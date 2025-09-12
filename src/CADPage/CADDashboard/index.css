@@ -1,0 +1,40 @@
+.dashboard-main-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 10px;
+}
+
+.dashboard-main-container>div {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Tab Navigation */
+.cad-nav-tabs {
+  padding-bottom: 5px;
+}
+.cad-nav-tabs>.nav-item {
+  border-right: 1px solid #666666;
+}
+
+.cad-nav-tabs>.nav-item:last-child {
+  border-right: 0px solid #666666;
+}
+
+.cad-nav-tabs> button {
+  padding: 0px;
+}
+.cad-nav-tabs>.nav-item>a {
+  color: #666666;
+  font-size: 13px;
+  font-style: normal;
+}
+
+.cad-nav-tabs>.nav-item>.active {
+  border: 0;
+  border-color: #001F3F;
+  color: #001F3F;
+  font-weight: 600;
+}

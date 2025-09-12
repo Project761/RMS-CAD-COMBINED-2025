@@ -1,0 +1,16 @@
+.header-Container {
+  background-color: #001F3F;
+  /* height: 36px; */
+  padding: 7.156px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-Container>span {
+  color: #E6E6E6;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 21.467px;
+}

@@ -1,0 +1,51 @@
+.ncic-nav-tabs {
+  background-color: #001f3f;
+  color: white;
+  padding: 2px;
+
+}
+
+
+.ncic-nav-tabs .nav-item .nav-link.nav-link.active,
+.ncic-nav-tabs .nav-item .nav-link.nav-link:hover:not(.disabled) {
+  border-color: white;
+  color: white;
+}
+.dropdown-menu.show {
+  display: block;
+}
+
+/* .dropdown-submenu {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  background-color: #001f3f;
+  display: none;
+  z-index: 100;
+  padding: 10px;
+} */
+
+.dropdown-submenu.show {
+  display: block;
+}
+
+.nav-item {
+  position: relative;
+}
+.ncic-nav-tabs .dropdown-toggle{
+  justify-content: space-between;
+}
+
+.ncic-nav-tabs .dropdown-toggle:hover .dropdown-menu {
+  display: block;
+}
+
+/* Rotate the arrow on hover */
+.ncic-nav-tabs .dropdown-toggle:hover:after, 
+.ncic-nav-tabs .dropdown-toggle.active:after {
+  transform: rotate(-90deg);
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+}

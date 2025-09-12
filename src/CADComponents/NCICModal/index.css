@@ -1,0 +1,49 @@
+/* .modal-content-ncic{
+  height: 90svh;
+} */
+
+.modal-body-ncic{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.modal-main-ncic{
+  height: 100%;
+}
+
+.ncic-main-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 5px;
+  gap: 5px;
+  border: solid 1px #001f3f;
+}
+
+.ncic-legend {
+  color: #001f3f;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: 0.5px;
+}
+
+.ncic-warning-text{
+  color: red;
+  padding: 5px;
+  background: #001f3f17 ;
+  margin: 0;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.ncic-form-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}

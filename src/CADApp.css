@@ -1,0 +1,944 @@
+.cad-css {
+  .custom-button {
+    width: 93px;
+  }
+
+  .button-container {
+    gap: 8px;
+  }
+
+  @media (min-width: 1200px) {
+    .modal-xl {
+      max-width: 1400px;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .modal-xl1 {
+      max-width: 1040px;
+      transform: none !important;
+    }
+  }
+
+  @media (max-width: 1080px) {
+    .modal-xl1 {
+      max-width: 940px !important;
+      transform: translate(0, -12px) !important;
+    }
+  }
+
+  .select-container {
+    flex-grow: 1;
+    width: 100px;
+  }
+
+  .tab-form-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-top: 10px;
+  }
+
+  .tab-form-monitor-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .tab-form-inner-container {
+    width: 100%;
+    display: flex;
+    /* align-items: center; */
+  }
+
+  .tab-form-inner-container>div:nth-child(1) {
+    display: flex;
+    flex-direction: column;
+    gap: 45px;
+  }
+
+  .tab-form-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .tab-form-label {
+    color: #4d4d4d;
+    font-size: 13px;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .tab-form-label-span {
+    color: #4d4d4d;
+    font-size: 13px;
+    font-weight: 400;
+    margin: 0;
+  }
+
+  .list-group-item,
+  .modal-content-cad {
+    background-color: #f2f2f2 !important;
+  }
+
+  .tab-form-row-gap {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-CADprimary {
+    color: #fff;
+    background-color: #001f3f;
+    border-color: #001f3f;
+  }
+
+  .btn-CADprimary:hover {
+    color: #fff;
+  }
+
+  .btn-border {
+    border: 1px solid #001f3f !important;
+    color: #001f3f !important;
+    font-weight: 600;
+    transition: background-color 0.3s, color 0.3s, border 0.3s;
+  }
+
+  .btn-border-selected {
+    background-color: #001f3f !important;
+    color: #fff !important;
+  }
+
+  .btn-border-contact {
+    background-color: #28a745 !important;
+    color: #fff !important;
+  }
+
+  .btn-border:hover {
+    border: 1px solid #001f3f !important;
+    background-color: #f3f3f3;
+    color: #001f3f !important;
+  }
+
+  .btn-border .selected:hover {
+    background-color: #001f3f;
+    color: #fff !important;
+  }
+
+  .btn-CADprimary1 {
+    color: #4d4d4d;
+    background-color: #ededed;
+    border-color: #4d4d4d;
+  }
+
+  .btn-CADprimary1:hover {
+    color: #4d4d4d;
+  }
+
+  .cad-legend {
+    color: #001f3f;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    letter-spacing: 0.5px;
+  }
+
+  .cad-legend-GEO {
+    color: #4d4d4d;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    letter-spacing: 0.5px;
+  }
+
+  /* Form Control Input size as React Select */
+  /* .tab-form-row .form-control {
+    height: 38px;
+  } */
+
+  .from-button-container {
+    width: 100%;
+    background-color: #f3f3f3;
+    position: sticky;
+    padding: 7px 0px;
+    bottom: 0;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .cancel-button,
+  .save-button {
+    padding: 8px 16px !important;
+    border: #001f3f 1px solid !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+  }
+
+  .error-button {
+    padding: 8px 16px !important;
+    border: #dc3545 1px solid !important;
+    color: #fff !important;
+    background-color: #dc3545 !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+  }
+
+
+  .button-table {
+    padding: 3px 7px;
+    border: #001f3f 1px solid;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .cancel-button-header {
+    padding: 2px 12px;
+    border: #001f3f 1px solid;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .save-button:disabled {
+    opacity: .65;
+  }
+
+  .cancel-button {
+    color: #001f3f;
+  }
+
+  .save-button {
+    color: #fff;
+    background-color: #001f3f;
+  }
+
+  .highlighter-input-readonly {
+    background-color: #b0bac3 !important;
+  }
+
+  /* Table Container */
+  .table-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* Table Header */
+  .table-header-status>div {
+    align-items: center;
+    border-right: #b0bac3 1px solid;
+    padding: 0 30px;
+    gap: 10px;
+  }
+
+  .table-header-status>div:first-child {
+    padding-left: 0;
+  }
+
+  .table-header-status>div:last-child {
+    border-right: 0px;
+  }
+
+  /* Table Button */
+  .table-header-buttons {
+    gap: 8px;
+  }
+
+  .table-header-buttons>button {
+    padding: 5px 10px;
+    background: transparent;
+    border: 0.435px solid #fff;
+    color: #fff;
+  }
+
+  .table-header-buttons>button:focus {
+    outline: none;
+  }
+
+
+  .inner-input-fullw input,
+  .inner-input-fullw textarea {
+    display: inline-block;
+    border: 1px solid #dddddd;
+    color: var(--labelColor);
+    background-color: #fff;
+    padding: 5px 8px 3px 8px;
+    width: 100%;
+    border-radius: 3px;
+    font-size: 14px;
+  }
+
+  .table-container-header {
+    width: 100%;
+  }
+
+  .form-control-remove-border,
+  .dataTables_wrapper .dataTables_filter {
+    border: none !important;
+    font-size: 14px;
+    height: auto;
+    height: calc(1.5em + .75rem + 2px);
+  }
+
+  .remove-input-border .form-control-remove-border:focus {
+    color: #495057;
+    background-color: #fff;
+    border-color: none;
+    outline: 0;
+    box-shadow: none;
+    height: calc(1.5em + .75rem + 2px);
+  }
+
+  .p-accordion .p-accordion-header .p-accordion-header-link {
+    padding: 0px !important;
+    border: none !important;
+    color: #6b7280;
+    background: none !important;
+    font-weight: 700;
+    border-radius: 6px;
+    transition: box-shadow 0.2s;
+  }
+
+  .p-accordion .p-accordion-content {
+    padding: 0px !important;
+    border: none !important;
+    background: #ffffff;
+    color: #4b5563;
+    border-top: 0;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+  }
+
+  .p-accordion-header-text {
+    color: #001f3f !important;
+    font-size: 13px;
+    /* font-style: normal; */
+    font-weight: 500 !important;
+    line-height: normal;
+    letter-spacing: 0.5px;
+  }
+
+  .CAD-sub-modal-width {
+    max-width: 1100px;
+  }
+
+  .CAD-incident-card {
+    background-color: #f2f2f2 !important;
+    height: 70vh !important;
+    /* width: 130vh !important; */
+    border-color: none !important;
+    margin-bottom: 0px;
+  }
+
+  /* @media screen and (min-width: 400px) and (max-width: 1330px) {
+  .CAD-incident-card {
+    height: auto !important;
+  }
+} */
+
+  /* @media screen and (max-height: 600px) {
+  .CAD-incident-card {
+    min-height: 500px !important;
+  }
+}
+
+@media screen and (min-width: 1500px) {
+  .CAD-incident-card {
+    height: 65vh !important;
+    width: 143vh !important;
+  }
+} */
+
+  .CAD-bg-color {
+    background-color: #f2f2f2 !important
+  }
+
+  @media screen and (min-width: 400px) and (max-width: 1330px) {
+    .CAD-incident-card {
+      height: auto !important;
+    }
+  }
+
+  .modal-table .rdt_TableHead {
+    z-index: 0 !important;
+  }
+
+  .modal-open .modal-cad {
+    overflow-x: hidden;
+    overflow-y: auto;
+    min-height: 104vh;
+  }
+
+  .full-screen-map {
+    height: 100vh;
+    width: 100%;
+  }
+
+  .leaflet-bar.back-button-control {
+    position: absolute;
+    top: 0px;
+    left: 5px;
+    z-index: 1000;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .leaflet-bar.fullscreen-control {
+    position: absolute;
+    top: 40px;
+    left: 5px;
+    z-index: 1000;
+    background-color: white;
+    border-radius: 5px;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+  }
+
+  .leaflet-control-zoom {
+    position: absolute;
+    top: 80px;
+    left: 5px;
+    z-index: 999;
+  }
+
+  /* Container for previewing images */
+  .cad-images.image-preview {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    /* Allow images to wrap in multiple rows */
+  }
+
+  /* Container for each image */
+  .cad-images.image-container {
+    position: relative;
+    display: flex;
+  }
+
+  /* Styling for images */
+  .cad-images.image-container img {
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+    /* Smooth transitions for hover effects */
+    cursor: pointer;
+  }
+
+  /* Styling for the image container */
+  .cad-images.image-container {
+    display: flex;
+    flex-direction: column;
+    /* Stack items vertically */
+    align-items: center;
+    /* Center items horizontally */
+    margin-bottom: 15px;
+    /* Space between image containers */
+  }
+
+  /* Styling for the image */
+  .cad-images.image-container img {
+    border: 1px solid #ddd;
+    /* Optional border styling */
+    border-radius: 4px;
+    /* Optional rounded corners */
+    transition: transform 0.3s ease;
+    /* Smooth scale effect */
+    /* Space between image and button */
+  }
+
+  /* Smooth hover effect for the image */
+  .cad-images.image-container img:hover {
+    transform: scale(1.05);
+    /* Slightly enlarge the image */
+    border-color: #007bff;
+    /* Change border color to blue */
+  }
+
+  /* Styling for the delete button */
+  .cad-images.image-container .delete-button {
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 2px 6px;
+    transition: background-color 0.3s ease;
+    /* Smooth hover effect */
+  }
+
+  /* Hover effect for delete button */
+  .cad-images.image-container .delete-button:hover {
+    background-color: darkred;
+    /* Darker red on hover */
+  }
+
+
+  /* CSS used here will be applied after bootstrap.css */
+
+  .notification_dropdown {
+    display: inline-block;
+    margin-left: 20px;
+    padding: 5px;
+  }
+
+
+  .glyphicon-bell {
+
+    font-size: 1.5rem;
+  }
+
+  .notifications {
+    min-width: 380px;
+  }
+
+  .notifications-wrapper {
+    overflow: auto;
+    max-height: 250px;
+  }
+
+  .menu-title {
+    font-size: 1.5rem;
+    display: inline-block;
+  }
+
+  .glyphicon-circle-arrow-right {
+    margin-left: 10px;
+  }
+
+
+  .notification-heading,
+  .notification-footer {
+    padding: 2px 10px;
+  }
+
+  .notification-item {
+    padding: 10px;
+    border-bottom: 1px solid #C0C0C0;
+  }
+
+  .modal {
+    z-index: 9999 !important;
+  }
+
+  .modal-in-Call-taker {
+    z-index: 99999 !important;
+  }
+
+  .cad-DatePicker .react-datepicker-wrapper {
+    width: 100% !important;
+  }
+
+  .CAD-table .iISsXa {
+    z-index: 1 !important;
+  }
+
+  .CAD-table .lgeGWP {
+    z-index: 1 !important;
+  }
+}
+
+
+.inner-input-fullw input,
+.inner-input-fullw textarea {
+  display: inline-block;
+  border: 1px solid #dddddd;
+  color: var(--labelColor);
+  background-color: #fff;
+  padding: 5px 8px 3px 8px;
+  width: 100%;
+  border-radius: 3px;
+  font-size: 14px;
+}
+
+.CAD-table .iISsXa {
+  z-index: 1 !important;
+}
+
+.CAD-table .lgeGWP {
+  z-index: 1 !important;
+}
+
+
+.CAD-Header.top_dark {
+  background-color: #001f3f !important;
+  color: #fff;
+  position: sticky;
+  z-index: 100;
+  top: 0px;
+}
+
+/* table style start */
+.small-table .p-datatable {
+  font-size: 12px;
+  /* Small font size */
+}
+
+.small-table .p-datatable-tbody>tr>td {
+  padding: 4px 8px;
+  /* Reduce row padding */
+}
+
+.small-table .p-datatable-thead>tr>th {
+  padding: 6px 8px;
+  /* Reduce header padding */
+  font-size: 12px;
+  /* Smaller header font size */
+  text-align: left;
+  /* Align header text */
+}
+
+.small-table .p-datatable-tbody>tr:hover {
+  background-color: #f5f5f5;
+  /* Optional: Highlight on hover */
+}
+
+/* Add hover effect */
+.p-datatable .p-datatable-tbody>tr:hover {
+  background-color: #f0f8ff !important;
+  /* Light blue */
+  cursor: pointer;
+  /* Optional: Show pointer */
+}
+
+/* Selected row background */
+.p-datatable .p-datatable-tbody>tr.p-highlight {
+  background-color: #001F3F !important;
+  /* Light blue */
+  color: #ffff !important;
+  /* Adjust text color if necessary */
+}
+
+/* Reduce the size of pagination controls */
+.small-table .p-paginator {
+  font-size: 12px;
+  /* Smaller text size */
+  padding: 4px;
+  /* Reduce padding */
+}
+
+.small-table .p-paginator .p-paginator-element {
+  height: 24px;
+  /* Reduce button size */
+  line-height: 24px;
+  /* Align text vertically */
+  padding: 0 8px;
+  /* Reduce padding around numbers/icons */
+}
+
+.small-table .p-paginator .p-paginator-pages .p-paginator-page {
+  height: 24px;
+  /* Consistent height for page numbers */
+  width: 24px;
+  /* Consistent width for square buttons */
+  border-radius: 4px;
+  /* Optional: Make corners slightly rounded */
+  margin: 2px;
+  /* Adjust spacing between buttons */
+}
+
+.small-table .p-paginator .p-paginator-prev,
+.small-table .p-paginator .p-paginator-next,
+.small-table .p-paginator .p-paginator-first,
+.small-table .p-paginator .p-paginator-last {
+  height: 24px;
+  /* Reduce size for navigation buttons */
+  width: 24px;
+  /* Make them square */
+  font-size: 12px;
+  /* Smaller text/icons */
+}
+
+/* Reduce the size of the rows per page dropdown */
+.small-table .p-paginator .p-dropdown {
+  font-size: 12px;
+  /* Smaller font size */
+  height: 24px;
+  /* Smaller height */
+}
+
+/* Adjust the dropdown trigger button */
+.small-table .p-paginator .p-dropdown .p-dropdown-label {
+  line-height: 0px;
+  /* Align text vertically */
+  font-size: 12px;
+  /* Smaller text */
+}
+
+/* Adjust the dropdown panel items */
+.small-table .p-paginator .p-dropdown-panel .p-dropdown-item {
+  font-size: 12px;
+  /* Smaller font size for items */
+}
+
+.p-dropdown {
+  width: 100px !important;
+  /* Adjust width */
+}
+
+.p-paginator .p-dropdown {
+  margin-left: 10px !important;
+  /* Adjust spacing */
+}
+
+.custom-rows-per-page {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  /* Adds spacing between the label and the dropdown */
+}
+
+.custom-rows-per-page span {
+  font-size: 0.9rem;
+  color: #555;
+  /* Slightly darker text for the label */
+}
+
+.custom-rows-per-page select {
+  padding: 3.4px 8px;
+  font-size: 0.9rem;
+  color: #333;
+  /* Text color */
+  background-color: #f9f9f9;
+  /* Light background */
+  border: 1px solid #ccc;
+  /* Subtle border */
+  border-radius: 6px;
+  /* Rounded corners */
+  outline: none;
+  /* Removes default browser outline */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  /* Smooth transition for hover effects */
+  cursor: pointer;
+}
+
+.custom-rows-per-page select:hover {
+  border-color: #2486d1;
+  /* Highlight border on hover */
+  box-shadow: 0 0 3px rgba(0, 122, 217, 0.4);
+  /* Subtle glow on hover */
+}
+
+.custom-rows-per-page select:focus {
+  border-color: #0056a6;
+  /* Stronger focus border color */
+  box-shadow: 0 0 3px rgba(0, 86, 166, 0.6);
+  /* Stronger focus glow */
+  background-color: #fff;
+  /* Lightens the background on focus */
+}
+
+.cad-custom-header {
+  background-color: #001F3F;
+  color: #fff;
+}
+
+/* table style end */
+@page {
+  size: 8.5in 11in;
+  /* Set page size to 8.5x11 inches */
+  margin: 2mm;
+  /* Reduced margin for printing */
+}
+
+.print-footer {
+  position: fixed;
+
+  width: 100%;
+  text-align: center;
+  font-size: 12px;
+  padding-top: 5mm;
+  /* Added some space above the footer */
+}
+
+.print-footer:after {
+  /* content: "Page " counter(page) " of " counter(pages); */
+  font-size: 12px;
+  position: absolute;
+  right: 20mm;
+}
+
+.content {
+  margin-bottom: 40mm;
+  /* Space before the footer */
+}
+
+/* Prevent table from overlapping with the footer */
+@media print {
+  .page-break {
+    page-break-before: always;
+  }
+
+  /* Move content after the footer to the next page */
+  .last-page-content {
+    page-break-before: always;
+    /* Move any content after the footer to the next page */
+  }
+}
+
+.CAD-table .p-datatable .p-datatable-thead>tr>th {
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+.CAD-card {
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e9e9e9;
+  background-color: #fff;
+}
+
+.card-title {
+  font-size: 1.10rem;
+  font-weight: 600;
+  color: #131b2c;
+  margin-bottom: 0.5rem;
+}
+
+.detail-row {
+  margin-bottom: 0.1rem;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.detail-label {
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.blinking-text {
+  /* color: green; */
+  /* background-Color: "#FF0000"; */
+  animation: blink 1s infinite;
+}
+
+.custom-quill {
+  height: 133px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  min-height: "130px";
+}
+
+
+.custom-quill .ql-toolbar {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 1;
+  border-bottom: 1px solid #ddd;
+}
+
+
+.custom-quill .ql-container {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.custom-quill .ql-picker-options {
+  height: 80px;
+  overflow-y: auto;
+}
+
+/* Messages Widget */
+.messages-widget {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.message-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  /* replaced var(--bg-secondary) */
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.message-item:hover {
+  background: linear-gradient(135deg,
+      rgba(233, 30, 99, 0.08),
+      /* replaced var(--primary-rgb) */
+      rgba(156, 39, 176, 0.08)
+      /* replaced var(--secondary-rgb) */
+    );
+}
+
+.message-item.unread {
+  border-left: 4px solid #e91e63;
+  /* replaced var(--primary) */
+  background: rgba(233, 30, 99, 0.05);
+  /* replaced var(--primary-rgb) */
+}
+
+.message-content {
+  flex: 1;
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.message-sender {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.message-time {
+  font-size: 0.7rem;
+  color: #4a4a4a;
+  /* replaced var(--text-secondary) */
+}
+
+.message-preview {
+  font-size: 0.8rem;
+  color: #4a4a4a;
+  /* replaced var(--text-secondary) */
+  line-height: 1.3;
+}
+
+.ck-editor__editable {
+  height: 150px;
+  /* Adjust the height as needed */
+  overflow-y: auto;
+  /* Enable vertical scroll */
+}

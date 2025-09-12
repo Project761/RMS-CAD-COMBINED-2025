@@ -1,0 +1,42 @@
+import { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+import { Decrypt_Id_Name, } from '../Common/Utility'
+import { get_LocalStoreData } from '../../redux/actions/Agency'
+import { useSelector } from 'react-redux'
+const ExpungeConfirmModel = (props) => {
+
+    const { showModal, setShowModal, onConfirm, victimCountStatus, offenderCountStatus } = props
+
+    const dispatch = useDispatch();
+    const localStoreData = useSelector((state) => state.Agency.localStoreData);
+    const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
+
+    useEffect(() => {
+        if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
+            if (uniqueId) { dispatch(get_LocalStoreData(uniqueId)); }
+        }
+    }, []);
+
+
+    return (
+        showModal && (victimCountStatus === 0 || offenderCountStatus === 0) ? (
+            <div className="modal fade show" data-backdrop="false" style={{ background: "rgba(0,0,0, 0.5)" }} id="myModal" tabIndex="-1" aria-labelledby="exampleModalLabel">
+                <div className="modal-dialog modal-dialog-centered">
+                    <div className="modal-content" style={{ backgroundColor: 'aliceblue' }} >
+                        <div className="box text-center py-4">
+                            <h5 className="modal-title" style={{ color: 'cadetblue', fontWeight: '700' }} id="exampleModalLabel">
+                                Are you sure you want to Delete the MasterName
+                            </h5>
+                            <div className="btn-box mt-2" data-toggle="modal" data-target="#MasterModal">
+                                <button type="button" className="btn btn-sm text-white" style={{ background: "#ef233c" }} onClick={onConfirm}>Yes</button>
+                                <button type="button" className="btn btn-sm btn-secondary ml-2" data-dismiss="modal" onClick={() => setShowModal(false)}>No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        ) : null
+    );
+}
+
+export default ExpungeConfirmModel;

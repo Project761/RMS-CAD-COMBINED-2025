@@ -1,0 +1,85 @@
+.utilities-tab-content-main-container,
+.utilities-tab-content-form-container,
+.utilities-tab-content-table-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.utilities-tab-content-main-container {
+  border: 1px solid #274c77;
+  padding: 10px;
+}
+
+.utilities-tab-content-form-container {
+  /* height: 34svh; */
+  height: auto;
+}
+
+.utilities-tab-content-form-container .tab-content {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.utilities-form-status-tabs {
+  border: 0.448px solid #334C65 !important;
+  background: #E6E9EC;
+  margin: 0 !important;
+  padding: 5px !important;
+}
+
+.utilities-tab-content-form-main {
+  width: 100%;
+  margin-top: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.utilities-tab-content-table-container {
+  /* height: 50svh; */
+}
+
+/* .form-control {
+  height: 38px;
+} */
+
+.utilities-tab-content-button-container {
+  display: flex;
+  gap: 4px;
+  justify-content: end;
+  align-items: center;
+}
+
+.agency-types-checkbox-container {
+  display: flex;
+  flex-direction: row;
+  gap: 38px;
+  width: 100%;
+  border: #54697E 0.44px solid;
+  padding: 5px;
+}
+
+.agency-checkbox-item {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.agency-checkbox-item>.agency-checkbox-text-container {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+
+/* .agency-checkbox-item>.agency-checkbox-text-container>span:first-child {
+  margin-right: 20px;
+} */
+
+.cad-sort-dropdown {
+  width: 100%;
+  /* background-color: #001F3F; */
+  height: 38px;
+}

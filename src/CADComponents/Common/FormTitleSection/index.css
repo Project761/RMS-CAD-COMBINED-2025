@@ -1,0 +1,23 @@
+/* TitleSection.css */
+.title-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.line {
+  width: 50px;
+  height: 2px;
+  background-color: #CCCCCC;
+  border: none;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
+.title {
+  color: #4D4D4D;
+  margin: 0 10px;
+  font-size: 13px;
+}

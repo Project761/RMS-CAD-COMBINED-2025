@@ -1,0 +1,102 @@
+.dashboard-main-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 10px;
+}
+
+.dashboard-main-container>div {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Tab Navigation */
+.cad-nav-tabs {
+  padding-bottom: 5px;
+}
+.cad-nav-tabs>.nav-item {
+  border-right: 1px solid #666666;
+}
+
+.cad-nav-tabs>.nav-item:last-child {
+  border-right: 0px solid #666666;
+}
+
+.cad-nav-tabs> button {
+  padding: 0px;
+}
+.cad-nav-tabs>.nav-item>a {
+  color: #666666;
+  font-size: 13px;
+  font-style: normal;
+}
+
+.cad-nav-tabs>.nav-item>.active {
+  border: 0;
+  border-color: #001F3F;
+  color: #001F3F;
+  font-weight: 600;
+}
+
+.custom-marker .marker-title {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: black;
+  width: 160px;
+  letter-spacing: 0.1px;
+  word-spacing: 0px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.marker-container {
+  display: flex; 
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.marker-wrapper {
+  background-color: #ffff; /* Black background with 70% opacity */
+  border-radius: 4px; /* Rounded corners */
+  padding: 5px; /* Spacing inside the div */
+  color: white; /* White text for readability */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Optional: Add a shadow for depth */
+}
+
+.custom-marker .marker-info {
+  font-size: 12px;
+  color: #6b33f0;
+  font-weight: 300;
+  letter-spacing: 0.2px;
+}
+
+.marker-details {
+  letter-spacing: 0.1px;
+}
+
+.full-screen-map {
+  height: 100vh; /* Full viewport height */
+  width: 100vw;  /* Full viewport width */
+  margin: 0;
+  padding: 0;
+}
+
+.fullscreen-control {
+  background-color: white;
+  border: 1px solid #ccc;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.fullscreen-control:hover {
+  background-color: #f4f4f4;
+}

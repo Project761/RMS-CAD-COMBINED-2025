@@ -1,0 +1,17 @@
+.react-resizable-handle{
+  position: sticky;
+  width: 100% !important;
+  background-color: #001F3F;
+  height: auto;
+  cursor: n-resize;
+  height: 4px;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+}
+
+.react-resizable-handle:hover{
+  cursor: n-resize;
+}

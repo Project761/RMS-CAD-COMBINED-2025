@@ -1,0 +1,94 @@
+import React, { useEffect, useState } from 'react';
+import DataTable from 'react-data-table-component';
+import { tableCustomStyles } from '../../../../Common/Utility';
+import { fetchPostData } from '../../../../hooks/Api';
+
+const ChainOfCustodyData = (props) => {
+  const { DecMPropID, DecPropID } = props
+
+  const [data, setData] = useState([]);
+
+  const get_ChainOfCustodyData = () => {
+    const val = {
+      'PropertyID': DecPropID, 'MasterpropertyID': 0,
+    };
+    fetchPostData('Propertyroom/GetData_ChainOfCustody', val).then((res) => {
+      if (res) {
+        setData(res);
+      } else { setData([]); }
+    });
+  };
+
+  useEffect(() => {
+    get_ChainOfCustodyData(DecPropID);
+  }, []);
+
+  const columns = [
+    {
+      name: 'Property #',
+      selector: (row) => row.PropertyNumber,
+      sortable: true,
+    },
+    {
+      name: 'Activity Type',
+      selector: (row) => row.Status,
+      sortable: true,
+    },
+    {
+      name: 'Date & Time',
+      selector: (row) => row.ExpectedDate,
+      sortable: true,
+    },
+    {
+      name: 'Officer Name',
+      selector: (row) => row.Officer_Name,
+      sortable: true,
+    },
+    {
+      name: 'Property Room',
+      selector: (row) => '',
+      sortable: true,
+    },
+    {
+      name: 'Location',
+      selector: (row) => row.location,
+      sortable: true,
+    },
+    {
+      name: 'Schedule Destroy Date',
+      selector: (row) => row.DestroyDate,
+      sortable: true,
+    },
+    {
+      name: 'Schedule Court Date',
+      selector: (row) => row.CourtDate,
+      sortable: true,
+    },
+
+
+  ];
+
+  return (
+    <div className="col-12 px-0 mt-2">
+      <DataTable
+        columns={columns}
+        data={data}
+        showHeader={true}
+        persistTableHead={true}
+        dense
+        highlightOnHover
+        responsive
+        customStyles={tableCustomStyles}
+        fixedHeader
+        fixedHeaderScrollHeight='220px'
+        pagination
+        paginationPerPage={100}
+        paginationRowsPerPageOptions={[100, 150, 200, 500]}
+        paginationComponentOptions={{ rowsPerPageText: 'Rows per page:' }}
+        showPaginationBottom={100}
+
+      />
+    </div>
+  );
+}
+export default ChainOfCustodyData;
