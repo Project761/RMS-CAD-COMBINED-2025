@@ -464,6 +464,8 @@ const Home = (props) => {
         });
     };
 
+    
+
     const Get_SendTask_Data = (PropertyID, MasterPropertyID) => {
         const val = { "PropertyID": PropertyID, "MasterPropertyID": MasterPropertyID }
         fetchPostData('TaskList/GetData_TaskList', val).then((res) => {
