@@ -441,9 +441,7 @@ const PropertyManagement = (props) => {
             }
             setShouldPrintForm(true);
             GetData_Propertyroom(MstPage === "MST-Property-Dash" ? DecMPropID : DecPropID, ProCategory, loginAgencyID);
-
             setReleaseStatus(selectedOption === 'Release' ? true : false)
-
             toastifySuccess(res.Message);
         })
     }
@@ -458,7 +456,6 @@ const PropertyManagement = (props) => {
             const parsedData = JSON.parse(res.data);
             if (parsedData.Table && parsedData.Table.length > 0) {
                 setChainReport(parsedData.Table[0]);
-
             }
             else {
                 toastifyError('No Data Available')
@@ -841,7 +838,7 @@ const PropertyManagement = (props) => {
                                 />
                             </div>
                             <div className="col-3 col-md-3 col-lg-1 mt-2">
-                                <label htmlFor="" className='new-label'>Property&nbsp;Person{errors.PropertyError !== 'true' ? (
+                                <label htmlFor="" className='new-label'>Property&nbsp;Room Officer{errors.PropertyError !== 'true' ? (
                                     <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.PropertyError}</p>
                                 ) : null}</label>
                             </div>

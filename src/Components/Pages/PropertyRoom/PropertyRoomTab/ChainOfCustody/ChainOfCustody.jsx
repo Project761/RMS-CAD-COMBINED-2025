@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
-import { tableCustomStyles } from '../../../../Common/Utility';
+import { getShowingWithFixedTime01, getShowingWithOutTime, tableCustomStyles } from '../../../../Common/Utility';
 import { fetchPostData } from '../../../../hooks/Api';
 
 const ChainOfCustodyData = (props) => {
   const { DecMPropID, DecPropID } = props
 
   const [data, setData] = useState([]);
+
+  useEffect(() => {
+    get_ChainOfCustodyData(DecPropID);
+  }, []);
 
   const get_ChainOfCustodyData = () => {
     const val = {
@@ -19,9 +23,7 @@ const ChainOfCustodyData = (props) => {
     });
   };
 
-  useEffect(() => {
-    get_ChainOfCustodyData(DecPropID);
-  }, []);
+  console.log(DecPropID)
 
   const columns = [
     {
@@ -36,7 +38,8 @@ const ChainOfCustodyData = (props) => {
     },
     {
       name: 'Date & Time',
-      selector: (row) => row.ExpectedDate,
+      selector: (row) => row.ExpectedDate ? getShowingWithFixedTime01(row.ExpectedDate) : '',
+      // selector: (row) => row.ExpectedDate,
       sortable: true,
     },
     {
@@ -64,7 +67,21 @@ const ChainOfCustodyData = (props) => {
       selector: (row) => row.CourtDate,
       sortable: true,
     },
-
+    {
+      name: 'Schedule Release Date',
+      selector: (row) => row.ReleaseDate,
+      sortable: true,
+    },
+    {
+      name: 'Release To',
+      selector: (row) => row.ReleaseDate,
+      sortable: true,
+    },
+    {
+      name: 'Comment',
+      selector: (row) => row.ActivityComments,
+      sortable: true,
+    },
 
   ];
 

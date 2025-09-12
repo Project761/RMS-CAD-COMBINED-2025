@@ -14,7 +14,6 @@ import { AgencyContext } from "../../../Context/Agency/Index";
 import NonpropertyModel from "./NonpropertyModel";
 
 
-
 const NonPropertyStorageList = (props) => {
   const { newfiltered } = props;
 
@@ -195,7 +194,7 @@ const NonPropertyStorageList = (props) => {
     },
     {
       name: "Reason Code",
-      selector: (row) => row.LossCode_Description,
+      selector: (row) => row.PropertyReason,
       sortable: true,
     },
 
@@ -234,7 +233,6 @@ const NonPropertyStorageList = (props) => {
     }
   };
 
-
   return (
     <>
       <div
@@ -254,14 +252,7 @@ const NonPropertyStorageList = (props) => {
                   columns={columns}
                   persistTableHead={true}
                   dense
-                  data={
-                    effectiveScreenPermission
-                      ? effectiveScreenPermission[0]?.DisplayOK
-                        ? newfiltered?.length > 0
-                          ? newfiltered
-                          : incidentFilterData
-                        : []
-                      : ""
+                  data={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? newfiltered?.length > 0 ? newfiltered : incidentFilterData : [] : ""
                   }
                   pagination
                   paginationPerPage={"100"}
@@ -272,11 +263,7 @@ const NonPropertyStorageList = (props) => {
                   customStyles={tableCustomStyles}
                   subHeaderAlign="left"
                   noDataComponent={
-                    effectiveScreenPermission
-                      ? effectiveScreenPermission[0]?.DisplayOK
-                        ? "There are no data to display"
-                        : "You don’t have permission to view data"
-                      : "There are no data to display"
+                    effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : "There are no data to display"
                   }
                 />
               ) : (
