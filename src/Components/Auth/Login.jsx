@@ -300,12 +300,11 @@ const Login = ({ login }) => {
                 }
             } else {
                 const { data } = await axios.post(Is2FALogin ? 'Account/GetToken' : 'Account/GetTokenNormal', { username: username, password: encryptAndEncodeToBase64(password), UniqueId: uniUserId, UnitId: unitName, AgencyId: LoginAgencyId, grant_type, Attempts: loginAttempt, UserPINID: pinID });
-                // axios.defaults.headers.common['Authorization'] = `Bearer ${data['access_token']}`;
+
                 setLoginAPIData(data);
                 if (data.error === '200') {
                     setLoginData({ username: username, password: encryptAndEncodeToBase64(password), UniqueId: uniUserId, UnitId: unitName, AgencyId: LoginAgencyId, grant_type, typeOfAccount });
                     InsertAccessOrRefreshToken(data);
-                    // InsertAccessOrRefreshToken(data['refresh_token'], data['access_token'])
                     setIsValidUser(data?.IsValidUser)
                     setIsSuperAdmin(data?.IsSuperadmin === "1" ? true : false)
                     localStorage.setItem('IsSuperadmin', data['IsSuperadmin'])
@@ -322,9 +321,6 @@ const Login = ({ login }) => {
                                         const encodedId = stringToBase64(connection.connectionId);
                                         localStorage.setItem("connectionId", encodedId);
                                         sessionStorage.setItem("connectionId", encodedId);
-
-                                        // Once started, invoke method to send PINID
-                                        // return connection.invoke("InitializeConnection", PinID);
                                     })
                                     .then(() => {
                                         console.log("✅ Parameters sent to the server after connection.");
@@ -359,24 +355,6 @@ const Login = ({ login }) => {
                 }
             }
 
-            //------------------------> old code without enc or dec condition <-------------------------------//
-
-            // const { data } = await axios.post('Account/GetToken', { username: username, password: encryptAndEncodeToBase64(password), UniqueId: uniUserId, UnitId: unitName, AgencyId: LoginAgencyId, grant_type });
-            // // console.log(data)
-            // // console.log("without Unit Acccount/GetToken", data)  
-            // axios.defaults.headers.common['Authorization'] = `Bearer ${data['access_token']}`;
-            // if (data.error === '200') {
-            //     InsertAccessOrRefreshToken(data);
-            //     // InsertAccessOrRefreshToken(data['refresh_token'], data['access_token'])
-            //     setErrMsg('');
-            //     setLoginResData(data);
-            //     const otp = get_OTP();
-            //     // setOtp('123456')
-            //     setOtp(otp);
-            //     setTimerOn(true);
-            // } else {
-            //     login_Attempt(data.error_description);
-            // }
         } else if (LoginAgencyId !== '' && uniUserId !== '' && password !== '' && unitCheck === true && unitName !== 0) {
             if (IsEncDec) {
                 const val = { username, password, UniqueId: uniUserId, UnitId: unitName, AgencyId: LoginAgencyId, grant_type, Attempts: loginAttempt, UserPINID: pinID }
@@ -384,10 +362,8 @@ const Login = ({ login }) => {
                 const postData = { 'EDpostData': EncPostData }
                 const { data } = await axios.post(Is2FALogin ? 'Account/GetToken' : 'Account/GetTokenNormal', postData);
 
-                // axios.defaults.headers.common['Authorization'] = `Bearer ${data['access_token']}`;
                 if (data.error === '200') {
                     InsertAccessOrRefreshToken(data)
-                    // InsertAccessOrRefreshToken(data['refresh_token'], data['access_token'])
                     setErrMsg('')
                     setLoginResData(data)
                     setLoginStatus(data?.IsLoggedIn ? false : true)
@@ -412,12 +388,9 @@ const Login = ({ login }) => {
                 }
             } else {
                 const { data } = await axios.post(Is2FALogin ? 'Account/GetToken' : 'Account/GetTokenNormal', { username, password, UniqueId: uniUserId, UnitId: unitName, AgencyId: LoginAgencyId, grant_type, Attempts: loginAttempt, UserPINID: pinID });
-                // axios.defaults.headers.common['Authorization'] = `Bearer ${data['access_token']}`;
+
                 if (data.error === '200') {
-
-
                     InsertAccessOrRefreshToken(data)
-                    // InsertAccessOrRefreshToken(data['refresh_token'], data['access_token'])
                     setErrMsg('')
                     setLoginResData(data)
                     setLoginStatus(data?.IsLoggedIn ? false : true)
@@ -445,21 +418,6 @@ const Login = ({ login }) => {
                     setLoginAttempt(data.LoginAttempts);
                 }
             }
-
-            // const { data } = await axios.post('Account/GetToken', { username, password, UniqueId: uniUserId, UnitId: unitName, AgencyId: LoginAgencyId, grant_type })
-            // axios.defaults.headers.common['Authorization'] = `Bearer ${data['access_token']}`;
-            // if (data.error === '200') {
-            //     InsertAccessOrRefreshToken(data)
-            //     // InsertAccessOrRefreshToken(data['refresh_token'], data['access_token'])
-            //     setErrMsg('')
-            //     setLoginResData(data)
-            //     const otp = get_OTP()
-            //     setOtp(otp)
-            //     // setOtp('123456')
-            //     setTimerOn(true)
-            // } else {
-            //     login_Attempt(data.error_description)
-            // }
         }
     }
 
@@ -472,8 +430,7 @@ const Login = ({ login }) => {
                 if (!loginAttemptStatus) {
                     setLoginAttempt(res[0]?.MaxLoginAttempts);
                 }
-                // setAgency(Comman_changeArrayFormat(res, 'AgencyID', 'Agency_Name'));
-                // setLoginAgencyId(res[0]?.AgencyID);
+
                 if (res?.length > 0 && res?.length <= 1) {
                     setAgency(login_changeArrayFormat(res, 'AgencyID', 'Agency_Name', 'PINID', 'Is2FAEnabled'));
                     setLoginAgencyId(res[0]?.AgencyID);
@@ -481,7 +438,7 @@ const Login = ({ login }) => {
                 } else {
                     setAgency(login_changeArrayFormat(res, 'AgencyID', 'Agency_Name', 'PINID', 'Is2FAEnabled'));
                     setAgencyMenu(true);
-                    // setLoginAgencyId(res[0]?.AgencyID);
+
                 }
             } else {
                 if (username?.length > 0) {
@@ -580,10 +537,8 @@ const Login = ({ login }) => {
     //     }
     // }
 
-
     async function handelContinue() {
         const res = await GoogleAuthServices.logOutFromAllDevices({ UserPINID: loginResData?.PINID.toString() });
-
         if (res?.status === 200) {
             setLoginStatus(true);
             const PinID = loginResData?.PINID.toString()
@@ -702,7 +657,8 @@ const Login = ({ login }) => {
                                             unitCheck ?
                                                 <div className="col-12 mt-1">
                                                     <label htmlFor="" className="m-0 p-0 pb-1" style={{ fontWeight: '600' }}>Unit <span className="text-danger">*</span></label>
-                                                    <Select name='UnitId'
+                                                    <Select
+                                                        name='UnitId'
                                                         value={unit?.filter((obj) => obj.value === unitName)}
                                                         options={unit}
                                                         placeholder={unitPlaceholder}
