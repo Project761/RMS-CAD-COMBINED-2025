@@ -358,9 +358,7 @@ const Login = ({ login }) => {
                     setLoginAttempt(data.LoginAttempts);
                 }
             }
-
             //------------------------> old code without enc or dec condition <-------------------------------//
-
             // const { data } = await axios.post('Account/GetToken', { username: username, password: encryptAndEncodeToBase64(password), UniqueId: uniUserId, UnitId: unitName, AgencyId: LoginAgencyId, grant_type });
             // // console.log(data)
             // // console.log("without Unit Acccount/GetToken", data)  
@@ -383,7 +381,6 @@ const Login = ({ login }) => {
                 const EncPostData = await Aes256Encrypt(JSON.stringify(val));
                 const postData = { 'EDpostData': EncPostData }
                 const { data } = await axios.post(Is2FALogin ? 'Account/GetToken' : 'Account/GetTokenNormal', postData);
-
                 // axios.defaults.headers.common['Authorization'] = `Bearer ${data['access_token']}`;
                 if (data.error === '200') {
                     InsertAccessOrRefreshToken(data)
