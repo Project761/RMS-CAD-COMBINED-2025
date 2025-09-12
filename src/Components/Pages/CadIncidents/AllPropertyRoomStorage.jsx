@@ -101,7 +101,8 @@ const AllPropertyRoomStorage = (props) => {
                                     className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
                                     style={{
                                         lineHeight: '1', minWidth: '22px', height: '22px', display: 'flex',
-                                        alignItems: 'center', justifyContent: 'center', borderRadius: '4px'
+                                        alignItems: 'center', justifyContent: 'center', borderRadius: '4px',
+                                        cursor: 'pointer'
                                     }}
                                 >
                                     <i className="fa fa-edit" data-toggle="modal" data-target="#MasterModalProperty" style={{ fontSize: '10px' }}></i>
@@ -112,7 +113,8 @@ const AllPropertyRoomStorage = (props) => {
                                 className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
                                 style={{
                                     lineHeight: '1', minWidth: '22px', height: '22px', display: 'flex',
-                                    alignItems: 'center', justifyContent: 'center', borderRadius: '4px'
+                                    alignItems: 'center', justifyContent: 'center', borderRadius: '4px',
+                                    cursor: 'pointer'
                                 }}
                             >
                                 <i className="fa fa-edit" data-toggle="modal" data-target="#MasterModalProperty" style={{ fontSize: '10px' }}></i>

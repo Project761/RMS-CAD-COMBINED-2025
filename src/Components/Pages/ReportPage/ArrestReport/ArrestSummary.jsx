@@ -975,7 +975,7 @@ const ArrestSummary = () => {
                                         {showFields.showPrimaryOfficerID && searchValue.PrimaryOfficerID && (
                                             <>
                                                 <div className="col-12 col-sm-4 col-md-1">
-                                                    <label className="new-label mb-0">Occurred Date To</label>
+                                                    <label className="new-label mb-0">Officer</label>
                                                 </div>
                                                 <div className="col-12 col-sm-8 col-md-5 text-field mt-0">
                                                     <input

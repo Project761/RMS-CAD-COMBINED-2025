@@ -43,6 +43,10 @@ const PropertyEvidenceReport = ({ isPreview }) => {
 
 
 
+    const [currentReportType, setCurrentReportType] = useState({
+        selectedReportType: 'AllPropertyRoomStorage',
+    });
+
 
     useEffect(() => {
         if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
@@ -89,8 +93,6 @@ const PropertyEvidenceReport = ({ isPreview }) => {
                 const parsedData = JSON.parse(res.data);
                 // const message = parsedData.Table[0].Message;
                 // toastifySuccess(message);
-                console.log("res::", res)
-                console.log("parsedData::", parsedData)
             } else { console.log("Somthing Wrong"); }
         }).catch((error) => {
             console.error("Error occurred:", error);
@@ -141,16 +143,17 @@ const PropertyEvidenceReport = ({ isPreview }) => {
                                 </Link>
 
                                 : <></>
-                            : <Link to=""
+                            : <span
                                 onClick={(e) => { set_IncidentId(row); }}
                                 className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
                                 style={{
                                     lineHeight: '1', minWidth: '22px', height: '22px', display: 'flex',
-                                    alignItems: 'center', justifyContent: 'center', borderRadius: '4px'
+                                    alignItems: 'center', justifyContent: 'center', borderRadius: '4px',
+                                    cursor: 'pointer'
                                 }}
                             >
                                 <i className="fa fa-edit" data-toggle="modal" data-target="#MasterModalProperty" style={{ fontSize: '10px' }}></i>
-                            </Link>
+                            </span>
                     }
                 </div>)
         },
@@ -185,9 +188,9 @@ const PropertyEvidenceReport = ({ isPreview }) => {
     ]
 
     const set_IncidentId = (row) => {
-        console.log(row)
         if (row.IncidentID) {
-            dispatch({ type: Incident_ID, payload: row?.IncidentID }); dispatch({ type: Incident_Number, payload: row?.IncidentNumber });
+            dispatch({ type: Incident_ID, payload: row?.IncidentID });
+            dispatch({ type: Incident_Number, payload: row?.IncidentNumber });
         }
     }
 
@@ -195,7 +198,7 @@ const PropertyEvidenceReport = ({ isPreview }) => {
         navigate('/dashboard-page');
     }
 
-    const HandleChange = (e) => {
+    const HandleFilterChange = (e) => {
         const value = e.target.value
         let filtered = [...queData];
         const filteredData = queData.filter(item => item.PropertyNumber?.toLowerCase().includes(value.toLowerCase()) || item.Category_Description?.toLowerCase().includes(value.toLowerCase()));
@@ -203,7 +206,11 @@ const PropertyEvidenceReport = ({ isPreview }) => {
     };
 
     const handleRadioChange = (e) => {
+        e.preventDefault();
         setSelectedReportType(e.target.value);
+        setCurrentReportType({
+            selectedReportType: e.target.value,
+        });
     };
 
     const [selectedOption, setSelectedOption] = useState(null);
@@ -221,10 +228,11 @@ const PropertyEvidenceReport = ({ isPreview }) => {
         setSelectedOption(option);
         console.log("Selected value:", option);
     };
-    useEffect(() => {
-        // Reset selected filter when report type changes
-        setSelectedOption(null);
-    }, [selectedReportType]);
+
+    // useEffect(() => {
+    //     // Reset selected filter when report type changes
+    //     setSelectedOption(null);
+    // }, [selectedReportType]);
 
     useEffect(() => {
         if (selectedOption) {
@@ -250,6 +258,7 @@ const PropertyEvidenceReport = ({ isPreview }) => {
         }
     }, [selectedOption, selectedReportType, incidentFilterData, queData, AllProRoomFilterData]);
 
+    console.log("selectedReportType", currentReportType?.selectedReportType);
 
     return (
         <>
@@ -274,7 +283,7 @@ const PropertyEvidenceReport = ({ isPreview }) => {
                         {isPreview ? (
                             <div className="d-flex align-items-center">
                                 <div className="position-relative mr-3 ">
-                                    <input type="text" name="IncidentNumber" id="IncidentNumber" className="form-control py-1 new-input" placeholder="Search......" onChange={(e) => { HandleChange(e); }} autoComplete="off" />
+                                    <input type="text" name="IncidentNumber" id="IncidentNumber" className="form-control py-1 new-input" placeholder="Search......" onChange={(e) => { HandleFilterChange(e); }} autoComplete="off" />
                                 </div>
                                 <h5 className="mb-0 mr-3" style={{ fontSize: "18px", fontWeight: "600", color: '#334c65' }}>
                                     {queData?.length}
@@ -303,7 +312,8 @@ const PropertyEvidenceReport = ({ isPreview }) => {
                     </div>
                     <div className='row gx-2 gy-2' style={{ margin: '0px 10px' }}>
                         {isPreview ? (
-                            <></>
+                            <>
+                            </>
                         ) : (
                             <ul className="list-unstyled d-flex mb-0" style={{ gap: "25px" }}>
                                 <li className="form-check">
@@ -357,39 +367,43 @@ const PropertyEvidenceReport = ({ isPreview }) => {
                     </div>
                 </div>
             </div>
-            {modalType === "property" && (
-                <CadPropertyModel
-                    show={showModal}
-                    modalOpenStatus={modalOpenStatus}
-                    setDataSaved={setDataSaved}
-                    setModalOpenStatus={(bool) => setModalOpenStatus(bool)}
-                    taskListID={taskListID}
-                    masterModalRef={masterModalRef}
-                    rowData={rowData}
-                    handleClose={() => setShowModal(false)}
-                    setModelActivityStatus={setModelActivityStatus}
-                    modelActivityStatus={modelActivityStatus}
-                    getIncidentSearchData={getIncidentSearchData}
-                />
-            )}
+            {
+                modalType === "property" && (
+                    <CadPropertyModel
+                        show={showModal}
+                        modalOpenStatus={modalOpenStatus}
+                        setDataSaved={setDataSaved}
+                        setModalOpenStatus={(bool) => setModalOpenStatus(bool)}
+                        taskListID={taskListID}
+                        masterModalRef={masterModalRef}
+                        rowData={rowData}
+                        handleClose={() => setShowModal(false)}
+                        setModelActivityStatus={setModelActivityStatus}
+                        modelActivityStatus={modelActivityStatus}
+                        getIncidentSearchData={getIncidentSearchData}
+                    />
+                )
+            }
 
-            {modalType === "nonproperty" && (
-                <NonpropertyModel
-                    show={showModal}
-                    modalOpenStatus={modalOpenStatus}
-                    setDataSaved={setDataSaved}
-                    setModalOpenStatus={(bool) => setModalOpenStatus(bool)}
-                    propertyID={rowData?.PropertyID}
-                    masterPropertyID={rowData?.MasterPropertyID}
-                    taskListID={taskListID}
-                    nonPropertyModalRef={nonPropertyModalRef}
-                    rowData={rowData}
-                    handleClose={() => setShowModal(false)}
-                    setModelActivityStatus={setModelActivityStatus}
-                    modelActivityStatus={modelActivityStatus}
-                    getIncidentSearchData={getIncidentSearchData}
-                />
-            )}
+            {
+                modalType === "nonproperty" && (
+                    <NonpropertyModel
+                        show={showModal}
+                        modalOpenStatus={modalOpenStatus}
+                        setDataSaved={setDataSaved}
+                        setModalOpenStatus={(bool) => setModalOpenStatus(bool)}
+                        propertyID={rowData?.PropertyID}
+                        masterPropertyID={rowData?.MasterPropertyID}
+                        taskListID={taskListID}
+                        nonPropertyModalRef={nonPropertyModalRef}
+                        rowData={rowData}
+                        handleClose={() => setShowModal(false)}
+                        setModelActivityStatus={setModelActivityStatus}
+                        modelActivityStatus={modelActivityStatus}
+                        getIncidentSearchData={getIncidentSearchData}
+                    />
+                )
+            }
 
             {/* <CadPropertyModel show={showModal} modalOpenStatus={modalOpenStatus} setDataSaved={setDataSaved} setModalOpenStatus={(bool) => { setModalOpenStatus(bool) }} taskListID={taskListID} rowData={rowData} handleClose={() => setShowModal(false)} setModelActivityStatus={setModelActivityStatus} modelActivityStatus={modelActivityStatus} getIncidentSearchData={getIncidentSearchData} /> */}
         </>

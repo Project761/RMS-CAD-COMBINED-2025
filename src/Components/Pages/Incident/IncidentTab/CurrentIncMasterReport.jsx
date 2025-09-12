@@ -182,7 +182,7 @@ const CurrentIncMasterReport = (props) => {
 
                                 >
                                     <p className="p-0 m-0 d-flex align-items-center" style={{ fontSize: '18px', color: "#000", fontWeight: 'bold' }}>
-                                        Master Incident Report12
+                                        Master Incident Report
                                     </p>
 
                                     <div className="d-flex align-items-center" style={{ gap: '0.5rem' }}>
