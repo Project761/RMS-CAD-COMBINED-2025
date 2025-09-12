@@ -465,6 +465,8 @@ const Home = (props) => {
         });
     };
 
+    
+
     const Get_SendTask_Data = (PropertyID, MasterPropertyID) => {
         const val = { "PropertyID": PropertyID, "MasterPropertyID": MasterPropertyID }
         fetchPostData('TaskList/GetData_TaskList', val).then((res) => {
@@ -1786,11 +1788,11 @@ const Home = (props) => {
                                 <div className="col-3 col-md-3 col-lg-1 mt-2 px-1">
                                     <label htmlFor="" className='new-label'>Evidence Type</label>
                                 </div>
-                                <div className="col-3 col-md-3 col-lg-3 mt-1">
-                                    <div className="col-9 col-md-9 col-lg-4 text-field mt-1">
+                               
+                                    <div className="col-9 col-md-9 col-lg-3 text-field mt-1">
                                         <input type="text" name="EvidenceType" disabled={!rowClicked} className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.EvidenceType} onChange={(e) => { handleChange(e) }} />
                                     </div>
-                                </div>
+                              
                                 <div className="col-3 col-md-3 col-lg-1 mt-2 ">
                                     <label htmlFor="" className='new-label'>Storage Location{errors.LocationError !== 'true' ? (
                                         <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.LocationError}</p>
@@ -1862,10 +1864,11 @@ const Home = (props) => {
                                         </button>
                                     </div>
                                 </div> */}
+                                <div className='col-12 col-md-12 col-lg-4 mt-2'></div>
                                 <div className="col-3 col-md-3 col-lg-1 mt-2 ">
                                     <label htmlFor="" className='new-label'>Comments</label>
                                 </div>
-                                <div className="col-9 col-md-9 col-lg-6 text-field mt-1">
+                                <div className="col-9 col-md-9 col-lg-11 text-field mt-1">
                                     <input type="text" name="ActivityComments" disabled={!rowClicked} className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
                                 </div>
                                 <div className='col-12 col-md-12 col-lg-12 mt-2'>
@@ -2147,8 +2150,9 @@ const Home = (props) => {
                 </div>
             </div> */}
 
-            <div className="div float-right">
-                <div className=" col-12  mt-2 btn-box" >
+            <div className="div ">
+                <div className=" col-12  mt-2 btn-box d-flex justify-content-between align-items-center" >
+
                     <div className="row propertyroom-button">
                         <div className='mr-1 mt-1 ' style={{ width: '150px' }}>
                             <Select
@@ -2178,6 +2182,9 @@ const Home = (props) => {
                         <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1">
                             Export
                         </button>
+                    </div>
+
+                    <div>
                         <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1 " onClick={onDashboardClose}>
                             Close
                         </button>
@@ -2191,6 +2198,7 @@ const Home = (props) => {
                             Clear
                         </button>
                     </div>
+
                 </div>
             </div>
             <TreeModel {...{ proRoom, locationStatus, setlocationStatus, locationPath, setfunctiondone, setLocationPath, setSearchStoragePath, searchStoStatus, setSearchStoStatus, setStorageLocationID, value, setValue, setPropertyNumber }} />
