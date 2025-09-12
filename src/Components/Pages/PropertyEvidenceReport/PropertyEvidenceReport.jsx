@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import Loader from '../../Common/Loader';
 import { useDispatch, useSelector } from 'react-redux';
 import { customStylesWithOutColor, Decrypt_Id_Name, getShowingDateText, stringToBase64, tableCustomStyles } from '../../Common/Utility';
@@ -14,6 +14,7 @@ import NonPropertyStorageList from '../CadIncidents/NonPropertyStorageList';
 import Select from 'react-select';
 import { AgencyContext } from '../../../Context/Agency/Index';
 import AllPropertyRoomStorage from '../CadIncidents/AllPropertyRoomStorage';
+import NonpropertyModel from '../CadIncidents/NonpropertyModel';
 
 
 const PropertyEvidenceReport = ({ isPreview }) => {
@@ -36,6 +37,11 @@ const PropertyEvidenceReport = ({ isPreview }) => {
     const { incidentFilterData, setIncidentFilterData, AllProRoomFilterData } = useContext(AgencyContext);
     const [newfiltered, setnewfiltered] = useState();
     const [Allfiltered, setAllfiltered] = useState();
+    const [modalType, setModalType] = useState(""); // 'property' or 'nonproperty'
+    const masterModalRef = useRef(null);
+    const nonPropertyModalRef = useRef(null);
+
+
 
     const [currentReportType, setCurrentReportType] = useState({
         selectedReportType: 'AllPropertyRoomStorage',
@@ -61,6 +67,7 @@ const PropertyEvidenceReport = ({ isPreview }) => {
                 setDataSaved(false);
                 getIncidentSearchData(localStoreData?.PINID);
             }, 1690);
+            setModalType('')
         }
     }, [modalOpenStatus]);
 
@@ -101,23 +108,40 @@ const PropertyEvidenceReport = ({ isPreview }) => {
                     {
                         effectiveScreenPermission ?
                             effectiveScreenPermission[0]?.Changeok ?
-                                <span
+                                <Link
+                                    to=""
                                     onClick={(e) => {
-                                        setRowData(row);
-                                        set_IncidentId(row);
-                                        setTaskListID(row?.TaskListID)
+                                        e.preventDefault(); setRowData(row); set_IncidentId(row); setTaskListID(row?.TaskListID);
                                         setModelActivityStatus(row.Activity);
-                                        setModalOpenStatus(true);
+
+                                        if (row.IsSendToPropertyRoom) {
+                                            setModalType("property"); setModalOpenStatus(true); setShowModal(true);
+                                            setTimeout(() => {
+                                                const modal = new window.bootstrap.Modal(masterModalRef.current);
+                                                modal.show();
+                                            }, 100);
+                                        } else if (row.IsNonPropertyRoom) {
+                                            setModalType("nonproperty"); setModalOpenStatus(true); setShowModal(true);
+                                            setTimeout(() => {
+                                                const modal = new window.bootstrap.Modal(nonPropertyModalRef.current);
+                                                modal.show();
+                                            }, 100);
+                                        }
                                     }}
                                     className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
                                     style={{
-                                        lineHeight: '1', minWidth: '22px', height: '22px', display: 'flex',
-                                        alignItems: 'center', justifyContent: 'center', borderRadius: '4px',
-                                        cursor: 'pointer'
+                                        lineHeight: '1',
+                                        minWidth: '22px',
+                                        height: '22px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        borderRadius: '4px'
                                     }}
                                 >
-                                    <i className="fa fa-edit" data-toggle="modal" data-target="#MasterModalProperty" style={{ fontSize: '10px' }}></i>
-                                </span>
+                                    <i className="fa fa-edit" />
+                                </Link>
+
                                 : <></>
                             : <span
                                 onClick={(e) => { set_IncidentId(row); }}
@@ -293,44 +317,18 @@ const PropertyEvidenceReport = ({ isPreview }) => {
                         ) : (
                             <ul className="list-unstyled d-flex mb-0" style={{ gap: "25px" }}>
                                 <li className="form-check">
-                                    <input
-                                        className="form-check-input"
-                                        type="radio"
-                                        value="AllPropertyRoomStorage"
-                                        name="ReportType"
-                                        id="AllPropertyRoomStorage"
-                                        checked={currentReportType.selectedReportType === 'AllPropertyRoomStorage'} // AllPropertyRoomStorage
-                                        // checked={selectedReportType === 'AllPropertyRoomStorage'} // AllPropertyRoomStorage
-                                        onChange={handleRadioChange}
-                                    />
+                                    <input className="form-check-input" type="radio" value="AllPropertyRoomStorage" name="AttemptCompletenew" id="AllPropertyRoomStorage"
+                                        checked={selectedReportType === 'AllPropertyRoomStorage'} onChange={handleRadioChange} />
                                     <label className="form-check-label" htmlFor="AllPropertyRoomStorage"> All Property Room Storage </label>
                                 </li>
                                 <li className="form-check">
-                                    <input
-                                        className="form-check-input"
-                                        type="radio"
-                                        value="all"
-                                        name="ReportType"
-                                        id="all"
-                                        // checked={selectedReportType === 'all'} //all
-                                        checked={currentReportType.selectedReportType === 'all'} //all
-                                        onChange={handleRadioChange}
-                                    />
+                                    <input className="form-check-input" type="radio" value="all" name="AttemptCompletenew" id="all" checked={selectedReportType === 'all'} onChange={handleRadioChange} />
                                     <label className="form-check-label" htmlFor="all"> Property Room Storage</label>
                                 </li>
 
                                 <li className="form-check ml-2">
-                                    <input
-                                        className="form-check-input"
-                                        type="radio"
-                                        value="NonProperty"
-                                        name="ReportType"
-                                        id="NonProperty"
-                                        // checked={selectedReportType === 'NonProperty'} //NonProperty
-                                        checked={currentReportType.selectedReportType === 'NonProperty'} //NonProperty
-                                        onChange={handleRadioChange}
-                                    />
-                                    <label className="form-check-label" htmlFor="NonProperty"> Non Property Room Storage </label>
+                                    <input className="form-check-input" type="radio" value="NonProperty" name="AttemptCompletenew" id="NonProperty" checked={selectedReportType === 'NonProperty'} onChange={handleRadioChange} />
+                                    <label className="form-check-label" htmlFor="NonProperty">  Non Property Room Storage </label>
                                 </li>
                             </ul>
                         )}
@@ -369,18 +367,45 @@ const PropertyEvidenceReport = ({ isPreview }) => {
                     </div>
                 </div>
             </div>
-            <CadPropertyModel
-                show={showModal}
-                modalOpenStatus={modalOpenStatus}
-                setDataSaved={setDataSaved}
-                taskListID={taskListID}
-                rowData={rowData}
-                setModelActivityStatus={setModelActivityStatus}
-                modelActivityStatus={modelActivityStatus}
-                getIncidentSearchData={getIncidentSearchData}
-                setModalOpenStatus={(bool) => { setModalOpenStatus(bool) }}
-                handleClose={() => setShowModal(false)}
-            />
+            {
+                modalType === "property" && (
+                    <CadPropertyModel
+                        show={showModal}
+                        modalOpenStatus={modalOpenStatus}
+                        setDataSaved={setDataSaved}
+                        setModalOpenStatus={(bool) => setModalOpenStatus(bool)}
+                        taskListID={taskListID}
+                        masterModalRef={masterModalRef}
+                        rowData={rowData}
+                        handleClose={() => setShowModal(false)}
+                        setModelActivityStatus={setModelActivityStatus}
+                        modelActivityStatus={modelActivityStatus}
+                        getIncidentSearchData={getIncidentSearchData}
+                    />
+                )
+            }
+
+            {
+                modalType === "nonproperty" && (
+                    <NonpropertyModel
+                        show={showModal}
+                        modalOpenStatus={modalOpenStatus}
+                        setDataSaved={setDataSaved}
+                        setModalOpenStatus={(bool) => setModalOpenStatus(bool)}
+                        propertyID={rowData?.PropertyID}
+                        masterPropertyID={rowData?.MasterPropertyID}
+                        taskListID={taskListID}
+                        nonPropertyModalRef={nonPropertyModalRef}
+                        rowData={rowData}
+                        handleClose={() => setShowModal(false)}
+                        setModelActivityStatus={setModelActivityStatus}
+                        modelActivityStatus={modelActivityStatus}
+                        getIncidentSearchData={getIncidentSearchData}
+                    />
+                )
+            }
+
+            {/* <CadPropertyModel show={showModal} modalOpenStatus={modalOpenStatus} setDataSaved={setDataSaved} setModalOpenStatus={(bool) => { setModalOpenStatus(bool) }} taskListID={taskListID} rowData={rowData} handleClose={() => setShowModal(false)} setModelActivityStatus={setModelActivityStatus} modelActivityStatus={modelActivityStatus} getIncidentSearchData={getIncidentSearchData} /> */}
         </>
     );
 }

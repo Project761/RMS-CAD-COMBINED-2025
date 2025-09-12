@@ -16,7 +16,7 @@ import { useReactToPrint } from "react-to-print";
 
 const CadPropertyModel = (props) => {
 
-  const { modelActivityStatus, DecPropID, DecMPropID, rowData, setDataSaved, SelectedCategory, CallStatus, ProType, ProNumber, ProTransfer, CheckboxStatus, ProCategory, taskListID, modalOpenStatus, setModalOpenStatus } = props
+  const { modelActivityStatus, DecPropID, DecMPropID, masterModalRef, setAllProRoomFilterData, rowData, getIncidentSearchDataProperty, setDataSaved, SelectedCategory, CallStatus, ProType, ProNumber, ProTransfer, CheckboxStatus, ProCategory, taskListID, modalOpenStatus, setModalOpenStatus } = props
   const { GetDataTimeZone, datezone, } = useContext(AgencyContext);
   const componentRef = useRef();
 
@@ -374,11 +374,17 @@ const CadPropertyModel = (props) => {
       if (!IsUpdate) {
         reset();
       }
+      setAllProRoomFilterData();
       Delete_TaskList();
       setModalOpenStatus(false);
       setDataSaved(true);
       GetData_Propertyroom(MstPage === "MST-Property-Dash" ? DecMPropID : DecPropID, ProCategory, loginAgencyID);
       toastifySuccess(res.Message);
+      setTimeout(() => {
+        getIncidentSearchDataProperty(localStoreData?.PINID);
+      }, 600)
+
+
     }).catch((error) => {
       toastifyError(error.Message);
     })
@@ -446,7 +452,7 @@ const CadPropertyModel = (props) => {
     modalOpenStatus &&
     <>
 
-      <div class="modal fade" style={{ background: "rgba(0,0,0, 0.5)" }} id="MasterModalProperty" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="false">
+      <div class="modal fade" style={{ background: "rgba(0,0,0, 0.5)" }} ref={masterModalRef} id="MasterModalProperty" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="false">
         <div class="modal-dialog  modal-dialog-centered  modal-xl  py-5">
           <div class="modal-content">
             <span className="align-self-end"><button type="button" className="border-0" aria-label="Close" data-dismiss="modal" style={{ alignSelf: "end", }} onClick={() => {
