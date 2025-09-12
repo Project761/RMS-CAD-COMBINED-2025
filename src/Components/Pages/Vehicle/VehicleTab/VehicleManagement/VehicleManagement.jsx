@@ -589,7 +589,7 @@ const VehicleManagement = (props) => {
                         />
                     </div>
                     <div className="col-3 col-md-3 col-lg-2 mt-2 px-0">
-                        <label htmlFor="" className='new-label px-0'>Property&nbsp;Person{errors.PropertyError !== 'true' ? (
+                        <label htmlFor="" className='new-label px-0'>Property&nbsp;Room Officer{errors.PropertyError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.PropertyError}</p>
                         ) : null}</label>
                     </div>

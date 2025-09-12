@@ -111,6 +111,10 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
   const [clickNibloder, setclickNibLoder] = useState(false);
   const [nibrsFieldError, setnibrsFieldError] = useState({});
 
+  const [isCrimeAgainstPerson, setIsCrimeAgainstPerson] = useState(false);
+  const [isCrimeAgainstProperty, setIsCrimeAgainstProperty] = useState(false);
+  const [isCrimeAgainstSociety, setIsCrimeAgainstSociety] = useState(false);
+
   const YesNoArr = [
     { value: 'Y', label: "Yes" },
     { value: 'N', label: "No" },
@@ -820,6 +824,8 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
     setStatesChangeStatus(false);
     setPrimaryLocationCode("");
     setNibrsCode("");
+    setIsCrimeAgainstSociety(false); setIsCrimeAgainstProperty(false); setIsCrimeAgainstPerson(false);
+
     setGangInfoVal([]);
     //law title
     LawTitleIdDrpDwnVal(loginAgencyID, null);
@@ -1670,15 +1676,30 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
     return true; // Default: show all options
   });
 
-  const isCrimeAgainstPerson = nibrsCodeDrp?.find((item) => item.value === value?.NIBRSCodeId)?.IsCrimeAgainsPerson;
+  // const isCrimeAgainstPerson = nibrsCodeDrp?.find((item) => item.value === value?.NIBRSCodeId)?.IsCrimeAgainsPerson;
 
-  const isCrimeAgainstProperty = nibrsCodeDrp?.find((item) => item.value === value?.NIBRSCodeId)?.IsCrimeAgainstProperty;
+  // const isCrimeAgainstProperty = nibrsCodeDrp?.find((item) => item.value === value?.NIBRSCodeId)?.IsCrimeAgainstProperty;
 
-  const isCrimeAgainstSociety = nibrsCodeDrp?.find((item) => item.value === value?.NIBRSCodeId)?.IsCrimeAgainstSociety;
+  // const isCrimeAgainstSociety = nibrsCodeDrp?.find((item) => item.value === value?.NIBRSCodeId)?.IsCrimeAgainstSociety;
 
+  useEffect(() => {
+    const selectedItem = nibrsCodeDrp?.find((item) => item.value === value?.NIBRSCodeId);
+    if (selectedItem) {
+      setIsCrimeAgainstPerson(selectedItem?.IsCrimeAgainsPerson);
+      setIsCrimeAgainstProperty(selectedItem?.IsCrimeAgainstProperty);
+      setIsCrimeAgainstSociety(selectedItem?.IsCrimeAgainstSociety);
+    }
+  }, [value?.NIBRSCodeId,]);
   const isNibrs999 = offenceFillterData?.find((item) => item?.FBICode === "999" ? true : false)
 
-
+  // useEffect(() => {
+  //   const selectedItem = nibrsCodeDrp?.find((item) => item.value === value?.NIBRSCodeId);
+  //   if (selectedItem) {
+  //     setIsCrimeAgainstPerson(selectedItem?.IsCrimeAgainsPerson);
+  //     setIsCrimeAgainstProperty(selectedItem?.IsCrimeAgainstProperty);
+  //     setIsCrimeAgainstSociety(selectedItem?.IsCrimeAgainstSociety);
+  //   }
+  // }, [value?.NIBRSCodeId,]);
 
 
   const OnChangeCargoTheft = (e, name) => {
@@ -1690,6 +1711,10 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
     }
   };
 
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = () => setIsHovered(true);
+  const handleMouseLeave = () => setIsHovered(false);
   return (
     <>
       <div className="col-12">
@@ -2348,19 +2373,41 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
           {
             !showError || isNibrs999 || nibrsCode === "999" ? (
               <></>
-            )
-              :
-              <span style={{ color: "red", transition: "background-color 0.3s ease", cursor: "pointer", }}>
+            ) : (
+              <span
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                style={{
+                  border: '1px solid red', backgroundColor: '#ffe6e6', color: isHovered ? 'blue' : 'red',
+                  padding: '3px', borderRadius: '4px', display: 'inline-block', transition: 'color 0.3s ease',
+                  fontWeight: 'bold', fontSize: '14px',
+                }}
+              >
                 {nibrsFieldError?.VictimoffenseError || "Offense must have at least one victim Connected"}
               </span>
+            )
           }
-          {/* {showError && (
-            <span style={{ color: "red", transition: "background-color 0.3s ease", cursor: "pointer", }}>
-              {nibrsFieldError?.VictimoffenseError || "Offense must have at least one victim Connected"}
-            </span>
-          )} */}
         </div>
+
+        {/* <div className="text-center p-1">
+          {
+            isNibrs999 || nibrsCode === "999" ? null : (
+              <div
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                style={{
+                  border: '1px solid red', backgroundColor: '#ffe6e6', color: isHovered ? 'blue' : 'red',
+                  padding: '3px', borderRadius: '4px', display: 'inline-block',
+                  transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
+                }}
+              >
+                Each Offense must have at least one victim Connected
+              </div>
+            )
+          }
+        </div> */}
         {
+
           isNibrsSummited ? (
             <>
             </>

@@ -14,7 +14,6 @@ import { AgencyContext } from "../../../Context/Agency/Index";
 import NonpropertyModel from "./NonpropertyModel";
 
 
-
 const NonPropertyStorageList = (props) => {
   const { newfiltered } = props;
 
@@ -23,9 +22,9 @@ const NonPropertyStorageList = (props) => {
   const [loder, setLoder] = useState(false);
   const uniqueId = sessionStorage.getItem("UniqueUserID")
     ? Decrypt_Id_Name(
-        sessionStorage.getItem("UniqueUserID"),
-        "UForUniqueUserID"
-      )
+      sessionStorage.getItem("UniqueUserID"),
+      "UForUniqueUserID"
+    )
     : "";
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
   const effectiveScreenPermission = useSelector(
@@ -38,8 +37,8 @@ const NonPropertyStorageList = (props) => {
   const [modalOpenStatus, setModalOpenStatus] = useState(false);
   const [dataSaved, setDataSaved] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
-  const [propertyID , setpropertyID] = useState([]);
-  const [masterPropertyID , setmasterPropertyID] = useState([]);
+  const [propertyID, setpropertyID] = useState([]);
+  const [masterPropertyID, setmasterPropertyID] = useState([]);
 
   const { incidentFilterData, setIncidentFilterData } =
     useContext(AgencyContext);
@@ -193,7 +192,7 @@ const NonPropertyStorageList = (props) => {
     },
     {
       name: "Reason Code",
-      selector: (row) => row.LossCode_Description,
+      selector: (row) => row.PropertyReason,
       sortable: true,
     },
 
@@ -232,7 +231,7 @@ const NonPropertyStorageList = (props) => {
     }
   };
 
-  console.log(newfiltered , incidentFilterData);
+  console.log(newfiltered, incidentFilterData);
   return (
     <>
       <div
@@ -252,14 +251,7 @@ const NonPropertyStorageList = (props) => {
                   columns={columns}
                   persistTableHead={true}
                   dense
-                  data={
-                    effectiveScreenPermission
-                      ? effectiveScreenPermission[0]?.DisplayOK
-                        ? newfiltered?.length > 0
-                          ? newfiltered
-                          : incidentFilterData
-                        : []
-                      : ""
+                  data={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? newfiltered?.length > 0 ? newfiltered : incidentFilterData : [] : ""
                   }
                   pagination
                   paginationPerPage={"100"}
@@ -270,11 +262,7 @@ const NonPropertyStorageList = (props) => {
                   customStyles={tableCustomStyles}
                   subHeaderAlign="left"
                   noDataComponent={
-                    effectiveScreenPermission
-                      ? effectiveScreenPermission[0]?.DisplayOK
-                        ? "There are no data to display"
-                        : "You don’t have permission to view data"
-                      : "There are no data to display"
+                    effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : "There are no data to display"
                   }
                 />
               ) : (
