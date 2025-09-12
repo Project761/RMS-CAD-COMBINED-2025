@@ -376,6 +376,8 @@ const PropertyEvidenceReport = ({ isPreview }) => {
                         setModalOpenStatus={(bool) => setModalOpenStatus(bool)}
                         taskListID={taskListID}
                         masterModalRef={masterModalRef}
+                        setModalType={setModalType}
+                        modalType={modalType}
                         rowData={rowData}
                         handleClose={() => setShowModal(false)}
                         setModelActivityStatus={setModelActivityStatus}
