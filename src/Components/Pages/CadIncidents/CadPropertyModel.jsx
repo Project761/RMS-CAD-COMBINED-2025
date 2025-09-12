@@ -236,18 +236,21 @@ const CadPropertyModel = (props) => {
   ])
 
 
-  const GetActivityReasonDrp = (loginAgencyID) => {
-    if (selectedOption === 'Transfer Location') {
-      selectedOption = 'TransferLocation'
-    }
-    const val = { AgencyID: loginAgencyID, 'EvidenceReasonType': selectedOption };
-    fetchPostData("PropertyEvidenceReason/GetDataDropDown_PropertyEvidenceReason", val).then((data) => {
+  const GetActivityReasonDrp = async (loginAgencyID) => {
+    try {
+      if (selectedOption === 'Transfer Location') {
+        selectedOption = 'TransferLocation'
+      }
+      const val = { AgencyID: loginAgencyID, 'EvidenceReasonType': selectedOption };
+      const data = await fetchPostData("PropertyEvidenceReason/GetDataDropDown_PropertyEvidenceReason", val);
       if (data) {
         setReasonIdDrp(Comman_changeArrayFormat(data, 'EvidenceReasonID', 'Description'))
       } else {
         setReasonIdDrp([]);
       }
-    });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {

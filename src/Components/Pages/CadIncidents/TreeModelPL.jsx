@@ -49,7 +49,7 @@ const TreeModalPL = (props) => {
         const pormise = fetchTreeModelPostData('PropertyStorageLocation/GetData_PropertyStorageLocation', { AgencyID: ID }).then(response => {
 
             if (response?.length > 0) {
-                console.log(response[0])
+         
                 setTreeData(response[0])
             } else {
                 console.log(response)
@@ -371,7 +371,7 @@ class Treeview extends Component {
             if (value.children?.length > 0 && value.showChildren) {
                 let babies = this.makeChildren(value.children);
                 let normalMode = (
-                    <div className="node" style={{ backgroundColor: value.Id == this.props?.selectBranch ? 'pink' : '' }} onClick={(e) => { this.props.setSelectBranch(value?.Id); console.log(value?.Id) }}>
+                    <div className="node" style={{ backgroundColor: value.Id == this.props?.selectBranch ? 'pink' : '' }} onClick={(e) => { this.props.setSelectBranch(value?.Id);  }}>
                         <i className="fa fa-minus-square-o" ></i>{value.name}
                         <span className="actions">
                             {
@@ -394,7 +394,7 @@ class Treeview extends Component {
             // A node has children but don't want to showing her children
             else if (value.children?.length > 0 && !value.showChildren) {
                 item = (
-                    <li key={index} style={{ backgroundColor: value.Id == this.props?.selectBranch ? 'pink' : '' }} onClick={(e) => { e.stopPropagation(); this.toggleView(value); this.props.setSelectBranch(value?.Id); console.log(value?.Id) }}>
+                    <li key={index} style={{ backgroundColor: value.Id == this.props?.selectBranch ? 'pink' : '' }} onClick={(e) => { e.stopPropagation(); this.toggleView(value); this.props.setSelectBranch(value?.Id); }}>
                         <div className="node" ><i className="fa fa-plus-square-o"></i>{value.name}</div>
                     </li>
                 );
@@ -404,7 +404,7 @@ class Treeview extends Component {
             else if (value.children?.length === 0) {
                 // console.log(value?.Id)
                 let normalMode = (
-                    <div className="node" style={{ backgroundColor: value.Id == this.props?.selectBranch ? 'pink' : '' }} onClick={(e) => { this.props.setSelectBranch(value?.Id); console.log(value?.Id) }}>
+                    <div className="node" style={{ backgroundColor: value.Id == this.props?.selectBranch ? 'pink' : '' }} onClick={(e) => { this.props.setSelectBranch(value?.Id);  }}>
                         <i className="fa fa-square-o"></i>{value.name}
                         <span className="actions">
                             {
@@ -449,7 +449,7 @@ class Treeview extends Component {
         // console.log(this.props.isEditLocation)
         // if (typeof this.state?.data?.name === 'undefined') return null;
         let children = this.makeChildren(this.state?.data?.children);
-        console.log("children::", children)
+      
         let root = (
             <span className="root">{this.state?.data?.name}
                 <span className="actions"> &nbsp;  &nbsp;

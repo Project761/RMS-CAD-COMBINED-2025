@@ -23,9 +23,9 @@ const NonPropertyStorageList = (props) => {
   const [loder, setLoder] = useState(false);
   const uniqueId = sessionStorage.getItem("UniqueUserID")
     ? Decrypt_Id_Name(
-        sessionStorage.getItem("UniqueUserID"),
-        "UForUniqueUserID"
-      )
+      sessionStorage.getItem("UniqueUserID"),
+      "UForUniqueUserID"
+    )
     : "";
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
   const effectiveScreenPermission = useSelector(
@@ -38,8 +38,8 @@ const NonPropertyStorageList = (props) => {
   const [modalOpenStatus, setModalOpenStatus] = useState(false);
   const [dataSaved, setDataSaved] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
-  const [propertyID , setpropertyID] = useState([]);
-  const [masterPropertyID , setmasterPropertyID] = useState([]);
+  const [propertyID, setpropertyID] = useState([]);
+  const [masterPropertyID, setmasterPropertyID] = useState([]);
 
   const { incidentFilterData, setIncidentFilterData } =
     useContext(AgencyContext);
@@ -135,6 +135,7 @@ const NonPropertyStorageList = (props) => {
                   alignItems: "center",
                   justifyContent: "center",
                   borderRadius: "4px",
+                  cursor: 'pointer'
                 }}
               >
                 <i
@@ -162,6 +163,7 @@ const NonPropertyStorageList = (props) => {
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: "4px",
+                cursor: 'pointer'
               }}
             >
               <i
@@ -232,7 +234,7 @@ const NonPropertyStorageList = (props) => {
     }
   };
 
-  console.log(newfiltered , incidentFilterData);
+
   return (
     <>
       <div

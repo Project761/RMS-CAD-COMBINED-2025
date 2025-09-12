@@ -325,6 +325,8 @@ const Home = (props) => {
     //         }
     //     }
     // }, [PINError, FirstNameError, LastNameError, PasswordError, UserNameError, ReEnterPasswordError, emailError])
+
+
     const check_Validation_Error = (e) => {
         e.preventDefault();
         // Unique Login UserId validation
@@ -386,6 +388,8 @@ const Home = (props) => {
             }
         }
     }, [PINError, FirstNameError, LastNameError, PasswordError, UserNameError, NCICLoginIdError, ReEnterPasswordError, emailError])
+
+
     const save_Personnel = async () => {
         const checkPassStatus = await checkPassword(null, value?.Password)
         if (isMultiPin || !checkPassStatus) {
@@ -409,38 +413,23 @@ const Home = (props) => {
                 'IsIncidentEditable': IsIncidentEditable,
                 'CreatedByUserFK': loginPinID,
             }
-
-            // console.log("🚀 ~ save_Personnel ~ UserName:", UserName)
-            const findUserName = allPersonnelList?.filter((item) => item?.UserName === UserName)
-            // console.log("🚀 ~ save_Personnel ~ findUserName:", findUserName)
-
-            if (findUserName?.length > 0) {
-                setErrors({ ...errors, ['PINError']: '' })
-                toastifyError('Login UserId Already Exists');
-                return;
-
-            } else {
-
-                AddDeleteUpadate('Personnel/InsertPersonnel', val).then((res) => {
-                    if (res?.success === true) {
-                        setChangesStatus(false); setStatesChangeStatus(false);
-                        // const parseData = JSON.parse(res.data);
-                        toastifySuccess(res.Message);
-                        setStatusFalse(); setPasStatus(true); setRePasStatus(true);
-                        navigate(`/personnelTab?Aid=${stringToBase64(aId)}&ASta=${aIdSta}&AgyName=${AgyName}&ORINum=${ORINum}&perId=${stringToBase64(res?.Id)}&perSta=${true}`)
-                        get_Personnel_Lists(aId, loginPinID)
-                        getAllPersonnelList(aId, loginPinID)
-                        setErrors({ ...errors, ['PINError']: '' })
-                        get_CountList(aId);
-                        if (uploadImgFiles?.length > 0) {
-                            upload_Image_File(res?.Id)
-                            setuploadImgFiles('')
-                        }
+            AddDeleteUpadate('Personnel/InsertPersonnel', val).then((res) => {
+                if (res?.success === true) {
+                    setChangesStatus(false); setStatesChangeStatus(false);
+                    // const parseData = JSON.parse(res.data);
+                    toastifySuccess(res.Message);
+                    setStatusFalse(); setPasStatus(true); setRePasStatus(true);
+                    navigate(`/personnelTab?Aid=${stringToBase64(aId)}&ASta=${aIdSta}&AgyName=${AgyName}&ORINum=${ORINum}&perId=${stringToBase64(res?.Id)}&perSta=${true}`)
+                    get_Personnel_Lists(aId, loginPinID)
+                    getAllPersonnelList(aId, loginPinID)
+                    setErrors({ ...errors, ['PINError']: '' })
+                    get_CountList(aId);
+                    if (uploadImgFiles?.length > 0) {
+                        upload_Image_File(res?.Id)
+                        setuploadImgFiles('')
                     }
-                }).catch(err => console.log(err))
-            }
-
-
+                }
+            }).catch(err => console.log(err))
 
         }
     }
@@ -473,54 +462,40 @@ const Home = (props) => {
                 'CreatedByUserFK': CreatedByUserFK,
             }
 
-            // console.log("🚀 ~ save_Personnel ~ UserName:", UserName)
-            const findUserName = allPersonnelList?.filter((item) => item?.UserName === UserName)
-            // console.log("🚀 ~ save_Personnel ~ findUserName:", findUserName)
+            AddDeleteUpadate('Personnel/UpdatePersonnel', val).then((res) => {
+                if (res.success === true) {
+                    if (uploadImgFiles?.length > 0) {
+                        upload_Image_File();
+                        setuploadImgFiles('');
+                    }
+                    const parseData = JSON.parse(res.data);
+                    toastifySuccess(parseData?.Table[0].Message);
+                    setErrors({ ...errors, ['PINError']: '' })
 
-            if (findUserName?.length > 0 && findUserName?.[0]?.PINID !== PINID) {
-                setErrors({ ...errors, ['PINError']: '' })
-                toastifyError('Login UserId Already Exists');
-                return;
-
-            } else {
-
-                AddDeleteUpadate('Personnel/UpdatePersonnel', val).then((res) => {
-                    if (res.success === true) {
-                        if (uploadImgFiles?.length > 0) {
-                            upload_Image_File();
-                            setuploadImgFiles('');
-                        }
-                        const parseData = JSON.parse(res.data);
-                        toastifySuccess(parseData?.Table[0].Message);
-                        setErrors({ ...errors, ['PINError']: '' })
-
-                        if (inActiveCheckBox && value.IsActive) {
-                            navigate(`/personnelTab?Aid=${stringToBase64(aId)}&ASta=${aIdSta}&AgyName=${AgyName}&ORINum=${ORINum}&perId=${stringToBase64(perId)}&perSta=${true}`)
-                            get_Personnel_Lists(aId, loginPinID); setInActiveCheckBox(false);
-                            getAllPersonnelList(aId, loginPinID)
-
-                        }
-                        else if (!inActiveCheckBox && !value.IsActive) {
-                            get_Personnel_Lists(aId, loginPinID); setStatusFalse();
-                            getAllPersonnelList(aId, loginPinID)
-
-                        } else if (!inActiveCheckBox && value.IsActive) {
-                            get_Personnel_Lists(aId, loginPinID);
-                        }
-                        setChangesStatus(false); setStatesChangeStatus(false); setPasStatus(true); setRePasStatus(true);
-
-                    } else {
-                        setErrors({ ...errors, ['PINError']: '' })
-                        toastifyError(JSON.parse(res.request.response).Message)
+                    if (inActiveCheckBox && value.IsActive) {
+                        navigate(`/personnelTab?Aid=${stringToBase64(aId)}&ASta=${aIdSta}&AgyName=${AgyName}&ORINum=${ORINum}&perId=${stringToBase64(perId)}&perSta=${true}`)
+                        get_Personnel_Lists(aId, loginPinID); setInActiveCheckBox(false);
+                        getAllPersonnelList(aId, loginPinID)
 
                     }
-                })
+                    else if (!inActiveCheckBox && !value.IsActive) {
+                        get_Personnel_Lists(aId, loginPinID); setStatusFalse();
+                        getAllPersonnelList(aId, loginPinID)
 
-            }
+                    } else if (!inActiveCheckBox && value.IsActive) {
+                        get_Personnel_Lists(aId, loginPinID);
+                    }
+                    setChangesStatus(false); setStatesChangeStatus(false); setPasStatus(true); setRePasStatus(true);
+
+                } else {
+                    setErrors({ ...errors, ['PINError']: '' })
+                    toastifyError(JSON.parse(res.request.response).Message)
+                }
+            })
+
             setErrors({ ...errors, ['PINError']: '' });
         }
     }
-
 
     const getAllPersonnelList = async (aId, PINID) => {
         try {
@@ -1196,7 +1171,7 @@ const Home = (props) => {
 
                                             name='NCICLoginId'
                                             value={value?.NCICLoginId || ''}
-                                            className={'requiredColor'}
+                                            // className={'requiredColor'}
                                             // maxLength={10}
                                             onChange={handleChangeNCIC}
                                             required />

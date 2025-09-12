@@ -376,7 +376,7 @@ const Owner = (props) => {
             }}>
               {value.labal ? (
                 <span className='select-cancel'>
-                  <i onClick={()=>{setPossessionID('')}} className='fa fa-times'></i>
+                  <i onClick={() => { setPossessionID('') }} className='fa fa-times'></i>
                 </span>
               ) : (null)}
             </span>
@@ -409,19 +409,26 @@ const Owner = (props) => {
               }
             </div>
           }
-          <div id='customSelectBox' className="col-12 col-md-12 col-lg-12 px-2 modal-table" style={{ display: 'none', width: '700px' }}>
-            <DataTable
-              dense
-              fixedHeader
-              fixedHeaderScrollHeight="150px"
-              customStyles={tableCustomStyles}
-              columns={columns1}
-              data={filterData}
-              onRowClicked={notebookEntryHandler}
-              selectableRowsHighlight
-              highlightOnHover
-              className='new-table'
-            />
+          <div className="row col-12">
+            <div className="col-1 col-md-1 col-lg-1" >
+
+            </div>
+            <div id='customSelectBox' className="col-11 col-md-11 col-lg-11 px-2 modal-table" style={{ display: 'none', width: '700px' }}>
+
+              <DataTable
+                dense
+                fixedHeader
+                fixedHeaderScrollHeight="150px"
+                customStyles={tableCustomStyles}
+                columns={columns1}
+                data={filterData}
+                onRowClicked={notebookEntryHandler}
+                selectableRowsHighlight
+                highlightOnHover
+                className='new-table'
+              />
+            </div>
+
           </div>
         </div>
       </div>
