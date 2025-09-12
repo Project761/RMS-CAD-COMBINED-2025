@@ -354,14 +354,12 @@ const Login = ({ login }) => {
                     setLoginAttempt(data.LoginAttempts);
                 }
             }
-
         } else if (LoginAgencyId !== '' && uniUserId !== '' && password !== '' && unitCheck === true && unitName !== 0) {
             if (IsEncDec) {
                 const val = { username, password, UniqueId: uniUserId, UnitId: unitName, AgencyId: LoginAgencyId, grant_type, Attempts: loginAttempt, UserPINID: pinID }
                 const EncPostData = await Aes256Encrypt(JSON.stringify(val));
                 const postData = { 'EDpostData': EncPostData }
                 const { data } = await axios.post(Is2FALogin ? 'Account/GetToken' : 'Account/GetTokenNormal', postData);
-
                 if (data.error === '200') {
                     InsertAccessOrRefreshToken(data)
                     setErrMsg('')

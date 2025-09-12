@@ -413,6 +413,8 @@ const MiscellaneousInformation = (props) => {
       Comments
     };
 
+
+
     AddDeleteUpadate("Property/Update_MiscellaneousInformation", val)
       .then(async (res) => {
         if (res?.success) {
