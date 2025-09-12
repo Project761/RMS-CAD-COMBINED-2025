@@ -40,15 +40,16 @@ const AllPropertyRoomStorage = (props) => {
     useEffect(() => {
         if (localStoreData) {
             dispatch(get_ScreenPermissions_Data("I034", localStoreData?.AgencyID, localStoreData?.PINID));
-            getIncidentSearchData(localStoreData?.PINID);
+            getIncidentSearchDataProperty(localStoreData?.PINID);
         }
     }, [localStoreData]);
 
 
 
-    const getIncidentSearchData = async (AgencyID) => {
+    const getIncidentSearchDataProperty = async (AgencyID) => {
         fetchPostData('TaskList/GetDataDashBoard_TaskList', { 'OfficerID': parseInt(AgencyID), 'PropertyRoomType': '' }).then((res) => {
             if (res.length > 0) {
+
                 setAllProRoomFilterData(res); setLoder(true);
             } else {
                 setLoder(true); setAllProRoomFilterData([]);
@@ -226,7 +227,7 @@ const AllPropertyRoomStorage = (props) => {
                 </div >
             </div>
             {/* <CadPropertyModel show={showModal} handleClose={() => setShowModal(false)} setModelActivityStatus={setModelActivityStatus} modelActivityStatus={modelActivityStatus} /> */}
-            <CadPropertyModel show={showModal} modalOpenStatus={modalOpenStatus} setDataSaved={setDataSaved} setModalOpenStatus={(bool) => { setModalOpenStatus(bool) }} taskListID={taskListID} rowData={rowData} handleClose={() => setShowModal(false)} setModelActivityStatus={setModelActivityStatus} modelActivityStatus={modelActivityStatus} getIncidentSearchData={getIncidentSearchData} />
+            <CadPropertyModel show={showModal} setAllProRoomFilterData={setAllProRoomFilterData} modalOpenStatus={modalOpenStatus} setDataSaved={setDataSaved} setModalOpenStatus={(bool) => { setModalOpenStatus(bool) }} taskListID={taskListID} rowData={rowData} handleClose={() => setShowModal(false)} setModelActivityStatus={setModelActivityStatus} modelActivityStatus={modelActivityStatus} getIncidentSearchDataProperty={getIncidentSearchDataProperty} />
         </>
     );
 }

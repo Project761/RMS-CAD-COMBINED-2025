@@ -55,6 +55,7 @@ const NonpropertyModel = (props) => {
     modalOpenStatus,
     setPropertyStatus,
     setModalOpenStatus,
+    nonPropertyModalRef,
   } = props;
   const { GetDataTimeZone, datezone } = useContext(AgencyContext);
   const componentRef = useRef();
@@ -1223,9 +1224,10 @@ const NonpropertyModel = (props) => {
     modalOpenStatus && (
       <>
         <div
-          class="modal fade"
+          class="modal"
           style={{ background: "rgba(0,0,0, 0.5)" }}
           id="NonpropertyModel"
+          ref={nonPropertyModalRef}
           tabindex="-1"
           aria-labelledby="exampleModalLabel"
           aria-hidden="true"
