@@ -65,8 +65,6 @@ const VehicleInvolvement = (props) => {
         })
     }
 
-
-    console.log(otherColName)
     const columns = [
         {
             width: '150px',
@@ -99,16 +97,6 @@ const VehicleInvolvement = (props) => {
                 </div>
         },
         {
-            name: 'Full Name',
-            selector: (row) => row.Owner,
-            sortable: true
-        },
-        {
-            name: 'Transaction Name',
-            selector: (row) => row.TransactionName,
-            sortable: true
-        },
-        {
             name: 'Transaction Number',
             selector: (row) => row.TransactionNumber,
             sortable: true,
@@ -136,6 +124,17 @@ const VehicleInvolvement = (props) => {
                 </span>
             )
         },
+        {
+            name: 'Full Name',
+            selector: (row) => row.Owner,
+            sortable: true
+        },
+        {
+            name: 'Transaction Name',
+            selector: (row) => row.TransactionName,
+            sortable: true
+        },
+
 
         // {
 

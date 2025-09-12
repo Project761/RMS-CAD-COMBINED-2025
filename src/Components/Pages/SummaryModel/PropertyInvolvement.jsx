@@ -99,23 +99,6 @@ const PropertyInvolvement = (props) => {
                 </div>
         },
         {
-            name: 'Full Name',
-            selector: (row) => row.Owner,
-            sortable: true
-        },
-        {
-
-            name: 'Transaction Name',
-            selector: (row) => row.TransactionName,
-            sortable: true
-        },
-        // {
-
-        //     name: 'Transaction Number',
-        //     selector: (row) => row.TransactionNumber,
-        //     sortable: true
-        // },
-        {
             name: 'Transaction Number',
             selector: (row) => row.TransactionNumber,
             sortable: true,
@@ -123,7 +106,6 @@ const PropertyInvolvement = (props) => {
                 <span
                     style={{ color: 'blue', cursor: 'pointer', textDecoration: 'underline' }}
                     onClick={() => {
-                        console.log(row?.NameID)
                         if (row?.TransactionName === "Name") {
                             if (IsMaster) {
                                 navigate(`/Name-Home?page=MST-Name-Dash&MasterNameID=${stringToBase64(row?.ID)}&ModNo=${row?.TransactionNumber}&NameStatus=${true}`);
@@ -141,6 +123,24 @@ const PropertyInvolvement = (props) => {
                 </span>
             )
         },
+        {
+            name: 'Full Name',
+            selector: (row) => row.Owner,
+            sortable: true
+        },
+        {
+
+            name: 'Transaction Name',
+            selector: (row) => row.TransactionName,
+            sortable: true
+        },
+        // {
+
+        //     name: 'Transaction Number',
+        //     selector: (row) => row.TransactionNumber,
+        //     sortable: true
+        // },
+
     ]
 
     const conditionalRowStyles = [

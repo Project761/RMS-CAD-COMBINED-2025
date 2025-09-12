@@ -134,6 +134,7 @@ const NonPropertyStorageList = (props) => {
                   alignItems: "center",
                   justifyContent: "center",
                   borderRadius: "4px",
+                  cursor: 'pointer'
                 }}
               >
                 <i
@@ -161,6 +162,7 @@ const NonPropertyStorageList = (props) => {
                 alignItems: "center",
                 justifyContent: "center",
                 borderRadius: "4px",
+                cursor: 'pointer'
               }}
             >
               <i
@@ -231,7 +233,6 @@ const NonPropertyStorageList = (props) => {
     }
   };
 
-  console.log(newfiltered, incidentFilterData);
   return (
     <>
       <div

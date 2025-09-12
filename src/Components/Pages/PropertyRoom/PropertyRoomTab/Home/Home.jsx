@@ -176,6 +176,7 @@ const Home = (props) => {
             GetActivityReasonDrp(loginAgencyID);
         }
         dispatch(get_PropertyTypeData(loginAgencyID));
+
     }, [loginAgencyID, selectedOption]);
 
     useEffect(() => {
@@ -477,6 +478,7 @@ const Home = (props) => {
             toastifyError(err?.message);
         })
     }
+
     const InSertBasicInfo = (id, col1, url, task) => {
         const val = {
             "PropertyID": selectedRows[0].PropertyID, "MasterPropertyID": selectedRows[0].MasterPropertyID,
@@ -502,7 +504,6 @@ const Home = (props) => {
             toastifyError(err?.message);
         })
     }
-
 
     const set_Edit_Value = (row) => {
         setSelectedStatus(row.Status);
@@ -677,6 +678,7 @@ const Home = (props) => {
 
         }
     };
+
     const TaskListvalidation = (selectedStatus) => {
         setTaskListStatus("")
         if (task === "CheckIn" && selectedStatus === "CheckIn") {
@@ -689,6 +691,7 @@ const Home = (props) => {
             setTaskListModalStatus(true)
         }
     }
+
     const HandleStatusOption = () => {
         const status = task;
         const arr = [{ value: "1", label: "CheckIn" }]
@@ -770,7 +773,6 @@ const Home = (props) => {
         }
         setSelectedRows(savedSelectedRows);
     }, []);
-
 
     useEffect(() => {
         if (!isClearing && selectedRows.length > 0) {
@@ -867,7 +869,6 @@ const Home = (props) => {
         setselectedRowsObjects(selectedRowsData);
     }
 
-
     function handleClickedCleared() {
         setValue({ ...value, 'location': '', });
     }
@@ -893,7 +894,6 @@ const Home = (props) => {
         }
         setSelectedFileName(nameArray);
     };
-
 
     const handleFileChange = (e) => {
         const files = e.target.files
@@ -935,6 +935,7 @@ const Home = (props) => {
             setValue({ taskListDrpDataID: selectedOption.value });
         }
     };
+
     const handleSendToTaskList = () => {
         // if (collectingOfficer === "") {
         //     setCollectingOfficerError("required")
@@ -1123,7 +1124,6 @@ const Home = (props) => {
                                 </>
                             )}
 
-
                             {selectedOptions?.value === 'PropertyTypeID' && (
                                 <>
                                     <div className="col-3 col-md-2 col-lg-2 mt-2 px-1">
@@ -1146,7 +1146,6 @@ const Home = (props) => {
                                         </div>
                                     </div>
                                 </>
-
                             )}
 
                             {selectedOptions?.value === 'PropertyTag' && (
@@ -1217,7 +1216,6 @@ const Home = (props) => {
                                 (selectedOptions?.value === 'StorageLocationID' || selectedOptions?.value === 'PropertyTypeID') ?
 
                                     <>
-
                                         <div className="col-3 col-md-3 col-lg-1 mt-2 text-right">
                                             <label htmlFor="" className='new-label'>Date From</label>
                                         </div>
@@ -1284,8 +1282,6 @@ const Home = (props) => {
                                                 {/* <label htmlFor="" className='pl-0 pt-1' >Reported To Date</label>    */}
                                             </div>
                                         </div>
-
-
                                     </> : <></>
                             }
                         </div >
@@ -1307,19 +1303,14 @@ const Home = (props) => {
                         paginationPerPage={'100'}
                         paginationRowsPerPageOptions={[100, 150, 200, 500]}
                         showPaginationBottom={100}
-                        // selectableRowsHighlight
-                        //  selectableRows
-
-
-                        // selectableRowSelected={row => selectedRows?.some(selected => selected.PropertyID === row.PropertyID)}
-
-                        // selectableRowSelected={row => (selectedRows || [])?.some(selected => selected?.PropertyID === row?.PropertyID)}
                         onSelectedRowsChange={(row) => { handleCheckboxChange(row); }}
-
-                        // onRowClicked={(row) => { console.log(row) }}
-                        // handleSelectedRows={(row) => { console.log(row) }}
-
                         noDataComponent={searchData.length === 0 ? 'There are no data to display' : ""}
+                    // selectableRowsHighlight
+                    //  selectableRows
+                    // selectableRowSelected={row => selectedRows?.some(selected => selected.PropertyID === row.PropertyID)}
+                    // selectableRowSelected={row => (selectedRows || [])?.some(selected => selected?.PropertyID === row?.PropertyID)}
+                    // onRowClicked={(row) => { console.log(row) }}
+                    // handleSelectedRows={(row) => { console.log(row) }}
                     // clearSelectedRows={toggleClear}
                     // selectedRows={selectedRows}
 
@@ -1343,7 +1334,6 @@ const Home = (props) => {
                             //             </label>
                             //         </div>
                             //         <div className="col-9 col-md-9 col-lg-3 text-field mt-1">
-
                             //             <Select
                             //                 // className='attemped__com flex-grow-1'
                             //                 onChange={(e) => ChangeDropDowns(e, 'Task')}
@@ -1354,14 +1344,12 @@ const Home = (props) => {
                             //                 value={StatusOption.filter(option => option.value === value?.Task)}
                             //             />
                             //         </div>
-
                             //         <div className="col-3 col-md-3 col-lg-8 mt-2 px-1 d-flex justify-content-end">
                             //             <button type="button" className="btn btn-sm mb-2 mt-1" style={{ backgroundColor: "#001f3f", color: "#fff" }}>
                             //                 Send
                             //             </button>
                             //         </div>
                             //     </div>
-
                             // </fieldset>
 
                             <fieldset>
@@ -1391,7 +1379,6 @@ const Home = (props) => {
                                                     container: (base) => ({ ...base, flex: 1 }) // Makes Select grow inside flex
                                                 }}
                                             />
-
                                         </div>
                                     </div>
                                     <div className='col-9 col-md-9 col-lg-2 text-center ' >
@@ -1488,13 +1475,13 @@ const Home = (props) => {
                                                                     required
                                                                     menuPlacement="top"
                                                                     styles={colourStylesUsers}
-                                                                    // isDisabled={value.Status === "Pending Review" || value.Status === "Approved"}
                                                                     closeMenuOnSelect={false}
-                                                                    // menuPlacement="top"
-                                                                    // hideSelectedOptions={true}
                                                                     onChange={Agencychange}
-                                                                    // allowSelectAll={true}
                                                                     value={multiSelected.optionSelected}
+                                                                // isDisabled={value.Status === "Pending Review" || value.Status === "Approved"}
+                                                                // menuPlacement="top"
+                                                                // hideSelectedOptions={true}
+                                                                // allowSelectAll={true}
                                                                 />
                                                             </div>
                                                         </>
@@ -1547,7 +1534,6 @@ const Home = (props) => {
                                                     color: "#fff",
                                                 }}
                                                 onClick={handleSendToTaskList}
-
                                                 disabled={!(taskToSend && value.OfficerID)}
                                             >
                                                 Send

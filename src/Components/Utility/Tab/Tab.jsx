@@ -188,20 +188,19 @@ const Tab = () => {
 
         try {
 
-            const [incidentError, offenseError, victimError, offenderError, DashBoardVicOffRelationStatus, narrativeError, propertyError] = await Promise.all([
+            const [incidentError, offenseError, victimError, offenderError, DashBoardVicOffRelationStatus, propertyError] = await Promise.all([
                 fetchPostDataNibrs('NIBRS/GetIncidentNIBRSError', { 'StrIncidentID': incidentID, 'StrIncidentNumber': incidentNumber, 'StrAgencyID': agencyID }),
                 fetchPostDataNibrs("NIBRS/Nibrs_OffenseError", { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'CrimeId': 0, 'gIntAgencyID': loginAgencyID }),
                 fetchPostDataNibrs('NIBRS/GetVictimNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'NameID': 0, 'gIntAgencyID': loginAgencyID }),
                 fetchPostDataNibrs('NIBRS/GetOffenderNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'NameID': 0, 'gIntAgencyID': loginAgencyID }),
                 fetchPostData('DashBoard/GetData_DashBoardIncidentStatus', { 'IncidentID': incidentID, }),
-                fetchPostData('Narrative/GetData_AllIncidentNarrativeApprovedStatus', { 'IncidentId': incidentID }),
                 fetchPostDataNibrs('NIBRS/GetPropertyNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'PropertyId': 0, 'gIntAgencyID': loginAgencyID }),
             ])
             // console.log("🚀 ~ nibrsValidateInc ~ incidentError:", incidentError)
 
             if (incidentError?.Administrative) {
                 const incObj = incidentError?.Administrative ? incidentError?.Administrative : [];
-                console.log("🚀 ~ nibrsValidateInc ~ incObj:", incObj);
+
                 setIncidentErrorStatus(true);
 
             } else {
@@ -239,18 +238,13 @@ const Tab = () => {
                 const Narrative = DashBoardVicOffRelationStatus[0]?.Narrative;
                 const VictimOffense = DashBoardVicOffRelationStatus[0]?.VictimOffense;
 
-                setNameRelationshipError(NameRelationship > 0)
+                setNameRelationshipError(NameRelationship > 0);
+                setNarrativeApprovedStatus(Narrative > 0);
 
             } else {
                 setNameRelationshipError(false)
-
-            }
-
-            if (narrativeError?.length > 0) {
-                // true when all narrative approved
-                setNarrativeApprovedStatus(narrativeError[0]?.AllReportApprove);
-            } else {
                 setNarrativeApprovedStatus(false);
+
             }
 
             if (propertyError) {

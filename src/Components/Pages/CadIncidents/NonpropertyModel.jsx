@@ -506,7 +506,7 @@ const NonpropertyModel = (props) => {
     fetchPostData("Property/GetSingleData_Property", val).then((res) => {
       if (res) {
         setEditval(res);
-        console.log("res of GetSingleData::", res);
+    
         setPropertyRoomStatus(res[0]?.PropertyRoomStatus);
       } else {
         setEditval([]);
@@ -540,7 +540,7 @@ const NonpropertyModel = (props) => {
         if (res) {
           setTask(res[res.length - 1]?.Task);
         } else {
-          console.log("executed");
+ 
           setTask("");
         }
       })
@@ -557,7 +557,7 @@ const NonpropertyModel = (props) => {
         if (res) {
           const obj = res.filter((item) => item?.PropertyID === PropertyID);
         } else {
-          console.log("res of Get_TaskList_Status::", res);
+      
         }
       })
       .catch((err) => {
@@ -599,12 +599,7 @@ const NonpropertyModel = (props) => {
   } = errors;
 
   useEffect(() => {
-    console.log(
-      ReasonError === "true",
-      DispatchError === "true",
-      DispatchingOfficerError === "true",
-      ReceipientError === "true"
-    );
+
     if (
       (ReasonError === "true" &&
         DispatchError === "true" &&
@@ -1010,7 +1005,7 @@ const NonpropertyModel = (props) => {
       arr = StatusOption.filter((item) => !(item.label === PropertyRoomStatus));
       return arr;
     } else {
-      console.log("Task::", task);
+ 
       const status = task;
       arr = [{ value: "1", label: "CheckIn" }];
       if (status) {
@@ -1169,7 +1164,7 @@ const NonpropertyModel = (props) => {
     files.forEach(file => formData.append("File", file));
 
     formData.append("Data", JSON.stringify(metadataArray));
-    console.log(metadataArray)
+
 
 
     try {
@@ -1306,10 +1301,7 @@ const NonpropertyModel = (props) => {
                           !addUpdatePermission && setChangesStatus(true);
 
                           if (date) {
-                            console.log(
-                              "occurred from date entered true::",
-                              date
-                            );
+                          
 
                             let occurredFromTimestamp = new Date(
                               value?.ReportedDate
@@ -1333,10 +1325,7 @@ const NonpropertyModel = (props) => {
                                 getShowingMonthDateYear(selectedDate),
                             });
                           } else {
-                            console.log(
-                              "occurred from date entered false::",
-                              date
-                            );
+                        
                             setdisPatchdate(date);
                             setValue({
                               ...value,
@@ -1394,10 +1383,7 @@ const NonpropertyModel = (props) => {
                           !addUpdatePermission && setChangesStatus(true);
 
                           if (date) {
-                            console.log(
-                              "occurred from date entered true::",
-                              date
-                            );
+                        
 
                             let occurredFromTimestamp = new Date(
                               value?.ReportedDate
@@ -1421,10 +1407,7 @@ const NonpropertyModel = (props) => {
                                 getShowingMonthDateYear(selectedDate),
                             });
                           } else {
-                            console.log(
-                              "occurred from date entered false::",
-                              date
-                            );
+                      
                             setexpectedArrival(date);
                             setValue({
                               ...value,
