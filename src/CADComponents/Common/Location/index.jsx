@@ -779,6 +779,6 @@ const buildLocationData = (extractedData, LocationGeoCode, stDirection, stDirect
         isCoordinateX: !!LocationGeoCode?.longitude,
         isCoordinateY: !!LocationGeoCode?.latitude,
         Id: "",
-        IsVerify: false,
+        // IsVerify: false,
     };
 };
