@@ -2158,6 +2158,7 @@ const MiscellaneousInformation = (props) => {
                                   >
                                     {/* Choose File Button */}
                                     <label
+                                      className="mb-0"
                                       htmlFor="file-input"
                                       style={{
                                         padding: "4px 10px",
@@ -2202,7 +2203,7 @@ const MiscellaneousInformation = (props) => {
                                               alignItems: "center",
                                               backgroundColor: "transparent",
                                               border: "1px solid #ccc",
-                                              padding: "2px 6px",
+                                              padding: "2.2px 6px",
                                               borderRadius: "2px",
                                               fontSize: "12px",
                                               color: "#333",
@@ -2493,7 +2494,7 @@ const MiscellaneousInformation = (props) => {
                                   ) || null
                                 }
                                 styles={{
-                                  container: (base) => ({ ...base, flex: 1 }), // Makes Select grow inside flex
+                                  container: (base) => ({ ...base, flex: 1 }), 
                                 }}
                               />
                             </div>
