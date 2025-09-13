@@ -1737,10 +1737,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
               is24Hour={true}
               // className={` ${(nibrsSubmittedIncident === 1 && incidentID) || !value.ReportedDate ? "readonlyColor" : ""}`}
               className={nibrsSubmittedIncident === 1 ? "LockFildsColor" : incidentID || !value.ReportedDate ? "readonlyColor" : ""}
-              disabled={
-                (nibrsSubmittedIncident === 1 && incidentID) ||
-                !value.ReportedDate
-              }
+              disabled={(nibrsSubmittedIncident === 1 && incidentID) || !value.ReportedDate}
             />
           </div>
           <div className="col-3 col-md-3 col-lg-4 mt-2 pt-1 ">

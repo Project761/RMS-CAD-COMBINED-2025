@@ -465,7 +465,7 @@ const Home = (props) => {
         });
     };
 
-    
+
 
     const Get_SendTask_Data = (PropertyID, MasterPropertyID) => {
         const val = { "PropertyID": PropertyID, "MasterPropertyID": MasterPropertyID }
@@ -1788,11 +1788,11 @@ const Home = (props) => {
                                 <div className="col-3 col-md-3 col-lg-1 mt-2 px-1">
                                     <label htmlFor="" className='new-label'>Evidence Type</label>
                                 </div>
-                               
-                                    <div className="col-9 col-md-9 col-lg-3 text-field mt-1">
-                                        <input type="text" name="EvidenceType" disabled={!rowClicked} className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.EvidenceType} onChange={(e) => { handleChange(e) }} />
-                                    </div>
-                              
+
+                                <div className="col-9 col-md-9 col-lg-3 text-field mt-1">
+                                    <input type="text" name="EvidenceType" disabled={!rowClicked} className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.EvidenceType} onChange={(e) => { handleChange(e) }} />
+                                </div>
+
                                 <div className="col-3 col-md-3 col-lg-1 mt-2 ">
                                     <label htmlFor="" className='new-label'>Storage Location{errors.LocationError !== 'true' ? (
                                         <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.LocationError}</p>
@@ -1871,95 +1871,97 @@ const Home = (props) => {
                                 <div className="col-9 col-md-9 col-lg-11 text-field mt-1">
                                     <input type="text" name="ActivityComments" disabled={!rowClicked} className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
                                 </div>
-                                <div className='col-12 col-md-12 col-lg-12 mt-2'>
-                                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px", fontFamily: "Arial, sans-serif" }}>
-                                        <label htmlFor="" className='new-label text-nowrap'>
-                                            File Attachment
-                                        </label>
+                                <div className='col-12 col-md-1 col-lg-1 mt-4'>
 
-                                        <div style={{ display: "flex", alignItems: "center", border: "1px solid #ccc", padding: "8px", borderRadius: "6px", background: "#f9f9f9", width: "100%" }}>
-                                            <label
-                                                htmlFor="file-input"
-                                                style={{
-                                                    padding: "8px 16px",
-                                                    backgroundColor: "#e9e9e9",
-                                                    color: "#fff",
-                                                    borderRadius: "4px",
-                                                    cursor: "pointer",
-                                                    fontSize: "14px",
-                                                    fontWeight: "bold",
-                                                    transition: "background 0.3s",
-                                                }}
-                                                onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
-                                                onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
-                                            >
-                                                Choose File
-                                            </label>
-                                            <input
-                                                type="file"
-                                                onChange={handleFileChange}
-                                                ref={fileInputRef}
-                                                multiple
-                                                style={{ display: "none" }}
-                                                id="file-input"
-                                            />
-                                            <div
-                                                style={{
-                                                    // border: "1px solid #ccc",
-                                                    // padding: "6px",
-                                                    borderRadius: "4px",
-                                                    display: "flex",
-                                                    flexWrap: "wrap",
-                                                    minHeight: "38px",
-                                                    flex: "1",
-                                                    alignItems: "center",
-                                                    gap: "6px",
-                                                    marginLeft: "12px",
-                                                    backgroundColor: "#fff",
-                                                }}
-                                            >
-                                                {selectedFiles.length > 0 ? (
-                                                    selectedFiles.map((file, index) => (
-                                                        <div
-                                                            key={index}
+                                    <label htmlFor="" className='new-label text-nowrap'>
+                                        File Attachment
+                                    </label>
+                                </div>
+                                <div className='col-12 col-md-1 col-lg-11 mt-2'>
+                                    <div style={{ display: "flex", alignItems: "center", border: "1px solid #ccc", padding: "8px", borderRadius: "6px", background: "#f9f9f9", width: "100%" }}>
+                                        <label
+                                            htmlFor="file-input"
+                                            style={{
+                                                padding: "8px 16px",
+                                                backgroundColor: "#e9e9e9",
+                                                color: "#fff",
+                                                borderRadius: "4px",
+                                                cursor: "pointer",
+                                                fontSize: "14px",
+                                                fontWeight: "bold",
+                                                transition: "background 0.3s",
+                                            }}
+                                            onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                            onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                        >
+                                            Choose File
+                                        </label>
+                                        <input
+                                            type="file"
+                                            onChange={handleFileChange}
+                                            ref={fileInputRef}
+                                            multiple
+                                            style={{ display: "none" }}
+                                            id="file-input"
+                                        />
+                                        <div
+                                            style={{
+                                                // border: "1px solid #ccc",
+                                                // padding: "6px",
+                                                borderRadius: "4px",
+                                                display: "flex",
+                                                flexWrap: "wrap",
+                                                minHeight: "38px",
+                                                flex: "1",
+                                                alignItems: "center",
+                                                gap: "6px",
+                                                marginLeft: "12px",
+                                                backgroundColor: "#fff",
+                                            }}
+                                        >
+                                            {selectedFiles.length > 0 ? (
+                                                selectedFiles.map((file, index) => (
+                                                    <div
+                                                        key={index}
+                                                        style={{
+                                                            display: "inline-flex",
+                                                            alignItems: "center",
+                                                            backgroundColor: "#e9ecef",
+                                                            padding: "4px 10px",
+                                                            borderRadius: "4px",
+                                                            margin: "4px",
+                                                            fontSize: "13px",
+                                                            fontWeight: "500",
+                                                        }}
+                                                    >
+                                                        <span>{file.name}</span>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => removeFile(index)}
                                                             style={{
-                                                                display: "inline-flex",
-                                                                alignItems: "center",
-                                                                backgroundColor: "#e9ecef",
-                                                                padding: "4px 10px",
-                                                                borderRadius: "4px",
-                                                                margin: "4px",
-                                                                fontSize: "13px",
-                                                                fontWeight: "500",
+                                                                marginLeft: "6px",
+                                                                border: "none",
+                                                                background: "none",
+                                                                cursor: "pointer",
+                                                                fontSize: "14px",
+                                                                fontWeight: "bold",
+                                                                color: "#d9534f",
                                                             }}
                                                         >
-                                                            <span>{file.name}</span>
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => removeFile(index)}
-                                                                style={{
-                                                                    marginLeft: "6px",
-                                                                    border: "none",
-                                                                    background: "none",
-                                                                    cursor: "pointer",
-                                                                    fontSize: "14px",
-                                                                    fontWeight: "bold",
-                                                                    color: "#d9534f",
-                                                                }}
-                                                            >
-                                                                ×
-                                                            </button>
-                                                        </div>
-                                                    ))
-                                                ) : (
-                                                    <span style={{ color: "#777", fontSize: "13px" }}>No files selected</span>
-                                                )}
-                                            </div>
+                                                            ×
+                                                        </button>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <span style={{ color: "#777", fontSize: "13px" }}>No files selected</span>
+                                            )}
                                         </div>
+
                                     </div>
-
-
                                 </div>
+
+
+
 
                                 <div className="col-3 col-md-3 col-lg-1 mt-2  ">
                                     <label htmlFor="" className='new-label text-nowrap ml-1'>Packaging Details</label>
@@ -2188,14 +2190,15 @@ const Home = (props) => {
                         <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1 " onClick={onDashboardClose}>
                             Close
                         </button>
+
+                        <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={() => { setStatusFalse(); }}>
+                            Clear
+                        </button>
                         <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={(e) => {
                             check_Validation_Error();
                             setEnabledStatus("")
                         }}>
                             Save
-                        </button>
-                        <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={() => { setStatusFalse(); }}>
-                            Clear
                         </button>
                     </div>
 

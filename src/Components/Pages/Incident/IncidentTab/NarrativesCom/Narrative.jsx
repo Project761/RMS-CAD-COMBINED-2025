@@ -369,7 +369,6 @@ const Narrative = (props) => {
       });
   };
 
-
   const updateNarrative = (e) => {
     const result = narrativeData?.find(item => {
       if (item.Comments) {
@@ -400,7 +399,7 @@ const Narrative = (props) => {
       const { CommentsDoc, NarrativeID, Comments, ReportedByPINActivityID, NarrativeTypeID, AsOfDate, WrittenForID, } = value;
       const val = {
         CommentsDoc: CommentsDoc, IncidentId: IncID, NarrativeID: NarrativeID, Comments: Comments, ReportedByPINActivityID: ReportedByPINActivityID, NarrativeTypeID: NarrativeTypeID, AsOfDate: AsOfDate, ModifiedByUserFK: loginPinID, WrittenForID: WrittenForID,
-        ApprovingSupervisorID: null, RedactedComment: redactedComment
+        ApprovingSupervisorID: null, RedactedComment: value.Status === 'Approved' ? redactedComment : CommentsDoc
       };
       AddDeleteUpadate('Narrative/Update_Narrative', val)
         .then((res) => {
@@ -512,7 +511,7 @@ const Narrative = (props) => {
   const conditionalRowStyles = [
     {
       // when: row => String(row.NarrativeID) === String(narrativeID),
-      when: row => parseInt(row.NarrativeID) === parseInt(narrativeID),
+      when: row => row?.NarrativeDescription === "Use Of Force" ? "" : parseInt(row.NarrativeID) === parseInt(narrativeID),
 
       style: { backgroundColor: '#001f3fbd', color: 'white', cursor: 'pointer', },
     },
@@ -888,30 +887,53 @@ const Narrative = (props) => {
 
       const data1 = redactingData?.Table4?.[0]?.Description;
       const data2 = redactingData?.Table;
-
       const data1List = data1?.split(",");
 
-      // --- CategoryData ---
-      if (["Victim", "Witness", "Juveniles"].some(cat => data1List?.includes(cat))) {
-        const filteredCategoryData = data2
-          ?.filter(item => data1List?.includes(item?.Category))
-          ?.map(item =>
-          ({
-            FullName: item.FullName,
-            FirstName: item.FirstName,
-            MiddleName: item.MiddleName,
-            LastName: item.LastName,
-            Address: data1List?.includes("Address") ? item.Address : "",
-            SSN: data1List?.includes("SSN") ? item.SSN : "",
-            Contact: data1List?.includes("Contact") ? item.Contact : "",
-            OwnerPhoneNumber: data1List?.includes("Contact") ? item.OwnerPhoneNumber : "",
-            DateOfBirth: data1List?.includes("DateOfBirth") ? item.DateOfBirth : "",
-            DLNumber: data1List?.includes("DLNumber") ? item.DLNumber : "",
-            AgeFrom: data1List?.includes("Juveniles") ? item.AgeFrom : "",
-            Category: item.Category,
-          }));
-        setCategoryData(filteredCategoryData || []);
-      }
+      const filteredCategoryData = data2?.map(item => {
+        const allowNames = data1List?.includes(item?.Category);
+
+        return {
+          FullName: allowNames ? item.FullName : "",
+          FirstName: allowNames ? item.FirstName : "",
+          MiddleName: allowNames ? item.MiddleName : "",
+          LastName: allowNames ? item.LastName : "",
+          Address: data1List?.includes("Address") ? item.Address : "",
+          SSN: data1List?.includes("SSN") ? item.SSN : "",
+          Contact: data1List?.includes("Contact") ? item.Contact : "",
+          DateOfBirth: data1List?.includes("DateOfBirth") ? item.DateOfBirth : "",
+          DLNumber: data1List?.includes("DLNumber") ? item.DLNumber : "",
+          // AgeFrom: data1List?.includes("Juveniles") ? item.AgeFrom : "",
+          AgeFrom: item.AgeFrom || "",
+          Category: item.Category,
+        };
+      });
+      setCategoryData(filteredCategoryData || []);
+
+
+      // const data1 = redactingData?.Table4?.[0]?.Description;
+      // const data2 = redactingData?.Table;
+      // console.log("data2", data2)
+      // const data1List = data1?.split(",");
+      // const roleType = ["Victim", "Witness", "Juveniles"]
+      // console.log("data1List", data1List)
+      // const filteredCategoryData = data2
+      //   ?.map(item =>
+      //   ({
+      //     FullName: roleType.includes(item?.Category) ? item.FullName : "",
+      //     FirstName: roleType.includes(item?.Category) ? item.FirstName : "",
+      //     MiddleName: roleType.includes(item?.Category) ? item.MiddleName : "",
+      //     LastName: roleType.includes(item?.Category) ? item.LastName : "",
+      //     Address: data1List?.includes("Address") ? item.Address : "",
+      //     SSN: data1List?.includes("SSN") ? item.SSN : "",
+      //     Contact: data1List?.includes("Contact") ? item.Contact : "",
+      //     OwnerPhoneNumber: data1List?.includes("Contact") ? item.OwnerPhoneNumber : "",
+      //     DateOfBirth: data1List?.includes("DateOfBirth") ? item.DateOfBirth : "",
+      //     DLNumber: data1List?.includes("DLNumber") ? item.DLNumber : "",
+      //     AgeFrom: data1List?.includes("Juveniles") ? item.AgeFrom : "",
+      //     Category: item.Category,
+      //   }));
+      // console.log("filteredCategoryData", filteredCategoryData)
+      // setCategoryData(filteredCategoryData || []);
 
       // --- ChargesData ---
       if (data1List?.includes("Charges")) {
@@ -1026,7 +1048,6 @@ const Narrative = (props) => {
 
     // --- main logic ---
     const textLower = quill.getText().toLowerCase();
-    console.log(":: textLower", textLower)
 
 
     const fullTextLength = quill.getLength();
@@ -1046,14 +1067,11 @@ const Narrative = (props) => {
       .map((w) => String(w).trim())
       .filter((w) => w.length > 0)
       .forEach((word) => {
-        console.log(":: word", word)
         const needleNoWs = word.toLowerCase().replace(/\s+/g, "");
         if (!needleNoWs) return;
 
         let searchFrom = 0;
         while (true) {
-          console.log(":: needleNoWs", needleNoWs)
-          console.log(":: searchFrom", searchFrom)
           const match = findNextMatchIgnoringSpaces(textLower, needleNoWs, searchFrom);
           if (!match) break;
 
@@ -1064,7 +1082,6 @@ const Narrative = (props) => {
             if (!isRangeFullyBlackOnBlack(quill, start, len)) {
               // skip if already suggestion styled
               const fmt = quill.getFormat(start, len);
-              console.log("::fmt", fmt)
               let alreadySuggestion = false;
               if (Array.isArray(fmt) && fmt.length > 0) {
                 alreadySuggestion = fmt.every(
@@ -1159,7 +1176,6 @@ const Narrative = (props) => {
 
   const toggleRedactFromHeaderButton = (quill, word) => {
     if (!quill || !word) return;
-    console.log("word", word)
     // Normalize the clicked word (needle): case-insensitive, remove spaces
     const needle = String(word).toLowerCase().replace(/\s+/g, "").trim();
     if (!needle) return;
@@ -1266,17 +1282,19 @@ const Narrative = (props) => {
   const redactModules = useMemo(
     () => ({
       toolbar: {
-        container: [
-          [{ header: "1" }, { header: "2" }, { font: [] }],
-          [{ size: ["small", "normal", "large", "huge"] }],
-          [{ list: "ordered" }, { list: "bullet" }],
-          [{ align: [] }],
-          ["bold", "italic", "underline"],
-          ["link", "image"],
-          [{ color: [] }, { background: [] }],
-          ["blockquote"],
-          ["redact"], // our button
-        ],
+        container: value.Status === 'Approved'
+          ? [["redact"]] // Only redact button when status is Approved
+          : [
+            [{ header: "1" }, { header: "2" }, { font: [] }],
+            [{ size: ["small", "normal", "large", "huge"] }],
+            [{ list: "ordered" }, { list: "bullet" }],
+            [{ align: [] }],
+            ["bold", "italic", "underline"],
+            ["link", "image"],
+            [{ color: [] }, { background: [] }],
+            ["blockquote"],
+            ["redact"], // our button
+          ],
         handlers: {
           redact: function () {
             const quill = this.quill;
@@ -1287,7 +1305,7 @@ const Narrative = (props) => {
       },
       clipboard: { matchVisual: false },
     }),
-    [] // ok to keep empty; we read latest via ref
+    [value.Status] // Add value.Status as dependency
   );
   const formats = [
     "header",
@@ -1330,8 +1348,6 @@ const Narrative = (props) => {
   }, [value?.Status]);
 
   // editor end
-
-
   return (
     <>
       <div className="row mt-1 child">
@@ -1340,13 +1356,13 @@ const Narrative = (props) => {
             {renderNarrativeData()}
           </div> */}
           <div className="row mb-3">
-            <div className="col-4 col-md-4 col-lg-2 mt-2 pt-2">
+            <div className="col-2 col-md-2 col-lg-1 mt-2 pt-2">
               <label htmlFor="" className='new-label'>Report Type  {errors.NarrativeIDError !== 'true' ? (
                 <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.NarrativeIDError}</p>
               ) : null}</label>
 
             </div>
-            <div className="col-7 col-md-7 col-lg-4 mt-2 ">
+            <div className="col-4 col-md-4 col-lg-2 mt-2 ">
               <Select
                 name='NarrativeTypeID'
                 isClearable
@@ -1363,12 +1379,12 @@ const Narrative = (props) => {
                   !(value.ReportedByPINActivityID === loginPinID || value.WrittenForID === loginPinID))}
               />
             </div>
-            <div className="col-4 col-md-4 col-lg-2 mt-2 pt-2">
+            <div className="col-2 col-md-2 col-lg-1 mt-2 pt-2">
               <label htmlFor="" className='new-label'>Date/Time {errors.AsOfDateError !== 'true' ? (
                 <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.AsOfDateError}</p>
               ) : null}</label>
             </div>
-            <div className="col-7 col-md-7 col-lg-4 mt-2 ">
+            <div className="col-4 col-md-4 col-lg-2 mt-2 ">
               <DatePicker
                 ref={startRef}
                 onKeyDown={(e) => {
@@ -1433,12 +1449,12 @@ const Narrative = (props) => {
 
             </div>
 
-            <div className="col-4 col-md-4 col-lg-2 mt-2 pt-2">
+            <div className="col-2 col-md-2 col-lg-1 mt-2 pt-2">
               <label htmlFor="" className='new-label text-nowrap'>Prepared by  {errors.ReportedByPinError !== 'true' ? (
                 <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReportedByPinError}</p>
               ) : null}</label>
             </div>
-            <div className="col-7 col-md-7 col-lg-4 mt-2 ">
+            <div className="col-4 col-md-4 col-lg-2 mt-2 ">
               <Select
                 name='ReportedByPINActivityID'
                 isClearable
@@ -1450,12 +1466,16 @@ const Narrative = (props) => {
                 isDisabled
               />
             </div>
-            <div className="col-4 col-md-4 col-lg-2 mt-2 pt-2">
+
+
+
+
+            <div className="col-2 col-md-2 col-lg-1 mt-2 pt-2">
               <label htmlFor="" className='new-label text-nowrap'>Written For {errors.WrittenForIDError !== 'true' ? (
                 <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.WrittenForIDError}</p>
               ) : null}</label>
             </div>
-            <div className="col-7 col-md-7 col-lg-4 mt-2 ">
+            <div className="col-4 col-md-4 col-lg-2 mt-2 ">
               <Select
                 name="WrittenForID"
                 isClearable
@@ -1490,48 +1510,84 @@ const Narrative = (props) => {
               </>
             )}
           </div>
-          {value.Status === 'Approved' && <div className="row mt-2 align-items-center">
-            <div className="col-3 col-md-3 col-lg-2 mt-1">
-              <label className="new-label">Preview</label>
-            </div>
+          {
+            <div className="row mt-2 align-items-center">
+              {value.Status === 'Approved' &&
+                <>
+                  <div className="col-2 col-md-2 col-lg-1">
+                    <label className="new-label">Preview Report</label>
+                  </div>
 
-            <div className="col d-flex align-items-center">
-              {/* Normal Report */}
-              <label className="d-flex align-items-center me-4" style={{ gap: "6px" }}>
-                <input
-                  type="radio"
-                  name="status"
-                  checked={isNormalReport}
-                  onChange={() => { setNormalReport(true) }}
-                />
-                <span>Normal Report</span>
-              </label>
+                  <div className="col-4 d-flex align-items-center">
+                    {/* Normal Report */}
+                    <label className="d-flex align-items-center me-4" style={{ gap: "6px" }}>
+                      <input
+                        type="radio"
+                        name="status"
+                        checked={isNormalReport}
+                        onChange={() => { setNormalReport(true) }}
+                      />
+                      <span>Normal Report</span>
+                    </label>
 
-              {/* Redacted Report */}
-              <label className="d-flex align-items-center" style={{ marginLeft: "18px", gap: "6px" }}>
-                <input
-                  type="radio"
-                  name="status"
-                  checked={!isNormalReport}
-                  onChange={() => { setNormalReport(false) }}
-                />
-                <span>Redacted Report</span>
-              </label>
+                    {/* Redacted Report */}
+                    <label className="d-flex align-items-center" style={{ marginLeft: "18px", gap: "6px" }}>
+                      <input
+                        type="radio"
+                        name="status"
+                        checked={!isNormalReport}
+                        onChange={() => { setNormalReport(false) }}
+                      />
+                      <span>Redacted Report</span>
+                    </label>
+                  </div>
+                </>
+              }
+              {value.Status && <div className={'col-4 text-right mb-2 ml-auto'}>
+                <div
+                  id="NIBRSStatus"
+                  className={
+                    value.Status === "Draft"
+                      ? "nibrs-draft-Nar"
+                      : value.Status === "Approved"
+                        ? "nibrs-submitted-Nar"
+                        : value.Status === "Rejected"
+                          ? "nibrs-rejected-Nar"
+                          : value.Status === "Pending Review"
+                            ? "nibrs-reopened-Nar"
+                            : ""
+                  }
+                  style={{
+                    color: "black",
+                    opacity: 1,
+                    height: "35px",
+                    fontSize: "14px",
+                    marginTop: "2px",
+                    boxShadow: "none",
+                    userSelect: "none",
+                    padding: "5px", // optional for spacing
+                  }}
+                >
+                  {value.Status}
+                </div>
+              </div>}
             </div>
-          </div>}
+          }
+
+
 
           {isNormalReport &&
             <span>
               {missingField.length > 0 &&
                 <div className='mx-2'>
                   <label htmlFor="" className='new-summary' style={{ fontSize: "18px" }}>NIBRS Missing Information</label>
-                  <div className="d-flex flex-row flex-wrap mt-2">
+                  <div className="d-flex flex-row flex-wrap mt-1">
                     {missingField.map((word, index) => (
                       <>
                         <button
                           key={index}
                           type="button"
-                          className="btn btn-primary mr-2 mb-2 py-1 px-1.5" // 'me-3' adds space to the right and 'mb-2' adds space below
+                          className="btn btn-primary m-1 py-1 px-1.5" // 'me-3' adds space to the right and 'mb-2' adds space below
                           style={{ cursor: 'default', fontSize: "13px" }}
                         >
                           <i className="fa fa-close" style={{ color: "red", fontSize: "13px" }}></i>  {word}
@@ -1581,16 +1637,16 @@ const Narrative = (props) => {
           {(value.Status === 'Approved' && !isNormalReport) &&
             <span>
               {detectedWords.length > 0 &&
-                <div className='m-2'>
+                <div className='mx-2'>
                   <label htmlFor="" className='new-summary' style={{ fontSize: "18px" }}>Redact Data</label>
-                  <div className="d-flex flex-row flex-wrap mt-2">
+                  <div className="d-flex flex-row flex-wrap mt-1">
 
                     {detectedWords.map((word, index) => (
                       <>
                         <button
                           key={index}
                           type="button"
-                          className="btn btn-success mr-2 mb-2 py-1 px-1.5" // 'me-3' adds space to the right and 'mb-2' adds space below
+                          className="btn btn-success mr-2 mb-0.5 py-1 px-1.5" // 'me-3' adds space to the right and 'mb-2' adds space below
                           onClick={() => {
                             const quill = document.querySelector(".ql-editor");
                             if (quill) {
@@ -1656,19 +1712,18 @@ const Narrative = (props) => {
         </div>
       </div >
       <div className="col-12">
-
+        {/* Approval  */}
         <div className="row ">
           {
             narrativeID ?
               <>
                 <div className="col-12 col-md-12 col-lg-12">
                   <div className="row ">
-                    <div className='col-lg-2'></div>
                     {(value.Status === 'Approved' && !isNormalReport) ?
                       <></>
                       :
                       <>
-                        <div className="col-6 col-md-6 col-lg-2 mt-2 pt-1 ">
+                        <div className="col-2 col-md-2 col-lg-1 mt-4 ">
                           <div className="form-check ml-2">
                             <input
                               type="radio"
@@ -1684,7 +1739,7 @@ const Narrative = (props) => {
                             </label>
                           </div>
                         </div>
-                        <div className="col-6 col-md-6 col-lg-2 mt-2 pt-1 ">
+                        <div className="col-2 col-md-2 col-lg-1 mt-4 ">
                           <div className="form-check ml-2">
                             <input
                               type="radio"
@@ -1700,17 +1755,18 @@ const Narrative = (props) => {
                             </label>
                           </div>
                         </div>
-                        <div className='col-lg-6'></div>
                         {selectedOption === "Individual" ? (
                           <>
-                            <div className="col-2 col-md-2 col-lg-2 mt-3 pt-2">
-                              <span htmlFor="" className='label-name '> Report Approver{errors.ApprovingOfficerError !== 'true' ? (
-                                <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ApprovingOfficerError}</p>
-                              ) : null}</span>
-                            </div>
-                            <div className="col-4 col-md-12 col-lg-4 dropdown__box">
+                            <div className="col-10 col-lg-7 dropdown__box d-flex align-items-center ">
+                              <span htmlFor="" className='label-name '
+                                style={{ marginRight: '10px', flexGrow: 1, whiteSpace: 'nowrap', fontSize: '13px' }}
+                              >
+                                Report Approver{errors.ApprovingOfficerError !== 'true' ? (
+                                  <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ApprovingOfficerError}</p>
+                                ) : null}
+                              </span>
                               <SelectBox
-                                className="custom-multiselect"
+                                className="custom-multiselect w-100"
                                 classNamePrefix="custom"
                                 options={reportApproveOfficer}
                                 isMulti
@@ -1731,14 +1787,14 @@ const Narrative = (props) => {
                           </>
                         ) : (
                           <>
-                            <div className="col-2 col-md-2 col-lg-2 mt-3 pt-2">
-                              <span htmlFor="" className='label-name'>  Approval Group{errors.ApprovingOfficerError !== 'true' ? (
-                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ApprovingOfficerError}</p>
-                              ) : null}</span>
-                            </div>
-                            <div className="col-4 col-md-12 col-lg-4 dropdown__box">
+                            <div className="col-10 col-lg-7 dropdown__box d-flex align-items-center ">
+                              <span htmlFor="" className='label-name'
+                                style={{ marginRight: '10px', flexGrow: 1, whiteSpace: 'nowrap', fontSize: '13px' }}>  Approval Group{errors.ApprovingOfficerError !== 'true' ? (
+                                  <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ApprovingOfficerError}
+                                  </p>
+                                ) : null}</span>
                               <SelectBox
-                                className="custom-multiselect"
+                                className="custom-multiselect w-100"
                                 classNamePrefix="custom"
                                 options={groupList}
                                 isMulti
@@ -1759,36 +1815,7 @@ const Narrative = (props) => {
                         )}
                       </>
                     }
-                    <div className='col-lg-2'></div>
 
-                    <div className={value.Status === 'Approved' && !isNormalReport ? 'col-12 text-right mb-2' : 'col-3 col-md-3 col-lg-4 text-right'}>
-                      <div
-                        id="NIBRSStatus"
-                        className={
-                          value.Status === "Draft"
-                            ? "nibrs-draft-Nar"
-                            : value.Status === "Approved"
-                              ? "nibrs-submitted-Nar"
-                              : value.Status === "Rejected"
-                                ? "nibrs-rejected-Nar"
-                                : value.Status === "Pending Review"
-                                  ? "nibrs-reopened-Nar"
-                                  : ""
-                        }
-                        style={{
-                          color: "black",
-                          opacity: 1,
-                          height: "35px",
-                          fontSize: "14px",
-                          marginTop: "2px",
-                          boxShadow: "none",
-                          userSelect: "none",
-                          padding: "5px", // optional for spacing
-                        }}
-                      >
-                        {value.Status}
-                      </div>
-                    </div>
                   </div>
                 </div>
 
@@ -1798,6 +1825,7 @@ const Narrative = (props) => {
 
         </div>
 
+        {/* Action Button */}
         <div className="col-12 col-md-12 col-lg-12 text-right mb-2 mt-2 ">
           <div className='row justify-content-end align-items-center'>
 
@@ -1890,6 +1918,8 @@ const Narrative = (props) => {
           </div>
         </div>
       </div>
+
+      {/* Grid */}
       <div className="col-12 px-0 mt-1" >
         {
           loder ?
@@ -1903,12 +1933,24 @@ const Narrative = (props) => {
               highlightOnHover
               customStyles={tableCustomStyles}
               conditionalRowStyles={conditionalRowStyles}
-              onRowClicked={(row) => { setIsUpdated(false); setNormalReport(true); editNarratives(row); }}
+              onRowClicked={(row) => {
+                console.log("row", row)
+                if (row?.NarrativeDescription === "Use Of Force") {
+                  row?.ArrestID ? (
+                    navigate(`/Arrest-Home?IncId=${stringToBase64(row?.IncidentId)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&ArrestId=${stringToBase64(row?.ArrestID)}&ArrNo=${stringToBase64(row?.ArrestNumber)}&isFromDashboard=true`)
+                  ) : (
+                    navigate(`/Inc-Home?IncId=${stringToBase64(row?.IncidentId)}&IncNo=${row?.IncidentNumber}&IncSta=true&isFromDashboard=true`)
+                  )
+                }
+                else {
+                  setIsUpdated(false); setNormalReport(true); editNarratives(row);
+                }
+              }}
               pagination
               paginationPerPage={'100'}
               paginationRowsPerPageOptions={[100, 150, 200, 500]}
               showPaginationBottom={100}
-              fixedHeaderScrollHeight='120px'
+              fixedHeaderScrollHeight='255px'
               fixedHeader
             />
             :

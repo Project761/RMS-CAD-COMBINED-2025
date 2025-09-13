@@ -183,32 +183,9 @@ function QueueReports({ isPreview }) {
       name: 'Incident# ', cell: row => {
         return (
           <span
-            onClick={() => {
-              <>
-                {
-                  row.ReportTypeJson === "Use Of Force" ? (
-                    row?.ArrestID ? (
-                      effectiveScreenPermission ?
-                        effectiveScreenPermission[0]?.Changeok ?
-
-                          navigate(`/Arrest-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&ArrestId=${stringToBase64(row?.ArrestID)}&ArrNo=${stringToBase64(row?.ArrestNumber)}&isFromDashboard=true`)
-                          : <></>
-                        :
-                        navigate(`/Arrest-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&ArrestId=${stringToBase64(row?.ArrestID)}&ArrNo=${stringToBase64(row?.ArrestNumber)}&isFromDashboard=true`)
-
-                    ) : (
-                      effectiveScreenPermission ?
-                        effectiveScreenPermission[0]?.Changeok ?
-                          navigate(`/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${row?.IncidentNumber}&IncSta=true&isFromDashboard=true`)
-                          : <></>
-                        :
-                        navigate(`/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${row?.IncidentNumber}&IncSta=true&isFromDashboard=true`)
-                    )
-                  ) : (
-                    navigate(`/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${row?.IncidentNumber}&IncSta=${true}`)
-                  )}
-              </>
-            }}
+            onClick={() =>
+              navigate(`/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${row?.IncidentNumber}&IncSta=${true}`)
+            }
             style={{
               color: '#007bff',
               cursor: 'pointer',
@@ -219,23 +196,32 @@ function QueueReports({ isPreview }) {
             {row?.IncidentNumber}
           </span>
         );
-      }, sortable: true, grow: 0, width: "130px",
+      }, sortable: true, grow: 0, width: "105px",
     },
     {
-      name: 'Arrest#',
-      selector: row => row.ArrestNumber,
-      sortable: true,
-      wrap: true,
-      maxWidth: '200px',
-      minWidth: '150px',
-      cell: row => (
-        <div style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
-          {row.ArrestNumber}
-        </div>
-      )
+      name: 'Arrest# ', cell: row => {
+        return (
+          <span
+            onClick={() => {
+              <>
+                {
+                  row?.ArrestNumber && (
+                    navigate(`/Arrest-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&ArrestId=${stringToBase64(row?.ArrestID)}&ArrNo=${stringToBase64(row?.ArrestNumber)}`)
+                  )}
+              </>
+            }}
+            style={{
+              color: '#007bff',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+            }}
+            title="Go to Arrest"
+          >
+            {row?.ArrestNumber}
+          </span>
+        );
+      }, sortable: true, grow: 0, width: "140px",
     },
-
-
     // {
     //   name: 'Incident#',
     //   selector: row => row.IncidentNumber,
@@ -249,7 +235,7 @@ function QueueReports({ isPreview }) {
     //     </div>
     //   )
     // },
-    { name: 'Seq#', selector: row => row.sequence, sortable: true, grow: 0, maxWidth: '100px', minWidth: '80px', },
+    { name: 'Seq#', selector: row => row.sequence, sortable: true, grow: 0, width: '80px', },
 
     { name: 'Approving Officer/Group', selector: row => row.ApproverName || row.Approve_Officer, sortable: true },
     {
@@ -552,6 +538,8 @@ function QueueReports({ isPreview }) {
                 conditionalRowStyles={conditionalRowStyles}
                 onRowClicked={setClickedRow}
                 responsive
+                defaultSortFieldId={8}
+                defaultSortAsc={false}
                 paginationComponentOptions={{
                   rowsPerPageText: "Rows per page:",
                   rangeSeparatorText: "of",

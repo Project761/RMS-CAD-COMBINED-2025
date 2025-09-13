@@ -186,7 +186,11 @@ const Dashboard = () => {
                   <QueueReports isPreview={true} />
                 </div>
               </div>
-
+              {/* <div className="col-12 mb-3">
+                <div style={cardStyle} className="p-3 ">
+                  <UseOfForcePendingReport isPreview={true} />
+                </div>
+              </div> */}
               <div className="col-12 mb-3">
                 <div style={cardStyle} className="p-3 ">
                   <PropertyEvidenceReport isPreview={true} />
