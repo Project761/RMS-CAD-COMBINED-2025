@@ -112,9 +112,10 @@ const PropertyEvidenceReport = ({ isPreview }) => {
                                     to=""
                                     onClick={(e) => {
                                         e.preventDefault(); setRowData(row); set_IncidentId(row); setTaskListID(row?.TaskListID);
-                                        setModelActivityStatus(row.Activity);
+
 
                                         if (row.IsSendToPropertyRoom) {
+                                            setModelActivityStatus(row.Activity);
                                             setModalType("property"); setModalOpenStatus(true); setShowModal(true);
                                             setTimeout(() => {
                                                 const modal = new window.bootstrap.Modal(masterModalRef.current);
@@ -333,7 +334,7 @@ const PropertyEvidenceReport = ({ isPreview }) => {
                             </ul>
                         )}
                     </div>
-                    {selectedReportType === 'all' && <AllPropertyRoomStorage  selectedReportType={selectedReportType} Allfiltered={Allfiltered} />}
+                    {selectedReportType === 'all' && <AllPropertyRoomStorage selectedReportType={selectedReportType} Allfiltered={Allfiltered} />}
                     {selectedReportType === 'NonProperty' && <NonPropertyStorageList newfiltered={newfiltered} />}
 
                     <div className="pt-2 property-evidence-datatable mt-2">

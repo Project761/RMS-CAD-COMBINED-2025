@@ -70,6 +70,8 @@ const CadPropertyModel = (props) => {
   const [searchStoStatus, setSearchStoStatus] = useState();
   const [shouldPrintForm, setShouldPrintForm] = useState(false);
   const [transferdate, settransferdate] = useState();
+  const closeButtonRef = useRef(null); // at the top of your component
+
   // modal open state
   const [keyChange, setKeyChange] = useState("");
 
@@ -87,7 +89,7 @@ const CadPropertyModel = (props) => {
     'ReceipientError': '', 'ReleasingOfficerError': '', 'ExpectedReturnDateTimeError': '', 'CheckOutDateTimeError': '', 'SubmittingOfficerError': '', 'CheckInDateTimeError': '', 'PropertyRoomOfficerError': ''
   })
 
-  console.log(selectedReportType)
+  console.log(modelActivityStatus)
 
 
   const colourStyles = {
@@ -182,6 +184,7 @@ const CadPropertyModel = (props) => {
 
 
   const check_Validation_Error = (e) => {
+
     const ReasonError = RequiredFieldIncident(value.ActivityReasonID);
     const PropertyRoomOfficerError = !value.IsCheckOut ? RequiredFieldIncident(value.OfficerNameID) : 'true';
     const CheckInDateTimeError = value.IsCheckIn ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
@@ -387,14 +390,12 @@ const CadPropertyModel = (props) => {
       if (selectedReportType === 'AllPropertyRoomStorage') {
         Delete_TaskList();
         setModalOpenStatus(false);
-        setTimeout(() => {
-          if (masterModalRef.current) {
-            const modal = new window.bootstrap.Modal(masterModalRef.current);
-            modal.hide();
-          } else {
-            console.error("masterModalRef.current is null");
-          }
-        }, 800);
+        // ✅ Close modal programmatically
+        setModalOpenStatus(false);
+
+        if (closeButtonRef.current) {
+          closeButtonRef.current.click(); // Close modal by simulating user click
+        }
         SetQueData();
 
         setTimeout(() => {
@@ -1715,7 +1716,7 @@ const CadPropertyModel = (props) => {
               <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1">
                 Print Barcode
               </button>
-              <button type="button" aria-label="Close" data-dismiss="modal" className="btn btn-sm btn-success mr-2 mb-2 mt-1" >
+              <button type="button" aria-label="Close" ref={closeButtonRef} data-dismiss="modal" className="btn btn-sm btn-success mr-2 mb-2 mt-1" >
                 Close
               </button>
               <button onClick={() => { reset(); }} type="button" className="btn btn-sm btn-success  mb-2 mr-2 mt-1">

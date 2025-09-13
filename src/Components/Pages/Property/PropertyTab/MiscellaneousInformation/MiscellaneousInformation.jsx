@@ -421,6 +421,18 @@ const MiscellaneousInformation = (props) => {
           const parsedData = JSON.parse(res.data);
           const message = parsedData.Table[0].Message;
           toastifySuccess(message);
+
+          if (taskToSend && value.OfficerID) {
+            InSertBasicInfo(
+              value?.CollectingOfficer,
+              "OfficerID",
+              "TaskList/Insert_TaskList",
+              taskToSend
+            );
+          }
+
+
+          setTaskToSend("");
           // ✅ Call document upload here
           if (selectedFiles?.length > 0 && fileUploadStatus) {
             await uploadNonPropertyRoomDocuments(PropertyID, MasterPropertyID, loginPinID, selectedFiles);
@@ -705,6 +717,7 @@ const MiscellaneousInformation = (props) => {
 
           Get_SendTask_Data(DecPropID, DecMPropID);
           Get_SendTask_DrpVal(DecPropID, DecMPropID);
+
         } else {
           console.log("Somthing Wrong");
         }
@@ -2641,13 +2654,14 @@ const MiscellaneousInformation = (props) => {
                                 color: "#fff",
                               }}
                               onClick={() => {
-                                InSertBasicInfo(
-                                  value?.CollectingOfficer,
-                                  "OfficerID",
-                                  "TaskList/Insert_TaskList",
-                                  taskToSend
-                                );
-                                setTaskToSend("");
+                                check_Validation_Error();
+                                // InSertBasicInfo(
+                                //   value?.CollectingOfficer,
+                                //   "OfficerID",
+                                //   "TaskList/Insert_TaskList",
+                                //   taskToSend
+                                // );
+
                               }}
                               disabled={!(taskToSend && value.OfficerID)}
                             >
