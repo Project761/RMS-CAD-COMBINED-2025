@@ -214,10 +214,30 @@ function DashboardAllReports({ isPreview }) {
                 return (
                     <span
                         onClick={() => {
-                            // navigate(
-                            //   `/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=true&IsCadInc=true&narrativeAssignId=${stringToBase64(row?.NarrativeAssignedID)}&tab=Report&Assigned=true`
-                            // );
-                            navigate(`/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&IsCadInc=${true}&narrativeAssignId=${stringToBase64(row?.NarrativeID)}&tab=Report`);
+                            <>
+                                {
+                                    row.ReportTypeJson === "Use Of Force" ? (
+                                        row?.ArrestID ? (
+                                            effectiveScreenPermission ?
+                                                effectiveScreenPermission[0]?.Changeok ?
+
+                                                    navigate(`/Arrest-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&ArrestId=${stringToBase64(row?.ArrestID)}&ArrNo=${stringToBase64(row?.ArrestNumber)}&isFromDashboard=true`)
+                                                    : <></>
+                                                :
+                                                navigate(`/Arrest-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&ArrestId=${stringToBase64(row?.ArrestID)}&ArrNo=${stringToBase64(row?.ArrestNumber)}&isFromDashboard=true`)
+
+                                        ) : (
+                                            effectiveScreenPermission ?
+                                                effectiveScreenPermission[0]?.Changeok ?
+                                                    navigate(`/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${row?.IncidentNumber}&IncSta=true&isFromDashboard=true`)
+                                                    : <></>
+                                                :
+                                                navigate(`/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${row?.IncidentNumber}&IncSta=true&isFromDashboard=true`)
+                                        )
+                                    ) : (
+                                        navigate(`/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&IsCadInc=${true}&narrativeAssignId=${stringToBase64(row?.NarrativeID)}&tab=Report`)
+                                    )}
+                            </>
                         }}
                         style={{
                             color: '#007bff',
@@ -364,7 +384,6 @@ function DashboardAllReports({ isPreview }) {
         fetchPostData('/IncidentNarrativeReport/GetData_AllNarrativeReport', val).then((res) => {
             if (res) {
                 setNarrativeReportData(res);
-                setqueData(res?.filter(item => item.Status !== "Approved"));
                 setLoder(true);
             } else {
                 setNarrativeReportData([]);
@@ -378,8 +397,7 @@ function DashboardAllReports({ isPreview }) {
         if (OfficerID && agencyId) {
             fetchPostData('CAD/UseOfForceReport/GetUseOfForceReport', val).then((res) => {
                 if (res) {
-                    const Data = res?.filter((item) => item?.Status === "Pending Review" || item?.Status === "Draft" || item?.Status === "Rejected")
-                    setUseOfForceData(Data);
+                    setUseOfForceData(res);
                     setLoder(true);
                 } else {
                     setUseOfForceData([]);
@@ -463,7 +481,7 @@ function DashboardAllReports({ isPreview }) {
                                 </div>
 
                                 <h5 className="mb-0 mr-3" style={{ fontSize: "18px", fontWeight: "600", color: '#334c65' }}>
-                                    {queData?.filter(item => item.Status !== "Approved").length}
+                                    {queData?.length}
                                 </h5>
                                 <Link to="/all">
                                     <button className="see-all-btn mr-1 see_all-button" style={{ fontSize: "12px", padding: "4px 8px" }}>
@@ -508,6 +526,8 @@ function DashboardAllReports({ isPreview }) {
                                     paginationRowsPerPageOptions={[100, 150, 200, 500]}
                                     conditionalRowStyles={conditionalRowStyles}
                                     onRowClicked={setClickedRow}
+                                    defaultSortFieldId={4}
+                                    defaultSortAsc={false}
                                 // subHeaderComponent={
                                 //     <div className="col-12 px-0 mt-1">
                                 //         <div className="row px-0">

@@ -46,7 +46,7 @@ const VINSection = ({ vehicleSectionState, setVehicleSectionState, handleVehicle
                 />
 
                 <label className="tab-form-label">
-                  By (Plate No. and Plate Expires) or VIN (RQ)s
+                  (Plate No. and Plate Expires) or Vehicle (RQ)s
                 </label>
               </div>
               <div className="form-check d-flex align-items-center">
@@ -64,7 +64,7 @@ const VINSection = ({ vehicleSectionState, setVehicleSectionState, handleVehicle
                   }}
                 />
                 <label className="tab-form-label">
-                  By Name and DOB (RNQ)
+                  Name and DOB (RNQ)
                 </label>
               </div>
             </div>
@@ -288,8 +288,8 @@ const VINSection = ({ vehicleSectionState, setVehicleSectionState, handleVehicle
                 showYearDropdown
                 showYearPicker
                 dateFormat="yyyy"
-                maxDate={new Date()}
-                minDate={new Date(1900, 0, 1)}
+                maxDate={new Date(new Date().getFullYear() + 1, 11, 31)}
+                minDate={new Date(new Date().getFullYear() - 1, 0, 1)}
                 autoComplete="off"
                 placeholderText="Select Plate Expires"
                 disabled={vehicleSectionState?.isByRQ_RNQ_QM === 'RQ' ? false : true}
@@ -342,6 +342,7 @@ const VINSection = ({ vehicleSectionState, setVehicleSectionState, handleVehicle
                 className={`form-control py-1 new-input`}
                 name="VIN"
                 placeholder="VIN"
+                maxLength={17}
                 value={vehicleSectionState.VIN}
                 onChange={(v) => {
                   const value = v.target.value;

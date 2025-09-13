@@ -5,11 +5,7 @@ export function matchIncidentWords({
   chargesData = [],
   locationData = [],
 }) {
-  console.log("))) commentsDoc", commentsDoc)
-  console.log("))) vehicleData", vehicleData)
-  console.log("))) categoryData", categoryData)
-  console.log("))) chargesData", chargesData)
-  console.log("))) locationData", locationData)
+
 
 
   const stripHtml = (html = "") => html.replace(/<[^>]*>/g, "");
@@ -22,11 +18,9 @@ export function matchIncidentWords({
     return `${mo}/${d}/${y}`;
   };
   const toDMY = (iso) => {
-    console.log("iso", iso)
     if (!iso) return null;
     const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
     if (!m) return null;
-    console.log("m", m)
     const [, y, mo, d] = m;
     return `${d}/${mo}/${y}`;
   };
@@ -63,35 +57,10 @@ export function matchIncidentWords({
 
   // helper to check needle against haystack, ignoring case and internal spaces
   const checkAndAdd = (val) => {
-    console.log("val", val)
     const original = String(val ?? "").trim();
     if (!original) return;
 
-    // Check if the value matches an SSN pattern (digit groups with or without hyphens)
-    // const ssnPattern = /^\d{3}[-\s]?\d{2}[-\s]?\d{4}$/;  // SSN pattern with spaces and hyphens allowed
-    // const isSSN = ssnPattern.test(original);
-
-    // if (isSSN) {
-    //   console.log(">>> originalSS", original);
-
-    //   // Normalize SSN by removing non-numeric characters (spaces, hyphens)
-    //   const normalizedSSN = original.replace(/[-\s]/g, ""); // Remove spaces and hyphens
-    //   const needleLower = normalizedSSN.toLowerCase();
-    //   const needleNoWs = needleLower.replace(/\s+/g, ""); // Normalize further to remove any internal spaces
-    //   console.log("SSN needleNoWs", needleNoWs);
-
-    //   // Extract only numeric data from hayNoWs (commentsDoc) for comparison
-    //   const hayNoWsNumbers = hayNoWs.replace(/[\s/]/g, ""); // Remove only spaces and slashes from hayNoWs
-    //   console.log("SSN hayNoWsNumbers", hayNoWsNumbers);
-
-    //   // 1) Check for SSN matches (after normalization)
-    //   if (hayNoWsNumbers.includes(needleNoWs)) {
-    //     detected.add(original);  // Add original SSN value
-    //   }
-    //   return; // Exit after SSN handling
-    // }
-
-    // For non-SSN values, perform standard case-insensitive checks
+    
     const needleLower = original.toLowerCase();
     const needleNoWs = needleLower.replace(/\s+/g, "");
 
@@ -129,9 +98,9 @@ export function matchIncidentWords({
 
       [FullName, FirstName, LastName, MiddleName, Address, SSN, Contact, DLNumber, OwnerPhoneNumber].forEach(checkAndAdd);
 
-      if (Category === "Juveniles") {
-        checkAndAdd(AgeFrom)
-      }
+      // if (Category === "Juveniles") {
+        checkAndAdd(`(Age: ${AgeFrom})`)
+      // }
 
       const fullname1 = `${FirstName} ${LastName} ${MiddleName}`
       const fullname2 = `${FirstName} ${MiddleName} ${LastName}`
@@ -151,9 +120,7 @@ export function matchIncidentWords({
         const mdy = toMDY(DateOfBirth);   // 08/30/2004
         const ymd = toYMD(DateOfBirth);   // 2004-08-30
         const dmy = toDMY(DateOfBirth)    // 30/08/2004
-        console.log("mdy", mdy);   // 08/30/2004
-        console.log("ymd", ymd);   // 1967-08-30
-        console.log("dmy", dmy);   // 1967-08-30
+      
         if (mdy) checkAndAdd(mdy);
         if (ymd) checkAndAdd(ymd);
         if (dmy) checkAndAdd(dmy);

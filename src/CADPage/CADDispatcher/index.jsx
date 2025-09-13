@@ -50,7 +50,7 @@ function CADDispatcher() {
     let tabKey = query?.get("key");
     if (!IncID) IncID = 0;
     if (!tabKey) tabKey = "";
-    console.log("IncID", IncID)
+
     useEffect(() => {
         if (IncID) {
             get_Incident_Count(parseInt(base64ToString(IncID)));
@@ -66,7 +66,7 @@ function CADDispatcher() {
 
     return (
         <div className="section-body view_page_design">
-            <div className="dashboard-main-container">
+            <div className="dashboard-main-container" style={{ marginTop: "2px" }}>
                 <div className="dispatcher-container">
                     <TitleCmp title={"CAD Event Details"} />
                     <div className="tab-controller-container">

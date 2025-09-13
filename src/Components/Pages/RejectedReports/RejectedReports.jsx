@@ -332,6 +332,8 @@ function RejectedReports() {
                 paginationRowsPerPageOptions={[100, 150, 200, 500]}
                 conditionalRowStyles={conditionalRowStyles}
                 onRowClicked={setClickedRow}
+                defaultSortFieldId={8}
+                defaultSortAsc={false}
               />
 
             </div>

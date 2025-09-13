@@ -20,7 +20,7 @@ const Tab = () => {
 
     const [currentTab, setCurrentTab] = useState('Incident');
     const [incidentStatus, setIncidentStatus] = useState(false)
-    const [showStatus, setShowStatus] = useState(false);
+    const [showStatus, setShowStatus] = useState(true);
     const [loading, setLoading] = useState(false);
 
     const [incidentErrorStatus, setIncidentErrorStatus] = useState(false)
@@ -47,7 +47,7 @@ const Tab = () => {
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (statusRef.current && !statusRef.current.contains(event.target)) {
-                setShowStatus(false);
+                setShowStatus(true);
             }
         };
         if (showStatus) {

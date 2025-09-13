@@ -1103,7 +1103,7 @@ const VehicleMasterReport = () => {
                                                                                         <div className="col-4 col-md-4 col-lg-4 mt-2 pt-1 ">
                                                                                             <div className="text-field">
                                                                                                 <input type="text" className='readonlyColor' name='DocFileName' required readOnly
-                                                                                                    value={obj?.PlateExpireDtTm ? getShowingWithOutTime(obj?.PlateExpireDtTm) : null}
+                                                                                                    value={obj?.PlateExpireDtTm}
                                                                                                 />
                                                                                                 <label htmlFor="" className='new-summary'>Plate Expires</label>
 

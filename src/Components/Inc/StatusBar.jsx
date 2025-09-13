@@ -7,6 +7,8 @@ const StatusBar = forwardRef((props, ref) => {
 
   const { loading, incidentErrorStatus, offenseCount, offenseErrorStatus, NameCount, nameErrorStatus, NameRelationshipError, narrativeApprovedStatus, PropertyCount, PropErrorStatus } = props;
 
+
+  console.log(PropertyCount)
   const statusData = [
     {
       label: "Incident",
@@ -26,11 +28,11 @@ const StatusBar = forwardRef((props, ref) => {
     },
     {
       label: "Name",
-      value: loading ? "Loading..." : NameCount && !nameErrorStatus ? "Added" : `${NameCount} Added`,
-      border: NameCount && !nameErrorStatus ? "left-border-green" : "left-border-red",
+      value: loading ? "Loading..." : NameCount === "number" && !nameErrorStatus ? "Added" : `${NameCount} Added`,
+      border: NameCount === "number" && !nameErrorStatus ? "left-border-green" : "left-border-red",
       color: "text-grays",
-      bg: NameCount && !nameErrorStatus ? "bg-green" : "bg-red",
-      icon: NameCount && !nameErrorStatus ? faCheck : faTimes,
+      bg: NameCount === "number" && !nameErrorStatus ? "bg-green" : "bg-red",
+      icon: NameCount === "number" && !nameErrorStatus ? faCheck : faTimes,
     },
     {
       label: "OV Links",
@@ -48,14 +50,22 @@ const StatusBar = forwardRef((props, ref) => {
       bg: narrativeApprovedStatus ? "bg-green" : "bg-yellow",
       icon: narrativeApprovedStatus ? faCheck : faExclamation,
     },
+    // {
+    //   label: "Property",
+    //   value: loading ? "Loading..." : PropertyCount && !PropErrorStatus ? "Added" : `${PropertyCount} Added`,
+    //   border: PropertyCount && !PropErrorStatus ? "left-border-green" : "left-border-red",
+    //   color: "text-grays",
+    //   bg: PropertyCount && !PropErrorStatus ? "bg-green" : "bg-red",
+    //   icon: PropertyCount && !PropErrorStatus ? faCheck : faTimes,
+    // },
     {
       label: "Property",
-      value: loading ? "Loading..." : PropertyCount && !PropErrorStatus ? "Added" : `${PropertyCount} Added`,
-      border: PropertyCount && !PropErrorStatus ? "left-border-green" : "left-border-red",
-      color: "text-grays",
-      bg: PropertyCount && !PropErrorStatus ? "bg-green" : "bg-red",
-      icon: PropertyCount && !PropErrorStatus ? faCheck : faTimes,
+      value: loading ? "Loading..." : typeof PropertyCount === "number" && !PropErrorStatus ? `${PropertyCount} Added` : "Error",
+      border: typeof PropertyCount === "number" && !PropErrorStatus ? "left-border-green" : "left-border-red",
+      bg: typeof PropertyCount === "number" && !PropErrorStatus ? "bg-green" : "bg-red",
+      icon: typeof PropertyCount === "number" && !PropErrorStatus ? faCheck : faTimes,
     },
+
     {
       label: "TIBRS Audit",
       value: "Pending",

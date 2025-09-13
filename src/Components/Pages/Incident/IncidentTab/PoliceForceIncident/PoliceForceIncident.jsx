@@ -449,9 +449,9 @@ const PoliceForceIncident = (props) => {
         (typeof primary === "string" && primary.trim() === "");
       return !isMissing ? primary : fallback;
     };
-    const addressInit = prefer(useForceSectionData?.Address, table1UseOfForce?.address);
-    const hgtInit = prefer(useForceSectionData?.Height, table1UseOfForce?.hgt);
-    const wgtInit = prefer(useForceSectionData?.Weight, table1UseOfForce?.wgt);
+    // const addressInit = prefer(useForceSectionData?.Address, table1UseOfForce?.address);
+    // const hgtInit = prefer(useForceSectionData?.Height, table1UseOfForce?.hgt);
+    // const wgtInit = prefer(useForceSectionData?.Weight, table1UseOfForce?.wgt);
     const { years, months } = extractYearsAndMonths(useForceSectionData?.TimeOnDept);
     setUseOfForce({
       useOfForce: {
@@ -468,14 +468,15 @@ const PoliceForceIncident = (props) => {
         location: useForceSectionData?.CrimeLocation,
         callType: useForceSectionData?.CFSDescription,
         typePromises: useForceSectionData?.PrimaryLocationType,
-        subjectName: useForceSectionData?.Arrestee_Name,
-        race: useForceSectionData?.Race_Code,
-        sex: useForceSectionData?.Gender_Code,
-        dob: useForceSectionData?.DOB ? moment(useForceSectionData?.DOB).format('MM/DD/YYYY') : '',
-        age: useForceSectionData?.Age,
-        address: addressInit ?? "",
-        hgt: hgtInit ?? "",
-        wgt: wgtInit ?? "",
+        subjectName: table1UseOfForce?.subjectName,
+        race: table1UseOfForce?.race,
+        sex: table1UseOfForce?.sex,
+        // dob: table1UseOfForce?.dob ? moment(useForceSectionData?.dob).format('MM/DD/YYYY') : '',
+        dob: table1UseOfForce?.dob || '',
+        age: table1UseOfForce?.age,
+        address: table1UseOfForce?.address,
+        hgt: table1UseOfForce?.hgt,
+        wgt: table1UseOfForce?.wgt,
       },
     })
     setUseOfForceBasicDetailState(prevState => ({
@@ -484,12 +485,12 @@ const PoliceForceIncident = (props) => {
       WrittenForID: loginPinID
     }));
 
-    setLocks(prev => ({
-      ...prev,
-      address: !!addressInit,
-      hgt: !!hgtInit,
-      wgt: !!wgtInit,
-    }));
+    // setLocks(prev => ({
+    //   ...prev,
+    //   address: !!addressInit,
+    //   hgt: !!hgtInit,
+    //   wgt: !!wgtInit,
+    // }));
     if (useOfForceID) {
       setFormData(editValUseOfForce?.Table1?.[0] || {})
 
@@ -1407,11 +1408,11 @@ const PoliceForceIncident = (props) => {
                           className="form-input flex-fill"
                           value={useOfForce?.useOfForce?.address || ""}
                           onChange={(e) => {
-                            if (!locks.address) {
+                            // if (!locks.address) {
                               handleInputChangeUseOfForce('useOfForce.address', e.target.value);
-                            }
+                            // }
                           }}
-                          readOnly={locks.address}   // ← not value-based; only server-lock based
+                          // readOnly={locks.address}   // ← not value-based; only server-lock based
                           style={{
                             color: '#333333',
                           }}
@@ -1427,11 +1428,11 @@ const PoliceForceIncident = (props) => {
                             style={{ flexGrow: 1, color: '#333333' }} // Makes the input take up the available space
                             value={useOfForce?.useOfForce?.hgt || ""}
                             onChange={(e) => {
-                              if (!locks.hgt) {
+                              // if (!locks.hgt) {
                                 handleInputChangeUseOfForce('useOfForce.hgt', e.target.value);
-                              }
+                              // }
                             }}
-                            readOnly={locks.hgt}
+                            // readOnly={locks.hgt}
                           />
                         </div>
 
@@ -1443,11 +1444,11 @@ const PoliceForceIncident = (props) => {
                             style={{ flexGrow: 1, color: '#333333' }} // Makes the input take up the available space
                             value={useOfForce?.useOfForce?.wgt || ""}
                             onChange={(e) => {
-                              if (!locks.wgt) {
+                              // if (!locks.wgt) {
                                 handleInputChangeUseOfForce('useOfForce.wgt', e.target.value);
-                              }
+                              // }
                             }}
-                            readOnly={locks.wgt}
+                            // readOnly={locks.wgt}
                           />
                         </div>
                       </div>
@@ -3150,6 +3151,7 @@ const PoliceForceIncident = (props) => {
                                 hideSelectedOptions={true}
                                 value={groupList?.filter(option => approvalState?.ApprovingSupervisorID?.split(',').includes(option.value.toString()))}
                                 onChange={handleSelectIncidentName}
+                                menuPlacement="top"
                               />
                             </div>
                           </>

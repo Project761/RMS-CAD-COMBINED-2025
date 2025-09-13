@@ -14,6 +14,7 @@ function ReportWorkflow() {
     ] = useObjState({
         workflowName: "",
         appliesToReport: "",
+        FOIA: false,
         note: "",
         reportApproverType: "multipleLevel",
         reportApprover: "",
@@ -74,7 +75,6 @@ function ReportWorkflow() {
 
     const timeUnitOptions = [
         { value: "hours", label: "Hours" },
-        { value: "minutes", label: "Minutes" },
         { value: "days", label: "Days" }
     ];
 
@@ -210,7 +210,7 @@ function ReportWorkflow() {
                             Applies To Report
                         </label>
                     </div>
-                    <div className="col-4 d-flex align-self-center">
+                    <div className="col-4 d-flex align-items-center justify-content-center">
                         <Select
                             isClearable
                             options={appliesToReportDrpData}
@@ -228,6 +228,19 @@ function ReportWorkflow() {
                             value={reportWorkflowState.appliesToReport ? reportWorkflowState.appliesToReport : ""}
                             onChange={(e) => { handleReportWorkflowState("appliesToReport", e); setIsChange(true); }}
                         />
+                        <div className="form-check ml-2">
+                            <input
+                                className="form-check-input"
+                                type="checkbox"
+                                id="FOIA"
+                                checked={reportWorkflowState.FOIA}
+                                disabled={reportWorkflowState.reportApproverType === "noApproval"}
+                                onChange={(e) => handleReportWorkflowState("FOIA", e.target.checked)}
+                            />
+                            <label className="form-check-label" htmlFor="FOIA">
+                                FOIA
+                            </label>
+                        </div>
                     </div>
                 </div>
 
@@ -429,7 +442,7 @@ function ReportWorkflow() {
                                 isDisabled={reportWorkflowState.reportApproverType === "noApproval"}
                                 className="w-100"
                                 value={timeUnitOptions.find(option => option.value === reportWorkflowState.reportWritingTimeUnit)}
-                                onChange={(e) => handleReportWorkflowState("reportWritingTimeUnit", e.value)}
+                                onChange={(e) => { handleReportWorkflowState("reportWritingTimeUnit", e.value); handleReportWorkflowState("warningTimeUnit", e.value) }}
                             />
                         </div>
                         <div className="col-2 d-flex align-self-center justify-content-end">
@@ -456,7 +469,7 @@ function ReportWorkflow() {
                                 isDisabled={reportWorkflowState.reportApproverType === "noApproval"}
                                 className="w-100"
                                 value={timeUnitOptions.find(option => option.value === reportWorkflowState.reportApprovalTimeUnit)}
-                                onChange={(e) => handleReportWorkflowState("reportApprovalTimeUnit", e.value)}
+                                onChange={(e) => { handleReportWorkflowState("reportApprovalTimeUnit", e.value); handleReportWorkflowState("warningBeforeTimeUnit2", e.value) }}
                             />
                         </div>
                     </div>
@@ -472,24 +485,37 @@ function ReportWorkflow() {
                                 id="warningBeforeTimeCheck"
                                 checked={reportWorkflowState.warningBeforeTimeCheck}
                                 disabled={reportWorkflowState.reportApproverType === "noApproval"}
-                                onChange={(e) => handleReportWorkflowState("warningBeforeTimeCheck", e.target.checked)}
+                                onChange={(e) => {
+                                    const isChecked = e.target.checked;
+                                    handleReportWorkflowState("warningBeforeTimeCheck", isChecked);
+                                    if (!isChecked) {
+                                        handleReportWorkflowState("warningBeforeTime", "");
+                                    }
+                                }}
                             />
                             <input
                                 type="number"
                                 className="form-control py-1 new-input requiredColor ml-2"
                                 placeholder="Enter time"
                                 min="1"
-                                disabled={reportWorkflowState.reportApproverType === "noApproval"}
+                                max={reportWorkflowState.reportWritingTimeLimit}
+                                disabled={reportWorkflowState.reportApproverType === "noApproval" || !reportWorkflowState.warningBeforeTimeCheck}
                                 value={reportWorkflowState.warningBeforeTime}
-                                onChange={(e) => handleReportWorkflowState("warningBeforeTime", e.target.value)}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    const maxValue = reportWorkflowState.reportWritingTimeLimit;
+                                    if (value === "" || (value && !isNaN(value) && parseFloat(value) < parseFloat(maxValue))) {
+                                        handleReportWorkflowState("warningBeforeTime", value);
+                                    }
+                                }}
                             />
                         </div>
                         <div className="col-1">
                             <Select
                                 options={timeUnitOptions}
                                 placeholder="Hours"
-                                styles={reportWorkflowState.reportApproverType === "noApproval" ? colorLessStyle_Select : coloredStyle_Select}
-                                isDisabled={reportWorkflowState.reportApproverType === "noApproval"}
+                                styles={reportWorkflowState.reportApproverType === "noApproval" ? colorLessStyle_Select : colorLessStyle_Select}
+                                isDisabled
                                 className="w-100"
                                 value={timeUnitOptions.find(option => option.value === reportWorkflowState.warningTimeUnit)}
                                 onChange={(e) => handleReportWorkflowState("warningTimeUnit", e.value)}
@@ -506,24 +532,36 @@ function ReportWorkflow() {
                                 id="warningBeforeTimeCheck2"
                                 checked={reportWorkflowState.warningBeforeTimeCheck2}
                                 disabled={reportWorkflowState.reportApproverType === "noApproval"}
-                                onChange={(e) => handleReportWorkflowState("warningBeforeTimeCheck2", e.target.checked)}
+                                onChange={(e) => {
+                                    const isChecked = e.target.checked;
+                                    handleReportWorkflowState("warningBeforeTimeCheck2", isChecked);
+                                    if (!isChecked) {
+                                        handleReportWorkflowState("warningBeforeTime2", "");
+                                    }
+                                }}
                             />
                             <input
                                 type="number"
                                 className="form-control py-1 new-input requiredColor ml-2"
                                 placeholder="Enter time"
                                 min="1"
-                                disabled={reportWorkflowState.reportApproverType === "noApproval"}
+                                disabled={reportWorkflowState.reportApproverType === "noApproval" || !reportWorkflowState.warningBeforeTimeCheck2}
                                 value={reportWorkflowState.warningBeforeTime2}
-                                onChange={(e) => handleReportWorkflowState("warningBeforeTime2", e.target.value)}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    const maxValue = reportWorkflowState.reportApprovalTimeLimit;
+                                    if (value === "" || (value && !isNaN(value) && parseFloat(value) < parseFloat(maxValue))) {
+                                        handleReportWorkflowState("warningBeforeTime2", value);
+                                    }
+                                }}
                             />
                         </div>
                         <div className="col-1">
                             <Select
                                 options={timeUnitOptions}
                                 placeholder="Hours"
-                                styles={reportWorkflowState.reportApproverType === "noApproval" ? colorLessStyle_Select : coloredStyle_Select}
-                                isDisabled={reportWorkflowState.reportApproverType === "noApproval"}
+                                styles={reportWorkflowState.reportApproverType === "noApproval" ? colorLessStyle_Select : colorLessStyle_Select}
+                                isDisabled
                                 className="w-100"
                                 value={timeUnitOptions.find(option => option.value === reportWorkflowState.warningBeforeTimeUnit2)}
                                 onChange={(e) => handleReportWorkflowState("warningBeforeTimeUnit2", e.value)}

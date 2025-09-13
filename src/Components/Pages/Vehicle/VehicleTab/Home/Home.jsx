@@ -863,7 +863,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, setIncidentReportedDate, sho
         {
             name: 'Plate Expirestion',
             // selector: (row) => row.InspectionExpiresDtTm,
-            selector: (row) => row.PlateExpireDtTm ? getShowingWithOutTime(row.PlateExpireDtTm) : " ",
+            selector: (row) => row.PlateExpireDtTm,
             sortable: true
         },
         {

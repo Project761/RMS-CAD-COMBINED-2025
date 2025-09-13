@@ -3158,6 +3158,7 @@ const PoliceForce = (props) => {
                                 hideSelectedOptions={true}
                                 value={groupList?.filter(option => approvalState?.ApprovingSupervisorID?.includes(option.value))}
                                 onChange={handleSelectIncidentName}
+                                menuPlacement="top"
                               />
                             </div>
                           </>

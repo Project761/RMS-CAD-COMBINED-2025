@@ -54,7 +54,8 @@ function DashboardAll({ isPreview }) {
     const [loder, setLoder] = useState(false);
     const [filteredData, setFilteredData] = useState([]);
     const [selectedReportType, setSelectedReportType] = useState('all');
-
+    const [useOfForceData, setUseOfForceData] = useState([]);
+    const [narrativeReportData, setNarrativeReportData] = useState([]);
     useEffect(() => {
         if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
             if (uniqueId) { dispatch(get_LocalStoreData(uniqueId)); }
@@ -66,6 +67,7 @@ function DashboardAll({ isPreview }) {
             setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
             get_Data_Que_Report(localStoreData?.PINID, localStoreData?.AgencyID);
             dispatch(get_ScreenPermissions_Data("N046", localStoreData?.AgencyID, localStoreData?.PINID));
+            getUseOfForceReport(localStoreData?.PINID, localStoreData?.AgencyID);
 
         }
     }, [localStoreData]);
@@ -73,8 +75,9 @@ function DashboardAll({ isPreview }) {
     useEffect(() => {
         if (modelStatus) {
             get_Data_Que_Report(loginPinID, loginAgencyID);
+            getUseOfForceReport(loginPinID, loginAgencyID);
         }
-    }, [modelStatus]);
+    }, [modelStatus, selectedReportType]);
 
     const handleRadioChange = (e) => {
         setSelectedReportType(e.target.value);
@@ -130,10 +133,30 @@ function DashboardAll({ isPreview }) {
                 return (
                     <span
                         onClick={() => {
-                            // navigate(
-                            //   `/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=true&IsCadInc=true&narrativeAssignId=${stringToBase64(row?.NarrativeAssignedID)}&tab=Report&Assigned=true`
-                            // );
-                            navigate(`/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&IsCadInc=${true}&narrativeAssignId=${stringToBase64(row?.NarrativeID)}&tab=Report`);
+                            <>
+                                {
+                                    row.ReportTypeJson === "Use Of Force" ? (
+                                        row?.ArrestID ? (
+                                            effectiveScreenPermission ?
+                                                effectiveScreenPermission[0]?.Changeok ?
+
+                                                    navigate(`/Arrest-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&ArrestId=${stringToBase64(row?.ArrestID)}&ArrNo=${stringToBase64(row?.ArrestNumber)}&isFromDashboard=true`)
+                                                    : <></>
+                                                :
+                                                navigate(`/Arrest-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&ArrestId=${stringToBase64(row?.ArrestID)}&ArrNo=${stringToBase64(row?.ArrestNumber)}&isFromDashboard=true`)
+
+                                        ) : (
+                                            effectiveScreenPermission ?
+                                                effectiveScreenPermission[0]?.Changeok ?
+                                                    navigate(`/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${row?.IncidentNumber}&IncSta=true&isFromDashboard=true`)
+                                                    : <></>
+                                                :
+                                                navigate(`/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${row?.IncidentNumber}&IncSta=true&isFromDashboard=true`)
+                                        )
+                                    ) : (
+                                        navigate(`/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&IsCadInc=${true}&narrativeAssignId=${stringToBase64(row?.NarrativeID)}&tab=Report`)
+                                    )}
+                            </>
                         }}
                         style={{
                             color: '#007bff',
@@ -155,7 +178,7 @@ function DashboardAll({ isPreview }) {
             sortable: true,
 
             cell: row => {
-                const desc = row.NarrativeDescription?.toLowerCase();
+                const desc = row?.ReportTypeJson || row.NarrativeDescription?.toLowerCase();
 
                 let backgroundColor = 'transparent';
                 let color = 'inherit';
@@ -173,6 +196,9 @@ function DashboardAll({ isPreview }) {
                 else if (desc === 'press release') {
                     backgroundColor = '#f87171'; // red-400
                     color = 'inherit';
+                } else if (desc === 'Use Of Force') {
+                    backgroundColor = '#007bff'; // red-400
+                    color = '#ffff';
                 }
 
                 return (
@@ -186,7 +212,7 @@ function DashboardAll({ isPreview }) {
                             whiteSpace: "nowrap"
                         }}
                     >
-                        {row.NarrativeDescription}
+                        {row?.ReportTypeJson || row.NarrativeDescription}
                     </span>
                 );
             },
@@ -277,14 +303,35 @@ function DashboardAll({ isPreview }) {
         if (row.IncidentID) { }
     }
 
+    const getUseOfForceReport = (OfficerID, agencyId) => {
+        const val = {
+            'ApprovePinID': OfficerID,
+            'AgencyID': agencyId
+        }
+        if (OfficerID && agencyId) {
+            fetchPostData('CAD/UseOfForceReport/GetUseOfForceReport', val).then((res) => {
+                if (res) {
+                    console.log("res", res)
+                    setUseOfForceData(res);
+                } else {
+                    setUseOfForceData([]);
+                }
+            })
+        }
+    }
+
+    useEffect(() => {
+        setqueData([...useOfForceData, ...narrativeReportData]);
+    }, [useOfForceData, narrativeReportData]);
+
     const get_Data_Que_Report = (OfficerID, agencyId) => {
         const val = { 'OfficerID': OfficerID, 'AgencyID': agencyId }
         fetchPostData('/IncidentNarrativeReport/GetData_AllNarrativeReport', val).then((res) => {
             if (res) {
-                setqueData(res?.filter(item => item.Status !== "Approved"));
+                setNarrativeReportData(res);
                 setLoder(true);
             } else {
-                setqueData([]);
+                setNarrativeReportData([]);
                 setLoder(true);
             }
         })
@@ -450,6 +497,8 @@ function DashboardAll({ isPreview }) {
                                             paginationRowsPerPageOptions={[100, 150, 200, 500]}
                                             conditionalRowStyles={conditionalRowStyles}
                                             onRowClicked={setClickedRow}
+                                            defaultSortFieldId={3}
+                                            defaultSortAsc={false}
                                         // subHeaderComponent={
                                         //     <div className="col-12 px-0 mt-1">
                                         //         <div className="row px-0">

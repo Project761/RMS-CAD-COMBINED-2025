@@ -1112,7 +1112,7 @@ const IncidentTabSection = (props) => {
                       col="FoundLocation"
                       locationID="NameLocationID"
                       check={incidentState?.FoundApartmentNo?.length > 0}
-                      verify={incidentState?.IsVerify}
+                      // verify={incidentState?.IsVerify}
                       page="Name"
                       isGEO
                     />

@@ -360,6 +360,8 @@ function DraftReport({ isPreview }) {
                                 paginationRowsPerPageOptions={[100, 150, 200, 500]}
                                 conditionalRowStyles={conditionalRowStyles}
                                 onRowClicked={setClickedRow}
+                                defaultSortFieldId={4}
+                                defaultSortAsc={false}
                             />
 
                         </div>

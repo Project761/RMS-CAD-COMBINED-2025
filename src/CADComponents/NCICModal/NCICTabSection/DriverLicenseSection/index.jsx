@@ -242,6 +242,34 @@ const DriverLicenseSection = ({ driverLicenseSectionState, setDriverLicenseSecti
                             />
                         </div>
                     </div>
+                    {/* OLN - Driver's License Number */}
+                    <div className="tab-form-row">
+                        <div className="col-3 d-flex align-self-center justify-content-end">
+                            <label className="tab-form-label">
+                                License Number :
+                                {errorDriverLicenseSectionState?.oln && (
+                                    <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>Required</p>
+                                )}
+                            </label>
+                        </div>
+                        <div className="col-6 d-flex align-self-center justify-content-end">
+                            <input
+                                type="text"
+                                className="form-control py-1 new-input requiredColor"
+                                name="oln"
+                                placeholder="Driver's License Number"
+                                value={driverLicenseSectionState?.oln}
+                                onChange={(v) => {
+                                    const value = v.target.value;
+                                    handleDriverLicenseSectionState("oln", value);
+                                    if (errorDriverLicenseSectionState?.oln) {
+                                        handleErrorDriverLicenseSectionState("oln", false);
+                                    }
+                                }}
+                                disabled={(driverLicenseSectionState?.lastName && driverLicenseSectionState?.firstName) ? true : false}
+                            />
+                        </div>
+                    </div>
                     {/* ST - State */}
                     <div className="tab-form-row">
                         <div className="col-3 d-flex align-self-center justify-content-end">
@@ -268,34 +296,6 @@ const DriverLicenseSection = ({ driverLicenseSectionState, setDriverLicenseSecti
                                     }
                                 }}
                                 className={"requiredColor"}
-                            />
-                        </div>
-                    </div>
-                    {/* OLN - Driver's License Number */}
-                    <div className="tab-form-row">
-                        <div className="col-3 d-flex align-self-center justify-content-end">
-                            <label className="tab-form-label">
-                                License Number :
-                                {errorDriverLicenseSectionState?.oln && (
-                                    <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>Required</p>
-                                )}
-                            </label>
-                        </div>
-                        <div className="col-6 d-flex align-self-center justify-content-end">
-                            <input
-                                type="text"
-                                className="form-control py-1 new-input requiredColor"
-                                name="oln"
-                                placeholder="Driver's License Number"
-                                value={driverLicenseSectionState?.oln}
-                                onChange={(v) => {
-                                    const value = v.target.value;
-                                    handleDriverLicenseSectionState("oln", value);
-                                    if (errorDriverLicenseSectionState?.oln) {
-                                        handleErrorDriverLicenseSectionState("oln", false);
-                                    }
-                                }}
-                                disabled={(driverLicenseSectionState?.lastName && driverLicenseSectionState?.firstName) ? true : false}
                             />
                         </div>
                     </div>

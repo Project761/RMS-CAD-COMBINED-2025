@@ -470,7 +470,10 @@ function Search({
                         isCoordinateX: data?.Longitude ? true : false,
                         isCoordinateY: data?.Latitude ? true : false,
                         isUpdate: true,
-                        IsVerify: data?.IsVerified === 1 ? true : false,
+                        ...(col === "FoundLocation"
+                            ? { isVerifyFoundLocation: data?.IsVerified }
+                            : { IsVerify: data?.IsVerified === 1 ? true : false }
+                        ),
                     };
                 });
             }

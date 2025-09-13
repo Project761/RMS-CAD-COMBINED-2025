@@ -31,11 +31,11 @@ const NCICModal = (props) => {
     const [loginAgencyID, setLoginAgencyID] = useState('');
     const [suffixIdDrp, setSuffixIdDrp] = useState([]);
     const [stateList, setStateList] = useState([]);
-    const [sexIdDrp, setSexIdDrp] = useState([]);
     const [raceIdDrp, setRaceIdDrp] = useState([]);
     const [ncicResponseData, setNcicResponseData] = useState([]);
     const [summaryData, setSummaryData] = useState(null);
     const [clickedRow, setClickedRow] = useState(null);
+    const [isDisableSendButton, setIsDisableSendButton] = useState(false);
     useEffect(() => {
         if (isNameCallTaker) {
             setTabState('driver-license');
@@ -239,7 +239,6 @@ const NCICModal = (props) => {
         createdDateTime: "",
     });
 
-
     const getNCICResponseKey = `/NCICDetails/GetNCICResponse`;
     const { data: getNCICResponseData, isSuccess: isFetchNCICResponse, refetch, isError: isNoData } = useQuery(
         [getNCICResponseKey, {
@@ -258,32 +257,50 @@ const NCICModal = (props) => {
         }
     }, [getNCICResponseData, isFetchNCICResponse]);
 
+    const sexIdDrp = [
+        {
+            value: 1,
+            label: "Female",
+            code: "F"
+        },
+        {
+            value: 2,
+            label: "Male",
+            code: "M"
+        },
+        {
+            value: 3,
+            label: "Unknown",
+            code: "U"
+        }
+    ]
+
     useEffect(() => {
         if (!!nameData?.LastName) {
             setDriverLicenseSectionState({
                 lastName: nameData?.LastName,
                 firstName: nameData?.FirstName,
                 middleName: nameData?.MiddleName,
-                suffix: nameData?.SuffixID,
-                sex: nameData?.SexID,
-                race: nameData?.RaceID,
-                st: nameData?.DLStateID,
-                dob: new Date(nameData?.DateOfBirth),
+                suffix: suffixIdDrp?.find(item => item?.value === nameData?.SuffixID)?.label,
+                sex: sexIdDrp?.find(item => item?.value === nameData?.SexID)?.code,
+                race: raceIdDrp?.find(item => item?.value === nameData?.RaceID)?.label,
+                st: stateList?.find(item => item?.value === nameData?.DLStateID)?.label,
+                dob: nameData?.DateOfBirth ? new Date(nameData?.DateOfBirth) : "",
             });
             setVehicleSectionState({
                 lastName: nameData?.LastName,
                 firstName: nameData?.FirstName,
                 middleName: nameData?.MiddleName,
-                suffix: nameData?.SuffixID,
-                dob: new Date(nameData?.DateOfBirth),
+                suffix: suffixIdDrp?.find(item => item?.value === nameData?.SuffixID)?.label,
+                dob: nameData?.DateOfBirth ? new Date(nameData?.DateOfBirth) : "",
             });
             setNameSectionState({
                 lastName: nameData?.LastName,
                 firstName: nameData?.FirstName,
                 middleName: nameData?.MiddleName,
-                suffix: nameData?.SuffixID,
-                sex: nameData?.SexID,
-                race: nameData?.RaceID,
+                suffix: suffixIdDrp?.find(item => item?.value === nameData?.SuffixID)?.label,
+                sex: sexIdDrp?.find(item => item?.value === nameData?.SexID)?.code,
+                race: raceIdDrp?.find(item => item?.value === nameData?.RaceID)?.label,
                 age: nameData?.Age,
                 ethnicity: nameData?.Ethnicity,
                 eyes: nameData?.Eyes,
@@ -292,17 +309,17 @@ const NCICModal = (props) => {
                 height2: nameData?.HeightTo,
                 weight: nameData?.WeightFrom,
                 weight2: nameData?.WeightTo,
-                st: nameData?.DLStateID,
-                dob: new Date(nameData?.DateOfBirth),
+                st: stateList?.find(item => item?.value === nameData?.DLStateID)?.label,
+                dob: nameData?.DateOfBirth ? new Date(nameData?.DateOfBirth) : "",
             })
             setWantedSectionState({
-                DOB: new Date(nameData?.DateOfBirth),
+                DOB: nameData?.DateOfBirth ? new Date(nameData?.DateOfBirth) : "",
                 lastName: nameData?.LastName,
                 firstName: nameData?.FirstName,
                 middleName: nameData?.MiddleName,
-                suffix: nameData?.SuffixID,
-                sex: nameData?.SexID,
-                race: nameData?.RaceID,
+                suffix: suffixIdDrp?.find(item => item?.value === nameData?.SuffixID)?.label,
+                sex: sexIdDrp?.find(item => item?.value === nameData?.SexID)?.code,
+                race: raceIdDrp?.find(item => item?.value === nameData?.RaceID)?.label,
                 age: nameData?.Age,
                 ethnicity: nameData?.Ethnicity,
                 eyes: nameData?.Eyes,
@@ -321,8 +338,8 @@ const NCICModal = (props) => {
                 lastName: nameData?.LastName,
                 firstName: nameData?.FirstName,
                 middleName: nameData?.MiddleName,
-                suffix: nameData?.SuffixID,
-                dob: new Date(nameData?.DateOfBirth),
+                suffix: suffixIdDrp?.find(item => item?.value === nameData?.SuffixID)?.label,
+                dob: nameData?.DateOfBirth ? new Date(nameData?.DateOfBirth) : "",
                 plateNo: "",
                 platExpires: "",
                 playType: "",
@@ -331,12 +348,13 @@ const NCICModal = (props) => {
                 manuYear: "",
                 plateState: "",
                 createdDateTime: "",
-                sex: nameData?.SexID,
-                race: nameData?.RaceID,
+                sex: sexIdDrp?.find(item => item?.value === nameData?.SexID)?.code,
+                race: raceIdDrp?.find(item => item?.value === nameData?.RaceID)?.label,
                 age: nameData?.Age,
             })
         }
-    }, [nameData, setDriverLicenseSectionState]);
+    }, [nameData, setDriverLicenseSectionState, raceIdDrp, suffixIdDrp, stateList]);
+
 
     useEffect(() => {
         if (!!vehicleIncidentData?.VehicleNo) {
@@ -450,12 +468,10 @@ const NCICModal = (props) => {
             if (data) {
                 setSuffixIdDrp(Comman_changeArrayFormat(data[0]?.Suffix, 'SuffixID', 'Description'));
                 setStateList(Comman_changeArrayFormat(data[0]?.State, "StateID", "State"));
-                setSexIdDrp(Comman_changeArrayFormat(data[0]?.Gender, 'SexCodeID', 'Description'));
                 setRaceIdDrp(Comman_changeArrayFormat(data[0]?.Race, 'RaceTypeID', 'Description'));
             } else {
                 setSuffixIdDrp([]);
                 setStateList([]);
-                setSexIdDrp([]);
                 setRaceIdDrp([]);
             }
         })
@@ -680,7 +696,7 @@ const NCICModal = (props) => {
         PIN: localStoreData?.PIN,
         AgencyID: localStoreData?.AgencyID,
         TerminalId: localStoreData?.NCICLoginTerminalID,
-        PINID: localStoreData?.PINID,
+        PINID: parseInt(localStoreData?.PINID),
         UserId: localStoreData?.NCICLoginId,
         ORI: localStoreData?.NCICORI,
         NCICUserId: localStoreData?.NCICLoginId,
@@ -694,6 +710,7 @@ const NCICModal = (props) => {
 
     const sendRequestAndRefetch = async (payload) => {
         try {
+            setIsDisableSendButton(true);
             const res = await NcicServices.sendNcicRequest(payload);
             if (res) {
                 setTimeout(() => {
@@ -702,6 +719,8 @@ const NCICModal = (props) => {
             }
         } catch (error) {
             console.error("NCIC request failed:", error);
+        } finally {
+            setIsDisableSendButton(false);
         }
     };
 
@@ -849,10 +868,10 @@ const NCICModal = (props) => {
 
     const conditionalRowStyles = [
         {
-            when: row => row === clickedRow,
+            when: row => row?.hit === true,
             style: {
-                backgroundColor: '#001f3fbd',
-                color: 'white',
+                color: 'red',
+                backgroundColor: 'darkorange',
                 cursor: 'pointer',
             },
         }
@@ -867,7 +886,7 @@ const NCICModal = (props) => {
                     data-toggle="modal"
                     data-target="#WhiteboardSearchModal"
                     className="btn btn-sm bg-green text-white m-1"
-                    onClick={() => { handleSummary(row); }}
+                    onClick={() => { handleSummary(row); setClickedRow(row); }}
                 >
                     Summary
                 </button>
@@ -1155,8 +1174,9 @@ const NCICModal = (props) => {
                                                             type="button"
                                                             className="save-button"
                                                             onClick={handleSendClick}
+                                                            disabled={isDisableSendButton}
                                                         >
-                                                            {"Send"}
+                                                            {isDisableSendButton ? "Sending..." : "Send"}
                                                         </button>
                                                         <button
                                                             type="button"
@@ -1182,7 +1202,8 @@ const NCICModal = (props) => {
                                                     <div className="d-flex tab-form-row-gap justify-content-center">
                                                         <button
                                                             type="button"
-                                                            className={clickedRow?.hit ? "error-button" : "save-button"}
+                                                            className={summaryData?.FormattedResponse?.search("<span style='color: red;") > 0 ? "error-button" : summaryData?.FormattedResponse?.search("<span style='color: blue;") > 0 ? "hitOrange-button" : "save-button"}
+                                                        // className={clickedRow?.hit ? "error-button" : !clickedRow?.hit ? "hitGreen-button" : "save-button"}
                                                         >
                                                             {"HIT YQ/YR"}
                                                         </button>
