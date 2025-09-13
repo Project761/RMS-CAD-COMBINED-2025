@@ -1987,9 +1987,9 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                                     placeholder="Select..."
                                 />
                             </div>
-                            <div className="col-2 col-md-2 col-lg-1 mt-1 " >
-                                <label className="new-label text-wrap" >
-                                    Attempted/&nbsp; Completed
+                            <div className="col-2 col-md-2 col-lg-1 mt-3 " >
+                                <label className="new-label text-wrap text-right" >
+                                    Attem/Comp
                                     {errorsCharge.AttemptRequiredError !== 'true' && (
                                         <span style={{ color: 'red', fontSize: '13px', display: 'block' }}>
                                             {errorsCharge.AttemptRequiredError}
