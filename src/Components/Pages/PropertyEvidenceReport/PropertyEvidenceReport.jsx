@@ -333,7 +333,7 @@ const PropertyEvidenceReport = ({ isPreview }) => {
                             </ul>
                         )}
                     </div>
-                    {selectedReportType === 'all' && <AllPropertyRoomStorage Allfiltered={Allfiltered} />}
+                    {selectedReportType === 'all' && <AllPropertyRoomStorage  selectedReportType={selectedReportType} Allfiltered={Allfiltered} />}
                     {selectedReportType === 'NonProperty' && <NonPropertyStorageList newfiltered={newfiltered} />}
 
                     <div className="pt-2 property-evidence-datatable mt-2">
@@ -378,9 +378,11 @@ const PropertyEvidenceReport = ({ isPreview }) => {
                         masterModalRef={masterModalRef}
                         setModalType={setModalType}
                         modalType={modalType}
+                        selectedReportType={selectedReportType}
                         rowData={rowData}
                         handleClose={() => setShowModal(false)}
                         setModelActivityStatus={setModelActivityStatus}
+                        SetQueData={SetQueData}
                         modelActivityStatus={modelActivityStatus}
                         getIncidentSearchData={getIncidentSearchData}
                     />

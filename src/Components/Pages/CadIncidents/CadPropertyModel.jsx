@@ -16,7 +16,7 @@ import { useReactToPrint } from "react-to-print";
 
 const CadPropertyModel = (props) => {
 
-  const { modelActivityStatus, DecPropID, DecMPropID, setModalType, modalType, masterModalRef, setAllProRoomFilterData, rowData, getIncidentSearchDataProperty, setDataSaved, SelectedCategory, CallStatus, ProType, ProNumber, ProTransfer, CheckboxStatus, ProCategory, taskListID, modalOpenStatus, setModalOpenStatus } = props
+  const { modelActivityStatus, DecPropID, DecMPropID, setModalType, SetQueData, selectedReportType, getIncidentSearchData, modalType, masterModalRef, setAllProRoomFilterData, rowData, getIncidentSearchDataProperty, setDataSaved, SelectedCategory, CallStatus, ProType, ProNumber, ProTransfer, CheckboxStatus, ProCategory, taskListID, modalOpenStatus, setModalOpenStatus } = props
   const { GetDataTimeZone, datezone, } = useContext(AgencyContext);
   const componentRef = useRef();
 
@@ -86,6 +86,8 @@ const CadPropertyModel = (props) => {
     'ReasonError': '', 'UpdateDateTimeError': '', 'TransferDateTimeError': '', 'WitnessError': '', 'ApprovalOfficerError': '', 'UpdatingOfficerError': '', 'DestructionOfficerError': '', 'DestructionDateTimeError': '', 'ReleasedDateTimeError': '',
     'ReceipientError': '', 'ReleasingOfficerError': '', 'ExpectedReturnDateTimeError': '', 'CheckOutDateTimeError': '', 'SubmittingOfficerError': '', 'CheckInDateTimeError': '', 'PropertyRoomOfficerError': ''
   })
+
+  console.log(selectedReportType)
 
 
   const colourStyles = {
@@ -374,18 +376,49 @@ const CadPropertyModel = (props) => {
       if (!IsUpdate) {
         reset();
       }
-      setAllProRoomFilterData();
-      Delete_TaskList();
-      setModalOpenStatus(false);
-      setModalType();
-      setDataSaved(true);
+      // setAllProRoomFilterData();
+      // Delete_TaskList();
+
+      // setModalType();
+      // setDataSaved(true);
       // GetData_Propertyroom(MstPage === "MST-Property-Dash" ? DecMPropID : DecPropID, ProCategory, loginAgencyID);
       toastifySuccess(res.Message);
-      if (modalType === "property") {
+
+      if (selectedReportType === 'AllPropertyRoomStorage') {
+        Delete_TaskList();
+        setModalOpenStatus(false);
+        setTimeout(() => {
+          if (masterModalRef.current) {
+            const modal = new window.bootstrap.Modal(masterModalRef.current);
+            modal.hide();
+          } else {
+            console.error("masterModalRef.current is null");
+          }
+        }, 800);
+        SetQueData();
+
+        setTimeout(() => {
+          getIncidentSearchData(localStoreData?.PINID);
+
+        }, 600);
+
+      }
+
+      // setModalOpenStatus(false);
+      // setModalType();
+      // setDataSaved(true);
+      // GetData_Propertyroom(MstPage === "MST-Property-Dash" ? DecMPropID : DecPropID, ProCategory, loginAgencyID);
+
+      if (selectedReportType === 'all') {
+        console.log('hello')
+        Delete_TaskList();
+        setAllProRoomFilterData();
+        setModalOpenStatus(false);
         setTimeout(() => {
           getIncidentSearchDataProperty(localStoreData?.PINID);
         }, 600)
       }
+
 
 
 
