@@ -14,7 +14,7 @@ import { AgencyContext } from '../../../Context/Agency/Index';
 
 const AllPropertyRoomStorage = (props) => {
 
-    const { Allfiltered } = props
+    const { Allfiltered, selectedReportType } = props
 
     const [showModal, setShowModal] = useState(false);
     const dispatch = useDispatch();
@@ -229,7 +229,7 @@ const AllPropertyRoomStorage = (props) => {
                 </div >
             </div>
             {/* <CadPropertyModel show={showModal} handleClose={() => setShowModal(false)} setModelActivityStatus={setModelActivityStatus} modelActivityStatus={modelActivityStatus} /> */}
-            <CadPropertyModel show={showModal} setAllProRoomFilterData={setAllProRoomFilterData} modalOpenStatus={modalOpenStatus} setDataSaved={setDataSaved} setModalOpenStatus={(bool) => { setModalOpenStatus(bool) }} taskListID={taskListID} rowData={rowData} handleClose={() => setShowModal(false)} setModelActivityStatus={setModelActivityStatus} modelActivityStatus={modelActivityStatus} getIncidentSearchDataProperty={getIncidentSearchDataProperty} />
+            <CadPropertyModel show={showModal} selectedReportType={selectedReportType} setAllProRoomFilterData={setAllProRoomFilterData} modalOpenStatus={modalOpenStatus} setDataSaved={setDataSaved} setModalOpenStatus={(bool) => { setModalOpenStatus(bool) }} taskListID={taskListID} rowData={rowData} handleClose={() => setShowModal(false)} setModelActivityStatus={setModelActivityStatus} modelActivityStatus={modelActivityStatus} getIncidentSearchDataProperty={getIncidentSearchDataProperty} />
         </>
     );
 }
