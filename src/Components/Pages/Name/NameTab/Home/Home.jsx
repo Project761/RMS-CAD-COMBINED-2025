@@ -2910,9 +2910,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                   ) : null}</label>
               </div>
               <div className="col-7  col-md-7 col-lg-9 mt-2   text-field" >
-
                 <Location {...{ value, setValue, setChangesStatus, locationStatus, setLocationStatus, updateStatus, setOnSelectLocation, setStatesChangeStatus }} col='Address' locationID='NameLocationID' check={isAdult ? false : false} verify={value.IsVerify} page='Name' />
-
               </div>
               <div className="col-3 col-md-3 col-lg-2 mt-2">
                 <div className="form-check ">

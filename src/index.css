@@ -642,7 +642,8 @@ input[type="file"] {
 
 [data-reach-combobox-popover] {
   border: none !important;
-  z-index: 9999 !important;
+  /* z-index: 9999 !important; */
+  /* z-index: 99 !important; */
   position: fixed !important;
   display: block !important;
 }
@@ -2967,7 +2968,7 @@ div[data-testid="table-header"],
 
 /* icon circle */
 .status-icons {
-  width: 24px;
+  width: 22px;
   height: 22px;
   border-radius: 50%;
   display: flex;
@@ -3167,3 +3168,12 @@ div[data-testid="table-header"],
 .room-box:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
+
+
+/* Modal ki default Bootstrap z-index: 1050 hoti hai */
+.modal-content {
+  position: relative;
+}
+
+
+
