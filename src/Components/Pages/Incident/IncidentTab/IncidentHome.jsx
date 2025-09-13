@@ -1476,9 +1476,9 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
                 filterTime={(date) => filterPassedTimeZone(date, datezone)}
                 selected={reportedDate}
                 disabled={nibrsSubmittedIncident === 1 || incidentID}
-                // className={nibrsSubmittedIncident === 1 || incidentID ? "readonlyColor" : "requiredColor"}
-                className={nibrsSubmittedIncident === 1 ? "LockFildsColor" : incidentID ? "readonlyColor" : "requiredColor"
-                }
+                className={nibrsSubmittedIncident === 1 || incidentID ? "readonlyColor" : "requiredColor"}
+                // className={nibrsSubmittedIncident === 1 ? "LockFildsColor" : incidentID ? "readonlyColor" : "requiredColor"
+                // }
 
                 timeInputLabel
                 showTimeSelect
@@ -1578,10 +1578,10 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
                 filterTime={(date) => filterPassedTimeZone(date, datezone)}
                 selected={reportedDate}
                 disabled={nibrsSubmittedIncident === 1 || incidentID}
-                // className={
-                //   nibrsSubmittedIncident === 1 || incidentID ? "readonlyColor" : "requiredColor"
-                // }
-                className={nibrsSubmittedIncident === 1 ? "LockFildsColor" : incidentID ? "readonlyColor" : "requiredColor"}
+                className={
+                  nibrsSubmittedIncident === 1 || incidentID ? "readonlyColor" : "requiredColor"
+                }
+                // className={nibrsSubmittedIncident === 1 ? "LockFildsColor" : incidentID ? "readonlyColor" : "requiredColor"}
                 timeInputLabel
                 placeholderText="Select..."
                 showTimeSelect
@@ -1735,8 +1735,8 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
               autoComplete="off"
               timeFormat="HH:mm"
               is24Hour={true}
-              // className={` ${(nibrsSubmittedIncident === 1 && incidentID) || !value.ReportedDate ? "readonlyColor" : ""}`}
-              className={nibrsSubmittedIncident === 1 ? "LockFildsColor" : incidentID || !value.ReportedDate ? "readonlyColor" : ""}
+              className={` ${(nibrsSubmittedIncident === 1 && incidentID) || !value.ReportedDate ? "readonlyColor" : ""}`}
+              // className={nibrsSubmittedIncident === 1 ? "LockFildsColor" : incidentID || !value.ReportedDate ? "readonlyColor" : ""}
               disabled={(nibrsSubmittedIncident === 1 && incidentID) || !value.ReportedDate}
             />
           </div>
@@ -1835,9 +1835,9 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
               }}
 
               dateFormat="MM/dd/yyyy HH:mm"
-              // className={` ${(nibrsSubmittedIncident === 1 && incidentID) ? 'readonlyColor' : ''}`}
+              className={` ${(nibrsSubmittedIncident === 1 && incidentID) ? 'readonlyColor' : ''}`}
               // className={`${(nibrsSubmittedIncident === 1 && incidentID) || !value?.OccurredFrom ? "readonlyColor" : ""}`}
-              className={nibrsSubmittedIncident === 1 ? "LockFildsColor" : incidentID || !value.OccurredFrom ? "readonlyColor" : ""}
+              // className={nibrsSubmittedIncident === 1 ? "LockFildsColor" : incidentID || !value.OccurredFrom ? "readonlyColor" : ""}
               disabled={
                 (nibrsSubmittedIncident === 1 && incidentID) ||
                 (!value?.OccurredFrom && true)
@@ -2107,12 +2107,12 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
             <DatePicker
               name="NIBRSclearancedate"
               id="NIBRSclearancedate"
-              // className={
-              //   nibrsSubmittedIncident === 1 && incidentID ? "readonlyColor" : clsDrpCode === "01" ? value?.NIBRSclearancedate ? "nibrsSuccessColor"
-              //     : "nibrsColor" : "readonlyColor"
-              // }
-              className={nibrsSubmittedIncident === 1 ? "LockFildsColor" : incidentID ? "readonlyColor" : clsDrpCode === "01" ? value?.NIBRSclearancedate ? "nibrsSuccessColor" : "nibrsColor" : "readonlyColor"
+              className={
+                nibrsSubmittedIncident === 1 && incidentID ? "readonlyColor" : clsDrpCode === "01" ? value?.NIBRSclearancedate ? "nibrsSuccessColor"
+                  : "nibrsColor" : "readonlyColor"
               }
+              // className={nibrsSubmittedIncident === 1 ? "LockFildsColor" : incidentID ? "readonlyColor" : clsDrpCode === "01" ? value?.NIBRSclearancedate ? "nibrsSuccessColor" : "nibrsColor" : "readonlyColor"
+              // }
               disabled={
                 value?.NIBRSClearanceID && exClsDateCode !== "N" ? false : true
               }
