@@ -1985,7 +1985,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
       d1.getDate() === d2.getDate()
     );
   };
- 
+
   const updateAllowTimeSelect = (date) => {
     if (!date) {
       setAllowTimeSelect(false);

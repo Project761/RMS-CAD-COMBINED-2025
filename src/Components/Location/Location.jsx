@@ -195,7 +195,7 @@ function Search({
         <>
             <div className="search" style={{ pointerEvents: !verify && 'none' }}>
                 <Combobox onSelect={handleSelect}>
-                    <ComboboxInput maxLength={250} style={{ background: check ? '#FFE2A8' : '', zIndex: 200 }}
+                    <ComboboxInput maxLength={250} style={{ background: check ? '#FFE2A8' : '', }}
                         value={value}
                         // value={val[col] || ''}
                         onChange={handleInput}
