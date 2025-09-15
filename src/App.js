@@ -13,7 +13,7 @@ import ForgotPassword from './Components/Auth/ForgotPassword';
 import ChangePassword from './Components/Auth/ChangePassword';
 import LockedUser from './Components/Pages/LockedUser/LockedUser';
 import ListManagement from './Components/Pages/Utility/ListManagement/ListManagement';
-import ScreenPermision from './Components/Pages/Utility/SecurityManager/ScreenPermission/ScreenPermision';
+import ScreenPermision from './Components/Pages/Utility/SecurityManager/ScreenPermission/ScreenPermision'; 
 import { ToastContainer } from 'react-toastify';
 import AgencyTab from './Components/Pages/Agency/ModalTest/AgencyTab';
 import PersonnelTab from './Components/Pages/PersonnelCom/PersonnelModal/PersonnelTab';
@@ -71,8 +71,6 @@ import IncidentTab from './Components/Pages/Incident/IncidentTab';
 import Log from './Components/Pages/Log/Log';
 import Dictionary from './Components/Pages/Dictionary/Dictionary';
 import AssaultInjuryCom from './Components/Pages/Name/NameTab/Offender/OffenderTab/AllTabCom/AssaultInjuryCom';
-
-
 import MissingPersonTab from './Components/Pages/MissingPerson/MissingPersonTab';
 import MissingPersonVehicle from './Components/Pages/MissingPerson/MissingPersonVehicle/MissingPersonVehicle';
 import PropertyRoomTab from './Components/Pages/PropertyRoom/PropertyRoomTab';

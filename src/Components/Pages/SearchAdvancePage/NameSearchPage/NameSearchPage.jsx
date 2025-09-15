@@ -359,7 +359,7 @@ const NameSearchPage = ({ isCAD = false, setSelectSearchRecord = () => { } }) =>
                     } else {
                         navigate('/namesearch?page=Name-Search');
                         // recent Name search data
-                        setRecentSearchData([...recentSearchData, { ...val, "SearchModule": "Nam-Search" }])
+                        setRecentSearchData([...recentSearchData, { ...val, "SearchModule": "Nam-Search" }]);
                     }
                 } else {
                     setnameSearch([]);

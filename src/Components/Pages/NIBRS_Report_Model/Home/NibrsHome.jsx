@@ -165,61 +165,6 @@ const NibrsHome = () => {
     }
   }
 
-  const getIncident_NibrsErrors = (incidentID, reportDate, baseDate, oriNumber) => {
-
-    const val = {
-      gIntAgencyID: loginAgencyID, IsIncidentCheck: true, gIncidentID: incidentID, dtpDateTo: reportDate, dtpDateFrom: reportDate, BaseDate: baseDate,
-      strORINumber: oriNumber, strComputerName: uniqueId, rdbSubmissionFile: false, rdbErrorLog: false, rdbNonReportable: false, chkPastErrorPrint: false, rdbOne: false, rdbTwoMonth: false,
-      rdbThreeMonth: false, rdbAllLogFile: false, IPAddress: ""
-    };
-
-    return fetchPostData('NIBRS/TXIBRS', val)
-      .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          const errorObject = data[0]?.ErrorObject || {};
-
-          setnibrsValidateIncidentData(errorObject);
-
-          let isOffenseInc = false;
-          let isGroup_B_Offense_ArrestInc = false;
-
-          if (errorObject?.Administrative) {
-            setAdministrativeErrorString(errorObject?.Administrative?.OnPageError || '');
-            isOffenseInc = errorObject?.Administrative?.OnPageError?.includes("This Incident does not have any TIBRS reportable Crime(s)");
-            isGroup_B_Offense_ArrestInc = errorObject?.Administrative?.OnPageError?.includes("Warning: There is no arrest attached to this Group B offense Incident Number");
-
-          } else {
-            setAdministrativeErrorString('');
-
-          }
-
-          setIsOffenseInc(isOffenseInc);
-          setIsGroup_B_Offense_ArrestInc(isGroup_B_Offense_ArrestInc);
-
-          if (errorObject?.Administrative || errorObject?.Offense || errorObject?.Offender || errorObject?.Victim || errorObject?.Properties) {
-
-
-          } else {
-
-
-          }
-
-        } else {
-          setnibrsValidateIncidentData([]);
-
-
-        }
-        setnibrsValidateLoder(false);
-        return true; // Signal that fetch completed successfully
-
-      })
-      .catch((error) => {
-        console.error("Error fetching NIBRS errors:", error);
-        setnibrsValidateLoder(false);
-        return false;
-      });
-  };
-
   // validate property/vehicle
   const ValidateProperty = async (incidentID) => {
     // loader
@@ -246,219 +191,252 @@ const NibrsHome = () => {
     // victim
     setVictimErrorStatus(false); setVictimErrorString('');
 
-    try {
+    const res = await TXIBRSValidateCall(incidentID, incReportedDate, baseDate, oriNumber);
+    console.log("🚀 ~ ValidateProperty ~ res:", res)
 
-      const [incidentError, victimError, offenseError, propertyError, offenderError] = await Promise.all([
+    if (res) {
+      try {
 
-        fetchPostDataNibrs('NIBRS/GetIncidentNIBRSError', { 'StrIncidentID': incidentID, 'StrIncidentNumber': IncNo, 'StrAgencyID': loginAgencyID }),
-        fetchPostDataNibrs('NIBRS/GetVictimNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'NameID': "", 'gIntAgencyID': loginAgencyID }),
-        fetchPostDataNibrs("NIBRS/Nibrs_OffenseError", { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'CrimeId': "", 'gIntAgencyID': loginAgencyID }),
-        fetchPostDataNibrs('NIBRS/GetPropertyNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'PropertyId': "", 'gIntAgencyID': loginAgencyID }),
-        fetchPostDataNibrs('NIBRS/GetOffenderNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'NameID': "", 'gIntAgencyID': loginAgencyID }),
-      ])
-
-
-      // if (true) {
-      if (incidentError?.Incident) {
-        const incObj = incidentError?.Incident ? incidentError?.Incident : [];
-
-        var ErrorStr = ""
-
-        // if (incObj?.OnPageError) {
-        //   ErrorStr += incObj?.OnPageError ? incObj?.OnPageError : ''
-
-        //   setIncidentErrorStatus(true);
-
-        // } else {
-        //   setIncidentErrorStatus(false);
-
-        // }
-
-        // if (incObj?.IsGroupBArrest) {
-        //   ErrorStr += incObj?.IsGroupBArrestError ? incObj?.IsGroupBArrestError : ''
-
-        //   setIsGroup_B_Offense_ArrestInc(true);
-
-        // } else {
-        //   setIsGroup_B_Offense_ArrestInc(false);
-
-        // }
-
-        // setAdministrativeErrorString(ErrorStr)
-        // console.log("🚀 ~ ValidateProperty ~ ErrorStr:", ErrorStr)
+        const [incidentError, victimError, offenseError, propertyError, offenderError] = await Promise.all([
+          // fetchPostData("NIBRS/TXIBRS", { gIncidentID: incidentID, dtpDateTo: incReportedDate, dtpDateFrom: incReportedDate, BaseDate: baseDate, strORINumber: oriNumber, strComputerName: uniqueId, rdbSubmissionFile: false, rdbErrorLog: false, rdbNonReportable: false, chkPastErrorPrint: false, rdbOne: false, rdbTwoMonth: false, rdbThreeMonth: false, rdbAllLogFile: false, IPAddress: "", IsIncidentCheck: true }),
+          fetchPostDataNibrs('NIBRS/GetIncidentNIBRSError', { 'StrIncidentID': incidentID, 'StrIncidentNumber': IncNo, 'StrAgencyID': loginAgencyID }),
+          fetchPostDataNibrs('NIBRS/GetVictimNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'NameID': "", 'gIntAgencyID': loginAgencyID }),
+          fetchPostDataNibrs("NIBRS/Nibrs_OffenseError", { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'CrimeId': "", 'gIntAgencyID': loginAgencyID }),
+          fetchPostDataNibrs('NIBRS/GetPropertyNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'PropertyId': "", 'gIntAgencyID': loginAgencyID }),
+          fetchPostDataNibrs('NIBRS/GetOffenderNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'NameID': "", 'gIntAgencyID': loginAgencyID }),
+        ])
 
 
+        // if (true) {
+        if (incidentError?.Incident) {
+          const incObj = incidentError?.Incident ? incidentError?.Incident : [];
 
-        // set administrative error string
+          var ErrorStr = ""
 
-        // if (incObj?.OnPageError) {
-        //   setIncidentErrorString(incObj?.OnPageError ? incObj?.OnPageError : '')
-        //   setIncidentErrorStatus(true);
+          // if (incObj?.OnPageError) {
+          //   ErrorStr += incObj?.OnPageError ? incObj?.OnPageError : ''
 
-        // } else {
-        //   setIncidentErrorStatus(false);
-        //   setIncidentErrorString('');
+          //   setIncidentErrorStatus(true);
 
-        // }
+          // } else {
+          //   setIncidentErrorStatus(false);
 
-        if (incObj?.IsGroupBArrest) {
-          setAdministrativeErrorString(incObj?.IsGroupBArrestError ? incObj?.IsGroupBArrestError : '');
-          setIsGroup_B_Offense_ArrestInc(true);
+          // }
 
-        } else {
-          setIsGroup_B_Offense_ArrestInc(false);
+          // if (incObj?.IsGroupBArrest) {
+          //   ErrorStr += incObj?.IsGroupBArrestError ? incObj?.IsGroupBArrestError : ''
 
-        }
+          //   setIsGroup_B_Offense_ArrestInc(true);
 
-        // if (incObj?.IsOffence) {
-        //   setAdministrativeErrorString(incObj?.IsOffenceError ? incObj?.IsOffenceError : '');
-        //   setIsOffenseInc(true);
+          // } else {
+          //   setIsGroup_B_Offense_ArrestInc(false);
 
-        // } else {
-        //   setIsOffenseInc(false);
+          // }
 
-        // }
+          // setAdministrativeErrorString(ErrorStr)
+          // console.log("🚀 ~ ValidateProperty ~ ErrorStr:", ErrorStr)
 
-      }
 
-      // set offense error string
-      if (offenseError) {
-        const incObj = incidentError?.Incident ? incidentError?.Incident : [];
-        const offenseObj = offenseError?.Offense ? offenseError?.Offense : [];
 
-        if (offenseObj?.length > 0) {
+          // set administrative error string
 
-          setOffenseErrorString(offenseObj[0]?.OnPageError ? offenseObj[0]?.OnPageError : '');
-          setOffenseErrorStatus(true);
+          // if (incObj?.OnPageError) {
+          //   setIncidentErrorString(incObj?.OnPageError ? incObj?.OnPageError : '')
+          //   setIncidentErrorStatus(true);
 
-        } else {
+          // } else {
+          //   setIncidentErrorStatus(false);
+          //   setIncidentErrorString('');
 
-          if (incObj?.IsOffence) {
-            setOffenseErrorString(incObj?.IsOffenceError ? incObj?.IsOffenceError : '');
-            setIsOffenseInc(true); setOffenseErrorStatus(true);
+          // }
+
+          if (incObj?.IsGroupBArrest) {
+            setAdministrativeErrorString(incObj?.IsGroupBArrestError ? incObj?.IsGroupBArrestError : '');
+            setIsGroup_B_Offense_ArrestInc(true);
 
           } else {
-            setIsOffenseInc(false); setOffenseErrorStatus(false); setOffenseErrorString('');
+            setIsGroup_B_Offense_ArrestInc(false);
+
           }
 
+          // if (incObj?.IsOffence) {
+          //   setAdministrativeErrorString(incObj?.IsOffenceError ? incObj?.IsOffenceError : '');
+          //   setIsOffenseInc(true);
 
+          // } else {
+          //   setIsOffenseInc(false);
 
-          // setOffenseErrorStatus(false); setOffenseErrorString('');
+          // }
 
         }
 
+        // set offense error string
+        if (offenseError) {
+          const incObj = incidentError?.Incident ? incidentError?.Incident : [];
+          const offenseObj = offenseError?.Offense ? offenseError?.Offense : [];
 
-      } else {
-        setOffenseErrorStatus(false); setOffenseErrorString('');
+          if (offenseObj?.length > 0) {
 
-      }
+            setOffenseErrorString(offenseObj[0]?.OnPageError ? offenseObj[0]?.OnPageError : '');
+            setOffenseErrorStatus(true);
 
+          } else {
 
-      // set property error string
-      if (propertyError) {
-        const proObj = propertyError?.Properties ? propertyError?.Properties : [];
-        console.log("🚀 ~ ValidateProperty ~ proObj:", proObj)
+            if (incObj?.IsOffence) {
+              setOffenseErrorString(incObj?.IsOffenceError ? incObj?.IsOffenceError : '');
+              setIsOffenseInc(true); setOffenseErrorStatus(true);
+
+            } else {
+              setIsOffenseInc(false); setOffenseErrorStatus(false); setOffenseErrorString('');
+
+            }
+          }
+
+        } else {
+          setOffenseErrorStatus(false); setOffenseErrorString('');
+
+        }
 
         // set property error string
-        if (proObj?.length > 0) {
-
-          const isSuspectedDrugType = proObj[0]?.OnPageError?.includes("Add at least one suspected drug type(create a Property with type 'Drug')");
-          // const isSuspectedDrugType = proObj[0]?.OnPageError?.includes("{352} There should be atleast 1 Suspected Drug Type entry.");
-          const isPropertyIdZeroError = proObj[0]?.OnPageError?.includes("{074} Need a property loss code of 5,7 for offense  23B");
-
-
-          if (isSuspectedDrugType) {
-            setSuspectedDrugTypeErrorStatus(true);
-            setIsPropertyIdZeroError(false);
-
-          } else if (isPropertyIdZeroError) {
-            setIsPropertyIdZeroError(true);
-            setSuspectedDrugTypeErrorStatus(false);
-
-          } else {
-            setSuspectedDrugTypeErrorStatus(false);
-            setIsPropertyIdZeroError(false);
-
-          }
-
-          const VehArr = proObj?.filter((item) => item?.PropertyType === 'V');
-          const PropArr = proObj?.filter((item) => item?.PropertyType !== 'V');
-
-          if (VehArr?.length > 0) {
-            setVehicleErrorString(VehArr[0]?.OnPageError ? VehArr[0]?.OnPageError : '');
-            setVehErrorStatus(true);
-
-          } else {
-            setVehErrorStatus(false); setVehicleErrorString('');
-
-          }
+        if (propertyError) {
+          const proObj = propertyError?.Properties ? propertyError?.Properties : [];
+          console.log("🚀 ~ ValidateProperty ~ proObj:", proObj)
 
           // set property error string
-          if (PropArr?.length > 0) {
-            setPropertyErrorString(PropArr[0]?.OnPageError ? PropArr[0]?.OnPageError : '');
-            setPropErrorStatus(true);
+          if (proObj?.length > 0) {
+
+            const isSuspectedDrugType = proObj[0]?.OnPageError?.includes("Add at least one suspected drug type(create a Property with type 'Drug')");
+            // const isSuspectedDrugType = proObj[0]?.OnPageError?.includes("{352} There should be atleast 1 Suspected Drug Type entry.");
+            const isPropertyIdZeroError = proObj[0]?.OnPageError?.includes("{074} Need a property loss code of 5,7 for offense  23B");
+
+
+            if (isSuspectedDrugType) {
+              setSuspectedDrugTypeErrorStatus(true);
+              setIsPropertyIdZeroError(false);
+
+            } else if (isPropertyIdZeroError) {
+              setIsPropertyIdZeroError(true);
+              setSuspectedDrugTypeErrorStatus(false);
+
+            } else {
+              setSuspectedDrugTypeErrorStatus(false);
+              setIsPropertyIdZeroError(false);
+
+            }
+
+            const VehArr = proObj?.filter((item) => item?.PropertyType === 'V');
+            const PropArr = proObj?.filter((item) => item?.PropertyType !== 'V');
+
+            if (VehArr?.length > 0) {
+              setVehicleErrorString(VehArr[0]?.OnPageError ? VehArr[0]?.OnPageError : '');
+              setVehErrorStatus(true);
+
+            } else {
+              setVehErrorStatus(false); setVehicleErrorString('');
+
+            }
+
+            // set property error string
+            if (PropArr?.length > 0) {
+              setPropertyErrorString(PropArr[0]?.OnPageError ? PropArr[0]?.OnPageError : '');
+              setPropErrorStatus(true);
+
+            } else {
+              setPropErrorStatus(false);
+              setPropertyErrorString('');
+
+            }
 
           } else {
-            setPropErrorStatus(false);
-            setPropertyErrorString('');
 
           }
 
         } else {
+          setPropErrorStatus(false); setPropertyErrorString('');
+          setVehErrorStatus(false); setVehicleErrorString('');
 
         }
 
-      } else {
-        setPropErrorStatus(false); setPropertyErrorString('');
-        setVehErrorStatus(false); setVehicleErrorString('');
+        // set offender error string
+        if (offenderError) {
+          const offenderObj = offenderError?.Offender ? offenderError?.Offender : [];
 
-      }
+          if (offenderObj?.length > 0) {
+            setOffenderErrorString(offenderObj[0]?.OnPageError ? offenderObj[0]?.OnPageError : '');
+            setOffenderErrorStatus(true);
 
+          } else {
+            setOffenderErrorStatus(false);
+            setOffenderErrorString('');
 
-      // set offender error string
-      if (offenderError) {
-        const offenderObj = offenderError?.Offender ? offenderError?.Offender : [];
-
-        if (offenderObj?.length > 0) {
-          setOffenderErrorString(offenderObj[0]?.OnPageError ? offenderObj[0]?.OnPageError : '');
-          setOffenderErrorStatus(true);
-
+          }
         } else {
-          setOffenderErrorStatus(false);
-          setOffenderErrorString('');
+          setOffenderErrorStatus(false); setOffenderErrorString('');
 
         }
-      } else {
-        setOffenderErrorStatus(false); setOffenderErrorString('');
 
-      }
+        // set victim error string
+        if (victimError) {
+          const victimObj = victimError?.Victim ? victimError?.Victim : [];
+          if (victimObj?.length > 0) {
+            setVictimErrorString(victimObj[0]?.OnPageError ? victimObj[0]?.OnPageError : '');
+            setVictimErrorStatus(true);
 
-      // set victim error string
-      if (victimError) {
-        const victimObj = victimError?.Victim ? victimError?.Victim : [];
-        if (victimObj?.length > 0) {
-          setVictimErrorString(victimObj[0]?.OnPageError ? victimObj[0]?.OnPageError : '');
-          setVictimErrorStatus(true);
+          } else {
+            setVictimErrorStatus(false);
+            setVictimErrorString('');
 
+          }
         } else {
-          setVictimErrorStatus(false);
-          setVictimErrorString('');
+          setVictimErrorStatus(false); setVictimErrorString('');
 
         }
-      } else {
-        setVictimErrorStatus(false); setVictimErrorString('');
 
+        // set loader false
+        setnibrsValidateLoder(false);
+
+      } catch (error) {
+        console.log("🚀 ~ ValidateProperty ~ error:", error);
+
+        setnibrsValidateLoder(false);
       }
 
-      // set loader false
-      setnibrsValidateLoder(false);
-
-    } catch (error) {
-      console.log("🚀 ~ ValidateProperty ~ error:", error);
-
+    } else {
+      console.log("🚀 ~ ValidateProperty ~ else:")
       setnibrsValidateLoder(false);
     }
+
+
   }
+
+  // validate Incident
+  const TXIBRSValidateCall = async (incidentID, reportDate, baseDate, oriNumber) => {
+    try {
+      setnibrsValidateLoder(true);
+      const val = {
+        gIntAgencyID: loginAgencyID,
+        gIncidentID: incidentID,
+        dtpDateTo: reportDate,
+        dtpDateFrom: reportDate,
+        BaseDate: baseDate,
+        strORINumber: oriNumber,
+        strComputerName: uniqueId,
+        //no use
+        rdbSubmissionFile: false, rdbErrorLog: false, rdbNonReportable: false, chkPastErrorPrint: false,
+        rdbOne: false, rdbTwoMonth: false, rdbThreeMonth: false, rdbAllLogFile: false, IPAddress: "", IsIncidentCheck: true,
+      };
+      const data = await fetchPostData("NIBRS/TXIBRS", val);
+      if (Array.isArray(data) && data.length > 0) {
+        return true;
+      } else {
+        return true;
+      }
+    } catch (error) {
+      console.log("🚀 ~ nibrsValidateInc ~ error:", error);
+      setnibrsValidateLoder(false);
+      return true;
+    }
+  };
 
   const sectionData = [
     {
@@ -533,11 +511,14 @@ const NibrsHome = () => {
   ];
 
   useEffect(() => {
-    if (IncID && incReportedDate && baseDate && oriNumber) {
-      if (nibrsValidateIncidentData?.length === 0) {
-        ValidateProperty(IncID);
+    const validateIncident = async () => {
+      if (IncID && incReportedDate && baseDate && oriNumber) {
+        if (nibrsValidateIncidentData?.length === 0) {
+          await ValidateProperty(IncID);
+        }
       }
     }
+    validateIncident();
   }, [incReportedDate, IncID, baseDate, oriNumber]);
 
 

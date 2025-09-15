@@ -369,10 +369,10 @@ const Home = (props) => {
   }
 
   const Add_Charge_Data = () => {
-    const { Count, ChargeCodeID, NIBRSID, UCRClearID, Name, LawTitleId } = value;
+    const { Count, ChargeCodeID, NIBRSID, UCRClearID, Name, LawTitleId, AttemptComplete } = value;
     const val = {
       'IncidentID': DecEIncID, 'ArrestID': DecArrestId, 'ChargeID': DecChargeId, 'CreatedByUserFK': LoginPinID, 'AgencyID': LoginAgencyID, 'Name': Name, 'IncidentNumber': IncNo, 'ArrestNumber': ArrNo, 'UCRClearID': UCRClearID, 'ChargeCodeID': ChargeCodeID, 'NIBRSID': NIBRSID, 'Count': Count,
-      'LawTitleId': LawTitleId,
+      'LawTitleId': LawTitleId, AttemptComplete: AttemptComplete,
     }
     AddDeleteUpadate('ArrestCharge/Insert_ArrestCharge', val).then((res) => {
       if (res.success) {

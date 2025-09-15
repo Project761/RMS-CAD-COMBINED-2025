@@ -529,7 +529,6 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
                                         maxDate={datezone ? new Date(datezone) : null}
                                         filterTime={(date) => filterPassedTimeZone(date, datezone)}
                                         selected={reportedDate}
-                                        className='requiredColor'
                                         timeInputLabel
                                         showTimeSelect
                                         timeIntervals={1}
@@ -543,6 +542,9 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
                                         timeFormat="HH:mm "
                                         is24Hour
                                         minDate={new Date(1991, 0, 1)}
+                                        // className='requiredColor'
+                                        className={"readonlyColor"}
+                                        disabled={true}
                                     />
                                     :
                                     <DatePicker
@@ -580,7 +582,9 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
                                         maxDate={datezone ? new Date(datezone) : null}
                                         filterTime={(date) => filterPassedTimeZone(date, datezone)}
                                         selected={reportedDate}
-                                        className='requiredColor'
+                                        // className='requiredColor'
+                                        className={"readonlyColor"}
+                                        disabled={true}
                                         timeInputLabel
                                         showTimeSelect
                                         timeIntervals={1}

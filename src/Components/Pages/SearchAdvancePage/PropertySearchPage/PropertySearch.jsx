@@ -102,8 +102,8 @@ const PropertySearch = ({ isCAD = false }) => {
         },
         {
             width: '150px',
-            name: 'Agency Name',
-            selector: (row) => row.Agency_Code ,
+            name: 'Agency Code',
+            selector: (row) => row.Agency_Code,
             sortable: true
         },
 
