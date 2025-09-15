@@ -71,7 +71,7 @@ const Home = (props) => {
     const [masterpropertyId, setMasterPropertyId] = useState('');
     const [possessionID, setPossessionID] = useState('');
     // checkbox states
-    const [selectedOption, setSelectedOption] = useState('CheckIn');
+    const [selectedOption, setSelectedOption] = useState(null);
     const [selectedStatus, setSelectedStatus] = useState('');
     // functionality states
     const [propertyNumber, setPropertyNumber] = useState('');
@@ -246,8 +246,8 @@ const Home = (props) => {
         const CheckOutDateTimeError = value.IsCheckOut ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
         const ExpectedReturnDateTimeError = value.IsCheckOut ? RequiredFieldIncident(value.ExpectedDate) : 'true';
         const ReleasingOfficerError = (value.IsRelease || value.IsCheckOut) ? RequiredFieldIncident(value.ReleasingOfficerID) : 'true';
-        const ReceipientError = value.IsRelease ? RequiredFieldIncident(value.ReceipentID) : 'true';
-        const ReleasedDateTimeError = value.IsRelease ? RequiredFieldIncident(value.ReleaseDate) : 'true';
+        const ReceipientError = value.IsRelease ? RequiredFieldIncident(value.OfficerNameID) : 'true';
+        const ReleasedDateTimeError = value.IsRelease ? RequiredFieldIncident(value.activitydate) : 'true';
         // const DestructionDateTimeError = value.IsDestroy ? RequiredFieldIncident(value.DestroyDate) : 'true';
         const DestructionDateTimeError = 'true';
         const DestructionOfficerError = value.IsDestroy ? RequiredFieldIncident(value.DestructionOfficerID) : 'true';
@@ -2510,7 +2510,7 @@ const Home = (props) => {
                                     name='activitydate'
                                     id='activitydate'
                                     onChange={(date) => {
-                                        setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
+                                        setactivitydate(date); setValue({ ...value, ['activitydate']: date ? getShowingMonthDateYear(date) : null, });
 
                                     }}
                                     isClearable={activitydate ? true : false}
