@@ -168,7 +168,7 @@ const PropertyEvidenceReport = ({ isPreview }) => {
             name: 'Property Type', selector: (row) => row.Category_Description, sortable: true
         },
         {
-            name: 'Reason Code', selector: (row) => row.LossCode_Description, sortable: true
+            name: 'Reason Code', selector: (row) => row.PropertyReason, sortable: true
         },
         {
             name: 'Owner Name', selector: (row) => row.OwnerName, sortable: true

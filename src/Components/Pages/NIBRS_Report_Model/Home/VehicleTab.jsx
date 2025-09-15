@@ -675,7 +675,7 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
         },
         {
             name: 'Plate Expiration',
-            selector: (row) => row.Expiration,
+            selector: (row) => row.PlateExpireDtTm,
             sortable: true
         },
         {
@@ -830,7 +830,7 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                     // console.log("🚀 ~ ValidateProperty ~ data:", data);
 
                     if (data?.Properties?.length > 0) {
-                        const VehArr = data?.Properties?.filter((item) => item?.PropertyType === 'V' );
+                        const VehArr = data?.Properties?.filter((item) => item?.PropertyType === 'V');
                         // console.log("🚀 ~ fetchPostDataNibrs ~ VehArr:", VehArr);
 
                         if (VehArr?.length > 0) {

@@ -24,6 +24,7 @@ const VehicleManagement = (props) => {
     const navigate = useNavigate();
     const componentRefnew = useRef();
     const componentRef = useRef();
+    const fileInputRef = useRef(null)
 
     const { DecVehId, DecMVehId, DecIncID, VicCategory, isViewEventDetails = false } = props
     const { GetDataTimeZone, datezone, } = useContext(AgencyContext);
@@ -87,6 +88,10 @@ const VehicleManagement = (props) => {
     const [releasestatus, setReleaseStatus] = useState();
     const [functiondone, setfunctiondone] = useState(false);
     const [shouldPrintForm, setShouldPrintForm] = useState(false);
+
+    const [selectedFiles, setSelectedFiles] = useState([])
+
+
     const [value, setValue] = useState({
         'PropertyID': '', 'MasterPropertyId': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'OtherPersonNameID': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
         'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '',
@@ -179,7 +184,7 @@ const VehicleManagement = (props) => {
     const GetData_Propertyroom = async (DecVehId, loginAgencyID) => {
         try {
             const val1 = {
-                'PropertyID': DecVehId, 'PropertyCategoryCode': 'V', 'MasterPropertyID': 0, 'AgencyId': loginAgencyID
+                'PropertyID': [DecVehId], 'PropertyCategoryCode': 'V', 'MasterPropertyID': 0, 'AgencyId': loginAgencyID
             };
             const val2 = {
                 'PropertyID': 0, 'PropertyCategoryCode': 'V', 'MasterPropertyID': DecVehId, 'AgencyId': loginAgencyID
@@ -489,7 +494,23 @@ const VehicleManagement = (props) => {
     };
 
 
+    const handleFileChange = (e) => {
+        const files = e.target.files
+        if (!files || files.length === 0) return
+        const newFilesArray = Array.from(files)
+        setSelectedFiles((prevFiles) => [...prevFiles, ...newFilesArray])
+        if (fileInputRef.current) {
+            fileInputRef.current.value = ""
+        }
+    }
 
+    const removeFile = (index) => {
+        setSelectedFiles((prevFiles) => {
+            const updatedFiles = [...prevFiles]
+            updatedFiles.splice(index, 1)
+            return updatedFiles
+        })
+    }
 
     return (
         <>
@@ -823,6 +844,97 @@ const VehicleManagement = (props) => {
                     </div>
                     <div className="col-9 col-md-9 col-lg-10 text-field mt-1">
                         <input type="text" name="ActivityComments" disabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'} className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
+                    </div>
+
+                    <div className="col-3 col-md-3 col-lg-2  mt-4  ">
+                        <label htmlFor="" className='new-label text-nowrap mb-0'>
+                            File Attachment
+                        </label>
+                    </div>
+                    <div className="col-3 col-md-3 col-lg-10 mt-2  ">
+                        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px", }}
+                        >
+                            <div style={{ display: "flex", alignItems: "center", border: "1px solid #ccc", borderRadius: "6px", background: "#f9f9f9", width: "100%" }}>
+                                <label
+                                    htmlFor="file-input"
+                                    style={{
+                                        padding: "5px 16px",
+                                        backgroundColor: "#e9e9e9",
+                                        color: "#fff",
+                                        borderRadius: "4px",
+                                        marginLeft: "4px",
+                                        marginTop: "8px",
+                                        cursor: "pointer",
+                                        fontSize: "14px",
+                                        fontWeight: "bold",
+                                        transition: "background 0.3s",
+                                    }}
+                                    onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                    onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                >
+                                    Choose File
+                                </label>
+                                <input
+                                    type="file"
+                                    onChange={handleFileChange}
+                                    ref={fileInputRef}
+                                    multiple
+                                    style={{ display: "none" }}
+                                    id="file-input"
+                                />
+                                <div
+                                    style={{
+                                        borderRadius: "4px",
+                                        display: "flex",
+                                        flexWrap: "wrap",
+                                        minHeight: "38px",
+                                        flex: "1",
+                                        alignItems: "center",
+                                        gap: "6px",
+                                        marginLeft: "12px",
+                                        backgroundColor: "#fff",
+                                    }}
+                                >
+                                    {selectedFiles.length > 0 ? (
+                                        selectedFiles.map((file, index) => (
+                                            <div
+                                                key={index}
+                                                style={{
+                                                    display: "inline-flex",
+                                                    alignItems: "center",
+                                                    backgroundColor: "#e9ecef",
+                                                    padding: "4px 10px",
+                                                    borderRadius: "4px",
+                                                    margin: "4px",
+                                                    fontSize: "13px",
+                                                    fontWeight: "500",
+                                                }}
+                                            >
+                                                <span>{file.name}</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeFile(index)}
+                                                    style={{
+                                                        marginLeft: "6px",
+                                                        border: "none",
+                                                        background: "none",
+                                                        cursor: "pointer",
+                                                        fontSize: "14px",
+                                                        fontWeight: "bold",
+                                                        color: "#d9534f",
+                                                    }}
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <span style={{ color: "#777", fontSize: "13px" }}>No files selected</span>
+                                    )}
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
             </div >

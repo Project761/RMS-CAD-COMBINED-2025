@@ -27,9 +27,10 @@ const PropertyManagement = (props) => {
     const componentRefnew = useRef();
     const componentRef = useRef();
 
-    const { DecPropID, DecMPropID, DecIncID, ProCategory, } = props
+    const { DecPropID, DecMPropID, DecIncID, ProCategory, isViewEventDetails = false } = props
     const { get_Property_Count, setChangesStatus, GetDataTimeZone, datezone, } = useContext(AgencyContext);
     const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
+    const primaryOfficerID = useSelector((state) => state.DropDown.agencyOfficerDrpData)
 
     const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -619,492 +620,440 @@ const PropertyManagement = (props) => {
 
     return (
         <>
-            <div className="row">
-                <div className="col-12 col-md-12 col-lg-12 mt-2 px-0 ">
-                    <fieldset>
-                        <legend>Project Management</legend>
-                        <div className="row px-0">
-                            <div className="col-3 col-md-2 col-lg-1 pt-1">
-                                <label htmlFor="" className='new-label'>Activity Type</label>
-                            </div>
-                            <div className="col-12 col-md-4 col-lg-2  pt-1 ">
-                                <div className="form-check  ">
-                                    <input className="form-check-input" type="radio" value="CheckIn" name="AttemptComplete" checked={value?.IsCheckIn}
-                                        disabled={!rowClicked || selectedStatus === 'TransferLocation' || selectedStatus === 'Update' || selectedStatus === 'CheckIn' || selectedStatus === 'Release' || selectedStatus === 'Destroy'} id="flexRadioDefault" onChange={handleRadioChange} />
-                                    <label style={{ fontWeight: value?.IsCheckIn ? 'bold' : 'normal' }} className="form-check-label" htmlFor="flexRadioDefault">
-                                        Check In
-                                    </label>
-                                </div>
-                            </div>
-                            <div className="col-12 col-md-4 col-lg-2  pt-1 ">
-                                <div className="form-check  ">
-                                    <input className="form-check-input" type="radio" value="CheckOut" name="AttemptComplete" checked={value?.IsCheckOut}
-                                        disabled={!rowClicked || selectedStatus === 'CheckOut' || selectedStatus === null || selectedStatus === 'Release' || selectedStatus === 'Destroy'} id="flexRadioDefault1" onChange={handleRadioChange} />
-                                    <label style={{ fontWeight: value?.IsCheckOut ? 'bold' : 'normal' }} className="form-check-label" htmlFor="flexRadioDefault1">
-                                        Check Out
-                                    </label>
-                                </div>
-                            </div>
-                            <div className="col-12 col-md-4 col-lg-2  pt-1 ">
-                                <div className="form-check  ">
-                                    <input className="form-check-input" type="radio" value="Release" name="AttemptComplete" checked={value?.IsRelease}
-                                        disabled={!rowClicked || selectedStatus === 'Release' || selectedStatus === null || selectedStatus === 'Release' || selectedStatus === 'Destroy'} id="flexRadioDefault2" onChange={handleRadioChange} />
-                                    <label style={{ fontWeight: value?.IsRelease ? 'bold' : 'normal' }} className="form-check-label" htmlFor="flexRadioDefault2 ">
-                                        Release
-                                    </label>
-                                </div>
-                            </div>
-                            <div className="col-12 col-md-4 col-lg-2  pt-1 ">
-                                <div className="form-check  ">
-                                    <input className="form-check-input" type="radio" value="Destroy" name="AttemptComplete" checked={value?.IsDestroy}
-                                        disabled={!rowClicked || selectedStatus === 'Destroy' || selectedStatus === null || selectedStatus === 'Release' || selectedStatus === 'Destroy'} id="flexRadioDefault3" onChange={handleRadioChange} />
-                                    <label style={{ fontWeight: value?.IsDestroy ? 'bold' : 'normal' }} className="form-check-label" htmlFor="flexRadioDefault3">
-                                        Destroy
-                                    </label>
-                                </div>
-                            </div>
-                            <div className="col-12 col-md-4 col-lg-2  pt-1 ">
-                                <div className="form-check  ">
-                                    <input className="form-check-input" type="radio" value="TransferLocation" name="AttemptComplete" checked={value?.IsTransferLocation}
-                                        disabled={!rowClicked || selectedStatus === 'TransferLocation' || selectedStatus === null || selectedStatus === 'Release' || selectedStatus === 'Destroy'} id="flexRadioDefault4" onChange={handleRadioChange} />
-                                    <label style={{ fontWeight: value?.IsTransferLocation ? 'bold' : 'normal' }} className="form-check-label" htmlFor="flexRadioDefault4">
-                                        Transfer Location
-                                    </label>
-                                </div>
-                            </div>
-                            <div className="col-12 col-md-4 col-lg-1  pt-1 ">
-                                <div className="form-check  ">
-                                    <input className="form-check-input" type="radio" value="Update" name="AttemptComplete" checked={value?.IsUpdate}
-                                        disabled={!rowClicked || selectedStatus === 'Update' || selectedStatus === null || selectedStatus === 'Release' || selectedStatus === 'Destroy'} id="flexRadioDefault5" onChange={handleRadioChange} />
-                                    <label style={{ fontWeight: value?.IsUpdate ? 'bold' : 'normal' }} className="form-check-label" htmlFor="flexRadioDefault5">
-                                        Update
-                                    </label>
-                                </div>
-                            </div>
+            <div className="col-12">
+                <div className="row">
+                    <div className="col-4 col-md-4 col-lg-2  pt-1 pl-lg-5 ml-lg-5 pl-md-0 ml-md-0">
+                        <div className="form-check  ">
+                            <input className="form-check-input" type="radio" value="CheckIn" name="AttemptComplete"
+                                checked={value?.IsCheckIn}
+                                disabled={categoryStatus === 'CheckIn' || categoryStatus === 'Release' || categoryStatus === 'Destroy'} id="flexRadioDefault"
+                                onChange={handleRadioChange} />
+                            <label className="form-check-label" htmlFor="flexRadioDefault">
+                                Check In
+                            </label>
+                        </div>
+                    </div>
+                    <div className="col-12 col-md-4 col-lg-2  pt-1 ">
+                        <div className="form-check  ">
+                            <input className="form-check-input" type="radio" value="CheckOut" name="AttemptComplete" checked={value?.IsCheckOut}
+                                disabled={!categoryStatus || categoryStatus === 'CheckOut' || categoryStatus === null || categoryStatus === 'Release' || categoryStatus === 'Destroy'} id="flexRadioDefault1" onChange={handleRadioChange} />
+                            <label className="form-check-label" htmlFor="flexRadioDefault1">
+                                Check Out
+                            </label>
+                        </div>
+                    </div>
+                    <div className="col-12 col-md-4 col-lg-2  pt-1 ">
+                        <div className="form-check  ">
+                            <input className="form-check-input" type="radio" value="Release" name="AttemptComplete" checked={value?.IsRelease}
+                                disabled={!categoryStatus || categoryStatus === 'Release' || categoryStatus === null || categoryStatus === 'Release' || categoryStatus === 'Destroy'} id="flexRadioDefault2" onChange={handleRadioChange} />
+                            <label className="form-check-label" htmlFor="flexRadioDefault2 ">
+                                Release
+                            </label>
+                        </div>
+                    </div>
+                    <div className="col-12 col-md-4 col-lg-2  pt-1 ">
+                        <div className="form-check  ">
+                            <input className="form-check-input" type="radio" value="Destroy" name="AttemptComplete" checked={value?.IsDestroy}
+                                disabled={!categoryStatus || categoryStatus === 'Destroy' || categoryStatus === null || categoryStatus === 'Release' || categoryStatus === 'Destroy'} id="flexRadioDefault3" onChange={handleRadioChange} />
+                            <label className="form-check-label" htmlFor="flexRadioDefault3">
+                                Destroy
+                            </label>
+                        </div>
+                    </div>
+                    <div className="col-12 col-md-4 col-lg-2  pt-1 ">
+                        <div className="form-check  ">
+                            <input className="form-check-input" type="radio" value="TransferLocation" name="AttemptComplete" checked={value?.IsTransferLocation}
+                                disabled={!categoryStatus || categoryStatus === 'TransferLocation' || categoryStatus === null || categoryStatus === 'Release' || categoryStatus === 'Destroy'} id="flexRadioDefault4" onChange={handleRadioChange} />
+                            <label className="form-check-label" htmlFor="flexRadioDefault4">
+                                Transfer Location
+                            </label>
+                        </div>
+                    </div>
+                    <div className="col-12 col-md-4 col-lg-1  pt-1 ">
+                        <div className="form-check  ">
+                            <input className="form-check-input" type="radio" value="Update" name="AttemptComplete" checked={value?.IsUpdate}
+                                disabled={!categoryStatus || categoryStatus === 'Update' || categoryStatus === null || categoryStatus === 'Release' || categoryStatus === 'Destroy'} id="flexRadioDefault5" onChange={handleRadioChange} />
+                            <label className="form-check-label" htmlFor="flexRadioDefault5">
+                                Update
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
+                        <label htmlFor="" className='new-label'>Reason{errors.ReasonError !== 'true' ? (
+                            <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
+                        ) : null}</label>
+                    </div>
+                    <div className="col-3 col-md-3 col-lg-4 mt-1">
+                        <Select
+                            name='ActivityReasonID'
+                            value={reasonIdDrp?.filter((obj) => obj.value === value?.ActivityReasonID)}
+                            isClearable
+                            options={reasonIdDrp}
+                            onChange={(e) => ChangeDropDown(e, 'ActivityReasonID')}
+                            placeholder="Select..."
+                            styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
+                            isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                        />
+                    </div>
+                    <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
+                        <label htmlFor="" className='new-label'>Investigator{errors.InvestigatorError !== 'true' ? (
+                            <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.InvestigatorError}</p>
+                        ) : null}</label>
+                    </div>
+                    <div className="col-3 col-md-3 col-lg-4 mt-1">
+                        <Select
+                            name='InvestigatorID'
+                            value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.InvestigatorID)}
+                            isClearable
+                            options={agencyOfficerDrpData}
+                            onChange={(e) => ChangeDropDown(e, 'InvestigatorID')}
+                            placeholder="Select..."
+                            styles={customStylesWithOutColor}
+                            isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
 
-                            <div className="col-3 col-md-3 col-lg-1 mt-2 px-1">
-                                <label htmlFor="" className='new-label'>Reason{errors.ReasonError !== 'true' ? (
-                                    <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
-                                ) : null}</label>
-                            </div>
-                            <div className="col-3 col-md-3 col-lg-3 mt-1">
-                                <Select
-                                    name='ActivityReasonID'
-                                    value={reasonIdDrp?.filter((obj) => obj.value === value?.ActivityReasonID)}
-                                    isClearable
-                                    options={reasonIdDrp}
-                                    onChange={(e) => ChangeDropDown(e, 'ActivityReasonID')}
-                                    placeholder="Select..."
-                                    styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
-                                    isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                                />
-                            </div>
-                            <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
-                                <label htmlFor="" className='new-label'>Activity Date/Time{errors.ActivityDtTmError !== 'true' ? (
-                                    <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ActivityDtTmError}</p>
-                                ) : null}</label>
-                            </div>
-                            <div className="col-3 col-md-3 col-lg-2 ">
+                        />
+                    </div>
+                    <div className="col-3 col-md-3 col-lg-2 mt-2 px-0">
+                        <label htmlFor="" className='new-label px-0'>Property&nbsp;Room Officer{errors.PropertyError !== 'true' ? (
+                            <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.PropertyError}</p>
+                        ) : null}</label>
+                    </div>
+                    <div className="col-3 col-md-3 col-lg-4 mt-1">
+                        <Select
+                            name='OtherPersonNameID'
+                            value={arresteeNameData?.filter((obj) => obj.value === value?.OtherPersonNameID)}
+                            isClearable
+                            options={arresteeNameData}
+                            onChange={(e) => ChangeDropDown(e, 'OtherPersonNameID')}
+                            placeholder="Select..."
+                            styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
+                            isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                        />
+                    </div>
+                    <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
+                        <label htmlFor="" className='new-label'>Officer Name{errors.OfficerNameError !== 'true' ? (
+                            <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.OfficerNameError}</p>
+                        ) : null}</label>
+                    </div>
+                    <div className="col-3 col-md-3 col-lg-4 mt-1">
+                        <Select
+                            name='OfficerNameID'
+                            value={primaryOfficerID?.filter((obj) => obj.value === value?.OfficerNameID)}
+                            isClearable
+                            options={primaryOfficerID}
+                            onChange={(e) => ChangeDropDown(e, 'OfficerNameID')}
+                            placeholder="Select..."
+                            styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
+                            isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                        />
+                    </div>
+                    <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
+                        <label htmlFor="" className='new-label'>Activity Date/Time{errors.ActivityDtTmError !== 'true' ? (
+                            <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ActivityDtTmError}</p>
+                        ) : null}</label>
+                    </div>
+                    <div className="col-3 col-md-3 col-lg-4 ">
+                        {/* <DatePicker
+                                      name='ActivityDtTm'
+                                      id='ActivityDtTm'
+                                      onChange={(date) => {
+                                          if (date > new Date(datezone)) {
+                                              date = new Date(datezone);
+                                          }
+                                          setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
+          
+                                      }}
+                                      isClearable={ActivityDtTm ? true : false}
+                                      selected={ActivityDtTm}
+                                      placeholderText={ActivityDtTm ? ActivityDtTm : 'Select...'}
+                                      dateFormat="MM/dd/yyyy HH:mm"
+                                      filterTime={(date) => filterPassedTimeZone(date, datezone)}
+                                      timeInputLabel
+                                      showTimeSelect
+                                      timeIntervals={1}
+                                      timeCaption="Time"
+                                      showMonthDropdown
+                                      showYearDropdown
+                                      dropdownMode="select"
+                                      showDisabledMonthNavigation
+                                      autoComplete='off'
+                                      timeFormat="HH:mm "
+                                      is24Hour
+                                      maxDate={new Date(datezone)}
+                                      disabled={selectedOption === null || selectedOption === ''}
+                                      className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                                  /> */}
+                        <DatePicker
+                            name='ActivityDtTm'
+                            id='ActivityDtTm'
+                            selected={activityDate}
+                            onChange={(date) => {
+                                const now = new Date(datezone);
 
-                                {/* <DatePicker
-                                    name='activitydate'
-                                    id='activitydate'
-                                    onChange={(selectedDate) => {
-                                        if (!selectedDate) {
-                                            // User ne clear kiya hai
-                                            setactivitydate(null);
-                                            setValue({ ...value, ['ActivityDtTm']: null });
-                                            setChangesStatus(true);
-                                            return;
-                                        }
+                                if (!date) {
+                                    // If user clears the date
+                                    setactivitydate(null);
+                                    setValue({
+                                        ...value,
+                                        ['ActivityDtTm']: null,
+                                    });
+                                    return;
+                                }
 
-                                        const rptDate = new Date(ReportedDtTm);
-                                        const zoneDate = new Date(datezone);
+                                // If time is 00:00:00 (i.e., only date selected), set default time to datezone time
+                                let updatedDate = new Date(date);
+                                const isMidnight = date.getHours() === 0 && date.getMinutes() === 0 && date.getSeconds() === 0;
 
-                                        // Selected date ka date part lo
-                                        let currDate = new Date(selectedDate);
+                                if (isMidnight) {
+                                    updatedDate.setHours(now.getHours());
+                                    updatedDate.setMinutes(now.getMinutes());
+                                    updatedDate.setSeconds(now.getSeconds());
+                                }
 
-                                        // Current system time us date mein set karo
-                                        const now = new Date();
-                                        currDate.setHours(now.getHours());
-                                        currDate.setMinutes(now.getMinutes());
-                                        currDate.setSeconds(now.getSeconds());
-                                        currDate.setMilliseconds(now.getMilliseconds());
+                                // Prevent future date-time
+                                const finalDate = updatedDate > now ? now : updatedDate;
 
-                                        // Date validation
-                                        if (currDate.getTime() < rptDate.getTime()) {
-                                            currDate = new Date(rptDate.getTime() + 60000);
-                                        }
-                                        if (currDate.getTime() > zoneDate.getTime()) {
-                                            currDate = zoneDate;
-                                        }
+                                setactivitydate(finalDate);
+                                setValue({
+                                    ...value,
+                                    ['ActivityDtTm']: getShowingMonthDateYear(finalDate),
+                                });
+                            }}
+                            placeholderText={activityDate ? activityDate : 'Select...'}
+                            isClearable={!!activityDate}
+                            dateFormat="MM/dd/yyyy HH:mm"
+                            showTimeSelect
+                            timeInputLabel="Time"
+                            timeIntervals={1}
+                            timeCaption="Time"
+                            timeFormat="HH:mm"
+                            is24Hour
+                            maxDate={new Date(datezone)}
+                            filterTime={(date) => filterPassedTimeZone(date, datezone)}
+                            showMonthDropdown
+                            showYearDropdown
+                            dropdownMode="select"
+                            showDisabledMonthNavigation
+                            autoComplete='off'
+                            disabled={selectedOption === null || selectedOption === ''}
+                            className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                        />
+                    </div>
 
-                                        setChangesStatus(true);
-                                        setactivitydate(currDate);
-                                        setValue({ ...value, ['ActivityDtTm']: currDate ? getShowingMonthDateYear(currDate) : null });
+
+                    <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
+                        <label htmlFor="" className='new-label'>Expected Return Date{errors.ExpectedDateError !== 'true' ? (
+                            <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ExpectedDateError}</p>
+                        ) : null}</label>
+                    </div>
+                    <div className="col-3 col-md-3 col-lg-4 ">
+                        <DatePicker
+                            name='ExpectedDate'
+                            id='ExpectedDate'
+                            onKeyDown={(e) => {
+                                if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                                    e?.preventDefault();
+                                }
+                            }}
+                            onChange={(date) => {
+                                setExpecteddate(date); setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
+
+                            }}
+                            isClearable={expecteddate ? true : false}
+                            selected={expecteddate}
+                            placeholderText={expecteddate ? expecteddate : 'Select...'}
+                            dateFormat="MM/dd/yyyy"
+                            filterTime={filterPassedTime}
+                            timeIntervals={1}
+                            timeCaption="Time"
+                            showMonthDropdown
+                            showYearDropdown
+                            dropdownMode="select"
+                            showDisabledMonthNavigation
+                            autoComplete='off'
+                            maxDate={new Date(datezone)}
+                            className={value.IsCheckIn || value.IsRelease || value.IsDestroy || value.IsTransferLocation || value.IsUpdate || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
+                            disabled={value.IsCheckIn || value.IsRelease || value.IsDestroy || value.IsTransferLocation || value.IsUpdate || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+
+                        />
+                    </div>
+
+                    <div className="col-3 col-md-3 col-lg-2 mt-2 ">
+                        <label htmlFor="" className='new-label'>Location{errors.LocationError !== 'true' ? (
+                            <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.LocationError}</p>
+                        ) : null}</label>
+                    </div>
+                    <div className="col-8 col-md-8 col-lg-4 text-field mt-1">
+                        <input type="text" name="location" id="StorageLocationID" value={locationStatus ? '' : value.location} disabled className={(value.IsCheckIn || value.IsTransferLocation || value.IsRelease)
+                            ? 'requiredColor'
+                            : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
+                                ? 'readonlyColor'
+                                : ''} />
+                        {value.location ? (
+                            <span
+                                style={{
+                                    position: 'absolute',
+                                    top: '40%',
+                                    right: '10px',
+                                    transform: 'translateY(-50%)',
+                                    cursor: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'not-allowed' : 'pointer',
+                                    opacity: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 0.5 : 1,
+                                    pointerEvents: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'none' : 'auto'
+                                }}
+                                onClick={handleClickedCleared}
+                            >
+                                <i className='fa fa-times'></i>
+                            </span>
+                        ) : (null)}
+                    </div>
+                    <div className="col-1 pt-1" >
+                        <button
+                            className=" btn btn-sm bg-green text-white" data-toggle="modal" disabled={!(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) || selectedOption === null} data-target="#PropertyRoomTreeModal" style={{ cursor: 'pointer' }} onClick={() => {
+                                setlocationStatus(true);
+                            }}>
+                            <i className="fa fa-plus" > </i>
+                        </button>
+                    </div>
+                    <div className="col-3 col-md-3 col-lg-1 mt-2 ">
+                        <label htmlFor="" className='new-label'>Name{errors.NameError !== 'true' ? (
+                            <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.NameError}</p>
+                        ) : null}</label>
+                    </div>
+                    <div className='d-flex col-8 col-md-8 col-lg-4'>
+                        <div className="col-12 col-md-12 col-lg-11  mt-1">
+                            <Select
+                                name='OwnerNameID'
+                                options={mastersNameDrpData}
+                                value={mastersNameDrpData?.filter((obj) => obj.value === value?.PropertyRoomPersonNameID)}
+                                isClearable={value?.OwnerNameID ? true : false}
+                                onChange={(e) => ChangeDropDown(e, 'PropertyRoomPersonNameID')}
+                                placeholder="Select..."
+                                isDisabled={value.IsCheckIn || value.IsCheckOut || value.IsDestroy || value.IsUpdate || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                                styles={value.IsCheckIn || value.IsCheckOut || value.IsDestroy || value.IsUpdate || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
+
+                            />
+
+                        </div>
+                        <div className="col-1 pt-2" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
+                            <button disabled={value.IsCheckIn || value.IsCheckOut || value.IsDestroy || value.IsUpdate || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'} onClick={() => {
+                                if (possessionID) { GetSingleDataPassion(possessionID); } setNameModalStatus(true);
+                            }}
+                                className=" btn btn-sm bg-green text-white py-1"   >
+                                <i className="fa fa-plus" > </i>
+                            </button>
+                        </div>
+                    </div>
+                    <div className="col-3 col-md-3 col-lg-2 mt-2 ">
+                        <label htmlFor="" className='new-label'>Comments</label>
+                    </div>
+                    <div className="col-9 col-md-9 col-lg-10 text-field mt-1">
+                        <input type="text" name="ActivityComments" disabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'} className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
+                    </div>
+
+                    <div className="col-3 col-md-3 col-lg-2 mt-4 ">
+                        <label htmlFor="" className='new-label text-nowrap mb-0'>
+                            File Attachment
+                        </label>
+                    </div>
+                    <div className="col-3 col-md-3 col-lg-10 mt-2   ">
+                        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px", }}
+                        >
+                            <div style={{ display: "flex", alignItems: "center", border: "1px solid #ccc", borderRadius: "6px", background: "#f9f9f9", width: "100%" }}>
+                                <label
+                                    htmlFor="file-input"
+                                    style={{
+                                        padding: "5px 16px",
+                                        backgroundColor: "#e9e9e9",
+                                        color: "#fff",
+                                        borderRadius: "4px",
+                                        marginLeft: "4px",
+                                        marginTop: "8px",
+                                        cursor: "pointer",
+                                        fontSize: "14px",
+                                        fontWeight: "bold",
+                                        transition: "background 0.3s",
                                     }}
-
-                                    isClearable={activityDate ? true : false}
-                                    selected={activityDate}
-                                    placeholderText={activityDate ? activityDate : 'Select...'}
-                                    value={activityDate ? getShowingMonthDateYear(activityDate) : ''}
-                                    minDate={new Date(ReportedDtTm)}
-                                    maxDate={new Date(datezone)}
-                                    showTimeSelect
-                                    filterTime={(time) => filterTimeForDateZone(time, datezone)}
-                                    dateFormat="MM/dd/yyyy HH:mm"
-                                    timeIntervals={1}
-                                    timeCaption="Time"
-                                    showMonthDropdown
-                                    showYearDropdown
-                                    placeholder="Select.."
-                                    dropdownMode="select"
-                                    className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
-                                    disabled={selectedOption === null || selectedOption === ''}
-                                /> */}
-                                <DatePicker
-                                    name='ActivityDtTm'
-                                    id='ActivityDtTm'
-                                    selected={activityDate}
-                                    onChange={(date) => {
-                                        const now = new Date(datezone);
-
-                                        if (!date) {
-                                            // If user clears the date
-                                            setactivitydate(null);
-                                            setValue({
-                                                ...value,
-                                                ['ActivityDtTm']: null,
-                                            });
-                                            return;
-                                        }
-
-                                        // If time is 00:00:00 (i.e., only date selected), set default time to datezone time
-                                        let updatedDate = new Date(date);
-                                        const isMidnight = date.getHours() === 0 && date.getMinutes() === 0 && date.getSeconds() === 0;
-
-                                        if (isMidnight) {
-                                            updatedDate.setHours(now.getHours());
-                                            updatedDate.setMinutes(now.getMinutes());
-                                            updatedDate.setSeconds(now.getSeconds());
-                                        }
-
-                                        // Prevent future date-time
-                                        const finalDate = updatedDate > now ? now : updatedDate;
-
-                                        setactivitydate(finalDate);
-                                        setValue({
-                                            ...value,
-                                            ['ActivityDtTm']: getShowingMonthDateYear(finalDate),
-                                        });
+                                    onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                    onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                >
+                                    Choose File
+                                </label>
+                                <input
+                                    type="file"
+                                    onChange={handleFileChange}
+                                    ref={fileInputRef}
+                                    multiple
+                                    style={{ display: "none" }}
+                                    id="file-input"
+                                />
+                                <div
+                                    style={{
+                                        borderRadius: "4px",
+                                        display: "flex",
+                                        flexWrap: "wrap",
+                                        minHeight: "38px",
+                                        flex: "1",
+                                        alignItems: "center",
+                                        gap: "6px",
+                                        marginLeft: "12px",
+                                        backgroundColor: "#fff",
                                     }}
-                                    placeholderText={activityDate ? activityDate : 'Select...'}
-                                    isClearable={!!activityDate}
-                                    dateFormat="MM/dd/yyyy HH:mm"
-                                    showTimeSelect
-                                    timeInputLabel="Time"
-                                    timeIntervals={1}
-                                    timeCaption="Time"
-                                    timeFormat="HH:mm"
-                                    is24Hour
-                                    maxDate={new Date(datezone)}
-                                    filterTime={(date) => filterPassedTimeZone(date, datezone)}
-                                    showMonthDropdown
-                                    showYearDropdown
-                                    dropdownMode="select"
-                                    showDisabledMonthNavigation
-                                    autoComplete='off'
-                                    disabled={selectedOption === null || selectedOption === ''}
-                                    className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
-                                />
-
-
-                            </div>
-                            <div className="col-3 col-md-3 col-lg-1 mt-2 px-1">
-                                <label htmlFor="" className='new-label'>Investigator{errors.InvestigatorError !== 'true' ? (
-                                    <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.InvestigatorError}</p>
-                                ) : null}</label>
-                            </div>
-                            <div className="col-3 col-md-3 col-lg-3 mt-1">
-                                <Select
-                                    name='InvestigatorID'
-                                    value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.InvestigatorID)}
-                                    isClearable
-                                    options={agencyOfficerDrpData}
-                                    onChange={(e) => ChangeDropDown(e, 'InvestigatorID')}
-                                    placeholder="Select..."
-                                    isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-
-                                />
-                            </div>
-                            <div className="col-3 col-md-3 col-lg-1 mt-2">
-                                <label htmlFor="" className='new-label'>Property&nbsp;Room Officer{errors.PropertyError !== 'true' ? (
-                                    <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.PropertyError}</p>
-                                ) : null}</label>
-                            </div>
-                            <div className="col-3 col-md-3 col-lg-3 mt-1">
-                                <Select
-                                    name='OtherPersonNameID'
-                                    value={arresteeNameData?.filter((obj) => obj.value === value?.OtherPersonNameID)}
-                                    isClearable
-                                    options={arresteeNameData}
-                                    onChange={(e) => ChangeDropDown(e, 'OtherPersonNameID')}
-                                    placeholder="Select..."
-                                    styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
-                                    isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                                />
-                            </div>
-                            <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
-                                <label htmlFor="" className='new-label'>Expected Return Date{errors.ExpectedDateError !== 'true' ? (
-                                    <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ExpectedDateError}</p>
-                                ) : null}</label>
-                            </div>
-                            <div className="col-3 col-md-3 col-lg-2 ">
-                                <DatePicker
-                                    name='ExpectedDate'
-                                    id='ExpectedDate'
-                                    onKeyDown={(e) => {
-                                        if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
-                                            e?.preventDefault();
-                                        }
-                                    }}
-                                    onChange={(date) => {
-                                        setChangesStatus(true);
-                                        setExpecteddate(date); setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
-
-                                    }}
-                                    isClearable={expecteddate ? true : false}
-                                    selected={expecteddate}
-                                    placeholderText={expecteddate ? expecteddate : 'Select...'}
-                                    dateFormat="MM/dd/yyyy"
-                                    filterTime={filterPassedTime}
-                                    timeIntervals={1}
-                                    timeCaption="Time"
-                                    showMonthDropdown
-                                    showYearDropdown
-                                    dropdownMode="select"
-                                    showDisabledMonthNavigation
-                                    autoComplete='off'
-                                    className={value.IsCheckIn || value.IsRelease || value.IsDestroy || value.IsTransferLocation || value.IsUpdate || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
-                                    disabled={value.IsCheckIn || value.IsRelease || value.IsDestroy || value.IsTransferLocation || value.IsUpdate || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-
-                                />
-                            </div>
-
-
-
-                            <div className="col-3 col-md-3 col-lg-1 mt-2 px-1">
-                                <label htmlFor="" className='new-label'>Officer Name{errors.OfficerNameError !== 'true' ? (
-                                    <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.OfficerNameError}</p>
-                                ) : null}</label>
-                            </div>
-                            <div className="col-3 col-md-3 col-lg-3 mt-1">
-                                <Select
-                                    name='OfficerNameID'
-                                    value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.OfficerNameID)}
-                                    isClearable
-                                    options={agencyOfficerDrpData}
-                                    onChange={(e) => ChangeDropDown(e, 'OfficerNameID')}
-                                    placeholder="Select..."
-                                    styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
-                                    isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                                />
-                            </div>
-                            <div className="col-3 col-md-3 col-lg-1 mt-2 px-1">
-                                <label htmlFor="" className='new-label'>Evidence Type</label>
-                            </div>
-                            <div className="col-3 col-md-3 col-lg-3 mt-1">
-                                <div className="col-9 col-md-9 col-lg-4 text-field mt-1">
-                                    <input type="text" name="EvidenceType" disabled={!rowClicked} className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.EvidenceType} onChange={(e) => { handleChange(e) }} />
+                                >
+                                    {selectedFiles.length > 0 ? (
+                                        selectedFiles.map((file, index) => (
+                                            <div
+                                                key={index}
+                                                style={{
+                                                    display: "inline-flex",
+                                                    alignItems: "center",
+                                                    backgroundColor: "#e9ecef",
+                                                    padding: "4px 10px",
+                                                    borderRadius: "4px",
+                                                    margin: "4px",
+                                                    fontSize: "13px",
+                                                    fontWeight: "500",
+                                                }}
+                                            >
+                                                <span>{file.name}</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeFile(index)}
+                                                    style={{
+                                                        marginLeft: "6px",
+                                                        border: "none",
+                                                        background: "none",
+                                                        cursor: "pointer",
+                                                        fontSize: "14px",
+                                                        fontWeight: "bold",
+                                                        color: "#d9534f",
+                                                    }}
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <span style={{ color: "#777", fontSize: "13px" }}>No files selected</span>
+                                    )}
                                 </div>
-                            </div>
-                            <div className="col-3 col-md-3 col-lg-1 mt-2 ">
-                                <label htmlFor="" className='new-label'>Location{errors.LocationError !== 'true' ? (
-                                    <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.LocationError}</p>
-                                ) : null}</label>
-                            </div>
-                            <div className="col-4 col-md-8 col-lg-6 text-field mt-1">
-                                <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} disabled className={(value.IsCheckIn || value.IsTransferLocation || value.IsRelease)
-                                    ? 'requiredColor'
-                                    : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
-                                        ? 'readonlyColor'
-                                        : ''} />
-
-                                {value.location ? (
-                                    <span style={{
-                                        position: 'absolute',
-                                        top: '40%',
-                                        right: '10px',
-                                        transform: 'translateY(-50%)',
-                                        cursor: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'not-allowed' : 'pointer',
-                                        opacity: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 0.5 : 1,
-                                        pointerEvents: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'none' : 'auto'
-                                    }} className='select-cancel' onClick={handleClickedCleared}>
-                                        <i className='fa fa-times'></i>
-                                    </span>
-                                ) : (null)}
-                            </div>
-                            <div className="col-1 pt-1" >
-                                <button disabled={!(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) || selectedOption === null}
-                                    className=" btn btn-sm bg-green text-white" data-toggle="modal" data-target="#PropertyRoomTreeModal" style={{ cursor: 'pointer' }} onClick={() => {
-                                        setlocationStatus(true);
-                                    }}>
-                                    <i className="fa fa-plus" > </i>
-                                </button>
-                            </div>
-                            <div className="col-3 col-md-3 col-lg-1 mt-2 ">
-                                <label htmlFor="" className='new-label'>Name{errors.NameError !== 'true' ? (
-                                    <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.NameError}</p>
-                                ) : null}</label>
-                            </div>
-                            <div className='d-flex col-3 col-md-8 col-lg-3'>
-                                <div className="col-4 col-md-12 col-lg-11  mt-1">
-                                    <Select
-                                        name='OwnerNameID'
-                                        options={mastersNameDrpData}
-                                        value={mastersNameDrpData?.filter((obj) => obj.value === value?.PropertyRoomPersonNameID)}
-                                        isClearable={value?.OwnerNameID ? true : false}
-                                        onChange={(e) => ChangeDropDown(e, 'PropertyRoomPersonNameID')}
-                                        placeholder="Select..."
-                                        isDisabled={value.IsCheckIn || value.IsCheckOut || value.IsDestroy || value.IsUpdate || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                                        styles={value.IsCheckIn || value.IsCheckOut || value.IsDestroy || value.IsUpdate || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
-
-                                    />
-
-                                </div>
-                                <div className="col-1 pt-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
-                                    <button disabled={!rowClicked || selectedOption === null} onClick={() => {
-                                        if (possessionID) { GetSingleDataPassion(possessionID); } setNameModalStatus(true);
-                                    }}
-                                        className=" btn btn-sm bg-green text-white py-1"   >
-                                        <i className="fa fa-plus" > </i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="col-3 col-md-3 col-lg-1 mt-2 ">
-                                <label htmlFor="" className='new-label'>Comments</label>
-                            </div>
-                            <div className="col-9 col-md-9 col-lg-6 text-field mt-1">
-                                <input type="text" name="ActivityComments" disabled={!rowClicked} className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
-                            </div>
-                            <div className='col-12 col-md-12 col-lg-12 mt-2'>
-                                <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px", fontFamily: "Arial, sans-serif" }}>
-                                    <label htmlFor="" className='new-label text-nowrap'>
-                                        File Attachment
-                                    </label>
-
-                                    <div style={{ display: "flex", alignItems: "center", border: "1px solid #ccc", padding: "8px", borderRadius: "6px", background: "#f9f9f9", width: "100%" }}>
-                                        <label
-                                            htmlFor="file-input"
-                                            style={{
-                                                padding: "8px 16px",
-                                                backgroundColor: "#e9e9e9",
-                                                color: "#fff",
-                                                borderRadius: "4px",
-                                                cursor: "pointer",
-                                                fontSize: "14px",
-                                                fontWeight: "bold",
-                                                transition: "background 0.3s",
-                                            }}
-                                            onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
-                                            onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
-                                        >
-                                            Choose File
-                                        </label>
-                                        <input
-                                            type="file"
-                                            onChange={handleFileChange}
-                                            ref={fileInputRef}
-                                            multiple
-                                            style={{ display: "none" }}
-                                            id="file-input"
-                                        />
-                                        <div
-                                            style={{
-
-                                                borderRadius: "4px",
-                                                display: "flex",
-                                                flexWrap: "wrap",
-                                                minHeight: "38px",
-                                                flex: "1",
-                                                alignItems: "center",
-                                                gap: "6px",
-                                                marginLeft: "12px",
-                                                backgroundColor: "#fff",
-                                            }}
-                                        >
-                                            {selectedFiles.length > 0 ? (
-                                                selectedFiles.map((file, index) => (
-                                                    <div
-                                                        key={index}
-                                                        style={{
-                                                            display: "inline-flex",
-                                                            alignItems: "center",
-                                                            backgroundColor: "#e9ecef",
-                                                            padding: "4px 10px",
-                                                            borderRadius: "4px",
-                                                            margin: "4px",
-                                                            fontSize: "13px",
-                                                            fontWeight: "500",
-                                                        }}
-                                                    >
-                                                        <span>{file.name}</span>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => removeFile(index)}
-                                                            style={{
-                                                                marginLeft: "6px",
-                                                                border: "none",
-                                                                background: "none",
-                                                                cursor: "pointer",
-                                                                fontSize: "14px",
-                                                                fontWeight: "bold",
-                                                                color: "#d9534f",
-                                                            }}
-                                                        >
-                                                            ×
-                                                        </button>
-                                                    </div>
-                                                ))
-                                            ) : (
-                                                <span style={{ color: "#777", fontSize: "13px" }}>No files selected</span>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                            </div>
-
-                            <div className="col-3 col-md-3 col-lg-1 mt-2  ">
-                                <label htmlFor="" className='new-label text-nowrap ml-1'>Packaging Details</label>
-                            </div>
-                            <div className="col-9 col-md-9 col-lg-4 text-field mt-1">
-                                <input type="text" name="PackagingDetails" disabled={!rowClicked} className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.PackagingDetails} onChange={(e) => { handleChange(e) }} />
-                            </div>
-                            <div className='col-lg-2'></div>
-                            <div className="col-3 col-md-3 col-lg-1 mt-2 px-0">
-                                <label htmlFor="" className='new-label px-0'>Misc&nbsp;Description</label>
                             </div>
 
                         </div>
-
-                    </fieldset>
+                    </div>
                 </div>
-
-
-            </div>
-
-            <div className="col-12 col-md-12 col-lg-12 pt-2 px-0 " >
+            </div >
+            <div className="col-12 col-md-12 col-lg-12 pt-2 px-0" >
                 <fieldset>
                     <legend>Schedule</legend>
                     <div className="row px-0">
-                        <div className="col-3 col-md-3 col-lg-1 mt-2 ">
+                        <div className="col-3 col-md-3 col-lg-2 mt-2 ">
                             <label htmlFor="" className='new-label'>Court Date{errors.CourtDateError !== 'true' ? (
                                 <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.CourtDateError}</p>
                             ) : null}</label>
                         </div>
-                        <div className="col-3 col-md-3 col-lg-3 px-0">
+                        <div className="col-3 col-md-3 col-lg-2 px-0">
                             <DatePicker
                                 name='CourtDate'
                                 id='CourtDate'
@@ -1115,7 +1064,6 @@ const PropertyManagement = (props) => {
                                 }}
                                 onChange={(date) => {
                                     setCourtdate(date);
-                                    setChangesStatus(true);
                                     setValue({
                                         ...value,
                                         ['CourtDate']: date ? getShowingMonthDateYear(date) : null,
@@ -1133,7 +1081,6 @@ const PropertyManagement = (props) => {
                                 placeholderText={courtdate ? courtdate : 'Select...'}
                                 dateFormat="MM/dd/yyyy"
                                 filterTime={filterPassedTime}
-
                                 timeIntervals={1}
                                 timeCaption="Time"
                                 showMonthDropdown
@@ -1143,14 +1090,12 @@ const PropertyManagement = (props) => {
                                 autoComplete='off'
                                 minDate={new Date()}
                                 maxDate={value.ReleaseDate ? new Date(value?.ReleaseDate) : ''}
-
-
                                 disabled={value.IsCheckOut || value.IsDestroy || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                                 className={value.IsCheckOut || value.IsDestroy || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
 
                             />
                         </div>
-                        <div className="col-3 col-md-3 col-lg-1 mt-2 px-1">
+                        <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
                             <label htmlFor="" className='new-label'>Release Date{errors.ReleaseDateError !== 'true' ? (
                                 <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReleaseDateError}</p>
                             ) : null}</label>
@@ -1165,7 +1110,6 @@ const PropertyManagement = (props) => {
                                     }
                                 }}
                                 onChange={(date) => {
-                                    setChangesStatus(true);
                                     setreleasedate(date); setValue({ ...value, ['ReleaseDate']: date ? getShowingMonthDateYear(date) : null, });
 
                                 }}
@@ -1174,7 +1118,6 @@ const PropertyManagement = (props) => {
                                 placeholderText={releasedate ? releasedate : 'Select...'}
                                 dateFormat="MM/dd/yyyy"
                                 filterTime={filterPassedTime}
-
                                 timeIntervals={1}
                                 timeCaption="Time"
                                 showMonthDropdown
@@ -1193,7 +1136,7 @@ const PropertyManagement = (props) => {
                                 <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.DestroyDateError}</p>
                             ) : null}</label>
                         </div>
-                        <div className="col-3 col-md-3 col-lg-4 ">
+                        <div className="col-3 col-md-3 col-lg-3 ">
                             <DatePicker
                                 name='DestroyDate'
                                 id='DestroyDate'
@@ -1203,7 +1146,6 @@ const PropertyManagement = (props) => {
                                     }
                                 }}
                                 onChange={(date) => {
-                                    setChangesStatus(true);
                                     setdestroydate(date);
                                     setValue({
                                         ...value,
@@ -1215,7 +1157,6 @@ const PropertyManagement = (props) => {
                                 placeholderText={destroydate ? destroydate : 'Select...'}
                                 dateFormat="MM/dd/yyyy"
                                 filterTime={filterPassedTime}
-
                                 timeIntervals={1}
                                 timeCaption="Time"
                                 showMonthDropdown
@@ -1229,69 +1170,46 @@ const PropertyManagement = (props) => {
 
                             />
                         </div>
-                    </div >
-                </fieldset>
-            </div>
 
-            <div className="div float-right">
-                <div className=" col-12  mt-2 btn-box" >
-                    <div className="row propertyroom-button">
-                        <div className='mr-1 mt-1 ' style={{ width: '150px' }}>
-                            <Select
-                                name='Investigator'
-                                styles={customStylesWithOutColor}
-                                isClearable
-                                placeholder="Export..."
-                                menuPlacement='top'
-                            />
-                        </div>
-                        <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1">
-                            Email Report
-                        </button>
-                        <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1">
-                            Print Barcode
-                        </button>
-                        <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={GetChainCustodyReport} disabled={!selectedStatus}>
-                            Chain Of Custody Report
-                        </button>
-                        <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={printForm} disabled={selectedStatus !== 'Release'}>
-                            Display Property Released Receipt
-                        </button>
-                        <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1">
-                            Export
-                        </button>
-
-                        {
-                            effectiveScreenPermission ?
-                                effectiveScreenPermission[0]?.AddOK ?
+                        {!isViewEventDetails && <div className="col-12 mt-5 btn-box text-right" >
+                            <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={GetChainCustodyReport} disabled={!categoryStatus}>
+                                Chain Of Custody Report
+                            </button>
+                            <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={printForm} disabled={categoryStatus !== 'Release'}>
+                                Display Property Released Receipt
+                            </button>
+                            {
+                                effectiveScreenPermission ?
+                                    effectiveScreenPermission[0]?.AddOK ?
+                                        <button
+                                            disabled={!selectedOption}
+                                            type="button"
+                                            className="btn btn-sm btn-success mr-2 mb-2 mt-1"
+                                            onClick={(e) => { check_Validation_Error(); }}
+                                        >
+                                            Save
+                                        </button>
+                                        :
+                                        <></>
+                                    :
                                     <button
                                         type="button"
                                         className="btn btn-sm btn-success mr-2 mb-2 mt-1"
-                                        onClick={(e) => {
-                                            check_Validation_Error();
-                                        }}
+                                        onClick={(e) => { check_Validation_Error(); }}
                                     >
                                         Save
                                     </button>
-                                    :
-                                    <></>
-                                :
-                                <button
-                                    type="button"
-                                    className="btn btn-sm btn-success mr-2 mb-2 mt-1"
-                                    onClick={(e) => {
-                                        check_Validation_Error();
-                                    }}
-                                >
-                                    Save
-                                </button>
+                            }
+                            {/* <button disabled={!selectedOption} type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={(e) => { check_Validation_Error(); }}>
+                                          Save
+                                      </button> */}
+                            <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={() => { setStatusFalse(); conditionalRowStyles(''); }}>
+                                Clear
+                            </button>
+                        </div>
                         }
-
-                        <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={() => { setStatusFalse(); }}>
-                            Clear
-                        </button>
-                    </div>
-                </div>
+                    </div >
+                </fieldset>
             </div>
             <TreeModel {...{ proRoom, locationStatus, setlocationStatus, locationPath, setfunctiondone, setLocationPath, setSearchStoragePath, searchStoStatus, setSearchStoStatus, setStorageLocationID, value, setValue, setPropertyNumber }} />
 
