@@ -72,6 +72,7 @@ const Home = (props) => {
     const [possessionID, setPossessionID] = useState('');
     // checkbox states
     const [selectedOption, setSelectedOption] = useState(null);
+    const [selectedOptionInternal, setselectedOptionInternal] = useState(null);
     const [selectedStatus, setSelectedStatus] = useState('');
     // functionality states
     const [propertyNumber, setPropertyNumber] = useState('');
@@ -247,7 +248,7 @@ const Home = (props) => {
         const ExpectedReturnDateTimeError = value.IsCheckOut ? RequiredFieldIncident(value.ExpectedDate) : 'true';
         const ReleasingOfficerError = (value.IsRelease || value.IsCheckOut) ? RequiredFieldIncident(value.ReleasingOfficerID) : 'true';
         const ReceipientError = value.IsRelease ? RequiredFieldIncident(value.OfficerNameID) : 'true';
-        const ReleasedDateTimeError = value.IsRelease ? RequiredFieldIncident(value.activitydate) : 'true';
+        const ReleasedDateTimeError = value.IsRelease ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
         // const DestructionDateTimeError = value.IsDestroy ? RequiredFieldIncident(value.DestroyDate) : 'true';
         const DestructionDateTimeError = 'true';
         const DestructionOfficerError = value.IsDestroy ? RequiredFieldIncident(value.DestructionOfficerID) : 'true';
@@ -1058,6 +1059,18 @@ const Home = (props) => {
             get_Group_List(loginAgencyID);
         }
     }, [loginAgencyID]);
+
+    const handleRadioChangeInner = (event) => {
+        const selectedOption = event.target.value;
+        setselectedOptionInternal(selectedOption);
+
+        // Set the specific state values based on the selected option
+        setValue(prevState => ({
+            ...prevState,
+            Internal: selectedOption === 'Internal',
+            External: selectedOption === 'External',
+        }));
+    };
 
     return (
         <>
@@ -3548,8 +3561,16 @@ const Home = (props) => {
                             <div className="col-12 col-md-4 col-lg-2  "></div>
                             <div className="col-12 col-md-4 col-lg-2">
                                 <div className="form-check">
-                                    <input className="form-check-input" type="radio" value="CheckIn" name="AttemptComplete" checked={value?.IsCheckIn}
-                                        id="flexRadioDefault" onChange={handleRadioChange} />
+
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        value="Internal"
+                                        // name="AttemptComplete"
+                                        checked={value?.Internal}
+                                        // id="flexRadioDefault"
+                                        onChange={handleRadioChangeInner}
+                                    />
                                     <label style={{ fontWeight: value?.IsCheckIn ? 'bold' : 'normal' }} className="form-check-label" htmlFor="flexRadioDefault">
                                         Internal Transfer
                                     </label>
@@ -3557,8 +3578,15 @@ const Home = (props) => {
                             </div>
                             <div className="col-12 col-md-4 col-lg-2">
                                 <div className="form-check">
-                                    <input className="form-check-input" type="radio" value="CheckOut" name="AttemptComplete" checked={value?.IsCheckOut}
-                                        id="flexRadioDefault1" onChange={handleRadioChange} />
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        value="External"
+                                        // name="AttemptComplete"
+                                        checked={value?.External}
+                                        // id="flexRadioDefault1"
+                                        onChange={handleRadioChangeInner}
+                                    />
                                     <label style={{ fontWeight: value?.IsCheckOut ? 'bold' : 'normal' }} className="form-check-label" htmlFor="flexRadioDefault1">
                                         External Transfer
                                     </label>
@@ -3656,64 +3684,70 @@ const Home = (props) => {
                                     isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                                 />
                             </div>
-                            <div className="col-3 col-md-3 col-lg-2">
-                                <label htmlFor="" className='new-label mb-0'>Receiving Officer{errors.PropertyRoomOfficerError !== 'true' ? (
-                                    <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.PropertyRoomOfficerError}</p>
-                                ) : null}</label>
-                            </div>
-                            <div className="col-3 col-md-3 col-lg-2 ">
-                                <Select
-                                    name='"OfficerNameID"'
-                                    value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.OfficerNameID)}
-                                    isClearable
-                                    options={agencyOfficerDrpData}
-                                    onChange={(e) => ChangeDropDown(e, 'OfficerNameID')}
-                                    placeholder="Select..."
-                                    styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
-                                    isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                                />
-                            </div>
-                            <div className="col-3 col-md-3 col-lg-2">
-                                <label htmlFor="" className='new-label mb-0'>Mode of Transport</label>
-                            </div>
-                            <div className="col-9 col-md-9 col-lg-2 text-field mt-0">
-                                <input type="text" name="ActivityComments"
-                                    className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
-                            </div>
-                            <div className="col-3 col-md-3 col-lg-2 ">
-                                <label htmlFor="" className='new-label mb-0'>Expected Arrival Date/Time{errors.ExpectedReturnDateTimeError !== 'true' ? (
-                                    <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ExpectedReturnDateTimeError}</p>
-                                ) : null}</label>
-                            </div>
-                            <div className="col-3 col-md-3 col-lg-2 ">
-                                <DatePicker
-                                    name='ExpectedDate'
-                                    id='ExpectedDate'
-                                    onChange={(date) => {
-                                        setExpecteddate(date); setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
+                            {
+                                value.External ?
+                                    <>
+                                        <div className="col-3 col-md-3 col-lg-2">
+                                            <label htmlFor="" className='new-label mb-0'>Receiving Officer{errors.PropertyRoomOfficerError !== 'true' ? (
+                                                <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.PropertyRoomOfficerError}</p>
+                                            ) : null}</label>
+                                        </div>
+                                        <div className="col-3 col-md-3 col-lg-2 ">
+                                            <Select
+                                                name='"OfficerNameID"'
+                                                value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.OfficerNameID)}
+                                                isClearable
+                                                options={agencyOfficerDrpData}
+                                                onChange={(e) => ChangeDropDown(e, 'OfficerNameID')}
+                                                placeholder="Select..."
+                                                styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                                                isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                                            />
+                                        </div>
+                                        <div className="col-3 col-md-3 col-lg-2">
+                                            <label htmlFor="" className='new-label mb-0'>Mode of Transport</label>
+                                        </div>
+                                        <div className="col-9 col-md-9 col-lg-2 text-field mt-0">
+                                            <input type="text" name="ActivityComments"
+                                                className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
+                                        </div>
+                                        <div className="col-3 col-md-3 col-lg-2 ">
+                                            <label htmlFor="" className='new-label mb-0'>Expected Arrival Date/Time{errors.ExpectedReturnDateTimeError !== 'true' ? (
+                                                <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ExpectedReturnDateTimeError}</p>
+                                            ) : null}</label>
+                                        </div>
+                                        <div className="col-3 col-md-3 col-lg-2 ">
+                                            <DatePicker
+                                                name='ExpectedDate'
+                                                id='ExpectedDate'
+                                                onChange={(date) => {
+                                                    setExpecteddate(date); setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
 
-                                    }}
-                                    isClearable={expecteddate ? true : false}
-                                    selected={expecteddate}
-                                    placeholderText={expecteddate ? expecteddate : 'Select...'}
-                                    dateFormat="MM/dd/yyyy HH:mm"
-                                    timeFormat="HH:mm "
-                                    is24Hour
-                                    timeInputLabel
-                                    showTimeSelect
-                                    timeIntervals={1}
-                                    timeCaption="Time"
-                                    showMonthDropdown
-                                    showYearDropdown
-                                    dropdownMode="select"
-                                    showDisabledMonthNavigation
-                                    autoComplete='off'
-                                    maxDate={new Date(datezone)}
-                                    disabled={selectedOption === null || selectedOption === ''}
-                                    className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
-                                />
+                                                }}
+                                                isClearable={expecteddate ? true : false}
+                                                selected={expecteddate}
+                                                placeholderText={expecteddate ? expecteddate : 'Select...'}
+                                                dateFormat="MM/dd/yyyy HH:mm"
+                                                timeFormat="HH:mm "
+                                                is24Hour
+                                                timeInputLabel
+                                                showTimeSelect
+                                                timeIntervals={1}
+                                                timeCaption="Time"
+                                                showMonthDropdown
+                                                showYearDropdown
+                                                dropdownMode="select"
+                                                showDisabledMonthNavigation
+                                                autoComplete='off'
+                                                maxDate={new Date(datezone)}
+                                                disabled={selectedOption === null || selectedOption === ''}
+                                                className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                                            />
 
-                            </div>
+                                        </div>
+                                    </> : <></>
+                            }
+
 
 
                             <div className='col-3 col-md-3 col-lg-8'></div>
