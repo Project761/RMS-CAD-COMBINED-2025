@@ -636,7 +636,7 @@ const VehicleManagement = (props) => {
                     </div>
                 </div>
                 <div className="div ">
-                    {selectedOption === "CheckIn" && <div className='row align-items-center' style={{ rowGap: "8px" }}>
+                    {(selectedOption !== "CheckOut" && selectedOption !== "Release" && selectedOption !== "Destroy" && selectedOption !== "TransferLocation" && selectedOption !== "Update") && <div className='row align-items-center' style={{ rowGap: "8px" }}>
                         <div className="col-3 col-md-3 col-lg-2">
                             <label htmlFor="" className='new-label mb-0'>Reason{errors.ReasonError !== 'true' ? (
                                 <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
