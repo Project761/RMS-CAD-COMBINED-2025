@@ -125,7 +125,7 @@ const NameSearch = ({ isCAD = false }) => {
 
         {
             width: '150px',
-            name: 'Agency Name',
+            name: 'Agency Code',
             selector: (row) => <>{row?.Agency_Code  ? row?.Agency_Code .substring(0, 10) : ''}{row?.Agency_Code ?.length > 20 ? '  . . .' : null} </>,
             sortable: true
         },

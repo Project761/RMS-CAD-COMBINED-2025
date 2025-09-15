@@ -122,7 +122,7 @@ const VehicleSearch = ({ isCAD = false }) => {
         },
 
         {
-            name: 'Agency Name',
+            name: 'Agency Code',
             selector: (row) => row.Agency_Code,
             sortable: true
         },

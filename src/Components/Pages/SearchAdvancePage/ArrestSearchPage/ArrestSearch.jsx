@@ -103,7 +103,7 @@ const ArrestSearch = () => {
         </span>
     },
     {
-      name: 'Agency Name',
+      name: 'Agency Code',
       selector: (row) => (
         <span title={row?.Agency_Code}>
           {row?.Agency_Code ? row?.Agency_Code.substring(0, 20) : ''}

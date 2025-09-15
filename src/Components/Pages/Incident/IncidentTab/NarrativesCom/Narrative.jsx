@@ -59,7 +59,7 @@ const Narrative = (props) => {
   const reportApproveOfficer = useSelector((state) => state.Incident.reportApproveOfficer);
   const narrativeTypeDrpData = useSelector((state) => state.DropDown.narrativeTypeDrpData);
 
-  const { get_IncidentTab_Count, setChangesStatus, nibrsStatus, GetDataTimeZone, datezone, setassignedReportID } = useContext(AgencyContext);
+  const { get_IncidentTab_Count, changesStatus, setChangesStatus, nibrsStatus, GetDataTimeZone, datezone, setassignedReportID } = useContext(AgencyContext);
 
   const [narrativeData, setNarrativeData] = useState([]);
   const [upDateCount, setUpDateCount] = useState(0);
@@ -653,11 +653,18 @@ const Narrative = (props) => {
   ]
 
   const editNarratives = (row) => {
-    if (row) {
-      setNarrativeID(row?.NarrativeID);
-      GetSingleData(row?.NarrativeID);
-      setUpDateCount(upDateCount + 1);
-      setStatus(true); setErrors({ ...errors, 'ReportedByPinError': '', 'AsOfDateError': '', 'NarrativeIDError': '', 'CommentsError': '', 'WrittenForIDError': '', }); setStatesChangeStatus(false);
+    if (changesStatus) {
+      const modal = new window.bootstrap.Modal(document?.getElementById('SaveModal'));
+      modal?.show();
+
+    } else {
+      if (row) {
+        setNarrativeID(row?.NarrativeID);
+        GetSingleData(row?.NarrativeID);
+        setUpDateCount(upDateCount + 1);
+        setStatus(true);
+        setErrors({ ...errors, 'ReportedByPinError': '', 'AsOfDateError': '', 'NarrativeIDError': '', 'CommentsError': '', 'WrittenForIDError': '', }); setStatesChangeStatus(false);
+      }
     }
   }
 

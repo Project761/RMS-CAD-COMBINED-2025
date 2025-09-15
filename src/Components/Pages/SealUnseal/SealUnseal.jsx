@@ -407,8 +407,10 @@ const SealUnseal = () => {
             ),
             width: "120px",
         },
-        { name: 'Charge Code', selector: row => row?.ChargeCode_Description, sortable: true },
-        { name: 'Charge Description', selector: row => row?.NIBRS_Description, sortable: true },
+        // { name: 'Charge Code', selector: row => row?.ChargeCode_Description, sortable: true },
+        // { name: 'Charge Description', selector: row => row?.NIBRS_Description, sortable: true },
+        { name: 'TIBRS Code', selector: row => row?.ChargeCode_Description, sortable: true },
+        { name: 'Offense Code', selector: row => row?.NIBRS_Description, sortable: true },
         { name: 'Event Number', selector: row => row?.ArrestNumber, sortable: true },
         {
             width: '200px', name: 'Date/Time Of Seal',

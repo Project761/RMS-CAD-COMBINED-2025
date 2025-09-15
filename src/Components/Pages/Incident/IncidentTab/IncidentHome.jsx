@@ -420,7 +420,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
         const CrimeLocationErr = onSelectLocation ? 'Select Location' : Space_AllowInc(value.CrimeLocation);
         const ReportedDateErr = RequiredFieldIncident(value.ReportedDate);
         const NIBRSClearanceIDErr = RequiredFieldIncident(value.NIBRSClearanceID);
-        const NIBRSclearancedateErrorErr = RequiredFieldIncident(value.NIBRSclearancedate);
+        const NIBRSclearancedateErrorErr = value?.NIBRSClearanceID && exClsDateCode !== "N" ? RequiredFieldIncident(value.NIBRSclearancedate) : "true";
         const CargoTheftErrorErr = carboTheft ? RequiredFieldIncidentCarboTheft(value.IsCargoTheftInvolved) : "true";
         const OffenceTypeErr = RequiredFieldIncident(value?.OffenseTypeID);
         const PrimaryOfficerIDErr = RequiredFieldIncident(value?.PrimaryOfficerID);
@@ -1224,7 +1224,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
 
   const handleCaseStatus = (e, name) => {
     !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-    console.log("🚀 ~ handleCaseStatus ~ e:", e)
+
     if (e) {
       setValue({ ...value, [name]: e.value, NIBRSStatus: e.label, CaseStatusCode: e.id });
     }
@@ -1235,6 +1235,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
 
   const isValidZone = (zone) => zone && Object.keys(zone).length > 0;
   const isVerifyLocation = geoFormValues.isVerify && isValidZone(geoFormValues.patrolZone) && isValidZone(geoFormValues.emsZone) && isValidZone(geoFormValues.fireZone) && isValidZone(geoFormValues.otherZone);
+
 
 
   return loder ? (
@@ -2107,12 +2108,20 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
             <DatePicker
               name="NIBRSclearancedate"
               id="NIBRSclearancedate"
-              className={
-                nibrsSubmittedIncident === 1 && incidentID ? "readonlyColor" : clsDrpCode === "01" ? value?.NIBRSclearancedate ? "nibrsSuccessColor"
-                  : "nibrsColor" : "readonlyColor"
-              }
-              // className={nibrsSubmittedIncident === 1 ? "LockFildsColor" : incidentID ? "readonlyColor" : clsDrpCode === "01" ? value?.NIBRSclearancedate ? "nibrsSuccessColor" : "nibrsColor" : "readonlyColor"
+              // className={
+              //   nibrsSubmittedIncident === 1 && incidentID ? "readonlyColor" : clsDrpCode === "01"
+              //     ?
+              //     value?.NIBRSclearancedate ? "nibrsSuccessColor" : "readonlyColor"
+              //     :
+              //     "readonlyColor"
               // }
+              className={
+                nibrsSubmittedIncident === 1 && incidentID ? "readonlyColor" : clsDrpCode === "01"
+                  ?
+                  value?.NIBRSclearancedate ? "nibrsSuccessColor" : value?.NIBRSClearanceID && exClsDateCode !== "N" ? "nibrsColor" : "readonlyColor"
+                  :
+                  "readonlyColor"
+              }
               disabled={
                 value?.NIBRSClearanceID && exClsDateCode !== "N" ? false : true
               }

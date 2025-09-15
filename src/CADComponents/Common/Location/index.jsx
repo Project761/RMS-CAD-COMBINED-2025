@@ -503,13 +503,13 @@ function Search({
             <div className="search" style={{ pointerEvents: !verify && "none" }}>
                 <Combobox onSelect={handleSelect}>
                     <ComboboxInput
-                        style={{ background: isDisabled ? "#9d949436" : check ? "#FFE2A8" : "", }}
+                        style={{ background: isDisabled ? "#9d949436" : check ? "#FFE2A8" : "", zIndex: '200' }}
                         value={value}
                         onChange={handleInput}
                         disabled={!ready || isDisabled}
                         maxLength={110}
                     />
-                    <ComboboxPopover style={{ maxHeight: "250px", overflowY: "scroll", }}>
+                    <ComboboxPopover style={{ maxHeight: "250px", overflowY: "scroll", zIndex: '9999' }}>
                         {verify ? (
                             <ComboboxList>
                                 {status === "OK" && (
