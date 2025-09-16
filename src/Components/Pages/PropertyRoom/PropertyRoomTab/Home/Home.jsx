@@ -132,7 +132,7 @@ const Home = (props) => {
     const [selectedOptions, setSelectedOptions] = useState(AddType[0]);
 
     const [value, setValue] = useState({
-        'PropertyID': '', 'MasterPropertyId': '', 'ActivityType': '', 'Internal': true,
+        'PropertyID': '', 'MasterPropertyId': '', 'ActivityType': '', 'Internal': true, 'Destination': '', 'ModeOfTransport': '',
         'External': false, 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'OtherPersonNameID': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '', 'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '', 'IsCheckIn': false, 'IsCheckOut': false, 'IsRelease': false, 'IsDestroy': false, 'IsTransferLocation': false, 'IsUpdate': false, 'CreatedByUserFK': '', 'AgencyID': '', 'PropertyTypeID': '', 'LastSeenDtTm': '', 'PackagingDetails': ''
     })
 
@@ -2723,15 +2723,15 @@ const Home = (props) => {
                         <label htmlFor="" className='new-label mb-0'>Destination</label>
                     </div>
                     <div className="col-9 col-md-9 col-lg-2 text-field mt-0">
-                        <input type="text" name="ActivityComments"
-                            className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={''} onChange={(e) => { handleChange(e) }} />
+                        <input type="text" name="Destination"
+                            className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.Destination} onChange={(e) => { handleChange(e) }} />
                     </div>
                     <div className="col-3 col-md-3 col-lg-2 ">
                         <label htmlFor="" className='new-label mb-0'>Mode of Transport</label>
                     </div>
                     <div className="col-9 col-md-9 col-lg-2 text-field mt-0">
-                        <input type="text" name="ActivityComments"
-                            className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={''} onChange={(e) => { handleChange(e) }} />
+                        <input type="text" name="ModeOfTransport"
+                            className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ModeOfTransport} onChange={(e) => { handleChange(e) }} />
                     </div>
 
                     <div className="col-3 col-md-3 col-lg-2 ">
