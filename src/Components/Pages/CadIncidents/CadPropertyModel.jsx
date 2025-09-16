@@ -507,13 +507,14 @@ const CadPropertyModel = (props) => {
       <div class="modal" style={{ background: "rgba(0,0,0, 0.5)" }} ref={masterModalRef} id="MasterModalProperty" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="false">
         <div class="modal-dialog  modal-dialog-centered  modal-xl  py-5">
           <div class="modal-content">
-            <span className="align-self-end"><button type="button" className="border-0" aria-label="Close" data-dismiss="modal" style={{ alignSelf: "end", }} onClick={() => {
+            <div className="model-header bg-light ml-3 py-2" style={{fontWeight:700}}>Evidence Tracker</div>
+            {/* <span className="align-self-end"><button type="button" className="border-0" aria-label="Close" data-dismiss="modal" style={{ alignSelf: "end", }} onClick={() => {
               setErrors({
                 'ReasonError': '', 'UpdateDateTimeError': '', 'TransferDateTimeError': '', 'WitnessError': '', 'ApprovalOfficerError': '', 'UpdatingOfficerError': '', 'DestructionOfficerError': '', 'DestructionDateTimeError': '', 'ReleasedDateTimeError': '',
                 'ReceipientError': '', 'ReleasingOfficerError': '', 'ExpectedReturnDateTimeError': '', 'CheckOutDateTimeError': '', 'SubmittingOfficerError': '', 'CheckInDateTimeError': '', 'PropertyRoomOfficerError': ''
               })
               setModalOpenStatus(false);
-            }}><b>X</b> </button></span>
+            }}><b>X</b> </button></span> */}
             <div class="modal-body name-body-model">
               <div className="row " >
                 <div className="col-12 col-md-12 col-lg-12 ">
@@ -876,7 +877,6 @@ const CadPropertyModel = (props) => {
                     {
                       value.IsUpdate ?
                         <>
-
 
                           <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
                             <label htmlFor="" className='new-label'>Update Date/Time{errors.UpdateDateTimeError !== 'true' ? (

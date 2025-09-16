@@ -32,7 +32,7 @@ const ChainOfCustodyData = (props) => {
       sortable: true,
     },
     {
-      name: 'Activity Type',
+      name: 'Activity ',
       selector: (row) => row.Status,
       sortable: true,
     },
@@ -67,21 +67,24 @@ const ChainOfCustodyData = (props) => {
       selector: (row) => row.CourtDate,
       sortable: true,
     },
-    {
-      name: 'Schedule Release Date',
-      selector: (row) => row.ReleaseDate,
-      sortable: true,
-    },
-    {
-      name: 'Release To',
-      selector: (row) => row.ReleaseDate,
-      sortable: true,
-    },
-    {
-      name: 'Comment',
-      selector: (row) => row.ActivityComments,
-      sortable: true,
-    },
+
+
+
+    // {
+    //   name: 'Schedule Release Date',
+    //   selector: (row) => row.ReleaseDate,
+    //   sortable: true,
+    // },
+    // {
+    //   name: 'Release To',
+    //   selector: (row) => row.ReleaseDate,
+    //   sortable: true,
+    // },
+    // {
+    //   name: 'Comment',
+    //   selector: (row) => row.ActivityComments,
+    //   sortable: true,
+    // },
 
   ];
 

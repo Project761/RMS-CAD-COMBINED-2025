@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
-import { getShowingWithOutTime, tableCustomStyles } from '../../../../Common/Utility'
+import { getShowingWithFixedTime01, getShowingWithOutTime, tableCustomStyles } from '../../../../Common/Utility'
 import { fetchPostData } from '../../../../hooks/Api'
 import { useLocation } from 'react-router-dom'
 import { get_ScreenPermissions_Data } from '../../../../../redux/actions/IncidentAction'
@@ -58,25 +58,69 @@ const VehicleChain = (props) => {
 
     const columns = [
         {
+            name: 'Property #',
+            selector: (row) => row.PropertyNumber,
+            sortable: true,
+        },
+        {
+            name: 'Activity ',
+            selector: (row) => row.Status,
+            sortable: true,
+        },
+        {
+            name: 'Date & Time',
+            selector: (row) => row.ExpectedDate ? getShowingWithFixedTime01(row.ExpectedDate) : '',
+            // selector: (row) => row.ExpectedDate,
+            sortable: true,
+        },
+        {
             name: 'Officer Name',
             selector: (row) => row.Officer_Name,
             sortable: true,
         },
+        // {
+        //     name: 'Activity Reason',
+        //     selector: (row) => row.ActivityReason_Des,
+        //     sortable: true,
+        // },
+
         {
-            name: 'Activity Reason',
-            selector: (row) => row.ActivityReason_Des,
+            name: 'Property Room',
+            selector: (row) => '',
+            sortable: true,
+        },
+
+        {
+            name: 'Location',
+            selector: (row) => row.location,
             sortable: true,
         },
         {
-            name: 'Other Person Name',
-            selector: (row) => row.OtherPersonName_Name,
+            name: 'Schedule Destroy Date',
+            selector: (row) => row.DestroyDate,
             sortable: true,
         },
         {
-            name: 'Activity Type',
-            selector: (row) => row.Status,
+            name: 'Schedule Court Date',
+            selector: (row) => row.CourtDate,
             sortable: true,
         },
+        // {
+        //     name: 'Schedule Release Date',
+        //     selector: (row) => row.ReleaseDate,
+        //     sortable: true,
+        // },
+        // {
+        //     name: 'Release To',
+        //     selector: (row) => row.ReleaseDate,
+        //     sortable: true,
+        // },
+        // {
+        //     name: 'Comment',
+        //     selector: (row) => row.ActivityComments,
+        //     sortable: true,
+        // },
+
     ];
 
 
