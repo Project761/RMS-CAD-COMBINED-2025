@@ -227,7 +227,6 @@ const PropertyEvidenceReport = ({ isPreview }) => {
 
     const handleChange = (option) => {
         setSelectedOption(option);
-        console.log("Selected value:", option);
     };
 
     // useEffect(() => {
@@ -259,7 +258,6 @@ const PropertyEvidenceReport = ({ isPreview }) => {
         }
     }, [selectedOption, selectedReportType, incidentFilterData, queData, AllProRoomFilterData]);
 
-    console.log("selectedReportType", currentReportType?.selectedReportType);
 
     return (
         <>

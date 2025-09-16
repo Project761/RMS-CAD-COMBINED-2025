@@ -8,7 +8,7 @@ const StatusBar = forwardRef((props, ref) => {
   const { loading, incidentErrorStatus, offenseCount, offenseErrorStatus, NameCount, nameErrorStatus, NameRelationshipError, narrativeApprovedStatus, PropertyCount, PropErrorStatus } = props;
 
 
-  console.log(PropertyCount)
+  // console.log(PropertyCount)
   const statusData = [
     {
       label: "Incident",
