@@ -82,7 +82,6 @@ const Header = (props) => {
   }, []);
 
 
-
   useEffect(() => {
     if (localStoreData) {
       setAgencyName(localStoreData?.Agency_Name);
