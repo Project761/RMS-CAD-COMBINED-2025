@@ -849,6 +849,9 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
     }
   }, [offenceFillterData]);
 
+
+
+
   const columns = [
     {
       minWidth: "200px",
@@ -858,10 +861,12 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
       sortable: true,
       cell: (row) =>
         check_NibrsCode_09C(row.FBICode, offenceFillterData) ? (
-          <TableErrorTooltip
-            value={row.FBIID_Description}
-            ErrorStr={check_NibrsCode_09C(row.FBICode, offenceFillterData)}
-          />
+          <div className="tooltip-left-zero">
+            <TableErrorTooltip
+              value={row.FBIID_Description}
+              ErrorStr={check_NibrsCode_09C(row.FBICode, offenceFillterData)}
+            />
+          </div>
         ) : (
           row.FBIID_Description
         ),
