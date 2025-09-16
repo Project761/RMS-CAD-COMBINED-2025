@@ -1934,7 +1934,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, setIncidentReportedDate, sho
                                 selectableRowsHighlight
                                 highlightOnHover
                                 responsive
-                                fixedHeaderScrollHeight="120px"
+                                fixedHeaderScrollHeight="150px"
                                 fixedHeader
                                 persistTableHead={true}
                                 customStyles={tableCustomStyles}
