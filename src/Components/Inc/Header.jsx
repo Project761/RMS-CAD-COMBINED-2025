@@ -81,10 +81,13 @@ const Header = (props) => {
     }
   }, []);
 
+
+
   useEffect(() => {
     if (localStoreData) {
       setAgencyName(localStoreData?.Agency_Name);
-      setUserName(localStoreData?.UserName);
+      // setUserName(localStoreData?.UserName);
+      setUserName(localStoreData?.UserName ? localStoreData?.UserName?.split(",")[0] : '');
       getReportPermission(localStoreData?.AgencyID, localStoreData?.PINID)
     }
   }, [localStoreData]);
@@ -314,7 +317,6 @@ const Header = (props) => {
 
             <div className="right " >
               <div className="notification d-flex justify-content-between align-items-center px-3" >
-
                 <div>
                   <button onClick={toggleDarkMode} className='dark-toogle'>
                     <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} />
