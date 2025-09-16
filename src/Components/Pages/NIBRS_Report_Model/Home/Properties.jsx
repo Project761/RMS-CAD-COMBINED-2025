@@ -1424,7 +1424,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
 
                         if (propArr?.length > 0) {
 
-                            const isSuspectedDrugType = propArr[0]?.OnPageError?.includes("{352} There should be atleast 1 Suspected Drug Type entry.");
+                            const isSuspectedDrugType = propArr[0]?.OnPageError?.includes("{352} Add at least one suspected drug type(create a property with type 'Drug')");
                             const isPropertyIdZeroError = propArr[0]?.OnPageError?.includes("{074} Need a property loss code of 5,7 for offense  23B");
 
                             if (isSuspectedDrugType) {
@@ -1743,7 +1743,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
                                     <span
                                         style={{ color: 'red', textAlign: 'center', }}
                                         onClick={() => { '' }}>
-                                        <u>⚠️ {'Add at least one suspected drug type (create a property with type ‘Drug’)' || ''}</u>
+                                        <u>⚠️ {"{352} Add at least one suspected drug type(create a property with type 'Drug')" || ''}</u>
                                     </span>
                                 )
                                     :

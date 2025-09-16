@@ -81,10 +81,13 @@ const Header = (props) => {
     }
   }, []);
 
+
+
   useEffect(() => {
     if (localStoreData) {
       setAgencyName(localStoreData?.Agency_Name);
       setUserName(localStoreData?.UserName);
+      // setUserName(localStoreData?.UserName?.split(",")[0]);
       getReportPermission(localStoreData?.AgencyID, localStoreData?.PINID)
     }
   }, [localStoreData]);
