@@ -531,6 +531,7 @@ const Incident = () => {
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') { getIncidentNoSearch(); }
     };
+    const isValidDate = (d) => d && !isNaN(new Date(d).getTime());
 
     return (
         <>
@@ -549,7 +550,6 @@ const Incident = () => {
                                         name='ReportedDate'
                                         id='ReportedDate'
                                         onChange={(date) => {
-
                                             if (date) {
                                                 setValue({
                                                     ...value,
@@ -560,7 +560,9 @@ const Incident = () => {
                                                 setValue({ ...value, ['ReportedDate']: null, ['ReportedDateTo']: null, })
                                             }
                                         }}
-                                        selected={value.ReportedDate && new Date(value.ReportedDate)}
+                                        selected={
+                                            value?.ReportedDate && !isNaN(new Date(value?.ReportedDate).getTime()) ? new Date(value?.ReportedDate) : null
+                                        }
                                         dateFormat="MM/dd/yyyy"
                                         timeInputLabel
                                         isClearable={value?.ReportedDate ? true : false}
@@ -581,7 +583,12 @@ const Incident = () => {
                                         name='ReportedDateTo'
                                         id='ReportedDateTo'
                                         onChange={(date) => { setValue({ ...value, ['ReportedDateTo']: date ? getShowingWithFixedTime(date) : null }) }}
-                                        selected={value?.ReportedDateTo && new Date(value?.ReportedDateTo)}
+                                        selected={
+                                            value?.ReportedDateTo && !isNaN(new Date(value?.ReportedDateTo).getTime())
+                                                ? new Date(value?.ReportedDateTo)
+                                                : null
+                                        }
+
                                         dateFormat="MM/dd/yyyy"
                                         timeInputLabel
                                         isClearable={value?.ReportedDateTo ? true : false}
@@ -590,7 +597,11 @@ const Incident = () => {
                                         showYearDropdown
                                         dropdownMode="select"
                                         autoComplete='Off'
-                                        minDate={new Date(value?.ReportedDate)}
+                                        minDate={
+                                            value?.ReportedDate && !isNaN(new Date(value?.ReportedDate).getTime())
+                                                ? new Date(value?.ReportedDate)
+                                                : null
+                                        }
                                         disabled={value?.ReportedDate ? false : true}
                                         maxDate={new Date(datezone)}
                                         placeholderText='Select To Date...'

@@ -191,7 +191,7 @@ const DashboardSidebar = () => {
                         showSearchData?.map((val, index) => {
                             let count = 0;
                             showSearchData?.forEach((item, i) => {
-                                if (i < index && item.SearchModule === val.SearchModule) {
+                                if (i < index && item?.SearchModule === val?.SearchModule) {
                                     count++;
                                 }
                             });
