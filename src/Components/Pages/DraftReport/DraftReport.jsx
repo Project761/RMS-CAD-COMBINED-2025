@@ -102,7 +102,7 @@ function DraftReport({ isPreview }) {
         //         </div>)
         // },
         {
-            name: 'Incident# ',
+            name: 'Report Type',
             minWidth: '120px',
             grow: 1, cell: row => {
                 return (
