@@ -646,9 +646,9 @@ const Incident = () => {
                                         }
                                         conditionalRowStyles={conditionalRowStyles}
                                         pagination
-                                        paginationPerPage={'25'}
+                                        paginationPerPage={'100'}
                                         paginationRowsPerPageOptions={[100, 150, 200, 500]}
-                                        showPaginationBottom={25}
+                                        showPaginationBottom={100}
                                         highlightOnHover
                                         subHeader
                                         responsive
