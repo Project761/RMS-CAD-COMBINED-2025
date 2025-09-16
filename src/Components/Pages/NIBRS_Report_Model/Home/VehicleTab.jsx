@@ -11,7 +11,7 @@ import BarCode from '../../../Common/BarCode';
 import AlertTable from '../../AlertMaster/AlertTable';
 import { get_Vehicle_Search_Data } from '../../../../redux/actions/VehicleAction';
 import VehicleSearchTab from '../../VehicleSearchTab/VehicleSearchTab';
-import AlertMasterModel from '../../AlertMaster/AlertMasterModel';
+import AlertMasterModel from '../../AlertMaster/AlertMasterModel';  
 import ImageModel from '../../ImageModel/ImageModel';
 import MasterNameModel from '../../MasterNameModel/MasterNameModel';
 import ListModal from '../../Utility/ListManagementModel/ListModal';
@@ -872,7 +872,6 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                     if (data?.Properties?.length > 0) {
 
                         const VehArr = data?.Properties?.filter((item) => item?.PropertyType === 'V');
-
 
                         if (VehArr?.length > 0) {
                             setclickNibLoder(false); setnibrsFieldError(VehArr[0]); setNibrsErrStr(VehArr[0]?.OnPageError);

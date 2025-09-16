@@ -274,6 +274,7 @@ const Tab = () => {
 
             if (propertyError) {
                 const proObj = propertyError?.Properties ? propertyError?.Properties : [];
+                console.log("🚀 ~ nibrsValidateInc ~ proObj:", proObj)
 
                 const VehArr = proObj?.filter((item) => item?.PropertyType === 'V');
                 const PropArr = proObj?.filter((item) => item?.PropertyType !== 'V');

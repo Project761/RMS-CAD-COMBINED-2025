@@ -402,7 +402,7 @@ const NibrsHome = () => {
       }
 
     } else {
-      console.log("🚀 ~ ValidateProperty ~ else:")
+
       setnibrsValidateLoder(false);
     }
 
