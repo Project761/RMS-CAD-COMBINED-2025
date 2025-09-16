@@ -184,7 +184,7 @@ const CriminalActivity = (props) => {
           <div className="col-2 col-md-2 col-lg-2 mt-4">
             <label htmlFor="" className='new-label'> Criminal Activity </label>
           </div>
-          <div className="col-7 col-md-7 col-lg-5 mt-2 mb-2">
+          <div className="col-7 col-md-7 col-lg-10 mt-2 mb-2">
             {
               value?.CriminalIDName ?
                 <Select

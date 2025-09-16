@@ -2120,7 +2120,6 @@ const PropertyManagement = (props) => {
                                 <div className="col-12 col-md-4 col-lg-2  "></div>
                                 <div className="col-12 col-md-4 col-lg-2">
                                     <div className="form-check">
-
                                         <input
                                             className="form-check-input"
                                             type="radio"
