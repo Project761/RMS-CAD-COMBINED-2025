@@ -30,6 +30,7 @@ const Tab = () => {
 
     const [loading, setLoading] = useState(false);
     const [showStatus, setShowStatus] = useState(false);
+
     const [isUserClosed, setIsUserClosed] = useState(() => {
 
         const savedPreference = localStorage.getItem('statusBarClosed');

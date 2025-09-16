@@ -67,7 +67,7 @@ const StatusBar = forwardRef((props, ref) => {
     },
 
     {
-      label: "TIBRS Audit",
+      label: "TIBRS",
       value: "Pending",
       color: "text-grays",
       // icon: faInfo,

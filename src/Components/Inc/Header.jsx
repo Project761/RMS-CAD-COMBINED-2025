@@ -314,7 +314,6 @@ const Header = (props) => {
 
             <div className="right " >
               <div className="notification d-flex justify-content-between align-items-center px-3" >
-
                 <div>
                   <button onClick={toggleDarkMode} className='dark-toogle'>
                     <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} />
