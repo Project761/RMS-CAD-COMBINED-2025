@@ -271,7 +271,8 @@ const VehicleManagement = (props) => {
         //     }
         // })
         const ReasonError = RequiredFieldIncident(value.ActivityReasonID);
-        const PropertyRoomOfficerError = !value.IsCheckOut ? RequiredFieldIncident(value.OfficerNameID) : 'true';
+        // const PropertyRoomOfficerError = !value.IsCheckOut ? RequiredFieldIncident(value.OfficerNameID) : 'true';
+        const PropertyRoomOfficerError = 'true';
         const CheckInDateTimeError = value.IsCheckIn ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
         const SubmittingOfficerError = value.IsCheckIn ? RequiredFieldIncident(value.InvestigatorID) : 'true';
         const CheckOutDateTimeError = value.IsCheckOut ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
@@ -735,7 +736,15 @@ const VehicleManagement = (props) => {
                                 options={agencyOfficerDrpData}
                                 onChange={(e) => ChangeDropDown(e, 'OfficerNameID')}
                                 placeholder="Select..."
-                                styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
+                                styles={{
+                                    control: (base) => ({
+                                        ...base,
+                                        backgroundColor: selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'
+                                            ? 'readonlyColor' // For Release or Destroy status
+                                            : (selectedStatus === 'CheckIn' ? '' : 'requiredColor') // Avoid requiredColor when status is CheckIn
+                                    })
+                                }}
+                                // styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                                 isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                             />
                         </div>
@@ -761,7 +770,7 @@ const VehicleManagement = (props) => {
                             <label htmlFor="" className='new-label px-0 mb-0'>Storage Location</label>
                         </div>
                         <div className="col-12 col-md-12 col-lg-3 ">
-                            <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} disabled className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
+                            <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
                                 ? 'requiredColor'
                                 : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
                                     ? 'readonlyColor'
@@ -999,7 +1008,7 @@ const VehicleManagement = (props) => {
                                         autoComplete='off'
                                         maxDate={new Date(datezone)}
                                         disabled={selectedOption === null || selectedOption === ''}
-                                        className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                                        className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : ''}
                                     />
 
                                 </div>
@@ -1431,7 +1440,7 @@ const VehicleManagement = (props) => {
 
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 ">
-                            <label htmlFor="" className='new-label px-0 mb-0'>Receipient {errors.ReceipientError !== 'true' ? (
+                            <label htmlFor="" className='new-label px-0 mb-0'>Recipient {errors.ReceipientError !== 'true' ? (
                                 <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReceipientError}</p>
                             ) : null}</label>
                         </div>
@@ -1452,10 +1461,21 @@ const VehicleManagement = (props) => {
                         </div>
 
                         <div className="col-3 col-md-3 col-lg-2 ">
-                            <label htmlFor="" className='new-label px-0 mb-0'>Receipient Location</label>
+                            <label htmlFor="" className='new-label px-0 mb-0'>Recipient Location</label>
                         </div>
                         <div className="col-12 col-md-12 col-lg-2    ">
-                            <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} disabled className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
+                            <Select
+                                name='ReceipentID'
+                                value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ReceipentID)}
+                                isClearable
+                                options={agencyOfficerDrpData}
+                                onChange={(e) => ChangeDropDown(e, 'ReceipentID')}
+                                placeholder="Select..."
+                            // styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
+                            // isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                            />
+
+                            {/* <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} disabled className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
                                 ? 'requiredColor'
                                 : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
                                     ? 'readonlyColor'
@@ -1475,7 +1495,7 @@ const VehicleManagement = (props) => {
                                 }} className='select-cancel' onClick={() => { handleClickedCleared("location") }}>
                                     <i className='fa fa-times'></i>
                                 </span>
-                            ) : (null)}
+                            ) : (null)} */}
                         </div>
 
 
@@ -1530,7 +1550,7 @@ const VehicleManagement = (props) => {
 
                         </div>
 
-                        <div className="col-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
+                        {/* <div className="col-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
                             <button disabled={!(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) || selectedOption === null}
                                 className=" btn btn-sm bg-green text-white" data-toggle="modal" data-target="#PropertyRoomTreeModal" style={{ cursor: 'pointer' }} onClick={() => {
                                     setlocationStatus(true);
@@ -1538,7 +1558,7 @@ const VehicleManagement = (props) => {
                                 }}>
                                 <i className="fa fa-plus" > </i>
                             </button>
-                        </div>
+                        </div> */}
 
                         <div className="col-3 col-md-3 col-lg-2 ">
                             <label htmlFor="" className='new-label mb-0'>Comments</label>
@@ -2577,7 +2597,7 @@ const VehicleManagement = (props) => {
                                     }`}
                             />
 
-                            {value.CurrentStorageLocation && (
+                            {/* {value.CurrentStorageLocation && (
                                 <span
                                     className="select-cancel"
                                     onClick={() => { handleClickedCleared("CurrentStorageLocation") }}
@@ -2602,10 +2622,10 @@ const VehicleManagement = (props) => {
                                 >
                                     <i className="fa fa-times"></i>
                                 </span>
-                            )}
+                            )} */}
                         </div>
                         {/** ➕ Add Button Section **/}
-                        <div className="col-1 ">
+                        {/* <div className="col-1 ">
                             {(() => {
                                 const isAddDisabled =
                                     !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) ||
@@ -2627,7 +2647,7 @@ const VehicleManagement = (props) => {
                                     </button>
                                 );
                             })()}
-                        </div>
+                        </div> */}
                         <div className='col-12 col-md-12 col-lg-4'></div>
 
 
@@ -2811,7 +2831,7 @@ const VehicleManagement = (props) => {
                                         autoComplete='off'
                                         maxDate={new Date(datezone)}
                                         disabled={selectedOption === null || selectedOption === ''}
-                                        className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                                        className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : ''}
                                     />
 
                                 </div>
