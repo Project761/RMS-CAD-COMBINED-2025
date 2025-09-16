@@ -20,8 +20,6 @@ const Tab = () => {
 
     const [currentTab, setCurrentTab] = useState('Incident');
     const [incidentStatus, setIncidentStatus] = useState(false)
-    const [showStatus, setShowStatus] = useState(true);
-    const [loading, setLoading] = useState(false);
 
     const [incidentErrorStatus, setIncidentErrorStatus] = useState(false)
     const [offenseErrorStatus, setOffenseErrorStatus] = useState(false)
@@ -29,6 +27,28 @@ const Tab = () => {
     const [NameRelationshipError, setNameRelationshipError] = useState(false);
     const [narrativeApprovedStatus, setNarrativeApprovedStatus] = useState(false);
     const [PropErrorStatus, setPropErrorStatus] = useState(false);
+
+    const [loading, setLoading] = useState(false);
+    const [showStatus, setShowStatus] = useState(false);
+    const [isUserClosed, setIsUserClosed] = useState(() => {
+
+        const savedPreference = localStorage.getItem('statusBarClosed');
+        return savedPreference === 'true';
+    });
+
+
+    const handleStatusBarClose = (e) => {
+        e.stopPropagation();
+        const newState = !showStatus;
+        setShowStatus(newState);
+        if (newState === false) { // Only update localStorage when closing
+            setIsUserClosed(true);
+            localStorage.setItem('statusBarClosed', 'true');
+        } else {
+            setIsUserClosed(false);
+            localStorage.setItem('statusBarClosed', 'false');
+        }
+    };
 
 
     const loginAgencyID = localStoreData?.AgencyID || '';
@@ -141,7 +161,12 @@ const Tab = () => {
     }, []);
 
     useEffect(() => {
-        if (IncSta === false || IncSta === 'false') { setIncidentStatus(false); } else { setIncidentStatus(true) }
+        if (IncSta === false || IncSta === 'false') {
+            setIncidentStatus(false);
+        } else {
+            setIncidentStatus(true);
+            if (!isUserClosed) { setShowStatus(true); }
+        }
     }, [IncSta]);
 
     const active = window.location.pathname;
@@ -463,10 +488,11 @@ const Tab = () => {
                                 <div className="">
                                     <button
                                         className="btn btn-primary py-1"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setShowStatus(!showStatus);
-                                        }}
+                                        // onClick={(e) => {
+                                        //     e.stopPropagation();
+                                        //     setShowStatus(!showStatus);
+                                        // }}
+                                        onClick={handleStatusBarClose}
                                     >
                                         <FontAwesomeIcon icon={faArrowLeft} />
                                     </button>
