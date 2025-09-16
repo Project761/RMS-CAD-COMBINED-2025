@@ -272,6 +272,7 @@ const VehicleManagement = (props) => {
         // })
         const ReasonError = RequiredFieldIncident(value.ActivityReasonID);
         // const PropertyRoomOfficerError = !value.IsCheckOut ? RequiredFieldIncident(value.OfficerNameID) : 'true';
+        const StorageLocationError = value.IsCheckIn ? RequiredFieldIncident(value.location) : 'true';
         const PropertyRoomOfficerError = 'true';
         const CheckInDateTimeError = value.IsCheckIn ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
         const SubmittingOfficerError = value.IsCheckIn ? RequiredFieldIncident(value.InvestigatorID) : 'true';
@@ -308,21 +309,22 @@ const VehicleManagement = (props) => {
                 ['WitnessError']: WitnessError || prevValues['WitnessError'],
                 ['TransferDateTimeError']: TransferDateTimeError || prevValues['TransferDateTimeError'],
                 ['UpdateDateTimeError']: UpdateDateTimeError || prevValues['UpdateDateTimeError'],
+                ['StorageLocationError']: StorageLocationError || prevValues['StorageLocationError'],
             }
         })
     }
-    const { ReasonError, PropertyRoomOfficerError, CheckInDateTimeError, SubmittingOfficerError, CheckOutDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
+    const { ReasonError, PropertyRoomOfficerError, CheckInDateTimeError, SubmittingOfficerError, StorageLocationError, CheckOutDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
         DestructionDateTimeError, DestructionOfficerError, UpdatingOfficerError, ApprovalOfficerError, WitnessError, TransferDateTimeError, UpdateDateTimeError } = errors
 
     useEffect(() => {
 
-        if (ReasonError === 'true' && PropertyRoomOfficerError === 'true' && CheckInDateTimeError === 'true' && SubmittingOfficerError === 'true' && CheckOutDateTimeError === 'true' && ReleasingOfficerError === 'true' && ReceipientError === 'true' && ReleasedDateTimeError === 'true'
+        if (ReasonError === 'true' && PropertyRoomOfficerError === 'true' && StorageLocationError === 'true' && CheckInDateTimeError === 'true' && SubmittingOfficerError === 'true' && CheckOutDateTimeError === 'true' && ReleasingOfficerError === 'true' && ReceipientError === 'true' && ReleasedDateTimeError === 'true'
             && DestructionDateTimeError === 'true' && DestructionOfficerError === 'true' && UpdatingOfficerError === 'true' && ApprovalOfficerError === 'true' && WitnessError === 'true' && TransferDateTimeError === 'true' && UpdateDateTimeError === 'true'
         ) {
 
             { Add_Type() }
         }
-    }, [ReasonError, PropertyRoomOfficerError, CheckInDateTimeError, SubmittingOfficerError, CheckOutDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
+    }, [ReasonError, PropertyRoomOfficerError, CheckInDateTimeError, StorageLocationError, SubmittingOfficerError, CheckOutDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
         DestructionDateTimeError, DestructionOfficerError, UpdatingOfficerError, ApprovalOfficerError, WitnessError, TransferDateTimeError, UpdateDateTimeError
     ])
 
@@ -767,7 +769,9 @@ const VehicleManagement = (props) => {
                         <div className='col-3 col-md-3 col-lg-4'></div>
 
                         <div className="col-3 col-md-3 col-lg-2 ">
-                            <label htmlFor="" className='new-label px-0 mb-0'>Storage Location</label>
+                            <label htmlFor="" className='new-label px-0 mb-0'>Storage Location{errors.StorageLocationError !== 'true' ? (
+                                <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.StorageLocationError}</p>
+                            ) : null}</label>
                         </div>
                         <div className="col-12 col-md-12 col-lg-3 ">
                             <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
