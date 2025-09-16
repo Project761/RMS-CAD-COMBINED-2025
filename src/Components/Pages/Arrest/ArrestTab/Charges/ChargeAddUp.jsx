@@ -80,7 +80,7 @@ const ChargeAddUp = () => {
             </div>
             <div className="col-12 col-sm-12">
                 <div className="card-body">
-                    <div className="row " style={{ marginTop: '-18px', marginLeft: '-18px' }}>
+                    <div className="row " style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
                         <div className="col-12 incident-tab">
                             <ul className='nav nav-tabs'>
                                 <Link

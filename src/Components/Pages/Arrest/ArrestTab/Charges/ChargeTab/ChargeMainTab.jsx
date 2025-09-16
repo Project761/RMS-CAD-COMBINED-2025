@@ -1,4 +1,4 @@
-import  { useState, useEffect, useContext } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AgencyContext } from '../../../../../../Context/Agency/Index';
@@ -77,7 +77,7 @@ const ChargeMainTab = () => {
             </div>
             <div className="col-12 col-sm-12">
                 <div className="card-body">
-                    <div className="row " style={{ marginTop: '-18px', marginLeft: '-18px' }}>
+                    <div className="row " style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
                         <div className="col-12 incident-tab">
                             <ul className='nav nav-tabs'>
                                 <Link
@@ -130,7 +130,7 @@ const ChargeMainTab = () => {
                                     onClick={() => { if (!changesStatus) setShowPage('Weapon') }} >
                                     Weapon{`${tabCount?.ChargeWeaponTypeCount > 0 ? '(' + tabCount?.ChargeWeaponTypeCount + ')' : ''}`}
                                 </span>
-                              
+
                             </ul>
                         </div>
                     </div>

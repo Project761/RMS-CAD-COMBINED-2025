@@ -109,7 +109,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
         })
     }
 
-   
+
 
     return (
         <div className=" section-body pt-1 p-1 bt" >
@@ -123,7 +123,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                     <div className="col-12 col-sm-12">
                         <div className={`card Agency ${isCad ? 'CAD-incident-card' : 'incident-card'}`}>
                             <div className="card-body" >
-                                <div className="row " style={{ marginTop: '-18px', marginLeft: '-18px' }}>
+                                <div className="row " style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
                                     <div className="col-12 name-tab">
                                         <ul className='nav nav-tabs'>
                                             {isCad ? <Link
@@ -403,51 +403,51 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                 </div>
                                 {
                                     nameShowPage === 'home' ?
-                                        <Home {...{ setStatus, status, showVictim, setShowVictim,  setNameShowPage, setshowWarrant, setShowOffender, setIsBusinessName, get_List, isCad, isCADSearch, isViewEventDetails }} />
+                                        <Home {...{ setStatus, status, showVictim, setShowVictim, setNameShowPage, setshowWarrant, setShowOffender, setIsBusinessName, get_List, isCad, isCADSearch, isViewEventDetails }} />
                                         :
                                         nameShowPage === 'general' ?
-                                            <General {...{ ListData, DecNameID, DecMasterNameID, DecIncID,  isViewEventDetails }} />
+                                            <General {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
                                             :
                                             nameShowPage === 'Contact_Details' ?
-                                                <ContactDetails {...{ ListData, DecNameID, DecMasterNameID,  DecIncID, isViewEventDetails }} />
+                                                <ContactDetails {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
                                                 :
                                                 nameShowPage === 'Appearance' ?
-                                                    <Appearance  {...{ ListData, DecNameID, DecMasterNameID,  DecIncID, isViewEventDetails }} />
+                                                    <Appearance  {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
                                                     :
                                                     nameShowPage === 'aliases' ?
-                                                        <Aliases {...{ ListData, DecNameID, DecMasterNameID,  DecIncID, isViewEventDetails }} />
+                                                        <Aliases {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
                                                         :
 
                                                         nameShowPage === 'SMT' ?
-                                                            <Smt {...{ ListData, DecNameID, DecMasterNameID, DecIncID,  isViewEventDetails }} />
+                                                            <Smt {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
                                                             :
                                                             nameShowPage === 'Offender' && showOffender ?
-                                                                <AssaultInjuryCom  {...{ ListData, ListData, DecNameID,  DecMasterNameID, DecIncID }} />
+                                                                <AssaultInjuryCom  {...{ ListData, ListData, DecNameID, DecMasterNameID, DecIncID }} />
                                                                 :
                                                                 nameShowPage === 'Identification_Number' ?
-                                                                    <IdentificationNumber {...{ ListData, DecNameID, DecMasterNameID,  DecIncID, isViewEventDetails }} />
+                                                                    <IdentificationNumber {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
                                                                     :
                                                                     nameShowPage === 'Victim' && showVictim ?
-                                                                        <Victim {...{ ListData, DecNameID, DecMasterNameID,  DecIncID, isViewEventDetails }} showTabs={setNameShowPage} />
+                                                                        <Victim {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} showTabs={setNameShowPage} />
                                                                         :
                                                                         nameShowPage === 'Gang' ?
-                                                                            <Gang {...{ DecNameID, DecMasterNameID, DecIncID,  isViewEventDetails }} />
+                                                                            <Gang {...{ DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
                                                                             :
                                                                             nameShowPage === 'connections' ?
-                                                                                <Connection  {...{ ListData, DecNameID,  DecMasterNameID, DecIncID }} />
+                                                                                <Connection  {...{ ListData, DecNameID, DecMasterNameID, DecIncID }} />
                                                                                 :
                                                                                 nameShowPage === 'Address' ?
-                                                                                    <Address {...{ ListData, DecNameID, DecMasterNameID,  DecIncID, isViewEventDetails }} />
+                                                                                    <Address {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
                                                                                     :
                                                                                     nameShowPage === 'Warrant' ?
-                                                                                        <Warrant {...{ ListData, DecNameID, DecMasterNameID,  DecIncID, isViewEventDetails }} />
+                                                                                        <Warrant {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
                                                                                         :
                                                                                         nameShowPage === 'Offense' ?
                                                                                             // <></>
-                                                                                            <Offense {...{ ListData, DecNameID, DecMasterNameID,  DecIncID, isViewEventDetails }} />
+                                                                                            <Offense {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
                                                                                             :
                                                                                             nameShowPage === 'History' ?
-                                                                                                <History {...{ ListData, DecNameID, DecMasterNameID,  DecIncID, isViewEventDetails }} />
+                                                                                                <History {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
                                                                                                 :
                                                                                                 nameShowPage === 'TransactionLog' ?
 
