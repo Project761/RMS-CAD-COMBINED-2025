@@ -759,7 +759,7 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
     }
 
     const getStatusColors = (ID, nibrsValidateData) => {
-        return getNibrsError(ID, nibrsValidateData) ? { backgroundColor: "#D8B4FE" } : {};
+        return getNibrsError(ID, nibrsValidateData) ? { backgroundColor: "rgb(255 202 194)" } : {};
     };
 
     const getPlateStateStyle = () => {

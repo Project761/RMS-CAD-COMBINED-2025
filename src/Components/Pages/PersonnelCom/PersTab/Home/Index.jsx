@@ -1398,18 +1398,20 @@ const Home = (props) => {
                                 dense
                                 columns={columns}
                                 data={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? personnelList : '' : ''}
-                                // paginationPerPage={'10'}
-                                // paginationRowsPerPageOptions={[10, 15]}
+
                                 highlightOnHover
                                 noContextMenu
                                 pagination
-                                paginationPerPage={'5'}
-                                paginationRowsPerPageOptions={[5, 10, 15, 20]}
+                                paginationPerPage={'100'}
+                                paginationRowsPerPageOptions={[100, 150, 200, 500]}
+                                showPaginationBottom={100}
+                                // paginationPerPage={'5'}
+                                // paginationRowsPerPageOptions={[5, 10, 15, 20]}
                                 responsive
                                 showHeader={true}
                                 persistTableHead={true}
                                 customStyles={tableCustomStyles}
-                                fixedHeaderScrollHeight="150px"
+                                // fixedHeaderScrollHeight="150px"
                                 fixedHeader
                                 conditionalRowStyles={conditionalRowStyles}
                                 onRowClicked={(row) => {
