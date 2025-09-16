@@ -175,6 +175,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
   const [multiSelectedReason, setMultiSelectedReason] = useState({
     optionSelected: null
   });
+  console.log(NameTabCount)
 
   const [value, setValue] = useState({
     'NameIDNumber': 'Auto Generated', 'NameTypeID': '', 'BusinessTypeID': '', 'SuffixID': '', 'VerifyID': '', 'SexID': '',
@@ -2834,7 +2835,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
         <div className="col-lg-5 " style={{ margin: '0 auto' }} >
           <div className='row' style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'nowrap' }}>
             {
-              nameID && MstPage !== "MST-Name-Dash" ? (
+              NameTabCount?.NameOffenseCount <= 0 && (
                 <span
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
@@ -2850,8 +2851,6 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                   Add Offense
                 </span>
               )
-                :
-                <></>
             }
             {
               isMissing && MstPage !== "MST-Name-Dash" ? (
