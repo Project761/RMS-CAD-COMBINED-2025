@@ -1,10 +1,9 @@
-import { useEffect, useState,useContext } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import { Link } from 'react-router-dom';
 import DataTable from 'react-data-table-component';
 import { AddDeleteUpadate, fetchPostData } from '../../../../../../hooks/Api';
 import { toastifyError, toastifySuccess } from '../../../../../../Common/AlertMsg';
 import DeletePopUpModal from '../../../../../../Common/DeleteModal';
-import IdentifyFieldColor from '../../../../../../Common/IdentifyFieldColor';
 import { AgencyContext } from '../../../../../../../Context/Agency/Index';
 import RelationshipAddUp from './RelationshipAddUp';
 
@@ -39,7 +38,7 @@ const Relationship = (props) => {
   const columns = [
     {
       name: <p className='text-end' style={{ position: 'absolute', top: '7px' }}>Action</p>,
-      cell: row => 
+      cell: row =>
         <div style={{ position: 'absolute', top: 4, left: 20 }}>
           <Link to={'/nametab'} onClick={(e) => {
             setModalStatus(true); setStatus(true); setRelationshipID(row.RelationshipID); setEditCount(editCount + 1)
@@ -48,7 +47,7 @@ const Relationship = (props) => {
             <i className="fa fa-edit"></i>
           </Link>
         </div>
-      
+
     },
     {
       name: 'Name',
@@ -62,13 +61,13 @@ const Relationship = (props) => {
     },
     {
       name: <p className='text-end' style={{ position: 'absolute', top: '7px' }}>Delete</p>,
-      cell: row => 
+      cell: row =>
         <div style={{ position: 'absolute', top: 4, left: 25 }}>
           <Link to={`#`} onClick={(e) => setRelationshipID(row.RelationshipID)} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
             <i className="fa fa-trash"></i>
           </Link>
         </div>
-      
+
     }
   ];
 
@@ -117,7 +116,6 @@ const Relationship = (props) => {
       </div>
       <RelationshipAddUp {...{ victimID, nameID, LoginPinID, incidentID, LoginAgencyID, Get_Relationship_Data, setModalStatus, modalStatus, status, relationshipID, setStatus, editCount, relationshipData }} />
       <DeletePopUpModal func={DeleteRelationship} />
-      <IdentifyFieldColor />
 
     </>
   )

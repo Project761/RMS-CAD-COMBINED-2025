@@ -16,7 +16,6 @@ import { toastifySuccess } from '../../../../Common/AlertMsg';
 import DeletePopUpModal from '../../../../Common/DeleteModal';
 import { RequiredFieldIncident } from '../../../Utility/Personnel/Validation';
 import { AgencyContext } from '../../../../../Context/Agency/Index';
-import IdentifyFieldColor from '../../../../Common/IdentifyFieldColor';
 import Ori from './VictimTab/ORI/Ori';
 import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -698,7 +697,6 @@ const Victim = (props) => {
                                                     :
                                                     <></>
             }
-            <IdentifyFieldColor />
             <ListModal {...{ openPage, setOpenPage }} />
 
             <DeletePopUpModal func={DeletePin} />

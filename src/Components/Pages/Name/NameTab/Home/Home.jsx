@@ -2835,7 +2835,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
         <div className="col-lg-5 " style={{ margin: '0 auto' }} >
           <div className='row' style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'nowrap' }}>
             {
-              NameTabCount?.NameOffenseCount <= 0 && (
+              nameID && NameTabCount?.NameOffenseCount <= 0 && (
                 <span
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
