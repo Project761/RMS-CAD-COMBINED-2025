@@ -121,7 +121,7 @@ const IncSidebar = () => {
         { className: 'geekmark', bgColor: '#ffe2a8', text: 'Required' },
         { className: 'geekmark1', bgColor: '#9d949436', text: 'Read Only' },
         { className: 'geekmark2', bgColor: '#d9e4f2', text: 'Lock' },
-        { className: 'geekmark3', bgColor: '#f29a9a', text: 'TIBRS Field' },
+        { className: 'geekmark3', bgColor: '#F29A9A', text: 'TIBRS Field' },
     ];
 
 
