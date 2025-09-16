@@ -71,6 +71,7 @@ const CadPropertyModel = (props) => {
   const [shouldPrintForm, setShouldPrintForm] = useState(false);
   const [transferdate, settransferdate] = useState();
   const closeButtonRef = useRef(null); // at the top of your component
+  const [selectedOptionInternal, setselectedOptionInternal] = useState('Internal');
 
   // modal open state
   const [keyChange, setKeyChange] = useState("");
@@ -78,7 +79,7 @@ const CadPropertyModel = (props) => {
   const fileInputRef = useRef(null)
 
   const [value, setValue] = useState({
-    'PropertyID': '', 'MasterPropertyId': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'OtherPersonNameID': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
+    'PropertyID': '', 'MasterPropertyId': '', 'ActivityType': '', 'ActivityReasonID': '', 'Internal': true, 'ExpectedDate': '', 'ActivityComments': '', 'OtherPersonNameID': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
     'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '',
     'IsCheckIn': (modelActivityStatus === "CheckIn"), 'IsCheckOut': false, 'IsRelease': false, 'IsDestroy': false, 'IsTransferLocation': false, 'IsUpdate': false, 'CreatedByUserFK': '', 'AgencyID': '', 'EvidenceType': '',
     'PropertyTypeID': '', 'LastSeenDtTm': '', 'PackagingDetails': '', 'ReleasingOfficerID': '', ' ReceipentOfficerID': '', 'ReceipentID': '', 'DestructionOfficerID': '', 'ApprovalOfficerID': '', 'WitnessID': '', 'TransferDate': '', 'UpdatingOfficerID': '', 'DestinationStorageLocation': '', 'CurrentStorageLocation': '',
@@ -487,6 +488,18 @@ const CadPropertyModel = (props) => {
     });
   }
 
+  const handleRadioChangeInner = (event) => {
+    const selectedOption = event.target.value;
+    setselectedOptionInternal(selectedOption);
+
+    // Set the specific state values based on the selected option
+    setValue(prevState => ({
+      ...prevState,
+      Internal: selectedOption === 'Internal',
+      External: selectedOption === 'External',
+    }));
+  };
+
   return (
     modalOpenStatus &&
     <>
@@ -562,7 +575,7 @@ const CadPropertyModel = (props) => {
 
                   </div>
 
-                  <div className="row align-items-center">
+                  {/* <div className="row align-items-center">
                     <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
                       <label htmlFor="" className='new-label'>Reason{errors.ReasonError !== 'true' ? (
                         <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
@@ -1150,9 +1163,9 @@ const CadPropertyModel = (props) => {
 
 
 
-                  </div>
+                  </div> */}
 
-                  {
+                  {/* {
                     !value.IsCheckOut ?
                       <>
                         <div className="row align-items-center mt-1">
@@ -1197,170 +1210,170 @@ const CadPropertyModel = (props) => {
                         </div>
                       </> :
                       <></>
-                  }
+                  } */}
 
                   {
-                    value.IsTransferLocation || value.IsUpdate ?
-                      <>
-                        <div className="row align-items-center ">
-                          <div className="col-3 col-md-3 col-lg-2  px-1">
-                            <label htmlFor="" className='new-label px-0'> Current Storage Location</label>
-                          </div>
+                    // value.IsTransferLocation || value.IsUpdate ?
+                    //   <>
+                    //     <div className="row align-items-center ">
+                    //       <div className="col-3 col-md-3 col-lg-2  px-1">
+                    //         <label htmlFor="" className='new-label px-0'> Current Storage Location</label>
+                    //       </div>
 
 
 
-                          <div className="col-12 col-md-12 col-lg-4" style={{ position: 'relative' }}>
-                            <input
-                              type="text"
-                              name="CurrentStorageLocation"
-                              id="CurrentStorageLocation"
-                              value={locationStatus ? '' : value.CurrentStorageLocation}
-                              disabled
-                              className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
-                                ? 'requiredColor'
-                                : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
-                                  ? 'readonlyColor'
-                                  : ''
-                                }`}
-                            />
+                    //       <div className="col-12 col-md-12 col-lg-4" style={{ position: 'relative' }}>
+                    //         <input
+                    //           type="text"
+                    //           name="CurrentStorageLocation"
+                    //           id="CurrentStorageLocation"
+                    //           value={locationStatus ? '' : value.CurrentStorageLocation}
+                    //           disabled
+                    //           className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
+                    //             ? 'requiredColor'
+                    //             : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
+                    //               ? 'readonlyColor'
+                    //               : ''
+                    //             }`}
+                    //         />
 
-                            {value.CurrentStorageLocation && (
-                              <span
-                                className="select-cancel"
-                                onClick={() => { handleClickedCleared("CurrentStorageLocation") }}
-                                style={{
-                                  position: 'absolute',
-                                  top: '50%',
-                                  right: '10px',
-                                  transform: 'translateY(-50%)',
-                                  cursor:
-                                    !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
-                                      ? 'not-allowed'
-                                      : 'pointer',
-                                  opacity:
-                                    !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
-                                      ? 0.5
-                                      : 1,
-                                  pointerEvents:
-                                    !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
-                                      ? 'none'
-                                      : 'auto',
-                                }}
-                              >
-                                <i className="fa fa-times"></i>
-                              </span>
-                            )}
-                          </div>
+                    //         {value.CurrentStorageLocation && (
+                    //           <span
+                    //             className="select-cancel"
+                    //             onClick={() => { handleClickedCleared("CurrentStorageLocation") }}
+                    //             style={{
+                    //               position: 'absolute',
+                    //               top: '50%',
+                    //               right: '10px',
+                    //               transform: 'translateY(-50%)',
+                    //               cursor:
+                    //                 !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
+                    //                   ? 'not-allowed'
+                    //                   : 'pointer',
+                    //               opacity:
+                    //                 !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
+                    //                   ? 0.5
+                    //                   : 1,
+                    //               pointerEvents:
+                    //                 !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
+                    //                   ? 'none'
+                    //                   : 'auto',
+                    //             }}
+                    //           >
+                    //             <i className="fa fa-times"></i>
+                    //           </span>
+                    //         )}
+                    //       </div>
 
-                          {/** ➕ Add Button Section **/}
-                          <div className="col-1 ">
-                            {(() => {
-                              const isAddDisabled =
-                                !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) ||
-                                selectedOption === null;
+                    //       {/** ➕ Add Button Section **/}
+                    //       <div className="col-1 ">
+                    //         {(() => {
+                    //           const isAddDisabled =
+                    //             !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) ||
+                    //             selectedOption === null;
 
-                              return (
-                                <button
-                                  disabled={isAddDisabled}
-                                  className="btn btn-sm bg-green text-white"
-                                  data-toggle="modal"
-                                  data-target="#PropertyRoomTreeModal"
-                                  style={{ cursor: isAddDisabled ? 'not-allowed' : 'pointer' }}
-                                  onClick={() => {
-                                    setlocationStatus(true)
-                                    setKeyChange("CurrentStorageLocation")
-                                  }}
-                                >
-                                  <i className="fa fa-plus"></i>
-                                </button>
-                              );
-                            })()}
-                          </div>
-
-
-
-
-                          <div className="col-3 col-md-3 col-lg-1 px-1">
-                            <label htmlFor="" className='new-label px-0'> Destination Storage Location</label>
-                          </div>
-                          <div className="col-12 col-md-12 col-lg-3" style={{ position: 'relative' }}>
-                            <input
-                              type="text"
-                              name="DestinationStorageLocation"
-                              id="DestinationStorageLocation"
-                              value={locationStatus ? '' : value.DestinationStorageLocation}
-                              disabled
-                              className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
-                                ? 'requiredColor'
-                                : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
-                                  ? 'readonlyColor'
-                                  : ''
-                                }`}
-                            />
-
-                            {value.DestinationStorageLocation && (
-                              <span
-                                className="select-cancel"
-                                onClick={() => { handleClickedCleared("DestinationStorageLocation") }}
-                                style={{
-                                  position: 'absolute',
-                                  top: '50%',
-                                  right: '10px',
-                                  transform: 'translateY(-50%)',
-                                  cursor:
-                                    !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
-                                      ? 'not-allowed'
-                                      : 'pointer',
-                                  opacity:
-                                    !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
-                                      ? 0.5
-                                      : 1,
-                                  pointerEvents:
-                                    !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
-                                      ? 'none'
-                                      : 'auto',
-                                }}
-                              >
-                                <i className="fa fa-times"></i>
-                              </span>
-                            )}
-                          </div>
-
-                          {/** Add Button Section **/}
-                          <div className="col-auto ">
-                            {(() => {
-                              const isAddDisabled =
-                                !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) ||
-                                selectedOption === null;
-
-                              return (
-                                <button
-                                  disabled={isAddDisabled}
-                                  className="btn btn-sm bg-green text-white"
-                                  data-toggle="modal"
-                                  data-target="#PropertyRoomTreeModal"
-                                  style={{ cursor: isAddDisabled ? 'not-allowed' : 'pointer' }}
-                                  onClick={() => {
-                                    setlocationStatus(true)
-                                    setKeyChange("DestinationStorageLocation")
-                                  }}
-                                >
-                                  <i className="fa fa-plus"></i>
-                                </button>
-                              );
-                            })()}
-                          </div>
+                    //           return (
+                    //             <button
+                    //               disabled={isAddDisabled}
+                    //               className="btn btn-sm bg-green text-white"
+                    //               data-toggle="modal"
+                    //               data-target="#PropertyRoomTreeModal"
+                    //               style={{ cursor: isAddDisabled ? 'not-allowed' : 'pointer' }}
+                    //               onClick={() => {
+                    //                 setlocationStatus(true)
+                    //                 setKeyChange("CurrentStorageLocation")
+                    //               }}
+                    //             >
+                    //               <i className="fa fa-plus"></i>
+                    //             </button>
+                    //           );
+                    //         })()}
+                    //       </div>
 
 
 
-                        </div>
-                      </>
-                      :
-                      <></>
+
+                    //       <div className="col-3 col-md-3 col-lg-1 px-1">
+                    //         <label htmlFor="" className='new-label px-0'> Destination Storage Location</label>
+                    //       </div>
+                    //       <div className="col-12 col-md-12 col-lg-3" style={{ position: 'relative' }}>
+                    //         <input
+                    //           type="text"
+                    //           name="DestinationStorageLocation"
+                    //           id="DestinationStorageLocation"
+                    //           value={locationStatus ? '' : value.DestinationStorageLocation}
+                    //           disabled
+                    //           className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
+                    //             ? 'requiredColor'
+                    //             : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
+                    //               ? 'readonlyColor'
+                    //               : ''
+                    //             }`}
+                    //         />
+
+                    //         {value.DestinationStorageLocation && (
+                    //           <span
+                    //             className="select-cancel"
+                    //             onClick={() => { handleClickedCleared("DestinationStorageLocation") }}
+                    //             style={{
+                    //               position: 'absolute',
+                    //               top: '50%',
+                    //               right: '10px',
+                    //               transform: 'translateY(-50%)',
+                    //               cursor:
+                    //                 !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
+                    //                   ? 'not-allowed'
+                    //                   : 'pointer',
+                    //               opacity:
+                    //                 !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
+                    //                   ? 0.5
+                    //                   : 1,
+                    //               pointerEvents:
+                    //                 !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
+                    //                   ? 'none'
+                    //                   : 'auto',
+                    //             }}
+                    //           >
+                    //             <i className="fa fa-times"></i>
+                    //           </span>
+                    //         )}
+                    //       </div>
+
+                    //       {/** Add Button Section **/}
+                    //       <div className="col-auto ">
+                    //         {(() => {
+                    //           const isAddDisabled =
+                    //             !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) ||
+                    //             selectedOption === null;
+
+                    //           return (
+                    //             <button
+                    //               disabled={isAddDisabled}
+                    //               className="btn btn-sm bg-green text-white"
+                    //               data-toggle="modal"
+                    //               data-target="#PropertyRoomTreeModal"
+                    //               style={{ cursor: isAddDisabled ? 'not-allowed' : 'pointer' }}
+                    //               onClick={() => {
+                    //                 setlocationStatus(true)
+                    //                 setKeyChange("DestinationStorageLocation")
+                    //               }}
+                    //             >
+                    //               <i className="fa fa-plus"></i>
+                    //             </button>
+                    //           );
+                    //         })()}
+                    //       </div>
+
+
+
+                    //     </div>
+                    //   </>
+                    //   :
+                    //   <></>
                   }
 
 
-                  {
+                  {/* {
                     value.IsDestroy ?
                       <>
                         <div className="row align-items-center mt-2">
@@ -1401,9 +1414,9 @@ const CadPropertyModel = (props) => {
                         </div>
                       </> :
                       <></>
-                  }
+                  } */}
 
-                  {
+                  {/* {
                     !value.IsTransferLocation ?
                       <>
                         <div className="row align-items-center ">
@@ -1454,9 +1467,9 @@ const CadPropertyModel = (props) => {
                         </div>
                       </> :
                       <></>
-                  }
+                  } */}
 
-                  <div className="row align-items-center ">
+                  {/* <div className="row align-items-center ">
 
                     <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
                       <label htmlFor="" className='new-label'>Comments</label>
@@ -1465,9 +1478,9 @@ const CadPropertyModel = (props) => {
                       <input type="text" name="ActivityComments"
                         className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
                     </div>
-                  </div>
+                  </div> */}
 
-                  <div className="row align-items-center">
+                  {/* <div className="row align-items-center">
                     <div className='col-12 col-md-12 col-lg-12 mt-2'>
                       <div className="row align-items-center ">
                         <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
@@ -1564,10 +1577,10 @@ const CadPropertyModel = (props) => {
 
                     </div>
 
-                  </div>
+                  </div> */}
 
 
-                  <div className="row align-items-center">
+                  {/* <div className="row align-items-center">
                     {
 
                       value.IsCheckIn || value.IsUpdate ?
@@ -1703,6 +1716,2227 @@ const CadPropertyModel = (props) => {
 
                         </> :
                         <></>
+                    }
+                  </div> */}
+
+                  <div className="div ">
+                    {(selectedOption !== "CheckOut" && selectedOption !== "Release" && selectedOption !== "Destroy" && selectedOption !== "TransferLocation" && selectedOption !== "Update") && <div className='row align-items-center' style={{ rowGap: "8px" }}>
+                      <div className="col-3 col-md-3 col-lg-2">
+                        <label htmlFor="" className='new-label mb-0'>Reason{errors.ReasonError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <Select
+                          name='ActivityReasonID'
+                          value={reasonIdDrp?.filter((obj) => obj.value === value?.ActivityReasonID)}
+                          isClearable
+                          options={reasonIdDrp}
+                          onChange={(e) => ChangeDropDown(e, 'ActivityReasonID')}
+                          placeholder="Select..."
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                        />
+                      </div>
+
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label mb-0'>Check in Date/Time{errors.CheckInDateTimeError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.CheckInDateTimeError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <DatePicker
+                          name='activitydate'
+                          id='activitydate'
+                          onChange={(date) => {
+                            setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
+
+                          }}
+                          isClearable={activitydate ? true : false}
+                          selected={activitydate}
+                          placeholderText={activitydate ? activitydate : 'Select...'}
+                          dateFormat="MM/dd/yyyy HH:mm"
+                          timeFormat="HH:mm "
+                          is24Hour
+                          timeInputLabel
+                          showTimeSelect
+                          timeIntervals={1}
+                          timeCaption="Time"
+                          showMonthDropdown
+                          showYearDropdown
+                          dropdownMode="select"
+                          showDisabledMonthNavigation
+                          autoComplete='off'
+                          maxDate={new Date(datezone)}
+                          disabled={selectedOption === null || selectedOption === ''}
+                          className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                        />
+
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2  ">
+                        <label htmlFor="" className='new-label px-0  mb-0'>Submitting Officer{errors.SubmittingOfficerError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.SubmittingOfficerError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
+
+                        <Select
+                          name='InvestigatorID'
+                          value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.InvestigatorID)}
+                          isClearable
+                          options={agencyOfficerDrpData}
+                          onChange={(e) => ChangeDropDown(e, 'InvestigatorID')}
+                          placeholder="Select..."
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                        />
+
+
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label mb-0'>Property Room Officer{errors.PropertyRoomOfficerError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.PropertyRoomOfficerError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <Select
+                          name='"OfficerNameID"'
+                          value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.OfficerNameID)}
+                          isClearable
+                          options={agencyOfficerDrpData}
+                          onChange={(e) => ChangeDropDown(e, 'OfficerNameID')}
+                          placeholder="Select..."
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                        />
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label mb-0'>Evidence Type</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <input
+                          type="text"
+                          name="EvidenceType"
+                          className={`form-control ${selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'
+                            ? 'readonlyColor'
+                            : ''
+                            }`}
+                          value={value.EvidenceType}
+                          onChange={(e) => handleChange(e)}
+                          readOnly={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                        />
+                      </div>
+                      <div className='col-3 col-md-3 col-lg-4'></div>
+
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label px-0 mb-0'>Storage Location</label>
+                      </div>
+                      <div className="col-12 col-md-12 col-lg-3 ">
+                        <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} disabled className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
+                          ? 'requiredColor'
+                          : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
+                            ? 'readonlyColor'
+                            : ''
+                          }`}
+                        />
+
+                        {value.location ? (
+                          <span style={{
+                            position: 'absolute',
+                            top: '40%',
+                            right: '10px',
+                            transform: 'translateY(-50%)',
+                            cursor: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'not-allowed' : 'pointer',
+                            opacity: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 0.5 : 1,
+                            pointerEvents: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'none' : 'auto'
+                          }} className='select-cancel' onClick={() => { handleClickedCleared("location") }}>
+                            <i className='fa fa-times'></i>
+                          </span>
+                        ) : (null)}
+                      </div>
+                      <div className="col-1 ">
+                        {(() => {
+                          const isAddDisabled =
+                            !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) ||
+                            selectedOption === null;
+
+                          return (
+                            <button
+                              disabled={isAddDisabled}
+                              className="btn btn-sm bg-green text-white"
+                              data-toggle="modal"
+                              data-target="#PropertyRoomTreeModal"
+                              style={{ cursor: isAddDisabled ? 'not-allowed' : 'pointer' }}
+                              onClick={() => {
+                                setlocationStatus(true)
+                                // setKeyChange("CurrentStorageLocation")
+                              }}
+                            >
+                              <i className="fa fa-plus"></i>
+                            </button>
+                          );
+                        })()}
+                      </div>
+
+                      <div className="col-3 col-md-3 col-lg-2">
+                        <label htmlFor="" className='new-label text-nowrap  mb-0'>Packaging Details</label>
+                      </div>
+                      <div className="col-9 col-md-9 col-lg-4 text-field mt-0">
+                        <input type="text" name="PackagingDetails" className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.PackagingDetails} onChange={(e) => { handleChange(e) }} />
+                      </div>
+
+
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label mb-0'>Comments</label>
+                      </div>
+                      <div className="col-9 col-md-9 col-lg-10 text-field mt-0">
+                        <input type="text" name="ActivityComments"
+                          className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
+                      </div>
+
+
+
+                      <div className='col-12 col-md-12 col-lg-12 '>
+                        <div className="row align-items-center ">
+                          <div className="col-3 col-md-3 col-lg-2">
+                            <label htmlFor="" className='new-label text-nowrap  mb-0'>
+                              File Attachment
+                            </label>
+                          </div>
+                          <div className="col-3 col-md-3 col-lg-10 ">
+                            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px", }}
+                            >
+                              <div style={{ display: "flex", alignItems: "center", border: "1px solid #ccc", borderRadius: "6px", background: "#f9f9f9", width: "100%" }}>
+                                <label
+                                  htmlFor="file-input"
+                                  style={{
+                                    padding: "5px 16px",
+                                    backgroundColor: "#e9e9e9",
+                                    color: "#fff",
+                                    borderRadius: "4px",
+                                    marginLeft: "4px",
+                                    marginTop: "8px",
+                                    cursor: "pointer",
+                                    fontSize: "14px",
+                                    fontWeight: "bold",
+                                    transition: "background 0.3s",
+                                  }}
+                                  onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                  onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                >
+                                  Choose File
+                                </label>
+                                <input
+                                  type="file"
+                                  onChange={handleFileChange}
+                                  ref={fileInputRef}
+                                  multiple
+                                  style={{ display: "none" }}
+                                  id="file-input"
+                                />
+                                <div
+                                  style={{
+                                    borderRadius: "4px",
+                                    display: "flex",
+                                    flexWrap: "wrap",
+                                    minHeight: "38px",
+                                    flex: "1",
+                                    alignItems: "center",
+                                    gap: "6px",
+                                    marginLeft: "12px",
+                                    backgroundColor: "#fff",
+                                  }}
+                                >
+                                  {selectedFiles.length > 0 ? (
+                                    selectedFiles.map((file, index) => (
+                                      <div
+                                        key={index}
+                                        style={{
+                                          display: "inline-flex",
+                                          alignItems: "center",
+                                          backgroundColor: "#e9ecef",
+                                          padding: "4px 10px",
+                                          borderRadius: "4px",
+                                          margin: "4px",
+                                          fontSize: "13px",
+                                          fontWeight: "500",
+                                        }}
+                                      >
+                                        <span>{file.name}</span>
+                                        <button
+                                          type="button"
+                                          onClick={() => removeFile(index)}
+                                          style={{
+                                            marginLeft: "6px",
+                                            border: "none",
+                                            background: "none",
+                                            cursor: "pointer",
+                                            fontSize: "14px",
+                                            fontWeight: "bold",
+                                            color: "#d9534f",
+                                          }}
+                                        >
+                                          ×
+                                        </button>
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <span style={{ color: "#777", fontSize: "13px" }}>No files selected</span>
+                                  )}
+                                </div>
+                              </div>
+
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+
+                      <fieldset style={{ width: "100%" }}>
+                        <legend>Schedule</legend>
+                        <div className='row align-items-center'>
+                          <div className="col-3 col-md-3 col-lg-2 ">
+                            <label htmlFor="" className='new-label mb-0'>Court Date</label>
+                          </div>
+                          <div className="col-3 col-md-3 col-lg-2 ">
+                            <DatePicker
+                              name='CourtDate'
+                              id='CourtDate'
+                              onKeyDown={(e) => {
+                                if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                                  e?.preventDefault();
+                                }
+                              }}
+                              onChange={(date) => {
+                                setCourtdate(date);
+                                setValue({
+                                  ...value,
+                                  ['CourtDate']: date ? getShowingMonthDateYear(date) : null,
+                                });
+                                if (destroydate && new Date(destroydate) < new Date(date)) {
+                                  setdestroydate(null);
+                                  setValue({
+                                    ...value,
+                                    ['DestroyDate']: null,
+                                  });
+                                }
+                              }}
+                              isClearable={!!courtdate}
+                              selected={courtdate}
+                              placeholderText={courtdate ? courtdate : 'Select...'}
+                              dateFormat="MM/dd/yyyy"
+                              filterTime={filterPassedTime}
+                              timeIntervals={1}
+                              timeCaption="Time"
+                              showMonthDropdown
+                              showYearDropdown
+                              dropdownMode="select"
+                              showDisabledMonthNavigation
+                              autoComplete='off'
+                              minDate={new Date()}
+                              maxDate={value.ReleaseDate ? new Date(value?.ReleaseDate) : ''}
+                              disabled={value.IsCheckOut || value.IsDestroy || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                              className={value.IsCheckOut || value.IsDestroy || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
+
+                            />
+                          </div>
+                          <div className="col-3 col-md-3 col-lg-2 ">
+                            <label htmlFor="" className='new-label mb-0'>Release Date/Time{errors.ReleasedDateTimeError !== 'true' ? (
+                              <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReleasedDateTimeError}</p>
+                            ) : null}</label>
+                          </div>
+                          <div className="col-3 col-md-3 col-lg-2 ">
+                            <DatePicker
+                              name='activitydate'
+                              id='activitydate'
+                              onChange={(date) => {
+                                setactivitydate(date); setValue({ ...value, ['activitydate']: date ? getShowingMonthDateYear(date) : null, });
+
+                              }}
+                              isClearable={activitydate ? true : false}
+                              selected={activitydate}
+                              placeholderText={activitydate ? activitydate : 'Select...'}
+                              dateFormat="MM/dd/yyyy HH:mm"
+                              timeFormat="HH:mm "
+                              is24Hour
+                              timeInputLabel
+                              showTimeSelect
+                              timeIntervals={1}
+                              timeCaption="Time"
+                              showMonthDropdown
+                              showYearDropdown
+                              dropdownMode="select"
+                              showDisabledMonthNavigation
+                              autoComplete='off'
+                              maxDate={new Date(datezone)}
+                              disabled={selectedOption === null || selectedOption === ''}
+                              className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                            />
+
+                          </div>
+
+                          <div className="col-3 col-md-3 col-lg-2 ">
+                            <label htmlFor="" className='new-label mb-0'>Destroy&nbsp;Date</label>
+                          </div>
+                          <div className="col-3 col-md-3 col-lg-2 ">
+                            <DatePicker
+                              name='DestroyDate'
+                              id='DestroyDate'
+                              onKeyDown={(e) => {
+                                if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                                  e?.preventDefault();
+                                }
+                              }}
+                              onChange={(date) => {
+                                setdestroydate(date);
+                                setValue({
+                                  ...value,
+                                  ['DestroyDate']: date ? getShowingMonthDateYear(date) : null,
+                                });
+                              }}
+                              isClearable={!!destroydate}
+                              selected={destroydate}
+                              placeholderText={destroydate ? destroydate : 'Select...'}
+                              dateFormat="MM/dd/yyyy"
+                              filterTime={filterPassedTime}
+
+                              timeIntervals={1}
+                              timeCaption="Time"
+                              showMonthDropdown
+                              showYearDropdown
+                              dropdownMode="select"
+                              showDisabledMonthNavigation
+                              autoComplete='off'
+                              minDate={courtdate ? new Date(courtdate) : new Date()}
+                              disabled={value.IsCheckOut || value.IsRelease || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                              className={value.IsCheckOut || value.IsRelease || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
+
+                            />
+                          </div>
+                        </div>
+                      </fieldset>
+                    </div>
+                    }
+                    {selectedOption === "CheckOut" && <div className='row align-items-center' style={{ rowGap: "8px" }}>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label mb-0'>Reason{errors.ReasonError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <Select
+                          name='ActivityReasonID'
+                          value={reasonIdDrp?.filter((obj) => obj.value === value?.ActivityReasonID)}
+                          isClearable
+                          options={reasonIdDrp}
+                          onChange={(e) => ChangeDropDown(e, 'ActivityReasonID')}
+                          placeholder="Select..."
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                        />
+                      </div>
+
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label mb-0'>Check Out Date/Time{errors.CheckOutDateTimeError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.CheckOutDateTimeError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2">
+                        <DatePicker
+                          name='activitydate'
+                          id='activitydate'
+                          onChange={(date) => {
+                            setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
+
+                          }}
+                          isClearable={activitydate ? true : false}
+                          selected={activitydate}
+                          placeholderText={activitydate ? activitydate : 'Select...'}
+                          dateFormat="MM/dd/yyyy HH:mm"
+                          timeFormat="HH:mm "
+                          is24Hour
+                          timeInputLabel
+                          showTimeSelect
+                          timeIntervals={1}
+                          timeCaption="Time"
+                          showMonthDropdown
+                          showYearDropdown
+                          dropdownMode="select"
+                          showDisabledMonthNavigation
+                          autoComplete='off'
+                          maxDate={new Date(datezone)}
+                          disabled={selectedOption === null || selectedOption === ''}
+                          className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                        />
+
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
+                        <label htmlFor="" className='new-label mb-0'>Expected Return Date/Time{errors.ExpectedReturnDateTimeError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ExpectedReturnDateTimeError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2">
+                        <DatePicker
+                          name='ExpectedDate'
+                          id='ExpectedDate'
+                          onChange={(date) => {
+                            setExpecteddate(date); setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
+
+                          }}
+                          isClearable={expecteddate ? true : false}
+                          selected={expecteddate}
+                          placeholderText={expecteddate ? expecteddate : 'Select...'}
+                          dateFormat="MM/dd/yyyy HH:mm"
+                          timeFormat="HH:mm "
+                          is24Hour
+                          timeInputLabel
+                          showTimeSelect
+                          timeIntervals={1}
+                          timeCaption="Time"
+                          showMonthDropdown
+                          showYearDropdown
+                          dropdownMode="select"
+                          showDisabledMonthNavigation
+                          autoComplete='off'
+                          maxDate={new Date(datezone)}
+                          disabled={selectedOption === null || selectedOption === ''}
+                          className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                        />
+
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label px-0 mb-0'>Releasing Officer{errors.ReleasingOfficerError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReleasingOfficerError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
+
+                        <Select
+                          name='ReleasingOfficerID'
+                          value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ReleasingOfficerID)}
+                          isClearable
+                          options={agencyOfficerDrpData}
+                          onChange={(e) => ChangeDropDown(e, 'ReleasingOfficerID')}
+                          placeholder="Select..."
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                        />
+
+
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2  ">
+                        <label htmlFor="" className='new-label px-0 mb-0'>Receipient Officer{errors.ReasonError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
+
+                        <Select
+                          name='ReceipentOfficerID'
+                          value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ReceipentOfficerID)}
+                          isClearable
+                          options={agencyOfficerDrpData}
+                          onChange={(e) => ChangeDropDown(e, 'ReceipentOfficerID')}
+                          placeholder="Select..."
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                        />
+
+
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label mb-0'>Destination</label>
+                      </div>
+                      <div className="col-9 col-md-9 col-lg-2 text-field mt-0">
+                        <input type="text" name="Destination"
+                          className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.Destination} onChange={(e) => { handleChange(e) }} />
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label mb-0'>Mode of Transport</label>
+                      </div>
+                      <div className="col-9 col-md-9 col-lg-2 text-field mt-0">
+                        <input type="text" name="ModeOfTransport"
+                          className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ModeOfTransport} onChange={(e) => { handleChange(e) }} />
+                      </div>
+
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label px-0 mb-0'>Storage Location</label>
+                      </div>
+                      <div className="col-12 col-md-12 col-lg-5 ">
+                        <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} disabled className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
+                          ? 'requiredColor'
+                          : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
+                            ? 'readonlyColor'
+                            : ''
+                          }`}
+                        />
+
+                        {value.location ? (
+                          <span style={{
+                            position: 'absolute',
+                            top: '40%',
+                            right: '10px',
+                            transform: 'translateY(-50%)',
+                            cursor: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'not-allowed' : 'pointer',
+                            opacity: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 0.5 : 1,
+                            pointerEvents: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'none' : 'auto'
+                          }} className='select-cancel' onClick={() => { handleClickedCleared("location") }}>
+                            <i className='fa fa-times'></i>
+                          </span>
+                        ) : (null)}
+                      </div>
+
+
+                      <div className="col-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
+                        <button disabled={!(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) || selectedOption === null}
+                          className=" btn btn-sm bg-green text-white" data-toggle="modal" data-target="#PropertyRoomTreeModal" style={{ cursor: 'pointer' }} onClick={() => {
+                            setlocationStatus(true);
+                            // setKeyChange("location")
+                          }}>
+                          <i className="fa fa-plus" > </i>
+                        </button>
+                      </div>
+
+
+                      <div className="col-3 col-md-3 col-lg-2">
+                        <label htmlFor="" className='new-label text-nowrap mb-0'>Packaging Details</label>
+                      </div>
+                      <div className="col-9 col-md-9 col-lg-10 text-field mt-0">
+                        <input type="text" name="PackagingDetails" className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.PackagingDetails} onChange={(e) => { handleChange(e) }} />
+                      </div>
+
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label mb-0'>Comments</label>
+                      </div>
+                      <div className="col-9 col-md-9 col-lg-10 text-field mt-0">
+                        <input type="text" name="ActivityComments"
+                          className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
+                      </div>
+
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label text-nowrap mb-0'>
+                          File Attachment
+                        </label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-10 ">
+                        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px", }}
+                        >
+                          <div style={{ display: "flex", alignItems: "center", border: "1px solid #ccc", borderRadius: "6px", background: "#f9f9f9", width: "100%" }}>
+                            <label
+                              htmlFor="file-input"
+                              style={{
+                                padding: "5px 16px",
+                                backgroundColor: "#e9e9e9",
+                                color: "#fff",
+                                borderRadius: "4px",
+                                marginLeft: "4px",
+                                marginTop: "8px",
+                                cursor: "pointer",
+                                fontSize: "14px",
+                                fontWeight: "bold",
+                                transition: "background 0.3s",
+                              }}
+                              onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                              onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                            >
+                              Choose File
+                            </label>
+                            <input
+                              type="file"
+                              onChange={handleFileChange}
+                              ref={fileInputRef}
+                              multiple
+                              style={{ display: "none" }}
+                              id="file-input"
+                            />
+                            <div
+                              style={{
+                                borderRadius: "4px",
+                                display: "flex",
+                                flexWrap: "wrap",
+                                minHeight: "38px",
+                                flex: "1",
+                                alignItems: "center",
+                                gap: "6px",
+                                marginLeft: "12px",
+                                backgroundColor: "#fff",
+                              }}
+                            >
+                              {selectedFiles.length > 0 ? (
+                                selectedFiles.map((file, index) => (
+                                  <div
+                                    key={index}
+                                    style={{
+                                      display: "inline-flex",
+                                      alignItems: "center",
+                                      backgroundColor: "#e9ecef",
+                                      padding: "4px 10px",
+                                      borderRadius: "4px",
+                                      margin: "4px",
+                                      fontSize: "13px",
+                                      fontWeight: "500",
+                                    }}
+                                  >
+                                    <span>{file.name}</span>
+                                    <button
+                                      type="button"
+                                      onClick={() => removeFile(index)}
+                                      style={{
+                                        marginLeft: "6px",
+                                        border: "none",
+                                        background: "none",
+                                        cursor: "pointer",
+                                        fontSize: "14px",
+                                        fontWeight: "bold",
+                                        color: "#d9534f",
+                                      }}
+                                    >
+                                      ×
+                                    </button>
+                                  </div>
+                                ))
+                              ) : (
+                                <span style={{ color: "#777", fontSize: "13px" }}>No files selected</span>
+                              )}
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+
+
+
+
+
+                    </div>}
+                    {selectedOption === "Release" && <div className='row align-items-center' style={{ rowGap: "8px" }}>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label mb-0'>Reason{errors.ReasonError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <Select
+                          name='ActivityReasonID'
+                          value={reasonIdDrp?.filter((obj) => obj.value === value?.ActivityReasonID)}
+                          isClearable
+                          options={reasonIdDrp}
+                          onChange={(e) => ChangeDropDown(e, 'ActivityReasonID')}
+                          placeholder="Select..."
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                        />
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label mb-0 '>Release Date/Time{errors.ReleasedDateTimeError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReleasedDateTimeError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <DatePicker
+                          name='activitydate'
+                          id='activitydate'
+                          onChange={(date) => {
+                            setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
+
+                          }}
+                          isClearable={activitydate ? true : false}
+                          selected={activitydate}
+                          placeholderText={activitydate ? activitydate : 'Select...'}
+                          dateFormat="MM/dd/yyyy HH:mm"
+                          timeFormat="HH:mm "
+                          is24Hour
+                          timeInputLabel
+                          showTimeSelect
+                          timeIntervals={1}
+                          timeCaption="Time"
+                          showMonthDropdown
+                          showYearDropdown
+                          dropdownMode="select"
+                          showDisabledMonthNavigation
+                          autoComplete='off'
+                          maxDate={new Date(datezone)}
+                          disabled={selectedOption === null || selectedOption === ''}
+                          className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                        />
+
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label mb-0'>Property Room Officer{errors.PropertyRoomOfficerError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.PropertyRoomOfficerError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2">
+                        <Select
+                          name='"OfficerNameID"'
+                          value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.OfficerNameID)}
+                          isClearable
+                          options={agencyOfficerDrpData}
+                          onChange={(e) => ChangeDropDown(e, 'OfficerNameID')}
+                          placeholder="Select..."
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                        />
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label px-0 mb-0'>Releasing Officer{errors.ReleasingOfficerError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReleasingOfficerError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
+
+                        <Select
+                          name='ReleasingOfficerID'
+                          value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ReleasingOfficerID)}
+                          isClearable
+                          options={agencyOfficerDrpData}
+                          onChange={(e) => ChangeDropDown(e, 'ReleasingOfficerID')}
+                          placeholder="Select..."
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                        />
+
+
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label px-0 mb-0'>Receipient {errors.ReceipientError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReceipientError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
+
+                        <Select
+                          name='ReceipentID'
+                          value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ReceipentID)}
+                          isClearable
+                          options={agencyOfficerDrpData}
+                          onChange={(e) => ChangeDropDown(e, 'ReceipentID')}
+                          placeholder="Select..."
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                        />
+
+
+                      </div>
+
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label px-0 mb-0'>Receipient Location</label>
+                      </div>
+                      <div className="col-12 col-md-12 col-lg-2    ">
+                        <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} disabled className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
+                          ? 'requiredColor'
+                          : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
+                            ? 'readonlyColor'
+                            : ''
+                          }`}
+                        />
+
+                        {value.location ? (
+                          <span style={{
+                            position: 'absolute',
+                            top: '40%',
+                            right: '10px',
+                            transform: 'translateY(-50%)',
+                            cursor: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'not-allowed' : 'pointer',
+                            opacity: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 0.5 : 1,
+                            pointerEvents: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'none' : 'auto'
+                          }} className='select-cancel' onClick={() => { handleClickedCleared("location") }}>
+                            <i className='fa fa-times'></i>
+                          </span>
+                        ) : (null)}
+                      </div>
+
+
+                      {/* <div className="col-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
+                                                          <button disabled={!(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) || selectedOption === null}
+                                                              className=" btn btn-sm bg-green text-white" data-toggle="modal" data-target="#PropertyRoomTreeModal" style={{ cursor: 'pointer' }} onClick={() => {
+                                                                  setlocationStatus(true);
+                                                              }}>
+                                                              <i className="fa fa-plus" > </i>
+                                                          </button>
+                                                      </div> */}
+
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label mb-0'>Mode of Transport</label>
+                      </div>
+                      <div className="col-9 col-md-9 col-lg-2 text-field mt-0">
+                        <input type="text" name="ActivityComments"
+                          className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
+                      </div>
+
+
+                      <div className="col-3 col-md-3 col-lg-2">
+                        <label htmlFor="" className='new-label px-0 mb-0'>Storage Location</label>
+                      </div>
+                      <div className="col-12 col-md-12 col-lg-5 ">
+                        <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} disabled className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
+                          ? 'requiredColor'
+                          : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
+                            ? 'readonlyColor'
+                            : ''
+                          }`}
+                        />
+
+                        {value.location ? (
+                          <span style={{
+                            position: 'absolute',
+                            top: '40%',
+                            right: '10px',
+                            transform: 'translateY(-50%)',
+                            cursor: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'not-allowed' : 'pointer',
+                            opacity: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 0.5 : 1,
+                            pointerEvents: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'none' : 'auto'
+                          }} className='select-cancel' onClick={() => { handleClickedCleared("location") }}>
+                            <i className='fa fa-times'></i>
+                          </span>
+                        ) : (null)}
+
+
+
+
+
+
+                      </div>
+
+                      <div className="col-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
+                        <button disabled={!(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) || selectedOption === null}
+                          className=" btn btn-sm bg-green text-white" data-toggle="modal" data-target="#PropertyRoomTreeModal" style={{ cursor: 'pointer' }} onClick={() => {
+                            setlocationStatus(true);
+                            // setKeyChange("location")
+                          }}>
+                          <i className="fa fa-plus" > </i>
+                        </button>
+                      </div>
+
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label mb-0'>Comments</label>
+                      </div>
+                      <div className="col-9 col-md-9 col-lg-10 text-field mt-0">
+                        <input type="text" name="ActivityComments"
+                          className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
+                      </div>
+
+
+
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label text-nowrap mb-0'>
+                          File Attachment
+                        </label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-10 ">
+                        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px", }}
+                        >
+                          <div style={{ display: "flex", alignItems: "center", border: "1px solid #ccc", borderRadius: "6px", background: "#f9f9f9", width: "100%" }}>
+                            <label
+                              htmlFor="file-input"
+                              style={{
+                                padding: "5px 16px",
+                                backgroundColor: "#e9e9e9",
+                                color: "#fff",
+                                borderRadius: "4px",
+                                marginLeft: "4px",
+                                marginTop: "8px",
+                                cursor: "pointer",
+                                fontSize: "14px",
+                                fontWeight: "bold",
+                                transition: "background 0.3s",
+                              }}
+                              onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                              onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                            >
+                              Choose File
+                            </label>
+                            <input
+                              type="file"
+                              onChange={handleFileChange}
+                              ref={fileInputRef}
+                              multiple
+                              style={{ display: "none" }}
+                              id="file-input"
+                            />
+                            <div
+                              style={{
+                                borderRadius: "4px",
+                                display: "flex",
+                                flexWrap: "wrap",
+                                minHeight: "38px",
+                                flex: "1",
+                                alignItems: "center",
+                                gap: "6px",
+                                marginLeft: "12px",
+                                backgroundColor: "#fff",
+                              }}
+                            >
+                              {selectedFiles.length > 0 ? (
+                                selectedFiles.map((file, index) => (
+                                  <div
+                                    key={index}
+                                    style={{
+                                      display: "inline-flex",
+                                      alignItems: "center",
+                                      backgroundColor: "#e9ecef",
+                                      padding: "4px 10px",
+                                      borderRadius: "4px",
+                                      margin: "4px",
+                                      fontSize: "13px",
+                                      fontWeight: "500",
+                                    }}
+                                  >
+                                    <span>{file.name}</span>
+                                    <button
+                                      type="button"
+                                      onClick={() => removeFile(index)}
+                                      style={{
+                                        marginLeft: "6px",
+                                        border: "none",
+                                        background: "none",
+                                        cursor: "pointer",
+                                        fontSize: "14px",
+                                        fontWeight: "bold",
+                                        color: "#d9534f",
+                                      }}
+                                    >
+                                      ×
+                                    </button>
+                                  </div>
+                                ))
+                              ) : (
+                                <span style={{ color: "#777", fontSize: "13px" }}>No files selected</span>
+                              )}
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+
+                      <fieldset style={{ width: "100%" }}>
+                        <legend>Schedule</legend>
+                        <div className='row align-items-center'>
+                          <div className="col-3 col-md-3 col-lg-2 ">
+                            <label htmlFor="" className='new-label mb-0'>Court Date</label>
+                          </div>
+                          <div className="col-3 col-md-3 col-lg-2 ">
+                            <DatePicker
+                              name='CourtDate'
+                              id='CourtDate'
+                              onKeyDown={(e) => {
+                                if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                                  e?.preventDefault();
+                                }
+                              }}
+                              onChange={(date) => {
+                                setCourtdate(date);
+                                setValue({
+                                  ...value,
+                                  ['CourtDate']: date ? getShowingMonthDateYear(date) : null,
+                                });
+                                if (destroydate && new Date(destroydate) < new Date(date)) {
+                                  setdestroydate(null);
+                                  setValue({
+                                    ...value,
+                                    ['DestroyDate']: null,
+                                  });
+                                }
+                              }}
+                              isClearable={!!courtdate}
+                              selected={courtdate}
+                              placeholderText={courtdate ? courtdate : 'Select...'}
+                              dateFormat="MM/dd/yyyy"
+                              filterTime={filterPassedTime}
+                              timeIntervals={1}
+                              timeCaption="Time"
+                              showMonthDropdown
+                              showYearDropdown
+                              dropdownMode="select"
+                              showDisabledMonthNavigation
+                              autoComplete='off'
+                              minDate={new Date()}
+                              maxDate={value.ReleaseDate ? new Date(value?.ReleaseDate) : ''}
+                              disabled={value.IsCheckOut || value.IsDestroy || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                              className={value.IsCheckOut || value.IsDestroy || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
+
+                            />
+                          </div>
+                        </div>
+
+                      </fieldset>
+
+                    </div>
+                    }
+                    {selectedOption === "Destroy" && <div className='row align-items-center' style={{ rowGap: "8px" }}>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label mb-0'>Reason{errors.ReasonError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2">
+                        <Select
+                          name='ActivityReasonID'
+                          value={reasonIdDrp?.filter((obj) => obj.value === value?.ActivityReasonID)}
+                          isClearable
+                          options={reasonIdDrp}
+                          onChange={(e) => ChangeDropDown(e, 'ActivityReasonID')}
+                          placeholder="Select..."
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                        />
+                      </div>
+
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label mb-0'>Destruction Date/Time{errors.DestructionDateTimeError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.DestructionDateTimeError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <DatePicker
+                          name='activitydate'
+                          id='activitydate'
+                          onChange={(date) => {
+                            setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
+
+                          }}
+                          isClearable={activitydate ? true : false}
+                          selected={activitydate}
+                          placeholderText={activitydate ? activitydate : 'Select...'}
+                          dateFormat="MM/dd/yyyy HH:mm"
+                          timeFormat="HH:mm "
+                          is24Hour
+                          timeInputLabel
+                          showTimeSelect
+                          timeIntervals={1}
+                          timeCaption="Time"
+                          showMonthDropdown
+                          showYearDropdown
+                          dropdownMode="select"
+                          showDisabledMonthNavigation
+                          autoComplete='off'
+                          maxDate={new Date(datezone)}
+                          disabled={selectedOption === null || selectedOption === ''}
+                          className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                        />
+
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label mb-0'>Property Room Officer{errors.PropertyRoomOfficerError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.PropertyRoomOfficerError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <Select
+                          name='"OfficerNameID"'
+                          value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.OfficerNameID)}
+                          isClearable
+                          options={agencyOfficerDrpData}
+                          onChange={(e) => ChangeDropDown(e, 'OfficerNameID')}
+                          placeholder="Select..."
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                        />
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label px-0 mb-0'>Destruction Officer{errors.DestructionOfficerError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.DestructionOfficerError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
+
+                        <Select
+                          name='DestructionOfficerID'
+                          value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.DestructionOfficerID)}
+                          isClearable
+                          options={agencyOfficerDrpData}
+                          onChange={(e) => ChangeDropDown(e, 'DestructionOfficerID')}
+                          placeholder="Select..."
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                        />
+
+
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label px-0 mb-0'>Witness{errors.WitnessError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.WitnessError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
+
+                        <Select
+                          name='WitnessID'
+                          value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.WitnessID)}
+                          isClearable
+                          options={agencyOfficerDrpData}
+                          onChange={(e) => ChangeDropDown(e, 'WitnessID')}
+                          placeholder="Select..."
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                        />
+
+
+                      </div>
+
+                      <div className="col-3 col-md-3 col-lg-2  ">
+                        <label htmlFor="" className='new-label px-0 mb-0'> Destruction Location</label>
+                      </div>
+                      <div className="col-12 col-md-12 col-lg-2 ">
+                        <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} disabled className={`form-control ${(value.IsCheckIn || value.IsTransferLocation || value.IsRelease)
+                          ? 'requiredColor'
+                          : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
+                            ? 'readonlyColor'
+                            : ''}`} />
+
+                        {value.location ? (
+                          <span style={{
+                            position: 'absolute',
+                            top: '40%',
+                            right: '10px',
+                            transform: 'translateY(-50%)',
+                            cursor: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'not-allowed' : 'pointer',
+                            opacity: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 0.5 : 1,
+                            pointerEvents: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'none' : 'auto'
+                          }} className='select-cancel' onClick={() => { handleClickedCleared("location") }}>
+                            <i className='fa fa-times'></i>
+                          </span>
+                        ) : (null)}
+                      </div>
+                      {/* <div className="col-1 " data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
+                                      <button disabled={!(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) || selectedOption === null}
+                                          className=" btn btn-sm bg-green text-white" data-toggle="modal" data-target="#PropertyRoomTreeModal" style={{ cursor: 'pointer' }} onClick={() => {
+                                              setlocationStatus(true);
+                                          }}>
+                                          <i className="fa fa-plus" ></i>
+                                      </button>
+                                  </div> */}
+
+
+
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label mb-0'>Destruction Method</label>
+                      </div>
+                      <div className="col-9 col-md-9 col-lg-2 text-field mt-0">
+                        <input type="text" name="ActivityComments"
+                          className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label px-0'>Approval Officer{errors.ApprovalOfficerError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ApprovalOfficerError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
+
+                        <Select
+                          name='ApprovalOfficerID'
+                          value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ApprovalOfficerID)}
+                          isClearable
+                          options={agencyOfficerDrpData}
+                          onChange={(e) => ChangeDropDown(e, 'ApprovalOfficerID')}
+                          placeholder="Select..."
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                        />
+
+
+                      </div>
+
+                      <div className='col-3 col-md-3 col-lg-4'></div>
+
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label px-0 mb-0'>Storage Location</label>
+                      </div>
+                      <div className="col-12 col-md-12 col-lg-6 ">
+                        <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} disabled className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
+                          ? 'requiredColor'
+                          : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
+                            ? 'readonlyColor'
+                            : ''
+                          }`}
+                        />
+
+                        {value.location ? (
+                          <span style={{
+                            position: 'absolute',
+                            top: '40%',
+                            right: '10px',
+                            transform: 'translateY(-50%)',
+                            cursor: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'not-allowed' : 'pointer',
+                            opacity: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 0.5 : 1,
+                            pointerEvents: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'none' : 'auto'
+                          }} className='select-cancel' onClick={() => { handleClickedCleared("location") }}>
+                            <i className='fa fa-times'></i>
+                          </span>
+                        ) : (null)}
+                      </div>
+
+
+                      <div className="col-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
+                        <button disabled={!(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) || selectedOption === null}
+                          className=" btn btn-sm bg-green text-white" data-toggle="modal" data-target="#PropertyRoomTreeModal" style={{ cursor: 'pointer' }} onClick={() => {
+                            setlocationStatus(true);
+                            // setKeyChange("location")
+                          }}>
+                          <i className="fa fa-plus" > </i>
+                        </button>
+                      </div>
+                      <div className='col-12 col-md-12 col-lg-3'></div>
+
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label mb-0'>Comments</label>
+                      </div>
+                      <div className="col-9 col-md-9 col-lg-10 text-field mt-0">
+                        <input type="text" name="ActivityComments"
+                          className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
+                      </div>
+
+
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label text-nowrap mb-0'>
+                          File Attachment
+                        </label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-10 ">
+                        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px", }}
+                        >
+                          <div style={{ display: "flex", alignItems: "center", border: "1px solid #ccc", borderRadius: "6px", background: "#f9f9f9", width: "100%" }}>
+                            <label
+                              htmlFor="file-input"
+                              style={{
+                                padding: "5px 16px",
+                                backgroundColor: "#e9e9e9",
+                                color: "#fff",
+                                borderRadius: "4px",
+                                marginLeft: "4px",
+                                marginTop: "8px",
+                                cursor: "pointer",
+                                fontSize: "14px",
+                                fontWeight: "bold",
+                                transition: "background 0.3s",
+                              }}
+                              onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                              onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                            >
+                              Choose File
+                            </label>
+                            <input
+                              type="file"
+                              onChange={handleFileChange}
+                              ref={fileInputRef}
+                              multiple
+                              style={{ display: "none" }}
+                              id="file-input"
+                            />
+                            <div
+                              style={{
+                                borderRadius: "4px",
+                                display: "flex",
+                                flexWrap: "wrap",
+                                minHeight: "38px",
+                                flex: "1",
+                                alignItems: "center",
+                                gap: "6px",
+                                marginLeft: "12px",
+                                backgroundColor: "#fff",
+                              }}
+                            >
+                              {selectedFiles.length > 0 ? (
+                                selectedFiles.map((file, index) => (
+                                  <div
+                                    key={index}
+                                    style={{
+                                      display: "inline-flex",
+                                      alignItems: "center",
+                                      backgroundColor: "#e9ecef",
+                                      padding: "4px 10px",
+                                      borderRadius: "4px",
+                                      margin: "4px",
+                                      fontSize: "13px",
+                                      fontWeight: "500",
+                                    }}
+                                  >
+                                    <span>{file.name}</span>
+                                    <button
+                                      type="button"
+                                      onClick={() => removeFile(index)}
+                                      style={{
+                                        marginLeft: "6px",
+                                        border: "none",
+                                        background: "none",
+                                        cursor: "pointer",
+                                        fontSize: "14px",
+                                        fontWeight: "bold",
+                                        color: "#d9534f",
+                                      }}
+                                    >
+                                      ×
+                                    </button>
+                                  </div>
+                                ))
+                              ) : (
+                                <span style={{ color: "#777", fontSize: "13px" }}>No files selected</span>
+                              )}
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+
+
+
+                    </div>
+                    }
+                    {selectedOption === "TransferLocation" &&
+                      <>
+                        <div className='row align-items-center  mb-1'>
+                          <div className="col-12 col-md-4 col-lg-2  "></div>
+                          <div className="col-12 col-md-4 col-lg-2">
+                            <div className="form-check">
+
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                value="Internal"
+                                // name="AttemptComplete"
+                                checked={value?.Internal}
+                                // id="flexRadioDefault"
+                                onChange={handleRadioChangeInner}
+                              />
+                              <label style={{ fontWeight: value?.IsCheckIn ? 'bold' : 'normal' }} className="form-check-label" htmlFor="flexRadioDefault">
+                                Internal Transfer
+                              </label>
+                            </div>
+                          </div>
+                          <div className="col-12 col-md-4 col-lg-2">
+                            <div className="form-check">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                value="External"
+                                // name="AttemptComplete"
+                                checked={value?.External}
+                                // id="flexRadioDefault1"
+                                onChange={handleRadioChangeInner}
+                              />
+                              <label style={{ fontWeight: value?.IsCheckOut ? 'bold' : 'normal' }} className="form-check-label" htmlFor="flexRadioDefault1">
+                                External Transfer
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                        <div className='row align-items-center' style={{ rowGap: "8px" }}>
+
+                          <div className="col-3 col-md-3 col-lg-2">
+                            <label htmlFor="" className='new-label mb-0'>Reason{errors.ReasonError !== 'true' ? (
+                              <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
+                            ) : null}</label>
+                          </div>
+                          <div className="col-3 col-md-3 col-lg-2 ">
+                            <Select
+                              name='ActivityReasonID'
+                              value={reasonIdDrp?.filter((obj) => obj.value === value?.ActivityReasonID)}
+                              isClearable
+                              options={reasonIdDrp}
+                              onChange={(e) => ChangeDropDown(e, 'ActivityReasonID')}
+                              placeholder="Select..."
+                              styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                              isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                            />
+                          </div>
+                          <div className="col-3 col-md-3 col-lg-2 ">
+                            <label htmlFor="" className='new-label mb-0'>Transfer Date/Time{errors.TransferDateTimeError !== 'true' ? (
+                              <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.TransferDateTimeError}</p>
+                            ) : null}</label>
+                          </div>
+                          <div className="col-3 col-md-3 col-lg-2 ">
+                            <DatePicker
+                              name='TransferDate'
+                              id='TransferDate'
+                              onChange={(date) => {
+                                settransferdate(date); setValue({ ...value, ['TransferDate']: date ? getShowingMonthDateYear(date) : null, });
+
+                              }}
+                              isClearable={transferdate ? true : false}
+                              selected={transferdate}
+                              placeholderText={transferdate ? transferdate : 'Select...'}
+                              dateFormat="MM/dd/yyyy HH:mm"
+                              timeFormat="HH:mm "
+                              is24Hour
+                              timeInputLabel
+                              showTimeSelect
+                              timeIntervals={1}
+                              timeCaption="Time"
+                              showMonthDropdown
+                              showYearDropdown
+                              dropdownMode="select"
+                              showDisabledMonthNavigation
+                              autoComplete='off'
+                              maxDate={new Date(datezone)}
+                              disabled={selectedOption === null || selectedOption === ''}
+                              className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                            />
+
+                          </div>
+
+                          <div className="col-3 col-md-3 col-lg-2">
+                            <label htmlFor="" className='new-label px-0 mb-0'>Approval Officer{errors.ApprovalOfficerError !== 'true' ? (
+                              <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ApprovalOfficerError}</p>
+                            ) : null}</label>
+                          </div>
+                          <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
+
+                            <Select
+                              name='ApprovalOfficerID'
+                              value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ApprovalOfficerID)}
+                              isClearable
+                              options={agencyOfficerDrpData}
+                              onChange={(e) => ChangeDropDown(e, 'ApprovalOfficerID')}
+                              placeholder="Select..."
+                              styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                              isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                            />
+
+
+                          </div>
+                          <div className="col-3 col-md-3 col-lg-2 ">
+                            <label htmlFor="" className='new-label mb-0'>Property Room Officer{errors.PropertyRoomOfficerError !== 'true' ? (
+                              <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.PropertyRoomOfficerError}</p>
+                            ) : null}</label>
+                          </div>
+                          <div className="col-3 col-md-3 col-lg-2">
+                            <Select
+                              name='"OfficerNameID"'
+                              value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.OfficerNameID)}
+                              isClearable
+                              options={agencyOfficerDrpData}
+                              onChange={(e) => ChangeDropDown(e, 'OfficerNameID')}
+                              placeholder="Select..."
+                              styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                              isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                            />
+                          </div>
+                          {
+                            value.External ?
+                              <>
+                                <div className="col-3 col-md-3 col-lg-2">
+                                  <label htmlFor="" className='new-label mb-0'>Receiving Officer{errors.PropertyRoomOfficerError !== 'true' ? (
+                                    <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.PropertyRoomOfficerError}</p>
+                                  ) : null}</label>
+                                </div>
+                                <div className="col-3 col-md-3 col-lg-2 ">
+                                  <Select
+                                    name='"OfficerNameID"'
+                                    value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.OfficerNameID)}
+                                    isClearable
+                                    options={agencyOfficerDrpData}
+                                    onChange={(e) => ChangeDropDown(e, 'OfficerNameID')}
+                                    placeholder="Select..."
+                                    styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                                    isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                                  />
+                                </div>
+                                <div className="col-3 col-md-3 col-lg-2">
+                                  <label htmlFor="" className='new-label mb-0'>Mode of Transport</label>
+                                </div>
+                                <div className="col-9 col-md-9 col-lg-2 text-field mt-0">
+                                  <input type="text" name="ActivityComments"
+                                    className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
+                                </div>
+                                <div className="col-3 col-md-3 col-lg-2 ">
+                                  <label htmlFor="" className='new-label mb-0'>Expected Arrival Date/Time{errors.ExpectedReturnDateTimeError !== 'true' ? (
+                                    <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ExpectedReturnDateTimeError}</p>
+                                  ) : null}</label>
+                                </div>
+                                <div className="col-3 col-md-3 col-lg-2 ">
+                                  <DatePicker
+                                    name='ExpectedDate'
+                                    id='ExpectedDate'
+                                    onChange={(date) => {
+                                      setExpecteddate(date); setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
+
+                                    }}
+                                    isClearable={expecteddate ? true : false}
+                                    selected={expecteddate}
+                                    placeholderText={expecteddate ? expecteddate : 'Select...'}
+                                    dateFormat="MM/dd/yyyy HH:mm"
+                                    timeFormat="HH:mm "
+                                    is24Hour
+                                    timeInputLabel
+                                    showTimeSelect
+                                    timeIntervals={1}
+                                    timeCaption="Time"
+                                    showMonthDropdown
+                                    showYearDropdown
+                                    dropdownMode="select"
+                                    showDisabledMonthNavigation
+                                    autoComplete='off'
+                                    maxDate={new Date(datezone)}
+                                    disabled={selectedOption === null || selectedOption === ''}
+                                    className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                                  />
+
+                                </div>
+                              </> : <></>
+                          }
+
+
+
+                          <div className='col-3 col-md-3 col-lg-8'></div>
+                          <div className="col-3 col-md-3 col-lg-2  ">
+                            <label htmlFor="" className='new-label px-0 mb-0'> Current Storage Location</label>
+                          </div>
+                          <div className="col-12 col-md-12 col-lg-3" style={{ position: 'relative' }}>
+                            <input
+                              type="text"
+                              name="CurrentStorageLocation"
+                              id="CurrentStorageLocation"
+                              value={locationStatus ? '' : value.CurrentStorageLocation}
+                              disabled
+                              className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
+                                ? 'requiredColor'
+                                : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
+                                  ? 'readonlyColor'
+                                  : ''
+                                }`}
+                            />
+
+                            {value.CurrentStorageLocation && (
+                              <span
+                                className="select-cancel"
+                                onClick={() => { handleClickedCleared("CurrentStorageLocation") }}
+                                style={{
+                                  position: 'absolute',
+                                  top: '50%',
+                                  right: '10px',
+                                  transform: 'translateY(-50%)',
+                                  cursor:
+                                    !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
+                                      ? 'not-allowed'
+                                      : 'pointer',
+                                  opacity:
+                                    !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
+                                      ? 0.5
+                                      : 1,
+                                  pointerEvents:
+                                    !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
+                                      ? 'none'
+                                      : 'auto',
+                                }}
+                              >
+                                <i className="fa fa-times"></i>
+                              </span>
+                            )}
+                          </div>
+
+                          {/** ➕ Add Button Section **/}
+                          <div className="col-1 ">
+                            {(() => {
+                              const isAddDisabled =
+                                !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) ||
+                                selectedOption === null;
+
+                              return (
+                                <button
+                                  disabled={isAddDisabled}
+                                  className="btn btn-sm bg-green text-white"
+                                  data-toggle="modal"
+                                  data-target="#PropertyRoomTreeModal"
+                                  style={{ cursor: isAddDisabled ? 'not-allowed' : 'pointer' }}
+                                  onClick={() => {
+                                    setlocationStatus(true)
+                                    // setKeyChange("CurrentStorageLocation")
+                                  }}
+                                >
+                                  <i className="fa fa-plus"></i>
+                                </button>
+                              );
+                            })()}
+                          </div>
+
+
+                          <div className="col-3 col-md-3 col-lg-2 ">
+                            <label htmlFor="" className='new-label px-0 mb-0 text-nowrap'> New Storage Location</label>
+                          </div>
+                          <div className="col-12 col-md-12 col-lg-3" style={{ position: 'relative' }}>
+                            <input
+                              type="text"
+                              name="DestinationStorageLocation"
+                              id="DestinationStorageLocation"
+                              value={locationStatus ? '' : value.DestinationStorageLocation}
+                              disabled
+                              className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
+                                ? 'requiredColor'
+                                : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
+                                  ? 'readonlyColor'
+                                  : ''
+                                }`}
+                            />
+
+                            {value.DestinationStorageLocation && (
+                              <span
+                                className="select-cancel"
+                                onClick={() => { handleClickedCleared("DestinationStorageLocation") }}
+                                style={{
+                                  position: 'absolute',
+                                  top: '50%',
+                                  right: '10px',
+                                  transform: 'translateY(-50%)',
+                                  cursor:
+                                    !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
+                                      ? 'not-allowed'
+                                      : 'pointer',
+                                  opacity:
+                                    !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
+                                      ? 0.5
+                                      : 1,
+                                  pointerEvents:
+                                    !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
+                                      ? 'none'
+                                      : 'auto',
+                                }}
+                              >
+                                <i className="fa fa-times"></i>
+                              </span>
+                            )}
+                          </div>
+
+                          {/** Add Button Section **/}
+                          <div className="col-1">
+                            {(() => {
+                              const isAddDisabled =
+                                !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) ||
+                                selectedOption === null;
+
+                              return (
+                                <button
+                                  disabled={isAddDisabled}
+                                  className="btn btn-sm bg-green text-white"
+                                  data-toggle="modal"
+                                  data-target="#PropertyRoomTreeModal"
+                                  style={{ cursor: isAddDisabled ? 'not-allowed' : 'pointer' }}
+                                  onClick={() => {
+                                    setlocationStatus(true)
+                                    // setKeyChange("DestinationStorageLocation")
+                                  }}
+                                >
+                                  <i className="fa fa-plus"></i>
+                                </button>
+                              );
+                            })()}
+                          </div>
+
+                          <div className="col-3 col-md-3 col-lg-2 ">
+                            <label htmlFor="" className='new-label mb-0'>Comments</label>
+                          </div>
+                          <div className="col-9 col-md-9 col-lg-10 text-field mt-0">
+                            <input type="text" name="ActivityComments"
+                              className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
+                          </div>
+
+
+                          <div className="col-3 col-md-3 col-lg-2 ">
+                            <label htmlFor="" className='new-label text-nowrap mb-0'>
+                              File Attachment
+                            </label>
+                          </div>
+                          <div className="col-3 col-md-3 col-lg-10">
+                            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px", }}
+                            >
+                              <div style={{ display: "flex", alignItems: "center", border: "1px solid #ccc", borderRadius: "6px", background: "#f9f9f9", width: "100%" }}>
+                                <label
+                                  htmlFor="file-input"
+                                  style={{
+                                    padding: "5px 16px",
+                                    backgroundColor: "#e9e9e9",
+                                    color: "#fff",
+                                    borderRadius: "4px",
+                                    marginLeft: "4px",
+                                    marginTop: "8px",
+                                    cursor: "pointer",
+                                    fontSize: "14px",
+                                    fontWeight: "bold",
+                                    transition: "background 0.3s",
+                                  }}
+                                  onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                  onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                >
+                                  Choose File
+                                </label>
+                                <input
+                                  type="file"
+                                  onChange={handleFileChange}
+                                  ref={fileInputRef}
+                                  multiple
+                                  style={{ display: "none" }}
+                                  id="file-input"
+                                />
+                                <div
+                                  style={{
+                                    borderRadius: "4px",
+                                    display: "flex",
+                                    flexWrap: "wrap",
+                                    minHeight: "38px",
+                                    flex: "1",
+                                    alignItems: "center",
+                                    gap: "6px",
+                                    marginLeft: "12px",
+                                    backgroundColor: "#fff",
+                                  }}
+                                >
+                                  {selectedFiles.length > 0 ? (
+                                    selectedFiles.map((file, index) => (
+                                      <div
+                                        key={index}
+                                        style={{
+                                          display: "inline-flex",
+                                          alignItems: "center",
+                                          backgroundColor: "#e9ecef",
+                                          padding: "4px 10px",
+                                          borderRadius: "4px",
+                                          margin: "4px",
+                                          fontSize: "13px",
+                                          fontWeight: "500",
+                                        }}
+                                      >
+                                        <span>{file.name}</span>
+                                        <button
+                                          type="button"
+                                          onClick={() => removeFile(index)}
+                                          style={{
+                                            marginLeft: "6px",
+                                            border: "none",
+                                            background: "none",
+                                            cursor: "pointer",
+                                            fontSize: "14px",
+                                            fontWeight: "bold",
+                                            color: "#d9534f",
+                                          }}
+                                        >
+                                          ×
+                                        </button>
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <span style={{ color: "#777", fontSize: "13px" }}>No files selected</span>
+                                  )}
+                                </div>
+                              </div>
+
+                            </div>
+                          </div>
+
+
+
+                        </div>
+                      </>
+                    }
+                    {selectedOption === "Update" && <div className='row align-items-center' style={{ rowGap: "8px" }}>
+                      <div className="col-3 col-md-3 col-lg-2">
+                        <label htmlFor="" className='new-label mb-0'>Reason{errors.ReasonError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2">
+                        <Select
+                          name='ActivityReasonID'
+                          value={reasonIdDrp?.filter((obj) => obj.value === value?.ActivityReasonID)}
+                          isClearable
+                          options={reasonIdDrp}
+                          onChange={(e) => ChangeDropDown(e, 'ActivityReasonID')}
+                          placeholder="Select..."
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                        />
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label mb-0'>Update Date/Time{errors.UpdateDateTimeError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.UpdateDateTimeError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2">
+                        <DatePicker
+                          name='activitydate'
+                          id='activitydate'
+                          onChange={(date) => {
+                            setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
+
+                          }}
+                          isClearable={activitydate ? true : false}
+                          selected={activitydate}
+                          placeholderText={activitydate ? activitydate : 'Select...'}
+                          dateFormat="MM/dd/yyyy HH:mm"
+                          timeFormat="HH:mm "
+                          is24Hour
+                          timeInputLabel
+                          showTimeSelect
+                          timeIntervals={1}
+                          timeCaption="Time"
+                          showMonthDropdown
+                          showYearDropdown
+                          dropdownMode="select"
+                          showDisabledMonthNavigation
+                          autoComplete='off'
+                          maxDate={new Date(datezone)}
+                          disabled={selectedOption === null || selectedOption === ''}
+                          className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                        />
+
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label px-0 mb-0'>Updating Officer{errors.UpdatingOfficerError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.UpdatingOfficerError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
+
+                        <Select
+                          name='UpdatingOfficerID'
+                          value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.UpdatingOfficerID)}
+                          isClearable
+                          options={agencyOfficerDrpData}
+                          onChange={(e) => ChangeDropDown(e, 'UpdatingOfficerID')}
+                          placeholder="Select..."
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                        />
+
+
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label mb-0'>Property Room Officer{errors.PropertyRoomOfficerError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.PropertyRoomOfficerError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2">
+                        <Select
+                          name='"OfficerNameID"'
+                          value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.OfficerNameID)}
+                          isClearable
+                          options={agencyOfficerDrpData}
+                          onChange={(e) => ChangeDropDown(e, 'OfficerNameID')}
+                          placeholder="Select..."
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                        />
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label px-0 mb-0'>Approval Officer{errors.ApprovalOfficerError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ApprovalOfficerError}</p>
+                        ) : null}</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
+
+                        <Select
+                          name='ApprovalOfficerID'
+                          value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ApprovalOfficerID)}
+                          isClearable
+                          options={agencyOfficerDrpData}
+                          onChange={(e) => ChangeDropDown(e, 'ApprovalOfficerID')}
+                          placeholder="Select..."
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                        />
+
+
+                      </div>
+
+                      <div className='col-3 col-md-3 col-lg-4'></div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label px-0 mb-0'> Current Storage Location</label>
+                      </div>
+                      <div className="col-12 col-md-12 col-lg-5" style={{ position: 'relative' }}>
+                        <input
+                          type="text"
+                          name="CurrentStorageLocation"
+                          id="CurrentStorageLocation"
+                          value={locationStatus ? '' : value.CurrentStorageLocation}
+                          disabled
+                          className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
+                            ? 'requiredColor'
+                            : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
+                              ? 'readonlyColor'
+                              : ''
+                            }`}
+                        />
+
+                        {value.CurrentStorageLocation && (
+                          <span
+                            className="select-cancel"
+                            onClick={() => { handleClickedCleared("CurrentStorageLocation") }}
+                            style={{
+                              position: 'absolute',
+                              top: '50%',
+                              right: '10px',
+                              transform: 'translateY(-50%)',
+                              cursor:
+                                !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
+                                  ? 'not-allowed'
+                                  : 'pointer',
+                              opacity:
+                                !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
+                                  ? 0.5
+                                  : 1,
+                              pointerEvents:
+                                !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
+                                  ? 'none'
+                                  : 'auto',
+                            }}
+                          >
+                            <i className="fa fa-times"></i>
+                          </span>
+                        )}
+                      </div>
+                      {/** ➕ Add Button Section **/}
+                      <div className="col-1 ">
+                        {(() => {
+                          const isAddDisabled =
+                            !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) ||
+                            selectedOption === null;
+
+                          return (
+                            <button
+                              disabled={isAddDisabled}
+                              className="btn btn-sm bg-green text-white"
+                              data-toggle="modal"
+                              data-target="#PropertyRoomTreeModal"
+                              style={{ cursor: isAddDisabled ? 'not-allowed' : 'pointer' }}
+                              onClick={() => {
+                                setlocationStatus(true)
+                                // setKeyChange("CurrentStorageLocation")
+                              }}
+                            >
+                              <i className="fa fa-plus"></i>
+                            </button>
+                          );
+                        })()}
+                      </div>
+                      <div className='col-12 col-md-12 col-lg-4'></div>
+
+
+
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label'>Comments</label>
+                      </div>
+                      <div className="col-9 col-md-9 col-lg-10 text-field mt-0">
+                        <input type="text" name="ActivityComments"
+                          className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
+                      </div>
+
+
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label text-nowrap mb-0'>
+                          File Attachment
+                        </label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-10 ">
+                        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px", }}
+                        >
+                          <div style={{ display: "flex", alignItems: "center", border: "1px solid #ccc", borderRadius: "6px", background: "#f9f9f9", width: "100%" }}>
+                            <label
+                              htmlFor="file-input"
+                              style={{
+                                padding: "5px 16px",
+                                backgroundColor: "#e9e9e9",
+                                color: "#fff",
+                                borderRadius: "4px",
+                                marginLeft: "4px",
+                                marginTop: "8px",
+                                cursor: "pointer",
+                                fontSize: "14px",
+                                fontWeight: "bold",
+                                transition: "background 0.3s",
+                              }}
+                              onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                              onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                            >
+                              Choose File
+                            </label>
+                            <input
+                              type="file"
+                              onChange={handleFileChange}
+                              ref={fileInputRef}
+                              multiple
+                              style={{ display: "none" }}
+                              id="file-input"
+                            />
+                            <div
+                              style={{
+                                borderRadius: "4px",
+                                display: "flex",
+                                flexWrap: "wrap",
+                                minHeight: "38px",
+                                flex: "1",
+                                alignItems: "center",
+                                gap: "6px",
+                                marginLeft: "12px",
+                                backgroundColor: "#fff",
+                              }}
+                            >
+                              {selectedFiles.length > 0 ? (
+                                selectedFiles.map((file, index) => (
+                                  <div
+                                    key={index}
+                                    style={{
+                                      display: "inline-flex",
+                                      alignItems: "center",
+                                      backgroundColor: "#e9ecef",
+                                      padding: "4px 10px",
+                                      borderRadius: "4px",
+                                      margin: "4px",
+                                      fontSize: "13px",
+                                      fontWeight: "500",
+                                    }}
+                                  >
+                                    <span>{file.name}</span>
+                                    <button
+                                      type="button"
+                                      onClick={() => removeFile(index)}
+                                      style={{
+                                        marginLeft: "6px",
+                                        border: "none",
+                                        background: "none",
+                                        cursor: "pointer",
+                                        fontSize: "14px",
+                                        fontWeight: "bold",
+                                        color: "#d9534f",
+                                      }}
+                                    >
+                                      ×
+                                    </button>
+                                  </div>
+                                ))
+                              ) : (
+                                <span style={{ color: "#777", fontSize: "13px" }}>No files selected</span>
+                              )}
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+
+
+                      <fieldset style={{ width: "100%" }}>
+                        <legend>Schedule</legend>
+                        <div className='row align-items-center'>
+                          <div className="col-3 col-md-3 col-lg-2">
+                            <label htmlFor="" className='new-label mb-0'>Court Date</label>
+                          </div>
+                          <div className="col-3 col-md-3 col-lg-2 mt-1">
+                            <DatePicker
+                              name='CourtDate'
+                              id='CourtDate'
+                              onKeyDown={(e) => {
+                                if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                                  e?.preventDefault();
+                                }
+                              }}
+                              onChange={(date) => {
+                                setCourtdate(date);
+                                setValue({
+                                  ...value,
+                                  ['CourtDate']: date ? getShowingMonthDateYear(date) : null,
+                                });
+                                if (destroydate && new Date(destroydate) < new Date(date)) {
+                                  setdestroydate(null);
+                                  setValue({
+                                    ...value,
+                                    ['DestroyDate']: null,
+                                  });
+                                }
+                              }}
+                              isClearable={!!courtdate}
+                              selected={courtdate}
+                              placeholderText={courtdate ? courtdate : 'Select...'}
+                              dateFormat="MM/dd/yyyy"
+                              filterTime={filterPassedTime}
+                              timeIntervals={1}
+                              timeCaption="Time"
+                              showMonthDropdown
+                              showYearDropdown
+                              dropdownMode="select"
+                              showDisabledMonthNavigation
+                              autoComplete='off'
+                              minDate={new Date()}
+                              maxDate={value.ReleaseDate ? new Date(value?.ReleaseDate) : ''}
+                              disabled={value.IsCheckOut || value.IsDestroy || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                              className={value.IsCheckOut || value.IsDestroy || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
+
+                            />
+                          </div>
+                          <div className="col-3 col-md-3 col-lg-2 ">
+                            <label htmlFor="" className='new-label mb-0'>Release Date/Time{errors.ReleasedDateTimeError !== 'true' ? (
+                              <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReleasedDateTimeError}</p>
+                            ) : null}</label>
+                          </div>
+                          <div className="col-3 col-md-3 col-lg-2">
+                            <DatePicker
+                              name='activitydate'
+                              id='activitydate'
+                              onChange={(date) => {
+                                setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
+
+                              }}
+                              isClearable={activitydate ? true : false}
+                              selected={activitydate}
+                              placeholderText={activitydate ? activitydate : 'Select...'}
+                              dateFormat="MM/dd/yyyy HH:mm"
+                              timeFormat="HH:mm "
+                              is24Hour
+                              timeInputLabel
+                              showTimeSelect
+                              timeIntervals={1}
+                              timeCaption="Time"
+                              showMonthDropdown
+                              showYearDropdown
+                              dropdownMode="select"
+                              showDisabledMonthNavigation
+                              autoComplete='off'
+                              maxDate={new Date(datezone)}
+                              disabled={selectedOption === null || selectedOption === ''}
+                              className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : ''}
+                            />
+
+                          </div>
+                          <div className="col-3 col-md-3 col-lg-2 1">
+                            <label htmlFor="" className='new-label mb-0'>Destroy&nbsp;Date</label>
+                          </div>
+                          <div className="col-3 col-md-3 col-lg-2">
+                            <DatePicker
+                              name='DestroyDate'
+                              id='DestroyDate'
+                              onKeyDown={(e) => {
+                                if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                                  e?.preventDefault();
+                                }
+                              }}
+                              onChange={(date) => {
+                                setdestroydate(date);
+                                setValue({
+                                  ...value,
+                                  ['DestroyDate']: date ? getShowingMonthDateYear(date) : null,
+                                });
+                              }}
+                              isClearable={!!destroydate}
+                              selected={destroydate}
+                              placeholderText={destroydate ? destroydate : 'Select...'}
+                              dateFormat="MM/dd/yyyy"
+                              filterTime={filterPassedTime}
+
+                              timeIntervals={1}
+                              timeCaption="Time"
+                              showMonthDropdown
+                              showYearDropdown
+                              dropdownMode="select"
+                              showDisabledMonthNavigation
+                              autoComplete='off'
+                              minDate={courtdate ? new Date(courtdate) : new Date()}
+                              disabled={value.IsCheckOut || value.IsRelease || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                              className={value.IsCheckOut || value.IsRelease || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
+
+                            />
+                          </div>
+                        </div>
+                      </fieldset>
+
+                    </div>
+
+
                     }
                   </div>
 
