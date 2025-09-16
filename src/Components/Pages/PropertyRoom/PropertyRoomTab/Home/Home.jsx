@@ -72,7 +72,7 @@ const Home = (props) => {
     const [possessionID, setPossessionID] = useState('');
     // checkbox states
     const [selectedOption, setSelectedOption] = useState(null);
-    const [selectedOptionInternal, setselectedOptionInternal] = useState(null);
+    const [selectedOptionInternal, setselectedOptionInternal] = useState('Internal');
     const [selectedStatus, setSelectedStatus] = useState('');
     // functionality states
     const [propertyNumber, setPropertyNumber] = useState('');
@@ -115,6 +115,7 @@ const Home = (props) => {
     const [multiSelected, setMultiSelected] = useState({ optionSelected: null });
     const [groupList, setGroupList] = useState([]);
     const [selectedOptiontask, setselectedOptiontask] = useState("Individual");
+    const [transferdate, settransferdate] = useState();
 
     const AddType = [
         { value: 'PropertyNumber', label: 'Property Number' },
@@ -131,7 +132,8 @@ const Home = (props) => {
     const [selectedOptions, setSelectedOptions] = useState(AddType[0]);
 
     const [value, setValue] = useState({
-        'PropertyID': '', 'MasterPropertyId': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'OtherPersonNameID': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '', 'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '', 'IsCheckIn': false, 'IsCheckOut': false, 'IsRelease': false, 'IsDestroy': false, 'IsTransferLocation': false, 'IsUpdate': false, 'CreatedByUserFK': '', 'AgencyID': '', 'PropertyTypeID': '', 'LastSeenDtTm': '', 'PackagingDetails': ''
+        'PropertyID': '', 'MasterPropertyId': '', 'ActivityType': '', 'Internal': true,
+        'External': false, 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'OtherPersonNameID': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '', 'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '', 'IsCheckIn': false, 'IsCheckOut': false, 'IsRelease': false, 'IsDestroy': false, 'IsTransferLocation': false, 'IsUpdate': false, 'CreatedByUserFK': '', 'AgencyID': '', 'PropertyTypeID': '', 'LastSeenDtTm': '', 'PackagingDetails': ''
     })
 
     const [errors, setErrors] = useState({
@@ -3621,13 +3623,13 @@ const Home = (props) => {
                                 <DatePicker
                                     name='TransferDate'
                                     id='TransferDate'
-                                    // onChange={(date) => {
-                                    //     settransferdate(date); setValue({ ...value, ['TransferDate']: date ? getShowingMonthDateYear(date) : null, });
+                                    onChange={(date) => {
+                                        settransferdate(date); setValue({ ...value, ['TransferDate']: date ? getShowingMonthDateYear(date) : null, });
 
-                                    // }}
-                                    // isClearable={transferdate ? true : false}
-                                    // selected={transferdate}
-                                    // placeholderText={transferdate ? transferdate : 'Select...'}
+                                    }}
+                                    isClearable={transferdate ? true : false}
+                                    selected={transferdate}
+                                    placeholderText={transferdate ? transferdate : 'Select...'}
                                     dateFormat="MM/dd/yyyy HH:mm"
                                     timeFormat="HH:mm "
                                     is24Hour
@@ -3824,7 +3826,7 @@ const Home = (props) => {
 
 
                             <div className="col-3 col-md-3 col-lg-2 ">
-                                <label htmlFor="" className='new-label px-0 mb-0 text-nowrap'> Destination Storage Location</label>
+                                <label htmlFor="" className='new-label px-0 mb-0 text-nowrap'> New Storage Location</label>
                             </div>
                             <div className="col-12 col-md-12 col-lg-3" style={{ position: 'relative' }}>
                                 <input
@@ -4362,7 +4364,7 @@ const Home = (props) => {
                                     autoComplete='off'
                                     maxDate={new Date(datezone)}
                                     disabled={selectedOption === null || selectedOption === ''}
-                                    className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                                    className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : ''}
                                 />
 
                             </div>
