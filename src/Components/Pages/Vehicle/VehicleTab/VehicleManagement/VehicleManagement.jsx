@@ -95,7 +95,7 @@ const VehicleManagement = (props) => {
     const [value, setValue] = useState({
         'PropertyID': '', 'MasterPropertyId': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'OtherPersonNameID': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
         'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '',
-        'IsCheckIn': false, 'IsCheckOut': false, 'IsRelease': false, 'IsDestroy': false, 'IsTransferLocation': false, 'IsUpdate': false, 'CreatedByUserFK': '', 'ActivityDtTm': '', 'LastSeenDtTm': '',
+        'IsCheckIn': false, 'IsCheckOut': false, 'IsRelease': false, 'IsDestroy': false, 'IsTransferLocation': false, 'IsUpdate': false, 'CreatedByUserFK': '', 'ActivityDtTm': '', 'LastSeenDtTm': '', 'ModeofTransport': '', 'Destination': ''
     })
 
     const [errors, setErrors] = useState({
@@ -477,7 +477,7 @@ const VehicleManagement = (props) => {
             ...value,
             'PropertyID': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'OtherPersonNameID': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
             'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '',
-            'MasterPropertyId': '', 'IsCheckIn': '', 'IsCheckOut': '', 'IsRelease': '', 'IsDestroy': '', 'IsTransferLocation': '', 'IsUpdate': '', 'CreatedByUserFK': '', 'LastSeenDtTm': '',
+            'MasterPropertyId': '', 'IsCheckIn': '', 'IsCheckOut': '', 'IsRelease': '', 'IsDestroy': '', 'IsTransferLocation': '', 'IsUpdate': '', 'CreatedByUserFK': '', 'LastSeenDtTm': '', 'ModeofTransport': '', 'Destination': ''
         });
         setErrors({
             ...errors,
@@ -1164,15 +1164,15 @@ const VehicleManagement = (props) => {
                             <label htmlFor="" className='new-label mb-0'>Destination</label>
                         </div>
                         <div className="col-9 col-md-9 col-lg-2 text-field mt-0">
-                            <input type="text" name="ActivityComments"
-                                className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
+                            <input type="text" name="Destination"
+                                className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.Destination} onChange={(e) => { handleChange(e) }} />
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 ">
                             <label htmlFor="" className='new-label mb-0'>Mode of Transport</label>
                         </div>
                         <div className="col-9 col-md-9 col-lg-2 text-field mt-0">
-                            <input type="text" name="ActivityComments"
-                                className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
+                            <input type="text" name="ModeofTransport"
+                                className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ModeofTransport} onChange={(e) => { handleChange(e) }} />
                         </div>
 
                         <div className="col-3 col-md-3 col-lg-2 ">
@@ -1476,8 +1476,8 @@ const VehicleManagement = (props) => {
                             <label htmlFor="" className='new-label mb-0'>Mode of Transport</label>
                         </div>
                         <div className="col-9 col-md-9 col-lg-2 text-field mt-0">
-                            <input type="text" name="ActivityComments"
-                                className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
+                            <input type="text" name="ModeofTransport"
+                                className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ModeofTransport} onChange={(e) => { handleChange(e) }} />
                         </div>
 
 
@@ -2151,8 +2151,8 @@ const VehicleManagement = (props) => {
                                                 <label htmlFor="" className='new-label mb-0'>Mode of Transport</label>
                                             </div>
                                             <div className="col-9 col-md-9 col-lg-2 text-field mt-0">
-                                                <input type="text" name="ActivityComments"
-                                                    className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
+                                                <input type="text" name="ModeofTransport"
+                                                    className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ModeofTransport} onChange={(e) => { handleChange(e) }} />
                                             </div>
                                             <div className="col-3 col-md-3 col-lg-2 ">
                                                 <label htmlFor="" className='new-label mb-0'>Expected Arrival Date/Time{errors.ExpectedReturnDateTimeError !== 'true' ? (
@@ -2267,7 +2267,7 @@ const VehicleManagement = (props) => {
 
 
                                 <div className="col-3 col-md-3 col-lg-2 ">
-                                    <label htmlFor="" className='new-label px-0 mb-0 text-nowrap'> Destination Storage Location</label>
+                                    <label htmlFor="" className='new-label px-0 mb-0 text-nowrap'> New Storage Location</label>
                                 </div>
                                 <div className="col-12 col-md-12 col-lg-3" style={{ position: 'relative' }}>
                                     <input
