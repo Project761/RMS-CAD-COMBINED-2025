@@ -2958,51 +2958,49 @@ const PropertyManagement = (props) => {
                 </div>
             </div >
             <div className="col-12 col-md-12 col-lg-12 pt-2 px-0" >
-                <fieldset>
 
-                    <div className="row px-0">
-
+                <div className="row px-0">
 
 
-                        {!isViewEventDetails && <div className="col-12 mt-5 btn-box text-right" >
-                            <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={GetChainCustodyReport} disabled={!categoryStatus}>
-                                Chain Of Custody Report
-                            </button>
-                            <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={printForm} disabled={categoryStatus !== 'Release'}>
-                                Display Property Released Receipt
-                            </button>
-                            {
-                                effectiveScreenPermission ?
-                                    effectiveScreenPermission[0]?.AddOK ?
-                                        <button
-                                            disabled={!selectedOption}
-                                            type="button"
-                                            className="btn btn-sm btn-success mr-2 mb-2 mt-1"
-                                            onClick={(e) => { check_Validation_Error(); }}
-                                        >
-                                            Save
-                                        </button>
-                                        :
-                                        <></>
-                                    :
+
+                    {!isViewEventDetails && <div className="col-12 mt-5 btn-box text-right" >
+                        <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={GetChainCustodyReport} disabled={!categoryStatus}>
+                            Chain Of Custody Report
+                        </button>
+                        <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={printForm} disabled={categoryStatus !== 'Release'}>
+                            Display Property Released Receipt
+                        </button>
+                        {
+                            effectiveScreenPermission ?
+                                effectiveScreenPermission[0]?.AddOK ?
                                     <button
+                                        disabled={!selectedOption}
                                         type="button"
                                         className="btn btn-sm btn-success mr-2 mb-2 mt-1"
                                         onClick={(e) => { check_Validation_Error(); }}
                                     >
                                         Save
                                     </button>
-                            }
-                            {/* <button disabled={!selectedOption} type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={(e) => { check_Validation_Error(); }}>
+                                    :
+                                    <></>
+                                :
+                                <button
+                                    type="button"
+                                    className="btn btn-sm btn-success mr-2 mb-2 mt-1"
+                                    onClick={(e) => { check_Validation_Error(); }}
+                                >
+                                    Save
+                                </button>
+                        }
+                        {/* <button disabled={!selectedOption} type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={(e) => { check_Validation_Error(); }}>
                                           Save
                                       </button> */}
-                            <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={() => { setStatusFalse(); conditionalRowStyles(''); }}>
-                                Clear
-                            </button>
-                        </div>
-                        }
-                    </div >
-                </fieldset>
+                        <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={() => { setStatusFalse(); conditionalRowStyles(''); }}>
+                            Clear
+                        </button>
+                    </div>
+                    }
+                </div >
             </div>
             <TreeModel {...{ proRoom, locationStatus, setlocationStatus, locationPath, setfunctiondone, setLocationPath, setSearchStoragePath, searchStoStatus, setSearchStoStatus, setStorageLocationID, value, setValue, setPropertyNumber }} />
 

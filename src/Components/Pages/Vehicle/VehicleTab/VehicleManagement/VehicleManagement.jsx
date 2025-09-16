@@ -2856,10 +2856,10 @@ const VehicleManagement = (props) => {
                     }
                 </div>
                 <div className="col-12 col-md-12 col-lg-12 pt-2 px-0" >
-                    <fieldset>
-                        <legend>Schedule</legend>
-                        <div className="row px-0">
-                            <div className="col-3 col-md-3 col-lg-2 mt-2 ">
+                    {/* <fieldset> */}
+                    {/* <legend>Schedule</legend> */}
+                    <div className="row px-0">
+                        {/* <div className="col-3 col-md-3 col-lg-2 mt-2 ">
                                 <label htmlFor="" className='new-label'>Court Date{errors.CourtDateError !== 'true' ? (
                                     <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.CourtDateError}</p>
                                 ) : null}</label>
@@ -2980,47 +2980,45 @@ const VehicleManagement = (props) => {
                                     className={value.IsCheckOut || value.IsRelease || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
 
                                 />
-                            </div>
+                            </div> */}
 
-                            {!isViewEventDetails && <div className="col-12 mt-5 btn-box text-right" >
-                                <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={GetChainCustodyReport} disabled={!categoryStatus}>
-                                    Chain Of Custody Report
-                                </button>
-                                <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={printForm} disabled={categoryStatus !== 'Release'}>
-                                    Display Property Released Receipt
-                                </button>
-                                {
-                                    effectiveScreenPermission ?
-                                        effectiveScreenPermission[0]?.AddOK ?
-                                            <button
-                                                disabled={!selectedOption}
-                                                type="button"
-                                                className="btn btn-sm btn-success mr-2 mb-2 mt-1"
-                                                onClick={(e) => { check_Validation_Error(); }}
-                                            >
-                                                Save
-                                            </button>
-                                            :
-                                            <></>
-                                        :
+                        {!isViewEventDetails && <div className="col-12 mt-5 btn-box text-right" >
+                            <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={GetChainCustodyReport} disabled={!categoryStatus}>
+                                Chain Of Custody Report
+                            </button>
+                            <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={printForm} disabled={categoryStatus !== 'Release'}>
+                                Display Property Released Receipt
+                            </button>
+                            {
+                                effectiveScreenPermission ?
+                                    effectiveScreenPermission[0]?.AddOK ?
                                         <button
+                                            disabled={!selectedOption}
                                             type="button"
                                             className="btn btn-sm btn-success mr-2 mb-2 mt-1"
                                             onClick={(e) => { check_Validation_Error(); }}
                                         >
                                             Save
                                         </button>
-                                }
-                                {/* <button disabled={!selectedOption} type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={(e) => { check_Validation_Error(); }}>
-                                Save
-                            </button> */}
-                                <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={() => { setStatusFalse(); conditionalRowStyles(''); }}>
-                                    Clear
-                                </button>
-                            </div>
+                                        :
+                                        <></>
+                                    :
+                                    <button
+                                        type="button"
+                                        className="btn btn-sm btn-success mr-2 mb-2 mt-1"
+                                        onClick={(e) => { check_Validation_Error(); }}
+                                    >
+                                        Save
+                                    </button>
                             }
-                        </div >
-                    </fieldset>
+
+                            <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={() => { setStatusFalse(); conditionalRowStyles(''); }}>
+                                Clear
+                            </button>
+                        </div>
+                        }
+                    </div >
+                    {/* </fieldset> */}
                 </div>
             </div >
 
