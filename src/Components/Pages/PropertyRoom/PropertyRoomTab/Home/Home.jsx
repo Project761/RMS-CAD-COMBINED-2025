@@ -2724,14 +2724,14 @@ const Home = (props) => {
                     </div>
                     <div className="col-9 col-md-9 col-lg-2 text-field mt-0">
                         <input type="text" name="ActivityComments"
-                            className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
+                            className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={''} onChange={(e) => { handleChange(e) }} />
                     </div>
                     <div className="col-3 col-md-3 col-lg-2 ">
                         <label htmlFor="" className='new-label mb-0'>Mode of Transport</label>
                     </div>
                     <div className="col-9 col-md-9 col-lg-2 text-field mt-0">
                         <input type="text" name="ActivityComments"
-                            className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
+                            className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={''} onChange={(e) => { handleChange(e) }} />
                     </div>
 
                     <div className="col-3 col-md-3 col-lg-2 ">
