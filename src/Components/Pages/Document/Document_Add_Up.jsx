@@ -70,7 +70,7 @@ const Document_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetail
                         <div className={`Agency ${isCitation ? '' : 'card'} ${isCad ? 'CAD-incident-card' : 'incident-card'}`}>
                             <div className="card-body" >
                                 {!isCitation && (
-                                    <div className="row " style={{ marginTop: '-18px', marginLeft: '-18px' }}>
+                                    <div className="row " style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
                                         <div className="col-12 name-tab">
                                             <ul className='nav nav-tabs'>
                                                 <Link

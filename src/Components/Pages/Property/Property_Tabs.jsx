@@ -119,7 +119,7 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                     <div className="col-12 col-sm-12">
                         <div className={`card Agency ${isCad ? 'CAD-incident-card' : 'incident-card'} ${openPage ? 'name-card' : ''}`}>
                             <div className="card-body">
-                                <div className="row " style={{ marginTop: '-18px', marginLeft: '-18px' }}>
+                                <div className="row " style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
                                     <div className="col-12  name-tab">
                                         <ul className='nav nav-tabs'>
                                             {isCad ? <Link

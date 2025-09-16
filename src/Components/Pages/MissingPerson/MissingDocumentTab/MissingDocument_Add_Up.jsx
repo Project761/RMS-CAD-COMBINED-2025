@@ -13,7 +13,7 @@ const MissingDocument_Add_Up = () => {
 
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
 
-    const { updateCount,  changesStatus, } = useContext(AgencyContext)
+    const { updateCount, changesStatus, } = useContext(AgencyContext)
 
     const iconHome = <i className="fa fa-home" style={{ fontSize: '20px' }}></i>
     const [showPage, setShowPage] = useState('home');
@@ -71,13 +71,13 @@ const MissingDocument_Add_Up = () => {
                     <div className="col-12 col-sm-12">
                         <div className="card Agency incident-card ">
                             <div className="card-body" >
-                                <div className="row " style={{ marginTop: '-18px', marginLeft: '-18px' }}>
+                                <div className="row " style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
                                     <div className="col-12 name-tab">
                                         <ul className='nav nav-tabs'>
                                             <Link
                                                 className={`nav-item ${showPage === 'home' ? 'active' : ''}`}
 
-                                              
+
                                                 to={`/Missing-Document-Home?IncId=${IncID}&IncNo=${IncNo}&documentId=${(documentID)}&IncSta=${IncSta}&MissPerID=${MissPerId}&MissPerSta=${MissPerSta}&MissVehID=${MissVehID}`}
 
                                                 style={{ color: showPage === 'home' ? 'Red' : '#000' }}
@@ -102,7 +102,7 @@ const MissingDocument_Add_Up = () => {
                                                             }}
                                                         >
                                                             Document Access
-                                                            
+
                                                         </span>
 
                                                         {/* Document History */}
@@ -136,7 +136,7 @@ const MissingDocument_Add_Up = () => {
                                                 <DocumentHistory {...{ DecdocumentID }} />
                                                 :
                                                 null
-                                   
+
                                 }
                             </div>
                         </div>
