@@ -8,7 +8,6 @@ import { AddDeleteUpadate, fetchPostData } from '../../../../../../hooks/Api';
 import { toastifySuccess } from '../../../../../../Common/AlertMsg';
 import DeletePopUpModal from '../../../../../../Common/DeleteModal';
 import { Comman_changeArrayFormat } from '../../../../../../Common/ChangeArrayFormat';
-import IdentifyFieldColor from '../../../../../../Common/IdentifyFieldColor';
 import { AgencyContext } from '../../../../../../../Context/Agency/Index';
 
 const OffenderTabsCom = (props) => {
@@ -253,7 +252,6 @@ const OffenderTabsCom = (props) => {
             </div>
 
             <DeletePopUpModal func={Delete_Data} />
-            <IdentifyFieldColor />
 
         </>
     )

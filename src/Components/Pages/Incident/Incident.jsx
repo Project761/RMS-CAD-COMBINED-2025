@@ -259,7 +259,7 @@ const Incident = () => {
         {
             grow: 1,
             minWidth: "85px",
-            name: 'Agency Name',
+            name: 'Agency Code',
             selector: (row) => row.Agency_Code,
             sortable: true
         },
