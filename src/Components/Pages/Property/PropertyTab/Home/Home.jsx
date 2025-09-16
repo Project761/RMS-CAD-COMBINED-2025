@@ -3364,7 +3364,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                       onRowClicked={(row) => set_Edit_Value(row)}
                       pagination
                       paginationPerPage={'5'}
-                      fixedHeaderScrollHeight='80px'
+                      fixedHeaderScrollHeight='150px'
                       paginationRowsPerPageOptions={[5, 10, 15, 20]}
                       highlightOnHover
                       noDataComponent={"There are no data to display"}
@@ -3629,9 +3629,9 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
 
             onRowClicked={(row) => {
               set_EditRow(row);
-            }}
+            }}    
 
-            fixedHeaderScrollHeight='90px'
+            fixedHeaderScrollHeight='150px'
             pagination
             paginationPerPage={'100'}
             paginationRowsPerPageOptions={[100, 150, 200, 500]}
