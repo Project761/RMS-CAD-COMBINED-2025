@@ -744,7 +744,7 @@ const Home = (props) => {
     };
 
     const setStatusFalse = (e) => {
-        setIsClearing(true); setSelectedRows([]);
+        setIsClearing(true); setSelectedRows([]); setSelectedStatus('');
         navigate(`/Property-room?&ProId=${0}&MProId=${0}&ProRomId=${0}&ProRoomStatus=${true}&selectedCategory=${''}&ProType=${''}&ProNumber=${''}&ProTransfer=${''}&CallStatus=${false}`); reset(); setPropertyId(''); setClickedRow(null); setPropertyNumber(''); setSelectedRows([]); setSearchStoragePath(''); setSelectedOptions(AddType[0]); setPossessionID(''); setValue({ ...value, ['ReportedDate']: '', ['ReportedDateTo']: '' }); setToggleClear(!toggleClear);
         sessionStorage.setItem('selectedRows', '');
     }
@@ -856,7 +856,7 @@ const Home = (props) => {
         setsearcherror(prevValues => { return { ...prevValues, 'SearchError': '', } })
         setCourtdate(''); setreleasedate(''); setdestroydate(''); setExpecteddate('');
         setSelectedStatus(''); setRowClicked(''); setSelectedOption(''); setactivitydate(''); setReasonIdDrp([]); setLocationPath('');
-        setDescription(''); setSelectedStatus(''); setRowClicked(''); setSearchData([]);
+        setDescription(''); setRowClicked(''); setSearchData([]);
         setSelectedRows([]); setToggleClear(!toggleClear); setStatus(''); settransfer(null); setEditval([]);
     }
 

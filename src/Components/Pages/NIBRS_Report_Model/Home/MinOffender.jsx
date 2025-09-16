@@ -810,7 +810,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, ValidateP
             name: 'Race', selector: (row) => row.Description_Race, sortable: true
         },
         {
-            name: 'Ethnicity', selector: (row) => row.Ethnicity, sortable: true
+            name: 'Ethnicity', selector: (row) => row.EthnicityDes, sortable: true
         },
         {
             name: 'Alias Indicator', selector: (row) => row.SSN, sortable: true
