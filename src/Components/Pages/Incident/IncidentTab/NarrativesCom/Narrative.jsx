@@ -1614,7 +1614,8 @@ const Narrative = (props) => {
                 value={value.CommentsDoc}
                 onChange={(value, delta, source, editor) => {
                   const text = editor?.getText();
-                  setChangesStatus(true); setStatesChangeStatus(true);
+                  // setChangesStatus(true); 
+                  setStatesChangeStatus(true);
 
                   setValue((prevValue) => ({
                     ...prevValue,
