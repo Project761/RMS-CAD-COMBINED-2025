@@ -946,7 +946,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, setIncidentReportedDate, sho
     }
 
     const getStatusColors = (ID, nibrsValidateData) => {
-        return getNibrsError(ID, nibrsValidateData) ? { backgroundColor: "rgb(255 202 194)" } : {};
+        return getNibrsError(ID, nibrsValidateData) ? { backgroundColor: "#001f3fbd" } : {};
     };
 
     const conditionalRowStyles = [

@@ -15,13 +15,13 @@ const Nibrs_Report_Model = ({ show, setShow, handleModel }) => {
 
     const { GetDataTimeZone, datezone, } = useContext(AgencyContext);
 
-    
+
 
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
     const dispatch = useDispatch();
 
-   
+
     const [loginAgencyID, setLoginAgencyID] = useState('');
     const [oriNumber, setOriNumber] = useState('');
     const [baseDate, setBaseDate] = useState('');
@@ -34,12 +34,12 @@ const Nibrs_Report_Model = ({ show, setShow, handleModel }) => {
         }
     }, []);
 
-    
+
     useEffect(() => {
         GetDataTimeZone(localStoreData?.AgencyID);
         setValueObj({
             ...valueObj,
-           
+
             "dtpDateFrom": datezone ? getShowingMonthDateYearNibReport(datezone, "from") : null,
             "dtpDateTo": datezone ? getShowingMonthDateYearNibReport(datezone, "to") : null,
         })
@@ -48,14 +48,26 @@ const Nibrs_Report_Model = ({ show, setShow, handleModel }) => {
     useEffect(() => {
         if (localStoreData) {
             setLoginAgencyID(localStoreData?.AgencyID);
-            setloginPinID(localStoreData?.PINID);
+            setloginPinID(localStoreData?.PINID); getAgencySettingData(localStoreData?.AgencyID);
             setOriNumber(localStoreData?.ORI);
-            setBaseDate(localStoreData?.BaseDate ? localStoreData?.BaseDate : null);
+            // setBaseDate(localStoreData?.BaseDate ? localStoreData?.BaseDate : null);
             GetDataTimeZone(localStoreData?.AgencyID);
         }
-    }, [localStoreData]);
+    }, [localStoreData, show]);
 
-    
+
+    useEffect(() => {
+        if (loginAgencyID) {
+            getAgencySettingData(loginAgencyID);
+        }
+    }, [loginAgencyID, show]);
+
+    const getAgencySettingData = (aId) => {
+        fetchPostData('Agency/GetData_SingleData', { 'AgencyID': aId })
+            .then((res) => {
+                setBaseDate(res[0]?.BaseDate);
+            })
+    };
 
     const [valueObj, setValueObj] = useState({
         "TxtYear": "",
@@ -65,7 +77,7 @@ const Nibrs_Report_Model = ({ show, setShow, handleModel }) => {
         "strORINumber": "",
         "gIntAgencyID": "",
         "IsIncidentCheck": false,
-        
+
 
         "rdbAllLogFile": true,
         "rdbSubmissionFile": false,
@@ -99,7 +111,7 @@ const Nibrs_Report_Model = ({ show, setShow, handleModel }) => {
         totalSuc: '',
         totalVH: '',
         ErrorIncident: '',
-       
+
     })
 
     const getfileUrlToDownload = async () => {
@@ -132,7 +144,7 @@ const Nibrs_Report_Model = ({ show, setShow, handleModel }) => {
             "dtpDateTo": dtpDateTo,
             "chkStatetoSubmit": chkStatetoSubmit,
 
-            
+
             "BaseDate": baseDate ? getShowingMonthDateYearNibReport(baseDate) : null,
             "strComputerName": uniqueId,
             "strORINumber": oriNumber,
@@ -140,7 +152,7 @@ const Nibrs_Report_Model = ({ show, setShow, handleModel }) => {
         }
 
         const res = await fetchPostData('NIBRS/TXIBRS', val);
-       
+
         setShowNoObj({
             ...showNoObj,
             NonReportable: res[0]?.NonReportable,
@@ -165,21 +177,21 @@ const Nibrs_Report_Model = ({ show, setShow, handleModel }) => {
             'https://apigoldline.com:5002/Imagefolder/WV0030100-1224E.txt',
             'https://apigoldline.com:5002/Imagefolder/WV0030100-1224E.txt',
             'https://apigoldline.com:5002/Imagefolder/WV0030100-1224E.txt',
-            
+
         ];
 
         downloadFile(arr);
-      
 
-        
 
-        
+
+
+
         setIsLoading(false);
     }
 
     function replaceDomain(url) {
         const oldDomain = 'https://apigoldline.com:5002';
-       
+
         const newDomain = 'https://apigoldline.com';
         return url.replace(oldDomain, newDomain);
     }
@@ -513,14 +525,14 @@ const Nibrs_Report_Model = ({ show, setShow, handleModel }) => {
                                         </fieldset>
                                     </div>
                                     <div className="btn-box mt-4 col-12 text-right">
-                                        
+
                                         <button type='button' disabled={isLoading} onClick={() => {
                                             getfileUrlToDownload();
-                                          
+
                                         }} className='btn btn-sm btn-success mr-2' >
                                             Download Report
                                         </button>
-                                       
+
                                         <button type="button" onClick={() => { handleModel(); onClickClose() }} data-dismiss="modal" className="btn btn-sm btn-success mr-1" >Close</button>
                                     </div>
                                 </div>
