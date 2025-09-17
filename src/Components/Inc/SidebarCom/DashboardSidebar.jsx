@@ -12,6 +12,7 @@ const DashboardSidebar = () => {
     const { setIsOnCAD } = useContext(IncidentContext);
     const { incidentRecentData, setUpdateCount, setIncStatus, updateCount, recentSearchData, setSearchObject } = useContext(AgencyContext)
 
+
     const [expand, setExpand] = useState()
     const [expandList, setExpandList] = useState()
     const [plusMinus, setPlusMinus] = useState(false)
@@ -48,6 +49,19 @@ const DashboardSidebar = () => {
     else IncID = parseInt(base64ToString(IncID));
 
     const showSearchData = recentSearchData?.slice(-5);
+
+
+    const recentIncidents = Object.values(
+        incidentRecentData.reduce((acc, item) => {
+            // Normalize IncidentNumber (trim spaces)
+            const incidentNum = item.IncidentNumber?.trim();
+            if (!acc[incidentNum]) {
+                acc[incidentNum] = item;
+            }
+            return acc;
+        }, {})
+    );
+
 
     return (
         <>
@@ -243,7 +257,7 @@ const DashboardSidebar = () => {
                         })
                     }
                     {
-                        incidentRecentData?.slice(-5).map((val) => (
+                        recentIncidents?.slice(-5).map((val) => (
                             <li key={val.IncidentID}>
                                 <Link style={{ display: 'flex', flexDirection: 'column' }}
                                     to={`/Inc-Home?IncId=${stringToBase64(val?.IncidentID)}&IncNo=${val?.IncidentNumber}&IncSta=${true}`}
@@ -257,6 +271,21 @@ const DashboardSidebar = () => {
                             </li>
                         ))
                     }
+                    {/* {
+                        incidentRecentData?.slice(-5).map((val) => (
+                            <li key={val.IncidentID}>
+                                <Link style={{ display: 'flex', flexDirection: 'column' }}
+                                    to={`/Inc-Home?IncId=${stringToBase64(val?.IncidentID)}&IncNo=${val?.IncidentNumber}&IncSta=${true}`}
+                                    onClick={() => {
+                                        navigate(`/Inc-Home?IncId=${stringToBase64(val?.IncidentID)}&IncNo=${val?.IncidentNumber}&IncSta=${true}`);
+                                        setIncStatus(true);
+                                        setUpdateCount(updateCount + 1);
+                                    }}>
+                                    <span>Incident-{val.IncidentNumber}</span>
+                                </Link>
+                            </li>
+                        ))
+                    } */}
                 </ul>
             </p>
         </>

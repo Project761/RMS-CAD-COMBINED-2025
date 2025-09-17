@@ -375,20 +375,6 @@ const Tab = () => {
                     </li>
                     <li className="nav-item">
                         <Link
-                            className={`nav-link  ${active === `/Document-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&documentId=${documentID}&DocSta=${DocSta}` ? 'active' : ''} ${incidentStatus ? '' : 'disabled'}`}
-                            to={changesStatus ? currentLocation : `/Document-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&documentId=${documentID}&DocSta=${DocSta}`}
-                            data-toggle={changesStatus ? "modal" : "pill"}
-                            style={{ color: currentTab === 'Document' ? 'Red' : incidentCount[0]?.DocumentManagementCount > 0 ? 'blue' : '#130e0e', fontWeight: '600' }}
-                            data-target={changesStatus ? "#SaveModal" : ''}
-                            tabIndex="-1"
-                            aria-disabled="true"
-                            onClick={() => { if (!changesStatus) { setCurrentTab('Document') } }}
-                        >
-                            Document{`${incidentCount[0]?.DocumentManagementCount > 0 ? '(' + incidentCount[0]?.DocumentManagementCount + ')' : ''}`}
-                        </Link>
-                    </li>
-                    <li className="nav-item">
-                        <Link
                             className={`nav-link  ${active === `/Offvic-Home?IncId=${IncID}&IncNo=${IncNo}&NameID=${NameID}&IncSta=${IncSta}` ? 'active' : ''} ${incidentStatus ? '' : 'disabled'}`}
                             to={changesStatus ? currentLocation : `/Offvic-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}`}
                             data-toggle={changesStatus ? "modal" : "pill"}
@@ -421,6 +407,22 @@ const Tab = () => {
                         >Arrest {`${incidentCount[0]?.ArrestCount > 0 ? '(' + incidentCount[0]?.ArrestCount + ')' : ''}`}
                         </Link>
                     </li>
+                    <li className="nav-item">
+                        <Link
+                            className={`nav-link  ${active === `/Document-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&documentId=${documentID}&DocSta=${DocSta}` ? 'active' : ''} ${incidentStatus ? '' : 'disabled'}`}
+                            to={changesStatus ? currentLocation : `/Document-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&documentId=${documentID}&DocSta=${DocSta}`}
+                            data-toggle={changesStatus ? "modal" : "pill"}
+                            style={{ color: currentTab === 'Document' ? 'Red' : incidentCount[0]?.DocumentManagementCount > 0 ? 'blue' : '#130e0e', fontWeight: '600' }}
+                            data-target={changesStatus ? "#SaveModal" : ''}
+                            tabIndex="-1"
+                            aria-disabled="true"
+                            onClick={() => { if (!changesStatus) { setCurrentTab('Document') } }}
+                        >
+                            Document{`${incidentCount[0]?.DocumentManagementCount > 0 ? '(' + incidentCount[0]?.DocumentManagementCount + ')' : ''}`}
+                        </Link>
+                    </li>
+
+
                     <li className="nav-item">
                         <Link
                             className={`nav-link  ${active === `/nibrs-Home?IncId=${IncID}&IncNo=${IncNo}&NameID=${NameID}&IncSta=${IncSta}` ? 'active' : ''} ${incidentStatus ? '' : 'disabled'}`}

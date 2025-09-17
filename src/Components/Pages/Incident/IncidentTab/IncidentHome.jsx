@@ -47,7 +47,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
   const cadDispositionDrpData = useSelector((state) => state.DropDown.cadDispositionDrpData);
   const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
 
-  const { updateCount, get_IncidentTab_Count, get_Incident_Count, nibrsSubmittedIncident, setnibrsSubmittedIncident, setIncidentRmsCfs, setnibrsStatus, exceptionalClearID, GetDataExceptionalClearanceID, setChangesStatus, changesStatus, setReportedDtTmInc, GetDataTimeZone, datezone, setOfficerApprovCount
+  const { updateCount, get_IncidentTab_Count, get_Incident_Count, nibrsSubmittedIncident, setnibrsSubmittedIncident, setIncidentRmsCfs, setnibrsStatus, exceptionalClearID, GetDataExceptionalClearanceID, setChangesStatus, changesStatus, setReportedDtTmInc, GetDataTimeZone, datezone, setOfficerApprovCount, incidentRecentData, setIncidentRecentData,
   } = useContext(AgencyContext);
   const [reportedDate, setReportedDate] = useState(new Date(datezone));
   const [occuredFromDate, setOccuredFromDate] = useState(new Date(datezone));
@@ -797,17 +797,32 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
         'PrimaryOfficerID': PrimaryOfficerID, 'NIBRSStatus': NIBRSStatus, 'CaseStatusCode': CaseStatusCode, 'CaseStatusID': CaseStatusID, 'isPoliceForceApplied': isPoliceForceApplied
       }
       AddDeleteUpadate('Incident/IncidentInsert', val).then((res) => {
+        // console.log("🚀 ~ AddIncident ~ res:", res)
         if (res.success) {
           setIncNumberGenrateStatus(true);
           if (res.IncidentID) {
             get_IncidentTab_Count(parseInt(res?.IncidentID), loginPinID);
             GetEditData(parseInt(res?.IncidentID));
             setOnSelectLocation(false); setIncidentID(parseInt(res?.IncidentID)); setChangesStatus(false); setStatesChangeStatus(false); toastifySuccess(res?.Message);
+
+            // for add new incident in recent incident list
+            let newData = [...incidentRecentData];
+            const newObj = {
+              IncidentID: res.IncidentID ? parseInt(res.IncidentID) : '',
+              IncidentNumber: res.IncidentNumber ? res.IncidentNumber : '',
+            }
+            newData.push(newObj);
+
+            setIncidentRecentData(newData);
+
+
           }
           navigate(`/Inc-Home?IncId=${stringToBase64(res?.IncidentID?.trim())}&IncNo=${res?.IncidentNumber?.trim()}&IncSta=${true}`);
           setErrors({ ...errors, ['OccuredError']: '', ['IncNumberError']: '', ['NIBRSclearancedateError']: '', });
+
         } else {
           toastifyError("Error"); setErrors({ ...errors, ['OccuredError']: '', ['IncNumberError']: '', ['NIBRSclearancedateError']: '', });
+
         }
       })
     }
@@ -1237,7 +1252,6 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
   const isVerifyLocation = geoFormValues.isVerify && isValidZone(geoFormValues.patrolZone) && isValidZone(geoFormValues.emsZone) && isValidZone(geoFormValues.fireZone) && isValidZone(geoFormValues.otherZone);
 
 
-
   return loder ? (
     <>
       <div className="col-12 overflow-y-hidden">
@@ -1308,10 +1322,6 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
             >
               Case Status  {errors.CaseStatusError !== "true" ? <p style={{ color: "red", fontSize: "11px", margin: "0px", padding: "0px", }}>{errors.CaseStatusError}</p> : null}
             </span>
-            {/* <label className="new-label">
-                  Case Status
-                  {errors.CaseStatusError !== "true" ? <p style={{ color: "red", fontSize: "11px", margin: "0px", padding: "0px", }}>{errors.CaseStatusError}</p> : null}
-                </label> */}
           </div>
           <div className="col-9 col-md-9 col-lg-3">
             <Select
@@ -1323,35 +1333,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
               onChange={(e) => handleCaseStatus(e, "CaseStatusID")}
               placeholder="Select..."
             />
-            {/* <input
-                  type="text"
-                  name="NIBRSStatus"
-                  autoComplete="off"
-                  id="NIBRSStatus"
-                  className={`form-control py-1 new-input new-inputs ${value?.NIBRSStatus === "Open"
-                    ? "nibrs-draft"
-                    : value?.NIBRSStatus?.trim() === "CASE CLOSED"
-                      ? "nibrs-submitted"
-                      : value?.NIBRSStatus === "Rejected"
-                        ? "nibrs-rejected"
-                        : value?.NIBRSStatus === "Reopen"
-                          ? "nibrs-reopened"
-                          : ""
-                    }`}
-                  value={value?.NIBRSStatus}
-                  disabled
-                  style={{
-                    color: "black",
-                    opacity: 1,
-                    height: "32px",
-                    fontSize: "14px",
-                    marginTop: "2px",
-                    boxShadow: "none",
-                    userSelect: "none",
-                  }}
-                /> */}
           </div>
-
           <div className="col-4 col-md-4 col-lg-2 ">
             <label htmlFor="" className="new-label mb-0">
               Master Incident #
@@ -1360,8 +1342,6 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
           <div className="col-7 col-md-7 col-lg-3">
             <input type="text" name="MasterIncidentNumber" id="MasterIncidentNumber" className="form-control  py-1 new-input" value={value.MasterIncidentNumber} disabled readOnly />
           </div>
-
-
           <div className="col-3 col-md-3 col-lg-4">
             <label htmlFor="" className="new-label mb-0">
               CAD Event #
@@ -1910,7 +1890,6 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
             )}
 
           </div>
-
           <div className="col-3 col-md-3 col-lg-2  ">
             <span className="new-label mb-0">
               Offense Type
@@ -2092,13 +2071,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
             <DatePicker
               name="NIBRSclearancedate"
               id="NIBRSclearancedate"
-              // className={
-              //   nibrsSubmittedIncident === 1 && incidentID ? "readonlyColor" : clsDrpCode === "01"
-              //     ?
-              //     value?.NIBRSclearancedate ? "nibrsSuccessColor" : "readonlyColor"
-              //     :
-              //     "readonlyColor"
-              // }
+
               className={
                 nibrsSubmittedIncident === 1 && incidentID ? "readonlyColor" : clsDrpCode === "01"
                   ?
