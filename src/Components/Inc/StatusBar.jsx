@@ -28,11 +28,11 @@ const StatusBar = forwardRef((props, ref) => {
     },
     {
       label: "Name",
-      value: loading ? "Loading..." : NameCount === "number" && !nameErrorStatus ? "Added" : `${NameCount} Added`,
-      border: NameCount === "number" && !nameErrorStatus ? "left-border-green" : "left-border-red",
+      value: loading ? "Loading..." : NameCount && !nameErrorStatus ? "Added" : `${NameCount} Added`,
+      border: NameCount && !nameErrorStatus ? "left-border-green" : "left-border-red",
       color: "text-grays",
-      bg: NameCount === "number" && !nameErrorStatus ? "bg-green" : "bg-red",
-      icon: NameCount === "number" && !nameErrorStatus ? faCheck : faTimes,
+      bg: NameCount && !nameErrorStatus ? "bg-green" : "bg-red",
+      icon: NameCount && !nameErrorStatus ? faCheck : faTimes,
     },
     {
       label: "OV Links",
