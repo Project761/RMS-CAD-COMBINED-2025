@@ -205,6 +205,9 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
     }
   }, []);
 
+
+  
+
   useEffect(() => {
     if (localStoreData) {
       setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
