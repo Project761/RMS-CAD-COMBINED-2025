@@ -1255,7 +1255,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
   return loder ? (
     <>
       <div className="col-12 overflow-y-hidden">
-        <div className="row align-items-center mt-1 mb-2" style={{ rowGap: "8px" }}>
+        <div className="row align-items-center mt-2 mb-2" style={{ rowGap: "8px" }}>
           <div className="col-4 col-md-4 col-lg-2 ">
             <label htmlFor="" className="new-label mb-0">
               Incident #
@@ -1274,7 +1274,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
             ) : (
               <InputMask
                 mask={inputMask}
-                maskChar="_"
+                maskChar="_"  
                 alwaysShowMask={true}
                 value={value.IncidentNumber}
                 placeholder={Counter_Format}
@@ -1350,9 +1350,9 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
           <div className="col-9 col-md-9 col-lg-3  ">
             <input type="text" name="CADIncidentNumber" id="CADIncidentNumber" className="form-control  py-1 new-input" value={value.CADIncidentNumber} disabled readOnly />
           </div>
-        </div>
-        <div className=" bb"></div>
-        <div className="row align-items-center mt-1" style={{ rowGap: "8px" }}>
+
+          <div className="bb"></div>
+
           <div className="col-3 col-md-3 col-lg-2 ">
             <label htmlFor="" className="new-label mb-0">
               Reported Date/Time
@@ -1863,7 +1863,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
               style={{ resize: "both" }}
             />
           </div>
-          <div className="col-2 col-md-2 col-lg-2 d-flex">
+          <div className="col-2 col-md-2 col-lg-2 d-flex align-items-center">
             <div className="form-check custom-control custom-checkbox">
               <input className="custom-control-input" data-toggle="modal" data-target="#VerifyModal" type="checkbox" id="flexCheckDefault" name="IsVerify" value={value?.IsVerify}
                 checked={value?.IsVerify || !value?.crimelocationid}
@@ -1888,11 +1888,8 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
             ) : (
               <></>
             )}
+
           </div>
-        </div>
-      </div>
-      <div className="col-12 " style={{ marginTop: "11px" }}>
-        <div className="row align-items-center " style={{ rowGap: "8px" }} >
           <div className="col-3 col-md-3 col-lg-2  ">
             <span className="new-label mb-0">
               Offense Type
@@ -1993,7 +1990,6 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
               styles={customStylesWithOutColor}
             />
           </div>
-
           <div className="col-3 col-md-3 col-lg-4 ">
             <label className='new-label mb-0'>Use of Force Applied</label>
           </div>
@@ -2180,114 +2176,122 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
               }
             />
           </div>
-        </div>
-      </div>
-      <div className="row align-items-center " style={{ rowGap: "8px", marginTop: "9px" }}>
-        <div className="col-3 col-md-3 col-lg-2 ">
-          <label htmlFor="" className="new-label mb-0">
-            TIBRS submission Date/time
-          </label>
-        </div>
-        <div className="col-9 col-md-9 col-lg-3">
-          <DatePicker
-            name="BIBRSDate"
-            id="BIBRSDate"
-            open={false}
-            className={"readonlyColor"}
-            ref={startRef3}
-            onKeyDown={onKeyDown}
-            dateFormat="MM/dd/yyyy HH:mm"
-            selected={value?.BIBRSDate && new Date(value.BIBRSDate)}
-            placeholderText={"Select.."}
-            timeInputLabel
-            isClearable={false}
-            disabled={true}
-            peekNextMonth
-            showMonthDropdown
-            showYearDropdown
-            dropdownMode="select"
-            showTimeSelect
-            timeIntervals={1}
-            timeCaption="Time"
-            minDate={reportedDate}
-            maxDate={datezone ? new Date(datezone) : null}
-            filterTime={(date) => filterPassedTimeZone(date, datezone)}
-          />
-        </div>
-        <div className="col-3 col-md-3 col-lg-4 ">
-          <label htmlFor="" className="new-label mb-0">
-            TIBRS Status{" "}
-          </label>
-        </div>
-        <div className="col-9 col-md-9 col-lg-3 ">
-          <input type="text" name="NIBRSStatus" id="NIBRSStatus" className={`form-control py-1 new-input `} disabled />
-        </div>
-      </div>
-      <div className="row  align-items-center" style={{ rowGap: "8px", marginTop: "11px" }}>
-        <div className="col-3 col-md-3 col-lg-2 ">
-          <label className="new-label mb-0">Print Format</label>
-        </div>
-        <div className="col d-flex align-items-center">
-          {/* Normal Report */}
-          <label className="d-flex align-items-center me-4 mb-0" style={{ gap: "6px" }}>
-            <input
-              type="radio"
-              value="false"
-              name="status"
-              checked={isPreviewNormalReport}
-              onChange={() => { setIsPreviewNormalReport(true) }}
+
+          <div className="col-3 col-md-3 col-lg-2 ">
+            <label htmlFor="" className="new-label mb-0">
+              TIBRS submission Date/time
+            </label>
+          </div>
+          <div className="col-9 col-md-9 col-lg-3">
+            <DatePicker
+              name="BIBRSDate"
+              id="BIBRSDate"
+              open={false}
+              className={"readonlyColor"}
+              ref={startRef3}
+              onKeyDown={onKeyDown}
+              dateFormat="MM/dd/yyyy HH:mm"
+              selected={value?.BIBRSDate && new Date(value.BIBRSDate)}
+              placeholderText={"Select.."}
+              timeInputLabel
+              isClearable={false}
+              disabled={true}
+              peekNextMonth
+              showMonthDropdown
+              showYearDropdown
+              dropdownMode="select"
+              showTimeSelect
+              timeIntervals={1}
+              timeCaption="Time"
+              minDate={reportedDate}
+              maxDate={datezone ? new Date(datezone) : null}
+              filterTime={(date) => filterPassedTimeZone(date, datezone)}
             />
-            <span>Normal Report</span>
-          </label>
-          {/* Redacted Report */}
-          <label className="d-flex align-items-center mb-0" style={{ marginLeft: "18px", gap: "6px" }}>
-            <input
-              type="radio"
-              value="true"
-              name="status"
-              checked={!isPreviewNormalReport}
-              onChange={() => { setIsPreviewNormalReport(false) }}
-            />
-            <span>Redacted Report</span>
-          </label>
-        </div>
-      </div>
-      <div className="row align-items-center" style={{ rowGap: "8px" }}>
-        {carboTheft ? (
-          <>
-            <div className="col-2 col-md-2 col-lg-2" style={{ display: "flex", flexDirection: "column" }}>
-              <div>   {" "}
-                <span className="new-label">
-                  Did the incident involve Cargo theft
-                  {errors.CargoTheftError !== "true" ? (
-                    <p style={{ color: "red", fontSize: "11px", margin: "0px", padding: "0px", }} > {errors.CargoTheftError}</p>
-                  ) : null}
-                </span>
-              </div>
-            </div>
-            <div className="col-6 col-md-6 col-lg-2 ">
-              <Select
-                name="IsCargoTheftInvolved"
-                value={YesNoArr?.filter((obj) => obj.value === value?.IsCargoTheftInvolved)}
-                options={YesNoArr}
-                menuPlacement="bottom"
-                onChange={(e) => OnChangeCargoTheft(e, "IsCargoTheftInvolved")}
-                isClearable={value?.IsCargoTheftInvolved ? true : false}
-                placeholder="Select..."
-                styles={value?.IsCargoTheftInvolved || value?.IsCargoTheftInvolved === false ? nibSuccessStyles : nibrscolourStyles}
+          </div>
+          <div className="col-3 col-md-3 col-lg-4 ">
+            <label htmlFor="" className="new-label mb-0">
+              TIBRS Status{" "}
+            </label>
+          </div>
+          <div className="col-9 col-md-9 col-lg-3 ">
+            <input type="text" name="NIBRSStatus" id="NIBRSStatus" className={`form-control py-1 new-input `} disabled />
+          </div>
+
+
+          <div className="col-3 col-md-3 col-lg-2 ">
+            <label className="new-label mb-0">Print Format</label>
+          </div>
+          <div className="col d-flex align-items-center">
+            {/* Normal Report */}
+            <label className="d-flex align-items-center me-4 mb-0" style={{ gap: "6px" }}>
+              <input
+                type="radio"
+                value="false"
+                name="status"
+                checked={isPreviewNormalReport}
+                onChange={() => { setIsPreviewNormalReport(true) }}
               />
-            </div>
-          </>
-        ) : (
-          <>
-            {/* Empty fillers to occupy the same space */}
-            <div className="col-2 col-md-2 col-lg-2 d-none d-lg-block"></div>
-            <div className="col-6 col-md-6 col-lg-2 d-none d-lg-block"></div>
-          </>
-        )}
-        {/* Case Status */}
+
+              <span>Normal Report</span>
+            </label>
+
+            {/* Redacted Report */}
+            <label className="d-flex align-items-center mb-0" style={{ marginLeft: "18px", gap: "6px" }}>
+              <input
+                type="radio"
+                value="true"
+                name="status"
+                checked={!isPreviewNormalReport}
+                onChange={() => { setIsPreviewNormalReport(false) }}
+              />
+              <span>Redacted Report</span>
+            </label>
+          </div>
+
+          {carboTheft ? (
+            <>
+              <div className="col-2 col-md-2 col-lg-2" style={{ display: "flex", flexDirection: "column" }}>
+                <div>   {" "}
+                  <span className="new-label">
+                    Did the incident involve Cargo theft
+                    {errors.CargoTheftError !== "true" ? (
+                      <p style={{ color: "red", fontSize: "11px", margin: "0px", padding: "0px", }} > {errors.CargoTheftError}</p>
+                    ) : null}
+                  </span>
+                </div>
+              </div>
+              <div className="col-6 col-md-6 col-lg-2 ">
+                <Select
+                  name="IsCargoTheftInvolved"
+                  value={YesNoArr?.filter((obj) => obj.value === value?.IsCargoTheftInvolved)}
+                  options={YesNoArr}
+                  menuPlacement="bottom"
+                  onChange={(e) => OnChangeCargoTheft(e, "IsCargoTheftInvolved")}
+                  isClearable={value?.IsCargoTheftInvolved ? true : false}
+                  placeholder="Select..."
+                  styles={value?.IsCargoTheftInvolved || value?.IsCargoTheftInvolved === false ? nibSuccessStyles : nibrscolourStyles}
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Empty fillers to occupy the same space */}
+              <div className="col-2 col-md-2 col-lg-2 d-none d-lg-block"></div>
+              <div className="col-6 col-md-6 col-lg-2 d-none d-lg-block"></div>
+            </>
+          )}
+
+
+        </div>
       </div>
-      <div className="col-12 text-right mt-3 d-flex justify-content-between">
+
+
+
+
+
+
+
+      <div className="col-12 text-right mt-2 d-flex justify-content-between">
         <div>
           {IncSta === true || IncSta === "true" ? (
             <>
