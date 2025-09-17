@@ -498,7 +498,7 @@ const PropertyManagement = (props) => {
     }
     const GetChainCustodyReport = () => {
         const val = {
-            'PropertyID': propertyId,
+            'PropertyID': [propertyId],
             'PropertyCategoryCode': ProCategory,
             'MasterPropertyID': 0,
             'AgencyId': loginAgencyID,
@@ -616,6 +616,7 @@ const PropertyManagement = (props) => {
         setSelectedOption(''); setactivitydate('')
         setReasonIdDrp([]);
         setfunctiondone(!functiondone);
+        setChangesStatus(false);
     }
 
     const conditionalRowStyles = [
@@ -1306,7 +1307,7 @@ const PropertyManagement = (props) => {
                                 }`}
                             />
 
-                            {value.location ? (
+                            {/* {value.location ? (
                                 <span style={{
                                     position: 'absolute',
                                     top: '40%',
@@ -1318,11 +1319,11 @@ const PropertyManagement = (props) => {
                                 }} className='select-cancel' onClick={() => { handleClickedCleared("location") }}>
                                     <i className='fa fa-times'></i>
                                 </span>
-                            ) : (null)}
+                            ) : (null)} */}
                         </div>
 
 
-                        <div className="col-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
+                        {/* <div className="col-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
                             <button disabled={!(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) || selectedOption === null}
                                 className=" btn btn-sm bg-green text-white" data-toggle="modal" data-target="#PropertyRoomTreeModal" style={{ cursor: 'pointer' }} onClick={() => {
                                     setlocationStatus(true);
@@ -1330,7 +1331,7 @@ const PropertyManagement = (props) => {
                                 }}>
                                 <i className="fa fa-plus" > </i>
                             </button>
-                        </div>
+                        </div> */}
 
 
                         <div className="col-3 col-md-3 col-lg-2">
@@ -1547,7 +1548,7 @@ const PropertyManagement = (props) => {
                                 options={agencyOfficerDrpData}
                                 onChange={(e) => ChangeDropDown(e, 'ReceipentID')}
                                 placeholder="Select..."
-                                styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
+                                styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
                                 isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                             />
 

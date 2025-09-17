@@ -27,7 +27,7 @@ const VehicleManagement = (props) => {
     const fileInputRef = useRef(null)
 
     const { DecVehId, DecMVehId, DecIncID, VicCategory, isViewEventDetails = false } = props
-    const { GetDataTimeZone, datezone, } = useContext(AgencyContext);
+    const { GetDataTimeZone, datezone, setChangesStatus } = useContext(AgencyContext);
     const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
     const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -491,6 +491,7 @@ const VehicleManagement = (props) => {
         setSelectedStatus(''); setRowClicked(''); setSelectedOption(''); setactivitydate('')
         setReasonIdDrp([]);
         setfunctiondone(!functiondone);
+        setChangesStatus(false);
     }
 
     const conditionalRowStyles = [
@@ -1215,7 +1216,7 @@ const VehicleManagement = (props) => {
                                 }`}
                             />
 
-                            {value.location ? (
+                            {/* {value.location ? (
                                 <span style={{
                                     position: 'absolute',
                                     top: '40%',
@@ -1227,7 +1228,7 @@ const VehicleManagement = (props) => {
                                 }} className='select-cancel' onClick={() => { handleClickedCleared("location") }}>
                                     <i className='fa fa-times'></i>
                                 </span>
-                            ) : (null)}
+                            ) : (null)} */}
                         </div>
 
 
@@ -1457,7 +1458,7 @@ const VehicleManagement = (props) => {
                                 options={agencyOfficerDrpData}
                                 onChange={(e) => ChangeDropDown(e, 'ReceipentID')}
                                 placeholder="Select..."
-                                styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
+                                styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
                                 isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                             />
 
