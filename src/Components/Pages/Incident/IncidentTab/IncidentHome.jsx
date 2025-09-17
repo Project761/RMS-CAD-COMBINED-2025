@@ -243,7 +243,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
     }
   }, [loginAgencyID, incidentStatusDrpDwn]);
 
-  //   api/IncidentStatus/GetDataDropDown_IncidentStatus
+  // api/IncidentStatus/GetDataDropDown_IncidentStatus
   // AgencyID
 
   const getIncidentStatus = async (AgencyID) => {
@@ -1274,7 +1274,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
             ) : (
               <InputMask
                 mask={inputMask}
-                maskChar="_"  
+                maskChar="_"
                 alwaysShowMask={true}
                 value={value.IncidentNumber}
                 placeholder={Counter_Format}
