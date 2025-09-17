@@ -431,18 +431,18 @@ const Address = (props) => {
             <NameListing  {...{ ListData }} />
             <div className="col-12 col-md-12 pt-2 p-0" >
 
-                <div className="row">
-                    <div className="col-3 col-md-2 col-lg-1 mt-3">
-                        <label htmlFor="" className='label-name '>Address{errors.AddressError !== 'true' ? (
+                <div className="row align-items-center" style={{ rowGap: "8px" }}>
+                    <div className="col-3 col-md-2 col-lg-1">
+                        <label htmlFor="" className='new-label mb-0 '>Address{errors.AddressError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.AddressError}</p>
                         ) : null}
                         </label>
                     </div>
-                    <div className="col-4 col-md-7 col-lg-6 text-field mt-2" >
+                    <div className="col-4 col-md-7 col-lg-6 text-field mt-0" >
                         <Location {...{ value, setValue, locationStatus, setLocationStatus, updateStatus, setStatesChangeStatus, setChangesStatus }} col='Address' locationID='LocationID' check={true} verify={value.IsVerify} />
 
                     </div>
-                    <div className="col-5 col-md-3 col-lg-2 mt-3 pl-2">
+                    <div className="col-5 col-md-3 col-lg-2 pl-2">
                         <div className="form-check ">
                             <input className="form-check-input" data-toggle="modal" data-target="#AddressVerifyModal" type="checkbox" name='IsVerify'
                                 checked={(value?.IsVerify || !value?.LocationID)}
@@ -459,10 +459,10 @@ const Address = (props) => {
                             }
                         </div>
                     </div>
-                    <div className="col-1 col-md-1 col-lg-1 mt-3">
-                        <label htmlFor="" className='label-name '>Type</label>
+                    <div className="col-1 col-md-1 col-lg-1 ">
+                        <label htmlFor="" className='new-label mb-0 '>Type</label>
                     </div>
-                    <div className="col-3 col-md-3 col-lg-2  mt-2">
+                    <div className="col-3 col-md-3 col-lg-2">
                         <Select
                             name='AddressFlags'
                             value={AddType?.filter((obj) => obj.label === value?.AddressFlags)}
@@ -476,21 +476,14 @@ const Address = (props) => {
                             styles={customStylesWithOutColor}
                         />
                     </div>
-                    <div className="col-3 col-md-3 col-lg-1  pt-1 mt-md-2 pl-3">
-                        <div className="form-check " style={{ fontSize: '15px' }}>
-                            <input className="form-check-input" type="checkbox" name='IsCurrent' checked={value.IsCurrent} value={value.IsCurrent} onChange={handleChange} id="IsCurrent" onClick={myFunction} />
-                            <label className="form-check-label" htmlFor="flexCheckDefault1">
-                                Current
-                            </label>
-                        </div>
-                    </div>
-                    <div className="col-3 col-md-2 col-lg-1 mt-3">
-                        <label htmlFor="" className='label-name '>From Date{errors.DateFromError !== 'true' ? (
+
+                    <div className="col-3 col-md-2 col-lg-1">
+                        <label htmlFor="" className='new-label mb-0 '>From Date{errors.DateFromError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.DateFromError}</p>
                         ) : null}
                         </label>
                     </div>
-                    <div className="col-4 col-md-4 col-lg-2 mt-1" >
+                    <div className="col-4 col-md-4 col-lg-2" >
                         <DatePicker
                             id='DateFrom'
                             name='DateFrom'
@@ -525,14 +518,14 @@ const Address = (props) => {
 
                         />
                     </div>
-                    <div className="col-5 col-lg-4 " id="text" style={{ display: value.IsCurrent ? 'none' : 'block' }}>
-                        <div className="d-flex">
-                            <div className="col-3 col-md-2 col-lg-2 mt-3">
-                                <label htmlFor="" className='label-name '>To Date{errors.DateToError !== 'true' ? (
+                    <div className="col-5 col-lg-4 p-0" id="text" style={{ display: value.IsCurrent ? 'none' : 'block' }}>
+                        <div className="d-flex align-items-center">
+                            <div className="col-3 col-md-2 col-lg-4">
+                                <label htmlFor="" className='new-label mb-0'>To Date{errors.DateToError !== 'true' ? (
                                     <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.DateToError}</p>
                                 ) : null}</label>
                             </div>
-                            <div className="col-4 col-md-4 col-lg-7  mt-1" >
+                            <div className="col-4 col-md-4 col-lg-8" >
                                 <DatePicker
                                     id='DateTo'
                                     name='DateTo'
@@ -564,7 +557,18 @@ const Address = (props) => {
                         </div>
                     </div>
 
+                    <div className="col-3 col-md-3 col-lg-1 pl-2">
+                        <div className="form-check " style={{ fontSize: '15px' }}>
+                            <input className="form-check-input" type="checkbox" name='IsCurrent' checked={value.IsCurrent} value={value.IsCurrent} onChange={handleChange} id="IsCurrent" onClick={myFunction} />
+                            <label className="form-check-label" htmlFor="flexCheckDefault1">
+                                Current
+                            </label>
+                        </div>
+                    </div>
+
                 </div>
+
+
                 {
                     !isViewEventDetails &&
                     <div className="btn-box text-right  mr-1 mb-2">
