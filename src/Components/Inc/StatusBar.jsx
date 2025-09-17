@@ -60,12 +60,11 @@ const StatusBar = forwardRef((props, ref) => {
     // },
     {
       label: "Property",
-      value: loading ? "Loading..." : typeof PropertyCount === "number" && !PropErrorStatus ? `${PropertyCount} Added` : "Error",
+      value: loading ? "Loading..." : typeof PropertyCount === "number" && !PropErrorStatus ? `${PropertyCount} Added` : `${PropertyCount} Added`,
       border: typeof PropertyCount === "number" && !PropErrorStatus ? "left-border-green" : "left-border-red",
       bg: typeof PropertyCount === "number" && !PropErrorStatus ? "bg-green" : "bg-red",
       icon: typeof PropertyCount === "number" && !PropErrorStatus ? faCheck : faTimes,
     },
-
     {
       label: "TIBRS",
       value: "Pending",
