@@ -370,8 +370,9 @@ const Incident = () => {
     ];
 
     const set_IncidentId = (row) => {
+        console.log("🚀 ~ set_IncidentId ~ row:", row)
         let newData = [...incidentRecentData];
-        let currentItem = newData.find((item) => row.IncidentID === item.IncidentID);
+        let currentItem = newData?.find((item) => row.IncidentID === item.IncidentID);
         if (!currentItem) {
             newData.push(row);
         }

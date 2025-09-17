@@ -300,7 +300,7 @@ const NibrsHome = () => {
         // set property error string
         if (propertyError) {
           const proObj = propertyError?.Properties ? propertyError?.Properties : [];
-          console.log("🚀 ~ ValidateProperty ~ proObj:", proObj)
+          // console.log("🚀 ~ ValidateProperty ~ proObj:", proObj)
 
           // set property error string
           if (proObj?.length > 0) {
