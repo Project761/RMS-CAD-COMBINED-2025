@@ -207,7 +207,7 @@ const PropertyEvidenceReport = ({ isPreview }) => {
     };
 
     const handleRadioChange = (e) => {
-        e.preventDefault();
+        // e.preventDefault();
         setSelectedReportType(e.target.value);
         setCurrentReportType({
             selectedReportType: e.target.value,
