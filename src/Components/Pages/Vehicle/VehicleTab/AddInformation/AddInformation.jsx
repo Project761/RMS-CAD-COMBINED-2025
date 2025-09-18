@@ -4,6 +4,7 @@ import DatePicker from "react-datepicker";
 import { AgencyContext } from "../../../../../Context/Agency/Index";
 import { Link, useLocation } from "react-router-dom";
 import {
+  base64ToString,
   changeArrayFormat,
   changeArrayFormat_WithFilter,
   customStylesWithOutColor,
@@ -25,7 +26,7 @@ import {
 } from "../../../../../redux/actions/IncidentAction";
 import { MasterVehicle_ID } from "../../../../../redux/actionTypes";
 import { RequiredFieldIncident } from "../../../Utility/Personnel/Validation";
-import { get_Narrative_Type_Drp_Data } from "../../../../../redux/actions/DropDownsData";
+import { get_AgencyOfficer_Data, get_Narrative_Type_Drp_Data } from "../../../../../redux/actions/DropDownsData";
 import SelectBox from "../../../../Common/SelectBox";
 
 const AddInformation = (props) => {
@@ -74,9 +75,14 @@ const AddInformation = (props) => {
       get: (param) => params.get(param),
     };
   };
+
+ 
   const fileInputRef = useRef(null);
 
   const query = useQuery();
+   var IncID = query?.get("IncId");
+  if (!IncID) IncID = 0;
+  else IncID = parseInt(base64ToString(IncID));
   let MstVehicle = query?.get("page");
 
   const [loginAgencyID, setLoginAgencyID] = useState("");
@@ -170,6 +176,8 @@ const AddInformation = (props) => {
     if (localStoreData) {
       setLoginPinID(localStoreData?.PINID);
       setLoginAgencyID(localStoreData?.AgencyID);
+      dispatch(get_AgencyOfficer_Data(localStoreData?.AgencyID, IncID))
+
       dispatch(
         get_ScreenPermissions_Data(
           "V093",
@@ -335,7 +343,7 @@ const AddInformation = (props) => {
       }
     }
 
-    
+
   }, [editval, updateCount]);
 
   const Reset = (e) => {
@@ -849,6 +857,7 @@ const AddInformation = (props) => {
           Get_SendTask_Data(DecVehId, DecMVehId);
           setTaskToSend();
           setMultiSelected({ optionSelected: [] });
+          setSelectedOption("Individual");
           // Get_SendTask_DrpVal(DecPropID, DecMPropID)
         } else {
           console.log("Somthing Wrong");
