@@ -716,7 +716,7 @@ const MiscellaneousInformation = (props) => {
           toastifySuccess(message);
           setTaskToSend();
           setMultiSelected({ optionSelected: [] });
-
+           setSelectedOption("Individual");
           Get_SendTask_Data(DecPropID, DecMPropID);
           Get_SendTask_DrpVal(DecPropID, DecMPropID);
 
