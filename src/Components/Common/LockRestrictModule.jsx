@@ -9,6 +9,9 @@ const LockRestrictModule = ({ show, onClose }) => {
     ]);
 
     const [agencyPlaceholder] = useState("Select Group");
+    // const [value, setValue] = useState({
+        
+    // })
 
     // Handlers
     const handleLoginSubmit = (e) => {
@@ -29,11 +32,10 @@ const LockRestrictModule = ({ show, onClose }) => {
             tabIndex="-1"
             aria-labelledby="exampleModalCenterTitle"
             aria-hidden="true"
-
             data-backdrop="false"
         >
             <div className="modal-dialog modal-dialog-centered modal-m">
-                <div className="modal-content p-3">
+                <div className="modal-content">
                     <div className="col-12">
                         <div className="card-body">
                             <form onSubmit={handleLoginSubmit} autoComplete="off">
