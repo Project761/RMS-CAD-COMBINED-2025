@@ -71,7 +71,8 @@ const CadPropertyModel = (props) => {
   const [shouldPrintForm, setShouldPrintForm] = useState(false);
   const [transferdate, settransferdate] = useState();
   const closeButtonRef = useRef(null); // at the top of your component
-  const [selectedOptionInternal, setselectedOptionInternal] = useState('Internal');
+  const [selectedOptionInternal, setselectedOptionInternal] = useState('IsInternalTransfer');
+  const [storagetype, setstoragetype] = useState();
 
   // modal open state
   const [keyChange, setKeyChange] = useState("");
@@ -79,7 +80,7 @@ const CadPropertyModel = (props) => {
   const fileInputRef = useRef(null)
 
   const [value, setValue] = useState({
-    'PropertyID': '', 'MasterPropertyId': '', 'ActivityType': '', 'ActivityReasonID': '', 'Internal': true, 'ExpectedDate': '', 'ActivityComments': '', 'OtherPersonNameID': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
+    'PropertyID': '', 'MasterPropertyId': '', 'ActivityType': '', 'ActivityReasonID': '', 'IsInternalTransfer': true, 'IsExternalTransfer': false, 'ExpectedDate': '', 'ActivityComments': '', 'OtherPersonNameID': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
     'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '',
     'IsCheckIn': (modelActivityStatus === "CheckIn"), 'IsCheckOut': false, 'IsRelease': false, 'IsDestroy': false, 'IsTransferLocation': false, 'IsUpdate': false, 'CreatedByUserFK': '', 'AgencyID': '', 'EvidenceType': '',
     'PropertyTypeID': '', 'LastSeenDtTm': '', 'PackagingDetails': '', 'ReleasingOfficerID': '', ' ReceipentOfficerID': '', 'ReceipentID': '', 'DestructionOfficerID': '', 'ApprovalOfficerID': '', 'WitnessID': '', 'TransferDate': '', 'UpdatingOfficerID': '', 'DestinationStorageLocation': '', 'CurrentStorageLocation': '',
@@ -104,18 +105,46 @@ const CadPropertyModel = (props) => {
     }),
   }
   useEffect(() => {
-    setValue((prev) => ({
-      ...prev,
-      IsCheckIn: modelActivityStatus === "CheckIn",
-      IsCheckOut: modelActivityStatus === "CheckOut",
-      IsRelease: modelActivityStatus === "Release",
-      IsDestroy: modelActivityStatus === "Destroy",
-      IsTransferLocation: modelActivityStatus === "Transfer Location",
-      IsUpdate: modelActivityStatus === "Update",
+    console.log('modelActivityStatus:', modelActivityStatus);
 
-    }));
+    // Normalize and check the activity status
+    const normalizedActivityStatus = modelActivityStatus.trim(); // Remove any leading/trailing spaces
+    const transferLocation = "Transfer Location";  // Normalized value for comparison
+
+    console.log('Normalized modelActivityStatus:', normalizedActivityStatus);
+    console.log('Comparison with "Transfer Location":', normalizedActivityStatus === transferLocation);
+
+    const isTransferLocation = normalizedActivityStatus === transferLocation; // Store comparison result
+    console.log('isTransferLocation:', isTransferLocation); // This shows true or false
+
+    // Check previous value of IsTransferLocation
+    console.log('Previous IsTransferLocation:', value.IsTransferLocation);
+
+    // Set the state
+    setValue((prev) => {
+      const newState = {
+        ...prev,
+        IsCheckIn: normalizedActivityStatus === "CheckIn",
+        IsCheckOut: normalizedActivityStatus === "CheckOut",
+        IsRelease: normalizedActivityStatus === "Release",
+        IsDestroy: normalizedActivityStatus === "Destroy",
+        IsTransferLocation: isTransferLocation,  // Correctly set IsTransferLocation
+        IsUpdate: normalizedActivityStatus === "Update",
+      };
+
+      console.log('Updated newState:', newState); // Log the new state
+      return newState;
+    });
+
+    // Update the selectedOption state
     setSelectedOption(modelActivityStatus);
-  }, [modelActivityStatus]);
+
+  }, [modelActivityStatus, modalOpenStatus]);
+  useEffect(() => {
+    console.log('Updated value state:', value);
+  }, [value]);
+
+
 
   useEffect(() => {
     if (localStoreData) {
@@ -129,14 +158,14 @@ const CadPropertyModel = (props) => {
       if (CallStatus === 'true') {
       } else if (CallStatus === 'false' && (ProType && ProNumber)) {
       }
-      setValue({ ...value, 'PropertyTypeID': parseInt(ProNumber), 'ActivityType': ProTransfer })
+      // setValue({ ...value, 'PropertyTypeID': parseInt(ProNumber), 'ActivityType': ProTransfer })
       GetDataTimeZone(localStoreData?.AgencyID);
     }
   }, [localStoreData, ProType, ProNumber, CallStatus, DecPropID, SelectedCategory, propertyTypeData, ProTransfer]);
 
 
   useEffect(() => {
-    setValue({ ...value, ['PropertyRoomPersonNameID']: parseInt(possessionID), })
+    // setValue({ ...value, ['PropertyRoomPersonNameID']: parseInt(possessionID), })
   }, [possessionID, loginPinID]);
 
 
@@ -153,9 +182,9 @@ const CadPropertyModel = (props) => {
 
 
 
-  useEffect(() => {
-    if (possessionID) { setValue({ ...value, ['PropertyRoomPersonNameID']: parseInt(possessionID) }) }
-  }, [possessionID]);
+  // useEffect(() => {
+  //   if (possessionID) { setValue({ ...value, ['PropertyRoomPersonNameID']: parseInt(possessionID) }) }
+  // }, [possessionID]);
 
 
 
@@ -188,12 +217,13 @@ const CadPropertyModel = (props) => {
 
     const ReasonError = RequiredFieldIncident(value.ActivityReasonID);
     // const PropertyRoomOfficerError = !value.IsCheckOut ? RequiredFieldIncident(value.OfficerNameID) : 'true';
+    const StorageLocationError = value.IsCheckIn ? RequiredFieldIncident(value.location) : 'true';
     const PropertyRoomOfficerError = value.IsTransferLocation || value.IsRelease || value.IsDestroy || value.IsUpdate ? RequiredFieldIncident(value.OfficerNameID) : 'true';
-
+    const NewStorageLocationError = value.IsTransferLocation ? RequiredFieldIncident(value.DestinationStorageLocation) : 'true'
     const CheckInDateTimeError = value.IsCheckIn ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
     const SubmittingOfficerError = value.IsCheckIn ? RequiredFieldIncident(value.InvestigatorID) : 'true';
     const CheckOutDateTimeError = value.IsCheckOut ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
-    const ExpectedReturnDateTimeError = value.IsTransferLocation ? RequiredFieldIncident(value.ExpectedDate) : 'true';
+    const ExpectedReturnDateTimeError = value.IsTransferLocation && value.IsExternalTransfer ? RequiredFieldIncident(value.ExpectedDate) : 'true';
     const ReleasingOfficerError = (value.IsRelease || value.IsCheckOut) ? RequiredFieldIncident(value.ReleasingOfficerID) : 'true';
     // const ReceipientError = value.IsRelease ? RequiredFieldIncident(value.ReceipentID) : 'true';
     const ReleasedDateTimeError = value.IsRelease ? RequiredFieldIncident(value.ReleaseDate) : 'true';
@@ -229,22 +259,23 @@ const CadPropertyModel = (props) => {
         ['TransferDateTimeError']: TransferDateTimeError || prevValues['TransferDateTimeError'],
         ['UpdateDateTimeError']: UpdateDateTimeError || prevValues['UpdateDateTimeError'],
 
-        // ['StorageLocationError']: StorageLocationError || prevValues['StorageLocationError'],
+        ['StorageLocationError']: StorageLocationError || prevValues['StorageLocationError'],
+        ['NewStorageLocationError']: NewStorageLocationError || prevValues['NewStorageLocationError'],
       }
     })
   }
-  const { ReasonError, PropertyRoomOfficerError, CheckInDateTimeError, SubmittingOfficerError, CheckOutDateTimeError, ExpectedReturnDateTimeError, ReleasingOfficerError, ReleasedDateTimeError,
+  const { ReasonError, PropertyRoomOfficerError, CheckInDateTimeError, StorageLocationError, NewStorageLocationError, SubmittingOfficerError, CheckOutDateTimeError, ExpectedReturnDateTimeError, ReleasingOfficerError, ReleasedDateTimeError,
     DestructionDateTimeError, DestructionOfficerError, UpdatingOfficerError, ApprovalOfficerError, WitnessError, TransferDateTimeError, UpdateDateTimeError, } = errors
 
   useEffect(() => {
 
-    if (ReasonError === 'true' && PropertyRoomOfficerError === 'true' && CheckInDateTimeError === 'true' && SubmittingOfficerError === 'true' && CheckOutDateTimeError === 'true' && ExpectedReturnDateTimeError === 'true' && ReleasingOfficerError === 'true' && ReleasedDateTimeError === 'true'
+    if (ReasonError === 'true' && PropertyRoomOfficerError === 'true' && NewStorageLocationError === 'true' && StorageLocationError === 'true' && CheckInDateTimeError === 'true' && SubmittingOfficerError === 'true' && CheckOutDateTimeError === 'true' && ExpectedReturnDateTimeError === 'true' && ReleasingOfficerError === 'true' && ReleasedDateTimeError === 'true'
       && DestructionDateTimeError === 'true' && DestructionOfficerError === 'true' && UpdatingOfficerError === 'true' && ApprovalOfficerError === 'true' && WitnessError === 'true' && TransferDateTimeError === 'true' && UpdateDateTimeError === 'true'
     ) {
 
       { Add_Type() }
     }
-  }, [ReasonError, PropertyRoomOfficerError, CheckInDateTimeError, SubmittingOfficerError, CheckOutDateTimeError, ExpectedReturnDateTimeError, ReleasingOfficerError, ReleasedDateTimeError,
+  }, [ReasonError, PropertyRoomOfficerError, CheckInDateTimeError, StorageLocationError, NewStorageLocationError, SubmittingOfficerError, CheckOutDateTimeError, ExpectedReturnDateTimeError, ReleasingOfficerError, ReleasedDateTimeError,
     DestructionDateTimeError, DestructionOfficerError, UpdatingOfficerError, ApprovalOfficerError, WitnessError, TransferDateTimeError, UpdateDateTimeError,
   ])
 
@@ -457,7 +488,7 @@ const CadPropertyModel = (props) => {
       ...value,
       'PropertyID': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
       'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '',
-      'MasterPropertyId': '', 'IsCheckIn': false, 'IsCheckOut': false, 'IsRelease': '', 'IsDestroy': '', 'IsTransferLocation': '', 'IsUpdate': '', 'CreatedByUserFK': '', 'PropertyTypeID': '',
+      'MasterPropertyId': '', 'IsCheckIn': false, 'IsCheckOut': false, 'IsRelease': '', 'IsDestroy': '', 'IsUpdate': '', 'CreatedByUserFK': '', 'PropertyTypeID': '',
       'OtherPersonNameID': '', 'LastSeenDtTm': '', 'PackagingDetails': '', 'EvidenceType': '',
     });
     setErrors({
@@ -468,7 +499,8 @@ const CadPropertyModel = (props) => {
 
     setSelectedFiles([]);
     setCourtdate(''); setreleasedate(''); setdestroydate(''); setExpecteddate('');
-    setSelectedStatus(''); setSelectedOption('');
+    setSelectedStatus('');
+    //  setSelectedOption('');
     setactivitydate('');
     setReasonIdDrp([]);
     setLocationPath('');
@@ -497,15 +529,17 @@ const CadPropertyModel = (props) => {
 
   const handleRadioChangeInner = (event) => {
     const selectedOption = event.target.value;
-    setselectedOptionInternal(selectedOption);
+    // setselectedOptionInternal(selectedOption);
 
     // Set the specific state values based on the selected option
     setValue(prevState => ({
       ...prevState,
-      Internal: selectedOption === 'Internal',
-      External: selectedOption === 'External',
+      IsInternalTransfer: selectedOption === 'IsInternalTransfer',
+      IsExternalTransfer: selectedOption === 'IsExternalTransfer',
     }));
   };
+
+  console.log(value.location)
 
   return (
     modalOpenStatus &&
@@ -578,7 +612,7 @@ const CadPropertyModel = (props) => {
                   </div>
 
                   <div className="div ">
-                    {(selectedOption !== "CheckOut" && selectedOption !== "Release" && selectedOption !== "Destroy" && selectedOption !== "TransferLocation" && selectedOption !== "Update") && <div className='row align-items-center' style={{ rowGap: "8px" }}>
+                    {(selectedOption !== "CheckOut" && selectedOption !== "Release" && selectedOption !== "Destroy" && value.IsTransferLocation === false || value.IsTransferLocation === 'false' && selectedOption !== "Update") && <div className='row align-items-center' style={{ rowGap: "8px" }}>
                       <div className="col-3 col-md-3 col-lg-2">
                         <label htmlFor="" className='new-label mb-0'>Reason{errors.ReasonError !== 'true' ? (
                           <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
@@ -737,9 +771,9 @@ const CadPropertyModel = (props) => {
                       </div> */}
                       <div className="col-3 col-md-3 col-lg-2 ">
                         <label htmlFor="" className='new-label px-0 mb-0'>Storage Location
-                          {/* {errors.StorageLocationError !== 'true' ? (
-                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.StorageLocationError}</p>
-                        ) : null} */}
+                          {errors.StorageLocationError !== 'true' ? (
+                            <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.StorageLocationError}</p>
+                          ) : null}
                         </label>
                       </div>
                       <div className="col-12 col-md-12 col-lg-3 ">
@@ -1978,7 +2012,7 @@ const CadPropertyModel = (props) => {
                     </div>
                     }
 
-                    {selectedOption === "TransferLocation" &&
+                    {(value.IsTransferLocation === true || value.IsTransferLocation === 'true') &&
                       <>
                         <div className='row align-items-center  mb-1'>
                           <div className="col-12 col-md-4 col-lg-2  "></div>
@@ -1987,10 +2021,9 @@ const CadPropertyModel = (props) => {
                               <input
                                 className="form-check-input"
                                 type="radio"
-                                value="Internal"
-                                // name="AttemptComplete"
-                                checked={value?.Internal}
-                                // id="flexRadioDefault"
+                                name="TransferType"
+                                value="IsInternalTransfer"
+                                checked={value.IsInternalTransfer}
                                 onChange={handleRadioChangeInner}
                               />
                               <label style={{ fontWeight: value?.IsCheckIn ? 'bold' : 'normal' }} className="form-check-label" htmlFor="flexRadioDefault">
@@ -2003,10 +2036,9 @@ const CadPropertyModel = (props) => {
                               <input
                                 className="form-check-input"
                                 type="radio"
-                                value="External"
-                                // name="AttemptComplete"
-                                checked={value?.External}
-                                // id="flexRadioDefault1"
+                                name="TransferType"
+                                value="IsExternalTransfer"
+                                checked={value.IsExternalTransfer}
                                 onChange={handleRadioChangeInner}
                               />
                               <label style={{ fontWeight: value?.IsCheckOut ? 'bold' : 'normal' }} className="form-check-label" htmlFor="flexRadioDefault1">
@@ -2107,7 +2139,7 @@ const CadPropertyModel = (props) => {
                             />
                           </div>
                           {
-                            value.External ?
+                            value.IsExternalTransfer ?
                               <>
                                 <div className="col-3 col-md-3 col-lg-2">
                                   <label htmlFor="" className='new-label mb-0'>Receiving Officer{errors.PropertyRoomOfficerError !== 'true' ? (
@@ -2246,7 +2278,9 @@ const CadPropertyModel = (props) => {
 
 
                           <div className="col-3 col-md-3 col-lg-2 ">
-                            <label htmlFor="" className='new-label px-0 mb-0 text-nowrap'> New Storage Location</label>
+                            <label htmlFor="" className='new-label px-0 mb-0 text-nowrap'> New Storage Location{errors.NewStorageLocationError !== 'true' ? (
+                              <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.NewStorageLocationError}</p>
+                            ) : null}</label>
                           </div>
                           <div className="col-12 col-md-12 col-lg-3" style={{ position: 'relative' }}>
                             <input
@@ -2254,7 +2288,7 @@ const CadPropertyModel = (props) => {
                               name="DestinationStorageLocation"
                               id="DestinationStorageLocation"
                               value={locationStatus ? '' : value.DestinationStorageLocation}
-                              disabled
+                              
                               className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
                                 ? 'requiredColor'
                                 : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
@@ -2307,6 +2341,7 @@ const CadPropertyModel = (props) => {
                                   style={{ cursor: isAddDisabled ? 'not-allowed' : 'pointer' }}
                                   onClick={() => {
                                     setlocationStatus(true)
+                                    setstoragetype('NewStorageLocation')
                                     // setKeyChange("DestinationStorageLocation")
                                   }}
                                 >
@@ -2864,7 +2899,7 @@ const CadPropertyModel = (props) => {
       </div >
 
 
-      <TreeModelPL {...{ proRoom, locationStatus, setlocationStatus, locationPath, setLocationPath, searchStoStatus, setSearchStoStatus, value, setValue, setPropertyNumber, keyChange }} />
+      <TreeModelPL {...{ proRoom, locationStatus, setlocationStatus, storagetype , locationPath, setLocationPath, searchStoStatus, setSearchStoStatus, value, setValue, setPropertyNumber, keyChange }} />
 
     </>
   );

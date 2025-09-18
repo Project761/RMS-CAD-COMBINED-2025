@@ -13,7 +13,7 @@ import { AgencyContext } from '../../../Context/Agency/Index';
 
 const TreeModalPL = (props) => {
 
-    const { proRoom, locationStatus, functiondone, setlocationStatus, value, searchStoStatus, setSearchStoStatus, setValue, setPropertyNumber, keyChange } = props
+    const { proRoom, locationStatus, functiondone, storagetype, setlocationStatus, value, searchStoStatus, setSearchStoStatus, setValue, setPropertyNumber, keyChange } = props
 
     const dispatch = useDispatch()
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -49,7 +49,7 @@ const TreeModalPL = (props) => {
         const pormise = fetchTreeModelPostData('PropertyStorageLocation/GetData_PropertyStorageLocation', { AgencyID: ID }).then(response => {
 
             if (response?.length > 0) {
-         
+
                 setTreeData(response[0])
             } else {
                 console.log(response)
@@ -103,16 +103,27 @@ const TreeModalPL = (props) => {
         if (selectBranch) {
             fetchPostData("PropertyStorageLocation/GetPathData_PropertyStorageLocation", val).then((data) => {
                 if (data) {
-                    setValue(prev => ({
-                        ...prev,
-                        [keyChange]: data[0].NodePath,
-                        StorageLocationID: data[0].StorageLocationID
-                    }));
-                    setlocationStatus(false);
+                    if (storagetype === 'NewStorageLocation') {
+                        setValue(prev => ({
+                            ...prev,
+                            DestinationStorageLocation: data[0].NodePath,
+                            StorageLocationID: data[0].StorageLocationID
+                        }));
+                        setlocationStatus(false);
+                    }
+                    else {
+                        setValue(prev => ({
+                            ...prev,
+                            location: data[0].NodePath,
+                            StorageLocationID: data[0].StorageLocationID
+                        }));
+                        
+                    }
+
                 } else {
                     setValue(prev => ({
                         ...prev,
-                        [keyChange]: data[0].NodePath,
+                        location: data[0].NodePath,
                         StorageLocationID: data[0].StorageLocationID
                     }));
                     setlocationStatus(false);
@@ -371,7 +382,7 @@ class Treeview extends Component {
             if (value.children?.length > 0 && value.showChildren) {
                 let babies = this.makeChildren(value.children);
                 let normalMode = (
-                    <div className="node" style={{ backgroundColor: value.Id == this.props?.selectBranch ? 'pink' : '' }} onClick={(e) => { this.props.setSelectBranch(value?.Id);  }}>
+                    <div className="node" style={{ backgroundColor: value.Id == this.props?.selectBranch ? 'pink' : '' }} onClick={(e) => { this.props.setSelectBranch(value?.Id); }}>
                         <i className="fa fa-minus-square-o" ></i>{value.name}
                         <span className="actions">
                             {
@@ -404,7 +415,7 @@ class Treeview extends Component {
             else if (value.children?.length === 0) {
                 // console.log(value?.Id)
                 let normalMode = (
-                    <div className="node" style={{ backgroundColor: value.Id == this.props?.selectBranch ? 'pink' : '' }} onClick={(e) => { this.props.setSelectBranch(value?.Id);  }}>
+                    <div className="node" style={{ backgroundColor: value.Id == this.props?.selectBranch ? 'pink' : '' }} onClick={(e) => { this.props.setSelectBranch(value?.Id); }}>
                         <i className="fa fa-square-o"></i>{value.name}
                         <span className="actions">
                             {
@@ -449,7 +460,7 @@ class Treeview extends Component {
         // console.log(this.props.isEditLocation)
         // if (typeof this.state?.data?.name === 'undefined') return null;
         let children = this.makeChildren(this.state?.data?.children);
-      
+
         let root = (
             <span className="root">{this.state?.data?.name}
                 <span className="actions"> &nbsp;  &nbsp;
