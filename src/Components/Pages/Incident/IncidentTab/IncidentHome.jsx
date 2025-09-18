@@ -47,8 +47,9 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
   const cadDispositionDrpData = useSelector((state) => state.DropDown.cadDispositionDrpData);
   const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
 
-  const { updateCount, get_IncidentTab_Count, get_Incident_Count, nibrsSubmittedIncident, setnibrsSubmittedIncident, setIncidentRmsCfs, setnibrsStatus, exceptionalClearID, GetDataExceptionalClearanceID, setChangesStatus, changesStatus, setReportedDtTmInc, GetDataTimeZone, datezone, setOfficerApprovCount, incidentRecentData, setIncidentRecentData,
+  const { updateCount, get_IncidentTab_Count, get_Incident_Count, nibrsSubmittedIncident, setnibrsSubmittedIncident, setIncidentRmsCfs, setnibrsStatus, exceptionalClearID, GetDataExceptionalClearanceID, setChangesStatus, changesStatus, setReportedDtTmInc, GetDataTimeZone, datezone, setOfficerApprovCount, incidentRecentData, setIncidentRecentData, incidentCount
   } = useContext(AgencyContext);
+  
   const [reportedDate, setReportedDate] = useState(new Date(datezone));
   const [occuredFromDate, setOccuredFromDate] = useState(new Date(datezone));
   const [occuredToDate, setOccuredToDate] = useState();
@@ -378,6 +379,12 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
         setIsEnabled(false);
       }
       dispatch({ type: Incident_ReportDate, payload: editval[0]?.ReportedDate ? getShowingDateText(editval[0]?.ReportedDate) : '', });
+
+      if (incidentCount[0]?.ArrestCount > 0) {
+        setadultArrestStatus(true);
+      } else {
+        setadultArrestStatus(false);
+      }
     } else {
       setValue({
         ...value,
@@ -2046,15 +2053,10 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
               )}
               isClearable
               options={exceptionalClearID}
-              onChange={(e) =>
-                onChangeExceptionalClearanceCode(e, "NIBRSClearanceID")
-              }
+              onChange={(e) => onChangeExceptionalClearanceCode(e, "NIBRSClearanceID")}
               placeholder="Select..."
               isDisabled={clsDrpCode === "01" ? false : true}
-              styles={getExceptionColorCode(
-                clsDrpCode,
-                value?.NIBRSClearanceID
-              )}
+              styles={getExceptionColorCode(clsDrpCode, value?.NIBRSClearanceID)}
             />
           </div>
           <div className="col-5 col-md-5 col-lg-4 ">
