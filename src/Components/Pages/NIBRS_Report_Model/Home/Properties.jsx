@@ -1441,10 +1441,6 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
 
                             }
 
-                            // if (isSuspectedDrugType) { setSuspectedDrugTypeErrorStatus(true); }
-                            // else { setSuspectedDrugTypeErrorStatus(false); }
-
-
                             const row = propArr[0];
 
                             isDefaultSelected && set_EditRow(row);
@@ -1650,6 +1646,15 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
                                 </span>
                             </div>
                             <div className="col-3 col-md-3 col-lg-3 mt-1">
+                                {false && (
+                                    <div className="nibrs-tooltip-error" style={{ left: '-20px' }}>
+                                        <div className="tooltip-arrow"></div>
+
+                                        <div className="tooltip-content">
+                                            <span className="text-danger">⚠️ {'dfdsfsdfsdfsdfsdf'}</span>
+                                        </div>
+                                    </div>
+                                )}
                                 <Select
                                     name='CategoryID'
                                     id='CategoryID'

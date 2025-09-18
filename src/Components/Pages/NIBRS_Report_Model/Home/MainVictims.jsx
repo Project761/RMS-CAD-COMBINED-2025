@@ -1967,9 +1967,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
         },
     ];
 
-
-
-
     const colourStylesMasterReason = {
         control: (styles) => ({
             ...styles,
@@ -2174,8 +2171,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
             setValue({ ...value, [name]: null, });
         }
     };
-
-
 
     const get_Victim_Type_Data = (loginAgencyID, nameTypeID) => {
         const val = { AgencyID: loginAgencyID };
@@ -2819,8 +2814,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
         }
     }, [victimClick, mainIncidentID])
 
-
-
     // validate Incident
     const ValidateIncNames = (incidentID, IncNo, isDefaultSelected = false) => {
         setclickNibLoder(true);
@@ -2911,7 +2904,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
     }
 
     function filterArray(arr, key) {
-
         return [...new Map(arr?.map(item => [item[key], item])).values()]
     }
 
@@ -3106,7 +3098,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
             </components.Option>
         );
     };
-
 
     const getLimitedTimesUpTo = (limitDate) => {
         const times = [];
@@ -3801,18 +3792,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
                                                         :
                                                         customStylesWithOutColor1
                                                 }
-                                                // styles={
-                                                //     loginAgencyState === 'TX' ?
-                                                //         victimCode === 'L' && nibrsCodeArray?.includes('120') ? customStylesWithOutColor1
-                                                //             :
-                                                //             isInjurryRequired ? filterArray(victimInjuryID, 'label')?.length > 0 ? nibrsSuccessStyles : nibrscolourStyles
-                                                //                 :
-                                                //                 isCrimeAgainstPerson ? check_injuryType_Nibrs(offenceCodes, victimInjuryID, victimCode, 'Color')
-                                                //                     :
-                                                //                     customStylesWithOutColor1
-                                                //         :
-                                                //         customStylesWithOutColor1
-                                                // }
                                                 isClearable={false}
                                                 options={injuryTypeDrp}
                                                 closeMenuOnSelect={false}

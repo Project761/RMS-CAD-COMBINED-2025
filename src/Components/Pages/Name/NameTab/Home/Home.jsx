@@ -206,7 +206,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
   }, []);
 
 
-  
+
 
   useEffect(() => {
     if (localStoreData) {
@@ -2364,7 +2364,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
 
                         style={{
                           textAlign: 'center', ...(value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.AgeFrom ? {
-                            backgroundColor: '#D8B4FE',
+                            backgroundColor: 'rgb(255 202 194)',
                             height: 20,
                             minHeight: 33,
                             fontSize: 14,
@@ -2385,7 +2385,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                       <input type="text" name='AgeTo' maxLength={3}
                         style={{
                           textAlign: 'center', ...(value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.AgeTo ? {
-                            backgroundColor: '#D8B4FE',
+                            backgroundColor: 'rgb(255 202 194)',
                             height: 20,
                             minHeight: 33,
                             fontSize: 14,
