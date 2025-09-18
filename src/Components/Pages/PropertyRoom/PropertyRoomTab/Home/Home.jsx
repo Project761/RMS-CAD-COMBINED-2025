@@ -4180,7 +4180,7 @@ const Home = (props) => {
                             type="text"
                             name="CurrentStorageLocation"
                             id="CurrentStorageLocation"
-                            value={locationStatus ? '' : value.CurrentStorageLocation}
+                            value={locationStatus ? '' : value.location}
                             disabled
                             className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
                                 ? 'requiredColor'
@@ -4190,57 +4190,10 @@ const Home = (props) => {
                                 }`}
                         />
 
-                        {value.CurrentStorageLocation && (
-                            <span
-                                className="select-cancel"
-                                onClick={() => { handleClickedCleared("CurrentStorageLocation") }}
-                                style={{
-                                    position: 'absolute',
-                                    top: '50%',
-                                    right: '10px',
-                                    transform: 'translateY(-50%)',
-                                    cursor:
-                                        !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
-                                            ? 'not-allowed'
-                                            : 'pointer',
-                                    opacity:
-                                        !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
-                                            ? 0.5
-                                            : 1,
-                                    pointerEvents:
-                                        !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
-                                            ? 'none'
-                                            : 'auto',
-                                }}
-                            >
-                                <i className="fa fa-times"></i>
-                            </span>
-                        )}
+                      
                     </div>
                     {/** ➕ Add Button Section **/}
-                    <div className="col-1 ">
-                        {(() => {
-                            const isAddDisabled =
-                                !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) ||
-                                selectedOption === null;
-
-                            return (
-                                <button
-                                    disabled={isAddDisabled}
-                                    className="btn btn-sm bg-green text-white"
-                                    data-toggle="modal"
-                                    data-target="#PropertyRoomTreeModal"
-                                    style={{ cursor: isAddDisabled ? 'not-allowed' : 'pointer' }}
-                                    onClick={() => {
-                                        setlocationStatus(true)
-                                        // setKeyChange("CurrentStorageLocation")
-                                    }}
-                                >
-                                    <i className="fa fa-plus"></i>
-                                </button>
-                            );
-                        })()}
-                    </div>
+                  
                     <div className='col-12 col-md-12 col-lg-4'></div>
 
 

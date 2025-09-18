@@ -703,7 +703,7 @@ const PropertyManagement = (props) => {
         }));
     };
 
-    console.log(value.DestinationStorageLocation)
+    console.log(selectedOption)
     return (
         <>
             <div className="col-12">
@@ -1955,8 +1955,8 @@ const PropertyManagement = (props) => {
                                 options={agencyOfficerDrpData}
                                 onChange={(e) => ChangeDropDown(e, 'DestructionLocation')}
                                 placeholder="Select..."
-                                styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release'  ? 'readonlyColor' : ''}
-                                isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' }
+                                styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
+                                isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                             />
                         </div>
                         {/* <div className="col-1 " data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
