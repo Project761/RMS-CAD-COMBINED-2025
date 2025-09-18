@@ -3159,3 +3159,30 @@ div[data-testid="table-header"],
   position: relative;
 }
 
+
+
+
+
+.custom-cancel-btn {
+  background-color: #fff;
+  border: 1px solid #002147;   /* dark blue border */
+  color: #002147;              /* dark blue text */
+  font-weight: 600;
+  padding: 8px 24px;
+  border-radius: 2px;
+}
+
+.custom-ok-btn {
+  background-color: #002147;   /* dark blue */
+  color: #fff;
+  font-weight: 600;
+  padding: 8px 24px;
+  border-radius: 2px;
+  border: none;
+}
+
+.custom-ok-btn:hover {
+  background-color: #00152d;   /* darker shade on hover */
+  color: #fff;
+}
+
