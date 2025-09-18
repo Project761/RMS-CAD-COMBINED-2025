@@ -14,13 +14,13 @@ const LockRestrictModule = ({ show, onClose }) => {
 
     // Handlers
     const handleLoginSubmit = (e) => {
-        e.preventDefault();
+        // efault()
     };
 
 
 
     const handelContinue = () => {
-        handleLoginSubmit(new Event("submit"));
+        handleLoginSubmit("submit");
     };
 
     if (!show) return null; // Hide modal if not active

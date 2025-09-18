@@ -504,8 +504,8 @@ const CadPropertyModel = (props) => {
     modalOpenStatus &&
     <>
 
-      <div class="modal" style={{ background: "rgba(0,0,0, 0.5)" }} ref={masterModalRef} id="MasterModalProperty" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="false">
-        <div class="modal-dialog  modal-dialog-centered  modal-xl  py-5">
+      <div class="modal fade " style={{ background: "rgba(0,0,0, 0.5)" }} ref={masterModalRef} id="MasterModalProperty" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="false">
+        <div class="modal-dialog  modal-dialog-centered  modal-xl">
           <div class="modal-content">
             <div className="model-header bg-light ml-3 py-2" style={{fontWeight:700}}>Evidence Tracker</div>
             {/* <span className="align-self-end"><button type="button" className="border-0" aria-label="Close" data-dismiss="modal" style={{ alignSelf: "end", }} onClick={() => {

@@ -1343,27 +1343,36 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
 
   const columns1 = [
     {
-      width: '250px',
+      grow: 1, minwidth: "100px",
       name: 'Property Number',
       selector: (row) => row.PropertyNumber,
       sortable: true
     },
     {
+      grow: 1,
+      minWidth: "100px",
       name: 'Property Type',
       selector: (row) => row.PropertyType_Description,
       sortable: true
     },
     {
+      grow: 1,
+      minWidth: "100px",
       name: 'Category',
       selector: (row) => row.PropertyCategory_Description,
       sortable: true
+
     },
     {
+      grow: 1,
+      minWidth: "100px",
       name: 'Loss Code',
       selector: (row) => row.PropertyLossCode_Description,
       sortable: true
     },
     {
+      grow: 1,
+      minWidth: "100px",
       name: 'Owner Name',
       selector: (row) => row.Owner_Description,
       sortable: true
@@ -1374,6 +1383,8 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
     //   sortable: true
     // },
     {
+      grow: 1,
+      minWidth: "100px",
       name: 'Evidence Flag',
       selector: row => (
         <input type="checkbox" checked={row.IsEvidence === true} disabled />
@@ -1381,9 +1392,9 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
       sortable: true
     },
     {
-      width: '100px',
+      grow: 0,
+      minWidth: "80px",
       name: 'View',
-
       cell: row =>
         <div style={{ position: 'absolute', top: 4, right: 30 }}>
           {
@@ -1402,6 +1413,8 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
         </div>
     },
     {
+      grow: 0,
+      minWidth: "100px",
       name: <p className='text-end' style={{ position: 'absolute', top: '7px', right: 10 }}>Delete</p>,
       cell: row =>
         <div style={{ position: 'absolute', top: 4, right: 10 }}>
@@ -3629,7 +3642,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
 
             onRowClicked={(row) => {
               set_EditRow(row);
-            }}    
+            }}
 
             fixedHeaderScrollHeight='150px'
             pagination
