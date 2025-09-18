@@ -1955,8 +1955,8 @@ const PropertyManagement = (props) => {
                                 options={agencyOfficerDrpData}
                                 onChange={(e) => ChangeDropDown(e, 'DestructionLocation')}
                                 placeholder="Select..."
-                                styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
-                                isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                                styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release'  ? 'readonlyColor' : ''}
+                                isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' }
                             />
                         </div>
                         {/* <div className="col-1 " data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
