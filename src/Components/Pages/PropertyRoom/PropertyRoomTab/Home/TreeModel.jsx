@@ -13,7 +13,7 @@ import { AgencyContext } from '../../../../../Context/Agency/Index';
 
 const TreeModal = (props) => {
 
-    const { proRoom, locationStatus,functiondone, setlocationStatus, locationPath, value,setfunctiondone, setSearchStoragePath, searchStoStatus, setSearchStoStatus, setValue, setPropertyNumber } = props
+    const { proRoom, locationStatus, functiondone, storagetype, setlocationStatus, locationPath, value, setfunctiondone, setSearchStoragePath, searchStoStatus, setSearchStoStatus, setValue, setPropertyNumber } = props
 
     const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -32,16 +32,16 @@ const TreeModal = (props) => {
         }
     }, []);
 
-   
-      
-    useEffect(()=>{
-          if(functiondone == 'true' || functiondone == true){
+
+
+    useEffect(() => {
+        if (functiondone == 'true' || functiondone == true) {
             setSelectBranch('');
-          }
-          else{
+        }
+        else {
             setfunctiondone(!functiondone);
-          }
-    },[functiondone])
+        }
+    }, [functiondone])
 
     useEffect(() => {
         if (localStoreData) {
@@ -107,12 +107,23 @@ const TreeModal = (props) => {
         if (selectBranch) {
             fetchPostData("PropertyStorageLocation/GetPathData_PropertyStorageLocation", val).then((data) => {
                 if (data) {
-                    setValue(prev => ({
-                        ...prev,
-                        location: data[0].NodePath,
-                        StorageLocationID: data[0].StorageLocationID
-                    }));
-                    setlocationStatus(false);
+                    if (storagetype === 'NewStorageLocation') {
+                        setValue(prev => ({
+                            ...prev,
+                            DestinationStorageLocation: data[0].NodePath,
+                            // StorageLocationID: data[0].StorageLocationID
+                        }));
+                        setlocationStatus(false);
+                    }
+                    else {
+                        setValue(prev => ({
+                            ...prev,
+                            location: data[0].NodePath,
+                            StorageLocationID: data[0].StorageLocationID
+                        }));
+                        setlocationStatus(false);
+                    }
+
                 } else {
                     setValue(prev => ({
                         ...prev,
@@ -129,7 +140,7 @@ const TreeModal = (props) => {
         // Implement logic based on the selected branch.
     };
 
-    
+
 
     const handleSelectSearch = (selectBranch) => {
         const val = { Id: selectBranch };
@@ -144,28 +155,28 @@ const TreeModal = (props) => {
                 setSearchStoStatus(false);
             }
         });
-       
+
     };
 
     const closeModalLogic = () => {
         if (value.location && locationStatus) {
-          handleSelect(selectBranch);
+            handleSelect(selectBranch);
         } else if (value.location && searchStoStatus) {
-          handleSelectSearch(selectBranch);
+            handleSelectSearch(selectBranch);
         }
-      };
-    
-      useEffect(() => {
+    };
+
+    useEffect(() => {
         const handleKeydown = (event) => {
-          if (event.key === "Escape") {
-            closeModalLogic();
-          }
+            if (event.key === "Escape") {
+                closeModalLogic();
+            }
         };
         window.addEventListener("keydown", handleKeydown);
         return () => {
-          window.removeEventListener("keydown", handleKeydown);
+            window.removeEventListener("keydown", handleKeydown);
         };
-      }, [value, locationStatus, searchStoStatus, selectBranch]);
+    }, [value, locationStatus, searchStoStatus, selectBranch]);
 
 
     return (
@@ -175,11 +186,13 @@ const TreeModal = (props) => {
                 <div className="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title model-color">Property Room Storage Location</h5>
-                        <button type="button" className="border-0" aria-label="Close" data-dismiss="modal" onClick={() => { setTreeData([]) ;  if (value.location && locationStatus) {
+                        <button type="button" className="border-0" aria-label="Close" data-dismiss="modal" onClick={() => {
+                            setTreeData([]); if (value.location && locationStatus) {
                                 handleSelect(selectBranch);
                             } else if (value.location && searchStoStatus) {
                                 handleSelectSearch(selectBranch);
-                            } }} style={{ alignSelf: "end" }}><b>X</b>
+                            }
+                        }} style={{ alignSelf: "end" }}><b>X</b>
                         </button>
                     </div>
                     <div className="modal-body p-2">

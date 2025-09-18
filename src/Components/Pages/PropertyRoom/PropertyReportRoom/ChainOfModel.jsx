@@ -719,6 +719,113 @@ const ChainOfModel = (props) => {
                         </>
 
                       )}
+                       {chainreport.Property[0].Type === 'Vehicle' && (
+                        <>
+                          <div className="property-info px-0">
+                            <fieldset>
+                              <legend className='prop-legend px-0'>Evidence Property Information</legend>
+                              <table className="table table-bordered mt-3">
+                                <tbody>
+                                  <tr className="table-row">
+                                    <td className="table-cell">
+                                      <span className='prop-td'>Property No:</span>
+                                      <p>{chainreport.Property[0].PropertyNumber}</p>
+                                    </td>
+                                    <td className="table-cell">
+                                      <span className='prop-td'>Property Type:</span>
+                                      <p>{chainreport.Property[0].Type}</p>
+                                    </td>
+                                    <td className="table-cell">
+                                      <span className='prop-td'>Reported Date:</span>
+                                      <p>{chainreport.Property[0].ReportedDtTm}</p>
+                                    </td>
+                                  </tr>
+                                  <tr className="table-row">
+                                    <td className="table-cell">
+                                      <span className='prop-td'>Incident No:</span>
+                                      <p>{chainreport.Property[0].IncidentNumber}</p>
+                                    </td>
+                                    <td className="table-cell">
+                                      <span className='prop-td'>Loss Code:</span>
+                                      <p>{chainreport.Property[0].LossCode_Description}</p>
+                                    </td>
+                                    <td className="table-cell">
+                                      <span className='prop-td'>Owner Name:</span>
+                                      <p>{chainreport.Property[0].OwnerDescription || 'N/A'}</p>
+                                    </td>
+                                  </tr>
+                                  <tr className="table-row">
+                                    <td className="table-cell">
+                                      <span className='prop-td'>Category:</span>
+                                      <p>{chainreport.Property[0].Category_Description}</p>
+                                    </td>
+                                    <td className="table-cell">
+                                      <span className='prop-td'>Classification:</span>
+                                      <p>{chainreport.Property[0].Classification_Description || 'N/A'}</p>
+                                    </td>
+                                    <td className="table-cell">
+                                      <span className='prop-td'>Brand:</span>
+                                      <p>{chainreport.Property[0].Brand}</p>
+                                    </td>
+                                  </tr>
+                                  <tr className="table-row">
+                                    <td className="table-cell">
+                                      <span className='prop-td'>Top Color:</span>
+                                      <p>{chainreport.Property[0].TopColor_Description}</p>
+                                    </td>
+                                    <td className="table-cell">
+                                      <span className='prop-td'>Bottom Color:</span>
+                                      <p>{chainreport.Property[0].BottomColor_Description}</p>
+                                    </td>
+                                    <td className="table-cell">
+                                      <span className='prop-td'>Quantity:</span>
+                                      <p>{chainreport.Property[0].Quantity}</p>
+                                    </td>
+                                  </tr>
+                                  <tr className="table-row">
+                                    <td className="table-cell" colSpan="3">
+                                      <span className='prop-td'>Misc Description:</span>
+                                      <p>{chainreport.Property[0].Description}</p>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </fieldset>
+                          </div>
+                          <div className="release-info">
+                            <fieldset>
+                              <legend className='prop-legend'>Chain Of Custody Information</legend>
+                              <table className="table table-bordered mt-3">
+                                <thead className='text-dark master-table'>
+                                  <tr>
+                                    <th className=''>Incident No.</th>
+                                    <th className=''>Activity Date/Time</th>
+                                    <th className=''>Activity Type</th>
+                                    <th className=''>Officer</th>
+                                    <th className=''>Property Room Person</th>
+                                    <th className=''>Location/Reason</th>
+                                    <th className=''>Destroyed Date/Time</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {chainreport.PropertyRoom.map((item, index) => (
+                                    <tr key={index}>
+                                      <td className='text-list'>{item.IncidentNumber1}</td>
+                                      <td className='text-list'>{item.ChainDate || 'N/A'}</td>
+                                      <td className='text-list'>{item.ActivityReason_Des}</td>
+                                      <td className='text-list'>{item.Officer_Name}</td>
+                                      <td className='text-list'>{item.PropertyRoomPerson_Name || 'N/A'}</td>
+                                      <td className='text-list'>{item.location || 'N/A'}</td>
+                                      <td className='text-list'>{item.DestroyDate || 'N/A'}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </fieldset>
+                          </div>
+                        </>
+
+                      )}
 
 
 

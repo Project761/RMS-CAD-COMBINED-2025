@@ -714,6 +714,8 @@ const MiscellaneousInformation = (props) => {
           const parsedData = JSON.parse(res.data);
           const message = parsedData.Table[0].Message;
           toastifySuccess(message);
+          setTaskToSend();
+          setMultiSelected({ optionSelected: [] });
 
           Get_SendTask_Data(DecPropID, DecMPropID);
           Get_SendTask_DrpVal(DecPropID, DecMPropID);
@@ -2494,7 +2496,7 @@ const MiscellaneousInformation = (props) => {
                                   ) || null
                                 }
                                 styles={{
-                                  container: (base) => ({ ...base, flex: 1 }), 
+                                  container: (base) => ({ ...base, flex: 1 }),
                                 }}
                               />
                             </div>

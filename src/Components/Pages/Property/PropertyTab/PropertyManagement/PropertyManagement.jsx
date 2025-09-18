@@ -14,11 +14,12 @@ import TreeModel from '../../../PropertyRoom/PropertyRoomTab/Home/TreeModel';
 import { useReactToPrint } from 'react-to-print';
 import ChainOfModel from '../../../PropertyRoom/PropertyReportRoom/ChainOfModel';
 import MasterNameModel from '../../../MasterNameModel/MasterNameModel';
-import PropertyReportRoom from '../../../PropertyRoom/PropertyReportRoom/PropertyReportRoom';
 import { AgencyContext } from '../../../../../Context/Agency/Index';
 import IdentifyFieldColor from '../../../../Common/IdentifyFieldColor';
 import { get_ScreenPermissions_Data } from '../../../../../redux/actions/IncidentAction';
 import ChangesModal from '../../../../Common/ChangesModal';
+import PropertyReportRoom from '../../../PropertyRoom/PropertyReportRoom/PropertyReportRoom';
+
 
 
 const PropertyManagement = (props) => {
@@ -102,13 +103,16 @@ const PropertyManagement = (props) => {
     const [permissionForAdd, setPermissionForAdd] = useState(false);
     const [permissionForEdit, setPermissionForEdit] = useState(false);
     const [ActivityDtTm, setactivitydate] = useState();
+    const [transferdate, settransferdate] = useState();
+    const [storagetype, setstoragetype] = useState();
 
     const fileInputRef = useRef(null)
     const [value, setValue] = useState({
         'PropertyID': '', 'MasterPropertyId': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'OtherPersonNameID': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
         'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '',
-        'IsCheckIn': false, 'IsCheckOut': false, 'IsRelease': false, 'IsDestroy': false, 'IsTransferLocation': false, 'IsUpdate': false, 'CreatedByUserFK': '', 'ActivityDtTm': '', 'LastSeenDtTm': '', 'ModeofTransport': '', 'Destination': '', 'Internal': true,
-        'External': false,
+        'IsCheckIn': false, 'IsCheckOut': false, 'IsRelease': false, 'IsDestroy': false, 'IsTransferLocation': false, 'IsUpdate': false, 'CreatedByUserFK': '', 'ActivityDtTm': '', 'LastSeenDtTm': '', 'ModeofTransport': '', 'Destination': '', 'IsInternalTransfer': true,
+        'IsExternalTransfer': false,
+        'DestinationStorageLocation': ''
     })
 
     const [errors, setErrors] = useState({
@@ -131,7 +135,7 @@ const PropertyManagement = (props) => {
         { value: 4, label: 'Destroy' },
     ]
 
-
+    console.log(editval)
 
     useEffect(() => {
         if (localStoreData) {
@@ -317,7 +321,7 @@ const PropertyManagement = (props) => {
 
 
     useEffect(() => {
-
+        console.log(editval, selectedOption)
         if (editval && selectedOption === 'Update') {
             setValue({
                 ...value, PropertyID: editval?.PropertyID || '', ActivityType: editval?.ActivityType || '',
@@ -337,10 +341,16 @@ const PropertyManagement = (props) => {
             setdestroydate(editval?.DestroyDate ? new Date(editval.DestroyDate) : null);
 
 
-        } else {
+        } else if (editval && selectedOption === 'CheckOut' || editval && selectedOption === 'Release' || editval && selectedOption === 'Destroy' || editval && selectedOption === "TransferLocation" || editval && selectedOption === "Update") {
+            setValue({
+                ...value, PropertyID: editval?.PropertyID || '',
+                StorageLocationID: editval?.StorageLocationID || '',
+                location: editval?.location || '',
+
+            });
 
         }
-    }, [editval]);
+    }, [editval, selectedOption]);
 
 
 
@@ -370,7 +380,8 @@ const PropertyManagement = (props) => {
         // })
         const ReasonError = RequiredFieldIncident(value.ActivityReasonID);
         const StorageLocationError = value.IsCheckIn ? RequiredFieldIncident(value.location) : 'true';
-        const PropertyRoomOfficerError = 'true';
+        const PropertyRoomOfficerError = value.IsTransferLocation || value.IsRelease || value.IsDestroy || value.IsUpdate ? RequiredFieldIncident(value.OfficerNameID) : 'true';
+        const NewStorageLocationError = value.IsTransferLocation ? RequiredFieldIncident(value.DestinationStorageLocation) : 'true'
         // const PropertyRoomOfficerError = !value.IsCheckOut ? RequiredFieldIncident(value.OfficerNameID) : 'true';
         const CheckInDateTimeError = value.IsCheckIn ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
         const SubmittingOfficerError = value.IsCheckIn ? RequiredFieldIncident(value.InvestigatorID) : 'true';
@@ -385,7 +396,7 @@ const PropertyManagement = (props) => {
         const UpdatingOfficerError = value.IsUpdate ? RequiredFieldIncident(value.UpdatingOfficerID) : 'true';
         const ApprovalOfficerError = (value.IsDestroy || value.IsTransferLocation || value.IsUpdate) ? RequiredFieldIncident(value.ApprovalOfficerID) : 'true';
         const WitnessError = value.IsDestroy ? RequiredFieldIncident(value.WitnessID) : 'true';
-        const TransferDateTimeError = value.IsTransferLocation ? RequiredFieldIncident(value.TransferDate) : 'true';
+        const TransferDateTimeError = value.IsTransferLocation ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
         const UpdateDateTimeError = (value.IsUpdate) ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
         setErrors(prevValues => {
 
@@ -408,21 +419,22 @@ const PropertyManagement = (props) => {
                 ['TransferDateTimeError']: TransferDateTimeError || prevValues['TransferDateTimeError'],
                 ['UpdateDateTimeError']: UpdateDateTimeError || prevValues['UpdateDateTimeError'],
                 ['StorageLocationError']: StorageLocationError || prevValues['StorageLocationError'],
+                ['NewStorageLocationError']: NewStorageLocationError || prevValues['NewStorageLocationError'],
             }
         })
     }
-    const { ReasonError, PropertyRoomOfficerError, StorageLocationError, CheckInDateTimeError, SubmittingOfficerError, CheckOutDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
+    const { ReasonError, PropertyRoomOfficerError, StorageLocationError, NewStorageLocationError , CheckInDateTimeError, SubmittingOfficerError, CheckOutDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
         DestructionDateTimeError, DestructionOfficerError, UpdatingOfficerError, ApprovalOfficerError, WitnessError, TransferDateTimeError, UpdateDateTimeError } = errors
 
     useEffect(() => {
 
-        if (ReasonError === 'true' && PropertyRoomOfficerError === 'true' && StorageLocationError === 'true' && CheckInDateTimeError === 'true' && SubmittingOfficerError === 'true' && CheckOutDateTimeError === 'true' && ReleasingOfficerError === 'true' && ReceipientError === 'true' && ReleasedDateTimeError === 'true'
+        if (ReasonError === 'true' && PropertyRoomOfficerError === 'true' && NewStorageLocationError === 'true' && StorageLocationError === 'true' && CheckInDateTimeError === 'true' && SubmittingOfficerError === 'true' && CheckOutDateTimeError === 'true' && ReleasingOfficerError === 'true' && ReceipientError === 'true' && ReleasedDateTimeError === 'true'
             && DestructionDateTimeError === 'true' && DestructionOfficerError === 'true' && UpdatingOfficerError === 'true' && ApprovalOfficerError === 'true' && WitnessError === 'true' && TransferDateTimeError === 'true' && UpdateDateTimeError === 'true'
         ) {
 
             { Add_Type() }
         }
-    }, [ReasonError, PropertyRoomOfficerError, StorageLocationError, CheckInDateTimeError, SubmittingOfficerError, CheckOutDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
+    }, [ReasonError, PropertyRoomOfficerError, StorageLocationError, CheckInDateTimeError,NewStorageLocationError, SubmittingOfficerError, CheckOutDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
         DestructionDateTimeError, DestructionOfficerError, UpdatingOfficerError, ApprovalOfficerError, WitnessError, TransferDateTimeError, UpdateDateTimeError
     ])
 
@@ -471,12 +483,12 @@ const PropertyManagement = (props) => {
         const ActivityType = selectedOption
         const CreatedByUserFK = loginPinID;
         const AgencyId = loginAgencyID;
-        const { ActivityReasonID, ExpectedDate, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
+        const { ActivityReasonID, ExpectedDate, ActivityComments, IsInternalTransfer , IsExternalTransfer , DestinationStorageLocation, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
             CourtDate, ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId,
             IsCheckIn, IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, ActivityDtTm
         } = value;
         const val = {
-            PropertyID, ActivityType, ActivityReasonID, ExpectedDate, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
+            PropertyID, ActivityType, ActivityReasonID, ExpectedDate, IsInternalTransfer , IsExternalTransfer , DestinationStorageLocation, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
             CourtDate, ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId,
             MasterPropertyId, IsCheckIn, IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, CreatedByUserFK, AgencyId, ActivityDtTm
         };
@@ -642,6 +654,16 @@ const PropertyManagement = (props) => {
 
     }
 
+    function handleClickedClearedDestination() {
+        setValue({
+            ...value,
+            'DestinationStorageLocation': '',
+        });
+        setfunctiondone(!functiondone);
+
+    }
+
+
     const filterTimeForDateZone = (time, datezone) => {
 
         let currDate = new Date(value?.ActivityDtTm);
@@ -676,10 +698,12 @@ const PropertyManagement = (props) => {
         // Set the specific state values based on the selected option
         setValue(prevState => ({
             ...prevState,
-            Internal: selectedOption === 'Internal',
-            External: selectedOption === 'External',
+            IsInternalTransfer: selectedOption === 'IsInternalTransfer',
+            IsExternalTransfer: selectedOption === 'IsExternalTransfer',
         }));
     };
+
+    console.log(value.DestinationStorageLocation)
     return (
         <>
             <div className="col-12">
@@ -1988,7 +2012,7 @@ const PropertyManagement = (props) => {
                                 }`}
                             />
 
-                            {value.location ? (
+                            {/* {value.location ? (
                                 <span style={{
                                     position: 'absolute',
                                     top: '40%',
@@ -2000,7 +2024,7 @@ const PropertyManagement = (props) => {
                                 }} className='select-cancel' onClick={() => { handleClickedCleared("location") }}>
                                     <i className='fa fa-times'></i>
                                 </span>
-                            ) : (null)}
+                            ) : (null)} */}
                         </div>
 
 
@@ -2129,8 +2153,8 @@ const PropertyManagement = (props) => {
                                             className="form-check-input"
                                             type="radio"
                                             name="TransferType"
-                                            value="Internal"
-                                            checked={value.Internal}
+                                            value="IsInternalTransfer"
+                                            checked={value.IsInternalTransfer}
                                             onChange={handleRadioChangeInner}
                                         />
                                         <label style={{ fontWeight: value?.IsCheckIn ? 'bold' : 'normal' }} className="form-check-label" htmlFor="flexRadioDefault">
@@ -2144,8 +2168,8 @@ const PropertyManagement = (props) => {
                                             className="form-check-input"
                                             type="radio"
                                             name="TransferType"
-                                            value="External"
-                                            checked={value.External}
+                                            value="IsExternalTransfer"
+                                            checked={value.IsExternalTransfer}
                                             onChange={handleRadioChangeInner}
                                         />
                                         <label style={{ fontWeight: value?.IsCheckOut ? 'bold' : 'normal' }} className="form-check-label" htmlFor="flexRadioDefault1">
@@ -2180,15 +2204,15 @@ const PropertyManagement = (props) => {
                                 </div>
                                 <div className="col-3 col-md-3 col-lg-2 ">
                                     <DatePicker
-                                        name='TransferDate'
-                                        id='TransferDate'
-                                        // onChange={(date) => {
-                                        //     settransferdate(date); setValue({ ...value, ['TransferDate']: date ? getShowingMonthDateYear(date) : null, });
+                                        name='LastSeenDtTm'
+                                        id='LastSeenDtTm'
+                                        onChange={(date) => {
+                                            settransferdate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
 
-                                        // }}
-                                        // isClearable={transferdate ? true : false}
-                                        // selected={transferdate}
-                                        // placeholderText={transferdate ? transferdate : 'Select...'}
+                                        }}
+                                        isClearable={transferdate ? true : false}
+                                        selected={transferdate}
+                                        placeholderText={transferdate ? transferdate : 'Select...'}
                                         dateFormat="MM/dd/yyyy HH:mm"
                                         timeFormat="HH:mm "
                                         is24Hour
@@ -2246,7 +2270,7 @@ const PropertyManagement = (props) => {
                                     />
                                 </div>
                                 {
-                                    value.External ?
+                                    value.IsExternalTransfer ?
                                         <>
                                             <div className="col-3 col-md-3 col-lg-2">
                                                 <label htmlFor="" className='new-label mb-0'>Receiving Officer{errors.PropertyRoomOfficerError !== 'true' ? (
@@ -2302,7 +2326,7 @@ const PropertyManagement = (props) => {
                                                     autoComplete='off'
                                                     maxDate={new Date(datezone)}
                                                     disabled={selectedOption === null || selectedOption === ''}
-                                                    className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                                                    className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : ''}
                                                 />
 
                                             </div>
@@ -2320,7 +2344,7 @@ const PropertyManagement = (props) => {
                                         type="text"
                                         name="CurrentStorageLocation"
                                         id="CurrentStorageLocation"
-                                        value={locationStatus ? '' : value.CurrentStorageLocation}
+                                        value={locationStatus ? '' : value.location}
                                         disabled
                                         className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
                                             ? 'requiredColor'
@@ -2330,7 +2354,7 @@ const PropertyManagement = (props) => {
                                             }`}
                                     />
 
-                                    {value.CurrentStorageLocation && (
+                                    {/* {value.CurrentStorageLocation && (
                                         <span
                                             className="select-cancel"
                                             onClick={() => { handleClickedCleared("CurrentStorageLocation") }}
@@ -2355,7 +2379,7 @@ const PropertyManagement = (props) => {
                                         >
                                             <i className="fa fa-times"></i>
                                         </span>
-                                    )}
+                                    )} */}
                                 </div>
 
                                 {/** ➕ Add Button Section **/}
@@ -2385,7 +2409,9 @@ const PropertyManagement = (props) => {
 
 
                                 <div className="col-3 col-md-3 col-lg-2 ">
-                                    <label htmlFor="" className='new-label px-0 mb-0 text-nowrap'>New Storage Location</label>
+                                    <label htmlFor="" className='new-label px-0 mb-0 text-nowrap'>New Storage Location{errors.NewStorageLocationError !== 'true' ? (
+                                        <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.NewStorageLocationError}</p>
+                                    ) : null}</label>
                                 </div>
                                 <div className="col-12 col-md-12 col-lg-3" style={{ position: 'relative' }}>
                                     <input
@@ -2404,7 +2430,7 @@ const PropertyManagement = (props) => {
                                     {value.DestinationStorageLocation && (
                                         <span
                                             className="select-cancel"
-                                            onClick={() => { handleClickedCleared("DestinationStorageLocation") }}
+                                            onClick={() => { handleClickedClearedDestination("DestinationStorageLocation") }}
                                             style={{
                                                 position: 'absolute',
                                                 top: '50%',
@@ -2446,6 +2472,7 @@ const PropertyManagement = (props) => {
                                                 onClick={() => {
                                                     setlocationStatus(true)
                                                     // setKeyChange("DestinationStorageLocation")
+                                                    setstoragetype('NewStorageLocation')
                                                 }}
                                             >
                                                 <i className="fa fa-plus"></i>
@@ -2678,7 +2705,7 @@ const PropertyManagement = (props) => {
                                 type="text"
                                 name="CurrentStorageLocation"
                                 id="CurrentStorageLocation"
-                                value={locationStatus ? '' : value.CurrentStorageLocation}
+                                value={locationStatus ? '' : value.location}
                                 disabled
                                 className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
                                     ? 'requiredColor'
@@ -3018,11 +3045,13 @@ const PropertyManagement = (props) => {
                     }
                 </div >
             </div>
-            <TreeModel {...{ proRoom, locationStatus, setlocationStatus, locationPath, setfunctiondone, setLocationPath, setSearchStoragePath, searchStoStatus, setSearchStoStatus, setStorageLocationID, value, setValue, setPropertyNumber }} />
+            <TreeModel {...{ proRoom, locationStatus, storagetype, setlocationStatus, locationPath, setfunctiondone, setLocationPath, setSearchStoragePath, searchStoStatus, setSearchStoStatus, setStorageLocationID, value, setValue, setPropertyNumber }} />
+
+
 
             <MasterNameModel {...{ value, setValue, nameModalStatus, setNameModalStatus, loginPinID, loginAgencyID, type, possessionID, setPossessionID, possenSinglData, setPossenSinglData, GetSingleDataPassion }} />
 
-
+            <PropertyReportRoom {...{ releasestatus, setReleaseStatus, reportStatus, editval, componentRef }} />
             <ChangesModal hasPermission={permissionForAdd} func={check_Validation_Error} />
             <ChainOfModel {...{ componentRefnew, chainreport }} />
 

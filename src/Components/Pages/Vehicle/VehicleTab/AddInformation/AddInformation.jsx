@@ -261,6 +261,8 @@ const AddInformation = (props) => {
     }
   }, [taskEditVal]);
 
+  console.log(editval)
+
   useEffect(() => {
     if (editval) {
       const IsSendToPropertyRoom =
@@ -332,6 +334,8 @@ const AddInformation = (props) => {
         setPropertyStatus(false);
       }
     }
+
+    
   }, [editval, updateCount]);
 
   const Reset = (e) => {
@@ -573,6 +577,7 @@ const AddInformation = (props) => {
             "TaskList/Insert_TaskList",
             taskToSend
           );
+
         }
         if (selectedFiles?.length > 0 && fileUploadStatus) {
           uploadNonPropertyRoomDocuments(PropertyID, MasterPropertyID, loginPinID, selectedFiles);
@@ -842,6 +847,8 @@ const AddInformation = (props) => {
           const message = parsedData.Table[0].Message;
           toastifySuccess(message);
           Get_SendTask_Data(DecVehId, DecMVehId);
+          setTaskToSend();
+          setMultiSelected({ optionSelected: [] });
           // Get_SendTask_DrpVal(DecPropID, DecMPropID)
         } else {
           console.log("Somthing Wrong");
