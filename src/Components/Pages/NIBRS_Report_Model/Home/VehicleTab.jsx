@@ -11,7 +11,7 @@ import BarCode from '../../../Common/BarCode';
 import AlertTable from '../../AlertMaster/AlertTable';
 import { get_Vehicle_Search_Data } from '../../../../redux/actions/VehicleAction';
 import VehicleSearchTab from '../../VehicleSearchTab/VehicleSearchTab';
-import AlertMasterModel from '../../AlertMaster/AlertMasterModel';  
+import AlertMasterModel from '../../AlertMaster/AlertMasterModel';
 import ImageModel from '../../ImageModel/ImageModel';
 import MasterNameModel from '../../MasterNameModel/MasterNameModel';
 import ListModal from '../../Utility/ListManagementModel/ListModal';
@@ -489,7 +489,6 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
 
     // Custom Style
 
-
     const WidhoutColorStyles = {
         control: (styles) => ({
             ...styles,
@@ -827,7 +826,7 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
         try {
             fetchPostDataNibrs('NIBRS/GetPropertyNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'PropertyId': '', 'gIntAgencyID': loginAgencyID }).then((data) => {
                 if (data) {
-                    // console.log("🚀 ~ ValidateProperty ~ data:", data);
+                    console.log("🚀 ~ ValidateProperty ~ data:", data);
 
                     if (data?.Properties?.length > 0) {
                         const VehArr = data?.Properties?.filter((item) => item?.PropertyType === 'V');
@@ -1065,6 +1064,15 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                             ) : null}</label>
                         </div>
                         <div className="col-4 col-md-4 col-lg-2  mt-1">
+                            {false && (
+                                <div className="nibrs-tooltip-error" style={{ left: '-147px' }}>
+                                    <div className="tooltip-arrow"></div>
+
+                                    <div className="tooltip-content">
+                                        <span className="text-danger">⚠️ {nibrsFieldError?.OnPageError || 'dfdsfsdfsdfsdfsdf'}</span>
+                                    </div>
+                                </div>
+                            )}
                             <Select
                                 name='CategoryID'
                                 value={categoryIdDrp?.filter((obj) => obj.value === value?.CategoryID)}

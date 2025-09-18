@@ -62,6 +62,9 @@ const NibrsHome = () => {
   const [isGroup_B_Offense_ArrestInc, setIsGroup_B_Offense_ArrestInc] = useState(false);
   const [isSuspectedDrugTypeErrorStatus, setSuspectedDrugTypeErrorStatus] = useState(false);
   const [isPropertyIdZeroError, setIsPropertyIdZeroError] = useState(false);
+  const [isCrimeAgainstPropertyError, setIsCrimeAgainstPropertyError] = useState(false)
+  const [isVictimConnectedError, setIsVictimConnectedError] = useState(false);
+
 
   /// Error String
   const [administrativeErrorString, setAdministrativeErrorString] = useState('');
@@ -177,7 +180,7 @@ const NibrsHome = () => {
     setIncidentErrorStatus(false); setIncidentErrorString('');
 
     // property
-    setSuspectedDrugTypeErrorStatus(false); setIsPropertyIdZeroError(false); setPropErrorStatus(false); setPropertyErrorString('');
+    setSuspectedDrugTypeErrorStatus(false); setIsCrimeAgainstPropertyError(false); setIsPropertyIdZeroError(false); setPropErrorStatus(false); setPropertyErrorString('');
 
     // vehicle
     setVehErrorStatus(false); setVehicleErrorString('');
@@ -189,10 +192,10 @@ const NibrsHome = () => {
     setOffenderErrorStatus(false); setOffenderErrorString('');
 
     // victim
-    setVictimErrorStatus(false); setVictimErrorString('');
+    setVictimErrorStatus(false); setVictimErrorString(''); setIsVictimConnectedError(false);
 
     const res = await TXIBRSValidateCall(incidentID, incReportedDate, baseDate, oriNumber);
-    console.log("🚀 ~ ValidateProperty ~ res:", res)
+    // console.log("🚀 ~ ValidateProperty ~ res:", res)
 
     if (res) {
       try {
@@ -298,30 +301,38 @@ const NibrsHome = () => {
         }
 
         // set property error string
+        console.log("🚀 ~ ValidateProperty ~ propertyError:", propertyError)
         if (propertyError) {
           const proObj = propertyError?.Properties ? propertyError?.Properties : [];
-          // console.log("🚀 ~ ValidateProperty ~ proObj:", proObj)
+          console.log("🚀 ~ ValidateProperty ~ proObj:", proObj)
 
           // set property error string
           if (proObj?.length > 0) {
 
+            const isCrimeAgainstError = proObj[0]?.OnPageError?.includes("For Crime Against Property Property must be present.");
             const isSuspectedDrugType = proObj[0]?.OnPageError?.includes("{352} Add at least one suspected drug type(create a property with type 'Drug')");
-            // "Add at least one suspected drug type(create a Property with type 'Drug')"
             // const isSuspectedDrugType = proObj[0]?.OnPageError?.includes("{352} There should be atleast 1 Suspected Drug Type entry.");
             const isPropertyIdZeroError = proObj[0]?.OnPageError?.includes("{074} Need a property loss code of 5,7 for offense  23B");
 
+            if (isCrimeAgainstError) {
+              setIsCrimeAgainstPropertyError(true);
+              setSuspectedDrugTypeErrorStatus(false);
+              setIsPropertyIdZeroError(false);
 
-            if (isSuspectedDrugType) {
+            } else if (isSuspectedDrugType) {
               setSuspectedDrugTypeErrorStatus(true);
               setIsPropertyIdZeroError(false);
+              setIsCrimeAgainstPropertyError(false);
 
             } else if (isPropertyIdZeroError) {
               setIsPropertyIdZeroError(true);
               setSuspectedDrugTypeErrorStatus(false);
+              setIsCrimeAgainstPropertyError(false);
 
             } else {
               setSuspectedDrugTypeErrorStatus(false);
               setIsPropertyIdZeroError(false);
+              setIsCrimeAgainstPropertyError(false);
 
             }
 
@@ -380,12 +391,21 @@ const NibrsHome = () => {
         if (victimError) {
           const victimObj = victimError?.Victim ? victimError?.Victim : [];
           if (victimObj?.length > 0) {
+            const isVictimConnectedError = victimObj[0]?.OnPageError?.includes("At least one victim must be present and must be connected with offence.");
+
+            if (isVictimConnectedError) {
+              setIsVictimConnectedError(true);
+            } else {
+              setIsVictimConnectedError(false);
+            }
+
             setVictimErrorString(victimObj[0]?.OnPageError ? victimObj[0]?.OnPageError : '');
             setVictimErrorStatus(true);
 
           } else {
             setVictimErrorStatus(false);
             setVictimErrorString('');
+            setIsVictimConnectedError(false);
 
           }
         } else {
@@ -446,23 +466,19 @@ const NibrsHome = () => {
       sectionKey: "admin",
       list: <Administrative_Details incidentClick={incidentClick} isNibrsSummited={isNibrsSummited} />
     },
-    // {
-    //   title: !isOffenseInc ? `Offense (${offenseCount})` : <span className="text-center" style={{ textAlign: 'center' }}> <u style={{ color: 'red', }}> Offense --- This Incident does not have any TIBRS reportable Crime(s)</u></span>,
-    //   status: !offenseErrorStatus && !isOffenseInc ? "completed" : "attention highlighted",
-    //   sectionKey: "offenses",
-    //   list: <Offense offenseClick={offenseClick} isNibrsSummited={isNibrsSummited} ValidateProperty={ValidateProperty} />
-    // },
     {
-      title: !isOffenseInc
-        ? `Offense (${offenseCount})` : (
-          <span className="text-center" style={{
+      title: !isOffenseInc ? `Offense (${offenseCount})` : (
+        <span
+          className="text-center"
+          style={{
             border: '1px solid red', backgroundColor: '#ffe6e6', color: 'red',
             padding: '3px', borderRadius: '4px', display: 'inline-block',
             transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
-          }}>
-            Offense --- This Incident does not have any TIBRS reportable Crime(s)
-          </span>
-        ),
+          }}
+        >
+          Offense --- This Incident does not have any TIBRS reportable Crime(s)
+        </span>
+      ),
       status: !offenseErrorStatus && !isOffenseInc ? "completed" : "attention highlighted",
       sectionKey: "offenses",
       list: (
@@ -481,17 +497,19 @@ const NibrsHome = () => {
       list: <MainOffender offenderClick={offenderClick} isNibrsSummited={isNibrsSummited} ValidateProperty={ValidateProperty} />
     },
     {
-      title: `Victim (${VictimCount})`,
-      status: !victimErrorStatus ? "completed" : "attention highlighted",
+      title: isVictimConnectedError ? <span className="text-center" style={{ textAlign: 'center' }}> <u style={{ color: 'red', }}>Victim --- At least one victim must be present and must be connected with offence</u></span> : `Victim (${VictimCount})`,
+      status: !victimErrorStatus && !isVictimConnectedError ? "completed" : "attention highlighted",
       sectionKey: "Victims",
       list: <MainVictims victimClick={victimClick} isNibrsSummited={isNibrsSummited} ValidateProperty={ValidateProperty} />
     },
     {
-      title: !isSuspectedDrugTypeErrorStatus && !isPropertyIdZeroError ? `Property (${PropertyCount})`
+      title: !isSuspectedDrugTypeErrorStatus && !isPropertyIdZeroError && !isCrimeAgainstPropertyError ? `Property (${PropertyCount})`
         :
-        isSuspectedDrugTypeErrorStatus ? <span className="text-center" style={{ textAlign: 'center' }}> <u style={{ color: 'red', }}>Property --- Add at least one suspected drug type(create a Property with type 'Drug')</u></span>
+        isCrimeAgainstPropertyError ? <span className="text-center" style={{ textAlign: 'center' }}> <u style={{ color: 'red', }}>Property --- For Crime Against Property Property must be present.</u></span>
           :
-          isPropertyIdZeroError ? <span className="text-center" style={{ textAlign: 'center' }}> <u style={{ color: 'red', }}>Property --- Need a property loss code of 5,7 for offense  23B</u></span> : `Property (${PropertyCount})`,
+          isSuspectedDrugTypeErrorStatus ? <span className="text-center" style={{ textAlign: 'center' }}> <u style={{ color: 'red', }}>Property --- Add at least one suspected drug type(create a Property with type 'Drug')</u></span>
+            :
+            isPropertyIdZeroError ? <span className="text-center" style={{ textAlign: 'center' }}> <u style={{ color: 'red', }}>Property --- Need a property loss code of 5,7 for offense  23B</u></span> : `Property (${PropertyCount})`,
 
       status: !propErrorStatus ? "completed" : "attention highlighted",
       sectionKey: "Properties",

@@ -10,14 +10,10 @@ const LockRestrictModule = ({ show, onClose }) => {
 
     const [agencyPlaceholder] = useState("Select Group");
 
-
-
     // Handlers
     const handleLoginSubmit = (e) => {
         e.preventDefault();
     };
-
-
 
     const handelContinue = () => {
         handleLoginSubmit(new Event("submit"));
@@ -48,7 +44,6 @@ const LockRestrictModule = ({ show, onClose }) => {
                                     </h5>
 
                                 </div>
-
                                 {/* Group Select */}
                                 <div className="form-group mb-3">
                                     <label className="form-label">
@@ -59,10 +54,7 @@ const LockRestrictModule = ({ show, onClose }) => {
                                         options={agency}
                                         placeholder={agencyPlaceholder}
                                         isClearable
-
-
                                     />
-
                                 </div>
 
                                 {/* Login (readonly) */}
@@ -92,11 +84,8 @@ const LockRestrictModule = ({ show, onClose }) => {
                                         className="form-control"
                                         placeholder="placeholder"
                                         autoComplete="off"
-
                                     />
-
                                 </div>
-
                                 <div className=" d-flex justify-content-space-between gap-5" style={{ columnGap: "15px" }}>
                                     <button
                                         type="button"

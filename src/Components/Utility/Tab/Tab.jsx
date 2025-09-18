@@ -277,12 +277,14 @@ const Tab = () => {
 
             }
 
+            // console.log("🚀 ~ nibrsValidateInc ~ propertyError:", propertyError)
             if (propertyError) {
                 const proObj = propertyError?.Properties ? propertyError?.Properties : [];
-                console.log("🚀 ~ nibrsValidateInc ~ proObj:", proObj)
+                // console.log("🚀 ~ nibrsValidateInc ~ proObj:", proObj)
 
                 const VehArr = proObj?.filter((item) => item?.PropertyType === 'V');
                 const PropArr = proObj?.filter((item) => item?.PropertyType !== 'V');
+                // console.log("🚀 ~ nibrsValidateInc ~ PropArr:", PropArr)
 
                 if (PropArr?.length > 0 || VehArr?.length > 0) {
                     setPropErrorStatus(true);
