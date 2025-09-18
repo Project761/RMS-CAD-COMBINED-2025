@@ -8,6 +8,8 @@ import StatusBar from '../../Inc/StatusBar';
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { fetchPostData, fetchPostDataNibrs } from '../../hooks/Api';
+import { faLock, faUnlock, faBan, } from "@fortawesome/free-solid-svg-icons";
+import LockRestrictModule from '../../Common/LockRestrictModule';
 
 const Tab = () => {
 
@@ -30,6 +32,8 @@ const Tab = () => {
 
     const [loading, setLoading] = useState(false);
     const [showStatus, setShowStatus] = useState(false);
+
+    const [showLockModal, setShowLockModal] = useState(false);
 
     const [isUserClosed, setIsUserClosed] = useState(() => {
 
@@ -484,6 +488,34 @@ const Tab = () => {
                             NLETS history
                         </Link>
                     </li>
+
+                    <li className="list-inline-item">
+                        <button
+                            className="btn py-1 d-flex align-items-center"
+                            style={{ columnGap: "5px", backgroundColor: "#E0E0E0" }}
+                            onClick={() => setShowLockModal(true)}
+                            data-toggle="modal"
+                            //   onClick={() => { setOpenPage("Incident Status"); }}
+                            data-target="#NibrsAllModuleErrorShowModal"
+                        >
+                            <FontAwesomeIcon icon={faLock} /> Lock
+                        </button>
+                    </li>
+                    <li className="list-inline-item">
+                        <button className="btn py-1 d-flex align-items-center gap-2" style={{ columnGap: "5px", backgroundColor: "#E0E0E0" }}>
+                            <FontAwesomeIcon icon={faUnlock} /> Unlock
+                        </button>
+                    </li>
+                    <li className="list-inline-item">
+                        <button disabled className="btn py-1  d-flex align-items-center gap-2 text-danger" style={{ columnGap: "5px", backgroundColor: "#E0E0E0" }}>
+                            <FontAwesomeIcon icon={faBan} /> Restrict
+                        </button>
+                    </li>
+                    <li className="list-inline-item">
+                        <button className="btn py-1  d-flex align-items-center gap-2" style={{ columnGap: "5px", backgroundColor: "#E0E0E0" }}>
+                            <FontAwesomeIcon icon={faBan} /> Unrestrict
+                        </button>
+                    </li>
                 </ul>
                 <ul className='float-end text-end mb-0'>
                     {
@@ -530,6 +562,11 @@ const Tab = () => {
 
                 </ul>
             </div>
+
+            <LockRestrictModule
+                show={showLockModal}
+                onClose={() => setShowLockModal(false)}
+            />
         </div >
     )
 }
