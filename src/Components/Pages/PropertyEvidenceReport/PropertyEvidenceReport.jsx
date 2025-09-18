@@ -139,8 +139,9 @@ const PropertyEvidenceReport = ({ isPreview }) => {
                                         justifyContent: 'center',
                                         borderRadius: '4px'
                                     }}
+                                    data-toggle="modal" data-target="#MasterModalProperty"
                                 >
-                                    <i className="fa fa-edit" />
+                                    <i className="fa fa-edit" style={{ fontSize: '10px' }} />
                                 </Link>
 
                                 : <></>
@@ -152,8 +153,9 @@ const PropertyEvidenceReport = ({ isPreview }) => {
                                     alignItems: 'center', justifyContent: 'center', borderRadius: '4px',
                                     cursor: 'pointer'
                                 }}
+                                data-toggle="modal" data-target="#MasterModalProperty"
                             >
-                                <i className="fa fa-edit" data-toggle="modal" data-target="#MasterModalProperty" style={{ fontSize: '10px' }}></i>
+                                <i className="fa fa-edit" style={{ fontSize: '10px' }}></i>
                             </span>
                     }
                 </div>)
@@ -332,37 +334,41 @@ const PropertyEvidenceReport = ({ isPreview }) => {
                             </ul>
                         )}
                     </div>
-                    {selectedReportType === 'all' && <AllPropertyRoomStorage selectedReportType={selectedReportType} Allfiltered={Allfiltered} />}
-                    {selectedReportType === 'NonProperty' && <NonPropertyStorageList newfiltered={newfiltered} />}
 
-                    <div className="pt-2 property-evidence-datatable mt-2">
-                        {selectedReportType === 'AllPropertyRoomStorage' && (
-                            <>
-                                {
-                                    loder ?
-                                        <DataTable
-                                            className={isPreview ? 'table-responsive_pastdues datatable-grid' : ''}
-                                            columns={columns}
-                                            persistTableHead={true}
-                                            dense
-                                            data={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? filteredData?.length > 0 ? filteredData : queData : [] : ""}
-                                            pagination
-                                            paginationPerPage={'100'}
-                                            paginationRowsPerPageOptions={[100, 150, 200, 500]}
-                                            fixedHeader={true}
-                                            showPaginationBottom={100}
-                                            highlightOnHoverd
-                                            responsive
-                                            fixedHeaderScrollHeight='400px'
-                                            customStyles={tableCustomStyles}
-                                            subHeaderAlign='left'
-                                            noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : 'There are no data to display'}
-                                        />
-                                        :
-                                        <Loader />
-                                }
-                            </>
-                        )}
+                    <div className="section-body mt-4 p-0" style={{ margin: '10px 10px 10px 15px' }}>
+                        {selectedReportType === 'all' && <AllPropertyRoomStorage selectedReportType={selectedReportType} Allfiltered={Allfiltered} />}
+                        {selectedReportType === 'NonProperty' && <NonPropertyStorageList newfiltered={newfiltered} />}
+
+                        <div className="property-evidence-datatable">
+                            {selectedReportType === 'AllPropertyRoomStorage' && (
+                                <>
+                                    {
+                                        loder ?
+                                            <DataTable
+                                                className={isPreview ? 'table-responsive_pastdues datatable-grid' : ''}
+                                                columns={columns}
+                                                persistTableHead={true}
+                                                dense
+                                                data={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? filteredData?.length > 0 ? filteredData : queData : [] : ""}
+                                                pagination
+                                                paginationPerPage={'100'}
+                                                paginationRowsPerPageOptions={[100, 150, 200, 500]}
+                                                fixedHeader={true}
+                                                showPaginationBottom={100}
+                                                highlightOnHoverd
+                                                responsive
+                                                fixedHeaderScrollHeight='400px'
+                                                customStyles={tableCustomStyles}
+                                                subHeaderAlign='left'
+                                                noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : 'There are no data to display'}
+                                            />
+                                            :
+                                            <Loader />
+                                    }
+                                </>
+                            )}
+                        </div>
+
                     </div>
                 </div>
             </div>

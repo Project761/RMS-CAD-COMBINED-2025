@@ -104,8 +104,9 @@ const AllPropertyRoomStorage = (props) => {
                                         alignItems: 'center', justifyContent: 'center', borderRadius: '4px',
                                         cursor: 'pointer'
                                     }}
+                                    data-toggle="modal" data-target="#MasterModalProperty"
                                 >
-                                    <i className="fa fa-edit" data-toggle="modal" data-target="#MasterModalProperty" style={{ fontSize: '10px' }}></i>
+                                    <i className="fa fa-edit" style={{ fontSize: '10px' }}></i>
                                 </Link>
                                 : <></>
                             : <Link to=""
@@ -116,8 +117,9 @@ const AllPropertyRoomStorage = (props) => {
                                     alignItems: 'center', justifyContent: 'center', borderRadius: '4px',
                                     cursor: 'pointer'
                                 }}
+                                data-toggle="modal" data-target="#MasterModalProperty"
                             >
-                                <i className="fa fa-edit" data-toggle="modal" data-target="#MasterModalProperty" style={{ fontSize: '10px' }}></i>
+                                <i className="fa fa-edit" style={{ fontSize: '10px' }}></i>
                             </Link>
                     }
                 </div>)
@@ -181,43 +183,43 @@ const AllPropertyRoomStorage = (props) => {
     }
     return (
         <>
-            <div className="section-body mt-4" style={{ margin: '10px 10px 10px 15px' }}>
-                {/* <div className="col-3 mb-2" >
+            {/* <div className="section-body mt-4" style={{ margin: '10px 10px 10px 15px' }}> */}
+            {/* <div className="col-3 mb-2" >
                     <div className="bg-green text-white py-1 px-2 d-flex justify-content-between align-items-center text-align-center" >
                         <span className="ml-3">Non Property Room Storage</span>
                     </div>
                 </div> */}
-                <div className="row clearfix">
-                    <div className="main-dashboard col-12 ">
-                        <div className="col-12 col-sm-12">
-                            {
-                                loder ?
-                                    <DataTable
-                                        columns={columns}
-                                        persistTableHead={true}
-                                        dense
-                                        data={
-                                            effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? Allfiltered?.length > 0 ? Allfiltered : AllProRoomFilterData : []
-                                                : ""
-                                        }
-                                        pagination
-                                        paginationPerPage={'100'}
-                                        paginationRowsPerPageOptions={[100, 150, 200, 500]}
-                                        showPaginationBottom={100}
-                                        fixedHeader
-                                        fixedHeaderScrollHeight='400px'
-                                        highlightOnHover
-                                        responsive
-                                        customStyles={tableCustomStyles}
-                                        subHeaderAlign='left'
-                                        noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : 'There are no data to display'}
+            <div className="row clearfix">
+                <div className="main-dashboard col-12 p-0 ">
+                    <div className="col-12 col-sm-12 p-0">
+                        {
+                            loder ?
+                                <DataTable
+                                    columns={columns}
+                                    persistTableHead={true}
+                                    dense
+                                    data={
+                                        effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? Allfiltered?.length > 0 ? Allfiltered : AllProRoomFilterData : []
+                                            : ""
+                                    }
+                                    pagination
+                                    paginationPerPage={'100'}
+                                    paginationRowsPerPageOptions={[100, 150, 200, 500]}
+                                    showPaginationBottom={100}
+                                    fixedHeader
+                                    fixedHeaderScrollHeight='400px'
+                                    highlightOnHover
+                                    responsive
+                                    customStyles={tableCustomStyles}
+                                    subHeaderAlign='left'
+                                    noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : 'There are no data to display'}
 
-                                    />
-                                    :
-                                    <Loader />
-                            }
-                        </div>
-                        {/* <div className="col-3 col-md-3 col-lg-12 mt-2 px-1 d-flex justify-content-end">
+                                />
+                                :
+                                <Loader />
+                        }
+                    </div>
+                    {/* <div className="col-3 col-md-3 col-lg-12 mt-2 px-1 d-flex justify-content-end">
                                <button type="button" className="btn btn-sm mb-2 mt-1 mr-2" style={{ border: "1px solid #001f3f", color: "#000" }}>
                                    Export
                                </button>
@@ -225,9 +227,9 @@ const AllPropertyRoomStorage = (props) => {
                                    Send
                                </button>
                            </div> */}
-                    </div>
-                </div >
-            </div>
+                </div>
+            </div >
+            {/* </div> */}
             {/* <CadPropertyModel show={showModal} handleClose={() => setShowModal(false)} setModelActivityStatus={setModelActivityStatus} modelActivityStatus={modelActivityStatus} /> */}
             <CadPropertyModel show={showModal} selectedReportType={selectedReportType} setAllProRoomFilterData={setAllProRoomFilterData} modalOpenStatus={modalOpenStatus} setDataSaved={setDataSaved} setModalOpenStatus={(bool) => { setModalOpenStatus(bool) }} taskListID={taskListID} rowData={rowData} handleClose={() => setShowModal(false)} setModelActivityStatus={setModelActivityStatus} modelActivityStatus={modelActivityStatus} getIncidentSearchDataProperty={getIncidentSearchDataProperty} />
         </>

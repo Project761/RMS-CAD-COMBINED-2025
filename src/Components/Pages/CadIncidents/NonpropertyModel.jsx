@@ -507,7 +507,7 @@ const NonpropertyModel = (props) => {
     fetchPostData("Property/GetSingleData_Property", val).then((res) => {
       if (res) {
         setEditval(res);
-    
+
         setPropertyRoomStatus(res[0]?.PropertyRoomStatus);
       } else {
         setEditval([]);
@@ -541,7 +541,7 @@ const NonpropertyModel = (props) => {
         if (res) {
           setTask(res[res.length - 1]?.Task);
         } else {
- 
+
           setTask("");
         }
       })
@@ -558,7 +558,7 @@ const NonpropertyModel = (props) => {
         if (res) {
           const obj = res.filter((item) => item?.PropertyID === PropertyID);
         } else {
-      
+
         }
       })
       .catch((err) => {
@@ -590,6 +590,8 @@ const NonpropertyModel = (props) => {
         ["ReceipientError"]: ReceipientErr || prevValues["ReceipientError"],
       };
     });
+
+
   };
 
   const {
@@ -1006,7 +1008,7 @@ const NonpropertyModel = (props) => {
       arr = StatusOption.filter((item) => !(item.label === PropertyRoomStatus));
       return arr;
     } else {
- 
+
       const status = task;
       arr = [{ value: "1", label: "CheckIn" }];
       if (status) {
@@ -1219,7 +1221,7 @@ const NonpropertyModel = (props) => {
     modalOpenStatus && (
       <>
         <div
-          class="modal"
+          class="modal "
           style={{ background: "rgba(0,0,0, 0.5)" }}
           id="NonpropertyModel"
           ref={nonPropertyModalRef}
@@ -1228,7 +1230,7 @@ const NonpropertyModel = (props) => {
           aria-hidden="true"
           data-backdrop="false"
         >
-          <div class="modal-dialog  modal-dialog-centered  modal-xl  py-5">
+          <div class="modal-dialog  modal-dialog-centered  modal-xl">
             <div class="modal-content">
               <div className="d-flex justify-content-between align-items-center bg-light postion-relative">
                 <div className="ml-4 mb-1" style={{ fontSize: '18px', fontWeight: 600, padding: "5px" }}>Evidence Tracker</div>
@@ -1303,7 +1305,7 @@ const NonpropertyModel = (props) => {
                           !addUpdatePermission && setChangesStatus(true);
 
                           if (date) {
-                          
+
 
                             let occurredFromTimestamp = new Date(
                               value?.ReportedDate
@@ -1327,7 +1329,7 @@ const NonpropertyModel = (props) => {
                                 getShowingMonthDateYear(selectedDate),
                             });
                           } else {
-                        
+
                             setdisPatchdate(date);
                             setValue({
                               ...value,
@@ -1385,7 +1387,7 @@ const NonpropertyModel = (props) => {
                           !addUpdatePermission && setChangesStatus(true);
 
                           if (date) {
-                        
+
 
                             let occurredFromTimestamp = new Date(
                               value?.ReportedDate
@@ -1409,7 +1411,7 @@ const NonpropertyModel = (props) => {
                                 getShowingMonthDateYear(selectedDate),
                             });
                           } else {
-                      
+
                             setexpectedArrival(date);
                             setValue({
                               ...value,
