@@ -1051,6 +1051,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         if (ArrestID) {
             const val = { 'ChargeID': ChargeID };
             fetchPostData('ArrestCharge/GetSingleData_ArrestCharge', val).then((res) => {
+                console.log("🚀 ~ GetSingleDataCharge ~ res:", res)
                 if (res) {
                     setEditvalCharge(res);
                 } else {
@@ -1070,6 +1071,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
     };
 
     useEffect(() => {
+
         if (EditvalCharge) {
             setValueCharge({
                 ...valueCharge,
@@ -1078,11 +1080,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                 'ChargeID': EditvalCharge[0]?.ChargeID,
                 'ModifiedByUserFK': loginPinID,
                 'LawTitleId': EditvalCharge[0]?.LawTitleId || EditvalCharge?.LawTitleId,
-                'AttemptComplete': EditvalCharge[0]?.AttemptComplete === "C"
-                    ? "C"
-                    : EditvalCharge[0]?.AttemptComplete === "A"
-                        ? "A"
-                        : "",
+                'AttemptComplete': EditvalCharge[0]?.AttemptComplete ? EditvalCharge[0]?.AttemptComplete : EditvalCharge?.AttemptComplete ? EditvalCharge?.AttemptComplete : '',
             });
             setArrestName(EditvalCharge[0]?.Name ? EditvalCharge[0]?.Name : '');
             // lawTitle
@@ -1316,6 +1314,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
     };
 
     const set_Edit_ValueCharge = (row) => {
+        console.log("🚀 ~ set_Edit_ValueCharge ~ row:", row)
         // setDelChargeID(row.ChargeID);
         if (!row.OffenseID) { setChargeID(row.ChargeID); setDecChargeId(row.ChargeID); }
         get_ArrestCharge_Count(row.ChargeID); setErrorsCharge(''); setstatesChangeCharge(false);

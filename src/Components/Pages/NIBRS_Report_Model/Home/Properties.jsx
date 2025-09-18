@@ -1439,16 +1439,19 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
                                 setSuspectedDrugTypeErrorStatus(false);
                                 setIsPropertyIdZeroError(false);
 
+                                setclickNibLoder(false);
+
                             }
 
                             const row = propArr[0];
 
                             isDefaultSelected && set_EditRow(row);
 
-                            setnibrsValidateData(propArr || []); setclickNibLoder(false);
+                            setnibrsValidateData(propArr || []);
+                            setclickNibLoder(false);
 
 
-                            ValidateProperty(mainIncidentID);
+                            // ValidateProperty(mainIncidentID);
                         } else {
                             setnibrsValidateData([]); setclickNibLoder(false);
 
