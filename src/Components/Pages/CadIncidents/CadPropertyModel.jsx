@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import Select from "react-select";
 import DatePicker from "react-datepicker";
-import { base64ToString, filterPassedTime, getShowingMonthDateYear, } from "../../Common/Utility";
+import { base64ToString, filterPassedTime, getShowingMonthDateYear, Requiredcolour, } from "../../Common/Utility";
 import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { get_AgencyOfficer_Data, } from "../../../redux/actions/DropDownsData";
@@ -87,7 +87,7 @@ const CadPropertyModel = (props) => {
 
   const [errors, setErrors] = useState({
     'ReasonError': '', 'UpdateDateTimeError': '', 'TransferDateTimeError': '', 'WitnessError': '', 'ApprovalOfficerError': '', 'UpdatingOfficerError': '', 'DestructionOfficerError': '', 'DestructionDateTimeError': '', 'ReleasedDateTimeError': '',
-    'ReceipientError': '', 'ReleasingOfficerError': '', 'ExpectedReturnDateTimeError': '', 'CheckOutDateTimeError': '', 'SubmittingOfficerError': '', 'CheckInDateTimeError': '', 'PropertyRoomOfficerError': ''
+    'ReleasingOfficerError': '', 'ExpectedReturnDateTimeError': '', 'CheckOutDateTimeError': '', 'SubmittingOfficerError': '', 'CheckInDateTimeError': '', 'PropertyRoomOfficerError': '', 'StorageLocationError': '',
   })
 
   console.log(modelActivityStatus)
@@ -187,22 +187,27 @@ const CadPropertyModel = (props) => {
   const check_Validation_Error = (e) => {
 
     const ReasonError = RequiredFieldIncident(value.ActivityReasonID);
-    const PropertyRoomOfficerError = !value.IsCheckOut ? RequiredFieldIncident(value.OfficerNameID) : 'true';
+    // const PropertyRoomOfficerError = !value.IsCheckOut ? RequiredFieldIncident(value.OfficerNameID) : 'true';
+    const PropertyRoomOfficerError = value.IsTransferLocation || value.IsRelease || value.IsDestroy || value.IsUpdate ? RequiredFieldIncident(value.OfficerNameID) : 'true';
+
     const CheckInDateTimeError = value.IsCheckIn ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
     const SubmittingOfficerError = value.IsCheckIn ? RequiredFieldIncident(value.InvestigatorID) : 'true';
     const CheckOutDateTimeError = value.IsCheckOut ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
-    const ExpectedReturnDateTimeError = value.IsCheckOut ? RequiredFieldIncident(value.ExpectedDate) : 'true';
+    const ExpectedReturnDateTimeError = value.IsTransferLocation ? RequiredFieldIncident(value.ExpectedDate) : 'true';
     const ReleasingOfficerError = (value.IsRelease || value.IsCheckOut) ? RequiredFieldIncident(value.ReleasingOfficerID) : 'true';
-    const ReceipientError = value.IsRelease ? RequiredFieldIncident(value.ReceipentID) : 'true';
+    // const ReceipientError = value.IsRelease ? RequiredFieldIncident(value.ReceipentID) : 'true';
     const ReleasedDateTimeError = value.IsRelease ? RequiredFieldIncident(value.ReleaseDate) : 'true';
-    // const DestructionDateTimeError = value.IsDestroy ? RequiredFieldIncident(value.DestroyDate) : 'true';
-    const DestructionDateTimeError = 'true';
+    const DestructionDateTimeError = value.IsDestroy ? RequiredFieldIncident(value.DestroyDate) : 'true';
+    // const DestructionDateTimeError = 'true';
     const DestructionOfficerError = value.IsDestroy ? RequiredFieldIncident(value.DestructionOfficerID) : 'true';
     const UpdatingOfficerError = value.IsUpdate ? RequiredFieldIncident(value.UpdatingOfficerID) : 'true';
     const ApprovalOfficerError = (value.IsDestroy || value.IsTransferLocation || value.IsUpdate) ? RequiredFieldIncident(value.ApprovalOfficerID) : 'true';
     const WitnessError = value.IsDestroy ? RequiredFieldIncident(value.WitnessID) : 'true';
     const TransferDateTimeError = value.IsTransferLocation ? RequiredFieldIncident(value.TransferDate) : 'true';
     const UpdateDateTimeError = (value.IsUpdate) ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
+
+    // const StorageLocationError = value.IsCheckIn ? RequiredFieldIncident(value.location) : 'true';
+
     setErrors(prevValues => {
 
       return {
@@ -214,7 +219,7 @@ const CadPropertyModel = (props) => {
         ['CheckOutDateTimeError']: CheckOutDateTimeError || prevValues['CheckOutDateTimeError'],
         ['ExpectedReturnDateTimeError']: ExpectedReturnDateTimeError || prevValues['ExpectedReturnDateTimeError'],
         ['ReleasingOfficerError']: ReleasingOfficerError || prevValues['ReleasingOfficerError'],
-        ['ReceipientError']: ReceipientError || prevValues['ReceipientError'],
+        // ['ReceipientError']: ReceipientError || prevValues['ReceipientError'],
         ['ReleasedDateTimeError']: ReleasedDateTimeError || prevValues['ReleasedDateTimeError'],
         ['DestructionDateTimeError']: DestructionDateTimeError || prevValues['DestructionDateTimeError'],
         ['DestructionOfficerError']: DestructionOfficerError || prevValues['DestructionOfficerError'],
@@ -223,22 +228,24 @@ const CadPropertyModel = (props) => {
         ['WitnessError']: WitnessError || prevValues['WitnessError'],
         ['TransferDateTimeError']: TransferDateTimeError || prevValues['TransferDateTimeError'],
         ['UpdateDateTimeError']: UpdateDateTimeError || prevValues['UpdateDateTimeError'],
+
+        // ['StorageLocationError']: StorageLocationError || prevValues['StorageLocationError'],
       }
     })
   }
-  const { ReasonError, PropertyRoomOfficerError, CheckInDateTimeError, SubmittingOfficerError, CheckOutDateTimeError, ExpectedReturnDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
-    DestructionDateTimeError, DestructionOfficerError, UpdatingOfficerError, ApprovalOfficerError, WitnessError, TransferDateTimeError, UpdateDateTimeError } = errors
+  const { ReasonError, PropertyRoomOfficerError, CheckInDateTimeError, SubmittingOfficerError, CheckOutDateTimeError, ExpectedReturnDateTimeError, ReleasingOfficerError, ReleasedDateTimeError,
+    DestructionDateTimeError, DestructionOfficerError, UpdatingOfficerError, ApprovalOfficerError, WitnessError, TransferDateTimeError, UpdateDateTimeError, } = errors
 
   useEffect(() => {
 
-    if (ReasonError === 'true' && PropertyRoomOfficerError === 'true' && CheckInDateTimeError === 'true' && SubmittingOfficerError === 'true' && CheckOutDateTimeError === 'true' && ExpectedReturnDateTimeError === 'true' && ReleasingOfficerError === 'true' && ReceipientError === 'true' && ReleasedDateTimeError === 'true'
+    if (ReasonError === 'true' && PropertyRoomOfficerError === 'true' && CheckInDateTimeError === 'true' && SubmittingOfficerError === 'true' && CheckOutDateTimeError === 'true' && ExpectedReturnDateTimeError === 'true' && ReleasingOfficerError === 'true' && ReleasedDateTimeError === 'true'
       && DestructionDateTimeError === 'true' && DestructionOfficerError === 'true' && UpdatingOfficerError === 'true' && ApprovalOfficerError === 'true' && WitnessError === 'true' && TransferDateTimeError === 'true' && UpdateDateTimeError === 'true'
     ) {
 
       { Add_Type() }
     }
-  }, [ReasonError, PropertyRoomOfficerError, CheckInDateTimeError, SubmittingOfficerError, CheckOutDateTimeError, ExpectedReturnDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
-    DestructionDateTimeError, DestructionOfficerError, UpdatingOfficerError, ApprovalOfficerError, WitnessError, TransferDateTimeError, UpdateDateTimeError
+  }, [ReasonError, PropertyRoomOfficerError, CheckInDateTimeError, SubmittingOfficerError, CheckOutDateTimeError, ExpectedReturnDateTimeError, ReleasingOfficerError, ReleasedDateTimeError,
+    DestructionDateTimeError, DestructionOfficerError, UpdatingOfficerError, ApprovalOfficerError, WitnessError, TransferDateTimeError, UpdateDateTimeError,
   ])
 
 
@@ -456,7 +463,7 @@ const CadPropertyModel = (props) => {
     setErrors({
       ...errors,
       'ReasonError': '', 'UpdateDateTimeError': '', 'TransferDateTimeError': '', 'WitnessError': '', 'ApprovalOfficerError': '', 'UpdatingOfficerError': '', 'DestructionOfficerError': '', 'DestructionDateTimeError': '', 'ReleasedDateTimeError': '',
-      'ReceipientError': '', 'ReleasingOfficerError': '', 'ExpectedReturnDateTimeError': '', 'CheckOutDateTimeError': '', 'SubmittingOfficerError': '', 'CheckInDateTimeError': '', 'PropertyRoomOfficerError': ''
+      'ReleasingOfficerError': '', 'ExpectedReturnDateTimeError': '', 'CheckOutDateTimeError': '', 'SubmittingOfficerError': '', 'CheckInDateTimeError': '', 'PropertyRoomOfficerError': '', 'StorageLocationError': '',
     })
 
     setSelectedFiles([]);
@@ -507,14 +514,8 @@ const CadPropertyModel = (props) => {
       <div class="modal fade " style={{ background: "rgba(0,0,0, 0.5)" }} ref={masterModalRef} id="MasterModalProperty" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="false">
         <div class="modal-dialog  modal-dialog-centered  modal-xl">
           <div class="modal-content">
-            <div className="model-header bg-light ml-3 py-2" style={{fontWeight:700}}>Evidence Tracker</div>
-            {/* <span className="align-self-end"><button type="button" className="border-0" aria-label="Close" data-dismiss="modal" style={{ alignSelf: "end", }} onClick={() => {
-              setErrors({
-                'ReasonError': '', 'UpdateDateTimeError': '', 'TransferDateTimeError': '', 'WitnessError': '', 'ApprovalOfficerError': '', 'UpdatingOfficerError': '', 'DestructionOfficerError': '', 'DestructionDateTimeError': '', 'ReleasedDateTimeError': '',
-                'ReceipientError': '', 'ReleasingOfficerError': '', 'ExpectedReturnDateTimeError': '', 'CheckOutDateTimeError': '', 'SubmittingOfficerError': '', 'CheckInDateTimeError': '', 'PropertyRoomOfficerError': ''
-              })
-              setModalOpenStatus(false);
-            }}><b>X</b> </button></span> */}
+            <div className="model-header bg-light ml-3 py-2" style={{ fontWeight: 700 }}>Evidence Track</div>
+
             <div class="modal-body name-body-model">
               <div className="row " >
                 <div className="col-12 col-md-12 col-lg-12 ">
@@ -576,1149 +577,6 @@ const CadPropertyModel = (props) => {
 
                   </div>
 
-                  {/* <div className="row align-items-center">
-                    <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
-                      <label htmlFor="" className='new-label'>Reason{errors.ReasonError !== 'true' ? (
-                        <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
-                      ) : null}</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2 mt-1">
-                      <Select
-                        name='ActivityReasonID'
-                        value={reasonIdDrp?.filter((obj) => obj.value === value?.ActivityReasonID)}
-                        isClearable
-                        options={reasonIdDrp}
-                        onChange={(e) => ChangeDropDown(e, 'ActivityReasonID')}
-                        placeholder="Select..."
-                        styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
-                        isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                      />
-                    </div>
-                    {
-                      value.IsCheckIn ?
-                        <>
-                          <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
-                            <label htmlFor="" className='new-label'>Check in Date/Time{errors.CheckInDateTimeError !== 'true' ? (
-                              <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.CheckInDateTimeError}</p>
-                            ) : null}</label>
-                          </div>
-                          <div className="col-3 col-md-3 col-lg-2 mt-1">
-                            <DatePicker
-                              name='activitydate'
-                              id='activitydate'
-                              onChange={(date) => {
-                                setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
-
-                              }}
-                              isClearable={activitydate ? true : false}
-                              selected={activitydate}
-                              placeholderText={activitydate ? activitydate : 'Select...'}
-                              dateFormat="MM/dd/yyyy HH:mm"
-                              timeFormat="HH:mm "
-                              is24Hour
-                              timeInputLabel
-                              showTimeSelect
-                              timeIntervals={1}
-                              timeCaption="Time"
-                              showMonthDropdown
-                              showYearDropdown
-                              dropdownMode="select"
-                              showDisabledMonthNavigation
-                              autoComplete='off'
-                              maxDate={new Date(datezone)}
-                              disabled={selectedOption === null || selectedOption === ''}
-                              className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
-                            />
-
-                          </div>
-                        </> :
-                        <></>
-                    }
-
-                    {
-                      value.IsTransferLocation ?
-                        <>
-                          <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
-                            <label htmlFor="" className='new-label'>Transfer Date/Time{errors.TransferDateTimeError !== 'true' ? (
-                              <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.TransferDateTimeError}</p>
-                            ) : null}</label>
-                          </div>
-                          <div className="col-3 col-md-3 col-lg-2 mt-1">
-                            <DatePicker
-                              name='TransferDate'
-                              id='TransferDate'
-                              onChange={(date) => {
-                                settransferdate(date); setValue({ ...value, ['TransferDate']: date ? getShowingMonthDateYear(date) : null, });
-
-                              }}
-                              isClearable={transferdate ? true : false}
-                              selected={transferdate}
-                              placeholderText={transferdate ? transferdate : 'Select...'}
-                              dateFormat="MM/dd/yyyy HH:mm"
-                              timeFormat="HH:mm "
-                              is24Hour
-                              timeInputLabel
-                              showTimeSelect
-                              timeIntervals={1}
-                              timeCaption="Time"
-                              showMonthDropdown
-                              showYearDropdown
-                              dropdownMode="select"
-                              showDisabledMonthNavigation
-                              autoComplete='off'
-                              maxDate={new Date(datezone)}
-                              disabled={selectedOption === null || selectedOption === ''}
-                              className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
-                            />
-
-                          </div>
-                        </> :
-                        <></>
-                    }
-
-                    {
-                      value.IsDestroy ?
-                        <>
-                          <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
-                            <label htmlFor="" className='new-label'>Destruction Date/Time{errors.DestructionDateTimeError !== 'true' ? (
-                              <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.DestructionDateTimeError}</p>
-                            ) : null}</label>
-                          </div>
-                          <div className="col-3 col-md-3 col-lg-2 mt-1">
-                            <DatePicker
-                              name='activitydate'
-                              id='activitydate'
-                              onChange={(date) => {
-                                setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
-
-                              }}
-                              isClearable={activitydate ? true : false}
-                              selected={activitydate}
-                              placeholderText={activitydate ? activitydate : 'Select...'}
-                              dateFormat="MM/dd/yyyy HH:mm"
-                              timeFormat="HH:mm "
-                              is24Hour
-                              timeInputLabel
-                              showTimeSelect
-                              timeIntervals={1}
-                              timeCaption="Time"
-                              showMonthDropdown
-                              showYearDropdown
-                              dropdownMode="select"
-                              showDisabledMonthNavigation
-                              autoComplete='off'
-                              maxDate={new Date(datezone)}
-                              disabled={selectedOption === null || selectedOption === ''}
-                              className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
-                            />
-
-                          </div>
-                        </> :
-                        <></>
-                    }
-
-
-
-
-
-                    {
-                      value.IsRelease ?
-                        <>
-                          <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
-                            <label htmlFor="" className='new-label'>Release Date/Time{errors.ReleasedDateTimeError !== 'true' ? (
-                              <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReleasedDateTimeError}</p>
-                            ) : null}</label>
-                          </div>
-                          <div className="col-3 col-md-3 col-lg-2 mt-1">
-                            <DatePicker
-                              name='activitydate'
-                              id='activitydate'
-                              onChange={(date) => {
-                                setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
-
-                              }}
-                              isClearable={activitydate ? true : false}
-                              selected={activitydate}
-                              placeholderText={activitydate ? activitydate : 'Select...'}
-                              dateFormat="MM/dd/yyyy HH:mm"
-                              timeFormat="HH:mm "
-                              is24Hour
-                              timeInputLabel
-                              showTimeSelect
-                              timeIntervals={1}
-                              timeCaption="Time"
-                              showMonthDropdown
-                              showYearDropdown
-                              dropdownMode="select"
-                              showDisabledMonthNavigation
-                              autoComplete='off'
-                              maxDate={new Date(datezone)}
-                              disabled={selectedOption === null || selectedOption === ''}
-                              className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
-                            />
-
-                          </div>
-                        </>
-                        :
-                        <></>
-                    }
-
-                    {
-                      value.IsCheckOut ?
-                        <>
-                          <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
-                            <label htmlFor="" className='new-label'>Check Out Date/Time{errors.CheckOutDateTimeError !== 'true' ? (
-                              <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.CheckOutDateTimeError}</p>
-                            ) : null}</label>
-                          </div>
-                          <div className="col-3 col-md-3 col-lg-2 mt-1">
-                            <DatePicker
-                              name='activitydate'
-                              id='activitydate'
-                              onChange={(date) => {
-                                setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
-
-                              }}
-                              isClearable={activitydate ? true : false}
-                              selected={activitydate}
-                              placeholderText={activitydate ? activitydate : 'Select...'}
-                              dateFormat="MM/dd/yyyy HH:mm"
-                              timeFormat="HH:mm "
-                              is24Hour
-                              timeInputLabel
-                              showTimeSelect
-                              timeIntervals={1}
-                              timeCaption="Time"
-                              showMonthDropdown
-                              showYearDropdown
-                              dropdownMode="select"
-                              showDisabledMonthNavigation
-                              autoComplete='off'
-                              maxDate={new Date(datezone)}
-                              disabled={selectedOption === null || selectedOption === ''}
-                              className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
-                            />
-
-                          </div>
-                        </>
-                        :
-                        <></>
-                    }
-
-                    {
-                      value.IsCheckOut ?
-                        <>
-                          <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
-                            <label htmlFor="" className='new-label'>Expected Return Date/Time{errors.ExpectedReturnDateTimeError !== 'true' ? (
-                              <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ExpectedReturnDateTimeError}</p>
-                            ) : null}</label>
-                          </div>
-                          <div className="col-3 col-md-3 col-lg-2 mt-1">
-                            <DatePicker
-                              name='ExpectedDate'
-                              id='ExpectedDate'
-                              onChange={(date) => {
-                                setExpecteddate(date); setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
-
-                              }}
-                              isClearable={expecteddate ? true : false}
-                              selected={expecteddate}
-                              placeholderText={expecteddate ? expecteddate : 'Select...'}
-                              dateFormat="MM/dd/yyyy HH:mm"
-                              timeFormat="HH:mm "
-                              is24Hour
-                              timeInputLabel
-                              showTimeSelect
-                              timeIntervals={1}
-                              timeCaption="Time"
-                              showMonthDropdown
-                              showYearDropdown
-                              dropdownMode="select"
-                              showDisabledMonthNavigation
-                              autoComplete='off'
-                              maxDate={new Date(datezone)}
-                              disabled={selectedOption === null || selectedOption === ''}
-                              className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
-                            />
-
-                          </div>
-                        </>
-                        :
-                        <></>
-                    }
-
-                    {
-                      value.IsCheckOut || value.IsRelease ?
-                        <>
-                          <div className="col-3 col-md-3 col-lg-2 mt-2 px-0 ">
-                            <label htmlFor="" className='new-label px-0'>Releasing Officer{errors.ReleasingOfficerError !== 'true' ? (
-                              <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReleasingOfficerError}</p>
-                            ) : null}</label>
-                          </div>
-                          <div className="col-3 col-md-3 col-lg-2  text-field">
-
-                            <Select
-                              name='ReleasingOfficerID'
-                              value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ReleasingOfficerID)}
-                              isClearable
-                              options={agencyOfficerDrpData}
-                              onChange={(e) => ChangeDropDown(e, 'ReleasingOfficerID')}
-                              placeholder="Select..."
-                              styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
-                              isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                            />
-
-
-                          </div>
-                        </> :
-                        <></>
-                    }
-
-                    {
-                      value.IsUpdate ?
-                        <>
-
-                          <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
-                            <label htmlFor="" className='new-label'>Update Date/Time{errors.UpdateDateTimeError !== 'true' ? (
-                              <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.UpdateDateTimeError}</p>
-                            ) : null}</label>
-                          </div>
-                          <div className="col-3 col-md-3 col-lg-2 mt-1">
-                            <DatePicker
-                              name='activitydate'
-                              id='activitydate'
-                              onChange={(date) => {
-                                setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
-
-                              }}
-                              isClearable={activitydate ? true : false}
-                              selected={activitydate}
-                              placeholderText={activitydate ? activitydate : 'Select...'}
-                              dateFormat="MM/dd/yyyy HH:mm"
-                              timeFormat="HH:mm "
-                              is24Hour
-                              timeInputLabel
-                              showTimeSelect
-                              timeIntervals={1}
-                              timeCaption="Time"
-                              showMonthDropdown
-                              showYearDropdown
-                              dropdownMode="select"
-                              showDisabledMonthNavigation
-                              autoComplete='off'
-                              maxDate={new Date(datezone)}
-                              disabled={selectedOption === null || selectedOption === ''}
-                              className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
-                            />
-
-                          </div>
-                        </> :
-                        <></>
-                    }
-
-
-                    {
-                      value.IsDestroy ?
-                        <>
-                          <div className="col-3 col-md-3 col-lg-2 mt-2 px-0 ">
-                            <label htmlFor="" className='new-label px-0'>Destruction Officer{errors.DestructionOfficerError !== 'true' ? (
-                              <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.DestructionOfficerError}</p>
-                            ) : null}</label>
-                          </div>
-                          <div className="col-3 col-md-3 col-lg-2  text-field">
-
-                            <Select
-                              name='DestructionOfficerID'
-                              value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.DestructionOfficerID)}
-                              isClearable
-                              options={agencyOfficerDrpData}
-                              onChange={(e) => ChangeDropDown(e, 'DestructionOfficerID')}
-                              placeholder="Select..."
-                              styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
-                              isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                            />
-
-
-                          </div>
-                        </> :
-                        <></>
-                    }
-
-                    {
-                      value.IsDestroy ?
-                        <>
-
-                          <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
-                            <label htmlFor="" className='new-label'>Destruction Method</label>
-                          </div>
-                          <div className="col-9 col-md-9 col-lg-2 text-field mt-1">
-                            <input type="text" name="ActivityComments"
-                              className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
-                          </div>
-
-                        </> :
-                        <></>
-
-                    }
-
-                    {
-                      value.IsDestroy || value.IsTransferLocation || value.IsUpdate ?
-                        <>
-
-
-
-                          <div className="col-3 col-md-3 col-lg-2 mt-2 px-0 ">
-                            <label htmlFor="" className='new-label px-0'>Updating Officer{errors.UpdatingOfficerError !== 'true' ? (
-                              <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.UpdatingOfficerError}</p>
-                            ) : null}</label>
-                          </div>
-                          <div className="col-3 col-md-3 col-lg-2  text-field">
-
-                            <Select
-                              name='UpdatingOfficerID'
-                              value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.UpdatingOfficerID)}
-                              isClearable
-                              options={agencyOfficerDrpData}
-                              onChange={(e) => ChangeDropDown(e, 'UpdatingOfficerID')}
-                              placeholder="Select..."
-                              styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
-                              isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                            />
-
-
-                          </div>
-
-
-
-
-                          <div className="col-3 col-md-3 col-lg-2 mt-2 px-0 ">
-                            <label htmlFor="" className='new-label px-0'>Approval Officer{errors.ApprovalOfficerError !== 'true' ? (
-                              <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ApprovalOfficerError}</p>
-                            ) : null}</label>
-                          </div>
-                          <div className="col-3 col-md-3 col-lg-2  text-field">
-
-                            <Select
-                              name='ApprovalOfficerID'
-                              value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ApprovalOfficerID)}
-                              isClearable
-                              options={agencyOfficerDrpData}
-                              onChange={(e) => ChangeDropDown(e, 'ApprovalOfficerID')}
-                              placeholder="Select..."
-                              styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
-                              isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                            />
-
-
-                          </div>
-                        </> :
-                        <></>
-                    }
-
-
-                    {
-                      value.IsCheckOut ?
-                        <>
-                          <div className="col-3 col-md-3 col-lg-2 mt-2 px-0 ">
-                            <label htmlFor="" className='new-label px-0'>Receipient Officer{errors.ReasonError !== 'true' ? (
-                              <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
-                            ) : null}</label>
-                          </div>
-                          <div className="col-3 col-md-3 col-lg-2  text-field">
-
-                            <Select
-                              name='ReceipentOfficerID'
-                              value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ReceipentOfficerID)}
-                              isClearable
-                              options={agencyOfficerDrpData}
-                              onChange={(e) => ChangeDropDown(e, 'ReceipentOfficerID')}
-                              placeholder="Select..."
-                              styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
-                              isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                            />
-
-
-                          </div>
-                        </> :
-                        <></>
-                    }
-
-                    {
-                      value.IsDestroy ?
-                        <>
-                          <div className="col-3 col-md-3 col-lg-2 mt-2 px-0 ">
-                            <label htmlFor="" className='new-label px-0'>Witness{errors.WitnessError !== 'true' ? (
-                              <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.WitnessError}</p>
-                            ) : null}</label>
-                          </div>
-                          <div className="col-3 col-md-3 col-lg-2  text-field">
-
-                            <Select
-                              name='WitnessID'
-                              value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.WitnessID)}
-                              isClearable
-                              options={agencyOfficerDrpData}
-                              onChange={(e) => ChangeDropDown(e, 'WitnessID')}
-                              placeholder="Select..."
-                              styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
-                              isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                            />
-
-
-                          </div>
-                        </> :
-                        <></>
-                    }
-
-                    {
-                      value.IsRelease ?
-                        <>
-                          <div className="col-3 col-md-3 col-lg-2 mt-2 px-0 ">
-                            <label htmlFor="" className='new-label px-0'>Receipient {errors.ReceipientError !== 'true' ? (
-                              <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReceipientError}</p>
-                            ) : null}</label>
-                          </div>
-                          <div className="col-3 col-md-3 col-lg-2  text-field">
-
-                            <Select
-                              name='ReceipentID'
-                              value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ReceipentID)}
-                              isClearable
-                              options={agencyOfficerDrpData}
-                              onChange={(e) => ChangeDropDown(e, 'ReceipentID')}
-                              placeholder="Select..."
-                              styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
-                              isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                            />
-
-
-                          </div>
-                        </> :
-                        <></>
-                    }
-
-                    {
-                      value.IsCheckOut ?
-                        <>
-
-                          <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
-                            <label htmlFor="" className='new-label'>Destination</label>
-                          </div>
-                          <div className="col-9 col-md-9 col-lg-2 text-field mt-1">
-                            <input type="text" name="ActivityComments"
-                              className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
-                          </div>
-
-                        </> :
-                        <></>
-                    }
-
-                    {
-                      value.IsCheckOut || value.IsRelease ?
-                        <>
-
-                          <div className="col-3 col-md-3 col-lg-2 mt-4 px-1">
-                            <label htmlFor="" className='new-label'>Mode of Transport</label>
-                          </div>
-                          <div className="col-9 col-md-9 col-lg-2 text-field mt-2">
-                            <input type="text" name="ActivityComments"
-                              className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
-                          </div>
-
-                        </> :
-                        <></>
-                    }
-
-
-
-
-
-
-                    {
-                      value.IsCheckIn ?
-                        <>
-                          <div className="col-3 col-md-3 col-lg-2 mt-2 px-0 ">
-                            <label htmlFor="" className='new-label px-0'>Submitting Officer{errors.SubmittingOfficerError !== 'true' ? (
-                              <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.SubmittingOfficerError}</p>
-                            ) : null}</label>
-                          </div>
-                          <div className="col-3 col-md-3 col-lg-2  text-field">
-
-                            <Select
-                              name='InvestigatorID'
-                              value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.InvestigatorID)}
-                              isClearable
-                              options={agencyOfficerDrpData}
-                              onChange={(e) => ChangeDropDown(e, 'InvestigatorID')}
-                              placeholder="Select..."
-                              styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
-                              isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                            />
-
-
-                          </div>
-                        </> :
-                        <></>
-                    }
-
-
-
-                  </div> */}
-
-                  {/* {
-                    !value.IsCheckOut ?
-                      <>
-                        <div className="row align-items-center mt-1">
-                          <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
-                            <label htmlFor="" className='new-label'>Property Room Officer{errors.PropertyRoomOfficerError !== 'true' ? (
-                              <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.PropertyRoomOfficerError}</p>
-                            ) : null}</label>
-                          </div>
-                          <div className="col-3 col-md-3 col-lg-4 mt-1">
-                            <Select
-                              name='"OfficerNameID"'
-                              value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.OfficerNameID)}
-                              isClearable
-                              options={agencyOfficerDrpData}
-                              onChange={(e) => ChangeDropDown(e, 'OfficerNameID')}
-                              placeholder="Select..."
-                              styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
-                              isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                            />
-                          </div>
-
-                          <div className="col-3 col-md-3 col-lg-2 mt-3 px-1">
-                            <label htmlFor="" className='new-label'>Evidence Type</label>
-                          </div>
-                          <div className="col-3 col-md-3 col-lg-4 mt-1">
-                            <input
-                              type="text"
-                              name="EvidenceType"
-                              className={`form-control ${selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'
-                                ? 'readonlyColor'
-                                : ''
-                                }`}
-                              value={value.EvidenceType}
-                              onChange={(e) => handleChange(e)}
-                              readOnly={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                            />
-                          </div>
-
-
-
-
-                        </div>
-                      </> :
-                      <></>
-                  } */}
-
-                  {
-                    // value.IsTransferLocation || value.IsUpdate ?
-                    //   <>
-                    //     <div className="row align-items-center ">
-                    //       <div className="col-3 col-md-3 col-lg-2  px-1">
-                    //         <label htmlFor="" className='new-label px-0'> Current Storage Location</label>
-                    //       </div>
-
-
-
-                    //       <div className="col-12 col-md-12 col-lg-4" style={{ position: 'relative' }}>
-                    //         <input
-                    //           type="text"
-                    //           name="CurrentStorageLocation"
-                    //           id="CurrentStorageLocation"
-                    //           value={locationStatus ? '' : value.CurrentStorageLocation}
-                    //           disabled
-                    //           className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
-                    //             ? 'requiredColor'
-                    //             : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
-                    //               ? 'readonlyColor'
-                    //               : ''
-                    //             }`}
-                    //         />
-
-                    //         {value.CurrentStorageLocation && (
-                    //           <span
-                    //             className="select-cancel"
-                    //             onClick={() => { handleClickedCleared("CurrentStorageLocation") }}
-                    //             style={{
-                    //               position: 'absolute',
-                    //               top: '50%',
-                    //               right: '10px',
-                    //               transform: 'translateY(-50%)',
-                    //               cursor:
-                    //                 !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
-                    //                   ? 'not-allowed'
-                    //                   : 'pointer',
-                    //               opacity:
-                    //                 !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
-                    //                   ? 0.5
-                    //                   : 1,
-                    //               pointerEvents:
-                    //                 !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
-                    //                   ? 'none'
-                    //                   : 'auto',
-                    //             }}
-                    //           >
-                    //             <i className="fa fa-times"></i>
-                    //           </span>
-                    //         )}
-                    //       </div>
-
-                    //       {/** ➕ Add Button Section **/}
-                    //       <div className="col-1 ">
-                    //         {(() => {
-                    //           const isAddDisabled =
-                    //             !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) ||
-                    //             selectedOption === null;
-
-                    //           return (
-                    //             <button
-                    //               disabled={isAddDisabled}
-                    //               className="btn btn-sm bg-green text-white"
-                    //               data-toggle="modal"
-                    //               data-target="#PropertyRoomTreeModal"
-                    //               style={{ cursor: isAddDisabled ? 'not-allowed' : 'pointer' }}
-                    //               onClick={() => {
-                    //                 setlocationStatus(true)
-                    //                 setKeyChange("CurrentStorageLocation")
-                    //               }}
-                    //             >
-                    //               <i className="fa fa-plus"></i>
-                    //             </button>
-                    //           );
-                    //         })()}
-                    //       </div>
-
-
-
-
-                    //       <div className="col-3 col-md-3 col-lg-1 px-1">
-                    //         <label htmlFor="" className='new-label px-0'> Destination Storage Location</label>
-                    //       </div>
-                    //       <div className="col-12 col-md-12 col-lg-3" style={{ position: 'relative' }}>
-                    //         <input
-                    //           type="text"
-                    //           name="DestinationStorageLocation"
-                    //           id="DestinationStorageLocation"
-                    //           value={locationStatus ? '' : value.DestinationStorageLocation}
-                    //           disabled
-                    //           className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
-                    //             ? 'requiredColor'
-                    //             : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
-                    //               ? 'readonlyColor'
-                    //               : ''
-                    //             }`}
-                    //         />
-
-                    //         {value.DestinationStorageLocation && (
-                    //           <span
-                    //             className="select-cancel"
-                    //             onClick={() => { handleClickedCleared("DestinationStorageLocation") }}
-                    //             style={{
-                    //               position: 'absolute',
-                    //               top: '50%',
-                    //               right: '10px',
-                    //               transform: 'translateY(-50%)',
-                    //               cursor:
-                    //                 !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
-                    //                   ? 'not-allowed'
-                    //                   : 'pointer',
-                    //               opacity:
-                    //                 !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
-                    //                   ? 0.5
-                    //                   : 1,
-                    //               pointerEvents:
-                    //                 !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null)
-                    //                   ? 'none'
-                    //                   : 'auto',
-                    //             }}
-                    //           >
-                    //             <i className="fa fa-times"></i>
-                    //           </span>
-                    //         )}
-                    //       </div>
-
-                    //       {/** Add Button Section **/}
-                    //       <div className="col-auto ">
-                    //         {(() => {
-                    //           const isAddDisabled =
-                    //             !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) ||
-                    //             selectedOption === null;
-
-                    //           return (
-                    //             <button
-                    //               disabled={isAddDisabled}
-                    //               className="btn btn-sm bg-green text-white"
-                    //               data-toggle="modal"
-                    //               data-target="#PropertyRoomTreeModal"
-                    //               style={{ cursor: isAddDisabled ? 'not-allowed' : 'pointer' }}
-                    //               onClick={() => {
-                    //                 setlocationStatus(true)
-                    //                 setKeyChange("DestinationStorageLocation")
-                    //               }}
-                    //             >
-                    //               <i className="fa fa-plus"></i>
-                    //             </button>
-                    //           );
-                    //         })()}
-                    //       </div>
-
-
-
-                    //     </div>
-                    //   </>
-                    //   :
-                    //   <></>
-                  }
-
-
-                  {/* {
-                    value.IsDestroy ?
-                      <>
-                        <div className="row align-items-center mt-2">
-                          <div className="col-3 col-md-3 col-lg-2  px-1">
-                            <label htmlFor="" className='new-label px-0'> Destruction Location</label>
-                          </div>
-                          <div className="col-12 col-md-12 col-lg-4 ">
-                            <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} disabled className={`form-control ${(value.IsCheckIn || value.IsTransferLocation || value.IsRelease)
-                              ? 'requiredColor'
-                              : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
-                                ? 'readonlyColor'
-                                : ''}`} />
-
-                            {value.location ? (
-                              <span style={{
-                                position: 'absolute',
-                                top: '40%',
-                                right: '10px',
-                                transform: 'translateY(-50%)',
-                                cursor: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'not-allowed' : 'pointer',
-                                opacity: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 0.5 : 1,
-                                pointerEvents: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'none' : 'auto'
-                              }} className='select-cancel' onClick={() => { handleClickedCleared("location") }}>
-                                <i className='fa fa-times'></i>
-                              </span>
-                            ) : (null)}
-                          </div>
-                          <div className="col-1 " data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
-                            <button disabled={!(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) || selectedOption === null}
-                              className=" btn btn-sm bg-green text-white" data-toggle="modal" data-target="#PropertyRoomTreeModal" style={{ cursor: 'pointer' }} onClick={() => {
-                                setlocationStatus(true);
-                              }}>
-                              <i className="fa fa-plus" > </i>
-                            </button>
-                          </div>
-
-
-                        </div>
-                      </> :
-                      <></>
-                  } */}
-
-                  {/* {
-                    !value.IsTransferLocation ?
-                      <>
-                        <div className="row align-items-center ">
-                          <div className="col-3 col-md-3 col-lg-2 px-1">
-                            <label htmlFor="" className='new-label px-0'>Storage Location</label>
-                          </div>
-                          <div className="col-12 col-md-12 col-lg-4 ">
-                            <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} disabled className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
-                              ? 'requiredColor'
-                              : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
-                                ? 'readonlyColor'
-                                : ''
-                              }`}
-                            />
-
-                            {value.location ? (
-                              <span style={{
-                                position: 'absolute',
-                                top: '40%',
-                                right: '10px',
-                                transform: 'translateY(-50%)',
-                                cursor: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'not-allowed' : 'pointer',
-                                opacity: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 0.5 : 1,
-                                pointerEvents: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'none' : 'auto'
-                              }} className='select-cancel' onClick={() => { handleClickedCleared("location") }}>
-                                <i className='fa fa-times'></i>
-                              </span>
-                            ) : (null)}
-                          </div>
-
-
-                          <div className="col-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
-                            <button disabled={!(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) || selectedOption === null}
-                              className=" btn btn-sm bg-green text-white" data-toggle="modal" data-target="#PropertyRoomTreeModal" style={{ cursor: 'pointer' }} onClick={() => {
-                                setlocationStatus(true);
-                                setKeyChange("location")
-                              }}>
-                              <i className="fa fa-plus" > </i>
-                            </button>
-                          </div>
-                          <div className="col-3 col-md-3 col-lg-1 mt-2  ">
-                            <label htmlFor="" className='new-label text-nowrap ml-1'>Packaging Details</label>
-                          </div>
-                          <div className="col-9 col-md-9 col-lg-4 text-field mt-1">
-                            <input type="text" name="PackagingDetails" className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.PackagingDetails} onChange={(e) => { handleChange(e) }} />
-                          </div>
-
-                        </div>
-                      </> :
-                      <></>
-                  } */}
-
-                  {/* <div className="row align-items-center ">
-
-                    <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
-                      <label htmlFor="" className='new-label'>Comments</label>
-                    </div>
-                    <div className="col-9 col-md-9 col-lg-10 text-field mt-1">
-                      <input type="text" name="ActivityComments"
-                        className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
-                    </div>
-                  </div> */}
-
-                  {/* <div className="row align-items-center">
-                    <div className='col-12 col-md-12 col-lg-12 mt-2'>
-                      <div className="row align-items-center ">
-                        <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
-                          <label htmlFor="" className='new-label text-nowrap'>
-                            File Attachment
-                          </label>
-                        </div>
-                        <div className="col-3 col-md-3 col-lg-10 mt-1">
-                          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px", }}
-                          >
-                            <div style={{ display: "flex", alignItems: "center", border: "1px solid #ccc", borderRadius: "6px", background: "#f9f9f9", width: "100%" }}>
-                              <label
-                                htmlFor="file-input"
-                                style={{
-                                  padding: "5px 16px",
-                                  backgroundColor: "#e9e9e9",
-                                  color: "#fff",
-                                  borderRadius: "4px",
-                                  marginLeft: "4px",
-                                  marginTop: "8px",
-                                  cursor: "pointer",
-                                  fontSize: "14px",
-                                  fontWeight: "bold",
-                                  transition: "background 0.3s",
-                                }}
-                                onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
-                                onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
-                              >
-                                Choose File
-                              </label>
-                              <input
-                                type="file"
-                                onChange={handleFileChange}
-                                ref={fileInputRef}
-                                multiple
-                                style={{ display: "none" }}
-                                id="file-input"
-                              />
-                              <div
-                                style={{
-                                  borderRadius: "4px",
-                                  display: "flex",
-                                  flexWrap: "wrap",
-                                  minHeight: "38px",
-                                  flex: "1",
-                                  alignItems: "center",
-                                  gap: "6px",
-                                  marginLeft: "12px",
-                                  backgroundColor: "#fff",
-                                }}
-                              >
-                                {selectedFiles.length > 0 ? (
-                                  selectedFiles.map((file, index) => (
-                                    <div
-                                      key={index}
-                                      style={{
-                                        display: "inline-flex",
-                                        alignItems: "center",
-                                        backgroundColor: "#e9ecef",
-                                        padding: "4px 10px",
-                                        borderRadius: "4px",
-                                        margin: "4px",
-                                        fontSize: "13px",
-                                        fontWeight: "500",
-                                      }}
-                                    >
-                                      <span>{file.name}</span>
-                                      <button
-                                        type="button"
-                                        onClick={() => removeFile(index)}
-                                        style={{
-                                          marginLeft: "6px",
-                                          border: "none",
-                                          background: "none",
-                                          cursor: "pointer",
-                                          fontSize: "14px",
-                                          fontWeight: "bold",
-                                          color: "#d9534f",
-                                        }}
-                                      >
-                                        ×
-                                      </button>
-                                    </div>
-                                  ))
-                                ) : (
-                                  <span style={{ color: "#777", fontSize: "13px" }}>No files selected</span>
-                                )}
-                              </div>
-                            </div>
-
-                          </div>
-                        </div>
-                      </div>
-
-                    </div>
-
-                  </div> */}
-
-
-                  {/* <div className="row align-items-center">
-                    {
-
-                      value.IsCheckIn || value.IsUpdate ?
-                        <>
-                          <div className="col-12 col-md-12 col-lg-12 px-1">
-                            <fieldset>
-                              <legend>Schedule</legend>
-
-                              <div className="row align-items-center  ">
-                                <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
-                                  <label htmlFor="" className='new-label'>Court Date</label>
-                                </div>
-                                <div className="col-3 col-md-3 col-lg-2 mt-1">
-                                  <DatePicker
-                                    name='CourtDate'
-                                    id='CourtDate'
-                                    onKeyDown={(e) => {
-                                      if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
-                                        e?.preventDefault();
-                                      }
-                                    }}
-                                    onChange={(date) => {
-                                      setCourtdate(date);
-                                      setValue({
-                                        ...value,
-                                        ['CourtDate']: date ? getShowingMonthDateYear(date) : null,
-                                      });
-                                      if (destroydate && new Date(destroydate) < new Date(date)) {
-                                        setdestroydate(null);
-                                        setValue({
-                                          ...value,
-                                          ['DestroyDate']: null,
-                                        });
-                                      }
-                                    }}
-                                    isClearable={!!courtdate}
-                                    selected={courtdate}
-                                    placeholderText={courtdate ? courtdate : 'Select...'}
-                                    dateFormat="MM/dd/yyyy"
-                                    filterTime={filterPassedTime}
-                                    timeIntervals={1}
-                                    timeCaption="Time"
-                                    showMonthDropdown
-                                    showYearDropdown
-                                    dropdownMode="select"
-                                    showDisabledMonthNavigation
-                                    autoComplete='off'
-                                    minDate={new Date()}
-                                    maxDate={value.ReleaseDate ? new Date(value?.ReleaseDate) : ''}
-                                    disabled={value.IsCheckOut || value.IsDestroy || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                                    className={value.IsCheckOut || value.IsDestroy || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
-
-                                  />
-                                </div>
-                                <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
-                                  <label htmlFor="" className='new-label'>Release Date{errors.ReasonError !== 'true' ? (
-                                    <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
-                                  ) : null}</label>
-
-                                </div>
-                                <div className="col-3 col-md-3 col-lg-2 mt-1">
-                                  <DatePicker
-                                    name='ReleaseDate'
-                                    id='ReleaseDate'
-                                    onKeyDown={(e) => {
-                                      if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
-                                        e?.preventDefault();
-                                      }
-                                    }}
-                                    onChange={(date) => {
-                                      setreleasedate(date); setValue({ ...value, ['ReleaseDate']: date ? getShowingMonthDateYear(date) : null, });
-
-                                    }}
-                                    isClearable={releasedate ? true : false}
-                                    selected={releasedate}
-                                    placeholderText={releasedate ? releasedate : 'Select...'}
-                                    dateFormat="MM/dd/yyyy"
-                                    filterTime={filterPassedTime}
-                                    timeIntervals={1}
-                                    timeCaption="Time"
-                                    showMonthDropdown
-                                    showYearDropdown
-                                    dropdownMode="select"
-                                    showDisabledMonthNavigation
-                                    autoComplete='off'
-                                    minDate={courtdate ? new Date(courtdate) : new Date()}
-                                    disabled={value.IsCheckOut || value.IsDestroy || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                                    className={value.IsCheckOut || value.IsDestroy || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
-
-                                  />
-                                </div>
-                                <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
-                                  <label htmlFor="" className='new-label'>Destroy&nbsp;Date</label>
-                                </div>
-                                <div className="col-3 col-md-3 col-lg-2 mt-1">
-                                  <DatePicker
-                                    name='DestroyDate'
-                                    id='DestroyDate'
-                                    onKeyDown={(e) => {
-                                      if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
-                                        e?.preventDefault();
-                                      }
-                                    }}
-                                    onChange={(date) => {
-                                      setdestroydate(date);
-                                      setValue({
-                                        ...value,
-                                        ['DestroyDate']: date ? getShowingMonthDateYear(date) : null,
-                                      });
-                                    }}
-                                    isClearable={!!destroydate}
-                                    selected={destroydate}
-                                    placeholderText={destroydate ? destroydate : 'Select...'}
-                                    dateFormat="MM/dd/yyyy"
-                                    filterTime={filterPassedTime}
-
-                                    timeIntervals={1}
-                                    timeCaption="Time"
-                                    showMonthDropdown
-                                    showYearDropdown
-                                    dropdownMode="select"
-                                    showDisabledMonthNavigation
-                                    autoComplete='off'
-                                    minDate={courtdate ? new Date(courtdate) : new Date()}
-                                    disabled={value.IsCheckOut || value.IsRelease || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                                    className={value.IsCheckOut || value.IsRelease || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
-
-                                  />
-                                </div>
-                              </div>
-                            </fieldset>
-                          </div>
-
-                        </> :
-                        <></>
-                    }
-                  </div> */}
-
                   <div className="div ">
                     {(selectedOption !== "CheckOut" && selectedOption !== "Release" && selectedOption !== "Destroy" && selectedOption !== "TransferLocation" && selectedOption !== "Update") && <div className='row align-items-center' style={{ rowGap: "8px" }}>
                       <div className="col-3 col-md-3 col-lg-2">
@@ -1734,7 +592,7 @@ const CadPropertyModel = (props) => {
                           options={reasonIdDrp}
                           onChange={(e) => ChangeDropDown(e, 'ActivityReasonID')}
                           placeholder="Select..."
-                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                           isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                         />
                       </div>
@@ -1787,16 +645,18 @@ const CadPropertyModel = (props) => {
                           options={agencyOfficerDrpData}
                           onChange={(e) => ChangeDropDown(e, 'InvestigatorID')}
                           placeholder="Select..."
-                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                           isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                         />
 
 
                       </div>
                       <div className="col-3 col-md-3 col-lg-2 ">
-                        <label htmlFor="" className='new-label mb-0'>Property Room Officer{errors.PropertyRoomOfficerError !== 'true' ? (
+                        <label htmlFor="" className='new-label mb-0'>Property Room Officer
+                          {/* {errors.PropertyRoomOfficerError !== 'true' ? (
                           <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.PropertyRoomOfficerError}</p>
-                        ) : null}</label>
+                        ) : null} */}
+                        </label>
                       </div>
                       <div className="col-3 col-md-3 col-lg-2 ">
                         <Select
@@ -1806,7 +666,7 @@ const CadPropertyModel = (props) => {
                           options={agencyOfficerDrpData}
                           onChange={(e) => ChangeDropDown(e, 'OfficerNameID')}
                           placeholder="Select..."
-                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
                           isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                         />
                       </div>
@@ -1828,18 +688,69 @@ const CadPropertyModel = (props) => {
                       </div>
                       <div className='col-3 col-md-3 col-lg-4'></div>
 
-                      <div className="col-3 col-md-3 col-lg-2 ">
+                      {/* <div className="col-3 col-md-3 col-lg-2 ">
                         <label htmlFor="" className='new-label px-0 mb-0'>Storage Location</label>
                       </div>
                       <div className="col-12 col-md-12 col-lg-3 ">
-                        <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} disabled className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
+                        <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
                           ? 'requiredColor'
                           : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
                             ? 'readonlyColor'
                             : ''
                           }`}
                         />
-
+                        {value.location ? (
+                          <span style={{
+                            position: 'absolute',
+                            top: '40%',
+                            right: '10px',
+                            transform: 'translateY(-50%)',
+                            cursor: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'not-allowed' : 'pointer',
+                            opacity: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 0.5 : 1,
+                            pointerEvents: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'none' : 'auto'
+                          }} className='select-cancel' onClick={() => { handleClickedCleared("location") }}>
+                            <i className='fa fa-times'></i>
+                          </span>
+                        ) : (null)}
+                      </div>
+                      <div className="col-1 ">
+                        {(() => {
+                          const isAddDisabled =
+                            !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) ||
+                            selectedOption === null;
+                          return (
+                            <button
+                              disabled={isAddDisabled}
+                              className="btn btn-sm bg-green text-white"
+                              data-toggle="modal"
+                              data-target="#PropertyRoomTreeModal"
+                              style={{ cursor: isAddDisabled ? 'not-allowed' : 'pointer' }}
+                              onClick={() => {
+                                setlocationStatus(true)
+                                // setKeyChange("CurrentStorageLocation")
+                              }}
+                            >
+                              <i className="fa fa-plus"></i>
+                            </button>
+                          );
+                        })()}
+                      </div> */}
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label px-0 mb-0'>Storage Location
+                          {/* {errors.StorageLocationError !== 'true' ? (
+                          <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.StorageLocationError}</p>
+                        ) : null} */}
+                        </label>
+                      </div>
+                      <div className="col-12 col-md-12 col-lg-3 ">
+                        <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location}
+                          className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
+                            ? 'requiredColor'
+                            : (selectedStatus === 'Release' || selectedStatus === 'Destroy')
+                              ? 'readonlyColor'
+                              : ''
+                            }`}
+                        />
                         {value.location ? (
                           <span style={{
                             position: 'absolute',
@@ -1877,7 +788,6 @@ const CadPropertyModel = (props) => {
                           );
                         })()}
                       </div>
-
                       <div className="col-3 col-md-3 col-lg-2">
                         <label htmlFor="" className='new-label text-nowrap  mb-0'>Packaging Details</label>
                       </div>
@@ -1893,9 +803,6 @@ const CadPropertyModel = (props) => {
                         <input type="text" name="ActivityComments"
                           className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
                       </div>
-
-
-
                       <div className='col-12 col-md-12 col-lg-12 '>
                         <div className="row align-items-center ">
                           <div className="col-3 col-md-3 col-lg-2">
@@ -2008,17 +915,11 @@ const CadPropertyModel = (props) => {
                                 }
                               }}
                               onChange={(date) => {
-                                setCourtdate(date);
-                                setValue({
-                                  ...value,
-                                  ['CourtDate']: date ? getShowingMonthDateYear(date) : null,
+                                setCourtdate(date); setValue({
+                                  ...value, ['CourtDate']: date ? getShowingMonthDateYear(date) : null,
                                 });
                                 if (destroydate && new Date(destroydate) < new Date(date)) {
-                                  setdestroydate(null);
-                                  setValue({
-                                    ...value,
-                                    ['DestroyDate']: null,
-                                  });
+                                  setdestroydate(null); setValue({ ...value, ['DestroyDate']: null, });
                                 }
                               }}
                               isClearable={!!courtdate}
@@ -2041,9 +942,11 @@ const CadPropertyModel = (props) => {
                             />
                           </div>
                           <div className="col-3 col-md-3 col-lg-2 ">
-                            <label htmlFor="" className='new-label mb-0'>Release Date/Time{errors.ReleasedDateTimeError !== 'true' ? (
+                            <label htmlFor="" className='new-label mb-0'>Release Date/Time
+                              {/* {errors.ReleasedDateTimeError !== 'true' ? (
                               <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReleasedDateTimeError}</p>
-                            ) : null}</label>
+                            ) : null} */}
+                            </label>
                           </div>
                           <div className="col-3 col-md-3 col-lg-2 ">
                             <DatePicker
@@ -2070,7 +973,7 @@ const CadPropertyModel = (props) => {
                               autoComplete='off'
                               maxDate={new Date(datezone)}
                               disabled={selectedOption === null || selectedOption === ''}
-                              className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                              className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : ''}
                             />
 
                           </div>
@@ -2117,6 +1020,7 @@ const CadPropertyModel = (props) => {
                       </fieldset>
                     </div>
                     }
+
                     {selectedOption === "CheckOut" && <div className='row align-items-center' style={{ rowGap: "8px" }}>
                       <div className="col-3 col-md-3 col-lg-2 ">
                         <label htmlFor="" className='new-label mb-0'>Reason{errors.ReasonError !== 'true' ? (
@@ -2131,7 +1035,7 @@ const CadPropertyModel = (props) => {
                           options={reasonIdDrp}
                           onChange={(e) => ChangeDropDown(e, 'ActivityReasonID')}
                           placeholder="Select..."
-                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                           isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                         />
                       </div>
@@ -2171,9 +1075,11 @@ const CadPropertyModel = (props) => {
 
                       </div>
                       <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
-                        <label htmlFor="" className='new-label mb-0'>Expected Return Date/Time{errors.ExpectedReturnDateTimeError !== 'true' ? (
+                        <label htmlFor="" className='new-label mb-0'>Expected Return Date/Time
+                          {/* {errors.ExpectedReturnDateTimeError !== 'true' ? (
                           <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ExpectedReturnDateTimeError}</p>
-                        ) : null}</label>
+                        ) : null} */}
+                        </label>
                       </div>
                       <div className="col-3 col-md-3 col-lg-2">
                         <DatePicker
@@ -2200,7 +1106,7 @@ const CadPropertyModel = (props) => {
                           autoComplete='off'
                           maxDate={new Date(datezone)}
                           disabled={selectedOption === null || selectedOption === ''}
-                          className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                          className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : ''}
                         />
 
                       </div>
@@ -2218,14 +1124,14 @@ const CadPropertyModel = (props) => {
                           options={agencyOfficerDrpData}
                           onChange={(e) => ChangeDropDown(e, 'ReleasingOfficerID')}
                           placeholder="Select..."
-                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                           isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                         />
 
 
                       </div>
                       <div className="col-3 col-md-3 col-lg-2  ">
-                        <label htmlFor="" className='new-label px-0 mb-0'>Receipient Officer{errors.ReasonError !== 'true' ? (
+                        <label htmlFor="" className='new-label px-0 mb-0'>Recipient Officer{errors.ReasonError !== 'true' ? (
                           <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
                         ) : null}</label>
                       </div>
@@ -2238,7 +1144,7 @@ const CadPropertyModel = (props) => {
                           options={agencyOfficerDrpData}
                           onChange={(e) => ChangeDropDown(e, 'ReceipentOfficerID')}
                           placeholder="Select..."
-                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                           isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                         />
 
@@ -2287,7 +1193,7 @@ const CadPropertyModel = (props) => {
                       </div>
 
 
-                      <div className="col-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
+                      {/* <div className="col-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
                         <button disabled={!(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) || selectedOption === null}
                           className=" btn btn-sm bg-green text-white" data-toggle="modal" data-target="#PropertyRoomTreeModal" style={{ cursor: 'pointer' }} onClick={() => {
                             setlocationStatus(true);
@@ -2295,7 +1201,7 @@ const CadPropertyModel = (props) => {
                           }}>
                           <i className="fa fa-plus" > </i>
                         </button>
-                      </div>
+                      </div> */}
 
 
                       <div className="col-3 col-md-3 col-lg-2">
@@ -2408,7 +1314,9 @@ const CadPropertyModel = (props) => {
 
 
 
-                    </div>}
+                    </div>
+                    }
+
                     {selectedOption === "Release" && <div className='row align-items-center' style={{ rowGap: "8px" }}>
                       <div className="col-3 col-md-3 col-lg-2 ">
                         <label htmlFor="" className='new-label mb-0'>Reason{errors.ReasonError !== 'true' ? (
@@ -2423,7 +1331,7 @@ const CadPropertyModel = (props) => {
                           options={reasonIdDrp}
                           onChange={(e) => ChangeDropDown(e, 'ActivityReasonID')}
                           placeholder="Select..."
-                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                           isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                         />
                       </div>
@@ -2434,10 +1342,10 @@ const CadPropertyModel = (props) => {
                       </div>
                       <div className="col-3 col-md-3 col-lg-2 ">
                         <DatePicker
-                          name='activitydate'
-                          id='activitydate'
+                          name='ReleaseDate'
+                          id='ReleaseDate'
                           onChange={(date) => {
-                            setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
+                            setactivitydate(date); setValue({ ...value, ['ReleaseDate']: date ? getShowingMonthDateYear(date) : null, });
 
                           }}
                           isClearable={activitydate ? true : false}
@@ -2474,7 +1382,7 @@ const CadPropertyModel = (props) => {
                           options={agencyOfficerDrpData}
                           onChange={(e) => ChangeDropDown(e, 'OfficerNameID')}
                           placeholder="Select..."
-                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                           isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                         />
                       </div>
@@ -2492,16 +1400,18 @@ const CadPropertyModel = (props) => {
                           options={agencyOfficerDrpData}
                           onChange={(e) => ChangeDropDown(e, 'ReleasingOfficerID')}
                           placeholder="Select..."
-                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                           isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                         />
 
 
                       </div>
                       <div className="col-3 col-md-3 col-lg-2 ">
-                        <label htmlFor="" className='new-label px-0 mb-0'>Receipient {errors.ReceipientError !== 'true' ? (
+                        <label htmlFor="" className='new-label px-0 mb-0'>Recipient
+                          {/* {errors.ReceipientError !== 'true' ? (
                           <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReceipientError}</p>
-                        ) : null}</label>
+                        ) : null} */}
+                        </label>
                       </div>
                       <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
 
@@ -2512,7 +1422,7 @@ const CadPropertyModel = (props) => {
                           options={agencyOfficerDrpData}
                           onChange={(e) => ChangeDropDown(e, 'ReceipentID')}
                           placeholder="Select..."
-                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
                           isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                         />
 
@@ -2520,41 +1430,20 @@ const CadPropertyModel = (props) => {
                       </div>
 
                       <div className="col-3 col-md-3 col-lg-2 ">
-                        <label htmlFor="" className='new-label px-0 mb-0'>Receipient Location</label>
+                        <label htmlFor="" className='new-label px-0 mb-0'>Recipient Location</label>
                       </div>
                       <div className="col-12 col-md-12 col-lg-2    ">
-                        <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} disabled className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
-                          ? 'requiredColor'
-                          : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
-                            ? 'readonlyColor'
-                            : ''
-                          }`}
+                        <Select
+                          name='ReceipentID'
+                          // value={''}
+                          isClearable
+                          // options={''}
+                          // onChange={''}
+                          placeholder="Select..."
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
+                          isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                         />
-
-                        {value.location ? (
-                          <span style={{
-                            position: 'absolute',
-                            top: '40%',
-                            right: '10px',
-                            transform: 'translateY(-50%)',
-                            cursor: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'not-allowed' : 'pointer',
-                            opacity: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 0.5 : 1,
-                            pointerEvents: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'none' : 'auto'
-                          }} className='select-cancel' onClick={() => { handleClickedCleared("location") }}>
-                            <i className='fa fa-times'></i>
-                          </span>
-                        ) : (null)}
                       </div>
-
-
-                      {/* <div className="col-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
-                                                          <button disabled={!(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) || selectedOption === null}
-                                                              className=" btn btn-sm bg-green text-white" data-toggle="modal" data-target="#PropertyRoomTreeModal" style={{ cursor: 'pointer' }} onClick={() => {
-                                                                  setlocationStatus(true);
-                                                              }}>
-                                                              <i className="fa fa-plus" > </i>
-                                                          </button>
-                                                      </div> */}
 
                       <div className="col-3 col-md-3 col-lg-2 ">
                         <label htmlFor="" className='new-label mb-0'>Mode of Transport</label>
@@ -2590,15 +1479,9 @@ const CadPropertyModel = (props) => {
                             <i className='fa fa-times'></i>
                           </span>
                         ) : (null)}
-
-
-
-
-
-
                       </div>
 
-                      <div className="col-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
+                      {/* <div className="col-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
                         <button disabled={!(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) || selectedOption === null}
                           className=" btn btn-sm bg-green text-white" data-toggle="modal" data-target="#PropertyRoomTreeModal" style={{ cursor: 'pointer' }} onClick={() => {
                             setlocationStatus(true);
@@ -2606,7 +1489,7 @@ const CadPropertyModel = (props) => {
                           }}>
                           <i className="fa fa-plus" > </i>
                         </button>
-                      </div>
+                      </div> */}
 
                       <div className="col-3 col-md-3 col-lg-2 ">
                         <label htmlFor="" className='new-label mb-0'>Comments</label>
@@ -2763,6 +1646,7 @@ const CadPropertyModel = (props) => {
 
                     </div>
                     }
+
                     {selectedOption === "Destroy" && <div className='row align-items-center' style={{ rowGap: "8px" }}>
                       <div className="col-3 col-md-3 col-lg-2 ">
                         <label htmlFor="" className='new-label mb-0'>Reason{errors.ReasonError !== 'true' ? (
@@ -2777,7 +1661,7 @@ const CadPropertyModel = (props) => {
                           options={reasonIdDrp}
                           onChange={(e) => ChangeDropDown(e, 'ActivityReasonID')}
                           placeholder="Select..."
-                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                           isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                         />
                       </div>
@@ -2789,10 +1673,10 @@ const CadPropertyModel = (props) => {
                       </div>
                       <div className="col-3 col-md-3 col-lg-2 ">
                         <DatePicker
-                          name='activitydate'
-                          id='activitydate'
+                          name='DestroyDate'
+                          id='DestroyDate'
                           onChange={(date) => {
-                            setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
+                            setactivitydate(date); setValue({ ...value, ['DestroyDate']: date ? getShowingMonthDateYear(date) : null, });
 
                           }}
                           isClearable={activitydate ? true : false}
@@ -2829,7 +1713,7 @@ const CadPropertyModel = (props) => {
                           options={agencyOfficerDrpData}
                           onChange={(e) => ChangeDropDown(e, 'OfficerNameID')}
                           placeholder="Select..."
-                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                           isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                         />
                       </div>
@@ -2847,7 +1731,7 @@ const CadPropertyModel = (props) => {
                           options={agencyOfficerDrpData}
                           onChange={(e) => ChangeDropDown(e, 'DestructionOfficerID')}
                           placeholder="Select..."
-                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                           isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                         />
 
@@ -2867,14 +1751,27 @@ const CadPropertyModel = (props) => {
                           options={agencyOfficerDrpData}
                           onChange={(e) => ChangeDropDown(e, 'WitnessID')}
                           placeholder="Select..."
-                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                           isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                         />
-
-
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label mb-0'>Destruction Location</label>
+                      </div>
+                      <div className="col-3 col-md-3 col-lg-2">
+                        <Select
+                          name='ActivityReasonID'
+                          // value={reasonIdDrp?.filter((obj) => obj.value === value?.ActivityReasonID)}
+                          isClearable
+                          // options={reasonIdDrp}
+                          // onChange={(e) => ChangeDropDown(e, 'ActivityReasonID')}
+                          placeholder="Select..."
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
+                          isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                        />
                       </div>
 
-                      <div className="col-3 col-md-3 col-lg-2  ">
+                      {/* <div className="col-3 col-md-3 col-lg-2  ">
                         <label htmlFor="" className='new-label px-0 mb-0'> Destruction Location</label>
                       </div>
                       <div className="col-12 col-md-12 col-lg-2 ">
@@ -2897,7 +1794,7 @@ const CadPropertyModel = (props) => {
                             <i className='fa fa-times'></i>
                           </span>
                         ) : (null)}
-                      </div>
+                      </div> */}
                       {/* <div className="col-1 " data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
                                       <button disabled={!(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) || selectedOption === null}
                                           className=" btn btn-sm bg-green text-white" data-toggle="modal" data-target="#PropertyRoomTreeModal" style={{ cursor: 'pointer' }} onClick={() => {
@@ -2930,7 +1827,7 @@ const CadPropertyModel = (props) => {
                           options={agencyOfficerDrpData}
                           onChange={(e) => ChangeDropDown(e, 'ApprovalOfficerID')}
                           placeholder="Select..."
-                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                           isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                         />
 
@@ -2965,9 +1862,7 @@ const CadPropertyModel = (props) => {
                           </span>
                         ) : (null)}
                       </div>
-
-
-                      <div className="col-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
+                      {/* <div className="col-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
                         <button disabled={!(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) || selectedOption === null}
                           className=" btn btn-sm bg-green text-white" data-toggle="modal" data-target="#PropertyRoomTreeModal" style={{ cursor: 'pointer' }} onClick={() => {
                             setlocationStatus(true);
@@ -2975,7 +1870,7 @@ const CadPropertyModel = (props) => {
                           }}>
                           <i className="fa fa-plus" > </i>
                         </button>
-                      </div>
+                      </div> */}
                       <div className='col-12 col-md-12 col-lg-3'></div>
 
                       <div className="col-3 col-md-3 col-lg-2 ">
@@ -3082,13 +1977,13 @@ const CadPropertyModel = (props) => {
 
                     </div>
                     }
+
                     {selectedOption === "TransferLocation" &&
                       <>
                         <div className='row align-items-center  mb-1'>
                           <div className="col-12 col-md-4 col-lg-2  "></div>
                           <div className="col-12 col-md-4 col-lg-2">
                             <div className="form-check">
-
                               <input
                                 className="form-check-input"
                                 type="radio"
@@ -3135,7 +2030,7 @@ const CadPropertyModel = (props) => {
                               options={reasonIdDrp}
                               onChange={(e) => ChangeDropDown(e, 'ActivityReasonID')}
                               placeholder="Select..."
-                              styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                              styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                               isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                             />
                           </div>
@@ -3188,7 +2083,7 @@ const CadPropertyModel = (props) => {
                               options={agencyOfficerDrpData}
                               onChange={(e) => ChangeDropDown(e, 'ApprovalOfficerID')}
                               placeholder="Select..."
-                              styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                              styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                               isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                             />
 
@@ -3207,7 +2102,7 @@ const CadPropertyModel = (props) => {
                               options={agencyOfficerDrpData}
                               onChange={(e) => ChangeDropDown(e, 'OfficerNameID')}
                               placeholder="Select..."
-                              styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                              styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                               isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                             />
                           </div>
@@ -3227,7 +2122,7 @@ const CadPropertyModel = (props) => {
                                     options={agencyOfficerDrpData}
                                     onChange={(e) => ChangeDropDown(e, 'OfficerNameID')}
                                     placeholder="Select..."
-                                    styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                                    styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                                     isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                                   />
                                 </div>
@@ -3319,13 +2214,13 @@ const CadPropertyModel = (props) => {
                                       : 'auto',
                                 }}
                               >
-                                <i className="fa fa-times"></i>
+                                {/* <i className="fa fa-times"></i> */}
                               </span>
                             )}
                           </div>
 
                           {/** ➕ Add Button Section **/}
-                          <div className="col-1 ">
+                          {/* <div className="col-1 ">
                             {(() => {
                               const isAddDisabled =
                                 !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) ||
@@ -3347,7 +2242,7 @@ const CadPropertyModel = (props) => {
                                 </button>
                               );
                             })()}
-                          </div>
+                          </div> */}
 
 
                           <div className="col-3 col-md-3 col-lg-2 ">
@@ -3526,6 +2421,7 @@ const CadPropertyModel = (props) => {
                         </div>
                       </>
                     }
+
                     {selectedOption === "Update" && <div className='row align-items-center' style={{ rowGap: "8px" }}>
                       <div className="col-3 col-md-3 col-lg-2">
                         <label htmlFor="" className='new-label mb-0'>Reason{errors.ReasonError !== 'true' ? (
@@ -3540,7 +2436,7 @@ const CadPropertyModel = (props) => {
                           options={reasonIdDrp}
                           onChange={(e) => ChangeDropDown(e, 'ActivityReasonID')}
                           placeholder="Select..."
-                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                           isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                         />
                       </div>
@@ -3592,7 +2488,7 @@ const CadPropertyModel = (props) => {
                           options={agencyOfficerDrpData}
                           onChange={(e) => ChangeDropDown(e, 'UpdatingOfficerID')}
                           placeholder="Select..."
-                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                           isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                         />
 
@@ -3611,7 +2507,7 @@ const CadPropertyModel = (props) => {
                           options={agencyOfficerDrpData}
                           onChange={(e) => ChangeDropDown(e, 'OfficerNameID')}
                           placeholder="Select..."
-                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                           isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                         />
                       </div>
@@ -3629,7 +2525,7 @@ const CadPropertyModel = (props) => {
                           options={agencyOfficerDrpData}
                           onChange={(e) => ChangeDropDown(e, 'ApprovalOfficerID')}
                           placeholder="Select..."
-                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
+                          styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                           isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                         />
 
@@ -3678,12 +2574,12 @@ const CadPropertyModel = (props) => {
                                   : 'auto',
                             }}
                           >
-                            <i className="fa fa-times"></i>
+                            {/* <i className="fa fa-times"></i> */}
                           </span>
                         )}
                       </div>
-                      {/** ➕ Add Button Section **/}
-                      <div className="col-1 ">
+
+                      {/* <div className="col-1 ">
                         {(() => {
                           const isAddDisabled =
                             !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) ||
@@ -3705,7 +2601,7 @@ const CadPropertyModel = (props) => {
                             </button>
                           );
                         })()}
-                      </div>
+                      </div> */}
                       <div className='col-12 col-md-12 col-lg-4'></div>
 
 
