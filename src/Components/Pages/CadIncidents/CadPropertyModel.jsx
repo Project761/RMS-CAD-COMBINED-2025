@@ -73,6 +73,7 @@ const CadPropertyModel = (props) => {
   const closeButtonRef = useRef(null); // at the top of your component
   const [selectedOptionInternal, setselectedOptionInternal] = useState('IsInternalTransfer');
   const [storagetype, setstoragetype] = useState();
+  const [editval, setEditval] = useState([]);
 
   // modal open state
   const [keyChange, setKeyChange] = useState("");
@@ -91,7 +92,7 @@ const CadPropertyModel = (props) => {
     'ReleasingOfficerError': '', 'ExpectedReturnDateTimeError': '', 'CheckOutDateTimeError': '', 'SubmittingOfficerError': '', 'CheckInDateTimeError': '', 'PropertyRoomOfficerError': '', 'StorageLocationError': '',
   })
 
-  console.log(modelActivityStatus)
+  
 
 
   const colourStyles = {
@@ -105,22 +106,11 @@ const CadPropertyModel = (props) => {
     }),
   }
   useEffect(() => {
-    console.log('modelActivityStatus:', modelActivityStatus);
+    
+    const normalizedActivityStatus = modelActivityStatus.trim(); 
+    const transferLocation = "Transfer Location";  
 
-    // Normalize and check the activity status
-    const normalizedActivityStatus = modelActivityStatus.trim(); // Remove any leading/trailing spaces
-    const transferLocation = "Transfer Location";  // Normalized value for comparison
-
-    console.log('Normalized modelActivityStatus:', normalizedActivityStatus);
-    console.log('Comparison with "Transfer Location":', normalizedActivityStatus === transferLocation);
-
-    const isTransferLocation = normalizedActivityStatus === transferLocation; // Store comparison result
-    console.log('isTransferLocation:', isTransferLocation); // This shows true or false
-
-    // Check previous value of IsTransferLocation
-    console.log('Previous IsTransferLocation:', value.IsTransferLocation);
-
-    // Set the state
+    const isTransferLocation = normalizedActivityStatus === transferLocation; 
     setValue((prev) => {
       const newState = {
         ...prev,
@@ -131,8 +121,6 @@ const CadPropertyModel = (props) => {
         IsTransferLocation: isTransferLocation,  // Correctly set IsTransferLocation
         IsUpdate: normalizedActivityStatus === "Update",
       };
-
-      console.log('Updated newState:', newState); // Log the new state
       return newState;
     });
 
@@ -344,10 +332,31 @@ const CadPropertyModel = (props) => {
     }
   };
 
+  useEffect(() => {
+    if (localStoreData) {
+      setloginAgencyID(localStoreData?.AgencyID); setloginPinID(localStoreData?.PINID);
+      // if (selectedOption !== "CheckIn") {
+      //   GetData_Propertyroom(MstPage === "MST-Property-Dash" ? rowData?.MasterPropertyID : rowData?.PropertyID, ProCategory, localStoreData?.AgencyID);
+      // }
+
+      GetDataTimeZone(localStoreData?.AgencyID);
+    }
+  }, [localStoreData, modalOpenStatus]);
+
+  useEffect(() => {
+      setEditval([]);
+    if (rowData?.Activity !== "CheckIn") {
+      GetData_Propertyroom(MstPage === "MST-Property-Dash" ? rowData?.MasterPropertyID : rowData?.PropertyID, ProCategory, loginAgencyID);
+    }
+  }, [modalOpenStatus]);
+
+
+
+
   const GetData_Propertyroom = async (DecPropID, category, loginAgencyID) => {
     try {
       const val1 = {
-        'PropertyID': DecPropID,
+        'PropertyID': [DecPropID],
         'PropertyCategoryCode': category,
         'MasterPropertyID': 0,
         'AgencyId': loginAgencyID
@@ -365,6 +374,9 @@ const CadPropertyModel = (props) => {
 
 
       if (parsedData.Table && parsedData.Table.length > 0) {
+        setEditval(parsedData.Table[0]);
+
+        // setcategoryStatus(parsedData.Table[0].Status);
         if (parsedData.Table[0].Status === 'Release' && shouldPrintForm === true) {
           await new Promise(resolve => setTimeout(resolve, 0));
           printForm();
@@ -450,7 +462,6 @@ const CadPropertyModel = (props) => {
       // GetData_Propertyroom(MstPage === "MST-Property-Dash" ? DecMPropID : DecPropID, ProCategory, loginAgencyID);
 
       if (selectedReportType === 'all') {
-        console.log('hello')
         Delete_TaskList();
         setAllProRoomFilterData();
         setModalOpenStatus(false);
@@ -468,8 +479,6 @@ const CadPropertyModel = (props) => {
   }
 
   const Delete_TaskList = () => {
-    console.log('hello')
-
     const val = { 'DeletedByUserFK': loginPinID, 'TaskListID': taskListID }
     AddDeleteUpadate('TaskList/Delete_TaskList', val).then((res) => {
       if (res) {
@@ -488,15 +497,52 @@ const CadPropertyModel = (props) => {
       ...value,
       'PropertyID': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
       'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '',
-      'MasterPropertyId': '', 'IsCheckIn': false, 'IsCheckOut': false, 'IsRelease': '', 'IsDestroy': '', 'IsUpdate': '', 'CreatedByUserFK': '', 'PropertyTypeID': '',
+      'MasterPropertyId': '', 'CreatedByUserFK': '', 'PropertyTypeID': '',
       'OtherPersonNameID': '', 'LastSeenDtTm': '', 'PackagingDetails': '', 'EvidenceType': '',
+      'location': '',
+      'IsCheckIn': '', 'PackagingDetails': '', 'IsCheckOut': '', 'IsRelease': '', 'IsDestroy': '', 'IsTransferLocation': '', 
     });
     setErrors({
       ...errors,
       'ReasonError': '', 'UpdateDateTimeError': '', 'TransferDateTimeError': '', 'WitnessError': '', 'ApprovalOfficerError': '', 'UpdatingOfficerError': '', 'DestructionOfficerError': '', 'DestructionDateTimeError': '', 'ReleasedDateTimeError': '',
       'ReleasingOfficerError': '', 'ExpectedReturnDateTimeError': '', 'CheckOutDateTimeError': '', 'SubmittingOfficerError': '', 'CheckInDateTimeError': '', 'PropertyRoomOfficerError': '', 'StorageLocationError': '',
     })
+    setEditval([]);
+    setSelectedOption(null);
+    // setModalOpenStatus(false);
+    //  if (closeButtonRef.current) {
+    //           closeButtonRef.current.click(); // Close modal by simulating user click
+    //         }
+    setSelectedFiles([]);
+    setCourtdate(''); setreleasedate(''); setdestroydate(''); setExpecteddate('');
+    setSelectedStatus('');
+    //  setSelectedOption('');
+    setactivitydate('');
+    setReasonIdDrp([]);
+    setLocationPath('');
+    setSelectedStatus('');
+    setToggleClear(!toggleClear);
+  }
 
+   const resetdata = () => {
+    setValue({
+      ...value,
+      'PropertyID': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
+      'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '',
+      'MasterPropertyId': '', 'CreatedByUserFK': '', 'PropertyTypeID': '',
+      'OtherPersonNameID': '', 'LastSeenDtTm': '', 'PackagingDetails': '', 'EvidenceType': '',
+      
+      'location': ''
+    });
+    setErrors({
+      ...errors,
+      'ReasonError': '', 'UpdateDateTimeError': '', 'TransferDateTimeError': '', 'WitnessError': '', 'ApprovalOfficerError': '', 'UpdatingOfficerError': '', 'DestructionOfficerError': '', 'DestructionDateTimeError': '', 'ReleasedDateTimeError': '',
+      'ReleasingOfficerError': '', 'ExpectedReturnDateTimeError': '', 'CheckOutDateTimeError': '', 'SubmittingOfficerError': '', 'CheckInDateTimeError': '', 'PropertyRoomOfficerError': '', 'StorageLocationError': '',
+    })
+    // setModalOpenStatus(false);
+    //  if (closeButtonRef.current) {
+    //           closeButtonRef.current.click(); // Close modal by simulating user click
+    //         }
     setSelectedFiles([]);
     setCourtdate(''); setreleasedate(''); setdestroydate(''); setExpecteddate('');
     setSelectedStatus('');
@@ -539,7 +585,62 @@ const CadPropertyModel = (props) => {
     }));
   };
 
-  console.log(value.location)
+  useEffect(() => {
+    if (editval && selectedOption === 'Update') {
+       setErrors({
+      ...errors,
+      'ReasonError': '', 'UpdateDateTimeError': '', 'TransferDateTimeError': '', 'WitnessError': '', 'ApprovalOfficerError': '', 'UpdatingOfficerError': '', 'DestructionOfficerError': '', 'DestructionDateTimeError': '', 'ReleasedDateTimeError': '',
+      'ReleasingOfficerError': '', 'ExpectedReturnDateTimeError': '', 'CheckOutDateTimeError': '', 'SubmittingOfficerError': '', 'CheckInDateTimeError': '', 'PropertyRoomOfficerError': '', 'StorageLocationError': '',
+    })
+      setValue({
+        ...value, PropertyID: editval?.PropertyID || '', ActivityType: editval?.ActivityType || '',
+
+        ExpectedDate: editval?.ExpectedDate || '', ActivityComments: editval?.ActivityComments || '', OtherPersonNameID: editval?.OtherPersonNameID || '',
+        PropertyRoomPersonNameID: editval?.PropertyRoomPersonNameID || '', ChainDate: editval?.ChainDate || '',
+        DestroyDate: editval?.DestroyDate ? new Date(editval.DestroyDate) : '', CourtDate: editval?.CourtDate ? new Date(editval.CourtDate) : '', ReleaseDate: editval?.ReleaseDate ? new Date(editval.ReleaseDate) : '',
+        PropertyTag: editval?.PropertyTag || '', RecoveryNumber: editval?.RecoveryNumber || '', StorageLocationID: editval?.StorageLocationID || '',
+        ReceiveDate: editval?.ReceiveDate || '', OfficerNameID: editval?.OfficerNameID || '', InvestigatorID: editval?.InvestigatorID || '', location: editval?.location || '',
+        activityid: editval?.activityid || '', EventId: editval?.EventId || '', MasterPropertyId: editval?.MasterPropertyId || '',
+        CreatedByUserFK: editval?.CreatedByUserFK || '',
+        IsUpdate : editval?.Status
+      });
+
+      dispatch(get_AgencyOfficer_Data(loginAgencyID, IncID));
+      GetActivityReasonDrp(loginAgencyID);
+      setCourtdate(editval?.CourtDate ? new Date(editval.CourtDate) : null);
+      setreleasedate(editval?.ReleaseDate ? new Date(editval.ReleaseDate) : null)
+      setdestroydate(editval?.DestroyDate ? new Date(editval.DestroyDate) : null);
+
+
+    } else if (editval && selectedOption === 'CheckOut' || editval && selectedOption === 'Release' || editval && selectedOption === 'Destroy' || editval && selectedOption === "Transfer Location" || editval && selectedOption === "Update") {
+      
+      setValue({
+        ...value, PropertyID: editval?.PropertyID || '',
+        StorageLocationID: editval?.StorageLocationID || '',
+        location: editval?.location || '',
+
+      });
+
+    }
+    else{
+       setValue({
+      ...value,
+      'PropertyID': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
+      'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '',
+      'MasterPropertyId': '', 'CreatedByUserFK': '', 'PropertyTypeID': '',
+      'OtherPersonNameID': '', 'LastSeenDtTm': '', 'PackagingDetails': '', 'EvidenceType': '',
+      
+    });
+     setErrors({
+      ...errors,
+      'ReasonError': '', 'UpdateDateTimeError': '', 'TransferDateTimeError': '', 'WitnessError': '', 'ApprovalOfficerError': '', 'UpdatingOfficerError': '', 'DestructionOfficerError': '', 'DestructionDateTimeError': '', 'ReleasedDateTimeError': '',
+      'ReleasingOfficerError': '', 'ExpectedReturnDateTimeError': '', 'CheckOutDateTimeError': '', 'SubmittingOfficerError': '', 'CheckInDateTimeError': '', 'PropertyRoomOfficerError': '', 'StorageLocationError': '',
+    })
+    
+    }
+  }, [editval, selectedOption]);
+
+  
 
   return (
     modalOpenStatus &&
@@ -612,7 +713,7 @@ const CadPropertyModel = (props) => {
                   </div>
 
                   <div className="div ">
-                    {(selectedOption !== "CheckOut" && selectedOption !== "Release" && selectedOption !== "Destroy" && value.IsTransferLocation === false || value.IsTransferLocation === 'false' && selectedOption !== "Update") && <div className='row align-items-center' style={{ rowGap: "8px" }}>
+                    {(selectedOption !== "CheckOut" && selectedOption !== "Release" && selectedOption !== "Destroy" && (value.IsTransferLocation === false || value.IsTransferLocation === 'false') && selectedOption !== "Update") && <div className='row align-items-center' style={{ rowGap: "8px" }}>
                       <div className="col-3 col-md-3 col-lg-2">
                         <label htmlFor="" className='new-label mb-0'>Reason{errors.ReasonError !== 'true' ? (
                           <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
@@ -777,8 +878,8 @@ const CadPropertyModel = (props) => {
                         </label>
                       </div>
                       <div className="col-12 col-md-12 col-lg-3 ">
-                        <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location}
-                          className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
+                        <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={value.location}
+                          className={`form-control ${value.IsCheckIn || value.location || value.IsRelease
                             ? 'requiredColor'
                             : (selectedStatus === 'Release' || selectedStatus === 'Destroy')
                               ? 'readonlyColor'
@@ -2213,7 +2314,7 @@ const CadPropertyModel = (props) => {
                               type="text"
                               name="CurrentStorageLocation"
                               id="CurrentStorageLocation"
-                              value={locationStatus ? '' : value.CurrentStorageLocation}
+                              value={locationStatus ? '' : value.location}
                               disabled
                               className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
                                 ? 'requiredColor'
@@ -2223,7 +2324,7 @@ const CadPropertyModel = (props) => {
                                 }`}
                             />
 
-                            {value.CurrentStorageLocation && (
+                            {/* {value.CurrentStorageLocation && (
                               <span
                                 className="select-cancel"
                                 onClick={() => { handleClickedCleared("CurrentStorageLocation") }}
@@ -2246,9 +2347,9 @@ const CadPropertyModel = (props) => {
                                       : 'auto',
                                 }}
                               >
-                                {/* <i className="fa fa-times"></i> */}
+                               
                               </span>
-                            )}
+                            )} */}
                           </div>
 
                           {/** ➕ Add Button Section **/}
@@ -2288,7 +2389,7 @@ const CadPropertyModel = (props) => {
                               name="DestinationStorageLocation"
                               id="DestinationStorageLocation"
                               value={locationStatus ? '' : value.DestinationStorageLocation}
-                              
+
                               className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
                                 ? 'requiredColor'
                                 : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
@@ -2576,7 +2677,7 @@ const CadPropertyModel = (props) => {
                           type="text"
                           name="CurrentStorageLocation"
                           id="CurrentStorageLocation"
-                          value={locationStatus ? '' : value.CurrentStorageLocation}
+                          value={locationStatus ? '' : value.location}
                           disabled
                           className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
                             ? 'requiredColor'
@@ -2586,7 +2687,7 @@ const CadPropertyModel = (props) => {
                             }`}
                         />
 
-                        {value.CurrentStorageLocation && (
+                        {value.location && (
                           <span
                             className="select-cancel"
                             onClick={() => { handleClickedCleared("CurrentStorageLocation") }}
@@ -2881,10 +2982,10 @@ const CadPropertyModel = (props) => {
               <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1">
                 Print Barcode
               </button>
-              <button type="button" aria-label="Close" ref={closeButtonRef} data-dismiss="modal" className="btn btn-sm btn-success mr-2 mb-2 mt-1" >
+              <button type="button" aria-label="Close" onClick={() => {  setModalOpenStatus(false); }} ref={closeButtonRef} data-dismiss="modal" className="btn btn-sm btn-success mr-2 mb-2 mt-1" >
                 Close
               </button>
-              <button onClick={() => { reset(); }} type="button" className="btn btn-sm btn-success  mb-2 mr-2 mt-1">
+              <button onClick={() => { resetdata(); }} type="button" className="btn btn-sm btn-success  mb-2 mr-2 mt-1">
                 Clear
               </button>
               <button type="button" onClick={(e) => { check_Validation_Error(); }} className="btn btn-sm btn-success  mb-2 mt-1">
@@ -2899,7 +3000,7 @@ const CadPropertyModel = (props) => {
       </div >
 
 
-      <TreeModelPL {...{ proRoom, locationStatus, setlocationStatus, storagetype , locationPath, setLocationPath, searchStoStatus, setSearchStoStatus, value, setValue, setPropertyNumber, keyChange }} />
+      <TreeModelPL {...{ proRoom, locationStatus, setlocationStatus, storagetype, locationPath, setLocationPath, searchStoStatus, setSearchStoStatus, value, setValue, setPropertyNumber, keyChange }} />
 
     </>
   );
