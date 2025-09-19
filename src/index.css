@@ -949,7 +949,8 @@ input[type="file"] {
 
 .dash-name {
   color: #000;
-  margin-top: 20px;
+  margin-top: -15px;
+  
 }
 
 .Nb {
@@ -2319,7 +2320,7 @@ input[type="file"] {
 .form-control {
   border-color: #e8e9e9;
   font-size: 14px;
-  height: auto !important;
+  height: auto;
 }
 
 .css-ymfn48-control {
@@ -3165,15 +3166,18 @@ div[data-testid="table-header"],
 
 .custom-cancel-btn {
   background-color: #fff;
-  border: 1px solid #002147;   /* dark blue border */
-  color: #002147;              /* dark blue text */
+  border: 1px solid #002147;
+  /* dark blue border */
+  color: #002147;
+  /* dark blue text */
   font-weight: 600;
   padding: 8px 24px;
   border-radius: 2px;
 }
 
 .custom-ok-btn {
-  background-color: #002147;   /* dark blue */
+  background-color: #002147;
+  /* dark blue */
   color: #fff;
   font-weight: 600;
   padding: 8px 24px;
@@ -3182,7 +3186,25 @@ div[data-testid="table-header"],
 }
 
 .custom-ok-btn:hover {
-  background-color: #00152d;   /* darker shade on hover */
+  background-color: #00152d;
+  /* darker shade on hover */
   color: #fff;
 }
 
+
+/* abhi */
+.custom-col-12 {
+  flex: 0 0 12%;
+  max-width: 12%;
+}
+
+
+.custom-col-20 {
+  flex: 0 0 20.8%;
+  max-width: 20.8%;
+}
+
+.custom-col-29 {
+  flex: 0 0 29.6%;
+  max-width: 29.6%;
+}
