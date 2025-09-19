@@ -42,7 +42,7 @@ function ReportWorkflow() {
     });
 
     const [errors, setErrors] = useState({
-        'WorkflowNameErrors': '', 'ReportApproverGroupIDErrors': '', 'AppliesReportTypeErrors': '', 'ReportReviewerGroupIDErrors': '',
+        'WorkflowNameErrors': '', 'ReportApproverGroupIDErrors': '', 'AppliesReportTypeErrors': '', 'ReportReviewerGroupIDErrors': '', 'ReportApproverRequiredErrors': '',
     })
 
     useEffect(() => {
@@ -106,9 +106,9 @@ function ReportWorkflow() {
         }
     ]
     const groupLevelData = [
-        { groupName: "Group 1", groupLevel: "Level 1" },
-        { groupName: "Group 2", groupLevel: "Level 2" },
-        { groupName: "Group 3", groupLevel: "Level 3" }
+        // { groupName: "Group 1", groupLevel: "Level 1" },
+        // { groupName: "Group 2", groupLevel: "Level 2" },
+        // { groupName: "Group 3", groupLevel: "Level 3" }
     ]
 
 
@@ -198,14 +198,13 @@ function ReportWorkflow() {
                 ...value,
                 'WorkflowName': editval[0]?.WorkflowName,
                 'ReportApproverGroupID': Number(editval[0]?.ReportApproverGroupID),
-                'Notes': editval[0]?.Notes, 'ReportApproverRequired': Number(editval[0]?.ReportApproverRequired),
-
+                'Notes': editval[0]?.Notes, 'ReportReviewerGroupID': Number(editval[0]?.ReportReviewerGroupID),
+                'ReportApproverRequired': editval[0]?.ReportApproverRequired,
                 'AppliesReportTypeID': editval[0]?.AppliesReportTypeID,
                 'ModifiedByUserFK': loginPinID,
             })
         }
     }, [editval])
-
 
     const reset = () => {
         setValue({
@@ -213,20 +212,36 @@ function ReportWorkflow() {
         }); setErrors({ ...errors, 'WorkflowNameErrors': '', 'ReportApproverGroupIDErrors': '', 'AppliesReportTypeErrors': '', 'ReportReviewerGroupIDErrors': '' }); setStatus(false); setClickedRow(null)
     }
 
+    // const check_Validation_Error = (e) => {
+    //     if (RequiredFieldIncident(value.WorkflowName)) {
+    //         setErrors(prevValues => { return { ...prevValues, ['WorkflowNameErrors']: RequiredFieldIncident(value.WorkflowName) } })
+    //     }
+    //     if (RequiredFieldIncident(value.AppliesReportTypeID)) {
+    //         setErrors(prevValues => { return { ...prevValues, ['AppliesReportTypeErrors']: RequiredFieldIncident(value.AppliesReportTypeID) } })
+    //     }
+    //     if (RequiredFieldIncident(value.ReportApproverGroupID)) {
+    //         setErrors(prevValues => { return { ...prevValues, ['ReportApproverGroupIDErrors']: RequiredFieldIncident(value.ReportApproverGroupID) } })
+    //     }
+    // if (RequiredFieldIncident(value.ReportApproverRequiredID)) {
+    //     setErrors(prevValues => { return { ...prevValues, [ReportApproverRequiredIDErrors]: RequiredFieldIncident(value.ReportApproverRequiredID) } })
+    // }
+    // }
     const check_Validation_Error = (e) => {
-        if (RequiredFieldIncident(value.WorkflowName)) {
-            setErrors(prevValues => { return { ...prevValues, ['WorkflowNameErrors']: RequiredFieldIncident(value.WorkflowName) } })
-        }
-        if (RequiredFieldIncident(value.AppliesReportTypeID)) {
-            setErrors(prevValues => { return { ...prevValues, ['AppliesReportTypeErrors']: RequiredFieldIncident(value.AppliesReportTypeID) } })
-        }
-        if (RequiredFieldIncident(value.ReportApproverGroupID)) {
-            setErrors(prevValues => { return { ...prevValues, ['ReportApproverGroupIDErrors']: RequiredFieldIncident(value.ReportApproverGroupID) } })
-        }
-        if (RequiredFieldIncident(value.ReportApproverRequired)) {
-            setErrors(prevValues => { return { ...prevValues, ['ReportReviewerGroupIDErrors']: RequiredFieldIncident(value.ReportApproverRequired) } })
-        }
-    }
+        setErrors(prev => ({
+            ...prev,
+            WorkflowNameErrors: RequiredFieldIncident(value.WorkflowName),
+            AppliesReportTypeErrors: RequiredFieldIncident(value.AppliesReportTypeID),
+            ReportApproverGroupIDErrors:
+                (value.ApprovalType !== "IsSelfApproved" && value.ApprovalType !== "IsNoApproval")
+                    ? RequiredFieldIncident(value.ReportApproverGroupID)
+                    : 'true',
+            ReportReviewerGroupIDErrors:
+                (value.ApprovalType !== "IsSelfApproved" && value.ApprovalType !== "IsNoApproval")
+                    ? RequiredFieldIncident(value.ReportApproverRequired)
+                    : 'true',
+        }));
+    };
+
     const { WorkflowNameErrors, AppliesReportTypeErrors, ReportApproverGroupIDErrors, ReportReviewerGroupIDErrors } = errors
 
     useEffect(() => {
@@ -260,39 +275,63 @@ function ReportWorkflow() {
         })
     }
 
+    // const HandleChange = (e) => {
+    //     if (
+    //         e.target.name === "IsSelfApproved" ||
+    //         e.target.name === "IsNoApproval" ||
+    //         e.target.name === "IsSingleLevel" ||
+    //         e.target.name === "IsMultipleLevel"
+    //     ) {
+    //         setValue({ ...value, [e.target.name]: e.target.checked });
+    //     } else {
+    //         setValue({ ...value, [e.target.name]: e.target.value });
+    //     }
+    // };
     const HandleChange = (e) => {
-        if (
-            e.target.name === "IsSelfApproved" ||
-            e.target.name === "IsNoApproval" ||
-            e.target.name === "IsSingleLevel" ||
-            e.target.name === "IsMultipleLevel"
+        const { name, value: inputValue, checked } = e.target;
+        if (name === "ApprovalType") {
+            if (value.ApprovalType === "IsMultipleLevel" && inputValue !== "IsMultipleLevel") {
+                setValue({
+                    ...value,
+                    ApprovalType: inputValue, ReportApproverGroupID: '', approvalsRequired: '', ReportApproverRequired: '', ReportReviewerGroupID: '', skipIfApproverIsAuthor: false
+                });
+            } else { setValue({ ...value, [name]: inputValue }); }
+        }
+        else if (
+            name === "IsSelfApproved" ||
+            name === "IsNoApproval" ||
+            name === "IsSingleLevel" ||
+            name === "IsMultipleLevel"
         ) {
-            setValue({ ...value, [e.target.name]: e.target.checked });
-        } else {
-            setValue({ ...value, [e.target.name]: e.target.value });
+            setValue({ ...value, [name]: checked });
+        }
+        else {
+            setValue({ ...value, [name]: e.target.value });
         }
     };
 
+
     const columns = [
         {
-            name: "Workflow Name", selector: row => row.WorkflowName, sortable: true,
+            name: "Workflow Name", selector: row => row?.WorkflowName, sortable: true,
         },
         {
-            name: "Applies To Report Type", selector: row => row.appliesToReportType, sortable: true,
+            name: "Applies To Report Type", selector: row => row?.AppliesReportType, sortable: true,
         },
         {
-            name: "Reviewer", selector: row => row.reviewer, sortable: true,
+            name: "Reviewer", selector: row => row?.ReportReviewerGroup, sortable: true,
         },
         {
-            name: "Report Approver", selector: row => row.reportApprover, sortable: true,
+            name: "Report Approver", selector: row => row?.reportApprover, sortable: true,
         },
         {
-            name: "Report Writing Time Limit", selector: row => row.reportWritingTimeLimit, sortable: true,
+            name: "Report Writing Time Limit", selector: row => row?.reportWritingTimeLimit, sortable: true,
         },
         {
-            name: "Report Approval Time Limit", selector: row => row.reportApprovalTimeLimit, sortable: true,
+            name: "Report Approval Time Limit", selector: row => row?.reportApprovalTimeLimit, sortable: true,
         },
     ];
+
 
     const set_Edit_Value = (row) => {
         setStatus(true); setErrors(''); setReportWorkFlowID(row.ReportWorkFlowID);
@@ -453,15 +492,7 @@ function ReportWorkflow() {
                             </div>
                             <div className="col-12 d-flex align-items-center">
                                 <div className="col-6 offset-1 d-flex gap-2 align-content-center">
-                                    {/* <Select
-                                        options={approverOptions}
-                                        placeholder="Select"
-                                        styles={value.reportApproverType === "selfApproved" || value.reportApproverType === "noApproval" ? colorLessStyle_Select : coloredStyle_Select}
-                                        className="w-100"
-                                        isDisabled={value.reportApproverType === "selfApproved" || value.reportApproverType === "noApproval"}
-                                        value={value.reportApprover}
-                                        onChange={(e) => handleReportWorkflowState("reportApprover", e)}
-                                    /> */}
+
                                     <label htmlFor="" className="tab-form-label"> {errors.ReportApproverGroupIDErrors !== 'true' ? (
                                         <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReportApproverGroupIDErrors}</p>
                                     ) : null}  </label>
@@ -479,10 +510,15 @@ function ReportWorkflow() {
                                     />
                                 </div>
                                 <div className="col-2 d-flex align-self-center justify-content-end">
-                                    <label htmlFor="" className="tab-form-label"> Approvals Required (hops)  </label>
+                                    <label htmlFor="" className="tab-form-label"> Approvals Required (hops) Approvals Required (hops)
+                                        {/* {errors.ReportApproverRequiredErrors !== 'true' ? (
+                                        <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReportApproverRequiredErrors}</p>
+                                    ) : null}   */}
+                                    </label>
                                 </div>
                                 <div className="col-3">
-                                    <input type="number" className="form-control py-1 new-input requiredColor" placeholder="Enter hours" min="1" disabled={value.ApprovalType === "IsNoApproval" || value.ApprovalType === "IsSelfApproved" || value.ApprovalType === "IsSingleLevel"} value={value.approvalsRequired} onChange={(e) => handleReportWorkflowState("approvalsRequired", e.target.value)}
+                                    <input type="number" name='ReportApproverRequired' className="form-control py-1 new-input " placeholder="Enter hops" min="1"
+                                        disabled={value.ApprovalType === "IsNoApproval" || value.ApprovalType === "IsSelfApproved" || value.ApprovalType === "IsSingleLevel"} value={value.ReportApproverRequired} onChange={HandleChange}
                                     />
                                 </div>
                             </div>
@@ -506,19 +542,13 @@ function ReportWorkflow() {
                                 ) : null}</label>  </div>
                             <div className="col-4">
                                 <Select
-                                    // options={reviewerOptions}
-                                    // placeholder="Select"
-                                    // styles={value.ApprovalType === "IsNoApproval" ? colorLessStyle_Select : coloredStyle_Select}
-                                    // isDisabled={value.ApprovalType === "IsNoApproval"}
-                                    // className="w-100"
-                                    // value={value.reportReviewer}
-                                    // onChange={(e) => handleReportWorkflowState("reportReviewer", e)}
-                                    name="ReportApproverRequired"
-                                    value={groupList?.filter((obj) => obj.value === value?.ReportApproverRequired)}
+
+                                    name="ReportReviewerGroupID"
+                                    value={groupList?.filter((obj) => obj.value === value?.ReportReviewerGroupID)}
                                     isClearable
                                     placeholder="Select..."
                                     options={groupList}
-                                    onChange={(e) => ChangeDropDownReportType(e, 'ReportApproverRequired')}
+                                    onChange={(e) => ChangeDropDownReportType(e, 'ReportReviewerGroupID')}
                                     styles={value.ApprovalType === "IsSelfApproved" || value.ApprovalType === "IsNoApproval" ? colorLessStyle_Select : coloredStyle_Select}
                                     className="w-100"
                                     isDisabled={value.ApprovalType === "IsSelfApproved" || value.ApprovalType === "IsNoApproval"}
