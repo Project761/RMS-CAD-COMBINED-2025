@@ -307,7 +307,6 @@ const Home = (props) => {
     }
 
     const JustifuableOnChange = (multiSelected) => {
-
         setJustifiyID(multiSelected)
         const len = multiSelected.length - 1
         if (multiSelected?.length < justifiableHomiVal?.length) {
@@ -427,7 +426,6 @@ const Home = (props) => {
                     <div className="col-4 col-md-4 col-lg-4  mt-2" >
                         <Select
                             name='JustifiableHomicideID'
-
                             value={justifiyID}
                             isClearable={false}
                             options={justifiableHomiDrp}
@@ -444,7 +442,6 @@ const Home = (props) => {
                                     :
                                     customStylesWithOutColor
                             }
-
                         />
                     </div>
                     <div className="col-2 col-md-2 col-lg-2 mt-3">
