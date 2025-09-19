@@ -130,7 +130,7 @@ const Narrative = (props) => {
   }, [localStoreData, IncID]);
 
 
-
+  console.log(narrativeID)
   const checkId = (id, obj) => {
     const status = obj?.filter((item) => item?.value == id)
     return status?.length > 0
@@ -148,13 +148,14 @@ const Narrative = (props) => {
   }, [IncID,]);
 
   useEffect(() => {
+    console.log('hello-0')
     if (loginAgencyID) {
       dispatch(get_AgencyOfficer_Data(loginAgencyID, IncID));
       Get_WrittenForDataDrp(loginAgencyID, IncID);
       Get_AgencyWiseRedactingReport(loginAgencyID, IncID);
-      dispatch(get_Report_Approve_Officer_Data(loginAgencyID, loginPinID));
+      dispatch(get_Report_Approve_Officer_Data(loginAgencyID, loginPinID, narrativeID));
       if (narrativeTypeDrpData?.length === 0) { dispatch(get_Narrative_Type_Drp_Data(loginAgencyID)) }
-      get_Group_List(loginAgencyID); get_IncidentTab_Count(IncID, loginPinID);
+      get_Group_List(loginAgencyID, loginPinID, narrativeID); get_IncidentTab_Count(IncID, loginPinID);
     }
   }, [loginAgencyID])
 
@@ -653,6 +654,7 @@ const Narrative = (props) => {
   ]
 
   const editNarratives = (row) => {
+    console.log('hello-1')
     if (changesStatus) {
       const modal = new window.bootstrap.Modal(document?.getElementById('SaveModal'));
       modal?.show();
@@ -661,7 +663,8 @@ const Narrative = (props) => {
       if (row) {
         setNarrativeID(row?.NarrativeID);
         GetSingleData(row?.NarrativeID);
-        setUpDateCount(upDateCount + 1);
+        get_Group_List(loginAgencyID, loginPinID, row?.NarrativeID);
+        setUpDateCount(upDateCount + 1); dispatch(get_Report_Approve_Officer_Data(loginAgencyID, loginPinID, row?.NarrativeID));
         setStatus(true);
         setErrors({ ...errors, 'ReportedByPinError': '', 'AsOfDateError': '', 'NarrativeIDError': '', 'CommentsError': '', 'WrittenForIDError': '', }); setStatesChangeStatus(false);
       }
@@ -689,8 +692,8 @@ const Narrative = (props) => {
   let reportDate = reportedTime.getDate();
 
 
-  const get_Group_List = (loginAgencyID) => {
-    const value = { AgencyId: loginAgencyID, PINID: loginPinID }
+  const get_Group_List = (loginAgencyID, loginPinID, NarrativeID) => {
+    const value = { AgencyId: loginAgencyID, PINID: loginPinID, NarrativeID: NarrativeID }
     fetchPostData("Group/GetData_Grouplevel", value).then((res) => {
       if (res) {
         setGroupList(changeArrayFormat(res, 'group'))
