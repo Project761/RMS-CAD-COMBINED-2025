@@ -1397,7 +1397,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
     <>
       <div className="col-12 bb child">
         <div className="row align-items-center mt-2" style={{ rowGap: "8px" }}>
-          <div className="col-4 col-md-4 col-lg-2 ">
+          <div className="col-4 col-md-4 custom-col-12 ">
             <span data-toggle="modal" onClick={() => { setOpenPage("Law Title"); }} data-target="#ListModel" className="new-link px-0">Law Title</span>
           </div>
           <div className="col-7 col-md-7 col-lg-2">
@@ -1450,7 +1450,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
           <div className="col-4 col-md-4 col-lg-1 ">
             <label htmlFor="" className="new-label m-0">Category</label>
           </div>
-          <div className="col-7 col-md-7 col-lg-3  ">
+          <div className="col-7 col-md-7 custom-col-20 custom-col-29">
             <Select
               name="CategoryId"
               styles={customStylesWithOutColor}
@@ -1463,8 +1463,8 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
               placeholder="Select..."
             />
           </div>
-          <div className="col-4 col-md-4 col-lg-2 " style={{ lineHeight: 1.1 }}>
-            <Link to={"/ListManagement?page=Charge%20Code&call=/Off-Home"} className="new-link">Offense Code/Name</Link>
+          <div className="col-4 col-md-4 custom-col-12 " style={{ lineHeight: 1.1 }}>
+            <Link to={"/ListManagement?page=Charge%20Code&call=/Off-Home"} className="new-link text-nowrap">Offense Code/Name</Link>
             <br />
             {errors.ChargeCodeIDError !== "true" ? (
               <div style={{ color: "red", fontSize: "13px", display: "block", display: "flex", width: "100%", justifyContent: "flex-end" }}  >
@@ -1501,7 +1501,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
             </div>
             ) : null}
           </div>
-          <div className="col-2 ">
+          <div className="custom-col-20">
             <Select
               onChange={(e) => changeDropDown(e, "AttemptComplete")}
               options={StatusOption}
@@ -1512,8 +1512,8 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
               value={StatusOption.filter((option) => option.value === value?.AttemptComplete)}
             />
           </div>
-          <div className="col-4 col-md-4 col-lg-2 " style={{ lineHeight: 1.1 }}>
-            <span style={{ lineHeight: 1.1 }} data-toggle="modal" onClick={() => setOpenPage("Location Type")} data-target="#ListModel" className="new-link d-block">
+          <div className="col-4 col-md-4 custom-col-12 " style={{ lineHeight: 1.1 }}>
+            <span style={{ lineHeight: 1.1 }} data-toggle="modal" onClick={() => setOpenPage("Location Type")} data-target="#ListModel" className="new-link d-block text-nowrap">
               Primary Location Type
               {locationTypeComplteStatus && (<ErrorTooltip ErrorStr={locationTypeComplteError} />)}
               {chekLocationType(nibrsCode, primaryLocationCode) && (<ErrorTooltip ErrorStr={CyberspaceLocationError} />)}
@@ -1554,7 +1554,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
               placeholder="Select..."
             />
           </div>
-          <div className="col-4 col-md-4 col-lg-2 ">
+          <div className="" style={{ flex: "0 0 21.3%", minWidth: "21.3%" }}>
             <span data-toggle="modal" onClick={() => setOpenPage("Location Type")} data-target="#ListModel" className="new-link">Secondary Location Type </span>
           </div>
           <div className="col-7 col-md-7 col-lg-4  ">
@@ -1571,7 +1571,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
               isDisabled={!value?.PrimaryLocationId}
             />
           </div>
-          <div className="col-4 col-md-4 col-lg-2 ">
+          <div className="custom-col-12">
             <span data-toggle="modal" onClick={() => setOpenPage("Crime Left  Scene")} data-target="#ListModel" className="new-link px-0">Offender Left Scene </span>
           </div>
           <div className="col-7 col-md-7 col-lg-2  ">
@@ -1615,7 +1615,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
             </label>
 
           </div>
-          <div className="col-7 col-md-7 col-lg-2  ">
+          <div className="custom-col-20">
             <Select
               isMulti
               // styles={ loginAgencyState === 'TX' ? getGangInfoStyleColor(nibrsCode) ? getGangInfoStyleColor(nibrsCode) : customStylesWithOutColor : customStylesWithOutColor}
@@ -1646,23 +1646,17 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
               placeholder="Select..."
             />
           </div>
-          <div className="col-4 col-md-4 col-lg-2 " style={{ lineHeight: 1.1 }}>
+          {/* style={{ lineHeight: 1.1 }} */}
+          <div className="custom-col-12 " >
             <label htmlFor="" className="new-label m-0 text-nowrap">
               Premises Entered
             </label>
             <br />
             {errors.PremisesEnteredError !== "true" ? (<div style={{ color: "red", fontSize: "13px", display: "block", display: "flex", width: "100%", justifyContent: "flex-end" }}  >{errors.PremisesEnteredError}</div>) : null}
           </div>
-          <div className="col-7 col-md-7 col-lg-2 text-field my-0">
+          <div className="col-7 col-md-7 col-lg-2 text-field mt-0">
             <input
               type="text"
-              // className={
-              //   loginAgencyState === "TX" ?
-              //     nibrsCode === "220" && (primaryLocationCode === "14" || primaryLocationCode === "19") ? value?.PremisesEntered ? nibrsColor(value?.PremisesEntered) : "nibrsError" : ""
-              //     // nibrsCode === "220" && (primaryLocationCode === "14" || primaryLocationCode === "19") ? "requiredColor" : ""
-              //     :
-              //     ""
-              // }
               style={{
                 backgroundColor: loginAgencyState === "TX" &&
                   nibrsCode === "220" && (primaryLocationCode === "14" || primaryLocationCode === "19") ? value?.PremisesEntered ? "rgb(159 212 174)"
@@ -1713,31 +1707,10 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
             />
           </div>
 
-          {/* <div className="col-2 col-md-2 col-lg-2 mt-2  " style={{ display: "flex", flexDirection: "column" }}>
-            <div>   {" "}
-              <span className="new-label">
-                Cargo Theft
-                {errors.CargoTheftError !== "true" ? (
-                  <p style={{ color: "red", fontSize: "11px", margin: "0px", padding: "0px", }} > {errors.CargoTheftError}</p>
-                ) : null}
-              </span>
-            </div>
-          </div>
-          <div className="col-6 col-md-6 col-lg-2 mt-2">
-            <Select
-              name="IsCargoTheftInvolved"
-              value={YesNoArr?.filter((obj) => obj.value === value?.IsCargoTheftInvolved)}
-              options={YesNoArr}
-              menuPlacement="bottom"
-              onChange={(e) => OnChangeCargoTheft(e, "IsCargoTheftInvolved")}
-              isClearable={value?.IsCargoTheftInvolved ? true : false}
-              placeholder="Select..."
-              styles={Requiredcolour}
-            />
-          </div> */}
+        
           {nibrsCode === "220" || nibrsCode === "210" || nibrsCode === "120" || nibrsCode === "23D" || nibrsCode === "23F" || nibrsCode === "23H" || nibrsCode === "240" || nibrsCode === "26A" || nibrsCode === "26A" || nibrsCode === "23D" || nibrsCode === "26C" || nibrsCode === "26E" || nibrsCode === "26F" || nibrsCode === "26G" || nibrsCode === "270" || nibrsCode === "510" ?
             <>
-              <div className="col-2 col-md-2 col-lg-2 mt-2" style={{ display: "flex", flexDirection: "column" }}>
+              <div className="col-2 col-md-2 col-lg-2" style={{ display: "flex", flexDirection: "column" }}>
                 <div>
                   <span className="new-label">
                     Cargo Theft
@@ -1750,7 +1723,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
                 </div>
               </div>
 
-              <div className="col-6 col-md-6 col-lg-2 mt-2">
+              <div className="custom-col-20">
                 <Select
                   name="IsCargoTheftInvolved"
                   value={YesNoArr?.filter((obj) => obj.value === value?.IsCargoTheftInvolved)}
@@ -1770,13 +1743,13 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
           <div className="col-1"></div>
           <div className="col-12 ">
             <div className="row align-items-center" style={{ rowGap: "8px" }}>
-              <div className="col-2 col-md-2 col-lg-2 ">
-                <label htmlFor="" className="new-label m-0 text-nowrap">
+              <div className="custom-col-12 ">
+                <label htmlFor="" className="new-label m-0 mb-0 text-nowrap">
                   Comments
                   {errors.CommentsError !== "true" ? (<span style={{ color: "red", fontSize: "13px", margin: "0px", padding: "0px", }}  >{errors.CommentsError}</span>) : null}
                 </label>
               </div>
-              <div className="col-10  col-md-10 col-lg-6  text-field my-0">
+              <div className="col-10 col-md-10 col-lg-6 text-field mt-0">
                 <textarea
                   name="Comments"
                   className={`form-control ${loginAgencyState === "TX" && nibrsCode === "11B" ? "requiredColor" : ""} `}
@@ -1792,7 +1765,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
           </div>
           <div className="col-12 mt-1 ">
             <div className="row align-items-center" style={{ rowGap: "8px" }}>
-              <div className="col-2 col-md-2 col-lg-2 "></div>
+              <div className="custom-col-12"></div>
               <div className="col-2 col-md-2 col-lg-3 ml-4">
                 <input className="form-check-input mr-1" disabled={true} type="checkbox" name="IsCrimeAgainstPerson" checked={isCrimeAgainstPerson} value={isCrimeAgainstPerson} />
                 <label htmlFor="">Is Crime Against Person</label>
