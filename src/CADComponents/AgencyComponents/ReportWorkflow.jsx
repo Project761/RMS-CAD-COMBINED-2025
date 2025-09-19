@@ -29,6 +29,7 @@ function ReportWorkflow() {
     const [reportWorkFlowID, setReportWorkFlowID] = useState('');
     const [editval, setEditval] = useState();
     const [groupList, setGroupList] = useState([]);
+    const [showModal, setShowModal] = useState(false);
 
     const [isChange, setIsChange] = React.useState(false);
 
@@ -231,14 +232,9 @@ function ReportWorkflow() {
             ...prev,
             WorkflowNameErrors: RequiredFieldIncident(value.WorkflowName),
             AppliesReportTypeErrors: RequiredFieldIncident(value.AppliesReportTypeID),
-            ReportApproverGroupIDErrors:
-                (value.ApprovalType !== "IsSelfApproved" && value.ApprovalType !== "IsNoApproval")
-                    ? RequiredFieldIncident(value.ReportApproverGroupID)
-                    : 'true',
-            ReportReviewerGroupIDErrors:
-                (value.ApprovalType !== "IsSelfApproved" && value.ApprovalType !== "IsNoApproval")
-                    ? RequiredFieldIncident(value.ReportApproverRequired)
-                    : 'true',
+
+            ReportApproverGroupIDErrors: (value.ApprovalType !== "IsSelfApproved" && value.ApprovalType !== "IsNoApproval") ? RequiredFieldIncident(value.ReportApproverGroupID) : 'true',
+            ReportReviewerGroupIDErrors: (value.ApprovalType !== "IsSelfApproved" && value.ApprovalType !== "IsNoApproval") ? RequiredFieldIncident(value.ReportReviewerGroupID) : 'true',
         }));
     };
 
@@ -259,7 +255,7 @@ function ReportWorkflow() {
         };
         AddDeleteUpadate('ReportWorkFlow/Insert_ReportWorkFlow', Value).then((res) => {
             const parsedData = JSON.parse(res.data); const message = parsedData.Table[0].Message;
-            toastifySuccess(message); get_Data_ReportWorkflow(loginAgencyID); setStatus(false); setErrors({ ...errors, 'WorkflowNameErrors': '', });
+            toastifySuccess(message); get_Data_ReportWorkflow(loginAgencyID); setStatus(false); reset(); setErrors({ ...errors, 'WorkflowNameErrors': '', });
         })
     }
     const update_Juvenile = () => {
@@ -730,10 +726,7 @@ function ReportWorkflow() {
                     <button
                         type="button"
                         className="btn btn-primary btn-sm ml-4"
-                        onClick={() => {
-                            // Add your add new group logic here
-                            console.log('Add new group clicked');
-                        }}
+                        onClick={() => setShowModal(true)}
                     >
                         Add new group
                     </button>
@@ -753,7 +746,95 @@ function ReportWorkflow() {
                     />
                 </div>
             </div>
+            {showModal && (
+                <div className="modal show fade d-block" tabIndex="-1" role="dialog">
+                    <div className="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">Add Group</h5>
+                                <button
+                                    type="button" className="btn btn-outline-danger btn-sm"
+                                    aria-label="Close modal" title="Close" onClick={() => setShowModal(false)}
+                                >
+                                    ✖
+                                </button>
 
+                            </div>
+                            <div className="modal-body">
+                                <form>
+                                    <div className="row mb-3">
+                                        <div className="col-12">
+                                            <label className="form-label">Group Name</label>
+                                            <input type="text" name='GroupName' className="form-control" />
+                                        </div>
+                                    </div>
+
+                                    {/* <div className="row mb-3">
+                                        <div className="col-md-4 col-sm-6 col-12">
+                                            <div className="form-check">
+                                                <input className="form-check-input" type="checkbox" id="multipleAgency" />
+                                                <label className="form-check-label" htmlFor="multipleAgency">
+                                                    Is Allow Multiple Agency
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div className="col-md-4 col-sm-6 col-12">
+                                            <div className="form-check">
+                                                <input className="form-check-input" type="checkbox" id="allowSeal" />
+                                                <label className="form-check-label" htmlFor="allowSeal">
+                                                    Is Allow Seal
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div className="col-md-4 col-sm-6 col-12">
+                                            <div className="form-check">
+                                                <input className="form-check-input" type="checkbox" id="allowUnseal" />
+                                                <label className="form-check-label" htmlFor="allowUnseal">
+                                                    Is Allow UnSeal
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div> */}
+
+                                    <div className="row mb-4">
+                                        <div className="col-12">
+                                            <label className="form-label">Group Level</label>
+
+                                            <input type="text" name='level'
+                                                // value={value.level}
+                                                autocomplete="off" className="form-control"
+                                                // onChange={handleChange}
+                                                maxLength={1}
+
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="d-flex justify-content-end">
+                                        <button
+                                            type="button"
+                                            className="btn btn-success mr-2"
+                                            onClick={() => setShowModal(false)}
+                                        >
+                                            Close
+                                        </button>
+
+
+                                        <button type="submit" className="btn btn-success mr-2">
+                                            Update
+                                        </button>
+
+                                        <button type="submit" className="btn btn-success">
+                                            Save
+                                        </button>
+
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <div className="col-12">
                 <div className="btn-box text-right mt-1 mr-1">
