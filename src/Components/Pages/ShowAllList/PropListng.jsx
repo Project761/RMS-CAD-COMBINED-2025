@@ -60,7 +60,7 @@ const PropListng = (props) => {
                                     <div className="col-2 col-md-2 col-lg-1 showlist px-0">
                                         <p htmlFor="" className='label-name px-0'>Property&nbsp;No.</p>
                                     </div>
-                                    <div className="col-4 col-md-4 col-lg-1 text-show ">
+                                    <div className="col-4 col-md-4 col-lg-2 text-show ">
                                         <label htmlFor="" className=''></label>
                                     </div>
                                     <div className="col-2 col-md-2 col-lg-1 showlist">
@@ -72,7 +72,7 @@ const PropListng = (props) => {
                                     <div className="col-2 col-md-2 col-lg-1 showlist">
                                         <p htmlFor="" className='label-name'>Category:</p>
                                     </div>
-                                    <div className="col-4 col-md-4 col-lg-4 text-show">
+                                    <div className="col-4 col-md-4 col-lg-3 text-show">
                                         <label htmlFor=""></label>
                                     </div>
                                     <div className="col-2 col-md-2 col-lg-1 showlist">
@@ -95,7 +95,7 @@ const PropListng = (props) => {
                                         <div className="col-2 col-md-2 col-lg-1 showlist px-0">
                                             <p htmlFor="" className='label-name px-0'>Property&nbsp;No:</p>
                                         </div>
-                                        <div className="col-4 col-md-4 col-lg-1 text-show ">
+                                        <div className="col-4 col-md-4 col-lg-2 text-show ">
                                             <label htmlFor="" className=''>{data.PropertyNumber}</label>
                                         </div>
                                         <div className="col-2 col-md-2 col-lg-1 showlist">
@@ -107,7 +107,7 @@ const PropListng = (props) => {
                                         <div className="col-2 col-md-2 col-lg-1 showlist">
                                             <p htmlFor="" className='label-name'>Category:</p>
                                         </div>
-                                        <div className="col-4 col-md-4 col-lg-4 text-show">
+                                        <div className="col-4 col-md-4 col-lg-3 text-show">
                                             <label htmlFor="">{data.PropertyCategory_Description}</label>
                                         </div>
                                         <div className="col-2 col-md-2 col-lg-1 showlist">

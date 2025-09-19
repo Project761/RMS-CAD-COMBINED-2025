@@ -497,7 +497,7 @@ const NibrsHome = () => {
       list: <MainOffender offenderClick={offenderClick} isNibrsSummited={isNibrsSummited} ValidateProperty={ValidateProperty} />
     },
     {
-      title: isVictimConnectedError ? <span className="text-center" style={{ textAlign: 'center' }}> <u style={{ color: 'red', }}>Victim --- At least one victim must be present and must be connected with offence</u></span> : `Victim (${VictimCount})`,
+      title: isVictimConnectedError ? <span className="text-center" style={{ textAlign: 'center' }}> <u style={{ color: 'red', }}>Victim --- At least one victim must be present and must be connected with offense</u></span> : `Victim (${VictimCount})`,
       status: !victimErrorStatus && !isVictimConnectedError ? "completed" : "attention highlighted",
       sectionKey: "Victims",
       list: <MainVictims victimClick={victimClick} isNibrsSummited={isNibrsSummited} ValidateProperty={ValidateProperty} />
