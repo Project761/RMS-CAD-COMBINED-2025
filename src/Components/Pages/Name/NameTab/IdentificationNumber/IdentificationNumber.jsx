@@ -327,7 +327,7 @@ const Identification = (props) => {
       width: '250px', name: 'Identification Type', selector: (row) => row.IdType_Description, sortable: true
     },
     {
-      name: 'ID Number', selector: (row) => row.IdentificationNumber?.toUpperCase() || row.DLIdentificationNumber.toUpperCase(), sortable: true
+      name: 'Identification Number', selector: (row) => row.IdentificationNumber?.toUpperCase() || row.DLIdentificationNumber.toUpperCase(), sortable: true
     },
     {
       name: 'Expiry Date', selector: (row) => row.ExpiryDate ? getShowingWithOutTime(row.ExpiryDate) : '', sortable: true

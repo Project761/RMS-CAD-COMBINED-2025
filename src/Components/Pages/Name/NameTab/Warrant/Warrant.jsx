@@ -274,7 +274,7 @@ const Warrant = (props) => {
 
     const columns = [
         {
-            name: 'Warrant Number',
+            name: 'Warrant No.',
             selector: (row) => row.WarrantNumber,
             sortable: true
         },
