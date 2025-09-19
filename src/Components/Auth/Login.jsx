@@ -182,6 +182,7 @@ const Login = ({ login }) => {
             'Agency_Name': data['Agency_Name'],
             'PINID': data['PINID'],
             'UserName': data['userName'],
+            'fullName': data['fullName'],
             'SessionTimeOut': data['SessionTimeOut'],
             'ORI': data['ORI'],
             'BaseDate': data['ReportSubmissionDate'],

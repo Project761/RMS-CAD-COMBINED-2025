@@ -85,8 +85,9 @@ const Header = (props) => {
   useEffect(() => {
     if (localStoreData) {
       setAgencyName(localStoreData?.Agency_Name);
+      setUserName(localStoreData?.fullName);
       // setUserName(localStoreData?.UserName);
-      setUserName(localStoreData?.UserName ? localStoreData?.UserName?.split(",")[0] : '');
+      // setUserName(localStoreData?.UserName ? localStoreData?.UserName?.split(",")[0] : '');
       getReportPermission(localStoreData?.AgencyID, localStoreData?.PINID)
     }
   }, [localStoreData]);
