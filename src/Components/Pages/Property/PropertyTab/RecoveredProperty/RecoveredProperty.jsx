@@ -452,14 +452,14 @@ const RecoveredProperty = (props) => {
     return (
         <>
             <PropListng {...{ ListData }} />
-            <div className="col-12 col-md-12 pt-1 p-0" >
-                <div className="row">
-                    <div className="col-2 col-md-2 col-lg-2 mt-3">
-                        <label htmlFor="" className='label-name '>Officer Pf{errors.OfficerPFIDError !== 'true' ? (
+            <div className="col-12 col-md-12 pt-1" >
+                <div className="row align-items-center" style={{rowGap:"8px"}}>
+                    <div className="col-2 col-md-2 col-lg-1">
+                        <label htmlFor="" className='label-name mb-0 '>Officer Pf{errors.OfficerPFIDError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.OfficerPFIDError}</p>
                         ) : null}</label>
                     </div>
-                    <div className="col-4 col-md-4 col-lg-2  mt-2" >
+                    <div className="col-4 col-md-4 col-lg-2" >
                         <Select
                             name='OfficerPFID'
                             styles={Requiredcolour}
@@ -470,8 +470,8 @@ const RecoveredProperty = (props) => {
                             placeholder="Select..."
                         />
                     </div>
-                    <div className="col-2 col-md-2 col-lg-2 mt-3">
-                        <label htmlFor="" className='label-name '>Recovered Date/Time  {errors.RecoveredDateTimeError !== 'true' ? (
+                    <div className="col-2 col-md-2 col-lg-2">
+                        <label htmlFor="" className='label-name mb-0 '>Recovered Date/Time  {errors.RecoveredDateTimeError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.RecoveredDateTimeError}</p>
                         ) : null}</label>
                     </div>
@@ -549,14 +549,14 @@ const RecoveredProperty = (props) => {
                         />
 
                     </div>
-                    <div className="col-2 col-md-2 col-lg-2 mt-3">
+                    <div className="col-2 col-md-2 col-lg-2">
                         <Link to={'/ListManagement?page=Recovery%20Type&call=/Prop-Home'} className='new-link'>
                             Recovery Type{errors.RecoveryTypeIDError !== 'true' ? (
                                 <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.RecoveryTypeIDError}</p>
                             ) : null}
                         </Link>
                     </div>
-                    <div className="col-4 col-md-4 col-lg-2 mt-2" >
+                    <div className="col-4 col-md-4 col-lg-3" >
                         <Select
                             name='RecoveryTypeID'
                             value={recoveryTypeDrpData?.filter((obj) => obj.value === value?.RecoveryTypeID)}
@@ -567,23 +567,22 @@ const RecoveredProperty = (props) => {
                             placeholder="Select..."
                         />
                     </div>
-                    <div className="col-2 col-md-2 col-lg-2 mt-3">
-                        <label htmlFor="" className='label-name '>Recovered Value {errors.ContactError !== 'true' ? (
+                    <div className="col-2 col-md-2 col-lg-1">
+                        <label htmlFor="" className='label-name mb-0 text-nowrap'>Recovered Value {errors.ContactError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ContactError}</p>
                         ) : null}</label>
                     </div>
-                    <div className="col-4 col-md-4 col-lg-2 text-field mt-2" >
+                    <div className="col-4 col-md-4 col-lg-2 text-field mt-0" >
                         <input type="text" name="RecoveredValue" value={value?.RecoveredValue ?? "0.00"} onChange={HandleChanges}
                             className={`${recoverTypeCode === 'P' ? " " : "readonlyColor"} requiredColor`}
                             required readOnly={recoverTypeCode === 'P' ? false : true}
                         />
                     </div>
 
-                    <div className="col-2 col-md-2 col-lg-2 mt-3">
-                        <label htmlFor="" className='label-name '>Balance</label>
+                    <div className="col-2 col-md-2 col-lg-2">
+                        <label htmlFor="" className='label-name mb-0'>Balance</label>
                     </div>
-                    <div className="col-4 col-md-4 col-lg-2 text-field mt-2" >
-
+                    <div className="col-4 col-md-4 col-lg-2 text-field mt-0" >
                         <input type="text" name="Balance"
 
                             value={
@@ -593,14 +592,14 @@ const RecoveredProperty = (props) => {
                             }
                             onChange={HandleChanges} className="readonlyColor" required readOnly />
                     </div>
-                    <div className="col-2 col-md-2 col-lg-2 mt-3">
+                    <div className="col-2 col-md-2 col-lg-2">
                         <Link to={'/ListManagement?page=Property%20Dispositions&call=/Prop-Home'} className='new-link'>
                             Disposition{errors.DispositionIDError !== 'true' ? (
                                 <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.DispositionIDError}</p>
                             ) : null}
                         </Link>
                     </div>
-                    <div className="col-10 col-md-10 col-lg-2 mt-2" >
+                    <div className="col-10 col-md-10 col-lg-3" >
                         <Select
                             name='DispositionID'
                             value={dispositionsDrpData?.filter((obj) => obj.value === value?.DispositionID)}
@@ -611,12 +610,12 @@ const RecoveredProperty = (props) => {
                             placeholder="Select..."
                         />
                     </div>
-                    <div className="col-2 col-md-2 col-lg-2 mt-3">
-                        <label htmlFor="" className='label-name '>Comments{errors.Comments !== 'true' ? (
+                    <div className="col-2 col-md-2 col-lg-1">
+                        <label htmlFor="" className='label-name mb-0'>Comments{errors.Comments !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.Comments}</p>
                         ) : null}</label>
                     </div>
-                    <div className="col-10 col-md-10 col-lg-6 text-field mt-2" >
+                    <div className="col-10 col-md-10 col-lg-6 text-field mt-0" >
                         <textarea name='Comments' value={value?.Comments} onChange={HandleChanges} id="Comments" cols="30" rows='4' className="form-control requiredColor" style={{ resize: 'none' }}></textarea>
                     </div>
                 </div>
