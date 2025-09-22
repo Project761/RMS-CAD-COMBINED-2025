@@ -57,6 +57,7 @@ const ReportModule = (props) => {
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
     const localStoreData = useSelector((state) => state?.Agency?.localStoreData);
     const agencyOfficerDrpData = useSelector((state) => state.DropDown.agencyOfficerDrpData);
+    const agencyOfficerFullNameDrpData = useSelector((state) => state.DropDown.agencyOfficerFullNameDrpData);
     const reportApproveOfficer = useSelector((state) => state.Incident.reportApproveOfficer);
     const narrativeTypeDrpData = useSelector((state) => state.DropDown.narrativeTypeDrpData);
 
@@ -100,6 +101,8 @@ const ReportModule = (props) => {
     const [missingField, setMissingField] = useState([]);
     const [isNormalReport, setNormalReport] = useState(true);
     const [redactedComment, setRedactedComment] = useState("");
+    const [checkWebWorkFlowStatus, setcheckWebWorkFlowStatus] = useState(false);
+    const [IsSelfApproved, setIsSelfApproved] = useState(false);
     const detectedWordsRef = useRef([]);
 
     const [value, setValue] = useState({
@@ -122,6 +125,7 @@ const ReportModule = (props) => {
         if (localStoreData) {
             setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(parseInt(localStoreData?.PINID));
             getScreenPermision(localStoreData?.AgencyID, localStoreData?.PINID); GetDataTimeZone(localStoreData?.AgencyID); setnarrativeAssignId(NarrativeAssignId); get_NarrativesData(IncID, localStoreData?.PINID);
+            GetData_ReportWorkLevelCheck(localStoreData?.AgencyID, narrativeID);
             setIsSupervisor(localStoreData?.IsSupervisor); get_IncidentTab_Count(IncID, localStoreData?.PINID); setIsSuperadmin(localStoreData?.IsSuperadmin);
             if (NarrativeAssignId && tabParam && !assigned) { setNarrativeID(NarrativeAssignId); GetSingleData(NarrativeAssignId); }
             else if (NarrativeAssignId && tabParam && assigned) {
@@ -131,7 +135,7 @@ const ReportModule = (props) => {
     }, [localStoreData, IncID]);
 
 
-
+    console.log(narrativeID)
     const checkId = (id, obj) => {
         const status = obj?.filter((item) => item?.value == id)
         return status?.length > 0
@@ -149,13 +153,14 @@ const ReportModule = (props) => {
     }, [IncID,]);
 
     useEffect(() => {
+        console.log('hello-0')
         if (loginAgencyID) {
             dispatch(get_AgencyOfficer_Data(loginAgencyID, IncID));
             Get_WrittenForDataDrp(loginAgencyID, IncID);
             Get_AgencyWiseRedactingReport(loginAgencyID, IncID);
-            dispatch(get_Report_Approve_Officer_Data(loginAgencyID, loginPinID));
+            dispatch(get_Report_Approve_Officer_Data(loginAgencyID, loginPinID, narrativeID));
             if (narrativeTypeDrpData?.length === 0) { dispatch(get_Narrative_Type_Drp_Data(loginAgencyID)) }
-            get_Group_List(loginAgencyID); get_IncidentTab_Count(IncID, loginPinID);
+            get_Group_List(loginAgencyID, loginPinID, narrativeID); get_IncidentTab_Count(IncID, loginPinID);
         }
     }, [loginAgencyID])
 
@@ -176,8 +181,9 @@ const ReportModule = (props) => {
     const Get_WrittenForDataDrp = async (loginAgencyID) => {
         const val = { AgencyID: loginAgencyID, }
         await fetchPostData('Narrative/GetData_WrittenForOfficer', val).then((data) => {
+            console.log("🚀 ~ Get_WrittenForDataDrp ~ data:", data)
             if (data) {
-                setWrittenForDataDrp(changeArrayFormat_Active_InActive(data, 'PINID', 'HeadOfAgency', 'IsActive'));
+                setWrittenForDataDrp(changeArrayFormat_Active_InActive(data, 'PINID', 'FullName', 'IsActive'));
             } else {
                 setWrittenForDataDrp([]);
             }
@@ -254,7 +260,7 @@ const ReportModule = (props) => {
         } else {
             setValue({
                 ...value,
-                'ReportedByPINActivityID': checkId(loginPinID, agencyOfficerDrpData) ? loginPinID : loginPinID,
+                'ReportedByPINActivityID': checkId(loginPinID, agencyOfficerFullNameDrpData) ? loginPinID : loginPinID,
                 'WrittenForID': narrativeTypeCode?.toLowerCase() === 'ni' ? primaryOfficer : checkWrittenId(loginPinID, WrittenForDataDrp) ? loginPinID : loginPinID,
             });
             setRedactedComment("")
@@ -363,6 +369,7 @@ const ReportModule = (props) => {
             .then((res) => {
                 if (res.success) {
                     toastifySuccess(res?.Message); get_NarrativesData(incidentID, loginPinID);
+                    GetData_ReportWorkLevelCheck(localStoreData?.AgencyID, res?.NarrativeID);
                     get_IncidentTab_Count(incidentID, loginPinID); setNarrativeID(res?.NarrativeID);
                     GetSingleData(res?.NarrativeID); setStatesChangeStatus(false);
                     setChangesStatus(false); setErrors(prev => ({ ...prev, AsOfDateError: '' }));
@@ -469,6 +476,28 @@ const ReportModule = (props) => {
             }
         })
     }
+
+    const GetData_ReportWorkLevelCheck = (loginAgencyID, narrativeID) => {
+        const val = { AgencyID: loginAgencyID, NarrativeID: narrativeID };
+
+        fetchPostData('IncidentNarrativeReport/GetData_ReportWorkLevelCheck', val).then(res => {
+            if (res && res.length > 0) {
+                console.log(res);
+
+                const workflowData = res[0];
+                const canShowApprovalButton = workflowData?.IsMultipleLevel || workflowData?.IsSingleLevel;
+                const canApproved = workflowData?.IsSelfApproved;
+                setcheckWebWorkFlowStatus(canShowApprovalButton);
+                setIsSelfApproved(canApproved);
+                // setLoder(true);
+            } else {
+                // Handle case where no data is returned
+                // setNarrativeData([]);
+                // setLoder(true);
+            }
+        });
+    };
+
 
     const get_NarrativesInformation = (incidentID) => {
         const val = { IncidentId: incidentID, }
@@ -654,6 +683,7 @@ const ReportModule = (props) => {
     ]
 
     const editNarratives = (row) => {
+        console.log('hello-1')
         if (changesStatus) {
             const modal = new window.bootstrap.Modal(document?.getElementById('SaveModal'));
             modal?.show();
@@ -662,7 +692,9 @@ const ReportModule = (props) => {
             if (row) {
                 setNarrativeID(row?.NarrativeID);
                 GetSingleData(row?.NarrativeID);
-                setUpDateCount(upDateCount + 1);
+                GetData_ReportWorkLevelCheck(loginAgencyID, row?.NarrativeID);
+                get_Group_List(loginAgencyID, loginPinID, row?.NarrativeID);
+                setUpDateCount(upDateCount + 1); dispatch(get_Report_Approve_Officer_Data(loginAgencyID, loginPinID, row?.NarrativeID));
                 setStatus(true);
                 setErrors({ ...errors, 'ReportedByPinError': '', 'AsOfDateError': '', 'NarrativeIDError': '', 'CommentsError': '', 'WrittenForIDError': '', }); setStatesChangeStatus(false);
             }
@@ -683,6 +715,7 @@ const ReportModule = (props) => {
                 get_IncidentTab_Count(incidentID, loginPinID); reset();
             } else { console.log("Somthing Wrong"); }
             get_NarrativesData(incidentID, loginPinID);
+            // GetData_ReportWorkLevelCheck(loginAgencyID ,narrativeID);
         })
     }
 
@@ -690,8 +723,8 @@ const ReportModule = (props) => {
     let reportDate = reportedTime.getDate();
 
 
-    const get_Group_List = (loginAgencyID) => {
-        const value = { AgencyId: loginAgencyID, PINID: loginPinID }
+    const get_Group_List = (loginAgencyID, loginPinID, NarrativeID) => {
+        const value = { AgencyId: loginAgencyID, PINID: loginPinID, NarrativeID: NarrativeID }
         fetchPostData("Group/GetData_Grouplevel", value).then((res) => {
             if (res) {
                 setGroupList(changeArrayFormat(res, 'group'))
@@ -699,7 +732,7 @@ const ReportModule = (props) => {
                     setValue({
                         ...value,
                         ['GroupName']: changeArrayFormat_WithFilter(res, 'group', res[0]?.GroupID),
-                        'ReportedByPINActivityID': checkId(loginPinID, agencyOfficerDrpData) ? loginPinID : '',
+                        'ReportedByPINActivityID': checkId(loginPinID, agencyOfficerFullNameDrpData) ? loginPinID : '',
                         'WrittenForID': narrativeTypeCode?.toLowerCase() === 'ni' ? primaryOfficer : checkWrittenId(loginPinID, WrittenForDataDrp) ? loginPinID : '',
                         'IncidentId': incidentID, 'CreatedByUserFK': loginPinID,
                     });
@@ -730,6 +763,7 @@ const ReportModule = (props) => {
                     const message = parsedData.Table[0].Message;
                     toastifySuccess(message);
                     get_NarrativesData(incidentID, loginPinID);
+                    // GetData_ReportWorkLevelCheck(loginAgencyID ,narrativeID);
                     resets(); reset()
                 } else {
                     console.log("something Wrong");
@@ -1355,6 +1389,33 @@ const ReportModule = (props) => {
         }
     }, [value?.Status]);
 
+    console.log(IsSelfApproved);
+
+    const Add_Type_Comments = () => {
+        const { IsApprove, IsReject, Comments, CommentsDoc, ApprovalComments, ApprovingSupervisorID, IsApprovedForward } = value
+        const type = selectedOption === "Individual" ? 'Individual' : 'Group';
+
+        const val = {
+            'AgencyID': loginAgencyID,
+            'IncidentId': incidentID, 'NarrativeID': narrativeID, 'ApprovingSupervisorType': type, 'ApprovingSupervisorID': ApprovingSupervisorID, 'IsApprove': true, 'CreatedByUserFK': loginPinID,
+            // 'IncidentId': incidentID, 'NarrativeID': narrativeID, 'ApprovingSupervisorType': type, 'ApprovingSupervisorID': ApprovingSupervisorID, 'IsApprove': IsApprovedForward ? 'true' : IsApprove, 'CreatedByUserFK': loginPinID, 'IsApprovedForward': IsApprovedForward, 'IsReject': IsReject, 'Comments': ApprovalComments,
+
+        };
+        AddDeleteUpadate('IncidentNarrativeReport/Insert_IncidentNarrativeReport', val).then((res) => {
+            // get_Data_Que_Report(loginPinID, loginAgencyID);
+            const parseData = JSON.parse(res.data);
+            toastifySuccess(parseData?.Table[0].Message);
+            get_NarrativesData(incidentID, loginPinID);
+            setIsSelfApproved(false);
+            // setStatesChangeStatus(false);
+            // setIsSaved(true);
+            // setModelStatus(true);
+            // resets();
+        })
+    }
+
+
+
     // editor end
     return (
         <>
@@ -1367,12 +1428,12 @@ const ReportModule = (props) => {
                         <div className="col-12 col-sm-12">
                             <div className="card Agency incident-card">
                                 <div className="card-body">
+
                                     <div className="row mt-1 child">
                                         <div className="col-12 col-md-12 col-lg-12 px-0 pl-0">
-
                                             {/* <div>
-            {renderNarrativeData()}
-          </div> */}
+                                        {renderNarrativeData()}
+                                      </div> */}
                                             <div className="row mb-3">
                                                 <div className="col-2 col-md-2 col-lg-1 mt-2 pt-2">
                                                     <label htmlFor="" className='new-label'>Report Type  {errors.NarrativeIDError !== 'true' ? (
@@ -1476,8 +1537,10 @@ const ReportModule = (props) => {
                                                     <Select
                                                         name='ReportedByPINActivityID'
                                                         isClearable
-                                                        value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ReportedByPINActivityID)}
-                                                        options={agencyOfficerDrpData}
+                                                        value={agencyOfficerFullNameDrpData?.filter((obj) => obj.value === value?.ReportedByPINActivityID)}
+                                                        options={agencyOfficerFullNameDrpData}
+                                                        // value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ReportedByPINActivityID)}
+                                                        // options={agencyOfficerDrpData}
                                                         onChange={(e) => ChangeDropDown(e, 'ReportedByPINActivityID')}
                                                         placeholder="Select.."
                                                         menuPlacement="bottom"
@@ -1497,7 +1560,6 @@ const ReportModule = (props) => {
                                                     <Select
                                                         name="WrittenForID"
                                                         isClearable
-
                                                         styles={
                                                             value.Status === 'Pending Review' || value.Status === 'Approved' || narrativeTypeCode.toLowerCase() === 'ni' || value.Status === 'Draft' || value.Status === 'Rejected'
                                                                 ? colourStylesUsers
@@ -1704,32 +1766,33 @@ const ReportModule = (props) => {
                                                     />
                                                     <style jsx>
                                                         {`
-                ::selection {
-                   background: #000000 !important;  /* Red background for normal selection */
-                    color: #000000 !important;  /* White text for normal selection */
-                 }
-                .ql-toolbar .ql-redact {
-                    width: auto !important; /* Ensure it takes the width of the content */
-                    min-width: 60px; /* Set a reasonable minimum width */
-                    padding: 4px 10px; /* Add more padding if needed */
-                    text-align: center; /* Center the text */
-                    white-space: nowrap; /* Prevent text from wrapping */
-                }
-                  .ql-redact::before {
-                    content: "Redact";
-                    font-size: 14px;
-                    font-weight: normal;
-                }
-                .ql-editor .redacted::selection {
-                    background: transparent !important; 
-                    color: transparent !important;
-                  }
-              `}
+                                            ::selection {
+                                               background: #000000 !important;  /* Red background for normal selection */
+                                                color: #000000 !important;  /* White text for normal selection */
+                                             }
+                                            .ql-toolbar .ql-redact {
+                                                width: auto !important; /* Ensure it takes the width of the content */
+                                                min-width: 60px; /* Set a reasonable minimum width */
+                                                padding: 4px 10px; /* Add more padding if needed */
+                                                text-align: center; /* Center the text */
+                                                white-space: nowrap; /* Prevent text from wrapping */
+                                            }
+                                              .ql-redact::before {
+                                                content: "Redact";
+                                                font-size: 14px;
+                                                font-weight: normal;
+                                            }
+                                            .ql-editor .redacted::selection {
+                                                background: transparent !important; 
+                                                color: transparent !important;
+                                              }
+                                          `}
                                                     </style>
                                                 </span>
                                             }
                                         </div>
                                     </div >
+
                                     <div className="col-12">
                                         {/* Approval  */}
                                         <div className="row ">
@@ -1867,14 +1930,95 @@ const ReportModule = (props) => {
 
 
 
+                                                        {/* {
+                                              narrativeID && value.Status != "Pending Review" && value.Status != "Rejected" && value.Status != "Approved" || narrativeID && value.Status === "Rejected" && value.ReportedByPINActivityID === loginPinID  ? <>
+                                                <div className=" ">
+                                                  <button type="button" disabled={((value.ReportedByPINActivityID != loginPinID && value.Status === 'Draft') || value.Status === 'Approved') ? true : false} onClick={(e) => { check_Validation_ErrorApproval(); }} className="btn btn-sm btn-success"  >Send For Approval</button>
+                                                </div>
+                                              </> :
+                                                <></>
+                                            } */}
                                                         {
-                                                            narrativeID && value.Status != "Pending Review" && value.Status != "Rejected" && value.Status != "Approved" || narrativeID && value.Status === "Rejected" && value.ReportedByPINActivityID === loginPinID ? <>
-                                                                <div className=" ">
-                                                                    <button type="button" disabled={((value.ReportedByPINActivityID != loginPinID && value.Status === 'Draft') || value.Status === 'Approved') ? true : false} onClick={(e) => { check_Validation_ErrorApproval(); }} className="btn btn-sm btn-success"  >Send For Approval</button>
-                                                                </div>
-                                                            </> :
-                                                                <></>
+                                                            checkWebWorkFlowStatus ? (
+                                                                narrativeID && (
+                                                                    (value.Status !== "Pending Review" &&
+                                                                        value.Status !== "Rejected" &&
+                                                                        value.Status !== "Approved") ||
+                                                                    (value.Status === "Rejected" && value.ReportedByPINActivityID === loginPinID)
+                                                                ) ? (
+                                                                    <div className=" ">
+                                                                        <button
+                                                                            type="button"
+                                                                            disabled={
+                                                                                value.ReportedByPINActivityID !== loginPinID &&
+                                                                                    value.Status === 'Draft' ||
+                                                                                    value.Status === 'Approved'
+                                                                                    ? true
+                                                                                    : false
+                                                                            }
+                                                                            onClick={(e) => {
+                                                                                check_Validation_ErrorApproval();
+                                                                            }}
+                                                                            className="btn btn-sm btn-success"
+                                                                        >
+                                                                            Send For Approval
+                                                                        </button>
+                                                                    </div>
+                                                                ) : (
+                                                                    <></>
+                                                                )
+                                                            ) : null
                                                         }
+                                                        {
+                                                            IsSelfApproved ? (
+                                                                narrativeID && (
+                                                                    (value.Status !== "Pending Review" &&
+                                                                        value.Status !== "Rejected" &&
+                                                                        value.Status !== "Approved") ||
+                                                                    (value.Status === "Rejected" && value.ReportedByPINActivityID === loginPinID)
+                                                                ) ? (
+                                                                    <div className=" ">
+                                                                        <button
+                                                                            type="button"
+                                                                            disabled={
+                                                                                value.ReportedByPINActivityID !== loginPinID &&
+                                                                                    value.Status === 'Draft' ||
+                                                                                    value.Status === 'Approved'
+                                                                                    ? true
+                                                                                    : false
+                                                                            }
+                                                                            onClick={(e) => {
+                                                                                Add_Type_Comments();
+                                                                            }}
+                                                                            className="btn btn-sm btn-success"
+                                                                        >
+                                                                            Approved
+                                                                        </button>
+                                                                    </div>
+                                                                ) : (
+                                                                    <></>
+                                                                )
+                                                            ) : null
+                                                        }
+                                                        {/* {
+                                              IsSelfApproved ?
+                                                <>
+                                                  <div className=" ">
+                                                    <button
+                                                      type="button"
+                                                      onClick={(e) => {
+                                                        Add_Type_Comments();
+                                                      }}
+                                                      className="btn btn-sm btn-success"
+                                                    >
+                                                      Approved
+                                                    </button>
+                                                  </div>
+                                                </> : <></>
+                            
+                            
+                                            } */}
+
                                                     </li>
                                                     <li className=''>
                                                         <button type="button" className="btn btn-sm btn-success mr-1 " onClick={() => { reset(); }}>New</button>
@@ -2011,6 +2155,7 @@ export default ReportModule;
 const NarrativeModal = (props) => {
 
     const agencyOfficerDrpData = useSelector((state) => state.DropDown.agencyOfficerDrpData);
+    const agencyOfficerFullNameDrpData = useSelector((state) => state.DropDown.agencyOfficerFullNameDrpData);
     const localStoreData = useSelector((state) => state?.Agency?.localStoreData);
     const narrativeTypeDrpData = useSelector((state) => state.DropDown.narrativeTypeDrpData);
     const [writtenForID, setWrittenForID] = useState([]);
@@ -2176,6 +2321,7 @@ const NarrativeModal = (props) => {
                 const parsedData = JSON.parse(res.data);
                 const message = parsedData.Table[0].Message;
                 toastifySuccess(message);
+
                 setshowModal(false);
                 resetOfficers();
                 setErrors({ ...errors, ['AssignCommentError']: '', });
@@ -2231,8 +2377,10 @@ const NarrativeModal = (props) => {
                                                 name='OfficerID'
                                                 isClearable
                                                 // styles={colourStyles}
-                                                value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.OfficerID)}
-                                                options={agencyOfficerDrpData}
+                                                value={agencyOfficerFullNameDrpData?.filter((obj) => obj.value === value?.OfficerID)}
+                                                options={agencyOfficerFullNameDrpData}
+                                                // value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.OfficerID)}
+                                                // options={agencyOfficerDrpData}
                                                 onChange={(e) => ChangeDropDown(e, 'OfficerID')}
                                                 placeholder="Select.."
                                                 styles={

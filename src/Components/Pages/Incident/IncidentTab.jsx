@@ -109,17 +109,16 @@ const IncidentTab = () => {
                                             >
                                                 Officer Activity
                                             </span>
-                                            <span
+                                            {/* <span
                                                 className={`nav-item ${showIncPage === 'Report' ? 'active' : ''} ${!status ? 'disabled' : ''}`}
                                                 data-toggle={changesStatus ? "modal" : "pill"}
                                                 data-target={changesStatus ? "#SaveModal" : ''}
                                                 style={{ color: showIncPage === 'Report' ? 'Red' : tabCount?.NarrativeCount > 0 ? 'blue' : '#000', }}
                                                 aria-current="page"
                                                 onClick={() => { if (!changesStatus) setShowIncPage('Report') }}
-
                                             >
                                                 Report{`${tabCount?.NarrativeCount > 0 ? '(' + tabCount?.NarrativeCount + ')' : ''}`}
-                                            </span>
+                                            </span> */}
                                             {
                                                 showPoliceForce &&
                                                 <span
@@ -144,14 +143,13 @@ const IncidentTab = () => {
                                                 style={{ color: showIncPage === 'AuditLog' ? 'Red' : tabCount?.IncidentLocationCount > 0 ? 'blue' : '#000', }}
                                                 aria-current="page"
                                                 onClick={() => { if (!changesStatus) setShowIncPage('AuditLog') }}
-
                                             >
                                                 Audit Log
                                             </span>
 
                                         </ul>
                                     </div>
-                                </div>
+                                </div> 
                                 {
                                     showIncPage === 'home' ?
                                         <IncidentHome {...{ incidentReportedDate, setIncidentReportedDate, setShowPoliceForce, setShowIncPage, isPreviewNormalReport, setIsPreviewNormalReport }} />
