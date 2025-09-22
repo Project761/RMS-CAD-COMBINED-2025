@@ -309,7 +309,8 @@ const NibrsHome = () => {
           // set property error string
           if (proObj?.length > 0) {
 
-            const isCrimeAgainstError = proObj[0]?.OnPageError?.includes("For Crime Against Property Property must be present.");
+            const isCrimeAgainstError = proObj[0]?.OnPageError?.includes("Property must be present.");
+            // const isCrimeAgainstError = proObj[0]?.OnPageError?.includes("For Crime Against Property Property must be present.");
             const isSuspectedDrugType = proObj[0]?.OnPageError?.includes("{352} Add at least one suspected drug type(create a property with type 'Drug')");
             // const isSuspectedDrugType = proObj[0]?.OnPageError?.includes("{352} There should be atleast 1 Suspected Drug Type entry.");
             const isPropertyIdZeroError = proObj[0]?.OnPageError?.includes("{074} Need a property loss code of 5,7 for offense  23B");

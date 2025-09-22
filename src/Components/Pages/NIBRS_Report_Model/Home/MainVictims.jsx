@@ -123,7 +123,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
     const [loginPinID, setLoginPinID] = useState(1);
     const [possessionID, setPossessionID] = useState('');
     const [juvinile, setJuvinile] = useState();
-
     const [uploadImgFiles, setuploadImgFiles] = useState([]);
 
     const [onSelectLocation, setOnSelectLocation] = useState(true);
@@ -154,7 +153,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
     const [nibrsErrStr, setNibrsErrStr] = useState('');
     const [clickNibloder, setclickNibLoder] = useState(false);
     const [nibrsErrModalStatus, setNibrsErrModalStatus] = useState(false);
-
     const [nibrsFieldError, setnibrsFieldError] = useState({});
 
     const [showInjuryTypeError, setShowInjuryTypeError] = useState(false);
@@ -163,18 +161,12 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
     const [showAssignmentTypeError, setShowAssignmentTypeError] = useState(false);
     const [showOffenseTypeError, setShowOffenseTypeError] = useState(false);
     const [showJustifyHomicideError, setShowJustifyHomicideError] = useState(false);
-
-    //  victimCode offenceCodes
     const [victimCode, setVictimCode] = useState('');
-    const [offenceCodes] = useState([]);
 
     const [isSocietyName, setIsSocietyName] = useState(false);
     const [isInjurryRequired, setisInjurryRequired] = useState(false);
     const [nibrsCodeArray, setnibrsCodeArray] = useState([]);
     const [arrestCount, setarrestCount] = useState('');
-
-
-
 
     // ---------------------offence-----------------------------    
     const [offenseDrp, setOffenseDrp] = useState();
@@ -207,7 +199,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
         'NameTypeIDError': '', 'LastNameError': '', 'FirstNameError': '', 'MiddleNameError': '', 'NameReasonCodeIDError': '', 'CertifiedByIDError': '', 'ContactError': 'true', 'WeightError': 'true', 'InjuryTypeError': '',
         'HeightError': 'true', 'AgeError': 'true', 'DateOfBirthError': '', 'RaceIDError': '', 'DLError': 'true', 'SexIDError': '', 'AddressError': 'true', 'CrimeLocationError': '', 'InjuryError': '', 'ResidentError': '', 'EthnicityErrorr': '',
 
-        'CallTypeIDError': '', 'AssignmentTypeIDError': '', 'JusifiableHomicideError': '',
+        'CallTypeIDError': '', 'AssignmentTypeIDError': '', "AssaultTypeIDError": '', 'JusifiableHomicideError': '',
     })
 
     const [imgData, setImgData] = useState({
@@ -347,7 +339,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
     }, [nameTypeData, mainIncidentID])
 
     const check_Validation_Error = (e) => {
-        console.log(assaultID20Or21)
         const { LastName, FirstName, MiddleName, NameTypeID, NameReasonCodeID, SSN, DLStateID, DLNumber, Contact, HeightFrom, HeightTo, WeightFrom, WeightTo, AgeFrom, AgeTo, SexID, RaceID, DateOfBirth, IsUnknown } = value;
         if (isAdult || IsOffender || victimTypeStatus) {
             const ORI = ORIValidatorVictim(value?.ORI);
@@ -373,6 +364,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
             const InjuryTypeError = victimCode === 'L' && nibrsCodeArray?.includes('120') ? 'true' : isInjurryRequired ? validateFields(victimInjuryID) : 'true';
             const CallTypeIDError = victimCode === 'L' ? RequiredFieldIncident(value.CallTypeID) : 'true';
             const AssignmentTypeIDError = victimCode === 'L' ? RequiredFieldIncident(value.AssignmentTypeID) : 'true';
+            const AssaultTypeIDErr = nibrsCodeArray?.includes('09A') || nibrsCodeArray?.includes('09C') || nibrsCodeArray?.includes('13A') ? validateFields(assaultID) : 'true';
 
             const JusifiableHomicideErr = assaultID20Or21 ? validateFields(justifiyID) : 'true';
 
@@ -405,6 +397,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
                     ['AssignmentTypeIDError']: AssignmentTypeIDError || prevValues['AssignmentTypeIDError'],
 
                     ['JusifiableHomicideError']: JusifiableHomicideErr || prevValues['JusifiableHomicideError'],
+                    ['AssaultTypeIDError']: AssaultTypeIDErr || prevValues['AssaultTypeIDError'],
                 }
             })
 
@@ -454,6 +447,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
             const InjuryTypeError = victimCode === 'L' && nibrsCodeArray?.includes('120') ? 'true' : isInjurryRequired ? validateFields(victimInjuryID) : 'true';
             const CallTypeIDError = victimCode === 'L' ? RequiredFieldIncident(value.CallTypeID) : 'true';
             const AssignmentTypeIDError = victimCode === 'L' ? RequiredFieldIncident(value.AssignmentTypeID) : 'true';
+            const AssaultTypeIDErr = nibrsCodeArray?.includes('09A') || nibrsCodeArray?.includes('09C') || nibrsCodeArray?.includes('13A') ? validateFields(assaultID) : 'true';
 
             const JusifiableHomicideErr = assaultID20Or21 ? validateFields(justifiyID) : 'true';
 
@@ -479,6 +473,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
                     ['CallTypeIDError']: CallTypeIDError || prevValues['CallTypeIDError'],
                     ['AssignmentTypeIDError']: AssignmentTypeIDError || prevValues['AssignmentTypeIDError'],
                     ['JusifiableHomicideError']: JusifiableHomicideErr || prevValues['JusifiableHomicideError'],
+                    ['AssaultTypeIDError']: AssaultTypeIDErr || prevValues['AssaultTypeIDError'],
                 }
             })
 
@@ -534,11 +529,11 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
     };
 
     // Check All Field Format is True Then Submit   
-    const { LastNameError, OwnerPhoneNumberError, CrimeLocationError, ORITypeErrors, AgeFromError, EthnicityErrorr, ResidentError, VictimTypeError, InjuryTypeError, RoleError, OwnerFaxNumberError, FirstNameError, MiddleNameError, NameTypeIDError, CertifiedByIDError, NameReasonCodeIDError, ContactError, DLError, SSN, WeightError, HeightError, AgeError, DateOfBirthError, RaceIDError, SexIDError, CallTypeIDError, AssignmentTypeIDError, JusifiableHomicideError } = errors
+    const { LastNameError, OwnerPhoneNumberError, CrimeLocationError, ORITypeErrors, AgeFromError, EthnicityErrorr, ResidentError, VictimTypeError, InjuryTypeError, RoleError, OwnerFaxNumberError, FirstNameError, MiddleNameError, NameTypeIDError, CertifiedByIDError, NameReasonCodeIDError, ContactError, DLError, SSN, WeightError, HeightError, AgeError, DateOfBirthError, RaceIDError, SexIDError, CallTypeIDError, AssignmentTypeIDError, JusifiableHomicideError, AssaultTypeIDError } = errors
 
     useEffect(() => {
         if (nameTypeCode === 'B') {
-            if (LastNameError === 'true' && FirstNameError === 'true' && ORITypeErrors === 'true' && CrimeLocationError === 'true' && InjuryTypeError === 'true' && RoleError === 'true' && CrimeLocationError === 'true' && OwnerPhoneNumberError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true' && CallTypeIDError === 'true' && AssignmentTypeIDError === 'true' && JusifiableHomicideError === 'true') {
+            if (LastNameError === 'true' && FirstNameError === 'true' && ORITypeErrors === 'true' && CrimeLocationError === 'true' && InjuryTypeError === 'true' && RoleError === 'true' && CrimeLocationError === 'true' && OwnerPhoneNumberError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true' && CallTypeIDError === 'true' && AssignmentTypeIDError === 'true' && JusifiableHomicideError === 'true' && AssaultTypeIDError === 'true') {
 
                 if (MstPage === "MST-Name-Dash") {
                     if (masterNameID) {
@@ -556,7 +551,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
                 }
             }
         } else if (isAdult || IsOffender || victimTypeStatus) {
-            if (LastNameError === 'true' && OwnerPhoneNumberError === 'true' && ORITypeErrors === 'true' && CrimeLocationError === 'true' && InjuryTypeError === 'true' && VictimTypeError === 'true' && RoleError === 'true' && ResidentError === 'true' && EthnicityErrorr === 'true' && AgeFromError === 'true' && FirstNameError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true' && DateOfBirthError === 'true' && RaceIDError === 'true' && SexIDError === 'true' && CallTypeIDError === 'true' && AssignmentTypeIDError === 'true' && JusifiableHomicideError === 'true') {
+            if (LastNameError === 'true' && OwnerPhoneNumberError === 'true' && ORITypeErrors === 'true' && CrimeLocationError === 'true' && InjuryTypeError === 'true' && VictimTypeError === 'true' && RoleError === 'true' && ResidentError === 'true' && EthnicityErrorr === 'true' && AgeFromError === 'true' && FirstNameError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true' && DateOfBirthError === 'true' && RaceIDError === 'true' && SexIDError === 'true' && CallTypeIDError === 'true' && AssignmentTypeIDError === 'true' && JusifiableHomicideError === 'true' && AssaultTypeIDError === 'true') {
                 if (MstPage === "MST-Name-Dash") {
                     if (masterNameID) {
                         Update_Name();
@@ -572,7 +567,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
                     }
                 }
             }
-        } else if (LastNameError === 'true' && OwnerPhoneNumberError === 'true' && ORITypeErrors === 'true' && CrimeLocationError === 'true' && InjuryTypeError === 'true' && VictimTypeError === 'true' && RoleError === 'true' && FirstNameError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true' && CallTypeIDError === 'true' && AssignmentTypeIDError === 'true' && JusifiableHomicideError === 'true') {
+        } else if (LastNameError === 'true' && OwnerPhoneNumberError === 'true' && ORITypeErrors === 'true' && CrimeLocationError === 'true' && InjuryTypeError === 'true' && VictimTypeError === 'true' && RoleError === 'true' && FirstNameError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true' && CallTypeIDError === 'true' && AssignmentTypeIDError === 'true' && JusifiableHomicideError === 'true' && AssaultTypeIDError === 'true') {
             if (MstPage === "MST-Name-Dash") {
                 if (masterNameID) {
                     Update_Name();
@@ -588,7 +583,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
                 }
             }
         }
-    }, [LastNameError, FirstNameError, OwnerPhoneNumberError, EthnicityErrorr, ORITypeErrors, MiddleNameError, ResidentError, InjuryTypeError, VictimTypeError, RoleError, AgeFromError, CrimeLocationError, OwnerFaxNumberError, DLError, NameTypeIDError, NameReasonCodeIDError, ContactError, SSN, WeightError, HeightError, AgeError, DateOfBirthError, RaceIDError, SexIDError, CallTypeIDError, AssignmentTypeIDError, JusifiableHomicideError])
+    }, [LastNameError, FirstNameError, OwnerPhoneNumberError, EthnicityErrorr, ORITypeErrors, MiddleNameError, ResidentError, InjuryTypeError, VictimTypeError, RoleError, AgeFromError, CrimeLocationError, OwnerFaxNumberError, DLError, NameTypeIDError, NameReasonCodeIDError, ContactError, SSN, WeightError, HeightError, AgeError, DateOfBirthError, RaceIDError, SexIDError, CallTypeIDError, AssignmentTypeIDError, JusifiableHomicideError, AssaultTypeIDError])
 
     useEffect(() => {
         if (loginAgencyID) {
@@ -2282,6 +2277,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
     const get_JustifiableHomicide_Data = (victimID) => {
         const val = { 'VictimID': victimID, }
         fetchPostData('VictimJustifiableHomicide/GetData_VictimJustifiableHomicide', val).then((res) => {
+            // console.log("🚀 ~ get_JustifiableHomicide_Data ~ res:", res)
             if (res) {
                 setJustifiableHomiEditVal(Comman_changeArrayFormatJustfiableHomicide(res, 'VictimJustifiableHomicideID', 'JustifiableHomicideID', 'PretendToBeID', 'JustifiableHomicide_Description', 'JustifiableHomicideCode'));
 
@@ -2423,28 +2419,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
             boxShadow: 0,
         }),
     };
-
-    const check_StatutoryRape = (offenceCodes, type, nameSingleData) => {
-        // StatutoryRape
-        const StatutoryRapeCodeArr = ['36B'];
-        const StatutoryRapeCodeSet = new Set(StatutoryRapeCodeArr);
-        const StatutoryRapeCommanCodes = offenceCodes?.filter(value => StatutoryRapeCodeSet.has(value));
-
-        // StatutoryRape / Rape
-        const rapeandStatutoryCode = ['36B', '11A'];
-        const rapeandStatutoryCodeSet = new Set(rapeandStatutoryCode);
-        const RapeCommanCodes = offenceCodes?.filter(value => rapeandStatutoryCodeSet.has(value));
-
-        if (StatutoryRapeCommanCodes?.length > 0 && nameSingleData[0]?.AgeFrom > 18) {
-            return type === 'Color' ? ErrorStyle(true) : ErrorTooltip(StatutoryRapeError);
-
-        } else if (RapeCommanCodes?.length > 0 && nameSingleData[0]?.Gender_Code != 'M' && nameSingleData[0]?.Gender_Code != 'F') {
-            return type === 'Color' ? ErrorStyle(true) : ErrorTooltip(SexOfVictimError);
-
-        } else {
-            return false
-        }
-    }
 
     const ErrorColorStyle = {
         control: base => ({
@@ -2992,17 +2966,13 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
         }
     }, [DeNameID, loginPinID, DeMasterNameID]);
 
-
     const codes_for_IndividualVictim = ["100", "11A", "11B", "11C", "11D", "120", "13A", "13B", "210", "64A", "64B"]
 
     const get_OffenseName_Data = (DeNameID) => {
         const val = { 'NameID': DeNameID }
         fetchPostData('NameOffense/GetData_NameOffense', val).then((res) => {
             if (res) {
-
-
                 setTypeOfSecurityEditVal(offenseArray(res, 'NameOffenseID', 'OffenseID', 'NameID', 'NameID', 'Offense_Description', 'PretendToBeID'));
-
 
                 setHas120RoberyOffense(res.some(item => item.FBICode === "220"));
                 const hasPropertyCrime = res.some(item => item.IsCrimeAgains_Person === true);
@@ -3033,11 +3003,9 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
     }, [typeOfSecurityEditVal])
 
     const get_Offense_DropDown = (incidentID, nameID) => {
-
         const val = { 'IncidentID': incidentID, 'NameID': nameID, 'MasterNameID': masterNameID, 'IsMaster': nameID ? false : true }
         fetchPostData('NameOffense/GetData_InsertNameOffense', val).then((data) => {
             if (data) {
-
                 setOffenseDrp(threeColVictimOffenseArray(data, 'CrimeID', 'Offense_Description'));
 
             } else {
@@ -3235,6 +3203,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
         setStatesChangeStatus(true);
     };
 
+
+    console.log("nibrsCodeArray", nibrsCodeArray);
 
     return (
         <>
@@ -3883,17 +3853,16 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
                                         <div className="col-2 col-md-2 col-lg-1 mt-3">
                                             <span data-toggle="modal" onClick={() => { setOpenPage('Assault Type') }} data-target="#ListModel" className='new-link'>
                                                 Assault Type
-                                                {
+                                                {/* {
                                                     loginAgencyState === 'TX' ?
-                                                        assultCodeArr?.includes("08") && offenceCodes?.length < 2 ? <ErrorTooltipComp ErrorStr={'Must have multiple offenses when Assault/Homicide Circumstances = 08'} />
-                                                            :
-                                                            assult_Type_Nibrs_Errors(assultCodeArr, offenceCodes, 'Tooltip')
+                                                       <>
+                                                        </>
                                                         :
                                                         <>
                                                         </>
-                                                }
-                                                {errors.DropError !== 'true' ? (
-                                                    <span style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.DropError}</span>
+                                                } */}
+                                                {errors.AssaultTypeIDError !== 'true' ? (
+                                                    <span style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.AssaultTypeIDError}</span>
                                                 ) : null}
                                             </span>
                                         </div>
@@ -3910,9 +3879,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
                                                 className="basic-multi-select"
                                                 styles={
                                                     loginAgencyState === 'TX' ?
-                                                        assultCodeArr?.includes("08") && offenceCodes?.length < 2 ? nibrsStylesColor
-                                                            :
-                                                            customStylesWithOutColor1
+
+                                                        nibrsCodeArray?.includes('09A') || nibrsCodeArray?.includes('09C') || nibrsCodeArray?.includes('13A') ? nibrsStylesColor : customStylesWithOutColor1
                                                         :
                                                         customStylesWithOutColor1
                                                 }

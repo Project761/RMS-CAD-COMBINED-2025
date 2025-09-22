@@ -1724,7 +1724,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
           </div>
           <div className="col-3 col-md-3 col-lg-4  ">
             <label htmlFor="" className="new-label mb-0">
-              Occurred to Date/Time
+              Occurred To Date/Time
             </label>
           </div>
           <div className="col-7  col-md-7 col-lg-3 ">

@@ -180,6 +180,7 @@ const Tab = () => {
         const pathname = window.location.pathname;
         if (pathname.includes('Inc-Home')) setCurrentTab('Incident');
         if (pathname.includes('Off-Home')) setCurrentTab('Offense');
+        if (pathname.includes('/Inc-Report')) setCurrentTab('Report');
         if (pathname.includes('Name-Home')) setCurrentTab('Name');
         if (pathname.includes('Prop-Home')) setCurrentTab('Property');
         if (pathname.includes('Vehicle-Home')) setCurrentTab('Vehicle');
@@ -333,6 +334,18 @@ const Tab = () => {
                             onClick={() => { if (!changesStatus) { setCurrentTab('Offense') } }}
                         >
                             Offense{`${incidentCount[0]?.OffenseCount > 0 ? '(' + incidentCount[0]?.OffenseCount + ')' : ''}`}
+                        </Link>
+                    </li>
+                    <li className="nav-item" >
+                        <Link
+                            className={`nav-link${active === `/Inc-Report?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}` ? 'active' : ''} ${incidentStatus ? '' : 'disabled'}`}
+                            to={changesStatus ? currentLocation : `/Inc-Report?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}`}
+                            style={{ color: currentTab === 'Report' ? 'Red' : incidentCount[0]?.OffenseCount > 0 ? 'blue' : '#130e0e', fontWeight: '600' }}
+                            data-toggle={changesStatus ? "modal" : "pill"}
+                            data-target={changesStatus ? "#SaveModal" : ''}
+                            onClick={() => { if (!changesStatus) { setCurrentTab('Report') } }}
+                        >
+                            Report
                         </Link>
                     </li>
                     <li className="nav-item">

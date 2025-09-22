@@ -1201,7 +1201,7 @@ const OffenderVictim = () => {
                                     <fieldset className='mt-2'>
                                         <legend>Offense</legend>
                                         <div className='row mt-3 align-align-items-center'>
-                                            <div className="col-2 col-md-3 col-lg-1">
+                                            <div className="col-2 col-md-3 col-lg-1 mt-3">
                                                 <label htmlFor="" className='new-label mb-0 '>Offense Code/Name</label>
                                             </div>
                                             <div className="col-4 col-md-4 col-lg-11  text-field">

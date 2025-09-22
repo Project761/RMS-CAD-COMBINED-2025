@@ -13,7 +13,7 @@ import ForgotPassword from './Components/Auth/ForgotPassword';
 import ChangePassword from './Components/Auth/ChangePassword';
 import LockedUser from './Components/Pages/LockedUser/LockedUser';
 import ListManagement from './Components/Pages/Utility/ListManagement/ListManagement';
-import ScreenPermision from './Components/Pages/Utility/SecurityManager/ScreenPermission/ScreenPermision'; 
+import ScreenPermision from './Components/Pages/Utility/SecurityManager/ScreenPermission/ScreenPermision';
 import { ToastContainer } from 'react-toastify';
 import AgencyTab from './Components/Pages/Agency/ModalTest/AgencyTab';
 import PersonnelTab from './Components/Pages/PersonnelCom/PersonnelModal/PersonnelTab';
@@ -196,6 +196,7 @@ import UseOfForcePendingReport from './Components/Pages/UseOfForcePendingReport/
 import DashboardAll from './Components/Pages/AllReport/AllReport';
 import PropertyAuditTab from './Components/Pages/Audit/Home';
 import Property_RoomTab from './Components/Pages/Audit/Audit_RoomTab';
+import ReportModule from './Components/Pages/ReportModule/ReportModule';
 // import PropertyAuditTab from './Components/Pages/PropertyRoom/Audit/Home';
 
 
@@ -297,6 +298,7 @@ function App() {
 
             {/* --------------------------------------- offense Tab------------------------------------   */}
             <Route exact path="/Off-Home" element={<Auth cmp={OffenceHomeTabs} path="/Off-Home" incidentSideBar={incidentSideBar} />} />
+            <Route exact path="/Inc-Report" element={<Auth cmp={ReportModule} path="/Inc-Report" incidentSideBar={incidentSideBar} />} />
             {/* --------------------------------------- name Tab------------------------------------   */}
             <Route exact path="/Name-Home" element={<Auth cmp={NameTab} path="/Name-Home" incidentSideBar={incidentSideBar} />} />
             {/* --------------------------------------- property Tab------------------------------------   */}
