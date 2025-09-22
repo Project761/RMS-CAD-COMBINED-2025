@@ -117,6 +117,7 @@ const Home = (props) => {
     const [selectedOptiontask, setselectedOptiontask] = useState("Individual");
     const [transferdate, settransferdate] = useState();
     const [storagetype, setstoragetype] = useState();
+    const [radioButtonStatus, setradioButtonStatus] = useState(false);
 
 
     const AddType = [
@@ -157,7 +158,7 @@ const Home = (props) => {
                 const matchedOption = AddType.find(option => option.value === ProType);
                 if (matchedOption) { setSelectedOptions(matchedOption); }
             }
-            setValue({ ...value, 'PropertyTypeID': parseInt(ProNumber), 'ActivityType': ProTransfer })
+            // setValue({ ...value, 'PropertyTypeID': parseInt(ProNumber), 'ActivityType': ProTransfer })
             settransfer(ProTransfer); setPropertyNumber(ProNumber); GetDataTimeZone(localStoreData?.AgencyID);
         }
     }, [localStoreData, ProType, ProNumber, CallStatus, DecPropID, SelectedCategory, propertyTypeData, ProTransfer]);
@@ -216,6 +217,7 @@ const Home = (props) => {
     }
 
     const handleRadioChange = (event) => {
+        setradioButtonStatus(true)
         setSelectedOption(event.target.value);
         const { value: selectedOption } = event.target;
         setValue(prevState => ({
@@ -290,7 +292,7 @@ const Home = (props) => {
         })
     }
 
-    const { ReasonError, PropertyRoomOfficerError, CheckInDateTimeError,NewStorageLocationError, StorageLocationError, SubmittingOfficerError, CheckOutDateTimeError, ExpectedReturnDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
+    const { ReasonError, PropertyRoomOfficerError, CheckInDateTimeError, NewStorageLocationError, StorageLocationError, SubmittingOfficerError, CheckOutDateTimeError, ExpectedReturnDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
         DestructionDateTimeError, DestructionOfficerError, UpdatingOfficerError, ApprovalOfficerError, WitnessError, TransferDateTimeError, UpdateDateTimeError } = errors
 
     useEffect(() => {
@@ -301,7 +303,7 @@ const Home = (props) => {
 
             { Add_Type() }
         }
-    }, [ReasonError, PropertyRoomOfficerError, CheckInDateTimeError,NewStorageLocationError ,  StorageLocationError, SubmittingOfficerError, CheckOutDateTimeError, ExpectedReturnDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
+    }, [ReasonError, PropertyRoomOfficerError, CheckInDateTimeError, NewStorageLocationError, StorageLocationError, SubmittingOfficerError, CheckOutDateTimeError, ExpectedReturnDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
         DestructionDateTimeError, DestructionOfficerError, UpdatingOfficerError, ApprovalOfficerError, WitnessError, TransferDateTimeError, UpdateDateTimeError
     ])
 
@@ -368,7 +370,7 @@ const Home = (props) => {
         });
     };
 
-    console.log(selectedCategory)
+   
 
     const GetData_PropertyroomRadio = (propertyId, category) => {
         const val = {
@@ -488,8 +490,7 @@ const Home = (props) => {
         const MasterPropertyId = masterpropertyId;
         const ActivityType = selectedOption;
         const CreatedByUserFK = loginPinID;
-        console.log("PropertyID::", PropertyID)
-        console.log("MasterPropertyId::", MasterPropertyId)
+      
         const { ActivityReasonID, ExpectedDate, ActivityComments, DestinationStorageLocation, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate, CourtDate,
             ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId, IsCheckIn,
             IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, activitydate, AgencyID, PackagingDetails,
@@ -708,7 +709,7 @@ const Home = (props) => {
 
     const ChangeDropDown = (e, name) => {
         if (e && name === "CollectingOfficer") {
-            console.log("CollectingOfficer dropdown change:::", e)
+           
             setCollectingOfficer(e.value)
         }
         else if (e && name === 'Task' || e === null && name === 'Task') {
@@ -767,8 +768,18 @@ const Home = (props) => {
     };
 
     const setStatusFalse = (e) => {
-        setIsClearing(true); setSelectedRows([]); setSelectedStatus('');
-        navigate(`/Property-room?&ProId=${0}&MProId=${0}&ProRomId=${0}&ProRoomStatus=${true}&selectedCategory=${''}&ProType=${''}&ProNumber=${''}&ProTransfer=${''}&CallStatus=${false}`); reset(); setPropertyId(''); setClickedRow(null); setPropertyNumber(''); setSelectedRows([]); setSearchStoragePath(''); setSelectedOptions(AddType[0]); setPossessionID(''); setValue({ ...value, ['ReportedDate']: '', ['ReportedDateTo']: '' }); setToggleClear(!toggleClear);
+        reset();
+
+        setIsClearing(true);
+         setSelectedRows([]); setSelectedStatus('');
+        navigate(`/Property-room?&ProId=${0}&MProId=${0}&ProRomId=${0}&ProRoomStatus=${true}&selectedCategory=${''}&ProType=${''}&ProNumber=${''}&ProTransfer=${''}&CallStatus=${false}`); 
+         setPropertyId(''); setClickedRow(null);
+          setPropertyNumber('');
+           setSelectedRows([]); 
+          setSearchStoragePath(''); setSelectedOptions(AddType[0]);
+           setPossessionID(''); 
+        //    setValue({ ...value, ['ReportedDate']: '', ['ReportedDateTo']: '' });
+         setToggleClear(!toggleClear);
         sessionStorage.setItem('selectedRows', '');
     }
 
@@ -869,18 +880,23 @@ const Home = (props) => {
             ...value,
             'PropertyID': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
             'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '',
-            'MasterPropertyId': '', 'IsCheckIn': false, 'IsCheckOut': false, 'IsRelease': '', 'IsDestroy': '', 'IsTransferLocation': '', 'IsUpdate': '', 'CreatedByUserFK': '', 'PropertyTypeID': '',
+            'MasterPropertyId': '', 'IsCheckIn': '', 'IsCheckOut': '', 'IsRelease': '', 'IsDestroy': '', 'IsTransferLocation': '', 'IsUpdate': '', 'CreatedByUserFK': '', 'PropertyTypeID': '',
             'OtherPersonNameID': '', 'LastSeenDtTm': '', 'PackagingDetails': '',
+            ['ReportedDate']: '', ['ReportedDateTo']: ''
         });
         setErrors({
             ...errors,
             'ReasonError': '', 'ActivityDateError': '', 'InvestigatorError': '', 'PropertyError': '', 'ExpectedDateError': '', 'OfficerNameError': '', 'NameError': '', 'CourtDateError': '', 'ReleaseDateError': '', 'DestroyDateError': '', 'TypeError': '', 'TransferError': '', 'LocationError': '', 'SearchError': '', 'ActivityDtTmError': '',
         })
+        setradioButtonStatus(false);
         setsearcherror(prevValues => { return { ...prevValues, 'SearchError': '', } })
         setCourtdate(''); setreleasedate(''); setdestroydate(''); setExpecteddate('');
-        setSelectedStatus(''); setRowClicked(''); setSelectedOption(''); setactivitydate(''); setReasonIdDrp([]); setLocationPath('');
-        setDescription(''); setRowClicked(''); setSearchData([]);
-        setSelectedRows([]); setToggleClear(!toggleClear); setStatus(''); settransfer(null); setEditval([]);
+        setSelectedStatus(''); setRowClicked(''); setSelectedOption(null); setactivitydate(''); setReasonIdDrp([]); setLocationPath('');
+        setDescription('');
+         setRowClicked(''); 
+         setSearchData([]);
+        setSelectedRows([]);
+         setToggleClear(!toggleClear); setStatus(''); settransfer(null); setEditval([]);
     }
 
     const conditionalRowStyles = [
@@ -1098,7 +1114,7 @@ const Home = (props) => {
     };
 
     useEffect(() => {
-        console.log(editval, selectedOption)
+       
         if (editval && selectedOption === 'Update') {
             setValue({
                 ...value, PropertyID: editval?.PropertyID || '', ActivityType: editval?.ActivityType || '',
@@ -1136,7 +1152,9 @@ const Home = (props) => {
         setfunctiondone(!functiondone);
 
     }
-    console.log(editval)
+
+
+   
 
     return (
         <>
@@ -4190,10 +4208,10 @@ const Home = (props) => {
                                 }`}
                         />
 
-                      
+
                     </div>
                     {/** ➕ Add Button Section **/}
-                  
+
                     <div className='col-12 col-md-12 col-lg-4'></div>
 
 
@@ -4469,7 +4487,7 @@ const Home = (props) => {
                     <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={() => { setStatusFalse(); }}>
                         Clear
                     </button>
-                    <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={(e) => {
+                    <button type="button" disabled={radioButtonStatus === false} className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={(e) => {
                         check_Validation_Error();
                         setEnabledStatus("")
                     }}>
