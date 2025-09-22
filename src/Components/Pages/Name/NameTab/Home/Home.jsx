@@ -2137,7 +2137,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                   </div>
                   {
                     !nameID &&
-                    <div className="col-12 col-md-3 col-lg-1 name-box text-center " >
+                    <div className="col-12 col-md-3 col-lg-1 name-box mt-0 text-center " >
                       <button type="button" data-toggle="modal" data-target="#SearchModal" className="btn btn-sm btn-success" onClick={() => getNameSearch(loginAgencyID, value?.NameTypeID, value.LastName, value.FirstName, value.MiddleName, value.DateOfBirth, value.SSN, value.HeightFrom, value.HeightTo, value.WeightFrom, value.WeightTo, value.EthnicityID, value.RaceID, value.SexID, value.PhoneTypeID, value.Contact, true)}>Search</button>
                     </div>
                   }
@@ -2342,7 +2342,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
 
                   <div className="col-12 col-md-7 col-lg-3">
                     <div className="row align-items-center">
-                      <div className="col-12 col-md-2">
+                      <div className="col-12 col-md-1">
                         <label htmlFor="" className='label-name mb-0'>Age {errors.AgeFromError !== 'true' ? (
                           <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.AgeFromError}</p>
                         ) : null}</label>
@@ -2376,7 +2376,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                       <div className="col-1 text-center px-0">
                         <span className="dash-name">_</span>
                       </div>
-                      <div className="col-5 col-md-1 mt-0 text-field px-0 " >
+                      <div className="col-5 col-md-2 mt-0 text-field px-0 " >
                         <input type="text" name='AgeTo' maxLength={3}
                           style={{
                             textAlign: 'center', ...(value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.AgeTo ? {
@@ -2463,96 +2463,109 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                   </div>
 
 
-                  <div className="col-12 col-md-12 col-lg-3 d-flex align-items-center ">
-                    <div className="col-2 col-md-2 col-lg-4">
-                      <span data-toggle="modal" onClick={() => { setOpenPage('Ethnicity') }} data-target="#ListModel" className='new-link px-0'>
-                        Ethnicity{errors.EthnicityErrorr !== 'true' ? (
-                          <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.EthnicityErrorr}</p>
-                        ) : null}
 
-                      </span>
-                    </div>
-                    <div className="col-10 col-md-10 col-lg-8">
-                      <Select
-                        name='EthnicityID'
-                        value={ethinicityDrpData?.filter((obj) => obj.value === value?.EthnicityID)}
-                        options={ethinicityDrpData}
-                        onChange={(e) => ChangeDropDown(e, 'EthnicityID')}
-                        isClearable
-                        placeholder="Select..."
-                        styles={nibrsSubmittedName === 1 ? LockFildscolour : (value?.IsUnknown === 'true' || value?.IsUnknown === true) ? customStylesWithOutColor : victimTypeStatus ? Requiredcolour : ''}
-
-                        isDisabled={value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-1 col-md-1 col-lg-1 ">
-                    <label htmlFor="" className='label-name mb-0 text-nowrap'>Weight
-                      <p className='text-center mb-0' style={{ fontWeight: 'bold', fontSize: '10px' }}>(LBS)</p>
-                      {errors.WeightError !== 'true' ? (
-                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.WeightError}</p>
+                  <div className="col-2 col-md-2 col-lg-1">
+                    <span data-toggle="modal" onClick={() => { setOpenPage('Ethnicity') }} data-target="#ListModel" className='new-link px-0'>
+                      Ethnicity{errors.EthnicityErrorr !== 'true' ? (
+                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.EthnicityErrorr}</p>
                       ) : null}
-                    </label>
+
+                    </span>
                   </div>
-                  <div className="col-2 col-md-2 col-lg-1 text-field mt-0" >
-                    <input type="text" name='WeightFrom' ref={crossButtonRef} onBlur={(e) => {
-                      if (e.target.name === 'WeightFrom' &&
-                        e.relatedTarget !== crossButtonRef.current &&
-                        e.relatedTarget?.name !== 'HeightFrom' &&
-                        e.relatedTarget?.name !== 'HeightTo') {
-                        handleWeightFromBlur(e);
-                      }
-                    }} value={value?.WeightFrom} maxLength={3} onKeyDown={handleKeyDown} onChange={HandleChange} required disabled={nameTypeCode === "B" ? true : false} readOnly={nameTypeCode === "B" ? true : false} className={nameTypeCode === "B" ? 'readonlyColor' : ''} placeholder='From' autoComplete='off' />
+                  <div className="col-10 col-md-10 col-lg-2">
+                    <Select
+                      name='EthnicityID'
+                      value={ethinicityDrpData?.filter((obj) => obj.value === value?.EthnicityID)}
+                      options={ethinicityDrpData}
+                      onChange={(e) => ChangeDropDown(e, 'EthnicityID')}
+                      isClearable
+                      placeholder="Select..."
+                      styles={nibrsSubmittedName === 1 ? LockFildscolour : (value?.IsUnknown === 'true' || value?.IsUnknown === true) ? customStylesWithOutColor : victimTypeStatus ? Requiredcolour : ''}
+
+                      isDisabled={value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
+                    />
                   </div>
-                  <span className='dash-name' >_</span>
-                  <div className="col-3 col-md-2 col-lg-1 px-0 ">
-                    <div className="text-field px-2 mt-0">
-                      <input type="text" name='WeightTo' ref={crossButtonRef} onBlur={(e) => {
-                        if (e.target.name === 'WeightTo' &&
-                          e.relatedTarget !== crossButtonRef.current &&
-                          e.relatedTarget?.name !== 'HeightFrom' &&
-                          e.relatedTarget?.name !== 'HeightTo') {
-                          handleWeightToBlur(e);
-                        }
-                      }} value={value?.WeightTo} maxLength={3} onChange={HandleChange} required className={(nameTypeCode === "B" || !value?.WeightFrom || value.WeightFrom === '0' || value.WeightFrom === '00' || value.WeightFrom === '000') ? 'readonlyColor' : ''} disabled={(nameTypeCode === "B" || !value?.WeightFrom || value.WeightFrom === '0' || value.WeightFrom === '00' || value.WeightFrom === '000') ? true : false} readOnly={nameTypeCode === "B" ? true : false} placeholder='To' autoComplete='off' />
-                    </div>
-                  </div>
-                  <div className="col-1 col-md-2 col-lg-1 ">
-                    <label htmlFor="" className='label-name mb-0 text-nowrap'>Height
-                      <p className='text-center mb-0' style={{ fontWeight: 'bold', fontSize: '10px' }}>(FT)</p>
-                      {errors.HeightError !== 'true' ? (
-                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.HeightError}</p>
-                      ) : null}
-                    </label>
-                  </div>
-                  <div className="col-2 col-md-2 col-lg-1 text-field mt-0" >
-                    <input type="text" name='HeightFrom' maxLength={3} value={value?.HeightFrom}
-                      onBlur={(e) => {
-                        if (e.target.name === 'HeightFrom' && e.relatedTarget !== crossButtonRef.current &&
-                          e.relatedTarget?.name !== 'WeightFrom' &&
-                          e.relatedTarget?.name !== 'WeightTo') {
-                          HeightFromOnBlur(e);
-                        }
-                      }}
-                      onChange={HandleChange}
-                      required
-                      onKeyDown={handleKeyDown} disabled={nameTypeCode === "B" ? true : false} readOnly={nameTypeCode === "B" ? true : false} className={nameTypeCode === "B" ? 'readonlyColor' : ''} placeholder='From' autoComplete='off' />
-                  </div>
-                  <span className='dash-name ' >_</span>
-                  <div className="col-3 col-md-2 col-lg-1 ">
-                    <div className="text-field px-2 mt-0">
-                      <input type="text" name='HeightTo' maxLength={3} value={value?.HeightTo} onBlur={(e) => {
-                        if (e.target.name === 'HeightTo' && e.relatedTarget !== crossButtonRef.current &&
-                          e.relatedTarget?.name !== 'WeightFrom' &&
-                          e.relatedTarget?.name !== 'WeightTo') {
-                          HeightOnChange(e);
-                        }
-                      }}
-                        onChange={HandleChange} required className={nameTypeCode === "B" || !value.HeightFrom ? 'readonlyColor' : ''} disabled={nameTypeCode === "B" || !value.HeightFrom ? true : false} readOnly={nameTypeCode === "B" ? true : false} placeholder='To' autoComplete='off' />
+
+                  <div className='col-lg-3'>
+                    <div className='row align-items-center'>
+                      <div className="col-12 col-md-3 ">
+                        <label htmlFor="" className='label-name mb-0 text-nowrap'>Weight
+                          <p className='text-center mb-0' style={{ fontWeight: 'bold', fontSize: '10px' }}>(LBS)</p>
+                          {errors.WeightError !== 'true' ? (
+                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.WeightError}</p>
+                          ) : null}
+                        </label>
+                      </div>
+                      <div className="col-5 col-md-4  text-field mt-0" >
+                        <input type="text" name='WeightFrom' ref={crossButtonRef} onBlur={(e) => {
+                          if (e.target.name === 'WeightFrom' &&
+                            e.relatedTarget !== crossButtonRef.current &&
+                            e.relatedTarget?.name !== 'HeightFrom' &&
+                            e.relatedTarget?.name !== 'HeightTo') {
+                            handleWeightFromBlur(e);
+                          }
+                        }} value={value?.WeightFrom} maxLength={3} onKeyDown={handleKeyDown} onChange={HandleChange} required disabled={nameTypeCode === "B" ? true : false} readOnly={nameTypeCode === "B" ? true : false} className={nameTypeCode === "B" ? 'readonlyColor' : ''} placeholder='From' autoComplete='off' />
+                      </div>
+                      <div className="col-2 col-md-1 text-center">
+                        <span className="dash-name">_</span>
+                      </div>
+                      <div className="col-5 col-md-4 ">
+                        <div className="text-field mt-0">
+                          <input type="text" name='WeightTo' ref={crossButtonRef} onBlur={(e) => {
+                            if (e.target.name === 'WeightTo' &&
+                              e.relatedTarget !== crossButtonRef.current &&
+                              e.relatedTarget?.name !== 'HeightFrom' &&
+                              e.relatedTarget?.name !== 'HeightTo') {
+                              handleWeightToBlur(e);
+                            }
+                          }} value={value?.WeightTo} maxLength={3} onChange={HandleChange} required className={(nameTypeCode === "B" || !value?.WeightFrom || value.WeightFrom === '0' || value.WeightFrom === '00' || value.WeightFrom === '000') ? 'readonlyColor' : ''} disabled={(nameTypeCode === "B" || !value?.WeightFrom || value.WeightFrom === '0' || value.WeightFrom === '00' || value.WeightFrom === '000') ? true : false} readOnly={nameTypeCode === "B" ? true : false} placeholder='To' autoComplete='off' />
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="" style={{flex: '0 0 7.33%', maxWidth:"0 0 7.33%"}} >
+                  <div className='col-lg-3'>
+                    <div className='row align-items-center'>
+                      <div className="col-12 col-md-3  ">
+                        <label htmlFor="" className='label-name mb-0 text-nowrap'>Height
+                          <p className='text-center mb-0' style={{ fontWeight: 'bold', fontSize: '10px' }}>(FT)</p>
+                          {errors.HeightError !== 'true' ? (
+                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.HeightError}</p>
+                          ) : null}
+                        </label>
+                      </div>
+                      <div className="col-5 col-md-4 text-field mt-0" >
+                        <input type="text" name='HeightFrom' maxLength={3} value={value?.HeightFrom}
+                          onBlur={(e) => {
+                            if (e.target.name === 'HeightFrom' && e.relatedTarget !== crossButtonRef.current &&
+                              e.relatedTarget?.name !== 'WeightFrom' &&
+                              e.relatedTarget?.name !== 'WeightTo') {
+                              HeightFromOnBlur(e);
+                            }
+                          }}
+                          onChange={HandleChange}
+                          required
+                          onKeyDown={handleKeyDown} disabled={nameTypeCode === "B" ? true : false} readOnly={nameTypeCode === "B" ? true : false} className={nameTypeCode === "B" ? 'readonlyColor' : ''} placeholder='From' autoComplete='off' />
+                      </div>
+                      <div className="col-2 col-md-1 text-center">
+                        <span className="dash-name">_</span>
+                      </div>
+                      <div className="col-5 col-md-4 ">
+                        <div className="text-field mt-0">
+                          <input type="text" name='HeightTo' maxLength={3} value={value?.HeightTo} onBlur={(e) => {
+                            if (e.target.name === 'HeightTo' && e.relatedTarget !== crossButtonRef.current &&
+                              e.relatedTarget?.name !== 'WeightFrom' &&
+                              e.relatedTarget?.name !== 'WeightTo') {
+                              HeightOnChange(e);
+                            }
+                          }}
+                            onChange={HandleChange} required className={nameTypeCode === "B" || !value.HeightFrom ? 'readonlyColor' : ''} disabled={nameTypeCode === "B" || !value.HeightFrom ? true : false} readOnly={nameTypeCode === "B" ? true : false} placeholder='To' autoComplete='off' />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="col-2 col-md-2 col-lg-1 px-0" >
                     <span data-toggle="modal" onClick={() => { setOpenPage('Resident') }} data-target="#ListModel" className='new-link px-0'>
                       Resident{errors.ResidentError !== 'true' ? (
                         <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ResidentError}</p>
@@ -2587,7 +2600,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                       ) : null}</label>
                   </div>
                   <div className="col-3 col-md-3 col-lg-2 text-field mt-0" >
-                    <input type="text"
+                    <input style={{height:"35px"}} type="text"
                       readOnly={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? true : false}
                       className={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? 'readonlyColor' : ''} maxLength={10} name='SSN' value={value?.SSN}
                       onChange={HandleChange} required autoComplete='off' />

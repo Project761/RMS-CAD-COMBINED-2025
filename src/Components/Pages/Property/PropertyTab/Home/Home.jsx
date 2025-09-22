@@ -2534,23 +2534,24 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                 </div>
 
               </div>
-              {navigateStatus && <div className="col-2 col-md-2 col-lg-3 mt-1">
-                {(
+              <div className="col-2 col-md-2 col-lg-3 mt-1">
+                {navigateStatus && (
                   <span
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
                     onClick={handleClick}
                     style={{
-                      color: isHovered ? 'blue' : 'red',
-                      transition: 'background-color 0.3s ease',
-                      cursor: 'pointer'
+                      color: isHovered ? "blue" : "red",
+                      transition: "background-color 0.3s ease",
+                      cursor: "pointer",
                     }}
                   >
-                    <u> Navigate to Miscellaneous Information</u>
+                    <u>Navigate to Miscellaneous Information</u>
                   </span>
                 )}
-              </div>}
-              <div className="col-5  col-md-5 col-lg-3" >
+              </div>
+
+              <div className="col-5 col-md-5 col-lg-6 text-right " >
                 {
                   (!propertyID || !masterPropertyID) && (ProSta != 'true' || ProSta != true) && (value.PropertyCategoryCode === 'D') &&
                   <button
@@ -2567,9 +2568,8 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                         value?.CategoryID,
                         value?.ClassificationID,
                         value?.OfficerID,
-
                         loginAgencyID,
-                        setSearchModalState,));
+                        setSearchModalState,))
                       setSearchModalState(true);
                     }}
                   >
@@ -2577,6 +2577,8 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                   </button>
                 }
               </div>
+
+
             </div>
           </div>
           <div className="col-3 col-md-3 col-lg-1 pt-3 " >

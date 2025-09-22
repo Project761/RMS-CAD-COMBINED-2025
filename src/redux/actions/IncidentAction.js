@@ -23,8 +23,8 @@ export const get_AgencyOfficer_Data = (ID, IncID) => async (dispatch) => {
     })
 };
 
-export const get_Report_Approve_Officer_Data = (ID, PinID) => async (dispatch) => {
-    const val = { AgencyID: ID, 'PINID': PinID };
+export const get_Report_Approve_Officer_Data = (ID, PinID, NarrativeID) => async (dispatch) => {
+    const val = { AgencyID: ID, 'PINID': PinID, 'NarrativeID': NarrativeID };
     fetchPostData('IncidentNarrativeReport/GetDropDown_ReportApprovedPersonnel', val).then((data) => {
         if (data) {
 
