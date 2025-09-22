@@ -67,6 +67,7 @@ const MiscellaneousInformation = (props) => {
   const [taskEditVal, setTaskEditVal] = useState([]);
   const [taskListModalStatus, setTaskListModalStatus] = useState(false);
   const [task, setTask] = useState("");
+  const [LastTask, setLastTask] = useState("");
   const [taskListStatus, setTaskListStatus] = useState("");
   const [taskToSend, setTaskToSend] = useState("");
   const [selectedFile, setSelectedFile] = useState([]);
@@ -210,14 +211,30 @@ const MiscellaneousInformation = (props) => {
       });
   };
 
+  // const Get_SendTask_Data = (PropertyID, MasterPropertyID) => {
+  //   const val = { PropertyID: PropertyID, MasterPropertyID: MasterPropertyID };
+  //   fetchPostData("TaskList/GetData_TaskList", val)
+  //     .then((res) => {
+  //       if (res) {
+  //         setTask(res[res.length - 1]?.Task);
+  //       } else {
+  //         setTask("");
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       toastifyError(err?.message);
+  //     });
+  // };
   const Get_SendTask_Data = (PropertyID, MasterPropertyID) => {
-    const val = { PropertyID: PropertyID, MasterPropertyID: MasterPropertyID };
+    const val = { PropertyID, MasterPropertyID };
     fetchPostData("TaskList/GetData_TaskList", val)
       .then((res) => {
-        if (res) {
-          setTask(res[res.length - 1]?.Task);
+        if (res && res.length > 0) {
+          setLastTask(res[res.length - 1]?.Task); // Get the last task
+          setTask(res[0]); // Set current task
         } else {
-          setTask("");
+          setTask(null); // If no task exists, set task to null
         }
       })
       .catch((err) => {
@@ -647,10 +664,12 @@ const MiscellaneousInformation = (props) => {
   const ChangeDropDown = (e, name) => {
     !addUpdatePermission && setStatesChangeStatus(true);
     !addUpdatePermission && setChangesStatus(true);
+
+    // When user selects a task
     if ((e && name === "Task") || (e === null && name === "Task")) {
       setTaskToSend(e ? e.label : "");
 
-      if (e) TaskListvalidation(e.label);
+      if (e) TaskListvalidation(e.label); // Validate selected task
     } else if (e) {
       setValue({
         ...value,
@@ -665,14 +684,36 @@ const MiscellaneousInformation = (props) => {
   };
   const TaskListvalidation = (selectedStatus) => {
     setTaskListStatus("");
-    if (task === "CheckIn" && selectedStatus === "CheckIn") {
-      setTaskListStatus("Task already send to task list ");
-    } else if (task === "CheckOut" && selectedStatus === "CheckOut") {
-      setTaskListStatus("Already Checkout ");
-    } else if (task === "CheckOut" && selectedStatus === "Transfer Location") {
-      setTaskListModalStatus(true);
+    let tasksInList = [];
+    try {
+      const parsed = JSON.parse(task?.tasklistdata || "[]");
+      tasksInList = parsed.map((item) => item.Task);
+    } catch (err) {
+      console.error("Error parsing tasklistdata:", err);
+    }
+    if (tasksInList.includes(selectedStatus)) {
+      if (selectedStatus === "CheckIn") {
+        setTaskListStatus("Task already sent to task list");
+        setChangesStatus(false);
+      } else if (selectedStatus === "CheckOut") {
+        setTaskListStatus("Already checked out");
+        setChangesStatus(false);
+      }
+      else if (selectedStatus === "Transfer Location") {
+        setChangesStatus(false);
+        setTaskListModalStatus(true);
+      }
+    } else {
+      if (LastTask === "CheckIn" && selectedStatus === "CheckIn") {
+        setTaskListStatus("Task already sent to task list");
+      } else if (LastTask === "CheckOut" && selectedStatus === "CheckOut") {
+        setTaskListStatus("Already checked out");
+      } else if (LastTask === "CheckOut" && selectedStatus === "Transfer Location") {
+        setTaskListModalStatus(true);
+      }
     }
   };
+
 
   const TaskListDataChange = (multiSelected) => {
     setSendTaskId(multiSelected);
@@ -716,7 +757,7 @@ const MiscellaneousInformation = (props) => {
           toastifySuccess(message);
           setTaskToSend();
           setMultiSelected({ optionSelected: [] });
-           setSelectedOption("Individual");
+          setSelectedOption("Individual");
           Get_SendTask_Data(DecPropID, DecMPropID);
           Get_SendTask_DrpVal(DecPropID, DecMPropID);
 
@@ -813,19 +854,19 @@ const MiscellaneousInformation = (props) => {
       return arr;
     } else {
       console.log("Task::", task);
-      const status = task;
+      const status = LastTask;
       arr = [{ value: "1", label: "CheckIn" }];
       if (status) {
         const filteredvalue = StatusOption.filter(
-          (item) => item.label !== task
+          (item) => item.label !== LastTask
         );
         console.log(filteredvalue);
         return filteredvalue;
+        // return StatusOption;
       }
       return arr;
     }
   };
-
   console.log(PropertyRoomStatus);
 
   const filterTime = (time) => {
@@ -961,6 +1002,8 @@ const MiscellaneousInformation = (props) => {
       // get_IncidentTab_Count(IncID, loginPinID);
     }
   }, [loginAgencyID]);
+
+  console.log(task, LastTask)
 
   return (
     <>
@@ -2484,7 +2527,7 @@ const MiscellaneousInformation = (props) => {
                                 gap: "8px",
                               }}
                             >
-                              <Select
+                              {/* <Select
                                 onChange={(e) => ChangeDropDown(e, "Task")}
                                 options={HandleStatusOption()}
                                 isClearable
@@ -2495,6 +2538,17 @@ const MiscellaneousInformation = (props) => {
                                     (option) => option.label === taskToSend
                                   ) || null
                                 }
+                                styles={{
+                                  container: (base) => ({ ...base, flex: 1 }),
+                                }}
+                              /> */}
+                              <Select
+                                onChange={(e) => ChangeDropDown(e, "Task")}
+                                options={HandleStatusOption()} 
+                                isClearable
+                                menuPlacement="top"
+                                placeholder="Select..."
+                                value={StatusOption.find((option) => option.label === taskToSend) || null}
                                 styles={{
                                   container: (base) => ({ ...base, flex: 1 }),
                                 }}
