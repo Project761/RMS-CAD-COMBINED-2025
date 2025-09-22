@@ -232,7 +232,6 @@ function ReportWorkflow() {
             ...prev,
             WorkflowNameErrors: RequiredFieldIncident(value.WorkflowName),
             AppliesReportTypeErrors: RequiredFieldIncident(value.AppliesReportTypeID),
-
             ReportApproverGroupIDErrors: (value.ApprovalType !== "IsSelfApproved" && value.ApprovalType !== "IsNoApproval") ? RequiredFieldIncident(value.ReportApproverGroupID) : 'true',
             ReportReviewerGroupIDErrors: (value.ApprovalType !== "IsSelfApproved" && value.ApprovalType !== "IsNoApproval") ? RequiredFieldIncident(value.ReportReviewerGroupID) : 'true',
         }));
