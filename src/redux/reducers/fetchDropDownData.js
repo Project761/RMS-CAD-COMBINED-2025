@@ -2,7 +2,7 @@ import { Decrypt_Id_Name } from "../../Components/Common/Utility";
 
 import {
     //----------------------------------------Drop_DownsDataArrays-----------------------------------
-    Agency_OfficerDrp_Data, DL_State_DrpData, PropertyType_Data, Arrestee_Name_DrpData, Property_LossCode_Drp_Data, Color_Drp_Data,
+    Agency_OfficerDrp_Data, Agency_Officer_FullName_Drp_Data, DL_State_DrpData, PropertyType_Data, Arrestee_Name_DrpData, Property_LossCode_Drp_Data, Color_Drp_Data,
     State_DrpData, Material_Drp_Data, Make_Drp_Data, Propulusion_Drp_Data, WeaponMake_Drp_Data, DrugManufactured_Drp_Data, TypeMarijuana_Drp_Data,
     MeasureType_Drp_Data, SuspectedDrug_Drp_Data, WeaponModel_Drp_Data, BoatModel_Drp_Data, VOD_Drp_Data, PropertySourceDrug_Drp_Data,
     Country_Drp_Data, States_Drp_Data, City_Drp_Data, DL_States_Drp_Data, HowVerify_Drp_Data, Resident_Drp_Data, Marital_Drp_Data,
@@ -28,7 +28,7 @@ import {
 const initialState = {
     // All use
     uniqueId: sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '',
-    agencyOfficerDrpData: [], dlStateDrpData: [], propertyTypeData: [], arresteeNameData: [], arresteeNameMissingData: [], propertyLossCodeDrpData: [], colorDrpData: [],
+    agencyOfficerDrpData: [], agencyOfficerFullNameDrpData: [], dlStateDrpData: [], propertyTypeData: [], arresteeNameData: [], arresteeNameMissingData: [], propertyLossCodeDrpData: [], colorDrpData: [],
     stateDrpData: [], materialDrpData: [], makeDrpData: [], propulusionDrpData: [], weaponMakeDrpData: [], drugManufacturedDrpData: [], typeMarijuanaDrpData: [],
     measureTypeDrpData: [], suspectedDrugDrpData: [], weaponModelDrpData: [], boatModelDrpData: [], vodDrpData: [], propSourceDrugDrpData: [],
     countryDrpData: [], statesDrpData: [], cityDrpData: [], dlStatesDrpData: [], howVerifyDrpData: [], residentDrpData: [], maritalDrpData: [],
@@ -229,11 +229,11 @@ const DropDownReducer = (state = initialState, action) => {
                 ...state,
                 mastersNameDrpData: action.payload
             }
-      case Possession_Owner_Name_Drp_Data:
-                return {
-                    ...state,
-                    ownerPossessionDrpData: action.payload
-                }
+        case Possession_Owner_Name_Drp_Data:
+            return {
+                ...state,
+                ownerPossessionDrpData: action.payload
+            }
         case Contact_Type_Drp_Data:
             return {
                 ...state,
@@ -348,6 +348,11 @@ const DropDownReducer = (state = initialState, action) => {
             return {
                 ...state,
                 agencyOfficerDrpData: action.payload
+            }
+        case Agency_Officer_FullName_Drp_Data:
+            return {
+                ...state,
+                agencyOfficerFullNameDrpData: action.payload
             }
         case DL_State_DrpData:
             return {

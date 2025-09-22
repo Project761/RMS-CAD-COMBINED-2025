@@ -2505,7 +2505,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                     }} value={value?.WeightFrom} maxLength={3} onKeyDown={handleKeyDown} onChange={HandleChange} required disabled={nameTypeCode === "B" ? true : false} readOnly={nameTypeCode === "B" ? true : false} className={nameTypeCode === "B" ? 'readonlyColor' : ''} placeholder='From' autoComplete='off' />
                   </div>
                   <span className='dash-name' >_</span>
-                  <div className="col-3 col-md-2 col-lg-1 ">
+                  <div className="col-3 col-md-2 col-lg-1 px-0 ">
                     <div className="text-field px-2 mt-0">
                       <input type="text" name='WeightTo' ref={crossButtonRef} onBlur={(e) => {
                         if (e.target.name === 'WeightTo' &&
@@ -2552,14 +2552,14 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                     </div>
                   </div>
 
-                  <div className="col-lg-1 px-0 text-right" >
+                  <div className="" style={{flex: '0 0 7.33%', maxWidth:"0 0 7.33%"}} >
                     <span data-toggle="modal" onClick={() => { setOpenPage('Resident') }} data-target="#ListModel" className='new-link px-0'>
                       Resident{errors.ResidentError !== 'true' ? (
                         <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ResidentError}</p>
                       ) : null}
                     </span>
                   </div>
-                  <div className="col-md-2">
+                  <div className="col-10 col-md-10 col-lg-2">
                     <Select
                       name="ResidentID"
                       value={residentIDDrp?.filter((obj) => obj.value === value?.ResidentID) || null}

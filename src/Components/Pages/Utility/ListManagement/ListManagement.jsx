@@ -45,7 +45,8 @@ const ListManagement = () => {
               {
                 openPage === 'Race' ?
                   <AddUpList
-                    {...{ openPage }} col4='IsEditable'
+                    {...{ openPage }}
+                    col4='IsEditable'
                     col1='RaceCode' col2='Description' col3='RaceTypeID'
                     getUrl='TableManagement/GetData_Race'
                     addUrl='TableManagement/InsertRaceType'

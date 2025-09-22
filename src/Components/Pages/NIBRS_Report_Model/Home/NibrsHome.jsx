@@ -309,7 +309,8 @@ const NibrsHome = () => {
           // set property error string
           if (proObj?.length > 0) {
 
-            const isCrimeAgainstError = proObj[0]?.OnPageError?.includes("For Crime Against Property Property must be present.");
+            const isCrimeAgainstError = proObj[0]?.OnPageError?.includes("Property must be present.");
+            // const isCrimeAgainstError = proObj[0]?.OnPageError?.includes("For Crime Against Property Property must be present.");
             const isSuspectedDrugType = proObj[0]?.OnPageError?.includes("{352} Add at least one suspected drug type(create a property with type 'Drug')");
             // const isSuspectedDrugType = proObj[0]?.OnPageError?.includes("{352} There should be atleast 1 Suspected Drug Type entry.");
             const isPropertyIdZeroError = proObj[0]?.OnPageError?.includes("{074} Need a property loss code of 5,7 for offense  23B");
@@ -497,7 +498,7 @@ const NibrsHome = () => {
       list: <MainOffender offenderClick={offenderClick} isNibrsSummited={isNibrsSummited} ValidateProperty={ValidateProperty} />
     },
     {
-      title: isVictimConnectedError ? <span className="text-center" style={{ textAlign: 'center' }}> <u style={{ color: 'red', }}>Victim --- At least one victim must be present and must be connected with offence</u></span> : `Victim (${VictimCount})`,
+      title: isVictimConnectedError ? <span className="text-center" style={{ textAlign: 'center' }}> <u style={{ color: 'red', }}>Victim --- At least one victim must be present and must be connected with offense</u></span> : `Victim (${VictimCount})`,
       status: !victimErrorStatus && !isVictimConnectedError ? "completed" : "attention highlighted",
       sectionKey: "Victims",
       list: <MainVictims victimClick={victimClick} isNibrsSummited={isNibrsSummited} ValidateProperty={ValidateProperty} />
