@@ -148,13 +148,13 @@ function DashboardAll({ isPreview }) {
                                         ) : (
                                             effectiveScreenPermission ?
                                                 effectiveScreenPermission[0]?.Changeok ?
-                                                    navigate(`/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${row?.IncidentNumber}&IncSta=true&isFromDashboard=true`)
+                                                    navigate(`/Inc-Report?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${row?.IncidentNumber}&IncSta=true&isFromDashboard=true`)
                                                     : <></>
                                                 :
-                                                navigate(`/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${row?.IncidentNumber}&IncSta=true&isFromDashboard=true`)
+                                                navigate(`/Inc-Report?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${row?.IncidentNumber}&IncSta=true&isFromDashboard=true`)
                                         )
                                     ) : (
-                                        navigate(`/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&IsCadInc=${true}&narrativeAssignId=${stringToBase64(row?.NarrativeID)}&tab=Report`)
+                                        navigate(`/Inc-Report?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&IsCadInc=${true}&narrativeAssignId=${stringToBase64(row?.NarrativeID)}&tab=Report`)
                                     )}
                             </>
                         }}

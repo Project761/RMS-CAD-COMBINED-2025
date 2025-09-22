@@ -79,7 +79,7 @@ function AssignedReports() {
                         className="btn btn-sm btn-dark w-100 mb-1"
                         style={{ backgroundColor: "#001f3f", color: "#fff" }}
                         onClick={() => {
-                            navigate(`/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&IsCadInc=${true}&narrativeAssignId=${stringToBase64(row?.NarrativeAssignedID)}&tab=Report&Assigned=true`);
+                            navigate(`/Inc-Report?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&IsCadInc=${true}&narrativeAssignId=${stringToBase64(row?.NarrativeAssignedID)}&tab=Report&Assigned=true`);
                         }}
                     >
                         Edit
@@ -126,7 +126,7 @@ function AssignedReports() {
                     <span
                         onClick={() => {
                             navigate(
-                                `/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=true&IsCadInc=true&narrativeAssignId=${stringToBase64(row?.NarrativeAssignedID)}&tab=Report&Assigned=true`
+                                `/Inc-Report?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=true&IsCadInc=true&narrativeAssignId=${stringToBase64(row?.NarrativeAssignedID)}&tab=Report&Assigned=true`
                             );
                         }}
                         style={{
