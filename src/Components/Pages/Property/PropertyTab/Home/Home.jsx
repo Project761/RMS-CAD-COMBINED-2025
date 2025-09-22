@@ -2392,43 +2392,87 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
               <div className="col-3 col-md-3 col-lg-1 mt-2 px-0">
                 <label htmlFor="" className='new-label px-0' style={{ paddingLeft: '5px' }}> Possession&nbsp;Of</label>
               </div>
-              <div className="col-8 col-md-8 col-lg-3 d-flex mt-1 ">
-                <div className="col-12 col-md-12 col-lg-9">
-                  {
-                    MstPage === "MST-Property-Dash" ?
-                      <Select
-                        name='PossessionOfID'
-                        styles={customStylesWithOutColor}
-                        value={mastersNameDrpData?.filter((obj) => obj.value === value?.PossessionOfID)}
-                        isClearable
-                        options={mastersNameDrpData}
-                        onChange={(e) => { ChangeDropDown(e, 'PossessionOfID') }}
-                        placeholder="Select..."
-                      />
-                      :
-                      <Select
-                        name='PossessionOfID'
-                        styles={customStylesWithOutColor}
-                        value={arresteeNameData?.filter((obj) => obj.value === value?.PossessionOfID)}
-                        isClearable
-                        options={arresteeNameData}
-                        onChange={(e) => { ChangeDropDown(e, 'PossessionOfID') }}
-                        placeholder="Select..."
-                      />
-                  }
-                </div>
-                <div className="" data-toggle="modal" data-target="#MasterModal"  >
-                  <button
-                    onClick={() => {
-                      if (possessionID) { GetSingleDataPassion(possessionID); } setNameModalStatus(true);
-                    }}
-                    className=" btn btn-sm bg-green text-white py-1"
-                  >
-                    <i className="fa fa-plus" >
-                    </i>
-                  </button>
-                </div>
+              {/* <div className="col-8 col-md-8 col-lg-3 d-flex mt-1 "> */}
+              <div className="col-8 col-md-8 col-lg-2 mt-1">
+                {
+                  MstPage === "MST-Property-Dash" ?
+                    <Select
+                      name='PossessionOfID'
+                      styles={customStylesWithOutColor}
+                      value={mastersNameDrpData?.filter((obj) => obj.value === value?.PossessionOfID)}
+                      isClearable
+                      options={mastersNameDrpData}
+                      onChange={(e) => { ChangeDropDown(e, 'PossessionOfID') }}
+                      placeholder="Select..."
+                    />
+                    :
+                    <Select
+                      name='PossessionOfID'
+                      styles={customStylesWithOutColor}
+                      value={arresteeNameData?.filter((obj) => obj.value === value?.PossessionOfID)}
+                      isClearable
+                      options={arresteeNameData}
+                      onChange={(e) => { ChangeDropDown(e, 'PossessionOfID') }}
+                      placeholder="Select..."
+                    />
+                }
               </div>
+
+              <span
+                onClick={() => {
+                  if (possessionID) { GetSingleDataPassion(possessionID); } setNameModalStatus(true);
+                }}
+                data-toggle="modal" data-target="#MasterModal"
+                className=" btn btn-sm bg-green text-white py-1 mt-1"
+                style={{ marginRight: 'auto' }}
+              >
+                <i className="fa fa-plus" >
+                </i>
+              </span>
+
+              {/* </div> */}
+
+              {/* <div className="col-3 col-md-3 col-lg-1 mt-2 px-0">
+                <label htmlFor="" className='new-label px-0' style={{ paddingLeft: '5px' }}>Possession&nbsp;Of</label>
+              </div>
+              <div className="col-8 col-md-8 col-lg-2 mt-1 ">
+                {
+                  MstPage === "MST-Property-Dash" ?
+                    <Select
+                      name='PossessionOfID'
+                      styles={customStylesWithOutColor}
+                      value={mastersNameDrpData?.filter((obj) => obj.value === value?.PossessionOfID)}
+                      isClearable
+                      options={mastersNameDrpData}
+                      onChange={(e) => { ChangeDropDown(e, 'PossessionOfID') }}
+                      placeholder="Select..."
+                    />
+                    :
+                    <Select
+                      name='PossessionOfID'
+                      styles={customStylesWithOutColor}
+                      value={arresteeNameData?.filter((obj) => obj.value === value?.PossessionOfID)}
+                      isClearable
+                      options={arresteeNameData}
+                      onChange={(e) => { ChangeDropDown(e, 'PossessionOfID') }}
+                      placeholder="Select..."
+                    />
+                }
+            
+              </div>
+                <span
+                  data-toggle="modal" data-target="#MasterModal"
+                  onClick={() => {
+                    if (possessionID) { GetSingleDataPassion(possessionID); } setNameModalStatus(true);
+                  }}
+                  className="col-1 col-md-1 col-lg-1 btn btn-sm bg-green text-white py-1 mt-1"
+                >
+                  <i className="fa fa-plus" >
+                  </i>
+                </span> */}
+
+
+
               <div className="col-3 col-md-3 col-lg-1 mt-2 ">
                 <label htmlFor="" className='new-label '>Primary&nbsp;Officer{errors.OfficerIDError !== 'true' ? (
                   <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.OfficerIDError}</p>
@@ -2475,15 +2519,20 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
               </div>
 
             </div>
-            <div className="row mb-1">
-              <div className='col-6 col-md-6 col-lg-1'></div>
-              <div className="col-6 col-md-6 col-lg-2">
-                <div className="form-check px-2 ml-3">
-                  <input className="form-check-input" name='IsEvidence' value={value?.IsEvidence} onChange={HandleChanges} checked={value?.IsEvidence} type="checkbox" id="flexCheckDefault" disabled={editval[0]?.IsEvidence ? true : false} />
-                  <label className="form-check-label" for="flexCheckDefault">
-                    Evidence
-                  </label>
+            <div className="row">
+              <div className="col-3 col-md-3 col-lg-1 ml-1">
+              </div>
+              <div className="col-3 col-md-3 col-lg-2 ml-1">
+                <div className="col-3 col-md-3 col-lg-1">
+                  <div className="form-check px-2">
+                    <input className="form-check-input" name='IsEvidence' value={value?.IsEvidence} onChange={HandleChanges} checked={value?.IsEvidence} type="checkbox" id="flexCheckDefault" disabled={editval[0]?.IsEvidence ? true : false} />
+                    <label className="form-check-label" for="flexCheckDefault">
+                      Evidence
+                    </label>
+                  </div>
+
                 </div>
+
               </div>
               <div className="col-2 col-md-2 col-lg-3 mt-1">
                 {navigateStatus && (

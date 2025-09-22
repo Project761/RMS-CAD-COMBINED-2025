@@ -631,6 +631,7 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
       toastifyError("The primary location and secondary location cannot be the same.");
       return;
     }
+
     const MethodOfEnrtyErr = checkMethodOfEntryIsRequire(nibrsCode, loginAgencyState) ? validateFieldsMethodOfEntry(value.CrimeMethodOfEntryID) : "true";
     const WeaponTypeErr = checkWeaponTypeIsRequire(nibrsCode, loginAgencyState) ? validateFields(weaponID) : "true";
     const CriminalActivityErr = checkCriminalActivityIsRequire(nibrsCode, loginAgencyState) ? validateFields(crimeActivity) : "true";
@@ -663,7 +664,6 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
         ["AttemptRequiredError"]: AttemptRequiredErr || pre["AttemptRequiredError"],
         ["CommentsError"]: CommentsErr || pre["CommentsError"],
         ["CargoTheftError"]: CargoTheftErrorErr || pre["CargoTheftError"],
-
 
         ["OffenderUsingError"]: OffenderUsingErr || pre["OffenderUsingError"],
         ["BiasCategoryError"]: BiasCategoryErr || pre["BiasCategoryError"],
@@ -785,7 +785,6 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
       setGangInfoVal([]);
     }
   }, [editval]);
-
 
   useEffect(() => {
     nibrsCodeDrp?.filter((val) => {
@@ -1154,7 +1153,6 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
     setStatus(false); Reset(); setnibrsSubmittedOffense(0);
   };
 
-
   useEffect(() => {
     if (offenceFillterData?.length > 0) {
       const arrestChargeCounts = offenceFillterData.map(item => item.ArrestChargeCount);
@@ -1342,8 +1340,6 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
     get_MethodOfEntry_Data(row?.CrimeID);
 
   };
-
-
 
   // Custom Style
   const nibrsSuccessStyles = {
@@ -1573,44 +1569,17 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
   }
 
   const getGangInfoStyleColor = (nibrsCode) => {
-    const gangValidCodes = [
-      "11B",
-      "09A",
-      "09B",
-      "100",
-      "11A",
-      "11B",
-      "11C",
-      "11D",
-      "120",
-      "13A",
-      "13B",
-      "13C",
-    ];
+    const gangValidCodes = ["11B", "09A", "09B", "100", "11A", "11B", "11C", "11D", "120", "13A", "13B", "13C"];
     if (gangValidCodes?.includes(nibrsCode)) {
-      return value?.IsGangInfo || value?.IsGangInfo === false
-        ? nibrsSuccessStyles
-        : nibrscolourStyles;
-    } else {
+      return value?.IsGangInfo || value?.IsGangInfo === false ? nibrsSuccessStyles : nibrscolourStyles;
+    }
+    else {
       return customStylesWithOutColor;
     }
   };
 
   const isGangDisabled = (nibrsCode) => {
-    const gangValidCodes = [
-      "11B",
-      "09A",
-      "09B",
-      "100",
-      "11A",
-      "11B",
-      "11C",
-      "11D",
-      "120",
-      "13A",
-      "13B",
-      "13C",
-    ];
+    const gangValidCodes = ["11B", "09A", "09B", "100", "11A", "11B", "11C", "11D", "120", "13A", "13B", "13C"];
     return gangValidCodes?.includes(nibrsCode);
   };
 
@@ -1690,6 +1659,7 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
       setIsCrimeAgainstSociety(selectedItem?.IsCrimeAgainstSociety);
     }
   }, [value?.NIBRSCodeId,]);
+
   const isNibrs999 = offenceFillterData?.find((item) => item?.FBICode === "999" ? true : false)
 
   // useEffect(() => {
@@ -1715,6 +1685,8 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
 
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => setIsHovered(false);
+
+
   return (
     <>
       <div className="col-12">
@@ -1837,7 +1809,6 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
             />
 
           </div>
-
           <div className={`col-4 col-md-4 col-lg-2 mt-0 pt-0 `}>
             <span data-toggle="modal" onClick={() => { setOpenPage("Location Type"); }} data-target="#ListModel" className="new-link">
               Primary Location Type
@@ -1878,19 +1849,15 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
             />
 
           </div>
-
           <div className={`col-4 col-md-4 col-lg-2 `}>
-
             <label htmlFor="" className="new-label m-0 ">
               Gang Information
             </label>
-
           </div>
           <div className="col-7 col-md-7 col-lg-4  ">
             {nibrsFieldError?.GangInformation && showGangInformationError && (
               <div className="nibrs-tooltip-error">
                 <div className="tooltip-arrow"></div>
-
                 <div className="tooltip-content">
                   <span className="text-danger">
                     ⚠️ {nibrsFieldError.GangInformationError || ""}
@@ -1902,17 +1869,17 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
               isMulti
               styles={
                 loginAgencyState === "TX"
-                  ? getGangInfoStyleColor(nibrsCode)
-                    ? getGangInfoStyleColor(nibrsCode)
-                    : customStylesWithOutColor
-                  : customStylesWithOutColor
+                  ?
+                  getGangInfoStyleColor(nibrsCode) ? getGangInfoStyleColor(nibrsCode) : customStylesWithOutColor
+                  :
+                  customStylesWithOutColor
               }
               isDisabled={
                 loginAgencyState === "TX"
-                  ? isGangDisabled(nibrsCode)
-                    ? false
-                    : true
-                  : false
+                  ?
+                  isGangDisabled(nibrsCode) ? false : true
+                  :
+                  false
               }
               value={gangInfoVal}
 
@@ -2307,15 +2274,16 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
               </div>
               <div className="col-9 col-md-9 col-lg-8 ">
                 {nibrsFieldError?.Bias && showBiasError &&
-                  (<div className="nibrs-tooltip-error">
-                    <div className="tooltip-arrow"></div>
-                    <div className="tooltip-content">
-                      <span className="text-danger">
-                        ⚠️ {nibrsFieldError.BiasError || ""}
-                      </span>
+                  {/* {true && */ }
+                    (<div className="nibrs-tooltip-error" style={{ left: '-80px' }}>
+                      <div className="tooltip-arrow"></div>
+                      <div className="tooltip-content">
+                        <span className="text-danger">
+                          ⚠️ {nibrsFieldError.BiasError || ""}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                  )}
+                    )}
                 <SelectBox
                   className="basic-multi-select"
                   name="bias"

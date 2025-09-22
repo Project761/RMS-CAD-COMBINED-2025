@@ -31,7 +31,6 @@ import { matchIncidentWords } from '../../../../../CADUtils/functions/redactFind
 const Narrative = (props) => {
 
   const navigate = useNavigate();
-
   const { incidentReportedDate, isPreviewNormalReport } = props
   const useQuery = () => {
     const params = new URLSearchParams(useLocation().search);
@@ -56,6 +55,7 @@ const Narrative = (props) => {
   const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
   const localStoreData = useSelector((state) => state?.Agency?.localStoreData);
   const agencyOfficerDrpData = useSelector((state) => state.DropDown.agencyOfficerDrpData);
+  const agencyOfficerFullNameDrpData = useSelector((state) => state.DropDown.agencyOfficerFullNameDrpData);
   const reportApproveOfficer = useSelector((state) => state.Incident.reportApproveOfficer);
   const narrativeTypeDrpData = useSelector((state) => state.DropDown.narrativeTypeDrpData);
 
@@ -176,8 +176,9 @@ const Narrative = (props) => {
   const Get_WrittenForDataDrp = async (loginAgencyID) => {
     const val = { AgencyID: loginAgencyID, }
     await fetchPostData('Narrative/GetData_WrittenForOfficer', val).then((data) => {
+      console.log("🚀 ~ Get_WrittenForDataDrp ~ data:", data)
       if (data) {
-        setWrittenForDataDrp(changeArrayFormat_Active_InActive(data, 'PINID', 'HeadOfAgency', 'IsActive'));
+        setWrittenForDataDrp(changeArrayFormat_Active_InActive(data, 'PINID', 'FullName', 'IsActive'));
       } else {
         setWrittenForDataDrp([]);
       }
@@ -254,7 +255,7 @@ const Narrative = (props) => {
     } else {
       setValue({
         ...value,
-        'ReportedByPINActivityID': checkId(loginPinID, agencyOfficerDrpData) ? loginPinID : loginPinID,
+        'ReportedByPINActivityID': checkId(loginPinID, agencyOfficerFullNameDrpData) ? loginPinID : loginPinID,
         'WrittenForID': narrativeTypeCode?.toLowerCase() === 'ni' ? primaryOfficer : checkWrittenId(loginPinID, WrittenForDataDrp) ? loginPinID : loginPinID,
       });
       setRedactedComment("")
@@ -701,7 +702,7 @@ const Narrative = (props) => {
           setValue({
             ...value,
             ['GroupName']: changeArrayFormat_WithFilter(res, 'group', res[0]?.GroupID),
-            'ReportedByPINActivityID': checkId(loginPinID, agencyOfficerDrpData) ? loginPinID : '',
+            'ReportedByPINActivityID': checkId(loginPinID, agencyOfficerFullNameDrpData) ? loginPinID : '',
             'WrittenForID': narrativeTypeCode?.toLowerCase() === 'ni' ? primaryOfficer : checkWrittenId(loginPinID, WrittenForDataDrp) ? loginPinID : '',
             'IncidentId': incidentID, 'CreatedByUserFK': loginPinID,
           });
@@ -1468,8 +1469,10 @@ const Narrative = (props) => {
               <Select
                 name='ReportedByPINActivityID'
                 isClearable
-                value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ReportedByPINActivityID)}
-                options={agencyOfficerDrpData}
+                value={agencyOfficerFullNameDrpData?.filter((obj) => obj.value === value?.ReportedByPINActivityID)}
+                options={agencyOfficerFullNameDrpData}
+                // value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ReportedByPINActivityID)}
+                // options={agencyOfficerDrpData}
                 onChange={(e) => ChangeDropDown(e, 'ReportedByPINActivityID')}
                 placeholder="Select.."
                 menuPlacement="bottom"
@@ -1489,7 +1492,6 @@ const Narrative = (props) => {
               <Select
                 name="WrittenForID"
                 isClearable
-
                 styles={
                   value.Status === 'Pending Review' || value.Status === 'Approved' || narrativeTypeCode.toLowerCase() === 'ni' || value.Status === 'Draft' || value.Status === 'Rejected'
                     ? colourStylesUsers
@@ -1996,6 +1998,7 @@ export default Narrative;
 const NarrativeModal = (props) => {
 
   const agencyOfficerDrpData = useSelector((state) => state.DropDown.agencyOfficerDrpData);
+  const agencyOfficerFullNameDrpData = useSelector((state) => state.DropDown.agencyOfficerFullNameDrpData);
   const localStoreData = useSelector((state) => state?.Agency?.localStoreData);
   const narrativeTypeDrpData = useSelector((state) => state.DropDown.narrativeTypeDrpData);
   const [writtenForID, setWrittenForID] = useState([]);
@@ -2216,8 +2219,10 @@ const NarrativeModal = (props) => {
                         name='OfficerID'
                         isClearable
                         // styles={colourStyles}
-                        value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.OfficerID)}
-                        options={agencyOfficerDrpData}
+                        value={agencyOfficerFullNameDrpData?.filter((obj) => obj.value === value?.OfficerID)}
+                        options={agencyOfficerFullNameDrpData}
+                        // value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.OfficerID)}
+                        // options={agencyOfficerDrpData}
                         onChange={(e) => ChangeDropDown(e, 'OfficerID')}
                         placeholder="Select.."
                         styles={

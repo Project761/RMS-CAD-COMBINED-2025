@@ -662,7 +662,7 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
                                 ) : null}
                             </span>
                         </div>
-                        <div className="col-9 col-md-9 col-lg-3 mt-1 ">
+                        <div className="col-9 col-md-9 col-lg-3 mt-2 ">
                             <Select
                                 name='NIBRSClearanceID'
                                 styles={getExceptionColorCode(clsDrpCode, value?.NIBRSClearanceID)}
@@ -679,7 +679,7 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
                                 <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.NIBRSclearancedateError}</p>
                             ) : null}</label>
                         </div>
-                        <div className='col-7  col-md-7 col-lg-3 '>
+                        <div className='col-7  col-md-7 col-lg-3 mt-2'>
                             <DatePicker
                                 name='NIBRSclearancedate'
                                 id='NIBRSclearancedate'

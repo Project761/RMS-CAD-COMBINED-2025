@@ -511,12 +511,12 @@ const Home = ({ DecMissPerID, DecIncID }) => {
                         <input type="text" className='readonlyColor' value={value?.IncidentNumber} onChange={HandleChange} name='IncidentNumber' required readOnly />
                     </div>
 
-                    <div className="col-2 col-md-2 col-lg-2 mt-2 pt-2">
+                    <div className="col-2 col-md-2 col-lg-2 mt-1 pt-2">
                         <label htmlFor="" className='new-label'>Reported Date/Time {errors.ReportedDttmError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReportedDttmError}</p>
                         ) : null}</label>
                     </div>
-                    <div className="col-4 col-md-4 col-lg-2  ">
+                    <div className="col-4 col-md-4 col-lg-2 mt-1 ">
                         <DatePicker
                             id="ReportedDttm"
                             name='ReportedDttm'
@@ -595,7 +595,7 @@ const Home = ({ DecMissPerID, DecIncID }) => {
                             Message Key
                         </span>
                     </div>
-                    <div className="col-4 col-md-4 col-lg-2 ">
+                    <div className="col-4 col-md-4 col-lg-2 mt-1 ">
                         <Select
                             styles={customStylesWithOutColor}
                             name="MessageKeyID"
@@ -624,10 +624,10 @@ const Home = ({ DecMissPerID, DecIncID }) => {
                     <div className="col-4 col-md-4 col-lg-2 mt-1 text-field">
                         <input type="text" className='' name='PhysicalCondition' value={value?.PhysicalCondition} onChange={HandleChange} required />
                     </div>
-                    <div className="col-2 col-md-2 col-lg-2 mt-2 pt-2">
+                    <div className="col-2 col-md-2 col-lg-2 mt-2 ">
                         <label htmlFor="" className='new-label'>Date Of Emancipation</label>
                     </div>
-                    <div className="col-4 col-md-4 col-lg-2  ">
+                    <div className="col-4 col-md-4 col-lg-2 mt-1 ">
                         <DatePicker
                             id="EmancipationDt"
                             name='EmancipationDt'

@@ -1,7 +1,7 @@
 import { toastifyError } from '../../Components/Common/AlertMsg';
 import { Comman_changeArrayFormat } from '../../Components/Common/ChangeArrayFormat';
 import { ScreenPermision, fetchPostData } from '../../Components/hooks/Api';
-import { Agency_OfficerDrp_Data, INC_NO_Exist_Status, INC_NO_Genrate_Status, Report_App_Officer_Drp_Data, Screen_Permissions } from '../actionTypes';
+import { Agency_OfficerDrp_Data, Agency_Officer_FullName_Drp_Data, INC_NO_Exist_Status, INC_NO_Genrate_Status, Report_App_Officer_Drp_Data, Screen_Permissions } from '../actionTypes';
 import * as api from '../api'
 
 // IncidentID
@@ -12,10 +12,13 @@ export const get_AgencyOfficer_Data = (ID, IncID) => async (dispatch) => {
     const val = { AgencyID: ID, IncidentID: 0 };
 
     fetchPostData('DropDown/GetData_HeadOfAgency', val).then((data) => {
+        // console.log("🚀 ~ get_AgencyOfficer_Data ~ data:", data)
         if (data) {
             dispatch({ type: Agency_OfficerDrp_Data, payload: Comman_changeArrayFormat(data, 'PINID', 'HeadOfAgency') });
+            dispatch({ type: Agency_Officer_FullName_Drp_Data, payload: Comman_changeArrayFormat(data, 'PINID', 'FullName') });
         } else {
             dispatch({ type: Agency_OfficerDrp_Data, payload: [] });
+            dispatch({ type: Agency_Officer_FullName_Drp_Data, payload: [] });
         }
     })
 };
