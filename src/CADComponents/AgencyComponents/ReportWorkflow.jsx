@@ -203,9 +203,16 @@ function ReportWorkflow() {
                 'ReportApproverRequired': editval[0]?.ReportApproverRequired,
                 'AppliesReportTypeID': editval[0]?.AppliesReportTypeID,
                 'ModifiedByUserFK': loginPinID,
+                'IsMultipleLevel': editval[0]?.IsMultipleLevel,
+                'IsSingleLevel': editval[0]?.IsSingleLevel,
+                'IsSelfApproved': editval[0]?.IsSelfApproved,
+                'IsNoApproval': editval[0]?.IsNoApproval,
+
             })
         }
     }, [editval])
+
+    console.log(value)
 
     const reset = () => {
         setValue({
@@ -352,6 +359,21 @@ function ReportWorkflow() {
         { value: 2, label: "Greater Than Or Equal To" },
     ];
 
+    const handleRadioChange = (event) => {
+        const selectedOptionnew = event.target.value;
+        // setApprovalStatus(selectedOptionnew);
+        setValue(prevState => ({
+            ...prevState,
+            IsMultipleLevel: selectedOptionnew === 'IsMultipleLevel',
+            IsSingleLevel: selectedOptionnew === 'IsSingleLevel',
+            IsSelfApproved: selectedOptionnew === 'IsSelfApproved',
+            IsNoApproval: selectedOptionnew === 'IsNoApproval',
+
+        }));
+
+        
+    };
+
     return (
         <div className="col-12 mt-3 mb-1 cad-css">
             <div className="utilities-tab-content-table-container mb-1">
@@ -434,8 +456,8 @@ function ReportWorkflow() {
                                             name="ApprovalType"
                                             id="IsMultipleLevel"
                                             value="IsMultipleLevel"
-                                            checked={value?.ApprovalType === "IsMultipleLevel"}
-                                            onChange={HandleChange}
+                                            checked={value?.IsMultipleLevel}
+                                            onChange={handleRadioChange}
                                         />
                                         <label className="form-check-label" htmlFor="IsMultipleLevel">Multiple Level</label>
                                     </div>
@@ -447,8 +469,8 @@ function ReportWorkflow() {
                                             name="ApprovalType"
                                             id="IsSingleLevel"
                                             value="IsSingleLevel"
-                                            checked={value?.ApprovalType === "IsSingleLevel"}
-                                            onChange={HandleChange}
+                                            checked={value?.IsSingleLevel}
+                                            onChange={handleRadioChange}
                                         />
                                         <label className="form-check-label" htmlFor="IsSingleLevel">Single Level</label>
                                     </div>
@@ -460,8 +482,8 @@ function ReportWorkflow() {
                                             name="ApprovalType"
                                             id="IsSelfApproved"
                                             value="IsSelfApproved"
-                                            checked={value?.ApprovalType === "IsSelfApproved"}
-                                            onChange={HandleChange}
+                                            checked={value?.IsSelfApproved}
+                                            onChange={handleRadioChange}
                                         />
                                         <label className="form-check-label" htmlFor="IsSelfApproved">Self Approved</label>
                                     </div>
@@ -473,8 +495,8 @@ function ReportWorkflow() {
                                             name="ApprovalType"
                                             id="IsNoApproval"
                                             value="IsNoApproval"
-                                            checked={value?.ApprovalType === "IsNoApproval"}
-                                            onChange={HandleChange}
+                                            checked={value?.IsNoApproval}
+                                            onChange={handleRadioChange}
                                         />
                                         <label className="form-check-label" htmlFor="IsNoApproval">No Approval</label>
                                     </div>

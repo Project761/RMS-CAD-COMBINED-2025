@@ -99,6 +99,8 @@ const Narrative = (props) => {
   const [missingField, setMissingField] = useState([]);
   const [isNormalReport, setNormalReport] = useState(true);
   const [redactedComment, setRedactedComment] = useState("");
+  const [checkWebWorkFlowStatus, setcheckWebWorkFlowStatus] = useState(false);
+  const [IsSelfApproved, setIsSelfApproved] = useState(false);
   const detectedWordsRef = useRef([]);
 
   const [value, setValue] = useState({
@@ -121,6 +123,7 @@ const Narrative = (props) => {
     if (localStoreData) {
       setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(parseInt(localStoreData?.PINID));
       getScreenPermision(localStoreData?.AgencyID, localStoreData?.PINID); GetDataTimeZone(localStoreData?.AgencyID); setnarrativeAssignId(NarrativeAssignId); get_NarrativesData(IncID, localStoreData?.PINID);
+      GetData_ReportWorkLevelCheck(localStoreData?.AgencyID, narrativeID);
       setIsSupervisor(localStoreData?.IsSupervisor); get_IncidentTab_Count(IncID, localStoreData?.PINID); setIsSuperadmin(localStoreData?.IsSuperadmin);
       if (NarrativeAssignId && tabParam && !assigned) { setNarrativeID(NarrativeAssignId); GetSingleData(NarrativeAssignId); }
       else if (NarrativeAssignId && tabParam && assigned) {
@@ -363,6 +366,7 @@ const Narrative = (props) => {
       .then((res) => {
         if (res.success) {
           toastifySuccess(res?.Message); get_NarrativesData(incidentID, loginPinID);
+           GetData_ReportWorkLevelCheck(localStoreData?.AgencyID, res?.NarrativeID);
           get_IncidentTab_Count(incidentID, loginPinID); setNarrativeID(res?.NarrativeID);
           GetSingleData(res?.NarrativeID); setStatesChangeStatus(false);
           setChangesStatus(false); setErrors(prev => ({ ...prev, AsOfDateError: '' }));
@@ -469,6 +473,28 @@ const Narrative = (props) => {
       }
     })
   }
+
+  const GetData_ReportWorkLevelCheck = (loginAgencyID, narrativeID) => {
+    const val = { AgencyID: loginAgencyID, NarrativeID: narrativeID };
+
+    fetchPostData('IncidentNarrativeReport/GetData_ReportWorkLevelCheck', val).then(res => {
+      if (res && res.length > 0) {
+        console.log(res);
+
+        const workflowData = res[0];
+        const canShowApprovalButton = workflowData?.IsMultipleLevel || workflowData?.IsSingleLevel;
+        const canApproved = workflowData?.IsSelfApproved;
+        setcheckWebWorkFlowStatus(canShowApprovalButton);
+        setIsSelfApproved(canApproved);
+        // setLoder(true);
+      } else {
+        // Handle case where no data is returned
+        // setNarrativeData([]);
+        // setLoder(true);
+      }
+    });
+  };
+
 
   const get_NarrativesInformation = (incidentID) => {
     const val = { IncidentId: incidentID, }
@@ -663,6 +689,7 @@ const Narrative = (props) => {
       if (row) {
         setNarrativeID(row?.NarrativeID);
         GetSingleData(row?.NarrativeID);
+        GetData_ReportWorkLevelCheck(loginAgencyID, row?.NarrativeID);
         get_Group_List(loginAgencyID, loginPinID, row?.NarrativeID);
         setUpDateCount(upDateCount + 1); dispatch(get_Report_Approve_Officer_Data(loginAgencyID, loginPinID, row?.NarrativeID));
         setStatus(true);
@@ -685,6 +712,7 @@ const Narrative = (props) => {
         get_IncidentTab_Count(incidentID, loginPinID); reset();
       } else { console.log("Somthing Wrong"); }
       get_NarrativesData(incidentID, loginPinID);
+      // GetData_ReportWorkLevelCheck(loginAgencyID ,narrativeID);
     })
   }
 
@@ -732,6 +760,7 @@ const Narrative = (props) => {
           const message = parsedData.Table[0].Message;
           toastifySuccess(message);
           get_NarrativesData(incidentID, loginPinID);
+          // GetData_ReportWorkLevelCheck(loginAgencyID ,narrativeID);
           resets(); reset()
         } else {
           console.log("something Wrong");
@@ -1357,6 +1386,31 @@ const Narrative = (props) => {
     }
   }, [value?.Status]);
 
+  console.log(IsSelfApproved);
+
+  const Add_Type_Comments = () => {
+    const { IsApprove, IsReject, Comments, CommentsDoc, ApprovalComments, ApprovingSupervisorID, IsApprovedForward } = value
+    const type = selectedOption === "Individual" ? 'Individual' : 'Group';
+
+    const val = {
+      'AgencyID': loginAgencyID,
+      'IncidentId': incidentID, 'NarrativeID': narrativeID, 'ApprovingSupervisorType': type, 'ApprovingSupervisorID': ApprovingSupervisorID, 'IsApprove':  true , 'CreatedByUserFK': loginPinID,
+      // 'IncidentId': incidentID, 'NarrativeID': narrativeID, 'ApprovingSupervisorType': type, 'ApprovingSupervisorID': ApprovingSupervisorID, 'IsApprove': IsApprovedForward ? 'true' : IsApprove, 'CreatedByUserFK': loginPinID, 'IsApprovedForward': IsApprovedForward, 'IsReject': IsReject, 'Comments': ApprovalComments,
+
+    };
+    AddDeleteUpadate('IncidentNarrativeReport/Insert_IncidentNarrativeReport', val).then((res) => {
+      // get_Data_Que_Report(loginPinID, loginAgencyID);
+      const parseData = JSON.parse(res.data);
+      toastifySuccess(parseData?.Table[0].Message);
+       get_NarrativesData(incidentID, loginPinID);
+       setIsSelfApproved(false);
+      // setStatesChangeStatus(false);
+      // setIsSaved(true);
+      // setModelStatus(true);
+      // resets();
+    })
+  }
+
   // editor end
   return (
     <>
@@ -1859,14 +1913,95 @@ const Narrative = (props) => {
 
 
 
-                {
-                  narrativeID && value.Status != "Pending Review" && value.Status != "Rejected" && value.Status != "Approved" || narrativeID && value.Status === "Rejected" && value.ReportedByPINActivityID === loginPinID ? <>
+                {/* {
+                  narrativeID && value.Status != "Pending Review" && value.Status != "Rejected" && value.Status != "Approved" || narrativeID && value.Status === "Rejected" && value.ReportedByPINActivityID === loginPinID  ? <>
                     <div className=" ">
                       <button type="button" disabled={((value.ReportedByPINActivityID != loginPinID && value.Status === 'Draft') || value.Status === 'Approved') ? true : false} onClick={(e) => { check_Validation_ErrorApproval(); }} className="btn btn-sm btn-success"  >Send For Approval</button>
                     </div>
                   </> :
                     <></>
+                } */}
+                {
+                  checkWebWorkFlowStatus ? (
+                    narrativeID && (
+                      (value.Status !== "Pending Review" &&
+                        value.Status !== "Rejected" &&
+                        value.Status !== "Approved") ||
+                      (value.Status === "Rejected" && value.ReportedByPINActivityID === loginPinID)
+                    ) ? (
+                      <div className=" ">
+                        <button
+                          type="button"
+                          disabled={
+                            value.ReportedByPINActivityID !== loginPinID &&
+                              value.Status === 'Draft' ||
+                              value.Status === 'Approved'
+                              ? true
+                              : false
+                          }
+                          onClick={(e) => {
+                            check_Validation_ErrorApproval();
+                          }}
+                          className="btn btn-sm btn-success"
+                        >
+                          Send For Approval
+                        </button>
+                      </div>
+                    ) : (
+                      <></>
+                    )
+                  ) : null
                 }
+                 {
+                  IsSelfApproved ? (
+                    narrativeID && (
+                      (value.Status !== "Pending Review" &&
+                        value.Status !== "Rejected" &&
+                        value.Status !== "Approved") ||
+                      (value.Status === "Rejected" && value.ReportedByPINActivityID === loginPinID)
+                    ) ? (
+                      <div className=" ">
+                        <button
+                          type="button"
+                          disabled={
+                            value.ReportedByPINActivityID !== loginPinID &&
+                              value.Status === 'Draft' ||
+                              value.Status === 'Approved'
+                              ? true
+                              : false
+                          }
+                          onClick={(e) => {
+                             Add_Type_Comments();
+                          }}
+                          className="btn btn-sm btn-success"
+                        >
+                          Approved
+                        </button>
+                      </div>
+                    ) : (
+                      <></>
+                    )
+                  ) : null
+                }
+                {/* {
+                  IsSelfApproved ?
+                    <>
+                      <div className=" ">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            Add_Type_Comments();
+                          }}
+                          className="btn btn-sm btn-success"
+                        >
+                          Approved
+                        </button>
+                      </div>
+                    </> : <></>
+
+
+                } */}
+
               </li>
               <li className=''>
                 <button type="button" className="btn btn-sm btn-success mr-1 " onClick={() => { reset(); }}>New</button>
@@ -2161,6 +2296,7 @@ const NarrativeModal = (props) => {
         const parsedData = JSON.parse(res.data);
         const message = parsedData.Table[0].Message;
         toastifySuccess(message);
+        
         setshowModal(false);
         resetOfficers();
         setErrors({ ...errors, ['AssignCommentError']: '', });

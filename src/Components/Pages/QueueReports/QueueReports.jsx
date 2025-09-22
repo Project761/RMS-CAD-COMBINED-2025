@@ -625,7 +625,8 @@ const QueueReportsModal = (props) => {
   const [IncReportCount, setIncReportCount] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [IncidentNo, setIncidentNo] = useState('');
-  const [multiSelected, setMultiSelected] = useState({ optionSelected: null })
+  const [multiSelected, setMultiSelected] = useState({ optionSelected: null });
+   const [checkWebWorkFlowStatus, setcheckWebWorkFlowStatus] = useState(false);
 
 
   const [editorState, setEditorState] = useState(
@@ -669,6 +670,7 @@ const QueueReportsModal = (props) => {
       dispatch(get_Report_Approve_Officer_Data(loginAgencyID, loginPinID));
       if (narrativeTypeDrpData?.length === 0) { dispatch(get_Narrative_Type_Drp_Data(loginAgencyID)) }
       get_Group_List(loginAgencyID);
+      GetData_ReportWorkLevelCheck(loginAgencyID , narrativeID)
       // get_IncidentTab_Count(IncID, loginPinID);
     }
   }, [loginAgencyID])
@@ -693,6 +695,8 @@ const QueueReportsModal = (props) => {
       }
     })
   }
+
+  console.log(checkWebWorkFlowStatus)
 
   useEffect(() => {
     if (groupList?.GroupID) {
@@ -1042,6 +1046,26 @@ const QueueReportsModal = (props) => {
     }),
   };
 
+   const GetData_ReportWorkLevelCheck = (loginAgencyID, narrativeID) => {
+      const val = { AgencyID: loginAgencyID, NarrativeID: narrativeID };
+  
+      fetchPostData('IncidentNarrativeReport/GetData_ReportWorkLevelCheck', val).then(res => {
+        if (res && res.length > 0) {
+          console.log(res);
+  
+          const workflowData = res[0];
+          const canShowApprovalButton = workflowData?.IsMultipleLevel;
+          setcheckWebWorkFlowStatus(canShowApprovalButton);
+          // setIsSelfApproved(canApproved);
+          // setLoder(true);
+        } else {
+          // Handle case where no data is returned
+          // setNarrativeData([]);
+          // setLoder(true);
+        }
+      });
+    };
+
 
   if (!isDataReady) {
     return (
@@ -1364,7 +1388,7 @@ const QueueReportsModal = (props) => {
                 <div className='col-md-2'>
 
                   {
-                    (!setApproverStatus(checkapproveStatus, reportApprovalStatus) && checkapproveStatus === "1") &&
+                    (!setApproverStatus(checkapproveStatus, reportApprovalStatus) && checkapproveStatus === "1") || checkWebWorkFlowStatus &&
                     < div className="form-check">
                       <input
                         className="form-check-input"
