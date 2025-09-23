@@ -1518,7 +1518,7 @@ const VehicleManagement = (props) => {
                             <label htmlFor="" className='new-label px-0 mb-0'>Recipient Location</label>
                         </div>
                         <div className="col-12 col-md-12 col-lg-2    ">
-                            <Select
+                            {/* <Select
                                 name='ReceipentID'
                                 value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ReceipentID)}
                                 isClearable
@@ -1527,6 +1527,8 @@ const VehicleManagement = (props) => {
                                 placeholder="Select..."
                             // styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                             // isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                            /> */}
+                             <input type="text" onChange={(e) => { handleChange(e) }} name="locationsdgf" style={{ position: 'relative' }}  value={value.locationsdgf}  className={`form-control`}
                             />
 
                             {/* <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} disabled className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
@@ -1885,7 +1887,7 @@ const VehicleManagement = (props) => {
                             <label htmlFor="" className='new-label px-0 mb-0'>Destruction Location</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
-                            <Select
+                            {/* <Select
                                 name='DestructionLocation'
                                 value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.DestructionLocation)}
                                 isClearable
@@ -1894,6 +1896,8 @@ const VehicleManagement = (props) => {
                                 placeholder="Select..."
                                 styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
                                 isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                            /> */}
+                             <input type="text" onChange={(e) => { handleChange(e) }} name="locationsdgf" style={{ position: 'relative' }}  value={value.locationsdgf}  className={`form-control`}
                             />
                         </div>
                         {/* <div className="col-1 " data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>

@@ -3082,15 +3082,10 @@ const Home = (props) => {
                         <label htmlFor="" className='new-label px-0 mb-0'>Receipient Location</label>
                     </div>
                     <div className="col-12 col-md-12 col-lg-2    ">
-                        <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} disabled className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
-                            ? 'requiredColor'
-                            : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
-                                ? 'readonlyColor'
-                                : ''
-                            }`}
-                        />
+                        <input type="text" onChange={(e) => { handleChange(e) }} name="locationsdgf" style={{ position: 'relative' }}  value={value.locationsdgf}  className={`form-control`}
+                            />
 
-                        {value.location ? (
+                        {/* {value.location ? (
                             <span style={{
                                 position: 'absolute',
                                 top: '40%',
@@ -3102,7 +3097,7 @@ const Home = (props) => {
                             }} className='select-cancel' onClick={() => { handleClickedCleared("location") }}>
                                 <i className='fa fa-times'></i>
                             </span>
-                        ) : (null)}
+                        ) : (null)} */}
                     </div>
 
 
@@ -3136,7 +3131,7 @@ const Home = (props) => {
                             }`}
                         />
 
-                        {value.location ? (
+                        {/* {value.location ? (
                             <span style={{
                                 position: 'absolute',
                                 top: '40%',
@@ -3148,7 +3143,7 @@ const Home = (props) => {
                             }} className='select-cancel' onClick={() => { handleClickedCleared("location") }}>
                                 <i className='fa fa-times'></i>
                             </span>
-                        ) : (null)}
+                        ) : (null)} */}
 
 
 
@@ -3157,7 +3152,7 @@ const Home = (props) => {
 
                     </div>
 
-                    <div className="col-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
+                    {/* <div className="col-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
                         <button disabled={!(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) || selectedOption === null}
                             className=" btn btn-sm bg-green text-white" data-toggle="modal" data-target="#PropertyRoomTreeModal" style={{ cursor: 'pointer' }} onClick={() => {
                                 setlocationStatus(true);
@@ -3165,7 +3160,7 @@ const Home = (props) => {
                             }}>
                             <i className="fa fa-plus" > </i>
                         </button>
-                    </div>
+                    </div> */}
 
                     <div className="col-3 col-md-3 col-lg-2 ">
                         <label htmlFor="" className='new-label mb-0'>Comments</label>
