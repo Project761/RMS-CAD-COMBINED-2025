@@ -370,7 +370,7 @@ const Home = (props) => {
         });
     };
 
-   
+
 
     const GetData_PropertyroomRadio = (propertyId, category) => {
         const val = {
@@ -490,7 +490,7 @@ const Home = (props) => {
         const MasterPropertyId = masterpropertyId;
         const ActivityType = selectedOption;
         const CreatedByUserFK = loginPinID;
-      
+
         const { ActivityReasonID, ExpectedDate, ActivityComments, DestinationStorageLocation, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate, CourtDate,
             ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId, IsCheckIn,
             IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, activitydate, AgencyID, PackagingDetails,
@@ -709,7 +709,7 @@ const Home = (props) => {
 
     const ChangeDropDown = (e, name) => {
         if (e && name === "CollectingOfficer") {
-           
+
             setCollectingOfficer(e.value)
         }
         else if (e && name === 'Task' || e === null && name === 'Task') {
@@ -771,15 +771,15 @@ const Home = (props) => {
         reset();
 
         setIsClearing(true);
-         setSelectedRows([]); setSelectedStatus('');
-        navigate(`/Property-room?&ProId=${0}&MProId=${0}&ProRomId=${0}&ProRoomStatus=${true}&selectedCategory=${''}&ProType=${''}&ProNumber=${''}&ProTransfer=${''}&CallStatus=${false}`); 
-         setPropertyId(''); setClickedRow(null);
-          setPropertyNumber('');
-           setSelectedRows([]); 
-          setSearchStoragePath(''); setSelectedOptions(AddType[0]);
-           setPossessionID(''); 
+        setSelectedRows([]); setSelectedStatus('');
+        navigate(`/Property-room?&ProId=${0}&MProId=${0}&ProRomId=${0}&ProRoomStatus=${true}&selectedCategory=${''}&ProType=${''}&ProNumber=${''}&ProTransfer=${''}&CallStatus=${false}`);
+        setPropertyId(''); setClickedRow(null);
+        setPropertyNumber('');
+        setSelectedRows([]);
+        setSearchStoragePath(''); setSelectedOptions(AddType[0]);
+        setPossessionID('');
         //    setValue({ ...value, ['ReportedDate']: '', ['ReportedDateTo']: '' });
-         setToggleClear(!toggleClear);
+        setToggleClear(!toggleClear);
         sessionStorage.setItem('selectedRows', '');
     }
 
@@ -893,10 +893,10 @@ const Home = (props) => {
         setCourtdate(''); setreleasedate(''); setdestroydate(''); setExpecteddate('');
         setSelectedStatus(''); setRowClicked(''); setSelectedOption(null); setactivitydate(''); setReasonIdDrp([]); setLocationPath('');
         setDescription('');
-         setRowClicked(''); 
-         setSearchData([]);
+        setRowClicked('');
+        setSearchData([]);
         setSelectedRows([]);
-         setToggleClear(!toggleClear); setStatus(''); settransfer(null); setEditval([]);
+        setToggleClear(!toggleClear); setStatus(''); settransfer(null); setEditval([]);
     }
 
     const conditionalRowStyles = [
@@ -1114,7 +1114,7 @@ const Home = (props) => {
     };
 
     useEffect(() => {
-       
+
         if (editval && selectedOption === 'Update') {
             setValue({
                 ...value, PropertyID: editval?.PropertyID || '', ActivityType: editval?.ActivityType || '',
@@ -1154,7 +1154,7 @@ const Home = (props) => {
     }
 
 
-   console.log(searchData)
+   
 
     return (
         <>
@@ -1604,10 +1604,10 @@ const Home = (props) => {
                                                                     closeMenuOnSelect={false}
                                                                     onChange={Agencychange}
                                                                     value={multiSelected.optionSelected}
-                                                                // isDisabled={value.Status === "Pending Review" || value.Status === "Approved"}
-                                                                // menuPlacement="top"
-                                                                // hideSelectedOptions={true}
-                                                                // allowSelectAll={true}
+                                                                    // isDisabled={value.Status === "Pending Review" || value.Status === "Approved"}
+                                                                    // menuPlacement="top"
+                                                                    // hideSelectedOptions={true}
+                                                                    allowSelectAll={true}
                                                                 />
                                                             </div>
                                                         </>
@@ -1642,7 +1642,7 @@ const Home = (props) => {
                                                                     closeMenuOnSelect={false}
                                                                     hideSelectedOptions={true}
                                                                     onChange={Agencychange}
-                                                                    // allowSelectAll={true}
+                                                                    allowSelectAll={true}
                                                                     value={multiSelected.optionSelected}
                                                                 />
                                                             </div>
