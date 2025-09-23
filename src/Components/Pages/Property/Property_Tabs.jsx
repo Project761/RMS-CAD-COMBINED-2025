@@ -184,18 +184,20 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                                             >
                                                 Owner{`${propertyCount?.OwnerCount > 0 ? '(' + propertyCount?.OwnerCount + ')' : ''}`}
                                             </span>
-                                            {/* <span
-                                                className={`nav-item ${showPage === 'Offense' ? 'active' : ''}${!status ? 'disabled' : ''}`}
 
-                                                data-toggle={changesStatus ? "modal" : "pill"}
-                                                data-target={changesStatus ? "#SaveModal" : ''}
-                                                style={{ color: showPage === 'Offense' ? 'Red' : propertyCount?.OffenseCount > 0 ? 'blue' : '#000' }}
-                                                aria-current="page"
-                                                onClick={() => { if (!changesStatus) { setShowPage('Offense') } }}
+                                            {MstPage !== "MST-Property-Dash" && (
+                                                <span
+                                                    className={`nav-item ${showPage === 'Offense' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+                                                    data-toggle={changesStatus ? "modal" : "pill"}
+                                                    data-target={changesStatus ? "#SaveModal" : ''}
+                                                    style={{ color: showPage === 'Offense' ? 'Red' : propertyCount?.OffenseCount > 0 ? 'blue' : '#000' }}
+                                                    aria-current="page"
+                                                    onClick={() => { if (!changesStatus) { setShowPage('Offense') } }}
 
-                                            >
-                                                Associated Offenses{`${propertyCount?.OffenseCount > 0 ? '(' + propertyCount?.OffenseCount + ')' : ''}`}
-                                            </span> */}
+                                                >
+                                                    Associated Offenses{`${propertyCount?.OffenseCount > 0 ? '(' + propertyCount?.OffenseCount + ')' : ''}`}
+                                                </span>
+                                            )}
                                             {
                                                 showRecovered &&
                                                 <span
