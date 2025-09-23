@@ -81,6 +81,9 @@ const MiscellaneousInformation = (props) => {
   const [multiSelected, setMultiSelected] = useState({ optionSelected: null });
   const [fileUploadStatus, setfileUploadStatus] = useState(false);
   const [groupList, setGroupList] = useState([]);
+  const [isSendButtonDisabled, setIsSendButtonDisabled] = useState(false);
+
+
   // Add Update Permission
   const [addUpdatePermission, setaddUpdatePermission] = useState();
 
@@ -661,15 +664,38 @@ const MiscellaneousInformation = (props) => {
     }
   };
 
+  // const ChangeDropDown = (e, name) => {
+  //   !addUpdatePermission && setStatesChangeStatus(true);
+  //   !addUpdatePermission && setChangesStatus(true);
+
+  //   // When user selects a task
+  //   if ((e && name === "Task") || (e === null && name === "Task")) {
+  //     setTaskToSend(e ? e.label : "");
+  //     setIsSendButtonDisabled(false);
+  //     if (e) TaskListvalidation(e.label); // Validate selected task
+  //   } else if (e) {
+  //     setValue({
+  //       ...value,
+  //       [name]: e.value,
+  //     });
+  //   } else {
+  //     setValue({
+  //       ...value,
+  //       [name]: null,
+  //     });
+  //   }
+  // };
+
   const ChangeDropDown = (e, name) => {
     !addUpdatePermission && setStatesChangeStatus(true);
     !addUpdatePermission && setChangesStatus(true);
-
-    // When user selects a task
     if ((e && name === "Task") || (e === null && name === "Task")) {
       setTaskToSend(e ? e.label : "");
+      if (e === null) {
+        setTaskListStatus("");
+      }
 
-      if (e) TaskListvalidation(e.label); // Validate selected task
+      if (e) TaskListvalidation(e.label);
     } else if (e) {
       setValue({
         ...value,
@@ -682,35 +708,58 @@ const MiscellaneousInformation = (props) => {
       });
     }
   };
+
   const TaskListvalidation = (selectedStatus) => {
     setTaskListStatus("");
     let tasksInList = [];
+
     try {
       const parsed = JSON.parse(task?.tasklistdata || "[]");
       tasksInList = parsed.map((item) => item.Task);
     } catch (err) {
       console.error("Error parsing tasklistdata:", err);
     }
+    setIsSendButtonDisabled(false);
+    console.log(tasksInList, 'hello')
     if (tasksInList.includes(selectedStatus)) {
+      console.log('Task already exists in the task list.');
+
+      // Handle specific tasks
       if (selectedStatus === "CheckIn") {
+
         setTaskListStatus("Task already sent to task list");
         setChangesStatus(false);
+        setIsSendButtonDisabled(true);
+        // setIsSendButtonDisabled(true);
       } else if (selectedStatus === "CheckOut") {
         setTaskListStatus("Already checked out");
         setChangesStatus(false);
-      }
-      else if (selectedStatus === "Transfer Location") {
+        setIsSendButtonDisabled(true);
+        // setIsSendButtonDisabled(true);
+      } else if (selectedStatus === "Transfer Location") {
         setChangesStatus(false);
         setTaskListModalStatus(true);
+
+        // setIsSendButtonDisabled(true);
       }
-    } else {
-      if (LastTask === "CheckIn" && selectedStatus === "CheckIn") {
-        setTaskListStatus("Task already sent to task list");
-      } else if (LastTask === "CheckOut" && selectedStatus === "CheckOut") {
-        setTaskListStatus("Already checked out");
-      } else if (LastTask === "CheckOut" && selectedStatus === "Transfer Location") {
+    }
+    else if (tasksInList.includes("CheckOut")) {
+      if (selectedStatus === "Transfer Location") {
+        setChangesStatus(false);
         setTaskListModalStatus(true);
+        setIsSendButtonDisabled(true);
+        // setIsSendButtonDisabled(true);
       }
+    }
+    else {
+      // setChangesStatus(true);
+      // if (LastTask === "CheckIn" && selectedStatus === "CheckIn") {
+      //   setTaskListStatus("Task already sent to task list");
+      // } else if (LastTask === "CheckOut" && selectedStatus === "CheckOut") {
+      //   setTaskListStatus("Already checked out");
+      // } else if (LastTask === "CheckOut" && selectedStatus === "Transfer Location") {
+      //   setTaskListModalStatus(true);
+      // }
     }
   };
 
@@ -2544,11 +2593,13 @@ const MiscellaneousInformation = (props) => {
                               /> */}
                               <Select
                                 onChange={(e) => ChangeDropDown(e, "Task")}
-                                options={HandleStatusOption()} 
+                                options={HandleStatusOption()}
                                 isClearable
                                 menuPlacement="top"
                                 placeholder="Select..."
-                                value={StatusOption.find((option) => option.label === taskToSend) || null}
+                                value={
+                                  StatusOption.find((option) => option.label === taskToSend) || null
+                                }
                                 styles={{
                                   container: (base) => ({ ...base, flex: 1 }),
                                 }}
@@ -2720,7 +2771,11 @@ const MiscellaneousInformation = (props) => {
                                 // );
 
                               }}
-                              disabled={!(taskToSend && value.OfficerID)}
+                              disabled={
+                                isSendButtonDisabled         // ✅ primary check
+                                  ? true                      // if true → disable directly
+                                  : !(taskToSend && value.OfficerID) // else check the second rule
+                              }
                             >
                               Send
                             </button>
