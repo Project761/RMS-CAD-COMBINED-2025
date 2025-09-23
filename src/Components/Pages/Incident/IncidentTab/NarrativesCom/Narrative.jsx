@@ -367,7 +367,7 @@ const Narrative = (props) => {
       .then((res) => {
         if (res.success) {
           toastifySuccess(res?.Message); get_NarrativesData(incidentID, loginPinID);
-           GetData_ReportWorkLevelCheck(localStoreData?.AgencyID, res?.NarrativeID);
+          GetData_ReportWorkLevelCheck(localStoreData?.AgencyID, res?.NarrativeID);
           get_IncidentTab_Count(incidentID, loginPinID); setNarrativeID(res?.NarrativeID);
           GetSingleData(res?.NarrativeID); setStatesChangeStatus(false);
           setChangesStatus(false); setErrors(prev => ({ ...prev, AsOfDateError: '' }));
@@ -1395,7 +1395,7 @@ const Narrative = (props) => {
 
     const val = {
       'AgencyID': loginAgencyID,
-      'IncidentId': incidentID, 'NarrativeID': narrativeID, 'ApprovingSupervisorType': type, 'ApprovingSupervisorID': ApprovingSupervisorID, 'IsApprove':  true , 'CreatedByUserFK': loginPinID,
+      'IncidentId': incidentID, 'NarrativeID': narrativeID, 'ApprovingSupervisorType': type, 'ApprovingSupervisorID': ApprovingSupervisorID, 'IsApprove': true, 'CreatedByUserFK': loginPinID,
       // 'IncidentId': incidentID, 'NarrativeID': narrativeID, 'ApprovingSupervisorType': type, 'ApprovingSupervisorID': ApprovingSupervisorID, 'IsApprove': IsApprovedForward ? 'true' : IsApprove, 'CreatedByUserFK': loginPinID, 'IsApprovedForward': IsApprovedForward, 'IsReject': IsReject, 'Comments': ApprovalComments,
 
     };
@@ -1403,8 +1403,8 @@ const Narrative = (props) => {
       // get_Data_Que_Report(loginPinID, loginAgencyID);
       const parseData = JSON.parse(res.data);
       toastifySuccess(parseData?.Table[0].Message);
-       get_NarrativesData(incidentID, loginPinID);
-       setIsSelfApproved(false);
+      get_NarrativesData(incidentID, loginPinID);
+      setIsSelfApproved(false);
       // setStatesChangeStatus(false);
       // setIsSaved(true);
       // setModelStatus(true);
@@ -1954,7 +1954,7 @@ const Narrative = (props) => {
                     )
                   ) : null
                 }
-                 {
+                {
                   IsSelfApproved ? (
                     narrativeID && (
                       (value.Status !== "Pending Review" &&
@@ -1973,7 +1973,7 @@ const Narrative = (props) => {
                               : false
                           }
                           onClick={(e) => {
-                             Add_Type_Comments();
+                            Add_Type_Comments();
                           }}
                           className="btn btn-sm btn-success"
                         >
@@ -2299,7 +2299,7 @@ const NarrativeModal = (props) => {
         const parsedData = JSON.parse(res.data);
         const message = parsedData.Table[0].Message;
         toastifySuccess(message);
-        
+
         setshowModal(false);
         resetOfficers();
         setErrors({ ...errors, ['AssignCommentError']: '', });

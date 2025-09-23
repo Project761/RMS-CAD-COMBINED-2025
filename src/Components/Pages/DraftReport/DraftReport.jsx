@@ -76,31 +76,31 @@ function DraftReport({ isPreview }) {
 
     const columns = [
 
-        // {
-        //     name: 'Action',
-        //     selector: row => row.incident,
-        //     sortable: true,
-        //     minWidth: '25px',
-        //     grow: 1,
-        //     cell: row => (
-        //         <div style={{ position: 'absolute', top: 4, }}>
-        //             {
-        //                 effectiveScreenPermission ?
-        //                     effectiveScreenPermission[0]?.Changeok ?
-        //                         <Link to={`/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&IsCadInc=${true}&narrativeAssignId=${stringToBase64(row?.NarrativeID)}&tab=Report`}
-        //                             onClick={(e) => { set_IncidentId(row); }}
-        //                             className="btn btn-sm bg-green text-white px-1 py-0 mr-1">
-        //                             <i className="fa fa-edit"></i>
-        //                         </Link>
-        //                         : <></>
-        //                     : <Link to={`/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&IsCadInc=${true}&narrativeAssignId=${stringToBase64(row?.NarrativeID)}&tab=Report`}
-        //                         onClick={(e) => { set_IncidentId(row); }}
-        //                         className="btn btn-sm bg-green text-white px-1 py-0 mr-1">
-        //                         <i className="fa fa-edit"></i>
-        //                     </Link>
-        //             }
-        //         </div>)
-        // },
+        {
+            name: 'Action',
+            selector: row => row.incident,
+            sortable: true,
+            minWidth: '25px',
+            grow: 1,
+            cell: row => (
+                <div style={{ position: 'absolute', top: 4, }}>
+                    {
+                        effectiveScreenPermission ?
+                            effectiveScreenPermission[0]?.Changeok ?
+                                <Link to={`/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&IsCadInc=${true}&narrativeAssignId=${stringToBase64(row?.NarrativeID)}&tab=Report`}
+                                    onClick={(e) => { set_IncidentId(row); }}
+                                    className="btn btn-sm bg-green text-white px-1 py-0 mr-1">
+                                    <i className="fa fa-edit"></i>
+                                </Link>
+                                : <></>
+                            : <Link to={`/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&IsCadInc=${true}&narrativeAssignId=${stringToBase64(row?.NarrativeID)}&tab=Report`}
+                                onClick={(e) => { set_IncidentId(row); }}
+                                className="btn btn-sm bg-green text-white px-1 py-0 mr-1">
+                                <i className="fa fa-edit"></i>
+                            </Link>
+                    }
+                </div>)
+        },
         {
             name: 'Report Type',
             minWidth: '120px',

@@ -24,7 +24,6 @@ import CurrentIncMasterReport from '../Incident/IncidentTab/CurrentIncMasterRepo
 import useObjState from '../../../CADHook/useObjState';
 
 
-
 function QueueReports({ isPreview }) {
 
   const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
@@ -626,7 +625,7 @@ const QueueReportsModal = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [IncidentNo, setIncidentNo] = useState('');
   const [multiSelected, setMultiSelected] = useState({ optionSelected: null });
-   const [checkWebWorkFlowStatus, setcheckWebWorkFlowStatus] = useState(false);
+  const [checkWebWorkFlowStatus, setcheckWebWorkFlowStatus] = useState(false);
 
 
   const [editorState, setEditorState] = useState(
@@ -667,16 +666,16 @@ const QueueReportsModal = (props) => {
     if (loginAgencyID) {
       // dispatch(get_AgencyOfficer_Data(loginAgencyID, IncID));
       // Get_WrittenForDataDrp(loginAgencyID, IncID);
-      dispatch(get_Report_Approve_Officer_Data(loginAgencyID, loginPinID));
+      dispatch(get_Report_Approve_Officer_Data(loginAgencyID, loginPinID, narrativeID));
       if (narrativeTypeDrpData?.length === 0) { dispatch(get_Narrative_Type_Drp_Data(loginAgencyID)) }
-      get_Group_List(loginAgencyID);
-      GetData_ReportWorkLevelCheck(loginAgencyID , narrativeID)
+      get_Group_List(loginAgencyID, loginPinID, narrativeID);
+      GetData_ReportWorkLevelCheck(loginAgencyID, narrativeID)
       // get_IncidentTab_Count(IncID, loginPinID);
     }
   }, [loginAgencyID])
 
-  const get_Group_List = (loginAgencyID) => {
-    const value = { AgencyId: loginAgencyID, PINID: loginPinID }
+  const get_Group_List = (loginAgencyID, loginPinID, NarrativeID) => {
+    const value = { AgencyId: loginAgencyID, PINID: loginPinID, NarrativeID: NarrativeID }
     fetchPostData("Group/GetData_Grouplevel", value).then((res) => {
       if (res) {
         setGroupList(changeArrayFormat(res, 'group'))
@@ -1046,25 +1045,25 @@ const QueueReportsModal = (props) => {
     }),
   };
 
-   const GetData_ReportWorkLevelCheck = (loginAgencyID, narrativeID) => {
-      const val = { AgencyID: loginAgencyID, NarrativeID: narrativeID };
-  
-      fetchPostData('IncidentNarrativeReport/GetData_ReportWorkLevelCheck', val).then(res => {
-        if (res && res.length > 0) {
-          console.log(res);
-  
-          const workflowData = res[0];
-          const canShowApprovalButton = workflowData?.IsMultipleLevel;
-          setcheckWebWorkFlowStatus(canShowApprovalButton);
-          // setIsSelfApproved(canApproved);
-          // setLoder(true);
-        } else {
-          // Handle case where no data is returned
-          // setNarrativeData([]);
-          // setLoder(true);
-        }
-      });
-    };
+  const GetData_ReportWorkLevelCheck = (loginAgencyID, narrativeID) => {
+    const val = { AgencyID: loginAgencyID, NarrativeID: narrativeID };
+
+    fetchPostData('IncidentNarrativeReport/GetData_ReportWorkLevelCheck', val).then(res => {
+      if (res && res.length > 0) {
+        console.log(res);
+
+        const workflowData = res[0];
+        const canShowApprovalButton = workflowData?.IsMultipleLevel;
+        setcheckWebWorkFlowStatus(canShowApprovalButton);
+        // setIsSelfApproved(canApproved);
+        // setLoder(true);
+      } else {
+        // Handle case where no data is returned
+        // setNarrativeData([]);
+        // setLoder(true);
+      }
+    });
+  };
 
 
   if (!isDataReady) {
