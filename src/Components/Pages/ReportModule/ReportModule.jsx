@@ -61,7 +61,7 @@ const ReportModule = (props) => {
     const reportApproveOfficer = useSelector((state) => state.Incident.reportApproveOfficer);
     const narrativeTypeDrpData = useSelector((state) => state.DropDown.narrativeTypeDrpData);
 
-    const { get_IncidentTab_Count, changesStatus, setChangesStatus, nibrsStatus, GetDataTimeZone, datezone, setassignedReportID } = useContext(AgencyContext);
+    const { get_IncidentTab_Count, get_Incident_Count, changesStatus, setChangesStatus, nibrsStatus, GetDataTimeZone, datezone, setassignedReportID } = useContext(AgencyContext);
 
     const [narrativeData, setNarrativeData] = useState([]);
     const [upDateCount, setUpDateCount] = useState(0);
@@ -148,7 +148,7 @@ const ReportModule = (props) => {
 
     useEffect(() => {
         if (IncID) {
-            setIncidentID(IncID); get_NarrativesInformation(IncID);
+            setIncidentID(IncID); get_NarrativesInformation(IncID); get_Incident_Count(IncID);
         }
     }, [IncID,]);
 

@@ -3,7 +3,7 @@ import Select from "react-select";
 import useObjState from '../../CADHook/useObjState';
 import { coloredStyle_Select, colorLessStyle_Select } from '../Utility/CustomStylesForReact';
 import DataTable from 'react-data-table-component';
-import { changeArrayFormat_WithFilter, Decrypt_Id_Name, Requiredcolour, tableCustomStyles } from '../../Components/Common/Utility';
+import { base64ToString, changeArrayFormat_WithFilter, Decrypt_Id_Name, Requiredcolour, tableCustomStyles } from '../../Components/Common/Utility';
 import { AddDeleteUpadate, fetchPostData } from '../../Components/hooks/Api';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
@@ -12,6 +12,9 @@ import { toastifySuccess } from '../../Components/Common/AlertMsg';
 import { RequiredFieldIncident } from '../../Components/Pages/Utility/Personnel/Validation';
 import { get_Narrative_Type_Drp_Data } from '../../redux/actions/DropDownsData';
 import { Comman_changeArrayFormat } from '../../Components/Common/ChangeArrayFormat';
+import Group from '../../Components/Pages/Agency/AgencyTab/Group/Group';
+import AddGroup from './AddGroup';
+import { useLocation } from 'react-router-dom';
 
 function ReportWorkflow() {
 
@@ -29,8 +32,8 @@ function ReportWorkflow() {
     const [reportWorkFlowID, setReportWorkFlowID] = useState('');
     const [editval, setEditval] = useState();
     const [groupList, setGroupList] = useState([]);
+    const [GroupListData, setGroupListData] = useState([]);
     const [showModal, setShowModal] = useState(false);
-
     const [isChange, setIsChange] = React.useState(false);
 
     const [reportWorkflowState, setReportWorkflowState, handleReportWorkflowState, clearReportWorkflowState,
@@ -45,6 +48,18 @@ function ReportWorkflow() {
     const [errors, setErrors] = useState({
         'WorkflowNameErrors': '', 'ReportApproverGroupIDErrors': '', 'AppliesReportTypeErrors': '', 'ReportReviewerGroupIDErrors': '', 'ReportApproverRequiredErrors': '',
     })
+    const useQuery = () => {
+        const params = new URLSearchParams(useLocation().search);
+        return {
+            get: (param) => params.get(param)
+        };
+    };
+
+    const query = useQuery();
+    var aId = query?.get("Aid");
+
+    if (!aId) aId = 0;
+    else aId = parseInt(base64ToString(aId));
 
     useEffect(() => {
         if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
@@ -54,7 +69,8 @@ function ReportWorkflow() {
 
     useEffect(() => {
         if (localStoreData) {
-            setLoginPinID(localStoreData?.PINID); setLoginAgencyID(localStoreData?.AgencyID);
+            setLoginPinID(localStoreData?.PINID);
+            setLoginAgencyID(localStoreData?.AgencyID);
         }
     }, [localStoreData]);
 
@@ -95,23 +111,21 @@ function ReportWorkflow() {
     ];
     const groupLevelColumns = [
         {
-            name: "Group Name",
-            selector: (row) => row.groupName,
+            name: 'Group Name',
+            selector: (row) => row.GroupName,
             sortable: true
         },
         {
-            name: "Group Level",
-            selector: (row) => row.groupLevel,
-            sortable: true,
-            width: "150px"
-        }
+            name: 'Group Level',
+            selector: (row) => row.level,
+            sortable: true
+        },
     ]
     const groupLevelData = [
         // { groupName: "Group 1", groupLevel: "Level 1" },
         // { groupName: "Group 2", groupLevel: "Level 2" },
         // { groupName: "Group 3", groupLevel: "Level 3" }
     ]
-
 
     const data = [
         {
@@ -157,19 +171,20 @@ function ReportWorkflow() {
     ];
 
     useEffect(() => {
-        if (loginAgencyID) {
-            get_Data_ReportWorkflow(loginAgencyID); if (narrativeTypeDrpData?.length === 0) { dispatch(get_Narrative_Type_Drp_Data(loginAgencyID)) }
-            get_Group_List(loginAgencyID);
+        if (aId) {
+            get_Data_ReportWorkflow(aId); if (narrativeTypeDrpData?.length === 0) { dispatch(get_Narrative_Type_Drp_Data(aId)) }
+            get_Group_List(aId);
         }
-    }, [loginAgencyID])
+    }, [aId])
 
-    const get_Data_ReportWorkflow = (loginAgencyID) => {
-        const val = { 'AgencyID': loginAgencyID, }
+    const get_Data_ReportWorkflow = (aId) => {
+        const val = { 'AgencyID': aId, }
         fetchPostData('ReportWorkFlow/GetData_ReportWorkFlow', val).then((res) => {
             if (res) { setReportWorkflowData(res); }
             else { setReportWorkflowData(); }
         })
     }
+
 
     const GetSingleData = (ReportWorkFlowID) => {
         const val = { 'ReportWorkFlowID': ReportWorkFlowID, }
@@ -185,34 +200,26 @@ function ReportWorkflow() {
     const get_Group_List = (aId) => {
         const value = { AgencyId: aId }
         fetchPostData("Group/GetData_Group", value).then((res) => {
-            console.log(res)
             if (res) {
                 setGroupList(Comman_changeArrayFormat(res, 'GroupID', 'GroupName'))
-            } else setGroupList()
+                setGroupListData(res)
+            } else { setGroupList([]); setGroupListData([]) }
         })
     }
 
+
+
     useEffect(() => {
         if (status) {
-            console.log(editval)
             setValue({
                 ...value,
-                'WorkflowName': editval[0]?.WorkflowName,
-                'ReportApproverGroupID': Number(editval[0]?.ReportApproverGroupID),
+                'WorkflowName': editval[0]?.WorkflowName, 'ReportApproverGroupID': Number(editval[0]?.ReportApproverGroupID),
                 'Notes': editval[0]?.Notes, 'ReportReviewerGroupID': Number(editval[0]?.ReportReviewerGroupID),
-                'ReportApproverRequired': editval[0]?.ReportApproverRequired,
-                'AppliesReportTypeID': editval[0]?.AppliesReportTypeID,
-                'ModifiedByUserFK': loginPinID,
-                'IsMultipleLevel': editval[0]?.IsMultipleLevel,
-                'IsSingleLevel': editval[0]?.IsSingleLevel,
-                'IsSelfApproved': editval[0]?.IsSelfApproved,
-                'IsNoApproval': editval[0]?.IsNoApproval,
-
+                'ReportApproverRequired': editval[0]?.ReportApproverRequired, 'ReportApproverRequired': editval[0]?.ReportApproverRequired != null ? Number(editval[0].ReportApproverRequired) : '', 'AppliesReportTypeID': editval[0]?.AppliesReportTypeID, 'IsMultipleLevel': editval[0]?.IsMultipleLevel,
+                'IsSingleLevel': editval[0]?.IsSingleLevel, 'IsSelfApproved': editval[0]?.IsSelfApproved, 'IsNoApproval': editval[0]?.IsNoApproval, 'ModifiedByUserFK': loginPinID,
             })
         }
     }, [editval])
-
-    console.log(value)
 
     const reset = () => {
         setValue({
@@ -257,23 +264,23 @@ function ReportWorkflow() {
     const Add_Type = () => {
         const { AgencyID, WorkflowName, AppliesReportTypeID, Notes, ReportApproverGroupID, ReportApproverRequired, ReportReviewerGroupID, IsMultipleLevel, IsSingleLevel, IsNoApproval, IsSelfApproved, CreatedByUserFK } = value;
         const Value = {
-            AgencyID: loginAgencyID, WorkflowName: WorkflowName, AppliesReportTypeID: AppliesReportTypeID, Notes: Notes, ReportApproverGroupID: ReportApproverGroupID, ReportApproverRequired: ReportApproverRequired, ReportReviewerGroupID: ReportReviewerGroupID, IsMultipleLevel: IsMultipleLevel, IsSingleLevel: IsSingleLevel, IsNoApproval: IsNoApproval, IsSelfApproved: IsSelfApproved, CreatedByUserFK: loginPinID
+            AgencyID: aId, WorkflowName: WorkflowName, AppliesReportTypeID: AppliesReportTypeID, Notes: Notes, ReportApproverGroupID: ReportApproverGroupID, ReportApproverRequired: ReportApproverRequired, ReportReviewerGroupID: ReportReviewerGroupID, IsMultipleLevel: IsMultipleLevel, IsSingleLevel: IsSingleLevel, IsNoApproval: IsNoApproval, IsSelfApproved: IsSelfApproved, CreatedByUserFK: loginPinID
         };
         AddDeleteUpadate('ReportWorkFlow/Insert_ReportWorkFlow', Value).then((res) => {
             const parsedData = JSON.parse(res.data); const message = parsedData.Table[0].Message;
-            toastifySuccess(message); get_Data_ReportWorkflow(loginAgencyID); setStatus(false); reset(); setErrors({ ...errors, 'WorkflowNameErrors': '', });
+            toastifySuccess(message); get_Data_ReportWorkflow(aId); setStatus(false); reset(); setErrors({ ...errors, 'WorkflowNameErrors': '', });
         })
     }
     const update_Juvenile = () => {
         const { AgencyID, ReportWorkFlowID, WorkflowName, AppliesReportTypeID, Notes, ReportApproverGroupID, ReportApproverRequired, ReportReviewerGroupID, IsMultipleLevel, IsSingleLevel, IsNoApproval, IsSelfApproved, CreatedByUserFK } = value;
         const Value = {
-            AgencyID: loginAgencyID, ReportWorkFlowID: reportWorkFlowID, WorkflowName: WorkflowName, AppliesReportTypeID: AppliesReportTypeID, Notes: Notes, ReportApproverGroupID: ReportApproverGroupID, ReportApproverRequired: ReportApproverRequired, ReportReviewerGroupID: ReportReviewerGroupID, IsMultipleLevel: IsMultipleLevel, IsSingleLevel: IsSingleLevel, IsNoApproval: IsNoApproval, IsSelfApproved: IsSelfApproved, ModifiedByUserFK: loginPinID
+            AgencyID: aId, ReportWorkFlowID: reportWorkFlowID, WorkflowName: WorkflowName, AppliesReportTypeID: AppliesReportTypeID, Notes: Notes, ReportApproverGroupID: ReportApproverGroupID, ReportApproverRequired: ReportApproverRequired, ReportReviewerGroupID: ReportReviewerGroupID, IsMultipleLevel: IsMultipleLevel, IsSingleLevel: IsSingleLevel, IsNoApproval: IsNoApproval, IsSelfApproved: IsSelfApproved, ModifiedByUserFK: loginPinID
         };
         AddDeleteUpadate('ReportWorkFlow/Update_ReportWorkFlow', Value).then((res) => {
             const parsedData = JSON.parse(res.data); const message = parsedData.Table[0].Message;
             toastifySuccess(message);
             setStatus(false); setErrors({ ...errors, 'WorkflowNameErrors': '', 'WorkflowNameErrors': '' });
-            reset(); get_Data_ReportWorkflow(loginAgencyID);
+            reset(); get_Data_ReportWorkflow(aId);
         })
     }
 
@@ -337,7 +344,7 @@ function ReportWorkflow() {
 
     const set_Edit_Value = (row) => {
         setStatus(true); setErrors(''); setReportWorkFlowID(row.ReportWorkFlowID);
-        GetSingleData(row.ReportWorkFlowID)
+        GetSingleData(row?.ReportWorkFlowID)
     }
     const conditionalRowStyles = [
         {
@@ -361,17 +368,13 @@ function ReportWorkflow() {
 
     const handleRadioChange = (event) => {
         const selectedOptionnew = event.target.value;
-        // setApprovalStatus(selectedOptionnew);
         setValue(prevState => ({
             ...prevState,
             IsMultipleLevel: selectedOptionnew === 'IsMultipleLevel',
             IsSingleLevel: selectedOptionnew === 'IsSingleLevel',
             IsSelfApproved: selectedOptionnew === 'IsSelfApproved',
             IsNoApproval: selectedOptionnew === 'IsNoApproval',
-
         }));
-
-        
     };
 
     return (
@@ -521,13 +524,13 @@ function ReportWorkflow() {
                                         placeholder="Select..."
                                         options={ReportApprovingLevel}
                                         onChange={(e) => ChangeDropDownReportType(e, 'ReportApproverGroupID')}
-                                        styles={value.ApprovalType === "IsSelfApproved" || value.ApprovalType === "IsNoApproval" ? colorLessStyle_Select : coloredStyle_Select}
+                                        styles={value.IsSelfApproved || value.IsNoApproval ? colorLessStyle_Select : coloredStyle_Select}
                                         className="w-100"
-                                        isDisabled={value.ApprovalType === "IsSelfApproved" || value.ApprovalType === "IsNoApproval"}
+                                        isDisabled={value.IsSelfApproved || value.IsNoApproval || value.ApprovalType === "IsNoApproval"}
                                     />
                                 </div>
                                 <div className="col-2 d-flex align-self-center justify-content-end">
-                                    <label htmlFor="" className="tab-form-label"> Approvals Required (hops) Approvals Required (hops)
+                                    <label htmlFor="" className="tab-form-label"> Approvals Required (hops)
                                         {/* {errors.ReportApproverRequiredErrors !== 'true' ? (
                                         <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReportApproverRequiredErrors}</p>
                                     ) : null}   */}
@@ -535,14 +538,14 @@ function ReportWorkflow() {
                                 </div>
                                 <div className="col-3">
                                     <input type="number" name='ReportApproverRequired' className="form-control py-1 new-input " placeholder="Enter hops" min="1"
-                                        disabled={value.ApprovalType === "IsNoApproval" || value.ApprovalType === "IsSelfApproved" || value.ApprovalType === "IsSingleLevel"} value={value.ReportApproverRequired} onChange={HandleChange}
+                                        disabled={value.IsNoApproval || value.IsSelfApproved || value.IsSingleLevel} value={value.ReportApproverRequired} onChange={HandleChange}
                                     />
                                 </div>
                             </div>
                             <div className="col-4 d-flex align-items-center offset-1 mt-1">
                                 <div className="form-check">
                                     <input className="form-check-input" type="checkbox" id="skipIfApproverIsAuthor"
-                                        checked={value.skipIfApproverIsAuthor} disabled={value.ApprovalType === "IsNoApproval" || value.ApprovalType === "IsSelfApproved"} onChange={(e) => handleReportWorkflowState("skipIfApproverIsAuthor", e.target.checked)}
+                                        checked={value.skipIfApproverIsAuthor} disabled={value.IsNoApproval || value.IsSelfApproved} onChange={(e) => handleReportWorkflowState("skipIfApproverIsAuthor", e.target.checked)}
                                     />
                                     <label className="form-check-label" htmlFor="skipIfApproverIsAuthor">  Skip if the approver is the author </label>
                                 </div>
@@ -566,9 +569,9 @@ function ReportWorkflow() {
                                     placeholder="Select..."
                                     options={groupList}
                                     onChange={(e) => ChangeDropDownReportType(e, 'ReportReviewerGroupID')}
-                                    styles={value.ApprovalType === "IsSelfApproved" || value.ApprovalType === "IsNoApproval" ? colorLessStyle_Select : coloredStyle_Select}
+                                    styles={value.IsSelfApproved || value.IsNoApproval ? colorLessStyle_Select : coloredStyle_Select}
                                     className="w-100"
-                                    isDisabled={value.ApprovalType === "IsSelfApproved" || value.ApprovalType === "IsNoApproval"}
+                                    isDisabled={value.IsSelfApproved || value.IsNoApproval}
                                 />
                             </div>
                             <div className="col-4 d-flex align-items-center">
@@ -752,109 +755,97 @@ function ReportWorkflow() {
                         Add new group
                     </button>
                 </div>
-                <div className="table-responsive">
+                <div className="col-12 mt-1">
                     <DataTable
                         dense
                         columns={groupLevelColumns}
-                        data={groupLevelData}
+                        // data={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? groupList : '' : ''}
+                        data={GroupListData}
+                        highlightOnHover
+                        paginationPerPage={'100'}
+                        paginationRowsPerPageOptions={[100, 150, 200, 500]}
+                        noContextMenu
+                        showHeader={true}
+                        persistTableHead={true}
+                        conditionalRowStyles={conditionalRowStyles}
                         customStyles={tableCustomStyles}
+                        // onRowClicked={(row) => {
+                        //     set_Edit_Value(row);
+                        //     setClickedRow(row);
+                        // }}
+                        fixedHeader
                         pagination
                         responsive
-                        striped
-                        persistTableHead={true}
-                        highlightOnHover
-                        fixedHeader
+                        subHeaderAlign="right"
+                        subHeaderWrap
+                        fixedHeaderScrollHeight='340px'
+                        noDataComponent={'There are no data to display'}
+
+                    // noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : 'There are no data to display'}
                     />
                 </div>
             </div>
+
+
             {showModal && (
-                <div className="modal show fade d-block" tabIndex="-1" role="dialog">
-                    <div className="modal-dialog modal-dialog-centered modal-lg" role="document">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title">Add Group</h5>
-                                <button
-                                    type="button" className="btn btn-outline-danger btn-sm"
-                                    aria-label="Close modal" title="Close" onClick={() => setShowModal(false)}
-                                >
-                                    ✖
-                                </button>
+                <AddGroup setShowModal={setShowModal} showModal={showModal} get_Group_List={get_Group_List} />
+                // <div className="modal show fade d-block" tabIndex="-1" role="dialog">
+                //     <div className="modal-dialog modal-dialog-centered modal-lg" role="document">
+                //         <div className="modal-content">
+                //             <div className="modal-header">
+                //                 <h5 className="modal-title">Add Group</h5>
+                //                 <button
+                //                     type="button" className="btn btn-outline-danger btn-sm"
+                //                     aria-label="Close modal" title="Close" onClick={() => setShowModal(false)}
+                //                 >
+                //                     ✖
+                //                 </button>
 
-                            </div>
-                            <div className="modal-body">
-                                <form>
-                                    <div className="row mb-3">
-                                        <div className="col-12">
-                                            <label className="form-label">Group Name</label>
-                                            <input type="text" name='GroupName' className="form-control" />
-                                        </div>
-                                    </div>
+                //             </div>
+                //             <div className="modal-body">
+                //                 <form>
+                //                     <div className="row mb-3">
+                //                         <div className="col-12">
+                //                             <label className="form-label">Group Name</label>
+                //                             <input type="text" name='GroupName' className="form-control" />
+                //                         </div>
+                //                     </div>
+                //                     <div className="row mb-4">
+                //                         <div className="col-12">
+                //                             <label className="form-label">Group Level</label>
 
-                                    {/* <div className="row mb-3">
-                                        <div className="col-md-4 col-sm-6 col-12">
-                                            <div className="form-check">
-                                                <input className="form-check-input" type="checkbox" id="multipleAgency" />
-                                                <label className="form-check-label" htmlFor="multipleAgency">
-                                                    Is Allow Multiple Agency
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div className="col-md-4 col-sm-6 col-12">
-                                            <div className="form-check">
-                                                <input className="form-check-input" type="checkbox" id="allowSeal" />
-                                                <label className="form-check-label" htmlFor="allowSeal">
-                                                    Is Allow Seal
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div className="col-md-4 col-sm-6 col-12">
-                                            <div className="form-check">
-                                                <input className="form-check-input" type="checkbox" id="allowUnseal" />
-                                                <label className="form-check-label" htmlFor="allowUnseal">
-                                                    Is Allow UnSeal
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div> */}
+                //                             <input type="text" name='level'
+                //                                 // value={value.level}
+                //                                 autocomplete="off" className="form-control"
+                //                                 // onChange={handleChange}
+                //                                 maxLength={1}
+                //                             />
+                //                         </div>
+                //                     </div>
 
-                                    <div className="row mb-4">
-                                        <div className="col-12">
-                                            <label className="form-label">Group Level</label>
+                //                     <div className="d-flex justify-content-end">
+                //                         <button
+                //                             type="button"
+                //                             className="btn btn-success mr-2"
+                //                             onClick={() => setShowModal(false)}
+                //                         >
+                //                             Close
+                //                         </button>
 
-                                            <input type="text" name='level'
-                                                // value={value.level}
-                                                autocomplete="off" className="form-control"
-                                                // onChange={handleChange}
-                                                maxLength={1}
+                //                         <button type="submit" className="btn btn-success mr-2">
+                //                             Update
+                //                         </button>
 
-                                            />
-                                        </div>
-                                    </div>
+                //                         <button type="submit" className="btn btn-success">
+                //                             Save
+                //                         </button>
 
-                                    <div className="d-flex justify-content-end">
-                                        <button
-                                            type="button"
-                                            className="btn btn-success mr-2"
-                                            onClick={() => setShowModal(false)}
-                                        >
-                                            Close
-                                        </button>
-
-
-                                        <button type="submit" className="btn btn-success mr-2">
-                                            Update
-                                        </button>
-
-                                        <button type="submit" className="btn btn-success">
-                                            Save
-                                        </button>
-
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                //                     </div>
+                //                 </form>
+                //             </div>
+                //         </div>
+                //     </div>
+                // </div>
             )}
 
             <div className="col-12">
@@ -862,7 +853,7 @@ function ReportWorkflow() {
                     <button
                         type="button" className="btn btn-sm btn-success mr-1" onClick={() => { reset(); }}
                     >
-                        Reset
+                        New
                     </button>
                     {
                         status ?
