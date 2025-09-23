@@ -752,31 +752,31 @@ const MiscellaneousInformation = (props) => {
     //     setChangesStatus(false);
     //     setIsSendButtonDisabled(true);
     // }
-    else if (tasksInList.includes("Release") && selectedStatus === "Release") {
+    else if (tasksInList.includes("Release") || tasksInList.includes("CheckIn") || tasksInList.includes("Update") || tasksInList.includes("CheckOut") || tasksInList.includes("Destroy") || tasksInList.includes("Transfer Location")  && selectedStatus === "Release") {
       setTaskListStatus("Other task already pending in task list.");
       setChangesStatus(false);
       setIsSendButtonDisabled(true);
     }
-    else if (tasksInList.includes("Destroy") && selectedStatus === "Destroy") {
+    else if (tasksInList.includes("Release") || tasksInList.includes("CheckIn") || tasksInList.includes("Update") || tasksInList.includes("CheckOut") || tasksInList.includes("Destroy") || tasksInList.includes("Transfer Location") && selectedStatus === "Destroy") {
       setTaskListStatus("Other task already pending in task list.");
       setChangesStatus(false);
       setIsSendButtonDisabled(true);
     }
-    else if (tasksInList.includes("Transfer Location") && selectedStatus === "Transfer Location") {
+    else if (tasksInList.includes("Release") || tasksInList.includes("CheckIn") || tasksInList.includes("Update") || tasksInList.includes("CheckOut") || tasksInList.includes("Destroy") || tasksInList.includes("Transfer Location") && selectedStatus === "Transfer Location") {
       setTaskListStatus("Other task already pending in task list.");
       setChangesStatus(false);
       setIsSendButtonDisabled(true);
     }
-    else if (tasksInList.includes("Update") && selectedStatus === "Update") {
+    else if (tasksInList.includes("Release") || tasksInList.includes("CheckIn") || tasksInList.includes("Update") || tasksInList.includes("CheckOut") || tasksInList.includes("Destroy") || tasksInList.includes("Transfer Location") && selectedStatus === "Update") {
       setTaskListStatus("Other task already pending in task list.");
       setChangesStatus(false);
       setIsSendButtonDisabled(true);
     }
-    else if (tasksInList.includes("CheckIn") && selectedStatus === "CheckIn") {
+    else if (tasksInList.includes("Release") || tasksInList.includes("CheckIn") || tasksInList.includes("Update") || tasksInList.includes("CheckOut") || tasksInList.includes("Destroy") || tasksInList.includes("Transfer Location") && selectedStatus === "CheckIn") {
       setTaskListStatus("CheckIn task already sent to task list.");
       setChangesStatus(false);
       setIsSendButtonDisabled(true);
-    } else if (tasksInList.includes("CheckOut") && selectedStatus === "CheckOut") {
+    } else if (tasksInList.includes("Release") || tasksInList.includes("CheckIn") || tasksInList.includes("Update") || tasksInList.includes("CheckOut") || tasksInList.includes("Destroy") || tasksInList.includes("Transfer Location") && selectedStatus === "CheckOut") {
       setTaskListStatus("Already checked out.");
       setChangesStatus(false);
       setIsSendButtonDisabled(true);
