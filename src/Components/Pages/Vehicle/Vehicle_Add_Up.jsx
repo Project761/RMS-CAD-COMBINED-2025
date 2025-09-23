@@ -39,6 +39,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
 
     const query = useQuery();
 
+    let MstVehicle = query?.get('page');
     var VehId = query?.get("VehId");
     var MVehId = query?.get('MVehId');
     var IncID = query?.get('IncId');
@@ -139,22 +140,22 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                             >
                                                 Additional Information
                                             </span>
+                                            {MstVehicle !== "MST-Vehicle-Dash" && (
+                                                <span
+                                                    className={`nav-item ${showPage === 'Offense' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+                                                    data-toggle={changesStatus ? "modal" : "pill"}
+                                                    data-target={changesStatus ? "#SaveModal" : ''}
+                                                    style={{ color: showPage === 'Offense' ? 'Red' : vehicleCount?.OffenseCount > 0 ? 'blue' : '#000' }}
+                                                    aria-current="page"
+                                                    onClick={() => {
+                                                        if (!changesStatus) { setShowPage('Offense') }
+                                                    }}
 
-                                            {/* <span
-                                                className={`nav-item ${showPage === 'Offense' ? 'active' : ''}${!status ? 'disabled' : ''}`}
-                                                data-toggle={changesStatus ? "modal" : "pill"}
-                                                data-target={changesStatus ? "#SaveModal" : ''}
-                                                style={{ color: showPage === 'Offense' ? 'Red' : vehicleCount?.OffenseCount > 0 ? 'blue' : '#000' }}
-                                                aria-current="page"
-                                                onClick={() => {
-                                                    if (!changesStatus) { setShowPage('Offense') }
-                                                }}
+                                                >
 
-                                            >
-
-                                                Associated Offenses{`${vehicleCount?.OffenseCount > 0 ? '(' + vehicleCount?.OffenseCount + ')' : ''}`}
-                                            </span> */}
-
+                                                    Associated Offenses{`${vehicleCount?.OffenseCount > 0 ? '(' + vehicleCount?.OffenseCount + ')' : ''}`}
+                                                </span>
+                                            )}
                                             {
                                                 showVehicleRecovered &&
                                                 <span className={`nav-item ${showPage === 'RecoveredVehicle' ? 'active' : ''} ${!status ? 'disabled' : ''}`}
