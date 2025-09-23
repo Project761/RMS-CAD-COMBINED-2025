@@ -350,7 +350,7 @@ const Home = (props) => {
 
     const GetData_Propertyroom = (DecPropID, category) => {
         const val = {
-            'PropertyID': propertyRoomArr, 'PropertyCategoryCode': category, 'MasterPropertyID': 0, 'AgencyId': loginAgencyID,
+            'PropertyID': DecPropID, 'PropertyCategoryCode': category, 'MasterPropertyID': 0, 'AgencyId': loginAgencyID,
         };
         AddDeleteUpadate('Propertyroom/GetData_Propertyroom', val).then((res) => {
             const parsedData = JSON.parse(res.data);
@@ -1154,7 +1154,7 @@ const Home = (props) => {
     }
 
 
-
+   
 
     return (
         <>

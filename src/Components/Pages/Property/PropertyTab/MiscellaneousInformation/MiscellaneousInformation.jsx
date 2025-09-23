@@ -82,6 +82,7 @@ const MiscellaneousInformation = (props) => {
   const [fileUploadStatus, setfileUploadStatus] = useState(false);
   const [groupList, setGroupList] = useState([]);
   const [isSendButtonDisabled, setIsSendButtonDisabled] = useState(false);
+  const [IsNonPropertyStatus , setIsNonPropertyStatus] = useState(false);
 
 
   // Add Update Permission
@@ -138,6 +139,7 @@ const MiscellaneousInformation = (props) => {
     fetchPostData("Property/GetSingleData_Property", val).then((res) => {
       if (res) {
         setEditval(res); setPropertyRoomStatus(res[0]?.PropertyRoomStatus);
+        setIsNonPropertyStatus(res[0]?.IsNonPropertyRoom);
       } else {
         setEditval([]);
       }
@@ -450,6 +452,14 @@ const MiscellaneousInformation = (props) => {
               "OfficerID",
               "TaskList/Insert_TaskList",
               taskToSend
+            );
+          }
+           if(value?.IsSendToTaskList && IsNonPropertyStatus === false && value.IsNonPropertyRoom){
+             InSertBasicInfo(
+              value?.CollectingOfficer,
+              "OfficerID",
+              "TaskList/Insert_TaskList",
+              
             );
           }
 
@@ -1609,15 +1619,16 @@ const MiscellaneousInformation = (props) => {
                                 color: "#fff",
                               }}
                               onClick={() => {
-                                InSertBasicInfo(
-                                  value?.CollectingOfficer,
-                                  "OfficerID",
-                                  "TaskList/Insert_TaskList",
-                                  taskToSend
-                                );
-                                setTaskToSend("");
+                                // InSertBasicInfo(
+                                //   value?.CollectingOfficer,
+                                //   "OfficerID",
+                                //   "TaskList/Insert_TaskList",
+                                //   taskToSend
+                                // );
+                                // setTaskToSend("");
+                                  check_Validation_Error();
                               }}
-                              disabled={!value.OfficerID}
+                              disabled={!value.OfficerID || IsNonPropertyStatus === true}
                             >
                               Send
                             </button>
