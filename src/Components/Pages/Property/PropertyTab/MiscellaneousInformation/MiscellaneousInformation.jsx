@@ -144,6 +144,8 @@ const MiscellaneousInformation = (props) => {
     });
   };
 
+  console.log(PropertyRoomStatus)
+
   const GetDataDocument = (propertyID, masterPropertyID, loginPinID) => {
     const val = {
       PropertyID: propertyID,
@@ -709,6 +711,8 @@ const MiscellaneousInformation = (props) => {
     }
   };
 
+  console.log(task?.tasklistdata)
+
   const TaskListvalidation = (selectedStatus) => {
     setTaskListStatus("");
     let tasksInList = [];
@@ -719,49 +723,64 @@ const MiscellaneousInformation = (props) => {
     } catch (err) {
       console.error("Error parsing tasklistdata:", err);
     }
+
     setIsSendButtonDisabled(false);
-    console.log(tasksInList, 'hello')
-    if (tasksInList.includes(selectedStatus)) {
-      console.log('Task already exists in the task list.');
-
-      // Handle specific tasks
-      if (selectedStatus === "CheckIn") {
-
-        setTaskListStatus("Task already sent to task list");
-        setChangesStatus(false);
-        setIsSendButtonDisabled(true);
-        // setIsSendButtonDisabled(true);
-      } else if (selectedStatus === "CheckOut") {
-        setTaskListStatus("Already checked out");
-        setChangesStatus(false);
-        setIsSendButtonDisabled(true);
-        // setIsSendButtonDisabled(true);
-      } else if (selectedStatus === "Transfer Location") {
-        setChangesStatus(false);
-        setTaskListModalStatus(true);
-
-        // setIsSendButtonDisabled(true);
-      }
+    console.log(tasksInList, 'hello');
+    if (tasksInList.includes("CheckIn") && selectedStatus === "CheckOut" || tasksInList.includes("CheckIn") && selectedStatus === "Release" || tasksInList.includes("CheckIn") && selectedStatus === "Destroy" || tasksInList.includes("CheckIn") && selectedStatus === "Update" || tasksInList.includes("CheckIn") && selectedStatus === "Transfer Location") {
+      setTaskListStatus("Other task already pending in task list.");
+      setChangesStatus(false);
+      setIsSendButtonDisabled(true);
     }
-    else if (tasksInList.includes("CheckOut")) {
-      if (selectedStatus === "Transfer Location") {
-        setChangesStatus(false);
-        setTaskListModalStatus(true);
-        setIsSendButtonDisabled(true);
-        // setIsSendButtonDisabled(true);
-      }
+
+    // else if (tasksInList.includes("CheckIn") && selectedStatus === "Release") {
+    //     setTaskListStatus("Please complete CheckIn");
+    //     setChangesStatus(false);
+    //     setIsSendButtonDisabled(true);
+    // }
+    //  else if (tasksInList.includes("CheckIn") && selectedStatus === "Destroy") {
+    //     setTaskListStatus("Please complete CheckIn");
+    //     setChangesStatus(false);
+    //     setIsSendButtonDisabled(true);
+    // }
+    else if (tasksInList.includes("Release") && selectedStatus === "Release") {
+      setTaskListStatus("Other task already pending in task list.");
+      setChangesStatus(false);
+      setIsSendButtonDisabled(true);
     }
-    else {
-      // setChangesStatus(true);
-      // if (LastTask === "CheckIn" && selectedStatus === "CheckIn") {
-      //   setTaskListStatus("Task already sent to task list");
-      // } else if (LastTask === "CheckOut" && selectedStatus === "CheckOut") {
-      //   setTaskListStatus("Already checked out");
-      // } else if (LastTask === "CheckOut" && selectedStatus === "Transfer Location") {
-      //   setTaskListModalStatus(true);
-      // }
+    else if (tasksInList.includes("Destroy") && selectedStatus === "Destroy") {
+      setTaskListStatus("Other task already pending in task list.");
+      setChangesStatus(false);
+      setIsSendButtonDisabled(true);
+    }
+    else if (tasksInList.includes("Transfer Location") && selectedStatus === "Transfer Location") {
+      setTaskListStatus("Other task already pending in task list.");
+      setChangesStatus(false);
+      setIsSendButtonDisabled(true);
+    }
+    else if (tasksInList.includes("Update") && selectedStatus === "Update") {
+      setTaskListStatus("Other task already pending in task list.");
+      setChangesStatus(false);
+      setIsSendButtonDisabled(true);
+    }
+    else if (tasksInList.includes("CheckIn") && selectedStatus === "CheckIn") {
+      setTaskListStatus("CheckIn task already sent to task list.");
+      setChangesStatus(false);
+      setIsSendButtonDisabled(true);
+    } else if (tasksInList.includes("CheckOut") && selectedStatus === "CheckOut") {
+      setTaskListStatus("Already checked out.");
+      setChangesStatus(false);
+      setIsSendButtonDisabled(true);
+    } else if (tasksInList.includes("CheckOut") && selectedStatus === "Transfer Location") {
+      setChangesStatus(false);
+      setTaskListModalStatus(true);
+      setIsSendButtonDisabled(true);
+    } else {
+      setChangesStatus(true);
+      setTaskListStatus("");
+      setIsSendButtonDisabled(false);
     }
   };
+
 
 
   const TaskListDataChange = (multiSelected) => {
