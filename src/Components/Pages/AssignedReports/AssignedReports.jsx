@@ -290,9 +290,7 @@ function AssignedReports() {
 
     return (
         <>
-
             <div className="col-12 col-sm-12">
-
                 {/* <div className="text-end mt-3 d-flex mb-2" style={{ justifyContent: "space-between", alignItems: "center" }}>
                     <h5 className="fw-bold ml-3">My Reports</h5>
                     <button className="btn btn-outline-dark mr-3" style={{ backgroundColor: "#001f3f", color: "#fff" }} onClick={onMasterPropClose}>
@@ -344,7 +342,6 @@ function AssignedReports() {
                                 Not submitted Report (DRAFT)
                             </label>
                         </li>
-
                         <li className="form-check ml-2">
                             <input
                                 className="form-check-input"
@@ -381,8 +378,6 @@ function AssignedReports() {
                 {selectedReportType === 'Rejected' && <RejectedReports />}
                 {selectedReportType === 'Approved' && <ApprovedReports />} */}
 
-
-
                 <div className="card-body">
                     <DataTable
                         className='table-responsive_assigned'
@@ -393,9 +388,7 @@ function AssignedReports() {
                         highlightOnHover
                         customStyles={tableCustomStyles}
                         noDataComponent={
-                            effectiveScreenPermission?.[0]?.DisplayOK
-                                ? 'There are no data to display'
-                                : 'You don’t have permission to view data'
+                            effectiveScreenPermission?.[0]?.DisplayOK ? 'There are no data to display' : 'You don’t have permission to view data'
                         }
                         fixedHeader
                         persistTableHead
@@ -406,17 +399,12 @@ function AssignedReports() {
                         onRowClicked={setClickedRow}
                     />
                 </div>
-
             </div>
             <AssignedReportsModal editval={editval} narrativeID={narrativeID} loginAgencyID={loginAgencyID} loginPinID={loginPinID} setModelStatus={setModelStatus} />
-
         </>
     )
 }
-
 export default AssignedReports
-
-
 
 
 
@@ -438,18 +426,14 @@ const AssignedReportsModal = (props) => {
         () => EditorState.createEmpty(),
     );
 
-
-
     const [value, setValue] = useState({
         'NameIDNumber': 'Auto Generated', 'NameTypeID': '', 'BusinessTypeID': '', 'SuffixID': '', 'VerifyID': '', 'SexID': '',
         'IsApprove': true, 'IsReject': false, 'Comments': '', 'CommentsDoc': '', 'ApprovalComments': ''
-
     })
 
     const [errors, setErrors] = useState({
         'ReportedByPinError': '', 'AsOfDateError': '', 'NarrativeIDError': '', 'CommentsError': '',
     })
-
 
 
     const rejectColumns = [
@@ -458,48 +442,25 @@ const AssignedReportsModal = (props) => {
         { name: 'Date Of Rejection', selector: row => row.CreatedDtTm ? getShowingDateText(row.CreatedDtTm) : '', sortable: true },
     ];
 
-    console.log(incidentID)
-
-
     useEffect(() => {
         if (editval) {
             setValue({
                 ...value,
-                'IncidentID': editval[0]?.IncidentNumber,
-                'CADIncidentNumber': editval[0]?.CADIncidentNumber,
-                'ReportedBy_Description': editval[0]?.ReportedBy_Description,
-                'ReportName': editval[0]?.ReportName,
-                'sequence': editval[0]?.sequence,
-                'CommentsDoc': editval[0]?.CommentsDoc,
-                'Comments': editval[0]?.Comments,
-                'NarrativeReport_Comments': editval[0]?.NarrativeReport_Comments
+                'IncidentID': editval[0]?.IncidentNumber, 'CADIncidentNumber': editval[0]?.CADIncidentNumber, 'ReportedBy_Description': editval[0]?.ReportedBy_Description, 'ReportName': editval[0]?.ReportName,
+                'sequence': editval[0]?.sequence, 'CommentsDoc': editval[0]?.CommentsDoc, 'Comments': editval[0]?.Comments, 'NarrativeReport_Comments': editval[0]?.NarrativeReport_Comments
             })
             setIsSaved(false);
             if (editval[0]?.CommentsDoc?.trim()) {
                 setEditorState(EditorState.createWithContent(ContentState.createFromBlockArray(htmlToDraft(editval[0]?.CommentsDoc ? editval[0].CommentsDoc?.trim() : <p></p>))));
             }
-            console.log(editval);
-            setIncidentID(editval[0]?.IncidentID)
-            setAsOfDate(editval[0]?.AsOfDate ? getShowingDateText(editval[0]?.AsOfDate) : '');
-            setnarrativeTypeId(editval[0]?.NarrativeTypeID)
-            setreportedPinActivity(editval[0]?.ReportedByPINActivityID)
-
-            console.log(editval[0]?.IncidentID)
+            setIncidentID(editval[0]?.IncidentID); setAsOfDate(editval[0]?.AsOfDate ? getShowingDateText(editval[0]?.AsOfDate) : '');
+            setnarrativeTypeId(editval[0]?.NarrativeTypeID); setreportedPinActivity(editval[0]?.ReportedByPINActivityID)
         }
         else {
-
             setValue({
-                ...value,
-                'IncidentID': '',
-                'CADIncidentNumber': '',
-                'ReportedBy_Description': '',
-                'Comments': '',
-                'sequence': '',
-                'CommentsDoc': '',
+                ...value, 'IncidentID': '', 'CADIncidentNumber': '', 'ReportedBy_Description': '', 'Comments': '', 'sequence': '', 'CommentsDoc': '',
             });
         }
-
-
     }, [editval])
 
 
@@ -539,30 +500,22 @@ const AssignedReportsModal = (props) => {
     const Add_Type = () => {
         const { IsApprove, IsReject, Comments, CommentsDoc, WrittenForID } = value
         const val = {
-            'AgencyID': loginAgencyID,
-            'IncidentId': incidentID, 'NarrativeID': narrativeID, 'ApprovingSupervisorType': '', 'ApprovingSupervisorID': '', 'IsApprove': IsApprove, 'CreatedByUserFK': loginPinID, 'IsReject': IsReject,
-            'CommentsDoc': CommentsDoc,
-            "ReportedByPINActivityID": reportedPinActivity,
-            "NarrativeTypeID": narrativeTypeId,
-            'Comments': Comments, 'WrittenForID': WrittenForID,
+            'AgencyID': loginAgencyID, 'IncidentId': incidentID, 'NarrativeID': narrativeID, 'ApprovingSupervisorType': '', 'ApprovingSupervisorID': '', 'IsApprove': IsApprove, 'CreatedByUserFK': loginPinID, 'IsReject': IsReject,
+            'CommentsDoc': CommentsDoc, "ReportedByPINActivityID": reportedPinActivity, "NarrativeTypeID": narrativeTypeId, 'Comments': Comments, 'WrittenForID': WrittenForID,
             'AsOfDate': AsOfDate
         };
         AddDeleteUpadate('Narrative/Update_Narrative', val).then((res) => {
-            Add_Type_Comments()
-            get_Data_Narrative(narrativeID)
+            Add_Type_Comments(); get_Data_Narrative(narrativeID)
             const parseData = JSON.parse(res.data);
-            toastifySuccess(parseData?.Table[0].Message);
-            setIsSaved(true);
-            setModelStatus(true);
-            reset();
+            toastifySuccess(parseData?.Table[0].Message); setIsSaved(true);
+            setModelStatus(true); reset();
         })
     }
 
     const Add_Type_Comments = () => {
         const { IsApprove, IsReject, Comments, CommentsDoc, ApprovalComments } = value
         const val = {
-            'AgencyID': loginAgencyID,
-            'IncidentId': incidentID, 'NarrativeID': narrativeID, 'ApprovingSupervisorType': '', 'ApprovingSupervisorID': '', 'IsApprove': IsApprove, 'CreatedByUserFK': loginPinID, 'IsReject': IsReject, 'Comments': ApprovalComments,
+            'AgencyID': loginAgencyID, 'IncidentId': incidentID, 'NarrativeID': narrativeID, 'ApprovingSupervisorType': '', 'ApprovingSupervisorID': '', 'IsApprove': IsApprove, 'CreatedByUserFK': loginPinID, 'IsReject': IsReject, 'Comments': ApprovalComments,
         };
         AddDeleteUpadate('IncidentNarrativeReport/Insert_IncidentNarrativeReport', val).then((res) => {
             const parseData = JSON.parse(res.data);
@@ -570,27 +523,18 @@ const AssignedReportsModal = (props) => {
         })
     }
     const reset = () => {
-        setValue({
-            ...value,
-            'CommentsDoc': ''
-        });
+        setValue({ ...value, 'CommentsDoc': '' });
     }
 
     const resets = () => {
-        setValue({
-            ...value,
-            'ApprovalComments': ''
-        });
+        setValue({ ...value, 'ApprovalComments': '' });
     }
 
     const handleRadioChange = (event) => {
         const selectedOption = event.target.value;
         setApprovalStatus(selectedOption);
         setValue(prevState => ({
-            ...prevState,
-            IsApprove: selectedOption === 'Approve',
-            IsReject: selectedOption === 'Reject',
-        }));
+            ...prevState, IsApprove: selectedOption === 'Approve',  IsReject: selectedOption === 'Reject', }));
     };
 
     const handleChange = (event) => {
@@ -620,7 +564,6 @@ const AssignedReportsModal = (props) => {
                 combinedText += e.blocks[key].text + ' ';
             }
         }
-
         setValue({ ...value, ['Comments']: combinedText.trim() });
     };
 
@@ -643,9 +586,7 @@ const AssignedReportsModal = (props) => {
 
     const resetserror = () => {
         setErrors({ ...errors, ['ApprovalCommentsError']: '', ['CommentsDocumentsError']: '' })
-
     }
-
 
     return (
         <div className="modal fade" id="QueueReportsModal" tabIndex="-1" aria-hidden="true" style={{ background: "rgba(0,0,0, 0.5)" }}>
