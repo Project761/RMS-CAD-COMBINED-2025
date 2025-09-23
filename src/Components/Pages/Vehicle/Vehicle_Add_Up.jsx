@@ -140,7 +140,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                                 Additional Information
                                             </span>
 
-                                            <span
+                                            {/* <span
                                                 className={`nav-item ${showPage === 'Offense' ? 'active' : ''}${!status ? 'disabled' : ''}`}
                                                 data-toggle={changesStatus ? "modal" : "pill"}
                                                 data-target={changesStatus ? "#SaveModal" : ''}
@@ -153,7 +153,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                             >
 
                                                 Associated Offenses{`${vehicleCount?.OffenseCount > 0 ? '(' + vehicleCount?.OffenseCount + ')' : ''}`}
-                                            </span>
+                                            </span> */}
 
                                             {
                                                 showVehicleRecovered &&

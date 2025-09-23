@@ -184,7 +184,7 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                                             >
                                                 Owner{`${propertyCount?.OwnerCount > 0 ? '(' + propertyCount?.OwnerCount + ')' : ''}`}
                                             </span>
-                                            <span
+                                            {/* <span
                                                 className={`nav-item ${showPage === 'Offense' ? 'active' : ''}${!status ? 'disabled' : ''}`}
 
                                                 data-toggle={changesStatus ? "modal" : "pill"}
@@ -195,7 +195,7 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
 
                                             >
                                                 Associated Offenses{`${propertyCount?.OffenseCount > 0 ? '(' + propertyCount?.OffenseCount + ')' : ''}`}
-                                            </span>
+                                            </span> */}
                                             {
                                                 showRecovered &&
                                                 <span
