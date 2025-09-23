@@ -2100,18 +2100,19 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
               </div>
             </div>
 
-            {
-              (!value.IsUnknown && ((masterNameID && MstPage === "MST-Name-Dash") || nameID)) ? (
-                <div className="col-lg-5">
-                  <AlertTable
-                    availableAlert={availableAlert}
-                    masterPropertyID={masterNameID ? masterNameID : ''}
-                    ProSta={NameStatus}
-                  />
-                </div>
-              ) : null
-            }
-            <div className='col-3 col-md-2 col-lg-5'></div>
+            <div className='col-3 col-md-2 col-lg-5'>
+              {
+                (!value.IsUnknown && ((masterNameID && MstPage === "MST-Name-Dash") || nameID)) ? (
+                  // <div className="col-lg-5">
+                    <AlertTable
+                      availableAlert={availableAlert}
+                      masterPropertyID={masterNameID ? masterNameID : ''}
+                      ProSta={NameStatus}
+                    />
+                  // </div>
+                ) : null
+              }
+            </div>
 
 
 
@@ -2600,7 +2601,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                       ) : null}</label>
                   </div>
                   <div className="col-3 col-md-3 col-lg-2 text-field mt-0" >
-                    <input style={{height:"35px"}} type="text"
+                    <input style={{ height: "35px" }} type="text"
                       readOnly={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? true : false}
                       className={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? 'readonlyColor' : ''} maxLength={10} name='SSN' value={value?.SSN}
                       onChange={HandleChange} required autoComplete='off' />

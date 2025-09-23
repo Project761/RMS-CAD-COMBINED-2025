@@ -13,6 +13,10 @@ import { Decrypt_Id_Name, DecryptedList, base64ToString } from '../../Common/Uti
 import { get_LocalStoreData } from '../../../redux/actions/Agency';
 import { useSelector } from 'react-redux';
 import PoliceForceIncident from './IncidentTab/PoliceForceIncident/PoliceForceIncident';
+import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import LockRestrictModule from '../../Common/LockRestrictModule';
+import { faLock, faUnlock, faBan, } from "@fortawesome/free-solid-svg-icons";
 
 const IncidentTab = () => {
 
@@ -44,6 +48,7 @@ const IncidentTab = () => {
     const [isPreviewNormalReport, setIsPreviewNormalReport] = useState(true);
     const iconHome = <i className="fa fa-home" style={{ fontSize: '20px' }}></i>
     const [showPoliceForce, setShowPoliceForce] = useState(false);
+    const [showLockModal, setShowLockModal] = useState(false);
 
     useEffect(() => {
         if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
@@ -83,8 +88,8 @@ const IncidentTab = () => {
                     <div className="col-12 col-sm-12">
                         <div className="card Agency incident-card ">
                             <div className="card-body" >
-                                <div className="row " style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px'  }}>
-                                    <div className="col-12   incident-tab">
+                                <div className="row " style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
+                                    <div className="col-12 incident-tab incident-tab_Lock">
                                         <ul className='nav nav-tabs'>
                                             <Link
                                                 className={`nav-item ${showIncPage === 'home' ? 'active' : ''} ${!status ? 'disabled' : ''}`}
@@ -147,9 +152,38 @@ const IncidentTab = () => {
                                                 Audit Log
                                             </span>
 
+
+
+                                            <li className="list-inline-item nav-item">
+                                                <button
+                                                    className="btn py-1 d-flex align-items-center"
+                                                    style={{ columnGap: "5px", backgroundColor: "#E0E0E0" }}
+                                                    onClick={() => setShowLockModal(true)}
+                                                    data-toggle="modal"
+                                                    data-target="#NibrsAllModuleErrorShowModal"
+                                                >
+                                                    <FontAwesomeIcon icon={faLock} /> Lock
+                                                </button>
+                                            </li>
+                                            <li className="list-inline-item nav-item">
+                                                <button className="btn py-1 d-flex align-items-center gap-2" style={{ columnGap: "5px", backgroundColor: "#E0E0E0" }}>
+                                                    <FontAwesomeIcon icon={faUnlock} /> Unlock
+                                                </button>
+                                            </li>
+                                            <li className="list-inline-item nav-item">
+                                                <button disabled className="btn py-1  d-flex align-items-center gap-2 text-danger" style={{ columnGap: "5px", backgroundColor: "#E0E0E0" }}>
+                                                    <FontAwesomeIcon icon={faBan} /> Restrict
+                                                </button>
+                                            </li>
+                                            <li className="list-inline-item ">
+                                                <button className="btn py-1  d-flex align-items-center gap-2" style={{ columnGap: "5px", backgroundColor: "#E0E0E0" }}>
+                                                    <FontAwesomeIcon icon={faBan} /> Unrestrict
+                                                </button>
+                                            </li>
+
                                         </ul>
                                     </div>
-                                </div> 
+                                </div>
                                 {
                                     showIncPage === 'home' ?
                                         <IncidentHome {...{ incidentReportedDate, setIncidentReportedDate, setShowPoliceForce, setShowIncPage, isPreviewNormalReport, setIsPreviewNormalReport }} />
@@ -179,6 +213,12 @@ const IncidentTab = () => {
                                                         <></>
                                 }
                             </div>
+                            <LockRestrictModule
+                                show={showLockModal}
+                                onClose={() => setShowLockModal(false)}
+                            />
+
+
                         </div>
                     </div>
                 </div>

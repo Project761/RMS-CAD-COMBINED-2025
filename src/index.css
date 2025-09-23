@@ -950,7 +950,7 @@ input[type="file"] {
 .dash-name {
   color: #000;
   margin-top: -15px;
-  
+
 }
 
 .Nb {
@@ -978,7 +978,7 @@ input[type="file"] {
 
 .incident-tab {
   border: 1px solid #8392a1 !important;
-  padding: 8px 0px !important;
+  padding: 8px 0px;
   background-color: white;
   height: 40px;
 }
@@ -3207,4 +3207,8 @@ div[data-testid="table-header"],
 .custom-col-29 {
   flex: 0 0 29.6%;
   max-width: 29.6%;
+}
+
+.incident-tab_Lock {
+  padding: 3px 0px !important;
 }

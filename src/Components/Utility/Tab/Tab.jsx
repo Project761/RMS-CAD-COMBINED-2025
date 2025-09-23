@@ -8,8 +8,8 @@ import StatusBar from '../../Inc/StatusBar';
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { fetchPostData, fetchPostDataNibrs } from '../../hooks/Api';
-import { faLock, faUnlock, faBan, } from "@fortawesome/free-solid-svg-icons";
-import LockRestrictModule from '../../Common/LockRestrictModule';
+// import { faLock, faUnlock, faBan, } from "@fortawesome/free-solid-svg-icons";
+// import LockRestrictModule from '../../Common/LockRestrictModule';
 
 const Tab = () => {
 
@@ -32,8 +32,6 @@ const Tab = () => {
 
     const [loading, setLoading] = useState(false);
     const [showStatus, setShowStatus] = useState(false);
-
-    const [showLockModal, setShowLockModal] = useState(false);
 
     const [isUserClosed, setIsUserClosed] = useState(() => {
 
@@ -306,7 +304,7 @@ const Tab = () => {
         }
     }
 
-    console.log(tabCount)
+
     return (
         <div className="col-12 inc__tabs">
             {/* <StatusBar /> */}
@@ -340,12 +338,12 @@ const Tab = () => {
                         <Link
                             className={`nav-link${active === `/Inc-Report?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}` ? 'active' : ''} ${incidentStatus ? '' : 'disabled'}`}
                             to={changesStatus ? currentLocation : `/Inc-Report?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}`}
-                            style={{ color: currentTab === 'Report' ? 'Red' : tabCount?.NarrativeCount > 0 ? 'blue' : '#130e0e', fontWeight: '600' }}
+                            style={{ color: currentTab === 'Report' ? 'Red' : incidentCount[0]?.OffenseCount > 0 ? 'blue' : '#130e0e', fontWeight: '600' }}
                             data-toggle={changesStatus ? "modal" : "pill"}
                             data-target={changesStatus ? "#SaveModal" : ''}
                             onClick={() => { if (!changesStatus) { setCurrentTab('Report') } }}
                         >
-                            Report{`${tabCount?.NarrativeCount > 0 ? '(' + tabCount?.NarrativeCount + ')' : ''}`}
+                            Report
                         </Link>
                     </li>
                     <li className="nav-item">
@@ -504,7 +502,8 @@ const Tab = () => {
                         </Link>
                     </li>
 
-                    <li className="list-inline-item">
+
+                    {/* <li className="list-inline-item">
                         <button
                             className="btn py-1 d-flex align-items-center"
                             style={{ columnGap: "5px", backgroundColor: "#E0E0E0" }}
@@ -530,7 +529,11 @@ const Tab = () => {
                         <button className="btn py-1  d-flex align-items-center gap-2" style={{ columnGap: "5px", backgroundColor: "#E0E0E0" }}>
                             <FontAwesomeIcon icon={faBan} /> Unrestrict
                         </button>
-                    </li>
+                    </li> */}
+
+
+
+
                 </ul>
                 <ul className='float-end text-end mb-0'>
                     {
@@ -578,10 +581,7 @@ const Tab = () => {
                 </ul>
             </div>
 
-            <LockRestrictModule
-                show={showLockModal}
-                onClose={() => setShowLockModal(false)}
-            />
+           
         </div >
     )
 }
