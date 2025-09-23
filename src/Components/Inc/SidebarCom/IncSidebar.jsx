@@ -13,7 +13,7 @@ const IncSidebar = () => {
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
     const missingPerData = useSelector((state) => state.MissingPerson.MissingPersonAllData);
 
-    const { changesStatus, incidentCount, arrestData, updateCount, setUpdateCount, setIncStatus, get_Incident_Count, setActiveArrest, activeArrest } = useContext(AgencyContext);
+    const { changesStatus, incidentCount, arrestData, CaseStatus, updateCount, setUpdateCount, setIncStatus, get_Incident_Count, setActiveArrest, activeArrest } = useContext(AgencyContext);
     const [plusMinus, setPlusMinus] = useState(false)
     const [expandList, setExpandList] = useState()
     const [plusMinus1, setPlusMinus1] = useState(false)
@@ -49,7 +49,7 @@ const IncSidebar = () => {
     var FiID = query?.get("FiID");
     var ChargeSta = query?.get("ChargeSta");
     var SideBarStatus = query?.get("SideBarStatus");
-
+    console.log(CaseStatus)
 
     if (!IncID) { IncID = 0; }
     else { IncID = IncID; DecEIncID = parseInt((IncID)); }
@@ -159,7 +159,7 @@ const IncSidebar = () => {
                             <span className="ml-2" data-toggle={changesStatus ? "modal" : ""} data-target={changesStatus ? "#SaveModal" : ''}>
                                 INC-{IncNo ? IncNo : ""}
                                 {/* INC-{!IncNo ? " " : IncNo} */}
-                                <p className='agency-name-sidebar'>{agencyName ? agencyName : ''}</p>
+                                <p className='agency-name-sidebar'>Case Status:-{CaseStatus ? CaseStatus : ''}</p>
                             </span>
                         </Link>
                         {/* Arrest */}

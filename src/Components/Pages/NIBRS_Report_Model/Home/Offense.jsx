@@ -2274,16 +2274,15 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
               </div>
               <div className="col-9 col-md-9 col-lg-8 ">
                 {nibrsFieldError?.Bias && showBiasError &&
-                  {/* {true && */ }
-                    (<div className="nibrs-tooltip-error" style={{ left: '-80px' }}>
-                      <div className="tooltip-arrow"></div>
-                      <div className="tooltip-content">
-                        <span className="text-danger">
-                          ⚠️ {nibrsFieldError.BiasError || ""}
-                        </span>
-                      </div>
+                  (<div className="nibrs-tooltip-error" style={{ left: '-80px' }}>
+                    <div className="tooltip-arrow"></div>
+                    <div className="tooltip-content">
+                      <span className="text-danger">
+                        ⚠️ {nibrsFieldError.BiasError || ""}
+                      </span>
                     </div>
-                    )}
+                  </div>
+                  )}
                 <SelectBox
                   className="basic-multi-select"
                   name="bias"
