@@ -1583,36 +1583,7 @@ const PropertyManagement = (props) => {
                             <label htmlFor="" className='new-label px-0 mb-0'>Recipient Location</label>
                         </div>
                         <div className="col-12 col-md-12 col-lg-2    ">
-                            {/* <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} disabled className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
-                                ? 'requiredColor'
-                                : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
-                                    ? 'readonlyColor'
-                                    : ''
-                                }`}
-                            />
-
-                            {value.location ? (
-                                <span style={{
-                                    position: 'absolute',
-                                    top: '40%',
-                                    right: '10px',
-                                    transform: 'translateY(-50%)',
-                                    cursor: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'not-allowed' : 'pointer',
-                                    opacity: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 0.5 : 1,
-                                    pointerEvents: !(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate || selectedOption === null) ? 'none' : 'auto'
-                                }} className='select-cancel' onClick={() => { handleClickedCleared("location") }}>
-                                    <i className='fa fa-times'></i>
-                                </span>
-                            ) : (null)} */}
-                            <Select
-                                name='ReceipentID'
-                                value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ReceipentID)}
-                                isClearable
-                                options={agencyOfficerDrpData}
-                                onChange={(e) => ChangeDropDown(e, 'ReceipentID')}
-                                placeholder="Select..."
-                            // styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
-                            // isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                          <input type="text" onChange={(e) => { handleChange(e) }} name="locationsdgf" style={{ position: 'relative' }}  value={value.locationsdgf}  className={`form-control`}
                             />
 
                         </div>
@@ -1948,7 +1919,9 @@ const PropertyManagement = (props) => {
                             <label htmlFor="" className='new-label px-0 mb-0'>Destruction Location</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
-                            <Select
+                             <input type="text" onChange={(e) => { handleChange(e) }} name="locationsdgf" style={{ position: 'relative' }}  value={value.locationsdgf}  className={`form-control`}
+                            />
+                            {/* <Select
                                 name='DestructionLocation'
                                 value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.DestructionLocation)}
                                 isClearable
@@ -1957,7 +1930,7 @@ const PropertyManagement = (props) => {
                                 placeholder="Select..."
                                 styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
                                 isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                            />
+                            /> */}
                         </div>
                         {/* <div className="col-1 " data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
                                                  <button disabled={!(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) || selectedOption === null}
