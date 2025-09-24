@@ -721,7 +721,7 @@ const MiscellaneousInformation = (props) => {
     }
   };
 
-  console.log(task?.tasklistdata)
+  
 
   const TaskListvalidation = (selectedStatus) => {
     setTaskListStatus("");
