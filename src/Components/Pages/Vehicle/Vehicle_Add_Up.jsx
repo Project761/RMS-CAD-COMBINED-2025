@@ -25,7 +25,7 @@ import Offense from './VehicleTab/Offense/Offense';
 const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails = false }) => {
 
     const dispatch = useDispatch()
-    const { changesStatus, vehicleCount, get_vehicle_Count, countoffaduit, incidentReportedDate, setIncidentReportedDate } = useContext(AgencyContext);
+    const { changesStatus, vehicleCount, get_vehicle_Count, countoffaduit, } = useContext(AgencyContext);
     const [propertystatus, setPropertyStatus] = useState('');
     const [IsNonPropertyRoomSelected, setIsNonPropertyRoomSelected] = useState(false);
 
@@ -66,8 +66,8 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
     const iconHome = <i className="fa fa-home" style={{ fontSize: '20px' }}></i>
     const [ListData, setListData] = useState([]);
     const [DocName, setDocName] = useState('VehDoc')
-
     const [addUpdatePermission, setaddUpdatePermission] = useState();
+    const [incidentReportedDate, setIncidentReportedDate] = useState(null);
 
 
     useEffect(() => {
