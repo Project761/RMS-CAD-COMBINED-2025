@@ -336,6 +336,17 @@ export const nibrscolourStyles = {
   }),
 };
 
+export const nibrsErrorMultiSelectStyles = {
+  control: (styles) => ({
+    ...styles,
+    backgroundColor: "#F29A9A",
+    height: 55,
+    fontSize: 14,
+    margintop: 2,
+    boxShadow: 0,
+  }),
+};
+
 export const MultiSelectRequredColor = {
   control: base => ({
     ...base,

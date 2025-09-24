@@ -36,7 +36,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
   const uniqueId = sessionStorage.getItem("UniqueUserID") ? Decrypt_Id_Name(sessionStorage.getItem("UniqueUserID"), "UForUniqueUserID") : "";
 
   const { get_Offence_Count, updateCount, setUpdateCount, setChangesStatus, nibrsSubmittedStatus, setnibrsSubmittedStatus, nibrsSubmittedOffenseMain, setnibrsSubmittedOffenseMain, get_Offence_Data, changesStatus, get_Incident_Count, setIncidentStatus, setIncStatus, offenceFillterData, setcountoffaduit, PanelCode, setPanelCode,
-    incidentCount
+    incidentCount, validate_IncSideBar
   } = useContext(AgencyContext);
 
 
@@ -110,7 +110,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
   });
 
 
-  console.log(offenceFillterData)
   const useQuery = () => {
     const params = new URLSearchParams(useLocation().search);
     return {
@@ -770,6 +769,8 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
       LawTitleIdDrpDwnVal(loginAgencyID, null);
       NIBRSCodeDrpDwnVal(loginAgencyID, null);
       toastifySuccess(res.Message);
+      // validateIncSideBar
+      validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
     } catch (error) {
       toastifyError("An error occurred while adding the offense.");
     } finally {
@@ -813,6 +814,8 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
       }
       LawTitleIdDrpDwnVal(loginAgencyID, null);
       NIBRSCodeDrpDwnVal(loginAgencyID, null);
+      // validateIncSideBar
+      validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
     } catch (error) {
       toastifyError("An error occurred while updating the offense.");
     } finally {
@@ -1391,8 +1394,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
 
 
 
-  console.log(nibrsCode)
-
   return (
     <>
       <div className="col-12 bb child">
@@ -1707,7 +1708,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
             />
           </div>
 
-        
+
           {nibrsCode === "220" || nibrsCode === "210" || nibrsCode === "120" || nibrsCode === "23D" || nibrsCode === "23F" || nibrsCode === "23H" || nibrsCode === "240" || nibrsCode === "26A" || nibrsCode === "26A" || nibrsCode === "23D" || nibrsCode === "26C" || nibrsCode === "26E" || nibrsCode === "26F" || nibrsCode === "26G" || nibrsCode === "270" || nibrsCode === "510" ?
             <>
               <div className="col-2 col-md-2 col-lg-2" style={{ display: "flex", flexDirection: "column" }}>

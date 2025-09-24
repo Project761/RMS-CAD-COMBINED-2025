@@ -3209,6 +3209,8 @@ div[data-testid="table-header"],
   max-width: 29.6%;
 }
 
-.incident-tab_Lock {
-  padding: 3px 0px !important;
+/* abhi */
+.incSiderbar_Hr {
+  border: 1px solid rgba(0, 0, 0, .125) !important;
+  margin-bottom: .70rem !important;
 }

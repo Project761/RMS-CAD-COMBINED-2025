@@ -3,7 +3,7 @@ import Select, { components } from "react-select";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import DataTable from 'react-data-table-component';
 import { useDispatch, useSelector } from 'react-redux';
-import { Decrypt_Id_Name, DecryptedList, filterPassedTime, EncryptedList, getShowingDateText, base64ToString, getShowingMonthDateYear, stringToBase64, getShowingWithOutTime, tableCustomStyles, Aes256Encrypt, Requiredcolour, nibrscolourStyles } from '../../../Common/Utility';
+import { Decrypt_Id_Name, DecryptedList, filterPassedTime, EncryptedList, getShowingDateText, base64ToString, getShowingMonthDateYear, stringToBase64, getShowingWithOutTime, tableCustomStyles, Aes256Encrypt, Requiredcolour, nibrscolourStyles, nibrsErrorMultiSelectStyles } from '../../../Common/Utility';
 import { AddDeleteUpadate, AddDelete_Img, fetchData, fetchPostData, fetchPostDataNibrs } from '../../../hooks/Api';
 import { Comman_changeArrayFormat, Comman_changeArrayFormatBasicInfo, Comman_changeArrayFormatBasicInfowithoutcode, Comman_changeArrayFormatJustfiableHomicide, Comman_changeArrayFormat_With_Name, changeArray, fourColArray, fourColArrayReasonCode, offenseArray, sixColArray, threeColArray, threeColArrayWithCode, threeColVictimInjuryArray, threeColVictimOffenseArray } from '../../../Common/ChangeArrayFormat';
 import { toastifyError, toastifySuccess } from '../../../Common/AlertMsg';
@@ -2003,7 +2003,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
     const customStylesWithOutColor1 = {
         control: base => ({
             ...base,
-            minHeight: 60,
+            minHeight: 55,
             fontSize: 14,
             margintop: 2,
             boxShadow: 0,
@@ -3203,9 +3203,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
         setStatesChangeStatus(true);
     };
 
-
-    console.log("nibrsCodeArray", nibrsCodeArray);
-
     return (
         <>
             <div className="col-12">
@@ -3831,7 +3828,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
                                                     loginAgencyState === 'TX' ?
                                                         victimCode === 'L' && nibrsCodeArray?.includes('120') ? customStylesWithOutColor1
                                                             :
-                                                            isInjurryRequired ? filterArray(victimInjuryID, 'label')?.length > 0 ? nibrsSuccessStyles : nibrscolourStyles
+                                                            isInjurryRequired ? filterArray(victimInjuryID, 'label')?.length > 0 ? nibrsSuccessStyles : nibrsErrorMultiSelectStyles
                                                                 :
                                                                 customStylesWithOutColor1
                                                         :
@@ -3850,7 +3847,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
                                                 value={filterArray(victimInjuryID, 'label')}
                                             />
                                         </div>
-                                        <div className="col-2 col-md-2 col-lg-1 mt-3">
+                                        <div className="col-2 col-md-2 col-lg-1 mt-4">
                                             <span data-toggle="modal" onClick={() => { setOpenPage('Assault Type') }} data-target="#ListModel" className='new-link'>
                                                 Assault Type
                                                 {/* {
@@ -3880,7 +3877,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
                                                 styles={
                                                     loginAgencyState === 'TX' ?
 
-                                                        nibrsCodeArray?.includes('09A') || nibrsCodeArray?.includes('09C') || nibrsCodeArray?.includes('13A') ? nibrsStylesColor : customStylesWithOutColor1
+                                                        nibrsCodeArray?.includes('09A') || nibrsCodeArray?.includes('09C') || nibrsCodeArray?.includes('13A') ? nibrsErrorMultiSelectStyles : customStylesWithOutColor1
                                                         :
                                                         customStylesWithOutColor1
                                                 }
@@ -3926,7 +3923,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
                                                 onChange={(e) => JustifuableOnChange(e)}
                                                 className="basic-multi-select"
                                                 isMulti
-                                                styles={assaultID20Or21 ? nibrsStylesColor : customStylesWithOutColor1}
+                                                styles={assaultID20Or21 ? nibrsErrorMultiSelectStyles : customStylesWithOutColor1}
                                             />
                                         </div>
 
