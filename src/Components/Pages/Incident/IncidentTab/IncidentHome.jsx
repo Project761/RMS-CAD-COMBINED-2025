@@ -1253,7 +1253,6 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
 
   const handleCaseStatus = (e, name) => {
     !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-
     if (e) {
       setValue({ ...value, [name]: e.value, NIBRSStatus: e.label, CaseStatusCode: e.id });
     }
