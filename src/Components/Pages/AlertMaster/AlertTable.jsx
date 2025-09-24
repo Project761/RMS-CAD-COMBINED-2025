@@ -4,7 +4,7 @@ import DataTable from 'react-data-table-component';
 
 const AlertTable = (props) => {
 
-    const { availableAlert, masterPropertyID, ProSta, labelCol  } = props;
+    const { availableAlert, masterPropertyID, ProSta, labelCol } = props;
     const [alertStatus, setAlertStatus] = useState(false)
 
 
@@ -57,7 +57,7 @@ const AlertTable = (props) => {
                 <div className={`${labelCol ? labelCol : "col-lg-2"} mt-2 text-nowrap`}>
                     {/* <a href="#" className='new-label text-bold'>Alerts:</a> */}
                     {/* <label htmlFor="" className='new-label text-bold'>Alerts:</label> */}
-                    <span data-toggle="modal" style={{ cursor: "pointer" }} data-target="#MasterAlert" className='alert-link pt-1' onClick={() => { setAlertStatus(false) }} >Alerts:</span>
+                    <span style={{ cursor: "pointer" }} className='alert-link pt-1' >Alerts:</span>
                 </div>
                 <div className='alert-name col-lg-10 mt-2' style={{ alignContent: "center", height: "30px", overflowY: 'auto' }} >
                     {availableAlert?.filter((alert) => alert?.AlertDateTo ? new Date(alert?.AlertDateTo) >= new Date(year, month, day) : alert)?.length > 0 ?
@@ -68,7 +68,7 @@ const AlertTable = (props) => {
                         <>
                             {
                                 masterPropertyID && (ProSta === 'true' || ProSta === true) &&
-                                <span data-toggle="modal" style={{ cursor: "pointer",  }} data-target="#MasterAlert" className='alert-link pt-1' onClick={() => { setAlertStatus(false) }}>
+                                <span data-toggle="modal" style={{ cursor: "pointer", }} data-target="#MasterAlert" className='alert-link pt-1' onClick={() => { setAlertStatus(false) }}>
                                     Add Alert
                                 </span>
                             }
@@ -93,7 +93,7 @@ const AlertTable = (props) => {
                                 />
                             </div>
                         </div>
-                        <span  data-toggle="modal" data-target="#MasterAlert" className='alert-link ml-1' onClick={() => { setAlertStatus(false) }}>
+                        <span data-toggle="modal" data-target="#MasterAlert" className='alert-link ml-1' onClick={() => { setAlertStatus(false) }}>
                             Add Alert
                         </span>
                     </div>

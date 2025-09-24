@@ -978,7 +978,7 @@ input[type="file"] {
 
 .incident-tab {
   border: 1px solid #8392a1 !important;
-  padding: 8px 0px !important;
+  padding: 8px 0px;
   background-color: white;
   height: 40px;
 }

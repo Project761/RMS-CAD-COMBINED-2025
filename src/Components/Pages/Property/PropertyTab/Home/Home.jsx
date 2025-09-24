@@ -2538,7 +2538,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                 </div>
 
               </div>
-              <div className="col-2 col-md-2 col-lg-3 mt-1">
+              {/* <div className="col-2 col-md-2 col-lg-3 mt-1">
                 {navigateStatus && (
                   <span
                     onMouseEnter={handleMouseEnter}
@@ -2551,6 +2551,22 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                     }}
                   >
                     <u>Navigate to Miscellaneous Information</u>
+                  </span>
+                )}
+              </div> */}
+              <div className="text-center p-1 mt-2">
+                {navigateStatus && (
+                  <span
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                    onClick={handleClick}
+                    style={{
+                      border: '1px solid red', backgroundColor: '#ffe6e6', color: isHovered ? 'blue' : 'red',
+                      padding: '3px', borderRadius: '4px', display: 'inline-block',
+                      transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '15px',
+                    }}
+                  >
+                    Navigate to Miscellaneous Information
                   </span>
                 )}
               </div>

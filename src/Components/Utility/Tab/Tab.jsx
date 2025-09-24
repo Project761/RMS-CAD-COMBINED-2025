@@ -8,8 +8,8 @@ import StatusBar from '../../Inc/StatusBar';
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { fetchPostData, fetchPostDataNibrs } from '../../hooks/Api';
-import { faLock, faUnlock, faBan, } from "@fortawesome/free-solid-svg-icons";
-import LockRestrictModule from '../../Common/LockRestrictModule';
+// import { faLock, faUnlock, faBan, } from "@fortawesome/free-solid-svg-icons";
+// import LockRestrictModule from '../../Common/LockRestrictModule';
 
 const Tab = () => {
 
@@ -502,7 +502,8 @@ const Tab = () => {
                         </Link>
                     </li>
 
-                    <li className="list-inline-item">
+
+                    {/* <li className="list-inline-item">
                         <button
                             className="btn py-1 d-flex align-items-center"
                             style={{ columnGap: "5px", backgroundColor: "#E0E0E0" }}
@@ -528,7 +529,11 @@ const Tab = () => {
                         <button className="btn py-1  d-flex align-items-center gap-2" style={{ columnGap: "5px", backgroundColor: "#E0E0E0" }}>
                             <FontAwesomeIcon icon={faBan} /> Unrestrict
                         </button>
-                    </li>
+                    </li> */}
+
+
+
+
                 </ul>
                 {/* <ul className='float-end text-end mb-0'>
                     {
@@ -573,10 +578,7 @@ const Tab = () => {
                 </ul> */}
             </div>
 
-            <LockRestrictModule
-                show={showLockModal}
-                onClose={() => setShowLockModal(false)}
-            />
+           
         </div >
     )
 }

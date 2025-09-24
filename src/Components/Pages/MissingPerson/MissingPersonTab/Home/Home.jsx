@@ -697,7 +697,7 @@ const Home = ({ DecMissPerID, DecIncID }) => {
 
                 </div>
             </div>
-            <fieldset>
+            <fieldset className='w-100 px-0'>
                 <legend>Missing Name Information</legend>
                 <div className="col-12">
                     <div className="row mt-2">

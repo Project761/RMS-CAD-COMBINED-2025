@@ -350,7 +350,7 @@ const Home = (props) => {
 
     const GetData_Propertyroom = (DecPropID, category) => {
         const val = {
-            'PropertyID': propertyRoomArr, 'PropertyCategoryCode': category, 'MasterPropertyID': 0, 'AgencyId': loginAgencyID,
+            'PropertyID': DecPropID, 'PropertyCategoryCode': category, 'MasterPropertyID': 0, 'AgencyId': loginAgencyID,
         };
         AddDeleteUpadate('Propertyroom/GetData_Propertyroom', val).then((res) => {
             const parsedData = JSON.parse(res.data);
@@ -370,7 +370,7 @@ const Home = (props) => {
         });
     };
 
-   
+
 
     const GetData_PropertyroomRadio = (propertyId, category) => {
         const val = {
@@ -490,7 +490,7 @@ const Home = (props) => {
         const MasterPropertyId = masterpropertyId;
         const ActivityType = selectedOption;
         const CreatedByUserFK = loginPinID;
-      
+
         const { ActivityReasonID, ExpectedDate, ActivityComments, DestinationStorageLocation, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate, CourtDate,
             ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId, IsCheckIn,
             IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, activitydate, AgencyID, PackagingDetails,
@@ -709,7 +709,7 @@ const Home = (props) => {
 
     const ChangeDropDown = (e, name) => {
         if (e && name === "CollectingOfficer") {
-           
+
             setCollectingOfficer(e.value)
         }
         else if (e && name === 'Task' || e === null && name === 'Task') {
@@ -771,15 +771,15 @@ const Home = (props) => {
         reset();
 
         setIsClearing(true);
-         setSelectedRows([]); setSelectedStatus('');
-        navigate(`/Property-room?&ProId=${0}&MProId=${0}&ProRomId=${0}&ProRoomStatus=${true}&selectedCategory=${''}&ProType=${''}&ProNumber=${''}&ProTransfer=${''}&CallStatus=${false}`); 
-         setPropertyId(''); setClickedRow(null);
-          setPropertyNumber('');
-           setSelectedRows([]); 
-          setSearchStoragePath(''); setSelectedOptions(AddType[0]);
-           setPossessionID(''); 
+        setSelectedRows([]); setSelectedStatus('');
+        navigate(`/Property-room?&ProId=${0}&MProId=${0}&ProRomId=${0}&ProRoomStatus=${true}&selectedCategory=${''}&ProType=${''}&ProNumber=${''}&ProTransfer=${''}&CallStatus=${false}`);
+        setPropertyId(''); setClickedRow(null);
+        setPropertyNumber('');
+        setSelectedRows([]);
+        setSearchStoragePath(''); setSelectedOptions(AddType[0]);
+        setPossessionID('');
         //    setValue({ ...value, ['ReportedDate']: '', ['ReportedDateTo']: '' });
-         setToggleClear(!toggleClear);
+        setToggleClear(!toggleClear);
         sessionStorage.setItem('selectedRows', '');
     }
 
@@ -893,10 +893,10 @@ const Home = (props) => {
         setCourtdate(''); setreleasedate(''); setdestroydate(''); setExpecteddate('');
         setSelectedStatus(''); setRowClicked(''); setSelectedOption(null); setactivitydate(''); setReasonIdDrp([]); setLocationPath('');
         setDescription('');
-         setRowClicked(''); 
-         setSearchData([]);
+        setRowClicked('');
+        setSearchData([]);
         setSelectedRows([]);
-         setToggleClear(!toggleClear); setStatus(''); settransfer(null); setEditval([]);
+        setToggleClear(!toggleClear); setStatus(''); settransfer(null); setEditval([]);
     }
 
     const conditionalRowStyles = [
@@ -1114,7 +1114,7 @@ const Home = (props) => {
     };
 
     useEffect(() => {
-       
+
         if (editval && selectedOption === 'Update') {
             setValue({
                 ...value, PropertyID: editval?.PropertyID || '', ActivityType: editval?.ActivityType || '',
@@ -1604,10 +1604,10 @@ const Home = (props) => {
                                                                     closeMenuOnSelect={false}
                                                                     onChange={Agencychange}
                                                                     value={multiSelected.optionSelected}
-                                                                // isDisabled={value.Status === "Pending Review" || value.Status === "Approved"}
-                                                                // menuPlacement="top"
-                                                                // hideSelectedOptions={true}
-                                                                // allowSelectAll={true}
+                                                                    // isDisabled={value.Status === "Pending Review" || value.Status === "Approved"}
+                                                                    // menuPlacement="top"
+                                                                    // hideSelectedOptions={true}
+                                                                    allowSelectAll={true}
                                                                 />
                                                             </div>
                                                         </>
@@ -1642,7 +1642,7 @@ const Home = (props) => {
                                                                     closeMenuOnSelect={false}
                                                                     hideSelectedOptions={true}
                                                                     onChange={Agencychange}
-                                                                    // allowSelectAll={true}
+                                                                    allowSelectAll={true}
                                                                     value={multiSelected.optionSelected}
                                                                 />
                                                             </div>
@@ -3082,15 +3082,10 @@ const Home = (props) => {
                         <label htmlFor="" className='new-label px-0 mb-0'>Receipient Location</label>
                     </div>
                     <div className="col-12 col-md-12 col-lg-2    ">
-                        <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} disabled className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
-                            ? 'requiredColor'
-                            : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
-                                ? 'readonlyColor'
-                                : ''
-                            }`}
-                        />
+                        <input type="text" onChange={(e) => { handleChange(e) }} name="locationsdgf" style={{ position: 'relative' }}  value={value.locationsdgf}  className={`form-control`}
+                            />
 
-                        {value.location ? (
+                        {/* {value.location ? (
                             <span style={{
                                 position: 'absolute',
                                 top: '40%',
@@ -3102,7 +3097,7 @@ const Home = (props) => {
                             }} className='select-cancel' onClick={() => { handleClickedCleared("location") }}>
                                 <i className='fa fa-times'></i>
                             </span>
-                        ) : (null)}
+                        ) : (null)} */}
                     </div>
 
 
@@ -3136,7 +3131,7 @@ const Home = (props) => {
                             }`}
                         />
 
-                        {value.location ? (
+                        {/* {value.location ? (
                             <span style={{
                                 position: 'absolute',
                                 top: '40%',
@@ -3148,7 +3143,7 @@ const Home = (props) => {
                             }} className='select-cancel' onClick={() => { handleClickedCleared("location") }}>
                                 <i className='fa fa-times'></i>
                             </span>
-                        ) : (null)}
+                        ) : (null)} */}
 
 
 
@@ -3157,7 +3152,7 @@ const Home = (props) => {
 
                     </div>
 
-                    <div className="col-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
+                    {/* <div className="col-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
                         <button disabled={!(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) || selectedOption === null}
                             className=" btn btn-sm bg-green text-white" data-toggle="modal" data-target="#PropertyRoomTreeModal" style={{ cursor: 'pointer' }} onClick={() => {
                                 setlocationStatus(true);
@@ -3165,7 +3160,7 @@ const Home = (props) => {
                             }}>
                             <i className="fa fa-plus" > </i>
                         </button>
-                    </div>
+                    </div> */}
 
                     <div className="col-3 col-md-3 col-lg-2 ">
                         <label htmlFor="" className='new-label mb-0'>Comments</label>

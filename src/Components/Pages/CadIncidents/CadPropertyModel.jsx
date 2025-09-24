@@ -1568,7 +1568,9 @@ const CadPropertyModel = (props) => {
                         <label htmlFor="" className='new-label px-0 mb-0'>Recipient Location</label>
                       </div>
                       <div className="col-12 col-md-12 col-lg-2    ">
-                        <Select
+                         <input type="text" onChange={(e) => { handleChange(e) }} name="locationsdgf" style={{ position: 'relative' }}  value={value.locationsdgf}  className={`form-control`}
+                            />
+                        {/* <Select
                           name='ReceipentID'
                           // value={''}
                           isClearable
@@ -1577,7 +1579,7 @@ const CadPropertyModel = (props) => {
                           placeholder="Select..."
                           styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
                           isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                        />
+                        /> */}
                       </div>
 
                       <div className="col-3 col-md-3 col-lg-2 ">
@@ -1601,7 +1603,7 @@ const CadPropertyModel = (props) => {
                           }`}
                         />
 
-                        {value.location ? (
+                        {/* {value.location ? (
                           <span style={{
                             position: 'absolute',
                             top: '40%',
@@ -1613,7 +1615,7 @@ const CadPropertyModel = (props) => {
                           }} className='select-cancel' onClick={() => { handleClickedCleared("location") }}>
                             <i className='fa fa-times'></i>
                           </span>
-                        ) : (null)}
+                        ) : (null)} */}
                       </div>
 
                       {/* <div className="col-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
@@ -1894,7 +1896,9 @@ const CadPropertyModel = (props) => {
                         <label htmlFor="" className='new-label mb-0'>Destruction Location</label>
                       </div>
                       <div className="col-3 col-md-3 col-lg-2">
-                        <Select
+                         <input type="text" onChange={(e) => { handleChange(e) }} name="locationsdgf" style={{ position: 'relative' }}  value={value.locationsdgf}  className={`form-control`}
+                            />
+                        {/* <Select
                           name='ActivityReasonID'
                           // value={reasonIdDrp?.filter((obj) => obj.value === value?.ActivityReasonID)}
                           isClearable
@@ -1903,7 +1907,7 @@ const CadPropertyModel = (props) => {
                           placeholder="Select..."
                           styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
                           isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                        />
+                        /> */}
                       </div>
 
                       {/* <div className="col-3 col-md-3 col-lg-2  ">

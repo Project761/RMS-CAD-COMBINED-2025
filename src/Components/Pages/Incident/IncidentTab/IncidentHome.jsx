@@ -46,7 +46,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
   const cadDispositionDrpData = useSelector((state) => state.DropDown.cadDispositionDrpData);
   const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
 
-  const { updateCount, get_IncidentTab_Count, get_Incident_Count, nibrsSubmittedIncident, setnibrsSubmittedIncident, setIncidentRmsCfs, setnibrsStatus, exceptionalClearID, GetDataExceptionalClearanceID, setChangesStatus, changesStatus, setReportedDtTmInc, GetDataTimeZone, datezone, setOfficerApprovCount, incidentRecentData, setIncidentRecentData, incidentCount, validate_IncSideBar
+  const { updateCount, get_IncidentTab_Count, get_Incident_Count, nibrsSubmittedIncident, setnibrsSubmittedIncident, setIncidentRmsCfs, setnibrsStatus, exceptionalClearID, GetDataExceptionalClearanceID, setChangesStatus, changesStatus, setReportedDtTmInc, GetDataTimeZone, datezone, setOfficerApprovCount, incidentRecentData, setIncidentRecentData, incidentCount, setCaseStatus, validate_IncSideBar
   } = useContext(AgencyContext);
 
   const [reportedDate, setReportedDate] = useState(new Date(datezone));
@@ -294,8 +294,10 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
     const val = { IncidentID: incidentID };
     fetchPostData("Incident/GetSingleData_Incident", val).then((res) => {
       if (res?.length > 0) {
-        setEditval(res); setLoder(true); setReportedDtTmInc(getShowingDateText(res[0]?.ReportedDate));
+        setEditval(res); setLoder(true); setCaseStatus(res[0]?.NIBRSStatus); setReportedDtTmInc(getShowingDateText(res[0]?.ReportedDate));
         setoffenseStatus(res[0]?.OffenceCount === "0" || res[0]?.OffenceCount === 0 ? true : false);
+      } else {
+        setCaseStatus([]);
       }
     });
   };
@@ -530,7 +532,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
     setErrors({
       ...errors, OccuredError: "", CrimeLocationError: "", ExceptionalClearaceError: "", NIBRSclearancedateError: "", OffenceTypeError: "", CargoTheftError: "", PrimaryOfficerIdError: "", CaseStatusError: "",
     });
-    setExClsDateCode("");
+    setExClsDateCode(""); setCaseStatus('open')
   };
 
   const setToResetData = () => {
@@ -1250,7 +1252,6 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
 
   const handleCaseStatus = (e, name) => {
     !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-
     if (e) {
       setValue({ ...value, [name]: e.value, NIBRSStatus: e.label, CaseStatusCode: e.id });
     }

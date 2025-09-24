@@ -58,7 +58,7 @@ const IncSidebar = () => {
     if (!ArrestId) ArrestId = 0;
     else ArrestId = ArrestId;
 
-    const { changesStatus, incidentCount, arrestData, updateCount, setUpdateCount, setIncStatus, get_Incident_Count, setActiveArrest, activeArrest,
+    const { changesStatus, incidentCount, arrestData, updateCount, setUpdateCount, setIncStatus, get_Incident_Count, setActiveArrest, activeArrest, CaseStatus,
 
         validate_IncSideBar, incidentErrorStatus, offenseErrorStatus, nameErrorStatus, NameRelationshipError, narrativeApprovedStatus, PropErrorStatus, nibrsSideBarLoading, setNibrsSideBarLoading
     } = useContext(AgencyContext);
@@ -308,7 +308,7 @@ const IncSidebar = () => {
                             <span className="ml-2" data-toggle={changesStatus ? "modal" : ""} data-target={changesStatus ? "#SaveModal" : ''}>
                                 INC-{IncNo ? IncNo : ""}
                                 {/* INC-{!IncNo ? " " : IncNo} */}
-                                <p className='agency-name-sidebar'>{agencyName ? agencyName : ''}</p>
+                                <p className='agency-name-sidebar'>Case Status:-{CaseStatus ? CaseStatus : ''}</p>
                             </span>
                         </Link>
                         {/* Arrest */}

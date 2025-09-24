@@ -25,7 +25,7 @@ const Incident = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { setShowIncPage, setTabCount, setIncidentCount, incidentRecentData, setIncidentRecentData, exceptionalClearID, GetDataExceptionalClearanceID, rmsDisposition, getRmsDispositionID, incidentSearchData, setIncidentSearchData, incAdvSearchData, setIncAdvSearchData, setPropertyCount, setVehicleCount, GetDataTimeZone, datezone, recentSearchData, setRecentSearchData, searchObject, setSearchObject } = useContext(AgencyContext);
+    const { setShowIncPage, setTabCount, setCaseStatus, setIncidentCount, incidentRecentData, setIncidentRecentData, exceptionalClearID, GetDataExceptionalClearanceID, rmsDisposition, getRmsDispositionID, incidentSearchData, setIncidentSearchData, incAdvSearchData, setIncAdvSearchData, setPropertyCount, setVehicleCount, GetDataTimeZone, datezone, recentSearchData, setRecentSearchData, searchObject, setSearchObject } = useContext(AgencyContext);
 
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
 
@@ -679,7 +679,7 @@ const Incident = () => {
                                                                         onClick={() => {
                                                                             setShowIncPage('home');
                                                                             setPropertyCount([]); setTabCount([]); setIncidentCount([]);
-                                                                            setVehicleCount([])
+                                                                            setVehicleCount([]); setCaseStatus('Open')
                                                                         }}
                                                                         className="btn btn-sm text-white py-0"
                                                                     >

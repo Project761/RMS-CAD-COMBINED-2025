@@ -2283,7 +2283,7 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
                         </span>
                       </div>
                     </div>
-                    )}
+                  )}
                 <SelectBox
                   className="basic-multi-select"
                   name="bias"

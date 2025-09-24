@@ -23,7 +23,7 @@ const Dashboard = () => {
   const IncRef = useRef(null);
 
   const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
-  const { setUpdateCount, updateCount, setIncidentStatus, setPropertyCount, setTabCount, setNameTabCount, setIncidentCount, setVehicleCount, GetDataTimeZone, datezone } = useContext(AgencyContext);
+  const { setUpdateCount, updateCount, setIncidentStatus, setPropertyCount, setTabCount, setNameTabCount, setIncidentCount, setVehicleCount, GetDataTimeZone, datezone, setCaseStatus } = useContext(AgencyContext);
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
 
   const [loginAgencyID, setLoginAgencyID] = useState('');
@@ -47,7 +47,7 @@ const Dashboard = () => {
     setUpdateCount(updateCount + 1);
     setIncidentStatus(false);
     setIncidentCount([]);
-    setTabCount([]);
+    setTabCount([]); setCaseStatus('Open');
     setNameTabCount([]);
     setPropertyCount([]);
     setVehicleCount([]);

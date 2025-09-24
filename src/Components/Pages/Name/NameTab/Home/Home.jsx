@@ -2104,18 +2104,19 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
               </div>
             </div>
 
-            {
-              (!value.IsUnknown && ((masterNameID && MstPage === "MST-Name-Dash") || nameID)) ? (
-                <div className="col-lg-5">
-                  <AlertTable
-                    availableAlert={availableAlert}
-                    masterPropertyID={masterNameID ? masterNameID : ''}
-                    ProSta={NameStatus}
-                  />
-                </div>
-              ) : null
-            }
-            <div className='col-3 col-md-2 col-lg-5'></div>
+            <div className='col-3 col-md-2 col-lg-5'>
+              {
+                (!value.IsUnknown && ((masterNameID && MstPage === "MST-Name-Dash") || nameID)) ? (
+                  // <div className="col-lg-5">
+                    <AlertTable
+                      availableAlert={availableAlert}
+                      masterPropertyID={masterNameID ? masterNameID : ''}
+                      ProSta={NameStatus}
+                    />
+                  // </div>
+                ) : null
+              }
+            </div>
 
 
 

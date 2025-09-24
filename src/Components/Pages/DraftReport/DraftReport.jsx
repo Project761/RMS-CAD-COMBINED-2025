@@ -54,9 +54,7 @@ function DraftReport({ isPreview }) {
     useEffect(() => {
         if (localStoreData) {
             setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
-            get_Data_Que_Report(localStoreData?.PINID, localStoreData?.AgencyID);
-            dispatch(get_ScreenPermissions_Data("N046", localStoreData?.AgencyID, localStoreData?.PINID));
-
+            get_Data_Que_Report(localStoreData?.PINID, localStoreData?.AgencyID);  dispatch(get_ScreenPermissions_Data("N046", localStoreData?.AgencyID, localStoreData?.PINID));
         }
     }, [localStoreData]);
 
@@ -68,8 +66,7 @@ function DraftReport({ isPreview }) {
 
     useEffect(() => {
         if (loginAgencyID && loginPinID) {
-            get_Data_Que_Report(loginPinID, loginAgencyID);
-            getUseOfForceReport(loginPinID, loginAgencyID);
+            get_Data_Que_Report(loginPinID, loginAgencyID);   getUseOfForceReport(loginPinID, loginAgencyID);
         }
     }, [loginPinID, loginAgencyID]);
 
@@ -101,6 +98,29 @@ function DraftReport({ isPreview }) {
         //             }
         //         </div>)
         // },
+        {
+            name: 'Incident# ',
+            grow: 1,
+            minWidth: '120px', cell: row => {
+                return (
+                    <span
+                        onClick={() => {
+                            navigate(
+                                `/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&IsCadInc=${true}&narrativeAssignId=${stringToBase64(row?.NarrativeID)}&tab=Report`
+                            );
+                        }}
+                        style={{
+                            color: '#007bff',
+                            cursor: 'pointer',
+                            textDecoration: 'underline',
+                        }}
+                        title="Go to Incident"
+                    >
+                        {row?.IncidentNumber}
+                    </span>
+                );
+            }, sortable: true,
+        },
         {
             name: 'Report Type',
             minWidth: '120px',
