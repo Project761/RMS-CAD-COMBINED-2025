@@ -950,7 +950,7 @@ input[type="file"] {
 .dash-name {
   color: #000;
   margin-top: -15px;
-  
+
 }
 
 .Nb {
@@ -3207,4 +3207,10 @@ div[data-testid="table-header"],
 .custom-col-29 {
   flex: 0 0 29.6%;
   max-width: 29.6%;
+}
+
+/* abhi */
+.incSiderbar_Hr {
+  border: 1px solid rgba(0, 0, 0, .125) !important;
+  margin-bottom: .70rem !important;
 }

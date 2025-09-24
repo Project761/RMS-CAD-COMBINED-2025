@@ -1,6 +1,6 @@
 import React, { createContext, useState } from 'react'
 import { Decrypt_Id_Name, } from '../../Components/Common/Utility'
-import { AddDeleteUpadate, fetchData, fetchDate, fetchPostData } from '../../Components/hooks/Api'
+import { AddDeleteUpadate, fetchData, fetchDate, fetchPostData, fetchPostDataNibrs } from '../../Components/hooks/Api'
 import { Comman_changeArrayFormat, sixColArray, sixColArrayArrest, threeColArray, threeColArrayWithCode } from '../../Components/Common/ChangeArrayFormat'
 import { toastifyError } from '../../Components/Common/AlertMsg'
 
@@ -679,6 +679,109 @@ const AgencyData = ({ children }) => {
         });
     };
 
+    // nibrs incident error
+    const [incidentErrorStatus, setIncidentErrorStatus] = useState(false);
+    // nibrs offense
+    const [offenseErrorStatus, setOffenseErrorStatus] = useState(false);
+    // nibrs name
+    const [nameErrorStatus, setNameErrorStatus] = useState(false);
+    // nibrs name relation
+    const [NameRelationshipError, setNameRelationshipError] = useState(false);
+    // nibrs narrative
+    const [narrativeApprovedStatus, setNarrativeApprovedStatus] = useState(false);
+    // nibrs property
+    const [PropErrorStatus, setPropErrorStatus] = useState(false);
+    // nibrs sideBar Loding Status
+    const [nibrsSideBarLoading, setNibrsSideBarLoading] = useState(false);
+
+
+
+    // Update both state and localStorage
+    const validate_IncSideBar = async (incidentID, incidentNumber, loginAgencyID) => {
+        setNibrsSideBarLoading(true);
+        // console.log("🚀 ~ validate_IncSideBar ~ Call:")
+
+        const [incidentError, offenseError, victimError, offenderError, DashBoardVicOffRelationStatus, propertyError] = await Promise.all([
+            fetchPostDataNibrs('NIBRS/GetIncidentNIBRSError', { 'StrIncidentID': incidentID, 'StrIncidentNumber': incidentNumber, 'StrAgencyID': loginAgencyID }),
+            fetchPostDataNibrs("NIBRS/Nibrs_OffenseError", { 'gIncidentID': incidentID, 'IncidentNumber': incidentNumber, 'CrimeId': 0, 'gIntAgencyID': loginAgencyID }),
+            fetchPostDataNibrs('NIBRS/GetVictimNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': incidentNumber, 'NameID': 0, 'gIntAgencyID': loginAgencyID }),
+            fetchPostDataNibrs('NIBRS/GetOffenderNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': incidentNumber, 'NameID': 0, 'gIntAgencyID': loginAgencyID }),
+            fetchPostData('DashBoard/GetData_DashBoardIncidentStatus', { 'IncidentID': incidentID, }),
+            fetchPostDataNibrs('NIBRS/GetPropertyNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': incidentNumber, 'PropertyId': 0, 'gIntAgencyID': loginAgencyID }),
+        ])
+
+
+        if (incidentError?.Administrative) {
+            const incObj = incidentError?.Administrative ? incidentError?.Administrative : [];
+
+            setIncidentErrorStatus(true);
+
+        } else {
+            setIncidentErrorStatus(false);
+        }
+
+
+        if (offenseError) {
+            const offenseObj = offenseError?.Offense ? offenseError?.Offense : [];
+            if (offenseObj?.length > 0) {
+                setOffenseErrorStatus(true);
+            } else {
+                setOffenseErrorStatus(false);
+            }
+        } else {
+            setOffenseErrorStatus(false);
+        }
+
+        if (victimError || offenderError) {
+            const victimObj = victimError?.Victim ? victimError?.Victim : [];
+            const offenderObj = offenderError?.Offender ? offenderError?.Offender : [];
+
+            if (victimObj?.length > 0 || offenderObj?.length > 0) {
+                setNameErrorStatus(true);
+            } else {
+                setNameErrorStatus(false);
+            }
+        } else {
+            setNameErrorStatus(false);
+        }
+
+
+        if (DashBoardVicOffRelationStatus?.length > 0) {
+            const NameRelationship = DashBoardVicOffRelationStatus[0]?.NameRelationship;
+            const Narrative = DashBoardVicOffRelationStatus[0]?.Narrative;
+            const VictimOffense = DashBoardVicOffRelationStatus[0]?.VictimOffense;
+
+            setNameRelationshipError(NameRelationship > 0);
+            setNarrativeApprovedStatus(Narrative > 0);
+
+        } else {
+            setNameRelationshipError(false)
+            setNarrativeApprovedStatus(false);
+        }
+
+        if (propertyError) {
+            const proObj = propertyError?.Properties ? propertyError?.Properties : [];
+
+            const VehArr = proObj?.filter((item) => item?.PropertyType === 'V');
+            const PropArr = proObj?.filter((item) => item?.PropertyType !== 'V');
+
+            if (PropArr?.length > 0 || VehArr?.length > 0) {
+                setPropErrorStatus(true);
+
+            } else {
+                setPropErrorStatus(false);
+            }
+
+        } else {
+            setPropErrorStatus(false);
+
+        }
+        // console.log("🚀 ~ validate_IncSideBar ~ Call End:")
+        setNibrsSideBarLoading(false);
+    };
+
+
+
     return (
         <AgencyContext.Provider value={{
             // forgetPassword
@@ -750,6 +853,8 @@ const AgencyData = ({ children }) => {
             searchObject, setSearchObject,
             searchCertificationData, setSearchCertificationData,
             Is2FAEnabled, setIs2FAEnabled,
+            // sideBar Nibrs Status
+            validate_IncSideBar, incidentErrorStatus, offenseErrorStatus, nameErrorStatus, NameRelationshipError, narrativeApprovedStatus, PropErrorStatus, nibrsSideBarLoading, setNibrsSideBarLoading
         }}>
             {children}
         </AgencyContext.Provider>
