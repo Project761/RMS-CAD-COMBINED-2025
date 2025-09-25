@@ -3214,3 +3214,7 @@ div[data-testid="table-header"],
   border: 1px solid rgba(0, 0, 0, .125) !important;
   margin-bottom: .70rem !important;
 }
+
+.incident-tab_Lock{
+  padding: 3px 0px !important;
+}
