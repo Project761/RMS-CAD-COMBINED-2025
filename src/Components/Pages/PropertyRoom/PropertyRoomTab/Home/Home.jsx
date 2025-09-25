@@ -565,6 +565,12 @@ const Home = (props) => {
                 const parsedData = JSON.parse(res.data);
                 const message = parsedData.Table[0].Message;
                 toastifySuccess(message);
+                setValue({
+                    ...value,
+                    ["OfficerID"]: "",
+                    ["DocumentAccess_Name"]: "",
+                });
+                setMultiSelected({ optionSelected: [] });
                 // toastifySuccess(res.Message);
                 //   col1 === 'OffenseID' && get_Offense_Data(); get_Data_Offense_Drp(incidentID, nameID);
                 //   col1 === 'PropertyID' && get_Offender_Property_Data(); get_Offender_Property_Drp(incidentID, nameID);
@@ -734,6 +740,9 @@ const Home = (props) => {
         }
         else if (e && name === 'Task' || e === null && name === 'Task') {
             setTaskToSend(e ? e.label : "");
+            if (e === null) {
+                setTaskListStatus("");
+            }
             if (e) TaskListvalidation(e.label)
         }
         else if (e === null && name === 'CollectingOfficer') {
@@ -831,7 +840,7 @@ const Home = (props) => {
             arr = StatusOption.filter((item) => !(item.label === LastTask));
             return arr;
         } else {
-           
+
             const status = LastTask;
             arr = [{ value: "1", label: "CheckIn" }];
             if (LastTask) {
@@ -843,7 +852,7 @@ const Home = (props) => {
                 // return StatusOption;
             }
             else if (selectedStatus && (LastTask === null || LastTask === undefined)) {
-                
+
                 const filteredvalue = StatusOption.filter(
                     (item) => item.label !== selectedStatus
                 );
@@ -1768,7 +1777,12 @@ const Home = (props) => {
                                                     color: "#fff",
                                                 }}
                                                 onClick={handleSendToTaskList}
-                                                disabled={!(taskToSend && value.OfficerID)}
+                                                // disabled={!(taskToSend && value.OfficerID)}
+                                                disabled={
+                                                    isSendButtonDisabled
+                                                        ? true
+                                                        : !(taskToSend && value.OfficerID)
+                                                }
                                             >
                                                 Send
                                             </button>

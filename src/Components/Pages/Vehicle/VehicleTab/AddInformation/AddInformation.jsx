@@ -630,6 +630,7 @@ const AddInformation = (props) => {
     }
   }, [loginAgencyID]);
 
+  
 
   return (
     <>
@@ -2210,7 +2211,12 @@ const AddInformation = (props) => {
                             // );
                             // setTaskToSend("");
                           }}
-                          disabled={!(taskToSend && value.OfficerID)}
+                          disabled={
+                            isSendButtonDisabled         // ✅ primary check
+                              ? true                      // if true → disable directly
+                              : !(taskToSend && value.OfficerID) // else check the second rule
+                          }
+                        // disabled={!(taskToSend && value.OfficerID)}
                         >
                           Send
                         </button>
