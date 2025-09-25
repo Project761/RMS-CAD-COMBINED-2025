@@ -32,12 +32,12 @@ const Tab = () => {
 
     const [loading, setLoading] = useState(false);
     const [showStatus, setShowStatus] = useState(false);
-
     const [isUserClosed, setIsUserClosed] = useState(() => {
-
         const savedPreference = localStorage.getItem('statusBarClosed');
         return savedPreference === 'true';
     });
+
+    const [showLockModal, setShowLockModal] = useState(false);
 
 
     const handleStatusBarClose = (e) => {
@@ -55,8 +55,8 @@ const Tab = () => {
 
 
     const loginAgencyID = localStoreData?.AgencyID || '';
-
     const currentLocation = window.location.pathname + window.location.search;
+
 
     const offenseCount = incidentCount[0]?.OffenseCount || 0;
     const NameCount = incidentCount[0]?.NameCount || 0;
@@ -535,17 +535,13 @@ const Tab = () => {
 
 
                 </ul>
-                <ul className='float-end text-end mb-0'>
+                {/* <ul className='float-end text-end mb-0'>
                     {
                         IncSta === true || IncSta === "true" ?
                             <>
                                 <div className="">
                                     <button
                                         className="btn btn-primary py-1"
-                                        // onClick={(e) => {
-                                        //     e.stopPropagation();
-                                        //     setShowStatus(!showStatus);
-                                        // }}
                                         onClick={handleStatusBarClose}
                                     >
                                         <FontAwesomeIcon icon={faArrowLeft} />
@@ -570,7 +566,8 @@ const Tab = () => {
                                             PropertyCount={PropertyCount}
                                             PropErrorStatus={PropErrorStatus}
 
-                                        />}
+                                        />
+                                    }
                                 </div>
                             </>
                             :
@@ -578,7 +575,7 @@ const Tab = () => {
                             </>
                     }
 
-                </ul>
+                </ul> */}
             </div>
 
            

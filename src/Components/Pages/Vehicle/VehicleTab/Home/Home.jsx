@@ -85,7 +85,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
     else DecMVehId = parseInt(base64ToString(MVehId));
 
 
-    const { get_vehicle_Count, get_Incident_Count, updateCount, setUpdateCount, nibrsSubmittedStatus, nibrsSubmittedvehicleMain, setnibrsSubmittedvehicleMain, setnibrsSubmittedStatus, changesStatus, changesStatusCount, setChangesStatus, setVehicleStatus, vehicleStatus, VehicleFilterData, get_Data_Vehicle, get_Name_Count, datezone, GetDataTimeZone, setcountoffaduit, incidentReportedDate, setIncidentReportedDate } = useContext(AgencyContext)
+    const { get_vehicle_Count, get_Incident_Count, updateCount, setUpdateCount, nibrsSubmittedStatus, nibrsSubmittedvehicleMain, setnibrsSubmittedvehicleMain, setnibrsSubmittedStatus, changesStatus, changesStatusCount, setChangesStatus, setVehicleStatus, vehicleStatus, VehicleFilterData, get_Data_Vehicle, get_Name_Count, datezone, GetDataTimeZone, setcountoffaduit, validate_IncSideBar, incidentReportedDate, setIncidentReportedDate } = useContext(AgencyContext)
 
     const [clickedRow, setClickedRow] = useState(null);
     const [destoryDate, setDestoryDate] = useState();
@@ -584,7 +584,9 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                 toastifySuccess(res.Message);
                 setErrors({ ...errors, ['LossCodeIDError']: '' }); get_Incident_Count(mainIncidentID, loginPinID); get_Data_Vehicle(mainIncidentID);
                 setUpdateCount(updateCount + 1); PropertyType(loginAgencyID);
-                setChangesStatus(false); setStatesChangeStatus(false); setStatus(false); setMasterPropertyID(res?.MasterPropertyID)
+                setChangesStatus(false); setStatesChangeStatus(false); setStatus(false); setMasterPropertyID(res?.MasterPropertyID);
+                // validateIncSideBar
+                validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
             } else {
                 toastifyError('Error'); setErrors({ ...errors, ['LossCodeIDError']: '' });
             }
@@ -603,6 +605,8 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                 setErrors({ ...errors, ['LossCodeIDError']: '' });
                 setValue({ ...value, Value: previousValue, }); get_List(vehicleID);
                 if (uploadImgFiles?.length > 0) { upload_Image_File(); setuploadImgFiles(''); }
+                // validateIncSideBar
+                validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
             } else {
                 toastifyError('Error');
                 setErrors({ ...errors, ['LossCodeIDError']: '' });
