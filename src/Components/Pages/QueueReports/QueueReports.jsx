@@ -657,9 +657,11 @@ const QueueReportsModal = (props) => {
   ];
 
   const rejectColumns = [
-    { name: 'Rejected By', selector: row => row.ApprovingOfficer, sortable: true },
-    { name: 'Reason For Rejection', selector: row => row.Comments, sortable: true },
-    { name: 'Date Of Rejection', selector: row => row.CreatedDtTm ? getShowingDateText(row.CreatedDtTm) : '', sortable: true },
+    { name: 'Officer', selector: row => row.ApprovingOfficer, sortable: true },
+    { name: 'Last Comment', selector: row => row.Comments, sortable: true },
+    { name: 'Date', selector: row => row.CreatedDtTm ? getShowingDateText(row.CreatedDtTm) : '', sortable: true },
+    { name: 'Status', selector: row => row.status, sortable: true },
+
   ];
 
   useEffect(() => {
