@@ -34,7 +34,7 @@ import CreatableSelect from 'react-select/creatable';
 import NCICModal from '../../../../../CADComponents/NCICModal';
 
 
-const Home = ({ setStatus, setShowVehicleRecovered, setIncidentReportedDate, showVehicleRecovered, get_List, setPropertyStatus, isCad = false, isViewEventDetails = false, isCADSearch = false }) => {
+const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_List, setPropertyStatus, isCad = false, isViewEventDetails = false, isCADSearch = false }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -85,7 +85,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, setIncidentReportedDate, sho
     else DecMVehId = parseInt(base64ToString(MVehId));
 
 
-    const { get_vehicle_Count, get_Incident_Count, updateCount, setUpdateCount, nibrsSubmittedStatus, nibrsSubmittedvehicleMain, setnibrsSubmittedvehicleMain, setnibrsSubmittedStatus, changesStatus, changesStatusCount, setChangesStatus, setVehicleStatus, vehicleStatus, VehicleFilterData, get_Data_Vehicle, get_Name_Count, datezone, GetDataTimeZone, setcountoffaduit, validate_IncSideBar } = useContext(AgencyContext)
+    const { get_vehicle_Count, get_Incident_Count, updateCount, setUpdateCount, nibrsSubmittedStatus, nibrsSubmittedvehicleMain, setnibrsSubmittedvehicleMain, setnibrsSubmittedStatus, changesStatus, changesStatusCount, setChangesStatus, setVehicleStatus, vehicleStatus, VehicleFilterData, get_Data_Vehicle, get_Name_Count, datezone, GetDataTimeZone, setcountoffaduit, validate_IncSideBar, incidentReportedDate, setIncidentReportedDate } = useContext(AgencyContext)
 
     const [clickedRow, setClickedRow] = useState(null);
     const [destoryDate, setDestoryDate] = useState();
@@ -1835,7 +1835,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, setIncidentReportedDate, sho
                         <div className="col-12 col-md-12 col-lg-2 mt-2 text-right" >
                         </div>
                         <div className='col-11  mt-1 mb-md-5 mb-sm-5 mb-lg-0'>
-                            
+
                             <AlertTable availableAlert={availableAlert} masterPropertyID={masterPropertyID} ProSta={VehSta} />
 
                             <div className='row  mt-1 justify-content-between align-items-center'>
