@@ -630,6 +630,7 @@ const AddInformation = (props) => {
     }
   }, [loginAgencyID]);
 
+  
 
   return (
     <>
@@ -804,7 +805,7 @@ const AddInformation = (props) => {
                           id="IsSendToPropertyRoom"
                           checked={value.IsSendToPropertyRoom}
                           onChange={HandleChanges}
-                           disabled={IsNonPropertyStatus === 'true' || IsNonPropertyStatus === true}
+                          disabled={IsNonPropertyStatus === 'true' || IsNonPropertyStatus === true}
                         />
                         <label
                           className="form-check-label"
@@ -823,7 +824,7 @@ const AddInformation = (props) => {
                           id="IsNonPropertyRoom"
                           checked={value.IsNonPropertyRoom}
                           onChange={HandleChanges}
-                           disabled={SendToPropertyRoomStatus === 'true' || SendToPropertyRoomStatus === true}
+                          disabled={SendToPropertyRoomStatus === 'true' || SendToPropertyRoomStatus === true}
                         />
                         <label
                           className="form-check-label"
@@ -1039,61 +1040,61 @@ const AddInformation = (props) => {
                         </label>
                       </div>
                     </div>
-                     {
-                                             value?.IsSendToTaskList ?
-                   
-                                               <>
-                                                 <div className="col-1 col-md-1 col-lg-1 ">
-                                                   <label
-                                                     className="form-check-label mb-0"
-                                                     htmlFor="sendToPropertyRoom"
-                                                   >
-                                                     Assignee
-                                                   </label>
-                                                 </div>
-                   
-                                                 <div className="col-3 col-md-3 col-lg-5 g-1 row align-items-center">
-                                                   <>
-                                                     <div className="col-6 col-md-6 col-lg-3 ">
-                                                       <div className="form-check ml-2">
-                                                         <input
-                                                           type="radio"
-                                                           name="approverType"
-                                                           value="Individual"
-                                                           className="form-check-input"
-                                                           checked={selectedOption === "Individual"}
-                                                           onChange={handleRadioChangeArrestForward}
-                                                         />
-                                                         <label
-                                                           className="form-check-label mb-0"
-                                                           htmlFor="Individual"
-                                                         >
-                                                           By User
-                                                         </label>
-                                                       </div>
-                                                     </div>
-                                                     <div className="col-6 col-md-6 col-lg-3 ">
-                                                       <div className="form-check ml-2">
-                                                         <input
-                                                           type="radio"
-                                                           name="approverType"
-                                                           value="Group"
-                                                           className="form-check-input"
-                                                           checked={selectedOption === "Group"}
-                                                           onChange={handleRadioChangeArrestForward}
-                                                         />
-                                                         <label
-                                                           className="form-check-label mb-0"
-                                                           htmlFor="Group"
-                                                         >
-                                                           By Group
-                                                         </label>
-                                                       </div>
-                                                     </div>
-                                                     <>
-                                                       {selectedOption === "Individual" ? (
-                                                         <>
-                                                           {/* <div className="col-2 col-md-2 col-lg-2">
+                    {
+                      value?.IsSendToTaskList ?
+
+                        <>
+                          <div className="col-1 col-md-1 col-lg-1 ">
+                            <label
+                              className="form-check-label mb-0"
+                              htmlFor="sendToPropertyRoom"
+                            >
+                              Assignee
+                            </label>
+                          </div>
+
+                          <div className="col-3 col-md-3 col-lg-5 g-1 row align-items-center">
+                            <>
+                              <div className="col-6 col-md-6 col-lg-3 ">
+                                <div className="form-check ml-2">
+                                  <input
+                                    type="radio"
+                                    name="approverType"
+                                    value="Individual"
+                                    className="form-check-input"
+                                    checked={selectedOption === "Individual"}
+                                    onChange={handleRadioChangeArrestForward}
+                                  />
+                                  <label
+                                    className="form-check-label mb-0"
+                                    htmlFor="Individual"
+                                  >
+                                    By User
+                                  </label>
+                                </div>
+                              </div>
+                              <div className="col-6 col-md-6 col-lg-3 ">
+                                <div className="form-check ml-2">
+                                  <input
+                                    type="radio"
+                                    name="approverType"
+                                    value="Group"
+                                    className="form-check-input"
+                                    checked={selectedOption === "Group"}
+                                    onChange={handleRadioChangeArrestForward}
+                                  />
+                                  <label
+                                    className="form-check-label mb-0"
+                                    htmlFor="Group"
+                                  >
+                                    By Group
+                                  </label>
+                                </div>
+                              </div>
+                              <>
+                                {selectedOption === "Individual" ? (
+                                  <>
+                                    {/* <div className="col-2 col-md-2 col-lg-2">
                                                          <span className="label-name">
                                                            {errors.ApprovingOfficerError !==
                                                              "true" && (
@@ -1111,28 +1112,28 @@ const AddInformation = (props) => {
                                                              )}
                                                          </span>
                                                        </div> */}
-                                                           <div className="col-4 col-md-12 col-lg-6 dropdown__box mt-0">
-                                                             <SelectBox
-                                                               className="custom-multiselect"
-                                                               classNamePrefix="custom"
-                                                               options={agencyOfficerDrpData}
-                                                               isMulti
-                                                               required
-                                                               menuPlacement="top"
-                                                               styles={colourStylesUsers}
-                                                               // isDisabled={value.Status === "Pending Review" || value.Status === "Approved"}
-                                                               closeMenuOnSelect={false}
-                                                               // menuPlacement="top"
-                                                               // hideSelectedOptions={true}
-                                                               onChange={Agencychange}
-                                                               // allowSelectAll={true}
-                                                               value={multiSelected.optionSelected}
-                                                             />
-                                                           </div>
-                                                         </>
-                                                       ) : (
-                                                         <>
-                                                           {/* <div className="col-2 col-md-2 col-lg-2 ">
+                                    <div className="col-4 col-md-12 col-lg-6 dropdown__box mt-0">
+                                      <SelectBox
+                                        className="custom-multiselect"
+                                        classNamePrefix="custom"
+                                        options={agencyOfficerDrpData}
+                                        isMulti
+                                        required
+                                        menuPlacement="top"
+                                        styles={colourStylesUsers}
+                                        // isDisabled={value.Status === "Pending Review" || value.Status === "Approved"}
+                                        closeMenuOnSelect={false}
+                                        // menuPlacement="top"
+                                        // hideSelectedOptions={true}
+                                        onChange={Agencychange}
+                                        // allowSelectAll={true}
+                                        value={multiSelected.optionSelected}
+                                      />
+                                    </div>
+                                  </>
+                                ) : (
+                                  <>
+                                    {/* <div className="col-2 col-md-2 col-lg-2 ">
                                                          <span className="label-name">
                                                            {errors.ApprovingOfficerError !==
                                                              "true" && (
@@ -1150,51 +1151,51 @@ const AddInformation = (props) => {
                                                              )}
                                                          </span>
                                                        </div> */}
-                                                           <div className="col-4 col-md-12 col-lg-6 dropdown__box mt-0">
-                                                             <SelectBox
-                                                               className="custom-multiselect"
-                                                               classNamePrefix="custom"
-                                                               options={groupList}
-                                                               menuPlacement="top"
-                                                               isMulti
-                                                               styles={colourStylesUsers}
-                                                               closeMenuOnSelect={false}
-                                                               hideSelectedOptions={true}
-                                                               onChange={Agencychange}
-                                                               // allowSelectAll={true}
-                                                               value={multiSelected.optionSelected}
-                                                             />
-                                                           </div>
-                                                         </>
-                                                       )}
-                                                     </>
-                                                   </>
-                                                 </div>
-                                                 <div className="col-3 col-md-3 col-lg-4 mt-1 px-1 d-flex justify-content-end">
-                                                   <button
-                                                     type="button"
-                                                     className="btn btn-sm mb-2 mt-1"
-                                                     style={{
-                                                       backgroundColor: "#001f3f",
-                                                       color: "#fff",
-                                                     }}
-                                                     onClick={() => {
-                                                       // InSertBasicInfo(
-                                                       //   value?.CollectingOfficer,
-                                                       //   "OfficerID",
-                                                       //   "TaskList/Insert_TaskList",
-                                                       //   taskToSend
-                                                       // );
-                                                       // setTaskToSend("");
-                                                       check_Validation_Error();
-                                                     }}
-                                                     disabled={!value.OfficerID || IsNonPropertyStatus === true}
-                                                   >
-                                                     Send
-                                                   </button>
-                                                 </div>
-                                               </> : <></>
-                                           }
+                                    <div className="col-4 col-md-12 col-lg-6 dropdown__box mt-0">
+                                      <SelectBox
+                                        className="custom-multiselect"
+                                        classNamePrefix="custom"
+                                        options={groupList}
+                                        menuPlacement="top"
+                                        isMulti
+                                        styles={colourStylesUsers}
+                                        closeMenuOnSelect={false}
+                                        hideSelectedOptions={true}
+                                        onChange={Agencychange}
+                                        // allowSelectAll={true}
+                                        value={multiSelected.optionSelected}
+                                      />
+                                    </div>
+                                  </>
+                                )}
+                              </>
+                            </>
+                          </div>
+                          <div className="col-3 col-md-3 col-lg-4 mt-1 px-1 d-flex justify-content-end">
+                            <button
+                              type="button"
+                              className="btn btn-sm mb-2 mt-1"
+                              style={{
+                                backgroundColor: "#001f3f",
+                                color: "#fff",
+                              }}
+                              onClick={() => {
+                                // InSertBasicInfo(
+                                //   value?.CollectingOfficer,
+                                //   "OfficerID",
+                                //   "TaskList/Insert_TaskList",
+                                //   taskToSend
+                                // );
+                                // setTaskToSend("");
+                                check_Validation_Error();
+                              }}
+                              disabled={!value.OfficerID || IsNonPropertyStatus === true}
+                            >
+                              Send
+                            </button>
+                          </div>
+                        </> : <></>
+                    }
 
                     {value?.IsNonPropertyRoom && !value?.IsSendToTaskList && (
                       <>
@@ -2195,7 +2196,12 @@ const AddInformation = (props) => {
                             // );
                             // setTaskToSend("");
                           }}
-                          disabled={!(taskToSend && value.OfficerID)}
+                          disabled={
+                            isSendButtonDisabled         // ✅ primary check
+                              ? true                      // if true → disable directly
+                              : !(taskToSend && value.OfficerID) // else check the second rule
+                          }
+                        // disabled={!(taskToSend && value.OfficerID)}
                         >
                           Send
                         </button>
