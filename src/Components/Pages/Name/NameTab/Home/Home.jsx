@@ -52,7 +52,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
 
   const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
 
-  const { get_Incident_Count, get_Name_Count, NameTabCount, nameSearchStatus, nibrsSubmittedName, setnibrsSubmittedName, get_Data_Name, setcountAppear, setAuditCount, setNameSearchStatus, setcountStatus, setChangesStatus, setNameSingleData, changesStatus, nameFilterData, } = useContext(AgencyContext);
+  const { get_Incident_Count, get_Name_Count, NameTabCount, nameSearchStatus, nibrsSubmittedName, setnibrsSubmittedName, get_Data_Name, setcountAppear, setAuditCount, setNameSearchStatus, setcountStatus, setChangesStatus, setNameSingleData, changesStatus, nameFilterData, validate_IncSideBar } = useContext(AgencyContext);
 
 
   const useQuery = () => {
@@ -1146,6 +1146,8 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                 toastifyError(res.Message); setErrors({ ...errors, ['NameTypeIDError']: '', ['ContactError']: '', });
                 setChangesStatus(false)
               }
+              // validateIncSideBar
+              validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
             })
           } else { toastifyError('SSN Already exist '); }
         }
@@ -1217,6 +1219,8 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
               } else {
                 setChangesStatus(false); toastifyError(res.Message); setErrors({ ...errors, ['NameTypeIDError']: '', });
               }
+              // validateIncSideBar
+              validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
             })
           } else { toastifyError('SSN Already Exists'); }
         }

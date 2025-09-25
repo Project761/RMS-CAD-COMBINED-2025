@@ -4,70 +4,32 @@ import DatePicker from "react-datepicker";
 import { AgencyContext } from "../../../../../Context/Agency/Index";
 import { Link, useLocation } from "react-router-dom";
 import {
-  base64ToString,
-  changeArrayFormat,
-  changeArrayFormat_WithFilter,
-  customStylesWithOutColor,
-  Decrypt_Id_Name,
-  getShowingMonthDateYear,
-  getShowingWithOutTime,
-  Requiredcolour,
+  base64ToString, changeArrayFormat, changeArrayFormat_WithFilter, customStylesWithOutColor, Decrypt_Id_Name, getShowingMonthDateYear, getShowingWithOutTime, Requiredcolour,
 } from "../../../../Common/Utility";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { get_LocalStoreData } from "../../../../../redux/actions/Agency";
 import { AddDelete_Img, AddDeleteUpadate, fetchPostData } from "../../../../hooks/Api";
 import { toastifyError, toastifySuccess } from "../../../../Common/AlertMsg";
 import VehicleListing from "../../../ShowAllList/VehicleListing";
 import ChangesModal from "../../../../Common/ChangesModal";
-import {
-  get_Report_Approve_Officer_Data,
-  get_ScreenPermissions_Data,
-} from "../../../../../redux/actions/IncidentAction";
+import { get_Report_Approve_Officer_Data, get_ScreenPermissions_Data, } from "../../../../../redux/actions/IncidentAction";
 import { MasterVehicle_ID } from "../../../../../redux/actionTypes";
 import { RequiredFieldIncident } from "../../../Utility/Personnel/Validation";
 import { get_AgencyOfficer_Data, get_Narrative_Type_Drp_Data } from "../../../../../redux/actions/DropDownsData";
 import SelectBox from "../../../../Common/SelectBox";
 
 const AddInformation = (props) => {
-  const {
-    ListData,
-    DecVehId,
-    DecMVehId,
-    DecIncID,
-    propertystatus,
-    setIsNonPropertyRoomSelected,
-    setPropertyStatus,
-    isViewEventDetails = false,
-  } = props;
+
+  const { ListData, DecVehId, DecMVehId, DecIncID, propertystatus, setIsNonPropertyRoomSelected, setPropertyStatus, isViewEventDetails = false, } = props;
   const dispatch = useDispatch();
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
-  const uniqueId = sessionStorage.getItem("UniqueUserID")
-    ? Decrypt_Id_Name(
-      sessionStorage.getItem("UniqueUserID"),
-      "UForUniqueUserID"
-    )
-    : "";
-  const effectiveScreenPermission = useSelector(
-    (state) => state.Incident.effectiveScreenPermission
-  );
-  const agencyOfficerDrpData = useSelector(
-    (state) => state.DropDown.agencyOfficerDrpData
-  );
-  const reportApproveOfficer = useSelector(
-    (state) => state.Incident.reportApproveOfficer
-  );
-  const narrativeTypeDrpData = useSelector(
-    (state) => state.DropDown.narrativeTypeDrpData
-  );
+  const uniqueId = sessionStorage.getItem("UniqueUserID") ? Decrypt_Id_Name(sessionStorage.getItem("UniqueUserID"), "UForUniqueUserID") : "";
+  const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
+  const agencyOfficerDrpData = useSelector((state) => state.DropDown.agencyOfficerDrpData);
+  const reportApproveOfficer = useSelector((state) => state.Incident.reportApproveOfficer);
+  const narrativeTypeDrpData = useSelector((state) => state.DropDown.narrativeTypeDrpData);
 
-  const {
-    setChangesStatus,
-    changesStatusCount,
-    changesStatus,
-    datezone,
-    GetDataTimeZone,
-  } = useContext(AgencyContext);
+  const { setChangesStatus, GetDataTimeZone, incidentReportedDate } = useContext(AgencyContext);
 
   const useQuery = () => {
     const params = new URLSearchParams(useLocation().search);
@@ -124,50 +86,13 @@ const AddInformation = (props) => {
   const [LastTask, setLastTask] = useState("");
 
   const [value, setValue] = useState({
-    ReportedDtTm: "",
-    TagID: "",
-    DestroyDtTm: "",
-    IncidentID: "",
-    IsImmobalizationDevice: "",
-    IsEligibleForImmobalization: "",
-    IsMaster: MstVehicle === "MST-Vehicle-Dash" ? true : false,
-    MasterPropertyID: "",
-    PropertyID: "",
-    AgencyID: "",
-    PropertyTag: "",
-    NICBID: "",
-    Description: "",
-    IsSendToPropertyRoom: true,
-    ModifiedByUserFK: "",
-    CollectingOfficer: "",
-    LocationOfCollection: "",
-    EvidenceDescription: "",
-    CollectionDtTm: "",
-    IsSendToTaskList: true,
-    IsNonPropertyRoom: "",
-    IsEvidence: "",
-    Reason: "",
-    DispatchDtTm: "",
-    ExpectedDtTm: "",
-    DispatchingOfficer: "",
-    FileAttachment1: "",
-    Summary: "",
-    LabLocation: "",
-    LabName: "",
-    TestPerformed: "",
-    FileAttachment: "",
-    PackagingDetails: "",
-    Destination: "",
-    ModOfTransport: "",
-    Recipient: "",
-    DispatchingOfficer: "",
-    Comments: "",
-    OfficerID: "",
+    ReportedDtTm: "", TagID: "", DestroyDtTm: "", IncidentID: "", IsImmobalizationDevice: "", IsEligibleForImmobalization: "", IsMaster: MstVehicle === "MST-Vehicle-Dash" ? true : false, MasterPropertyID: "", PropertyID: "", AgencyID: "", PropertyTag: "", NICBID: "", Description: "",
+    IsSendToPropertyRoom: true, ModifiedByUserFK: "", CollectingOfficer: "", LocationOfCollection: "", EvidenceDescription: "", CollectionDtTm: "",
+    IsSendToTaskList: true, IsNonPropertyRoom: "", IsEvidence: "", Reason: "", DispatchDtTm: "", ExpectedDtTm: "", DispatchingOfficer: "", FileAttachment1: "", Summary: "", LabLocation: "", LabName: "", TestPerformed: "", FileAttachment: "", PackagingDetails: "", Destination: "", ModOfTransport: "", Recipient: "", DispatchingOfficer: "", Comments: "", OfficerID: "",
   });
 
   const [errors, setErrors] = useState({
-    CollectionDtTmError: "",
-    CollectingOfficerError: "",
+    CollectionDtTmError: "", CollectingOfficerError: "",
   });
 
   useEffect(() => {
@@ -178,29 +103,14 @@ const AddInformation = (props) => {
 
   useEffect(() => {
     if (localStoreData) {
-      setLoginPinID(localStoreData?.PINID);
-      setLoginAgencyID(localStoreData?.AgencyID);
-      dispatch(get_AgencyOfficer_Data(localStoreData?.AgencyID, IncID))
-
-      dispatch(
-        get_ScreenPermissions_Data(
-          "V093",
-          localStoreData?.AgencyID,
-          localStoreData?.PINID
-        )
-      );
-      GetDataTimeZone(localStoreData?.AgencyID);
+      setLoginPinID(localStoreData?.PINID); setLoginAgencyID(localStoreData?.AgencyID); dispatch(get_AgencyOfficer_Data(localStoreData?.AgencyID, IncID))
+      dispatch(get_ScreenPermissions_Data("V093", localStoreData?.AgencyID, localStoreData?.PINID)); GetDataTimeZone(localStoreData?.AgencyID);
     }
   }, [localStoreData]);
 
   useEffect(() => {
     if (effectiveScreenPermission?.length > 0) {
-      setaddUpdatePermission(
-        effectiveScreenPermission[0]?.AddOK != 1 ||
-          effectiveScreenPermission[0]?.Changeok != 1
-          ? true
-          : false
-      );
+      setaddUpdatePermission(effectiveScreenPermission[0]?.AddOK != 1 || effectiveScreenPermission[0]?.Changeok != 1 ? true : false);
     } else {
       setaddUpdatePermission(false);
     }
@@ -208,32 +118,20 @@ const AddInformation = (props) => {
 
   useEffect(() => {
     if (DecVehId) {
-      setValue({
-        ...value,
-        PropertyID: DecVehId,
-        ModifiedByUserFK: "",
-        AgencyID: loginAgencyID,
-        CreatedByUserFK: loginPinID,
-        IncidentID: DecIncID,
-      });
+      setValue({ ...value, PropertyID: DecVehId, ModifiedByUserFK: "", AgencyID: loginAgencyID, CreatedByUserFK: loginPinID, IncidentID: DecIncID, });
       Get_TaskList_Status(DecVehId, loginAgencyID);
     }
   }, [DecVehId]);
 
   useEffect(() => {
     if (DecVehId || DecMVehId) {
-      setVehicleId(DecVehId);
-      GetSingleData(DecVehId, DecMVehId);
-      GetDataDocument(DecVehId, DecMVehId, loginPinID);
-      Get_SendTask_Data(DecVehId, DecMVehId);
+      setVehicleId(DecVehId); GetSingleData(DecVehId, DecMVehId); GetDataDocument(DecVehId, DecMVehId, loginPinID); Get_SendTask_Data(DecVehId, DecMVehId);
     }
   }, [DecVehId, DecMVehId]);
 
   const GetSingleData = (PropertyID, masterPropertyID) => {
     const val = {
-      PropertyID: PropertyID,
-      MasterPropertyID: masterPropertyID,
-      IsMaster: MstVehicle === "MST-Vehicle-Dash" ? true : false,
+      PropertyID: PropertyID, MasterPropertyID: masterPropertyID, IsMaster: MstVehicle === "MST-Vehicle-Dash" ? true : false,
     };
     const val2 = { MasterPropertyID: masterPropertyID };
     fetchPostData("PropertyVehicle/GetSingleData_PropertyVehicle", val).then(
@@ -253,20 +151,11 @@ const AddInformation = (props) => {
   const HandleChanges1 = (e) => {
     !addUpdatePermission && setChangesStatus(true);
     !addUpdatePermission && setStatesChangeStatus(true);
-    if (
-      e.target.name === "IsImmobalizationDevice" ||
-      e.target.name === "IsEligibleForImmobalization" ||
-      e.target.name === "IsSendToPropertyRoom"
+    if (e.target.name === "IsImmobalizationDevice" || e.target.name === "IsEligibleForImmobalization" || e.target.name === "IsSendToPropertyRoom"
     ) {
-      setValue({
-        ...value,
-        [e.target.name]: e.target.checked,
-      });
+      setValue({ ...value, [e.target.name]: e.target.checked, });
     } else {
-      setValue({
-        ...value,
-        [e.target.name]: e.target.value,
-      });
+      setValue({ ...value, [e.target.name]: e.target.value, });
     }
   };
 
@@ -276,20 +165,11 @@ const AddInformation = (props) => {
     }
   }, [taskEditVal]);
 
-  console.log(editval)
 
   useEffect(() => {
     if (editval) {
-      const IsSendToPropertyRoom =
-        editval[0].IsSendToPropertyRoom === false &&
-          editval[0].CollectionDtTm === null &&
-          editval[0].CollectingOfficer === null
-          ? true
-          : editval[0]?.IsSendToPropertyRoom;
-      dispatch({
-        type: MasterVehicle_ID,
-        payload: editval[0]?.MasterPropertyID,
-      });
+      const IsSendToPropertyRoom = editval[0].IsSendToPropertyRoom === false && editval[0].CollectionDtTm === null && editval[0].CollectingOfficer === null ? true : editval[0]?.IsSendToPropertyRoom;
+      dispatch({ type: MasterVehicle_ID, payload: editval[0]?.MasterPropertyID, });
       let tempTasklistStatus = null;
       if (!editval[0]?.IsNonPropertyRoom) {
         tempTasklistStatus = true;
@@ -298,174 +178,59 @@ const AddInformation = (props) => {
       }
       setValue({
         ...value,
-        MasterPropertyID: DecMVehId,
-        PropertyID: DecVehId,
-        IsImmobalizationDevice: editval[0]?.IsImmobalizationDevice,
-        IsEligibleForImmobalization: editval[0]?.IsEligibleForImmobalization,
-        DestroyDtTm: editval[0]?.DestroyDtTm
-          ? getShowingWithOutTime(editval[0]?.DestroyDtTm)
-          : null,
-        Description: editval[0]?.Description,
-        NICB: editval[0]?.NICB,
-        PropertyTag: editval[0]?.PropertyTag,
-        IsSendToPropertyRoom: IsSendToPropertyRoom,
-        CollectingOfficer: editval[0]?.CollectingOfficer,
-        LocationOfCollection: editval[0]?.LocationOfCollection,
-        EvidenceDescription: editval[0]?.EvidenceDescription,
-        CollectionDtTm: editval[0]?.CollectionDtTm,
-        IsEvidence: editval[0]?.IsEvidence,
-        Comments: editval[0]?.Comments,
-        IsNonPropertyRoom: editval[0]?.IsNonPropertyRoom,
-        ReportedDtTm: editval[0]?.ReportedDtTm,
-        IsSendToTaskList: tempTasklistStatus,
-        Reason: editval[0]?.Reason,
-        DispatchDtTm: editval[0]?.DispatchDtTm,
-        ExpectedDtTm: editval[0]?.ExpectedDtTm,
-        DispatchingOfficer: editval[0]?.DispatchingOfficer,
-        Summary: editval[0]?.Summary,
-        LabLocation: editval[0]?.LabLocation,
-        LabName: editval[0]?.LabName,
-        TestPerformed: editval[0]?.TestPerformed,
-        PackagingDetails: editval[0]?.PackagingDetails,
-        Destination: editval[0]?.Destination,
-        ModOfTransport: editval[0]?.ModOfTransport,
-        Recipient: editval[0]?.Recipient,
-        DispatchingOfficer: editval[0]?.DispatchingOfficer,
+        MasterPropertyID: DecMVehId, PropertyID: DecVehId, IsImmobalizationDevice: editval[0]?.IsImmobalizationDevice, IsEligibleForImmobalization: editval[0]?.IsEligibleForImmobalization, DestroyDtTm: editval[0]?.DestroyDtTm ? getShowingWithOutTime(editval[0]?.DestroyDtTm) : null,
+        Description: editval[0]?.Description, NICB: editval[0]?.NICB, PropertyTag: editval[0]?.PropertyTag, IsSendToPropertyRoom: IsSendToPropertyRoom,
+        CollectingOfficer: editval[0]?.CollectingOfficer, LocationOfCollection: editval[0]?.LocationOfCollection, EvidenceDescription: editval[0]?.EvidenceDescription,
+        CollectionDtTm: editval[0]?.CollectionDtTm, IsEvidence: editval[0]?.IsEvidence, Comments: editval[0]?.Comments, IsNonPropertyRoom: editval[0]?.IsNonPropertyRoom,
+        ReportedDtTm: editval[0]?.ReportedDtTm, IsSendToTaskList: tempTasklistStatus, Reason: editval[0]?.Reason, DispatchDtTm: editval[0]?.DispatchDtTm,
+        ExpectedDtTm: editval[0]?.ExpectedDtTm, DispatchingOfficer: editval[0]?.DispatchingOfficer, Summary: editval[0]?.Summary, LabLocation: editval[0]?.LabLocation,
+        LabName: editval[0]?.LabName, TestPerformed: editval[0]?.TestPerformed, PackagingDetails: editval[0]?.PackagingDetails, Destination: editval[0]?.Destination,
+        ModOfTransport: editval[0]?.ModOfTransport, Recipient: editval[0]?.Recipient, DispatchingOfficer: editval[0]?.DispatchingOfficer,
       });
-      setIsEvidenceStatus(editval[0]?.IsEvidence);
-      setCollectiondate(
+      setIsEvidenceStatus(editval[0]?.IsEvidence); setCollectiondate(
         editval[0]?.CollectionDtTm ? new Date(editval[0]?.CollectionDtTm) : ""
       );
-      setdisPatchdate(
-        editval[0]?.DispatchDtTm ? new Date(editval[0]?.DispatchDtTm) : ""
-      );
-      setexpectedArrival(
-        editval[0]?.ExpectedDtTm ? new Date(editval[0]?.ExpectedDtTm) : ""
-      );
+      setdisPatchdate(editval[0]?.DispatchDtTm ? new Date(editval[0]?.DispatchDtTm) : ""); setexpectedArrival(editval[0]?.ExpectedDtTm ? new Date(editval[0]?.ExpectedDtTm) : "");
       setMasterPropertyID(editval[0]?.MasterPropertyID);
-      if (editval[0]?.IsSendToPropertyRoom) {
-        setPropertyStatus(true);
-      } else {
-        setPropertyStatus(false);
-      }
+      if (editval[0]?.IsSendToPropertyRoom) { setPropertyStatus(true); }
+      else { setPropertyStatus(false); }
     }
-
-
   }, [editval, updateCount]);
 
   const Reset = (e) => {
     setValue({
-      ...value,
-      MasterPropertyID: "",
-      PropertyID: "",
-      Task: "",
-      AgencyID: "",
-      IncidentID: "",
-      ReportedDtTm: "",
-      DestroyDtTm: "",
-      PropertyTag: "",
-      NICB: "",
-      Description: "",
-      IsSendToPropertyRoom: true,
-      ModifiedByUserFK: "",
-      IsMaster: MstVehicle === "MST-Vehicle-Dash" ? true : false,
-      CollectingOfficer: "",
-      LocationOfCollection: "",
-      EvidenceDescription: "",
-      CollectionDtTm: "",
-      IsSendToTaskList: true,
-      IsNonPropertyRoom: "",
-      IsEvidence: "",
-      Reason: "",
-      DispatchDtTm: "",
-      ExpectedDtTm: "",
-      DispatchingOfficer: "",
-      FileAttachment1: "",
-      Summary: "",
-      LabLocation: "",
-      LabName: "",
-      TestPerformed: "",
-      FileAttachment: "",
-      PackagingDetails: "",
-      Destination: "",
-      ModOfTransport: "",
-      Recipient: "",
-      DispatchingOfficer: "",
-      Comments: "",
+      ...value, MasterPropertyID: "", PropertyID: "", Task: "", AgencyID: "", IncidentID: "", ReportedDtTm: "", DestroyDtTm: "", PropertyTag: "", NICB: "", Description: "", IsSendToPropertyRoom: true, IsMaster: MstVehicle === "MST-Vehicle-Dash" ? true : false, IsSendToTaskList: true, ModifiedByUserFK: "", CollectingOfficer: "", LocationOfCollection: "", EvidenceDescription: "", CollectionDtTm: "", IsNonPropertyRoom: "", IsEvidence: "", Reason: "", DispatchDtTm: "", ExpectedDtTm: "", DispatchingOfficer: "", FileAttachment1: "", Summary: "", LabLocation: "", LabName: "", TestPerformed: "", FileAttachment: "", PackagingDetails: "", Destination: "", ModOfTransport: "", Recipient: "", DispatchingOfficer: "", Comments: "",
     });
-    setErrors({
-      ...errors,
-      CollectionDtTmError: "",
-      CollectingOfficerError: "",
-    });
-    setStatesChangeStatus(false);
-    setCollectiondate("");
-    setdisPatchdate("");
-    setexpectedArrival("");
-    setfileUploadStatus(false);
-
-
+    setErrors({ ...errors, CollectionDtTmError: "", CollectingOfficerError: "", }); setStatesChangeStatus(false); setCollectiondate(""); setdisPatchdate(""); setexpectedArrival(""); setfileUploadStatus(false);
     if (editval[0]?.Description?.length > 0) {
       setUpdateCount(updateCount + 1);
     }
   };
 
   const check_Validation_Error = (e) => {
-    const CollectionDtTmErr = value.IsEvidence
-      ? RequiredFieldIncident(value?.CollectionDtTm)
-      : "true";
-    const CollectingOfficerErr = value.IsEvidence
-      ? RequiredFieldIncident(value?.CollectingOfficer)
-      : "true";
-    const ReasonErr =
-      value.IsNonPropertyRoom && !value?.IsSendToTaskList && value.IsEvidence
-        ? RequiredFieldIncident(value?.Reason)
-        : "true";
-    const DispatchErr =
-      value.IsNonPropertyRoom && !value?.IsSendToTaskList && value.IsEvidence
-        ? RequiredFieldIncident(value?.DispatchDtTm)
-        : "true";
-    const DispatchingOfficerErr =
-      value.IsNonPropertyRoom && !value?.IsSendToTaskList && value.IsEvidence
-        ? RequiredFieldIncident(value?.DispatchingOfficer)
-        : "true";
-    const ReceipientErr =
-      value.IsNonPropertyRoom && !value?.IsSendToTaskList && value.IsEvidence
-        ? RequiredFieldIncident(value?.Recipient)
-        : "true";
+    const CollectionDtTmErr = value.IsEvidence ? RequiredFieldIncident(value?.CollectionDtTm) : "true";
+    const CollectingOfficerErr = value.IsEvidence ? RequiredFieldIncident(value?.CollectingOfficer) : "true";
+    const ReasonErr = value.IsNonPropertyRoom && !value?.IsSendToTaskList && value.IsEvidence ? RequiredFieldIncident(value?.Reason) : "true";
+    const DispatchErr = value.IsNonPropertyRoom && !value?.IsSendToTaskList && value.IsEvidence ? RequiredFieldIncident(value?.DispatchDtTm) : "true";
+    const DispatchingOfficerErr = value.IsNonPropertyRoom && !value?.IsSendToTaskList && value.IsEvidence ? RequiredFieldIncident(value?.DispatchingOfficer) : "true";
+    const ReceipientErr = value.IsNonPropertyRoom && !value?.IsSendToTaskList && value.IsEvidence ? RequiredFieldIncident(value?.Recipient) : "true";
     setErrors((prevValues) => {
       return {
         ...prevValues,
-        ["CollectionDtTmError"]:
-          CollectionDtTmErr || prevValues["CollectionDtTmError"],
-        ["CollectingOfficerError"]:
-          CollectingOfficerErr || prevValues["CollectingOfficerError"],
+        ["CollectionDtTmError"]: CollectionDtTmErr || prevValues["CollectionDtTmError"],
+        ["CollectingOfficerError"]: CollectingOfficerErr || prevValues["CollectingOfficerError"],
         ["ReasonError"]: ReasonErr || prevValues["ReasonError"],
         ["DispatchError"]: DispatchErr || prevValues["DispatchError"],
-        ["DispatchingOfficerError"]:
-          DispatchingOfficerErr || prevValues["DispatchingOfficerError"],
+        ["DispatchingOfficerError"]: DispatchingOfficerErr || prevValues["DispatchingOfficerError"],
         ["ReceipientError"]: ReceipientErr || prevValues["ReceipientError"],
       };
     });
   };
-
-  const {
-    CollectionDtTmError,
-    CollectingOfficerError,
-    ReasonError,
-    DispatchError,
-    DispatchingOfficerError,
-    ReceipientError,
+  const { CollectionDtTmError, CollectingOfficerError, ReasonError, DispatchError, DispatchingOfficerError, ReceipientError,
   } = errors;
 
   useEffect(() => {
-    if (
-      CollectionDtTmError === "true" &&
-      CollectingOfficerError === "true" &&
-      ReasonError === "true" &&
-      DispatchError === "true" &&
-      DispatchingOfficerError === "true" &&
-      ReceipientError === "true"
+    if (CollectionDtTmError === "true" && CollectingOfficerError === "true" && ReasonError === "true" && DispatchError === "true" && DispatchingOfficerError === "true" && ReceipientError === "true"
     ) {
       if (value.IsSendToPropertyRoom || value.IsNonPropertyRoom) {
         Update_Name();
@@ -473,14 +238,7 @@ const AddInformation = (props) => {
         toastifyError("Select Property Room Type");
       }
     }
-  }, [
-    CollectionDtTmError,
-    CollectingOfficerError,
-    ReasonError,
-    DispatchError,
-    DispatchingOfficerError,
-    ReceipientError,
-  ]);
+  }, [CollectionDtTmError, CollectingOfficerError, ReasonError, DispatchError, DispatchingOfficerError, ReceipientError,]);
 
   const Get_TaskList_Status = (PropertyID) => {
     const val = { PropertyID: PropertyID, AgencyID: localStoreData?.AgencyID };
@@ -499,86 +257,10 @@ const AddInformation = (props) => {
   };
 
   const Update_Name = () => {
-    const {
-      MasterPropertyID,
-      MProId,
-      PropertyID,
-      ProId,
-      AgencyID,
-      IncidentID,
-      IncID,
-      IsImmobalizationDevice,
-      IsEligibleForImmobalization,
-      DestroyDtTm,
-      PropertyTag,
-      NICBID,
-      Description,
-      TagID,
-      IsSendToPropertyRoom,
-      ModifiedByUserFK,
-      IsMaster,
-      IsSendToTaskList,
-      CollectingOfficer,
-      LocationOfCollection,
-      EvidenceDescription,
-      CollectionDtTm,
-      IsNonPropertyRoom,
-      IsEvidence,
-      Task,
-      Reason,
-      DispatchDtTm,
-      ExpectedDtTm,
-      DispatchingOfficer,
-      Comments,
-      Recipient,
-      ModOfTransport,
-      Destination,
-      PackagingDetails,
-      FileAttachment,
-      TestPerformed,
-      LabName,
-      LabLocation,
-      Summary,
-      FileAttachment1,
+    const { MasterPropertyID, MProId, PropertyID, ProId, AgencyID, IncidentID, IncID, IsImmobalizationDevice, IsEligibleForImmobalization, DestroyDtTm, PropertyTag, NICBID, Description, TagID, IsSendToPropertyRoom, ModifiedByUserFK, IsMaster, IsSendToTaskList, CollectingOfficer, LocationOfCollection, EvidenceDescription, CollectionDtTm, IsNonPropertyRoom, IsEvidence, Task, Reason, DispatchDtTm, ExpectedDtTm, DispatchingOfficer, Comments, Recipient, ModOfTransport, Destination, PackagingDetails, FileAttachment, TestPerformed, LabName, LabLocation, Summary, FileAttachment1,
     } = value;
     const val = {
-      CreatedByUserFK: loginPinID,
-      MasterPropertyID: masterPropertyID,
-      PropertyID: PropertyID,
-      AgencyID: loginAgencyID,
-      IsMaster: IsMaster,
-      IncidentID: IncidentID,
-      IsSendToPropertyRoom: IsSendToPropertyRoom,
-      ModifiedByUserFK: loginPinID,
-      IsImmobalizationDevice: IsImmobalizationDevice,
-      DestroyDtTm: DestroyDtTm,
-      PropertyTag: PropertyTag,
-      NICBID: NICBID,
-      Description: Description,
-      CollectingOfficer: CollectingOfficer,
-      LocationOfCollection: LocationOfCollection,
-      EvidenceDescription: EvidenceDescription,
-      CollectionDtTm: CollectionDtTm,
-      IsEligibleForImmobalization: IsEligibleForImmobalization,
-      IsNonPropertyRoom: IsNonPropertyRoom,
-      IsEvidence: IsEvidence,
-      Task: Task,
-      IsSendToTaskList: IsSendToTaskList,
-      Reason: Reason,
-      DispatchDtTm: DispatchDtTm,
-      ExpectedDtTm: ExpectedDtTm,
-      DispatchingOfficer: DispatchingOfficer,
-      Summary: Summary,
-      LabLocation: LabLocation,
-      LabName: LabName,
-      TestPerformed: TestPerformed,
-      PackagingDetails: PackagingDetails,
-      Destination: Destination,
-      ModOfTransport: ModOfTransport,
-      TagID: TagID,
-      Recipient: Recipient,
-      DispatchingOfficer: DispatchingOfficer,
-      Comments: Comments,
+      CreatedByUserFK: loginPinID, MasterPropertyID: masterPropertyID, PropertyID: PropertyID, AgencyID: loginAgencyID, IsMaster: IsMaster, IncidentID: IncidentID, IsSendToPropertyRoom: IsSendToPropertyRoom, ModifiedByUserFK: loginPinID, IsImmobalizationDevice: IsImmobalizationDevice, DestroyDtTm: DestroyDtTm, PropertyTag: PropertyTag, NICBID: NICBID, Description: Description, CollectingOfficer: CollectingOfficer, LocationOfCollection: LocationOfCollection, EvidenceDescription: EvidenceDescription, CollectionDtTm: CollectionDtTm, IsEligibleForImmobalization: IsEligibleForImmobalization, IsNonPropertyRoom: IsNonPropertyRoom, IsEvidence: IsEvidence, Task: Task, IsSendToTaskList: IsSendToTaskList, Reason: Reason, DispatchDtTm: DispatchDtTm, ExpectedDtTm: ExpectedDtTm, DispatchingOfficer: DispatchingOfficer, Summary: Summary, LabLocation: LabLocation, LabName: LabName, TestPerformed: TestPerformed, PackagingDetails: PackagingDetails, Destination: Destination, ModOfTransport: ModOfTransport, TagID: TagID, Recipient: Recipient, DispatchingOfficer: DispatchingOfficer, Comments: Comments,
     };
     AddDeleteUpadate("PropertyVehicle/AdditionalInfo_Vehicle", val).then(
       (res) => {
@@ -586,13 +268,7 @@ const AddInformation = (props) => {
         const message = parsedData.Table[0].Message;
         toastifySuccess(message);
         if (taskToSend && value.OfficerID) {
-          InSertBasicInfo(
-            value?.CollectingOfficer,
-            "OfficerID",
-            "TaskList/Insert_TaskList",
-            taskToSend
-          );
-
+          InSertBasicInfo(value?.CollectingOfficer, "OfficerID", "TaskList/Insert_TaskList", taskToSend);
         }
         if (value?.IsSendToTaskList && IsNonPropertyStatus === false && value.IsNonPropertyRoom) {
           InSertBasicInfo(
@@ -605,10 +281,7 @@ const AddInformation = (props) => {
         if (selectedFiles?.length > 0 && fileUploadStatus) {
           uploadNonPropertyRoomDocuments(PropertyID, MasterPropertyID, loginPinID, selectedFiles);
         }
-        setChangesStatus(false);
-        setStatesChangeStatus(false);
-        GetSingleData(DecVehId, DecMVehId);
-        Get_TaskList_Status(DecVehId);
+        setChangesStatus(false); setStatesChangeStatus(false); GetSingleData(DecVehId, DecMVehId); Get_TaskList_Status(DecVehId);
         Reset();
       }
     );
@@ -616,25 +289,11 @@ const AddInformation = (props) => {
 
   const uploadNonPropertyRoomDocuments = async (PropertyID, MasterPropertyID, CreatedByUserFK, files) => {
     if (!files || files.length === 0) return;
-
     const formData = new FormData();
     const metadataArray = [];
-
-    files.forEach(() => {
-      metadataArray.push(
-        JSON.stringify({
-          PropertyID,
-          MasterPropertyID,
-          CreatedByUserFK,
-        })
-      );
-    });
-
+    files.forEach(() => { metadataArray.push(JSON.stringify({ PropertyID, MasterPropertyID, CreatedByUserFK, })); });
     files.forEach(file => formData.append("File", file));
-
     formData.append("Data", JSON.stringify(metadataArray));
-
-
     try {
       const response = await AddDelete_Img("NonPropertyRoomDocument/Insert_NonPropertyRoomDocument", formData);
       if (response?.success) {
@@ -650,32 +309,20 @@ const AddInformation = (props) => {
 
 
   const Delete_Document = (fileToDelete) => {
-    setSelectedFiles((prev) =>
-      prev.filter((file) => file.documentID !== fileToDelete.documentID && file.name !== fileToDelete.name)
-    );
+    setSelectedFiles((prev) => prev.filter((file) => file.documentID !== fileToDelete.documentID && file.name !== fileToDelete.name));
     if (fileToDelete.isFromAPI) {
-      const val = {
-        DocumentID: fileToDelete.documentID,
-        DeletedByUserFK: loginPinID,
-      };
-
+      const val = { DocumentID: fileToDelete.documentID, DeletedByUserFK: loginPinID, };
       fetchPostData("NonPropertyRoomDocument/Delete_NonPropertyRoomDocument", val)
         .then((res) => {
           // GetDataDocument(propertyID, masterPropertyID, loginPinID);
         })
         .catch((err) => {
-
         });
     }
   };
 
   const GetDataDocument = (propertyID, masterPropertyID, loginPinID) => {
-    const val = {
-      PropertyID: propertyID,
-      MasterPropertyID: masterPropertyID,
-      PINID: loginPinID,
-      IsMaster: MstVehicle === "MST-Vehicle-Dash",
-    };
+    const val = { PropertyID: propertyID, MasterPropertyID: masterPropertyID, PINID: loginPinID, IsMaster: MstVehicle === "MST-Vehicle-Dash", };
 
     fetchPostData("NonPropertyRoomDocument/GetData_NonPropertyRoomDocument", val)
       .then((res) => {
@@ -683,7 +330,6 @@ const AddInformation = (props) => {
           const normalizedFiles = res.map((doc) => {
             const extension = doc.DocumentType?.toLowerCase() || 'jpg';
             const fileName = `Document_${doc.DocumentID}.${extension}`;
-
             return {
               name: fileName, type: `image/${extension === 'jpg' ? 'jpeg' : extension}`, size: 0,
               lastModified: new Date(doc.CreatedDtTm).getTime(), lastModifiedDate: new Date(doc.CreatedDtTm), webkitRelativePath: '',
@@ -706,44 +352,17 @@ const AddInformation = (props) => {
     !addUpdatePermission && setStatesChangeStatus(true);
     !addUpdatePermission && setChangesStatus(true);
     if (e.target.name === "IsSendToPropertyRoom") {
-      setIsNonPropertyRoomSelected(false);
-      setValue({
-        ...value,
-        [e.target.name]: e.target.checked,
-        IsNonPropertyRoom: false,
-      });
-      setErrors({
-        ...errors,
-        CollectionDtTmError: "",
-        CollectingOfficerError: "",
-        OfficerID: "",
-      });
+      setIsNonPropertyRoomSelected(false); setValue({ ...value, [e.target.name]: e.target.checked, IsNonPropertyRoom: false, });
+      setErrors({ ...errors, CollectionDtTmError: "", CollectingOfficerError: "", OfficerID: "", });
     } else if (e.target.name === "IsNonPropertyRoom") {
-      setValue({
-        ...value,
-        [e.target.name]: e.target.checked,
-        IsSendToPropertyRoom: false,
-      });
-      setIsNonPropertyRoomSelected(true);
-      setErrors({
-        ...errors,
-        CollectionDtTmError: "",
-        CollectingOfficerError: "",
-        OfficerID: "",
-      });
+      setValue({ ...value, [e.target.name]: e.target.checked, IsSendToPropertyRoom: false, });
+      setIsNonPropertyRoomSelected(true); setErrors({ ...errors, CollectionDtTmError: "", CollectingOfficerError: "", OfficerID: "", });
     } else if (e.target.name === "IsEvidence") {
       if (!e.target.checked) {
         setValue({
-          ...value,
-          [e.target.name]: e.target.checked,
-          CollectingOfficer: "",
-          LocationOfCollection: "",
-          EvidenceDescription: "",
-          CollectionDtTm: "",
-          IsNonPropertyRoom: "",
+          ...value, [e.target.name]: e.target.checked, CollectingOfficer: "", LocationOfCollection: "", EvidenceDescription: "", CollectionDtTm: "", IsNonPropertyRoom: "",
         });
-        setCollectiondate("");
-        setIsNonPropertyRoom(false);
+        setCollectiondate(""); setIsNonPropertyRoom(false);
       } else {
         setValue({ ...value, [e.target.name]: e.target.checked });
       }
@@ -834,15 +453,9 @@ const AddInformation = (props) => {
 
       if (e) TaskListvalidation(e.label);
     } else if (e) {
-      setValue({
-        ...value,
-        [name]: e.value,
-      });
+      setValue({ ...value, [name]: e.value, });
     } else {
-      setValue({
-        ...value,
-        [name]: null,
-      });
+      setValue({ ...value, [name]: null, });
     }
   };
 
@@ -850,12 +463,9 @@ const AddInformation = (props) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
     const newFilesArray = Array.from(files);
-    setSelectedFiles((prevFiles) => [...prevFiles, ...newFilesArray]);
-    setStatesChangeStatus(true);
+    setSelectedFiles((prevFiles) => [...prevFiles, ...newFilesArray]); setStatesChangeStatus(true);
     setfileUploadStatus(true);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    if (fileInputRef.current) { fileInputRef.current.value = ""; }
   };
 
   const removeFile = (index) => {
@@ -874,6 +484,7 @@ const AddInformation = (props) => {
     { value: "5", label: "Transfer Location" },
     { value: "6", label: "Update" },
   ];
+
   const HandleStatusOption = () => {
     let arr = [];
     if (PropertyRoomStatus) {
@@ -887,9 +498,7 @@ const AddInformation = (props) => {
         const filteredvalue = StatusOption.filter(
           (item) => item.label !== LastTask
         );
-        console.log(filteredvalue);
         return filteredvalue;
-        // return StatusOption;
       }
       return arr;
     }
@@ -934,12 +543,8 @@ const AddInformation = (props) => {
         if (res) {
           const parsedData = JSON.parse(res.data);
           const message = parsedData.Table[0].Message;
-          toastifySuccess(message);
-          Get_SendTask_Data(DecVehId, DecMVehId);
-          setTaskToSend();
-          setMultiSelected({ optionSelected: [] });
+          toastifySuccess(message); Get_SendTask_Data(DecVehId, DecMVehId); setTaskToSend(); setMultiSelected({ optionSelected: [] });
           setSelectedOption("Individual");
-          // Get_SendTask_DrpVal(DecPropID, DecMPropID)
         } else {
           console.log("Somthing Wrong");
         }
@@ -950,6 +555,7 @@ const AddInformation = (props) => {
       });
   };
 
+
   const Get_SendTask_Data = (PropertyID, MasterPropertyID) => {
     const val = { PropertyID: PropertyID, MasterPropertyID: MasterPropertyID };
     fetchPostData("TaskList/GetData_TaskList", val)
@@ -958,7 +564,6 @@ const AddInformation = (props) => {
           setLastTask(res[res.length - 1]?.Task);
           setTask(res[0]);
         } else {
-          console.log("executed");
           setTask("");
         }
       })
@@ -970,35 +575,23 @@ const AddInformation = (props) => {
 
   const handleRadioChangeArrestForward = (e) => {
     const selectedValue = e.target.value;
-    setSelectedOption(selectedValue);
-    setValue({ ...value, ["OfficerID"]: "", ["DocumentAccess_Name"]: "" });
+    setSelectedOption(selectedValue); setValue({ ...value, ["OfficerID"]: "", ["DocumentAccess_Name"]: "" });
     setMultiSelected({ optionSelected: [] });
     setErrors({
-      ...errors,
-      ["ApprovalCommentsError"]: "",
-      ["CommentsDocumentsError"]: "",
-      ["ApprovingOfficerError"]: "",
-      ["GroupError"]: "",
+      ...errors, ["ApprovalCommentsError"]: "", ["CommentsDocumentsError"]: "", ["ApprovingOfficerError"]: "", ["GroupError"]: "",
     });
   };
 
   const colourStylesUsers = {
     control: (styles, { isDisabled }) => ({
-      ...styles,
-      backgroundColor: isDisabled ? "#d3d3d3" : "#fce9bf",
-      fontSize: 14,
-      marginTop: 2,
-      boxShadow: "none",
-      cursor: isDisabled ? "not-allowed" : "default",
+      ...styles, backgroundColor: isDisabled ? "#d3d3d3" : "#fce9bf", fontSize: 14,
+      marginTop: 2, boxShadow: "none", cursor: isDisabled ? "not-allowed" : "default",
     }),
   };
 
   const Agencychange = (multiSelected) => {
-    // setStatesChangeStatus(true)
-    // setMultiSelected({optionSelected: multiSelected });
     setMultiSelected({ optionSelected: multiSelected });
     const id = [];
-
     if (multiSelected) {
       multiSelected.map((item, i) => {
         id.push(item.value);
@@ -1010,15 +603,7 @@ const AddInformation = (props) => {
   useEffect(() => {
     if (groupList?.GroupID) {
       setValue({
-        ...value,
-        ["GroupName"]: changeArrayFormat_WithFilter(
-          groupList,
-          "group",
-          groupList[0]?.GroupID
-        ),
-        // 'ReportedByPINActivityID': checkId(loginPinID, agencyOfficerDrpData) ? loginPinID : '',
-        // 'WrittenForID': checkWrittenId(loginPinID, WrittenForDataDrp) ? loginPinID : '',
-        // 'IncidentId': incidentID,
+        ...value, ["GroupName"]: changeArrayFormat_WithFilter(groupList, "group", groupList[0]?.GroupID),
         CreatedByUserFK: loginPinID,
       });
     }
@@ -1029,15 +614,6 @@ const AddInformation = (props) => {
     fetchPostData("Group/GetData_Group", value).then((res) => {
       if (res) {
         setGroupList(changeArrayFormat(res, "group"));
-        // if (res[0]?.GroupID) {
-        //   setValue({
-        //     ...value,
-        //     ['GroupName']: changeArrayFormat_WithFilter(res, 'group', res[0]?.GroupID),
-        //     // 'ReportedByPINActivityID': checkId(loginPinID, agencyOfficerDrpData) ? loginPinID : '',
-        //     // 'WrittenForID': checkWrittenId(loginPinID, WrittenForDataDrp) ? loginPinID : '',
-        //     'IncidentId': incidentID, 'CreatedByUserFK': loginPinID,
-        //   });
-        // }
       } else {
         setGroupList();
       }
@@ -1046,18 +622,14 @@ const AddInformation = (props) => {
 
   useEffect(() => {
     if (loginAgencyID) {
-      // dispatch(get_AgencyOfficer_Data(loginAgencyID, IncID));
-      // Get_WrittenForDataDrp(loginAgencyID, IncID);
       dispatch(get_Report_Approve_Officer_Data(loginAgencyID, loginPinID));
       if (narrativeTypeDrpData?.length === 0) {
         dispatch(get_Narrative_Type_Drp_Data(loginAgencyID));
       }
       get_Group_List(loginAgencyID);
-      // get_IncidentTab_Count(IncID, loginPinID);
     }
   }, [loginAgencyID]);
 
-  console.log(selectedFiles)
 
   return (
     <>
@@ -1289,50 +861,42 @@ const AddInformation = (props) => {
                       id="ReportedDate"
                       name="ReportedDate"
                       dateFormat="MM/dd/yyyy HH:mm"
+                      selected={collectiondate}
                       onChange={(date) => {
-                        !addUpdatePermission && setStatesChangeStatus(true);
-                        !addUpdatePermission && setChangesStatus(true);
+                        if (!addUpdatePermission) {
+                          setStatesChangeStatus(true);
+                          setChangesStatus(true);
+                        }
+
+                        const reportedDt = new Date(value?.ReportedDtTm);
+                        const now = new Date(); // current datetime
 
                         if (date) {
-                          console.log(
-                            "occurred from date entered true::",
-                            date
-                          );
-
-                          let occurredFromTimestamp = new Date(
-                            value?.ReportedDtTm
-                          );
                           let selectedDate = new Date(date);
 
-                          // If selected date is before or equal to ReportedDtTm, push it by 1 minute
-                          if (
-                            selectedDate.getTime() <=
-                            occurredFromTimestamp.getTime()
-                          ) {
-                            selectedDate = new Date(
-                              occurredFromTimestamp.getTime() + 60000
-                            ); // 1 min after
+                          // Ensure selected > ReportedDtTm
+                          if (selectedDate.getTime() <= reportedDt.getTime()) {
+                            selectedDate = new Date(reportedDt.getTime() + 60000); // 1 minute later
+                          }
+
+                          // Ensure selected <= now
+                          if (selectedDate.getTime() > now.getTime()) {
+                            selectedDate = now;
                           }
 
                           setCollectiondate(selectedDate);
                           setValue({
                             ...value,
-                            ["CollectionDtTm"]:
-                              getShowingMonthDateYear(selectedDate),
+                            ["CollectionDtTm"]: getShowingMonthDateYear(selectedDate),
                           });
                         } else {
-                          console.log(
-                            "occurred from date entered false::",
-                            date
-                          );
-                          setCollectiondate(date);
+                          setCollectiondate(null);
                           setValue({
                             ...value,
                             ["CollectionDtTm"]: null,
                           });
                         }
                       }}
-                      selected={collectiondate}
                       className="requiredColor"
                       timeInputLabel
                       showTimeSelect
@@ -1347,24 +911,39 @@ const AddInformation = (props) => {
                       autoComplete="off"
                       timeFormat="HH:mm"
                       is24Hour
-                      minDate={new Date(value?.ReportedDtTm)} // ✅ Only after ReportedDtTm allowed
-                      maxDate={new Date(datezone)}
-                      filterTime={(time) => {
-                        // Optional: If selected date is same day as ReportedDtTm, restrict time
-                        const reported = new Date(value?.ReportedDtTm);
-                        const selectedDateOnly = new Date(collectiondate);
-                        selectedDateOnly.setHours(0, 0, 0, 0);
-                        reported.setHours(0, 0, 0, 0);
 
-                        if (selectedDateOnly.getTime() === reported.getTime()) {
+                      // ✅ Don't allow any date in future
+                      maxDate={new Date()}
+
+                      // ✅ Don't allow date before ReportedDtTm
+                      minDate={new Date(value?.ReportedDtTm)}
+
+                      // ✅ If selected date is today, restrict time to <= current time
+                      filterTime={(time) => {
+                        const now = new Date();
+                        const selectedDate = new Date(collectiondate);
+                        const reportedDt = new Date(value?.ReportedDtTm);
+
+                        const isSameDay = (date1, date2) => {
                           return (
-                            time.getTime() >
-                            new Date(value?.ReportedDtTm).getTime()
+                            date1.getFullYear() === date2.getFullYear() &&
+                            date1.getMonth() === date2.getMonth() &&
+                            date1.getDate() === date2.getDate()
                           );
+                        };
+
+                        if (isSameDay(selectedDate, now)) {
+                          return time.getTime() > reportedDt.getTime() && time.getTime() <= now.getTime();
                         }
-                        return true;
+
+                        if (isSameDay(selectedDate, reportedDt)) {
+                          return time.getTime() > reportedDt.getTime();
+                        }
+
+                        return time.getTime() <= now.getTime();
                       }}
                     />
+
                   </div>
                   <div className="col-3 col-md-2 col-lg-2 mt-2 px-1">
                     <label htmlFor="" className="new-label">
@@ -2009,9 +1588,9 @@ const AddInformation = (props) => {
                                   </p>
                                 ) : null}
                               </label>
-                              <label htmlFor="" className="new-label">
+                              {/* <label htmlFor="" className="new-label">
                                 Recipient
-                              </label>
+                              </label> */}
                             </div>
                             <div className="col-4 col-md-3 col-lg-2">
                               <div className="text-field mt-1">

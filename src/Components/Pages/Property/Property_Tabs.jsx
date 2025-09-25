@@ -25,7 +25,7 @@ import ChainOfCustody from './PropertyTab/ChainOfCustody/ChainOfCustody';
 
 const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch = false }) => {
 
-    const { changesStatus, propertyCount, get_Property_Count, countoffaduit } = useContext(AgencyContext);
+    const { changesStatus, propertyCount, get_Property_Count, countoffaduit, } = useContext(AgencyContext);
 
     const useQuery = () => {
         const params = new URLSearchParams(useLocation().search);
@@ -67,7 +67,7 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
     const [masterPropertyID, setMasterPropertyID] = useState('');
     const [propertystatus, setPropertyStatus] = useState('');
     const [IsNonPropertyRoomSelected, setIsNonPropertyRoomSelected] = useState(false);
-    const [incidentReportedDate, setIncidentReportedDate] = useState(null);
+    // const [incidentReportedDate, setIncidentReportedDate] = useState(null);
 
 
     useEffect(() => {
@@ -289,7 +289,7 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                                     </div>
                                     {
                                         showPage === 'home' ?
-                                            <Home {...{ showRecovered, setShowRecovered, get_List, showOtherTab, setShowOtherTab, setPropertyStatus, setShowPage, propertystatus, incidentReportedDate, setIncidentReportedDate, isCad, isViewEventDetails, isCADSearch, status, }} />
+                                            <Home {...{ showRecovered, setShowRecovered, get_List, showOtherTab, setShowOtherTab, setPropertyStatus, setShowPage, propertystatus, isCad, isViewEventDetails, isCADSearch, status, }} />
                                             :
                                             showPage === 'Miscellaneous Information' ?
                                                 <MiscellaneousInformation {...{ ListData, setIsNonPropertyRoomSelected, DecPropID, DecMPropID, DecIncID, propertystatus, setPropertyStatus, isCad, isViewEventDetails, isCADSearch, }} />
@@ -323,7 +323,7 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                                                                 <Offense {...{ ListData, DecPropID, DecMPropID, DecIncID, isViewEventDetails, }} />
                                                                 :
                                                                 showPage === 'Recoveredproperty' ?
-                                                                    <RecoveredProperty {...{ ListData, DecPropID, DecMPropID, DecIncID, incidentReportedDate, isViewEventDetails, }} />
+                                                                    <RecoveredProperty {...{ ListData, DecPropID, DecMPropID, DecIncID, isViewEventDetails, }} />
                                                                     :
                                                                     showPage === 'other' ?
                                                                         <Other {...{ ListData, DecPropID, DecMPropID, DecIncID, isViewEventDetails, }} />

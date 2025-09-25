@@ -33,9 +33,8 @@ import GeoServices from "../../../../CADServices/APIs/geo";
 import GeoLocationInfoModal from "../../../Location/GeoLocationInfoModal";
 
 
-const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
-  setShowIncPage, isPreviewNormalReport, setIsPreviewNormalReport
-}) => {
+
+const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncPage, isPreviewNormalReport, setIsPreviewNormalReport }) => {
 
   let navigate = useNavigate();
   const dispatch = useDispatch();
@@ -47,7 +46,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
   const cadDispositionDrpData = useSelector((state) => state.DropDown.cadDispositionDrpData);
   const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
 
-  const { updateCount, get_IncidentTab_Count, get_Incident_Count, nibrsSubmittedIncident, setnibrsSubmittedIncident, setIncidentRmsCfs, setnibrsStatus, exceptionalClearID, GetDataExceptionalClearanceID, setChangesStatus, changesStatus, setReportedDtTmInc, GetDataTimeZone, datezone, setOfficerApprovCount, incidentRecentData, setIncidentRecentData, incidentCount, setCaseStatus,
+  const { updateCount, get_IncidentTab_Count, get_Incident_Count, nibrsSubmittedIncident, setnibrsSubmittedIncident, setIncidentRmsCfs, setnibrsStatus, exceptionalClearID, GetDataExceptionalClearanceID, setChangesStatus, changesStatus, setReportedDtTmInc, GetDataTimeZone, datezone, setOfficerApprovCount, incidentRecentData, setIncidentRecentData, incidentCount, setCaseStatus, validate_IncSideBar
   } = useContext(AgencyContext);
 
   const [reportedDate, setReportedDate] = useState(new Date(datezone));
@@ -252,6 +251,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
       await fetchPostData("IncidentStatus/GetDataDropDown_IncidentStatus", { 'AgencyID': AgencyID }).then((res) => {
         // console.log("🚀 ~ getIncidentStatus ~ res:", res)
         if (res?.length > 0) {
+          console.log(res)
           setIncidentStatusDrpDwn(threeColArray(res, "IncidentStatusID", "Description", "IncidentStatusCode"));
         } else {
           setIncidentStatusDrpDwn([]);
@@ -295,7 +295,11 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
     const val = { IncidentID: incidentID };
     fetchPostData("Incident/GetSingleData_Incident", val).then((res) => {
       if (res?.length > 0) {
-        setEditval(res); setLoder(true); setCaseStatus(res[0]?.NIBRSStatus); setReportedDtTmInc(getShowingDateText(res[0]?.ReportedDate));
+        setEditval(res); setLoder(true);
+        const statusMap = { R: "ReOpen", C: "Closed", H: "Hold", O: "Open", };
+        const statusCode = res[0]?.CaseStatusCode;
+        setCaseStatus(statusMap[statusCode] || "Open");
+        setReportedDtTmInc(getShowingDateText(res[0]?.ReportedDate));
         setoffenseStatus(res[0]?.OffenceCount === "0" || res[0]?.OffenceCount === 0 ? true : false);
       } else {
         setCaseStatus([]);
@@ -397,11 +401,6 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
       setOnSelectLocation(false);
     }
   }, [editval, updateCount]);
-
-
-
-
-
 
   useEffect(() => {
     offenseIdDrp?.filter((val) => {
@@ -538,7 +537,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
     setErrors({
       ...errors, OccuredError: "", CrimeLocationError: "", ExceptionalClearaceError: "", NIBRSclearancedateError: "", OffenceTypeError: "", CargoTheftError: "", PrimaryOfficerIdError: "", CaseStatusError: "",
     });
-    setExClsDateCode(""); setCaseStatus('open')
+    setExClsDateCode(""); setCaseStatus('Open')
   };
 
   const setToResetData = () => {
@@ -829,7 +828,8 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
 
             setIncidentRecentData(newData);
 
-
+            // validateIncSideBar
+            validate_IncSideBar(res?.IncidentID, res?.IncidentNumber, loginAgencyID);
           }
           navigate(`/Inc-Home?IncId=${stringToBase64(res?.IncidentID?.trim())}&IncNo=${res?.IncidentNumber?.trim()}&IncSta=${true}`);
           setErrors({ ...errors, ['OccuredError']: '', ['IncNumberError']: '', ['NIBRSclearancedateError']: '', });
@@ -838,19 +838,23 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce,
           toastifyError("Error"); setErrors({ ...errors, ['OccuredError']: '', ['IncNumberError']: '', ['NIBRSclearancedateError']: '', });
 
         }
-      })
+      });
+
     }
   }
 
-  const UpdateIncident = () => {
-    AddDeleteUpadate('Incident/IncidentUpdate', value).then((res) => {
+  const UpdateIncident = async () => {
+    await AddDeleteUpadate('Incident/IncidentUpdate', value).then((res) => {
       const parsedData = JSON.parse(res.data);
       const message = parsedData.Table[0].Message;
       toastifySuccess(message); get_IncidentTab_Count(incidentID, loginPinID); setChangesStatus(false);
       setStatesChangeStatus(false); setOnSelectLocation(false);
       GetEditData(IncID);
       setErrors({ ...errors, ['OccuredError']: '', ['ExceptionalClearaceError']: '', });
-    })
+    });
+    // validateIncSideBar
+    validate_IncSideBar(IncID, IncNo, loginAgencyID);
+
   }
 
   const OnClose = () => {

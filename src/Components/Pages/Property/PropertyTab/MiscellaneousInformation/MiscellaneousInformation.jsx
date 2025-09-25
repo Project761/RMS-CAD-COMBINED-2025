@@ -83,7 +83,7 @@ const MiscellaneousInformation = (props) => {
   const [groupList, setGroupList] = useState([]);
   const [isSendButtonDisabled, setIsSendButtonDisabled] = useState(false);
   const [IsNonPropertyStatus, setIsNonPropertyStatus] = useState(false);
-  const [SendToPropertyRoomStatus , setSendToPropertyRoomStatus] = useState(false);
+  const [SendToPropertyRoomStatus, setSendToPropertyRoomStatus] = useState(false);
 
 
   // Add Update Permission
@@ -1258,57 +1258,8 @@ const MiscellaneousInformation = (props) => {
                         </label>
                       </div>
                       <div className="col-3 col-md-3 col-lg-2 ">
-                        {/* <DatePicker
-                                                id="ReportedDate"
-                                                name='ReportedDate'
-                                                dateFormat="MM/dd/yyyy HH:mm"
-                                                onChange={(date) => {
-                                                    !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-                                                    if (date) {
-                                                        console.log("occured frpm date entered true::", date);
-                                                        let maxTimestamp = new Date();
-                                                        let occurredFromTimestamp = new Date(value?.ReportedDtTm);
 
-                                                        let selectedDate = new Date(date);
-                                                        if (selectedDate?.getTime() <= occurredFromTimestamp.getTime()) {
-                                                            selectedDate = new Date(occurredFromTimestamp.getTime() + 60000);
-                                                        }
-                                                        if (selectedDate?.getTime() >= maxTimestamp.getTime()) {
-                                                            selectedDate = maxTimestamp;
-                                                        }
-                                                        setCollectiondate(selectedDate);
-                                                        setValue({
-                                                            ...value,
-                                                            ['CollectionDtTm']: getShowingMonthDateYear(selectedDate),
-                                                        });
-                                                    }
-                                                    else {
-                                                        console.log("occured frpm date entered false::", date);
-                                                        setCollectiondate(date);
-                                                        setValue({
-                                                            ...value,
-                                                            ['CollectionDtTm']: date ? getShowingMonthDateYear(date) : null,
-                                                        });
-                                                    }
-                                                }}
-                                                maxDate={new Date()}
-                                                filterTime={filterTime}
-                                                selected={collectiondate}
-                                                className='requiredColor'
-                                                timeInputLabel
-                                                showTimeSelect
-                                                timeIntervals={1}
-                                                timeCaption="Time"
-                                                showMonthDropdown
-                                                showYearDropdown
-                                                dropdownMode="select"
-                                                showDisabledMonthNavigation
-                                                autoComplete='off'
-                                                timeFormat="HH:mm "
-                                                is24Hour
-                                                minDate={new Date(value?.ReportedDtTm)}
-                                            /> */}
-                        <DatePicker
+                        {/* <DatePicker
                           id="ReportedDate"
                           name="ReportedDate"
                           dateFormat="MM/dd/yyyy HH:mm"
@@ -1388,6 +1339,93 @@ const MiscellaneousInformation = (props) => {
                               );
                             }
                             return true;
+                          }}
+                        /> */}
+
+                        <DatePicker
+                          id="ReportedDate"
+                          name="ReportedDate"
+                          dateFormat="MM/dd/yyyy HH:mm"
+                          selected={collectiondate}
+                          onChange={(date) => {
+                            if (!addUpdatePermission) {
+                              setStatesChangeStatus(true);
+                              setChangesStatus(true);
+                            }
+
+                            const reportedDt = new Date(value?.ReportedDtTm);
+                            const now = new Date(); // current datetime
+
+                            if (date) {
+                              let selectedDate = new Date(date);
+
+                              // Ensure selected > ReportedDtTm
+                              if (selectedDate.getTime() <= reportedDt.getTime()) {
+                                selectedDate = new Date(reportedDt.getTime() + 60000); // 1 minute later
+                              }
+
+                              // Ensure selected <= now
+                              if (selectedDate.getTime() > now.getTime()) {
+                                selectedDate = now;
+                              }
+
+                              setCollectiondate(selectedDate);
+                              setValue({
+                                ...value,
+                                ["CollectionDtTm"]: getShowingMonthDateYear(selectedDate),
+                              });
+                            } else {
+                              setCollectiondate(null);
+                              setValue({
+                                ...value,
+                                ["CollectionDtTm"]: null,
+                              });
+                            }
+                          }}
+                          className="requiredColor"
+                          timeInputLabel
+                          showTimeSelect
+                          timeIntervals={1}
+                          timeCaption="Time"
+                          showMonthDropdown
+                          isClearable={false}
+                          placeholderText={"Select..."}
+                          showYearDropdown
+                          dropdownMode="select"
+                          showDisabledMonthNavigation
+                          autoComplete="off"
+                          timeFormat="HH:mm"
+                          is24Hour
+
+                          // ✅ Don't allow any date in future
+                          maxDate={new Date()}
+
+                          // ✅ Don't allow date before ReportedDtTm
+                          minDate={new Date(value?.ReportedDtTm)}
+
+                          // ✅ If selected date is today, restrict time to <= current time
+                          filterTime={(time) => {
+                            const now = new Date();
+                            const selectedDate = new Date(collectiondate);
+                            const reportedDt = new Date(value?.ReportedDtTm);
+
+                            const isSameDay = (date1, date2) => {
+                              return (
+                                date1.getFullYear() === date2.getFullYear() &&
+                                date1.getMonth() === date2.getMonth() &&
+                                date1.getDate() === date2.getDate()
+                              );
+                            };
+
+                            if (isSameDay(selectedDate, now)) {
+                              return time.getTime() > reportedDt.getTime() && time.getTime() <= now.getTime();
+                            }
+
+                            if (isSameDay(selectedDate, reportedDt)) {
+                              return time.getTime() > reportedDt.getTime();
+                            }
+
+                            return time.getTime() <= now.getTime();
                           }}
                         />
                       </div>
