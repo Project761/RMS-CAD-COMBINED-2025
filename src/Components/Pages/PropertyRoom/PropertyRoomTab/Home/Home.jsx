@@ -831,7 +831,7 @@ const Home = (props) => {
             arr = StatusOption.filter((item) => !(item.label === LastTask));
             return arr;
         } else {
-            console.log("Task::", task , selectedStatus , LastTask);
+           
             const status = LastTask;
             arr = [{ value: "1", label: "CheckIn" }];
             if (LastTask) {
@@ -843,7 +843,7 @@ const Home = (props) => {
                 // return StatusOption;
             }
             else if (selectedStatus && (LastTask === null || LastTask === undefined)) {
-
+                
                 const filteredvalue = StatusOption.filter(
                     (item) => item.label !== selectedStatus
                 );
