@@ -528,7 +528,7 @@ const IncSidebar = () => {
                         {
                             IncSta === true || IncSta === "true" ?
                                 <>
-                                    <li className='position-relative'>
+                                    <li className='position-relative px-2'>
                                         <hr className='incSiderbar_Hr mt-1 w-100' />
                                         <StatusBar
                                             ref={statusRef}
