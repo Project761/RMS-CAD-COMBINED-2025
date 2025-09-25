@@ -1119,6 +1119,11 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
         });
     };
 
+    const getValidDate = (date) => {
+        const d = new Date(date);
+        return !isNaN(d.getTime()) ? d : null;
+    };
+
     return (
         <>
             <div className="col-12 col-md-12 col-lg-12 p-0">
@@ -1184,7 +1189,8 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                         timeFormat="HH:mm"
                                         is24Hour
                                         isClearable={false}
-                                        selected={value?.ReportedDtTm && new Date(value?.ReportedDtTm)}
+                                        // selected={value?.ReportedDtTm && new Date(value?.ReportedDtTm)}
+                                        selected={getValidDate(value?.ReportedDtTm)}
                                         autoComplete="Off"
                                         timeInputLabel
                                         placeholderText={'Select...'}
@@ -1215,7 +1221,8 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                         timeFormat="HH:mm "
                                         is24Hour
                                         isClearable={false}
-                                        selected={value?.ReportedDtTm && new Date(value?.ReportedDtTm)}
+                                        // selected={value?.ReportedDtTm && new Date(value?.ReportedDtTm)}
+                                        selected={getValidDate(value?.ReportedDtTm)}
                                         autoComplete="Off"
                                         onChange={(date) => {
                                             setIncidentReportedDate(date ? getShowingMonthDateYear(date) : null);
