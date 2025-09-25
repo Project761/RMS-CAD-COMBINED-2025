@@ -1130,7 +1130,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                         <div className="col-4 col-md-4 col-lg-2  text-field mt-1">
                             <input type="text" name='VehicleNumber' id='VehicleNumber' placeholder='Auto Generated' value={value?.VehicleNumber} onChange={HandleChanges} className='readonlyColor' required autoComplete='off' readOnly />
                         </div>
-                        <div className="col-2 col-md-2 col-lg-2 mt-2 ">
+                        <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1  ">
                             <label htmlFor="" className='new-label'>Loss Code{errors.LossCodeIDError !== 'true' ? (
                                 <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.LossCodeIDError}</p>
                             ) : null}</label>
@@ -1147,12 +1147,12 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                 isDisabled={nibrsSubmittedvehicleMain === 1 ? true : false}
                             />
                         </div>
-                        <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1 px-4">
+                        <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1 ">
                             <label htmlFor="" className='new-label'>Reported Date/Time{errors.ReportedDtTmError !== 'true' ? (
                                 <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ReportedDtTmError}</p>
                             ) : null}</label>
                         </div>
-                        <div className="col-10 col-md-10 col-lg-2 ">
+                        <div className="col-10 col-md-10 col-lg-2 mt-1 ">
                             {
                                 MstVehicle === 'MST-Vehicle-Dash' ?
                                     <DatePicker

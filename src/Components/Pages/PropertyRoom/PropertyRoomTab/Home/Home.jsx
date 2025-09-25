@@ -1264,11 +1264,11 @@ const Home = (props) => {
                 <div className="col-12 col-md-12 col-lg-12 pt-2 px-0 " >
                     <fieldset>
                         <legend>Search</legend>
-                        <div className="row px-0 align-items-center">
-                            <div className="col-3 col-md-2 col-lg-1 mt-2">
-                                <label htmlFor="" className='new-label'>Type</label>
+                        <div className="row align-items-center" style={{rowGap:"8px"}}>
+                            <div className="col-3 col-md-2 col-lg-1">
+                                <label htmlFor="" className='new-label mb-0'>Type</label>
                             </div>
-                            <div className="col-4 col-md-3 col-lg-3 mt-1">
+                            <div className="col-4 col-md-3 col-lg-3">
                                 <Select
                                     name='AddType'
                                     value={selectedOptions}
@@ -1293,13 +1293,13 @@ const Home = (props) => {
 
                             {selectedOptions?.value === 'PropertyNumber' && (
                                 <>
-                                    <div className="col-3 col-md-2 col-lg-2 mt-2 px-1">
-                                        <label htmlFor="" className='new-label '>Property No.{searcherror.SearchError !== 'true' ? (
+                                    <div className="col-3 col-md-2 col-lg-2">
+                                        <label htmlFor="" className='new-label mb-0 '>Property No.{searcherror.SearchError !== 'true' ? (
                                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{searcherror.SearchError}</p>
                                         ) : null}</label>
                                     </div>
                                     <div className="col-4 col-md-3 col-lg-2">
-                                        <div className="text-field mt-1">
+                                        <div className="text-field mt-0">
                                             <input type="text" className='requiredColor' maxLength={12} value={propertyNumber} onChange={handleInputChange} />
                                         </div>
                                     </div>
@@ -1321,13 +1321,13 @@ const Home = (props) => {
                             )}
                             {selectedOptions?.value === 'StorageLocationID' && (
                                 <>
-                                    <div className="col-3 col-md-2 col-lg-2 mt-2 px-1">
-                                        <label htmlFor="" className='new-label'>Location{searcherror.SearchError !== 'true' ? (
+                                    <div className="col-3 col-md-2 col-lg-2">
+                                        <label htmlFor="" className='new-label mb-0'>Location{searcherror.SearchError !== 'true' ? (
                                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{searcherror.SearchError}</p>
                                         ) : null}</label>
                                     </div>
                                     <div className="col-4 col-md-3 col-lg-2 ">
-                                        <div className="text-field mt-1 " data-toggle="modal" data-target="#PropertyRoomTreeModal">
+                                        <div className="text-field mt-0 " data-toggle="modal" data-target="#PropertyRoomTreeModal">
                                             <input type="text" className='requiredColor' value={searchStoragepath} onClick={() => {
                                                 // setlocationStatus(true);
                                                 setSearchStoStatus(true);
@@ -1338,13 +1338,13 @@ const Home = (props) => {
                             )}
                             {selectedOptions?.label === 'Barcode' && (
                                 <>
-                                    <div className="col-3 col-md-2 col-lg-2 mt-2 px-1">
-                                        <label htmlFor="" className='new-label'>Barcode{searcherror.SearchError !== 'true' ? (
+                                    <div className="col-3 col-md-2 col-lg-2">
+                                        <label htmlFor="" className='new-label mb-0'>Barcode{searcherror.SearchError !== 'true' ? (
                                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{searcherror.SearchError}</p>
                                         ) : null}</label>
                                     </div>
                                     <div className="col-4 col-md-3 col-lg-2">
-                                        <div className="text-field mt-1">
+                                        <div className="text-field mt-0">
                                             <input type="text" value={propertyNumber} onChange={handleInputChange} />
                                         </div>
                                     </div>
@@ -1352,13 +1352,13 @@ const Home = (props) => {
                             )}
                             {selectedOptions?.value === 'IncidentNumber' && (
                                 <>
-                                    <div className="col-3 col-md-2 col-lg-2 mt-2 px-1">
-                                        <label htmlFor="" className='new-label'>Transaction Number{searcherror.SearchError !== 'true' ? (
+                                    <div className="col-3 col-md-2 col-lg-2">
+                                        <label htmlFor="" className='new-label mb-0'>Transaction Number{searcherror.SearchError !== 'true' ? (
                                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{searcherror.SearchError}</p>
                                         ) : null}</label>
                                     </div>
                                     <div className="col-4 col-md-3 col-lg-2">
-                                        <div className="text-field mt-1">
+                                        <div className="text-field mt-0">
                                             <input type="text" className='requiredColor' maxLength={12} value={propertyNumber} onChange={handleInputChange} />
                                         </div>
                                     </div>
@@ -1367,13 +1367,13 @@ const Home = (props) => {
 
                             {selectedOptions?.value === 'PropertyTypeID' && (
                                 <>
-                                    <div className="col-3 col-md-2 col-lg-2 mt-2 px-1">
-                                        <label htmlFor="" className='new-label'>Property Type{searcherror.SearchError !== 'true' ? (
+                                    <div className="col-3 col-md-2 col-lg-2">
+                                        <label htmlFor="" className='new-label mb-0'>Property Type{searcherror.SearchError !== 'true' ? (
                                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{searcherror.SearchError}</p>
                                         ) : null}</label>
                                     </div>
                                     <div className="col-4 col-md-3 col-lg-2">
-                                        <div className=" mt-1">
+                                        <div className="">
                                             <Select
                                                 name='PropertyTypeID'
                                                 value={propertyTypeData?.filter((obj) => obj.value === value?.PropertyTypeID)}
@@ -1391,20 +1391,20 @@ const Home = (props) => {
 
                             {selectedOptions?.value === 'PropertyTag' && (
                                 <>
-                                    <div className="col-3 col-md-2 col-lg-2 mt-2 px-1">
-                                        <label htmlFor="" className='new-label'>Property Tag{searcherror.SearchError !== 'true' ? (
+                                    <div className="col-3 col-md-2 col-lg-2">
+                                        <label htmlFor="" className='new-label mb-0'>Property Tag{searcherror.SearchError !== 'true' ? (
                                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{searcherror.SearchError}</p>
                                         ) : null}</label>
                                     </div>
                                     <div className="col-4 col-md-3 col-lg-2">
-                                        <div className="text-field mt-1">
+                                        <div className="text-field mt-0">
                                             <input type="text" className='requiredColor' value={propertyNumber} onChange={handleInputChange} />
                                         </div>
                                     </div>
                                 </>
                             )}
 
-                            <div className="col-1 pt-2" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
+                            <div className="col-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
                                 <button
                                     className=" btn btn-sm bg-green text-white py-0 px-1" onClick={(e) => {
                                         check_Validation_Errorr();
@@ -1416,10 +1416,10 @@ const Home = (props) => {
                                 </button>
                             </div>
 
-                            <div className="col-3 col-md-2 col-lg-1 mt-2">
-                                <label htmlFor="" className='new-label'>Activity Type</label>
+                            <div className="col-3 col-md-2 col-lg-1">
+                                <label htmlFor="" className='new-label mb-0'>Activity Type</label>
                             </div>
-                            <div className="col-4 col-md-3 col-lg-2 mt-1">
+                            <div className="col-4 col-md-3 col-lg-2">
                                 <Select
                                     name='AddType'
                                     value={transfer ? AddTransfer.find(option => option.label === transfer) : null}
@@ -1457,8 +1457,8 @@ const Home = (props) => {
                                 (selectedOptions?.value === 'StorageLocationID' || selectedOptions?.value === 'PropertyTypeID') ?
 
                                     <>
-                                        <div className="col-3 col-md-3 col-lg-1 mt-2 text-right">
-                                            <label htmlFor="" className='new-label'>Date From</label>
+                                        <div className="col-3 col-md-3 col-lg-1  text-right">
+                                            <label htmlFor="" className='new-label mb-0'>Date From</label>
                                         </div>
                                         <div className='col-3 col-md-3 col-lg-3'>
                                             <div className="dropdown__box m-0">
@@ -1497,8 +1497,8 @@ const Home = (props) => {
                                                 {/* <label htmlFor="" className='pl-0 pt-1' >Reported From Date</label> */}
                                             </div>
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-2 mt-2 text-right">
-                                            <label htmlFor="" className='new-label'>Date To</label>
+                                        <div className="col-3 col-md-3 col-lg-2  text-right">
+                                            <label htmlFor="" className='new-label mb-0'>Date To</label>
                                         </div>
                                         <div className='col-3 col-md-3 col-lg-2'>
                                             <div className="dropdown__box m-0">
@@ -1526,6 +1526,13 @@ const Home = (props) => {
                                     </> : <></>
                             }
                         </div >
+
+
+
+
+
+
+
                     </fieldset>
                 </div>
                 <div className="col-12 px-0 mt-1 mb-1" >
