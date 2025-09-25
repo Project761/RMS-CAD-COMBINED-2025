@@ -2632,21 +2632,10 @@ const MiscellaneousInformation = (props) => {
                       <fieldset className="px-0">
                         <legend>Task List</legend>
                         <div className="row px-0 align-items-center">
-                          <div className="col-3 col-md-3 col-lg-1 ">
+                          <div className="col-3 col-md-3 col-lg-2 ">
                             <label htmlFor="" className="new-label mb-0">
                               Send Task to List
-                              {errors.tasklistError && (
-                                <p
-                                  style={{
-                                    color: "red",
-                                    fontSize: "13px",
-                                    margin: "0px",
-                                    padding: "0px",
-                                  }}
-                                >
-                                  {errors.tasklistError}
-                                </p>
-                              )}
+                              {errors.tasklistError && (<p style={{ color: "red", fontSize: "13px", margin: "0px", padding: "0px", }}>{errors.tasklistError}</p>)}
                             </label>
                           </div>
 
@@ -2690,7 +2679,6 @@ const MiscellaneousInformation = (props) => {
                             </div>
                           </div>
 
-
                           <>
                             <div className="col-1 col-md-1 col-lg-1 ">
                               <label
@@ -2701,7 +2689,7 @@ const MiscellaneousInformation = (props) => {
                               </label>
                             </div>
 
-                            <div className="col-3 col-md-3 col-lg-5 g-1 d-flex align-items-center   ">
+                            <div className="col-3 col-md-3 col-lg-6 g-1 d-flex align-items-center   ">
                               <>
                                 <div className="col-6 col-md-6 col-lg-3 ">
                                   <div className="form-check ml-2">
@@ -2849,24 +2837,6 @@ const MiscellaneousInformation = (props) => {
                             </button>
                           </div>
 
-                          <div className="col-12 col-md-12 col-lg-12 mt-2">
-                            {/* <DataTable
-                                                            dense
-                                                            fixedHeader
-                                                            persistTableHead={true}
-                                                            customStyles={tableCustomStyles}
-                                                            columns={columns1}
-                                                            selectableRowsHighlight
-                                                            highlightOnHover
-                                                            responsive
-
-                                                            fxedHeaderScrollHeight='90px'
-                                                            pagination
-                                                            paginationPerPage={'100'}
-                                                            paginationRowsPerPageOptions={[100, 150, 200, 500]}
-
-                                                        /> */}
-                          </div>
                         </div>
 
 
