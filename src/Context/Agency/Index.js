@@ -72,6 +72,7 @@ const AgencyData = ({ children }) => {
     const [incidentFilterData, setIncidentFilterData] = useState();
     const [AllProRoomFilterData, setAllProRoomFilterData] = useState();
     const [CaseStatus, setCaseStatus] = useState('Open');
+    const [incidentReportedDate, setIncidentReportedDate] = useState(null);
 
     //----arrest-----
     const [arrestData, setArrestData] = useState([]);
@@ -696,7 +697,7 @@ const AgencyData = ({ children }) => {
 
             // for Screen Permission
             setUtilityTable, utilityTable,
-
+            incidentReportedDate, setIncidentReportedDate,
             // Narrative Reports
             assignedReportID, setassignedReportID, incidentFilterData, setIncidentFilterData, AllProRoomFilterData, setAllProRoomFilterData,
 

@@ -18,7 +18,7 @@ import { get_ScreenPermissions_Data } from '../../../../../redux/actions/Inciden
 
 const RecoveredProperty = (props) => {
 
-    const { ListData, DecPropID, DecMPropID, incidentReportedDate, isViewEventDetails = false } = props
+    const { ListData, DecPropID, DecMPropID, isViewEventDetails = false } = props
 
     const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -46,7 +46,7 @@ const RecoveredProperty = (props) => {
     else IncID = parseInt(base64ToString(IncID));
     let MstPage = query?.get('page');
 
-    const { get_Property_Count, setChangesStatus, GetDataTimeZone, datezone } = useContext(AgencyContext);
+    const { get_Property_Count, setChangesStatus, GetDataTimeZone, datezone, incidentReportedDate, setIncidentReportedDate, } = useContext(AgencyContext);
     //screen permission 
     const [propertyData, setPropertyData] = useState([]);
     const [recoveredPropertyID, setRecoveredPropertyID] = useState();
@@ -453,7 +453,7 @@ const RecoveredProperty = (props) => {
         <>
             <PropListng {...{ ListData }} />
             <div className="col-12 col-md-12 pt-1" >
-                <div className="row align-items-center" style={{rowGap:"8px"}}>
+                <div className="row align-items-center" style={{ rowGap: "8px" }}>
                     <div className="col-2 col-md-2 col-lg-1">
                         <label htmlFor="" className='label-name mb-0 '>Officer Pf{errors.OfficerPFIDError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.OfficerPFIDError}</p>

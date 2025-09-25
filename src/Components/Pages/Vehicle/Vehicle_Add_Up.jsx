@@ -25,7 +25,7 @@ import Offense from './VehicleTab/Offense/Offense';
 const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails = false }) => {
 
     const dispatch = useDispatch()
-    const { changesStatus, vehicleCount, get_vehicle_Count, countoffaduit, } = useContext(AgencyContext);
+    const { changesStatus, vehicleCount, get_vehicle_Count, countoffaduit, incidentReportedDate, setIncidentReportedDate } = useContext(AgencyContext);
     const [propertystatus, setPropertyStatus] = useState('');
     const [IsNonPropertyRoomSelected, setIsNonPropertyRoomSelected] = useState(false);
 
@@ -67,7 +67,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
     const [ListData, setListData] = useState([]);
     const [DocName, setDocName] = useState('VehDoc')
     const [addUpdatePermission, setaddUpdatePermission] = useState();
-    const [incidentReportedDate, setIncidentReportedDate] = useState(null);
+    // const [incidentReportedDate, setIncidentReportedDate] = useState(null);
 
 
     useEffect(() => {
@@ -228,7 +228,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                 </div>
                                 {
                                     showPage === 'home' ?
-                                        <Home {...{ setStatus, setaddUpdatePermission, status, setShowVehicleRecovered, showVehicleRecovered, get_List, setPropertyStatus, incidentReportedDate, setIncidentReportedDate, isCad, isViewEventDetails, isCADSearch }} />
+                                        <Home {...{ setStatus, setaddUpdatePermission, status, setShowVehicleRecovered, showVehicleRecovered, get_List, setPropertyStatus,isCad, isViewEventDetails, isCADSearch }} />
                                         :
                                         // showPage === 'VehicleNotes' ?
                                         //     <VehicleNotes  {...{ ListData, DecVehId, DecMVehId, DecIncID, isViewEventDetails }} />
@@ -251,7 +251,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                             />
                                             :
                                             showPage === 'RecoveredVehicle' ?
-                                                <RecoveredVehicle  {...{ ListData, DecVehId, DecMVehId, DecIncID, incidentReportedDate, isViewEventDetails }} />
+                                                <RecoveredVehicle  {...{ ListData, DecVehId, DecMVehId, DecIncID, isViewEventDetails }} />
                                                 :
                                                 showPage === 'pawnvehicle' ?
                                                     <VehiclePawnProperty  {...{ ListData, DecVehId, DecMVehId, DecIncID }} />

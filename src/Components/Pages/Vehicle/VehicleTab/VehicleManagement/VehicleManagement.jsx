@@ -27,7 +27,7 @@ const VehicleManagement = (props) => {
     const fileInputRef = useRef(null)
 
     const { DecVehId, DecMVehId, DecIncID, VicCategory, isViewEventDetails = false } = props
-    const { GetDataTimeZone, datezone, setChangesStatus } = useContext(AgencyContext);
+    const { GetDataTimeZone, datezone, setChangesStatus, incidentReportedDate } = useContext(AgencyContext);
     const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
     const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -92,7 +92,6 @@ const VehicleManagement = (props) => {
     const [transferdate, settransferdate] = useState();
     const [storagetype, setstoragetype] = useState();
     const [selectedFiles, setSelectedFiles] = useState([])
-
 
     const [value, setValue] = useState({
         'PropertyID': '', 'MasterPropertyId': '', 'ActivityType': '', 'DestinationStorageLocation': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'OtherPersonNameID': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
@@ -279,7 +278,7 @@ const VehicleManagement = (props) => {
         // })
         const ReasonError = RequiredFieldIncident(value.ActivityReasonID);
         const PropertyRoomOfficerError = value.IsTransferLocation || value.IsRelease || value.IsDestroy || value.IsUpdate ? RequiredFieldIncident(value.OfficerNameID) : 'true';
-        const StorageLocationError = value.IsCheckIn  ? RequiredFieldIncident(value.location) : 'true';
+        const StorageLocationError = value.IsCheckIn ? RequiredFieldIncident(value.location) : 'true';
         const NewStorageLocationError = value.IsTransferLocation ? RequiredFieldIncident(value.DestinationStorageLocation) : 'true'
         const CheckInDateTimeError = value.IsCheckIn ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
         const SubmittingOfficerError = value.IsCheckIn ? RequiredFieldIncident(value.InvestigatorID) : 'true';
@@ -321,7 +320,7 @@ const VehicleManagement = (props) => {
             }
         })
     }
-    const { ReasonError, PropertyRoomOfficerError, NewStorageLocationError , CheckInDateTimeError, SubmittingOfficerError, StorageLocationError, CheckOutDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
+    const { ReasonError, PropertyRoomOfficerError, NewStorageLocationError, CheckInDateTimeError, SubmittingOfficerError, StorageLocationError, CheckOutDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
         DestructionDateTimeError, DestructionOfficerError, UpdatingOfficerError, ApprovalOfficerError, WitnessError, TransferDateTimeError, UpdateDateTimeError } = errors
 
     useEffect(() => {
@@ -332,7 +331,7 @@ const VehicleManagement = (props) => {
 
             { Add_Type() }
         }
-    }, [ReasonError, PropertyRoomOfficerError, CheckInDateTimeError, NewStorageLocationError , StorageLocationError, SubmittingOfficerError, CheckOutDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
+    }, [ReasonError, PropertyRoomOfficerError, CheckInDateTimeError, NewStorageLocationError, StorageLocationError, SubmittingOfficerError, CheckOutDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
         DestructionDateTimeError, DestructionOfficerError, UpdatingOfficerError, ApprovalOfficerError, WitnessError, TransferDateTimeError, UpdateDateTimeError
     ])
 
@@ -731,14 +730,32 @@ const VehicleManagement = (props) => {
                                 name='LastSeenDtTm'
                                 id='LastSeenDtTm'
                                 onChange={(date) => {
-                                    setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
-
+                                    if (date) {
+                                        const selectedDate = new Date(date);
+                                        const now = new Date();
+                                        if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0) {
+                                            selectedDate.setHours(now.getHours());
+                                            selectedDate.setMinutes(now.getMinutes());
+                                        }
+                                        setactivitydate(selectedDate);
+                                        setValue({
+                                            ...value,
+                                            ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate),
+                                        });
+                                    } else {
+                                        setactivitydate(null);
+                                        setValue({
+                                            ...value,
+                                            ['LastSeenDtTm']: null,
+                                        });
+                                    }
                                 }}
+
                                 isClearable={ActivityDtTm ? true : false}
                                 selected={ActivityDtTm}
                                 placeholderText={ActivityDtTm ? ActivityDtTm : 'Select...'}
                                 dateFormat="MM/dd/yyyy HH:mm"
-                                timeFormat="HH:mm "
+                                timeFormat="HH:mm"
                                 is24Hour
                                 timeInputLabel
                                 showTimeSelect
@@ -749,7 +766,14 @@ const VehicleManagement = (props) => {
                                 dropdownMode="select"
                                 showDisabledMonthNavigation
                                 autoComplete='off'
+                                minDate={new Date(incidentReportedDate)}
                                 maxDate={new Date(datezone)}
+                                filterTime={(time) => {
+                                    const timeValue = new Date(time).getTime();
+                                    const minTime = new Date(incidentReportedDate).getTime();
+                                    const maxTime = new Date(datezone).getTime();
+                                    return timeValue > minTime && timeValue <= maxTime;
+                                }}
                                 disabled={selectedOption === null || selectedOption === ''}
                                 className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                             />
@@ -1134,7 +1158,7 @@ const VehicleManagement = (props) => {
                             ) : null}</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2">
-                            <DatePicker
+                            {/* <DatePicker
                                 name='activitydate'
                                 id='activitydate'
                                 onChange={(date) => {
@@ -1159,8 +1183,57 @@ const VehicleManagement = (props) => {
                                 maxDate={new Date(datezone)}
                                 disabled={selectedOption === null || selectedOption === ''}
                                 className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                            /> */}
+                            <DatePicker
+                                name='activitydate'
+                                id='activitydate'
+                                onChange={(date) => {
+                                    if (date) {
+                                        const selectedDate = new Date(date);
+                                        const now = new Date();
+                                        if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0) {
+                                            selectedDate.setHours(now.getHours());
+                                            selectedDate.setMinutes(now.getMinutes());
+                                        }
+                                        setactivitydate(selectedDate);
+                                        setValue({
+                                            ...value,
+                                            ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate),
+                                        });
+                                    } else {
+                                        setactivitydate(null);
+                                        setValue({
+                                            ...value,
+                                            ['LastSeenDtTm']: null,
+                                        });
+                                    }
+                                }}
+                                isClearable={ActivityDtTm ? true : false}
+                                selected={ActivityDtTm}
+                                placeholderText={ActivityDtTm ? ActivityDtTm : 'Select...'}
+                                dateFormat="MM/dd/yyyy HH:mm"
+                                timeFormat="HH:mm"
+                                is24Hour
+                                timeInputLabel
+                                showTimeSelect
+                                timeIntervals={1}
+                                timeCaption="Time"
+                                showMonthDropdown
+                                showYearDropdown
+                                dropdownMode="select"
+                                showDisabledMonthNavigation
+                                autoComplete='off'
+                                minDate={new Date(incidentReportedDate)}
+                                maxDate={new Date(datezone)}
+                                filterTime={(time) => {
+                                    const timeValue = new Date(time).getTime();
+                                    const minTime = new Date(incidentReportedDate).getTime();
+                                    const maxTime = new Date(datezone).getTime();
+                                    return timeValue > minTime && timeValue <= maxTime;
+                                }}
+                                disabled={selectedOption === null || selectedOption === ''}
+                                className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                             />
-
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
                             <label htmlFor="" className='new-label mb-0'>Expected Return Date/Time
@@ -1175,7 +1248,6 @@ const VehicleManagement = (props) => {
                                 id='ExpectedDate'
                                 onChange={(date) => {
                                     setExpecteddate(date); setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
-
                                 }}
                                 isClearable={expecteddate ? true : false}
                                 selected={expecteddate}
@@ -1196,7 +1268,6 @@ const VehicleManagement = (props) => {
                                 disabled={selectedOption === null || selectedOption === ''}
                                 className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : ''}
                             />
-
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 ">
                             <label htmlFor="" className='new-label px-0 mb-0'>Releasing Officer{errors.ReleasingOfficerError !== 'true' ? (
@@ -1204,7 +1275,6 @@ const VehicleManagement = (props) => {
                             ) : null}</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
-
                             <Select
                                 name='ReleasingOfficerID'
                                 value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ReleasingOfficerID)}
@@ -1428,7 +1498,7 @@ const VehicleManagement = (props) => {
                             ) : null}</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 ">
-                            <DatePicker
+                            {/* <DatePicker
                                 name='activitydate'
                                 id='activitydate'
                                 onChange={(date) => {
@@ -1453,8 +1523,57 @@ const VehicleManagement = (props) => {
                                 maxDate={new Date(datezone)}
                                 disabled={selectedOption === null || selectedOption === ''}
                                 className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                            /> */}
+                            <DatePicker
+                                name='activitydate'
+                                id='activitydate'
+                                onChange={(date) => {
+                                    if (date) {
+                                        const selectedDate = new Date(date);
+                                        const now = new Date();
+                                        if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0) {
+                                            selectedDate.setHours(now.getHours());
+                                            selectedDate.setMinutes(now.getMinutes());
+                                        }
+                                        setactivitydate(selectedDate);
+                                        setValue({
+                                            ...value,
+                                            ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate),
+                                        });
+                                    } else {
+                                        setactivitydate(null);
+                                        setValue({
+                                            ...value,
+                                            ['LastSeenDtTm']: null,
+                                        });
+                                    }
+                                }}
+                                isClearable={ActivityDtTm ? true : false}
+                                selected={ActivityDtTm}
+                                placeholderText={ActivityDtTm ? ActivityDtTm : 'Select...'}
+                                dateFormat="MM/dd/yyyy HH:mm"
+                                timeFormat="HH:mm"
+                                is24Hour
+                                timeInputLabel
+                                showTimeSelect
+                                timeIntervals={1}
+                                timeCaption="Time"
+                                showMonthDropdown
+                                showYearDropdown
+                                dropdownMode="select"
+                                showDisabledMonthNavigation
+                                autoComplete='off'
+                                minDate={new Date(incidentReportedDate)}
+                                maxDate={new Date(datezone)}
+                                filterTime={(time) => {
+                                    const timeValue = new Date(time).getTime();
+                                    const minTime = new Date(incidentReportedDate).getTime();
+                                    const maxTime = new Date(datezone).getTime();
+                                    return timeValue > minTime && timeValue <= maxTime;
+                                }}
+                                disabled={selectedOption === null || selectedOption === ''}
+                                className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                             />
-
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 ">
                             <label htmlFor="" className='new-label mb-0'>Property Room Officer{errors.PropertyRoomOfficerError !== 'true' ? (
@@ -1528,7 +1647,7 @@ const VehicleManagement = (props) => {
                             // styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                             // isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                             /> */}
-                             <input type="text" onChange={(e) => { handleChange(e) }} name="locationsdgf" style={{ position: 'relative' }}  value={value.locationsdgf}  className={`form-control`}
+                            <input type="text" onChange={(e) => { handleChange(e) }} name="locationsdgf" style={{ position: 'relative' }} value={value.locationsdgf} className={`form-control`}
                             />
 
                             {/* <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} disabled className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
@@ -1797,7 +1916,7 @@ const VehicleManagement = (props) => {
                             ) : null}</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 ">
-                            <DatePicker
+                            {/* <DatePicker
                                 name='activitydate'
                                 id='activitydate'
                                 onChange={(date) => {
@@ -1822,8 +1941,57 @@ const VehicleManagement = (props) => {
                                 maxDate={new Date(datezone)}
                                 disabled={selectedOption === null || selectedOption === ''}
                                 className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                            /> */}
+                            <DatePicker
+                                name='activitydate'
+                                id='activitydate'
+                                onChange={(date) => {
+                                    if (date) {
+                                        const selectedDate = new Date(date);
+                                        const now = new Date();
+                                        if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0) {
+                                            selectedDate.setHours(now.getHours());
+                                            selectedDate.setMinutes(now.getMinutes());
+                                        }
+                                        setactivitydate(selectedDate);
+                                        setValue({
+                                            ...value,
+                                            ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate),
+                                        });
+                                    } else {
+                                        setactivitydate(null);
+                                        setValue({
+                                            ...value,
+                                            ['LastSeenDtTm']: null,
+                                        });
+                                    }
+                                }}
+                                isClearable={ActivityDtTm ? true : false}
+                                selected={ActivityDtTm}
+                                placeholderText={ActivityDtTm ? ActivityDtTm : 'Select...'}
+                                dateFormat="MM/dd/yyyy HH:mm"
+                                timeFormat="HH:mm"
+                                is24Hour
+                                timeInputLabel
+                                showTimeSelect
+                                timeIntervals={1}
+                                timeCaption="Time"
+                                showMonthDropdown
+                                showYearDropdown
+                                dropdownMode="select"
+                                showDisabledMonthNavigation
+                                autoComplete='off'
+                                minDate={new Date(incidentReportedDate)}
+                                maxDate={new Date(datezone)}
+                                filterTime={(time) => {
+                                    const timeValue = new Date(time).getTime();
+                                    const minTime = new Date(incidentReportedDate).getTime();
+                                    const maxTime = new Date(datezone).getTime();
+                                    return timeValue > minTime && timeValue <= maxTime;
+                                }}
+                                disabled={selectedOption === null || selectedOption === ''}
+                                className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                             />
-
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 ">
                             <label htmlFor="" className='new-label mb-0'>Property Room Officer{errors.PropertyRoomOfficerError !== 'true' ? (
@@ -1897,7 +2065,7 @@ const VehicleManagement = (props) => {
                                 styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
                                 isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                             /> */}
-                             <input type="text" onChange={(e) => { handleChange(e) }} name="locationsdgf" style={{ position: 'relative' }}  value={value.locationsdgf}  className={`form-control`}
+                            <input type="text" onChange={(e) => { handleChange(e) }} name="locationsdgf" style={{ position: 'relative' }} value={value.locationsdgf} className={`form-control`}
                             />
                         </div>
                         {/* <div className="col-1 " data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
@@ -2146,7 +2314,7 @@ const VehicleManagement = (props) => {
                                     ) : null}</label>
                                 </div>
                                 <div className="col-3 col-md-3 col-lg-2 ">
-                                    <DatePicker
+                                    {/* <DatePicker
                                         name='LastSeenDtTm'
                                         id='LastSeenDtTm'
                                         onChange={(date) => {
@@ -2171,8 +2339,57 @@ const VehicleManagement = (props) => {
                                         maxDate={new Date(datezone)}
                                         disabled={selectedOption === null || selectedOption === ''}
                                         className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                                    /> */}
+                                    <DatePicker
+                                        name='LastSeenDtTm'
+                                        id='LastSeenDtTm'
+                                        onChange={(date) => {
+                                            if (date) {
+                                                const selectedDate = new Date(date);
+                                                const now = new Date();
+                                                if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0) {
+                                                    selectedDate.setHours(now.getHours());
+                                                    selectedDate.setMinutes(now.getMinutes());
+                                                }
+                                                settransferdate(selectedDate);
+                                                setValue({
+                                                    ...value,
+                                                    ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate),
+                                                });
+                                            } else {
+                                                settransferdate(null);
+                                                setValue({
+                                                    ...value,
+                                                    ['LastSeenDtTm']: null,
+                                                });
+                                            }
+                                        }}
+                                        isClearable={transferdate ? true : false}
+                                        selected={transferdate}
+                                        placeholderText={transferdate ? transferdate : 'Select...'}
+                                        dateFormat="MM/dd/yyyy HH:mm"
+                                        timeFormat="HH:mm"
+                                        is24Hour
+                                        timeInputLabel
+                                        showTimeSelect
+                                        timeIntervals={1}
+                                        timeCaption="Time"
+                                        showMonthDropdown
+                                        showYearDropdown
+                                        dropdownMode="select"
+                                        showDisabledMonthNavigation
+                                        autoComplete='off'
+                                        minDate={new Date(incidentReportedDate)}
+                                        maxDate={new Date(datezone)}
+                                        filterTime={(time) => {
+                                            const timeValue = new Date(time).getTime();
+                                            const minTime = new Date(incidentReportedDate).getTime();
+                                            const maxTime = new Date(datezone).getTime();
+                                            return timeValue > minTime && timeValue <= maxTime;
+                                        }}
+                                        disabled={selectedOption === null || selectedOption === ''}
+                                        className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                                     />
-
                                 </div>
 
                                 <div className="col-3 col-md-3 col-lg-2">
@@ -2553,7 +2770,7 @@ const VehicleManagement = (props) => {
                             ) : null}</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2">
-                            <DatePicker
+                            {/* <DatePicker
                                 name='activitydate'
                                 id='activitydate'
                                 onChange={(date) => {
@@ -2578,8 +2795,57 @@ const VehicleManagement = (props) => {
                                 maxDate={new Date(datezone)}
                                 disabled={selectedOption === null || selectedOption === ''}
                                 className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                            /> */}
+                            <DatePicker
+                                name='activitydate'
+                                id='activitydate'
+                                onChange={(date) => {
+                                    if (date) {
+                                        const selectedDate = new Date(date);
+                                        const now = new Date();
+                                        if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0) {
+                                            selectedDate.setHours(now.getHours());
+                                            selectedDate.setMinutes(now.getMinutes());
+                                        }
+                                        setactivitydate(selectedDate);
+                                        setValue({
+                                            ...value,
+                                            ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate),
+                                        });
+                                    } else {
+                                        setactivitydate(null);
+                                        setValue({
+                                            ...value,
+                                            ['LastSeenDtTm']: null,
+                                        });
+                                    }
+                                }}
+                                isClearable={ActivityDtTm ? true : false}
+                                selected={ActivityDtTm}
+                                placeholderText={ActivityDtTm ? ActivityDtTm : 'Select...'}
+                                dateFormat="MM/dd/yyyy HH:mm"
+                                timeFormat="HH:mm"
+                                is24Hour
+                                timeInputLabel
+                                showTimeSelect
+                                timeIntervals={1}
+                                timeCaption="Time"
+                                showMonthDropdown
+                                showYearDropdown
+                                dropdownMode="select"
+                                showDisabledMonthNavigation
+                                autoComplete='off'
+                                minDate={new Date(incidentReportedDate)}
+                                maxDate={new Date(datezone)}
+                                filterTime={(time) => {
+                                    const timeValue = new Date(time).getTime();
+                                    const minTime = new Date(incidentReportedDate).getTime();
+                                    const maxTime = new Date(datezone).getTime();
+                                    return timeValue > minTime && timeValue <= maxTime;
+                                }}
+                                disabled={selectedOption === null || selectedOption === ''}
+                                className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                             />
-
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 ">
                             <label htmlFor="" className='new-label px-0 mb-0'>Updating Officer{errors.UpdatingOfficerError !== 'true' ? (
@@ -2587,7 +2853,6 @@ const VehicleManagement = (props) => {
                             ) : null}</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
-
                             <Select
                                 name='UpdatingOfficerID'
                                 value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.UpdatingOfficerID)}
@@ -2598,8 +2863,6 @@ const VehicleManagement = (props) => {
                                 styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                                 isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                             />
-
-
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 ">
                             <label htmlFor="" className='new-label mb-0'>Property Room Officer{errors.PropertyRoomOfficerError !== 'true' ? (
@@ -2624,7 +2887,6 @@ const VehicleManagement = (props) => {
                             ) : null}</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
-
                             <Select
                                 name='ApprovalOfficerID'
                                 value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ApprovalOfficerID)}
@@ -2635,8 +2897,6 @@ const VehicleManagement = (props) => {
                                 styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                                 isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                             />
-
-
                         </div>
 
                         <div className='col-3 col-md-3 col-lg-4'></div>

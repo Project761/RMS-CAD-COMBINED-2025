@@ -35,7 +35,7 @@ import CreatableSelect from 'react-select/creatable';
 import NCICModal from '../../../../../CADComponents/NCICModal';
 
 
-const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List, propertystatus, setPropertyStatus, incidentReportedDate, setIncidentReportedDate, isCad = false, isViewEventDetails = false, isCADSearch = false, }) => {
+const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List, propertystatus, setPropertyStatus, isCad = false, isViewEventDetails = false, isCADSearch = false, }) => {
 
 
   const dispatch = useDispatch();
@@ -98,7 +98,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
 
   const navigate = useNavigate();
 
-  const { get_Incident_Count, changesStatus, setChangesStatus, get_Property_Count, nibrsSubmittedStatus, setnibrsSubmittedStatus, nibrsSubmittedPropertyMain, setnibrsSubmittedPropertyMain, setcountoffaduit, datezone, GetDataTimeZone } = useContext(AgencyContext);
+  const { get_Incident_Count, changesStatus, setChangesStatus, get_Property_Count, nibrsSubmittedStatus, setnibrsSubmittedStatus, nibrsSubmittedPropertyMain, setnibrsSubmittedPropertyMain, setcountoffaduit, datezone, GetDataTimeZone, incidentReportedDate, setIncidentReportedDate, } = useContext(AgencyContext);
 
   const [loder, setLoder] = useState(false);
   const [drugLoder, setDrugLoder] = useState(false);
