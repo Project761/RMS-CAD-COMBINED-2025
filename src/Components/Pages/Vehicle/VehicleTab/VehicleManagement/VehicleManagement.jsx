@@ -639,6 +639,9 @@ const VehicleManagement = (props) => {
         setfunctiondone(!functiondone);
 
     }
+
+    console.log(incidentReportedDate)
+    console.log(datezone)
     return (
         <>
             <div className="col-12">
@@ -731,26 +734,17 @@ const VehicleManagement = (props) => {
                                 id='LastSeenDtTm'
                                 onChange={(date) => {
                                     if (date) {
-                                        const selectedDate = new Date(date);
-                                        const now = new Date();
-                                        if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0) {
-                                            selectedDate.setHours(now.getHours());
-                                            selectedDate.setMinutes(now.getMinutes());
+                                        let selectedDate = new Date(date);
+                                        const currentDateTimeFromZone = new Date(datezone);
+                                        // If time is midnight (user selected only date), set time from `datezone`
+                                        if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0 && selectedDate.getSeconds() === 0) {
+                                            selectedDate.setHours(currentDateTimeFromZone.getHours()); selectedDate.setMinutes(currentDateTimeFromZone.getMinutes()); selectedDate.setSeconds(currentDateTimeFromZone.getSeconds());
                                         }
-                                        setactivitydate(selectedDate);
-                                        setValue({
-                                            ...value,
-                                            ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate),
-                                        });
+                                        setactivitydate(selectedDate); setValue({ ...value, ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate), });
                                     } else {
-                                        setactivitydate(null);
-                                        setValue({
-                                            ...value,
-                                            ['LastSeenDtTm']: null,
-                                        });
+                                        setactivitydate(null); setValue({ ...value, ['LastSeenDtTm']: null, });
                                     }
                                 }}
-
                                 isClearable={ActivityDtTm ? true : false}
                                 selected={ActivityDtTm}
                                 placeholderText={ActivityDtTm ? ActivityDtTm : 'Select...'}
@@ -1185,27 +1179,19 @@ const VehicleManagement = (props) => {
                                 className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                             /> */}
                             <DatePicker
-                                name='activitydate'
-                                id='activitydate'
+                                name='LastSeenDtTm'
+                                id='LastSeenDtTm'
                                 onChange={(date) => {
                                     if (date) {
-                                        const selectedDate = new Date(date);
-                                        const now = new Date();
-                                        if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0) {
-                                            selectedDate.setHours(now.getHours());
-                                            selectedDate.setMinutes(now.getMinutes());
+                                        let selectedDate = new Date(date);
+                                        const currentDateTimeFromZone = new Date(datezone);
+                                        // If time is midnight (user selected only date), set time from `datezone`
+                                        if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0 && selectedDate.getSeconds() === 0) {
+                                            selectedDate.setHours(currentDateTimeFromZone.getHours()); selectedDate.setMinutes(currentDateTimeFromZone.getMinutes()); selectedDate.setSeconds(currentDateTimeFromZone.getSeconds());
                                         }
-                                        setactivitydate(selectedDate);
-                                        setValue({
-                                            ...value,
-                                            ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate),
-                                        });
+                                        setactivitydate(selectedDate); setValue({ ...value, ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate), });
                                     } else {
-                                        setactivitydate(null);
-                                        setValue({
-                                            ...value,
-                                            ['LastSeenDtTm']: null,
-                                        });
+                                        setactivitydate(null); setValue({ ...value, ['LastSeenDtTm']: null, });
                                     }
                                 }}
                                 isClearable={ActivityDtTm ? true : false}
@@ -1943,27 +1929,19 @@ const VehicleManagement = (props) => {
                                 className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                             /> */}
                             <DatePicker
-                                name='activitydate'
-                                id='activitydate'
+                                name='LastSeenDtTm'
+                                id='LastSeenDtTm'
                                 onChange={(date) => {
                                     if (date) {
-                                        const selectedDate = new Date(date);
-                                        const now = new Date();
-                                        if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0) {
-                                            selectedDate.setHours(now.getHours());
-                                            selectedDate.setMinutes(now.getMinutes());
+                                        let selectedDate = new Date(date);
+                                        const currentDateTimeFromZone = new Date(datezone);
+                                        // If time is midnight (user selected only date), set time from `datezone`
+                                        if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0 && selectedDate.getSeconds() === 0) {
+                                            selectedDate.setHours(currentDateTimeFromZone.getHours()); selectedDate.setMinutes(currentDateTimeFromZone.getMinutes()); selectedDate.setSeconds(currentDateTimeFromZone.getSeconds());
                                         }
-                                        setactivitydate(selectedDate);
-                                        setValue({
-                                            ...value,
-                                            ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate),
-                                        });
+                                        setactivitydate(selectedDate); setValue({ ...value, ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate), });
                                     } else {
-                                        setactivitydate(null);
-                                        setValue({
-                                            ...value,
-                                            ['LastSeenDtTm']: null,
-                                        });
+                                        setactivitydate(null); setValue({ ...value, ['LastSeenDtTm']: null, });
                                     }
                                 }}
                                 isClearable={ActivityDtTm ? true : false}
@@ -2345,28 +2323,20 @@ const VehicleManagement = (props) => {
                                         id='LastSeenDtTm'
                                         onChange={(date) => {
                                             if (date) {
-                                                const selectedDate = new Date(date);
-                                                const now = new Date();
-                                                if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0) {
-                                                    selectedDate.setHours(now.getHours());
-                                                    selectedDate.setMinutes(now.getMinutes());
+                                                let selectedDate = new Date(date);
+                                                const currentDateTimeFromZone = new Date(datezone);
+                                                // If time is midnight (user selected only date), set time from `datezone`
+                                                if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0 && selectedDate.getSeconds() === 0) {
+                                                    selectedDate.setHours(currentDateTimeFromZone.getHours()); selectedDate.setMinutes(currentDateTimeFromZone.getMinutes()); selectedDate.setSeconds(currentDateTimeFromZone.getSeconds());
                                                 }
-                                                settransferdate(selectedDate);
-                                                setValue({
-                                                    ...value,
-                                                    ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate),
-                                                });
+                                                setactivitydate(selectedDate); setValue({ ...value, ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate), });
                                             } else {
-                                                settransferdate(null);
-                                                setValue({
-                                                    ...value,
-                                                    ['LastSeenDtTm']: null,
-                                                });
+                                                setactivitydate(null); setValue({ ...value, ['LastSeenDtTm']: null, });
                                             }
                                         }}
-                                        isClearable={transferdate ? true : false}
-                                        selected={transferdate}
-                                        placeholderText={transferdate ? transferdate : 'Select...'}
+                                        isClearable={ActivityDtTm ? true : false}
+                                        selected={ActivityDtTm}
+                                        placeholderText={ActivityDtTm ? ActivityDtTm : 'Select...'}
                                         dateFormat="MM/dd/yyyy HH:mm"
                                         timeFormat="HH:mm"
                                         is24Hour
@@ -2797,27 +2767,19 @@ const VehicleManagement = (props) => {
                                 className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                             /> */}
                             <DatePicker
-                                name='activitydate'
-                                id='activitydate'
+                                name='LastSeenDtTm'
+                                id='LastSeenDtTm'
                                 onChange={(date) => {
                                     if (date) {
-                                        const selectedDate = new Date(date);
-                                        const now = new Date();
-                                        if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0) {
-                                            selectedDate.setHours(now.getHours());
-                                            selectedDate.setMinutes(now.getMinutes());
+                                        let selectedDate = new Date(date);
+                                        const currentDateTimeFromZone = new Date(datezone);
+                                        // If time is midnight (user selected only date), set time from `datezone`
+                                        if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0 && selectedDate.getSeconds() === 0) {
+                                            selectedDate.setHours(currentDateTimeFromZone.getHours()); selectedDate.setMinutes(currentDateTimeFromZone.getMinutes()); selectedDate.setSeconds(currentDateTimeFromZone.getSeconds());
                                         }
-                                        setactivitydate(selectedDate);
-                                        setValue({
-                                            ...value,
-                                            ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate),
-                                        });
+                                        setactivitydate(selectedDate); setValue({ ...value, ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate), });
                                     } else {
-                                        setactivitydate(null);
-                                        setValue({
-                                            ...value,
-                                            ['LastSeenDtTm']: null,
-                                        });
+                                        setactivitydate(null); setValue({ ...value, ['LastSeenDtTm']: null, });
                                     }
                                 }}
                                 isClearable={ActivityDtTm ? true : false}

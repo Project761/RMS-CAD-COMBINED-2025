@@ -29,7 +29,7 @@ const MultiValue = (props) => (
 const MiscellaneousInformation = (props) => {
   const { ListData, DecPropID, DecMPropID, DecIncID, setIsNonPropertyRoomSelected, propertystatus, setPropertyStatus, isViewEventDetails = false, } = props;
 
-  const { setChangesStatus, get_Incident_Count, incidentCount, datezone, GetDataTimeZone, } = useContext(AgencyContext);
+  const { setChangesStatus, get_Incident_Count, incidentCount, datezone, GetDataTimeZone, incidentReportedDate, } = useContext(AgencyContext);
   const reportApproveOfficer = useSelector((state) => state.Incident.reportApproveOfficer);
   const narrativeTypeDrpData = useSelector((state) => state.DropDown.narrativeTypeDrpData);
 
@@ -1343,90 +1343,46 @@ const MiscellaneousInformation = (props) => {
                         /> */}
 
                         <DatePicker
-                          id="ReportedDate"
-                          name="ReportedDate"
-                          dateFormat="MM/dd/yyyy HH:mm"
-                          selected={collectiondate}
+                          name='CollectionDtTm'
+                          id='CollectionDtTm'
                           onChange={(date) => {
-                            if (!addUpdatePermission) {
-                              setStatesChangeStatus(true);
-                              setChangesStatus(true);
-                            }
-
-                            const reportedDt = new Date(value?.ReportedDtTm);
-                            const now = new Date(); // current datetime
-
                             if (date) {
                               let selectedDate = new Date(date);
-
-                              // Ensure selected > ReportedDtTm
-                              if (selectedDate.getTime() <= reportedDt.getTime()) {
-                                selectedDate = new Date(reportedDt.getTime() + 60000); // 1 minute later
+                              const currentDateTimeFromZone = new Date(datezone);
+                              // If time is midnight (user selected only date), set time from `datezone`
+                              if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0 && selectedDate.getSeconds() === 0) {
+                                selectedDate.setHours(currentDateTimeFromZone.getHours()); selectedDate.setMinutes(currentDateTimeFromZone.getMinutes()); selectedDate.setSeconds(currentDateTimeFromZone.getSeconds());
                               }
-
-                              // Ensure selected <= now
-                              if (selectedDate.getTime() > now.getTime()) {
-                                selectedDate = now;
-                              }
-
-                              setCollectiondate(selectedDate);
-                              setValue({
-                                ...value,
-                                ["CollectionDtTm"]: getShowingMonthDateYear(selectedDate),
-                              });
+                              setCollectiondate(selectedDate); setValue({ ...value, ['CollectionDtTm']: getShowingMonthDateYear(selectedDate), });
                             } else {
-                              setCollectiondate(null);
-                              setValue({
-                                ...value,
-                                ["CollectionDtTm"]: null,
-                              });
+                              setCollectiondate(null); setValue({ ...value, ['CollectionDtTm']: null, });
                             }
                           }}
-                          className="requiredColor"
+                          isClearable={collectiondate ? true : false}
+                          selected={collectiondate}
+                          placeholderText={collectiondate ? collectiondate : 'Select...'}
+                          dateFormat="MM/dd/yyyy HH:mm"
+                          timeFormat="HH:mm"
+                          is24Hour
                           timeInputLabel
                           showTimeSelect
                           timeIntervals={1}
                           timeCaption="Time"
                           showMonthDropdown
-                          isClearable={false}
-                          placeholderText={"Select..."}
                           showYearDropdown
                           dropdownMode="select"
                           showDisabledMonthNavigation
-                          autoComplete="off"
-                          timeFormat="HH:mm"
-                          is24Hour
-
-                          // ✅ Don't allow any date in future
-                          maxDate={new Date()}
-
-                          // ✅ Don't allow date before ReportedDtTm
-                          minDate={new Date(value?.ReportedDtTm)}
-
-                          // ✅ If selected date is today, restrict time to <= current time
+                          autoComplete='off'
+                          minDate={new Date(incidentReportedDate)}
+                          maxDate={new Date(datezone)}
                           filterTime={(time) => {
-                            const now = new Date();
-                            const selectedDate = new Date(collectiondate);
-                            const reportedDt = new Date(value?.ReportedDtTm);
-
-                            const isSameDay = (date1, date2) => {
-                              return (
-                                date1.getFullYear() === date2.getFullYear() &&
-                                date1.getMonth() === date2.getMonth() &&
-                                date1.getDate() === date2.getDate()
-                              );
-                            };
-
-                            if (isSameDay(selectedDate, now)) {
-                              return time.getTime() > reportedDt.getTime() && time.getTime() <= now.getTime();
-                            }
-
-                            if (isSameDay(selectedDate, reportedDt)) {
-                              return time.getTime() > reportedDt.getTime();
-                            }
-
-                            return time.getTime() <= now.getTime();
+                            const timeValue = new Date(time).getTime();
+                            const minTime = new Date(incidentReportedDate).getTime();
+                            const maxTime = new Date(datezone).getTime();
+                            return timeValue > minTime && timeValue <= maxTime;
                           }}
+                          disabled={selectedOption === null || selectedOption === ''}
+                          className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                         />
                       </div>
 
