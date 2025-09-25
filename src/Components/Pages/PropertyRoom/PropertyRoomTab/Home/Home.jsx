@@ -9,7 +9,7 @@ import { get_AgencyOfficer_Data, get_Masters_Name_Drp_Data, get_PropertyTypeData
 import { useLocation, useNavigate } from "react-router-dom";
 import { AgencyContext } from '../../../../../Context/Agency/Index';
 import { RequiredFieldIncident } from '../../../Utility/Personnel/Validation';
-import { Comman_changeArrayFormat, sixColArray } from '../../../../Common/ChangeArrayFormat';
+import { Comman_changeArrayFormat, sixColArray, threeColArray } from '../../../../Common/ChangeArrayFormat';
 import { AddDeleteUpadate, fetchPostData, PropertyRoomInsert } from '../../../../hooks/Api';
 import { toastifyError, toastifySuccess } from '../../../../Common/AlertMsg';
 import TreeComponent from '../TreeComponent/TreeComponent';
@@ -123,6 +123,8 @@ const Home = (props) => {
     const [isSendButtonDisabled, setIsSendButtonDisabled] = useState(false);
     const [IsNonPropertyStatus, setIsNonPropertyStatus] = useState(false);
     const [SendToPropertyRoomStatus, setSendToPropertyRoomStatus] = useState(false);
+    const [propertyCategorydata, setpropertyCategorydata] = useState([]);
+    const [vehicleCategorydata, setvehicleCategorydata] = useState([]);
 
 
     const AddType = [
@@ -131,6 +133,8 @@ const Home = (props) => {
         { value: 'IncidentNumber', label: 'Incident Number' },
         { value: 'PropertyTypeID', label: 'Property Type' },
         { value: 'VehicleNumber', label: 'Vehicle Number' },
+        { value: 'VehicleTypeID', label: 'Vehicle Type' },
+
     ]
     const AddTransfer = [
         { value: 1, label: 'CheckIn' },
@@ -142,7 +146,7 @@ const Home = (props) => {
 
     const [value, setValue] = useState({
         'PropertyID': '', 'MasterPropertyId': '', 'ActivityType': '', 'DestinationStorageLocation': '', 'IsInternalTransfer': true, 'Destination': '', 'ModeOfTransport': '',
-        'IsExternalTransfer': false, 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'OtherPersonNameID': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '', 'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '', 'IsCheckIn': false, 'IsCheckOut': false, 'IsRelease': false, 'IsDestroy': false, 'IsTransferLocation': false, 'IsUpdate': false, 'CreatedByUserFK': '', 'AgencyID': '', 'PropertyTypeID': '', 'LastSeenDtTm': '', 'PackagingDetails': ''
+        'IsExternalTransfer': false, 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'OtherPersonNameID': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '', 'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '', 'IsCheckIn': false, 'IsCheckOut': false, 'IsRelease': false, 'IsDestroy': false, 'IsTransferLocation': false, 'IsUpdate': false, 'CreatedByUserFK': '', 'AgencyID': '', 'PropertyTypeID': '', 'VehicleTypeID': '', 'LastSeenDtTm': '', 'PackagingDetails': ''
     })
 
     const [errors, setErrors] = useState({
@@ -170,7 +174,7 @@ const Home = (props) => {
         }
     }, [localStoreData, ProType, ProNumber, CallStatus, DecPropID, SelectedCategory, propertyTypeData, ProTransfer]);
 
-    console.log(selectedOptions)
+    console.log(vehicleCategorydata , propertyCategorydata)
 
     useEffect(() => {
         dispatch(get_Masters_Name_Drp_Data(possessionID, 0, 0, IncID));
@@ -190,9 +194,39 @@ const Home = (props) => {
         if (loginAgencyID && selectedOption) {
             GetActivityReasonDrp(loginAgencyID);
         }
-        dispatch(get_PropertyTypeData(loginAgencyID));
+        get_PropertyTypeData(loginAgencyID);
 
     }, [loginAgencyID, selectedOption]);
+
+    // const get_PropertyTypeData = (LoginAgencyID) => async (dispatch) => {
+    //     const val = { AgencyID: LoginAgencyID }
+    //     fetchPostData('PropertyCategory/GetDataDropDown_PropertyCategory', val).then((res) => {
+    //         if (res) {
+    //             const dataArr = res?.filter((val) => { if (val.PropertyCategoryCode === "V") return val });
+    //             console.log(res)
+    //             setpropertyCategorydata(threeColArray(res, 'PropertyCategoryID', 'Description', 'PropertyCategoryCode'));
+    //             setvehicleCategorydata(threeColArray(dataArr, 'VehicleCategoryID', 'Description', 'PropertyCategoryCode'));
+    //             // dispatch({ type: PropertyType_Data, payload: threeColArray(dataArr, 'PropertyCategoryID', 'Description', 'PropertyCategoryCode') });
+    //         } else {
+    //             // dispatch({ type: PropertyType_Data, payload: [] });
+    //         }
+    //     })
+    // }
+
+    const get_PropertyTypeData = (LoginAgencyID) => {
+        const val = { AgencyID: LoginAgencyID }
+        fetchPostData('PropertyCategory/GetDataDropDown_PropertyCategory', val).then((data) => {
+            if (data) {
+                const dataArr = data?.filter((val) => { if (val.PropertyCategoryCode !== "V") return val });
+                const dataArrfiltervehicle = data?.filter((val) => { if (val.PropertyCategoryCode === "V") return val });
+                console.log(data)
+                setpropertyCategorydata(threeColArray(dataArr, 'PropertyCategoryID', 'Description', 'PropertyCategoryCode'));
+                setvehicleCategorydata(threeColArray(dataArrfiltervehicle, 'PropertyCategoryID', 'Description', 'PropertyCategoryCode'));
+            } else {
+                // setOwnerNameData([])
+            }
+        })
+    };
 
     useEffect(() => {
         if (IncID) {
@@ -326,6 +360,7 @@ const Home = (props) => {
 
     const check_Validation_Errorr = (e) => {
         sessionStorage.removeItem('selectedRows')
+        console.log(value.VehicleTypeID , 'hello')
         const SearchError = RequiredFieldIncident(propertyNumber || vehicleNumber);
         setsearcherror(prevValues => {
             return {
@@ -712,6 +747,7 @@ const Home = (props) => {
     ]
 
     const ChangeDropDowns = (e, name) => {
+         console.log(e)
         if (e) {
             setValue({ ...value, [name]: e.value })
             setPropertyNumber(e.value)
@@ -730,6 +766,29 @@ const Home = (props) => {
             })
             setPossessionID('');
             setPropertyNumber('')
+        }
+    };
+
+     const ChangeDropDownsVehicle = (e, name) => {
+       
+        if (e) {
+            setValue({ ...value, [name]: e.value })
+            setvehicleNumber(e.value)
+            setsearcherror(prevValues => {
+                return { ...prevValues, 'SearchError': '', }
+            })
+        } else {
+            setValue({
+                ...value,
+                [name]: null
+            });
+            setsearcherror(prevValues => {
+                return {
+                    ...prevValues, 'SearchError': '',
+                }
+            })
+            // setPossessionID('');
+            setvehicleNumber('');
         }
     };
 
@@ -1273,7 +1332,7 @@ const Home = (props) => {
                 <div className="col-12 col-md-12 col-lg-12 pt-2 px-0 " >
                     <fieldset>
                         <legend>Search</legend>
-                        <div className="row align-items-center" style={{rowGap:"8px"}}>
+                        <div className="row align-items-center" style={{ rowGap: "8px" }}>
                             <div className="col-3 col-md-2 col-lg-1">
                                 <label htmlFor="" className='new-label mb-0'>Type</label>
                             </div>
@@ -1285,12 +1344,14 @@ const Home = (props) => {
                                     onChange={(selectedOption) => {
                                         setSelectedOptions(selectedOption);
                                         setPropertyNumber('');
+                                        setvehicleNumber('');
                                         setsearcherror(prevValues => {
                                             return { ...prevValues, 'SearchError': '', }
                                         })
                                         setValue({
                                             ...value,
-                                            'PropertyTypeID': ''
+                                            'PropertyTypeID': '',
+                                            'VehicleTypeID': '',
                                         })
                                     }}
                                     defaultValue={AddType[0]}
@@ -1385,9 +1446,32 @@ const Home = (props) => {
                                         <div className="">
                                             <Select
                                                 name='PropertyTypeID'
-                                                value={propertyTypeData?.filter((obj) => obj.value === value?.PropertyTypeID)}
-                                                options={propertyTypeData}
+                                                value={propertyCategorydata?.filter((obj) => obj.value === value?.PropertyTypeID)}
+                                                options={propertyCategorydata}
                                                 onChange={(e) => ChangeDropDowns(e, 'PropertyTypeID')}
+                                                isClearable
+                                                placeholder="Select..."
+                                                styles={Requiredcolour}
+                                            // isDisabled={propertyID || masterPropertyID ? true : false}
+                                            />
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                            {selectedOptions?.value === 'VehicleTypeID' && (
+                                <>
+                                    <div className="col-3 col-md-2 col-lg-2">
+                                        <label htmlFor="" className='new-label mb-0'>Vehicle Type{searcherror.SearchError !== 'true' ? (
+                                            <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{searcherror.SearchError}</p>
+                                        ) : null}</label>
+                                    </div>
+                                    <div className="col-4 col-md-3 col-lg-2">
+                                        <div className="">
+                                            <Select
+                                                name='VehicleTypeID'
+                                                value={vehicleCategorydata?.filter((obj) => obj.value === value?.VehicleTypeID)}
+                                                options={vehicleCategorydata}
+                                                onChange={(e) => ChangeDropDownsVehicle(e, 'VehicleTypeID')}
                                                 isClearable
                                                 placeholder="Select..."
                                                 styles={Requiredcolour}
@@ -1463,7 +1547,7 @@ const Home = (props) => {
                             </div>
 
                             {
-                                (selectedOptions?.value === 'StorageLocationID' || selectedOptions?.value === 'PropertyTypeID') ?
+                                (selectedOptions?.value === 'StorageLocationID' || selectedOptions?.value === 'PropertyTypeID' || selectedOptions?.value === 'VehicleTypeID') ?
 
                                     <>
                                         <div className="col-3 col-md-3 col-lg-1  text-right">
