@@ -80,6 +80,10 @@ const AddInformation = (props) => {
   const [permissionForEdit, setPermissionForEdit] = useState(false);
   // Add Update Permission
   const [addUpdatePermission, setaddUpdatePermission] = useState();
+  const [isSendButtonDisabled, setIsSendButtonDisabled] = useState(false);
+  const [IsNonPropertyStatus, setIsNonPropertyStatus] = useState(false);
+  const [SendToPropertyRoomStatus, setSendToPropertyRoomStatus] = useState(false);
+  const [LastTask, setLastTask] = useState("");
 
   const [value, setValue] = useState({
     ReportedDtTm: "", TagID: "", DestroyDtTm: "", IncidentID: "", IsImmobalizationDevice: "", IsEligibleForImmobalization: "", IsMaster: MstVehicle === "MST-Vehicle-Dash" ? true : false, MasterPropertyID: "", PropertyID: "", AgencyID: "", PropertyTag: "", NICBID: "", Description: "",
@@ -134,6 +138,9 @@ const AddInformation = (props) => {
       (res) => {
         if (res) {
           setEditval(res);
+          setPropertyRoomStatus(res[0]?.PropertyRoomStatus);
+          setIsNonPropertyStatus(res[0]?.IsNonPropertyRoom);
+          setSendToPropertyRoomStatus(res[0]?.IsSendToPropertyRoom);
         } else {
           setEditval([]);
         }
@@ -263,6 +270,14 @@ const AddInformation = (props) => {
         if (taskToSend && value.OfficerID) {
           InSertBasicInfo(value?.CollectingOfficer, "OfficerID", "TaskList/Insert_TaskList", taskToSend);
         }
+        if (value?.IsSendToTaskList && IsNonPropertyStatus === false && value.IsNonPropertyRoom) {
+          InSertBasicInfo(
+            value?.CollectingOfficer,
+            "OfficerID",
+            "TaskList/Insert_TaskList",
+
+          );
+        }
         if (selectedFiles?.length > 0 && fileUploadStatus) {
           uploadNonPropertyRoomDocuments(PropertyID, MasterPropertyID, loginPinID, selectedFiles);
         }
@@ -360,19 +375,82 @@ const AddInformation = (props) => {
 
   const TaskListvalidation = (selectedStatus) => {
     setTaskListStatus("");
-    if (task === "CheckIn" && selectedStatus === "CheckIn") {
-      setTaskListStatus("Task already send to task list ");
-    } else if (task === "CheckOut" && selectedStatus === "CheckOut") {
-      setTaskListStatus("Already Checkout ");
-    } else if (task === "CheckOut" && selectedStatus === "Transfer Location") {
+    let tasksInList = [];
+
+    try {
+      const parsed = JSON.parse(task?.tasklistdata || "[]");
+      tasksInList = parsed.map((item) => item.Task);
+    } catch (err) {
+      console.error("Error parsing tasklistdata:", err);
+    }
+
+    setIsSendButtonDisabled(false);
+    console.log(tasksInList, 'hello');
+    if (tasksInList.includes("CheckIn") && selectedStatus === "CheckOut" || tasksInList.includes("CheckIn") && selectedStatus === "Release" || tasksInList.includes("CheckIn") && selectedStatus === "Destroy" || tasksInList.includes("CheckIn") && selectedStatus === "Update" || tasksInList.includes("CheckIn") && selectedStatus === "Transfer Location") {
+      setTaskListStatus("Other task already pending in task list.");
+      setChangesStatus(false);
+      setIsSendButtonDisabled(true);
+    }
+
+    // else if (tasksInList.includes("CheckIn") && selectedStatus === "Release") {
+    //     setTaskListStatus("Please complete CheckIn");
+    //     setChangesStatus(false);
+    //     setIsSendButtonDisabled(true);
+    // }
+    //  else if (tasksInList.includes("CheckIn") && selectedStatus === "Destroy") {
+    //     setTaskListStatus("Please complete CheckIn");
+    //     setChangesStatus(false);
+    //     setIsSendButtonDisabled(true);
+    // }
+    else if (tasksInList.includes("Release") || tasksInList.includes("CheckIn") || tasksInList.includes("Update") || tasksInList.includes("CheckOut") || tasksInList.includes("Destroy") || tasksInList.includes("Transfer Location") && selectedStatus === "Release") {
+      setTaskListStatus("Other task already pending in task list.");
+      setChangesStatus(false);
+      setIsSendButtonDisabled(true);
+    }
+    else if (tasksInList.includes("Release") || tasksInList.includes("CheckIn") || tasksInList.includes("Update") || tasksInList.includes("CheckOut") || tasksInList.includes("Destroy") || tasksInList.includes("Transfer Location") && selectedStatus === "Destroy") {
+      setTaskListStatus("Other task already pending in task list.");
+      setChangesStatus(false);
+      setIsSendButtonDisabled(true);
+    }
+    else if (tasksInList.includes("Release") || tasksInList.includes("CheckIn") || tasksInList.includes("Update") || tasksInList.includes("CheckOut") || tasksInList.includes("Destroy") || tasksInList.includes("Transfer Location") && selectedStatus === "Transfer Location") {
+      setTaskListStatus("Other task already pending in task list.");
+      setChangesStatus(false);
+      setIsSendButtonDisabled(true);
+    }
+    else if (tasksInList.includes("Release") || tasksInList.includes("CheckIn") || tasksInList.includes("Update") || tasksInList.includes("CheckOut") || tasksInList.includes("Destroy") || tasksInList.includes("Transfer Location") && selectedStatus === "Update") {
+      setTaskListStatus("Other task already pending in task list.");
+      setChangesStatus(false);
+      setIsSendButtonDisabled(true);
+    }
+    else if (tasksInList.includes("Release") || tasksInList.includes("CheckIn") || tasksInList.includes("Update") || tasksInList.includes("CheckOut") || tasksInList.includes("Destroy") || tasksInList.includes("Transfer Location") && selectedStatus === "CheckIn") {
+      setTaskListStatus("CheckIn task already sent to task list.");
+      setChangesStatus(false);
+      setIsSendButtonDisabled(true);
+    } else if (tasksInList.includes("Release") || tasksInList.includes("CheckIn") || tasksInList.includes("Update") || tasksInList.includes("CheckOut") || tasksInList.includes("Destroy") || tasksInList.includes("Transfer Location") && selectedStatus === "CheckOut") {
+      setTaskListStatus("Already checked out.");
+      setChangesStatus(false);
+      setIsSendButtonDisabled(true);
+    } else if (tasksInList.includes("CheckOut") && selectedStatus === "Transfer Location") {
+      setChangesStatus(false);
       setTaskListModalStatus(true);
+      setIsSendButtonDisabled(true);
+    } else {
+      setChangesStatus(true);
+      setTaskListStatus("");
+      setIsSendButtonDisabled(false);
     }
   };
+
+
   const ChangeDropDown = (e, name) => {
     !addUpdatePermission && setStatesChangeStatus(true);
     !addUpdatePermission && setChangesStatus(true);
     if ((e && name === "Task") || (e === null && name === "Task")) {
       setTaskToSend(e ? e.label : "");
+      if (e === null) {
+        setTaskListStatus("");
+      }
+
       if (e) TaskListvalidation(e.label);
     } else if (e) {
       setValue({ ...value, [name]: e.value, });
@@ -413,11 +491,12 @@ const AddInformation = (props) => {
       arr = StatusOption.filter((item) => !(item.label === PropertyRoomStatus));
       return arr;
     } else {
-      const status = task;
+      console.log("Task::", task);
+      const status = LastTask;
       arr = [{ value: "1", label: "CheckIn" }];
       if (status) {
         const filteredvalue = StatusOption.filter(
-          (item) => item.label !== task
+          (item) => item.label !== LastTask
         );
         return filteredvalue;
       }
@@ -449,8 +528,15 @@ const AddInformation = (props) => {
   };
 
   const InSertBasicInfo = (id, col1, url, task) => {
+    const documentAccess =
+      selectedOption === "Individual" ? "Individual" : "Group";
     const val = {
-      PropertyID: DecVehId, MasterPropertyID: DecMVehId, OfficerID: value.OfficerID, CreatedByUserFK: loginPinID, Task: task,
+      PropertyID: DecVehId,
+      MasterPropertyID: DecMVehId,
+      OfficerID: value.OfficerID,
+      CreatedByUserFK: loginPinID,
+      Task: task,
+      AssigneeType: documentAccess,
     };
     AddDeleteUpadate(url, val)
       .then((res) => {
@@ -475,7 +561,8 @@ const AddInformation = (props) => {
     fetchPostData("TaskList/GetData_TaskList", val)
       .then((res) => {
         if (res) {
-          setTask(res[res.length - 1]?.Task);
+          setLastTask(res[res.length - 1]?.Task);
+          setTask(res[0]);
         } else {
           setTask("");
         }
@@ -717,6 +804,7 @@ const AddInformation = (props) => {
                           id="IsSendToPropertyRoom"
                           checked={value.IsSendToPropertyRoom}
                           onChange={HandleChanges}
+                           disabled={IsNonPropertyStatus === 'true' || IsNonPropertyStatus === true}
                         />
                         <label
                           className="form-check-label"
@@ -735,6 +823,7 @@ const AddInformation = (props) => {
                           id="IsNonPropertyRoom"
                           checked={value.IsNonPropertyRoom}
                           onChange={HandleChanges}
+                           disabled={SendToPropertyRoomStatus === 'true' || SendToPropertyRoomStatus === true}
                         />
                         <label
                           className="form-check-label"
@@ -950,154 +1039,162 @@ const AddInformation = (props) => {
                         </label>
                       </div>
                     </div>
-                    <>
-                      <div className="col-1 col-md-1 col-lg-1 ">
-                        <label
-                          className="form-check-label mb-0"
-                          htmlFor="sendToPropertyRoom"
-                        >
-                          Assignee
-                        </label>
-                      </div>
-
-                      <div className="col-3 col-md-3 col-lg-5 g-1 row align-items-center">
-                        <>
-                          <div className="col-6 col-md-6 col-lg-3 ">
-                            <div className="form-check ml-2">
-                              <input
-                                type="radio"
-                                name="approverType"
-                                value="Individual"
-                                className="form-check-input"
-                                checked={selectedOption === "Individual"}
-                                onChange={handleRadioChangeArrestForward}
-                              />
-                              <label
-                                className="form-check-label mb-0"
-                                htmlFor="Individual"
-                              >
-                                By User
-                              </label>
-                            </div>
-                          </div>
-                          <div className="col-6 col-md-6 col-lg-3 ">
-                            <div className="form-check ml-2">
-                              <input
-                                type="radio"
-                                name="approverType"
-                                value="Group"
-                                className="form-check-input"
-                                checked={selectedOption === "Group"}
-                                onChange={handleRadioChangeArrestForward}
-                              />
-                              <label
-                                className="form-check-label mb-0"
-                                htmlFor="Group"
-                              >
-                                By Group
-                              </label>
-                            </div>
-                          </div>
-                          <>
-                            {selectedOption === "Individual" ? (
-                              <>
-                                <div className="col-2 col-md-2 col-lg-2">
-                                  <span className="label-name">
-                                    {errors.ApprovingOfficerError !==
-                                      "true" && (
-                                        <p
-                                          style={{
-                                            color: "red",
-                                            fontSize: "13px",
-                                            margin: "0px",
-                                            padding: "0px",
-                                            fontWeight: "400",
-                                          }}
-                                        >
-                                          {errors.ApprovingOfficerError}
-                                        </p>
-                                      )}
-                                  </span>
-                                </div>
-                                <div className="col-4 col-md-12 col-lg-4 dropdown__box mt-0">
-                                  <SelectBox
-                                    className="custom-multiselect"
-                                    classNamePrefix="custom"
-                                    options={agencyOfficerDrpData}
-                                    isMulti
-                                    required
-                                    menuPlacement="top"
-                                    styles={colourStylesUsers}
-                                    // isDisabled={value.Status === "Pending Review" || value.Status === "Approved"}
-                                    closeMenuOnSelect={false}
-                                    // menuPlacement="top"
-                                    // hideSelectedOptions={true}
-                                    onChange={Agencychange}
-                                    // allowSelectAll={true}
-                                    value={multiSelected.optionSelected}
-                                  />
-                                </div>
-                              </>
-                            ) : (
-                              <>
-                                <div className="col-2 col-md-2 col-lg-2 ">
-                                  <span className="label-name">
-                                    {errors.ApprovingOfficerError !==
-                                      "true" && (
-                                        <p
-                                          style={{
-                                            color: "red",
-                                            fontSize: "13px",
-                                            margin: "0px",
-                                            padding: "0px",
-                                            fontWeight: "400",
-                                          }}
-                                        >
-                                          {errors.ApprovingOfficerError}
-                                        </p>
-                                      )}
-                                  </span>
-                                </div>
-                                <div className="col-4 col-md-12 col-lg-4 dropdown__box mt-0">
-                                  <SelectBox
-                                    className="custom-multiselect"
-                                    classNamePrefix="custom"
-                                    options={groupList}
-                                    menuPlacement="top"
-                                    isMulti
-                                    styles={colourStylesUsers}
-                                    closeMenuOnSelect={false}
-                                    hideSelectedOptions={true}
-                                    onChange={Agencychange}
-                                    // allowSelectAll={true}
-                                    value={multiSelected.optionSelected}
-                                  />
-                                </div>
-                              </>
-                            )}
-                          </>
-                        </>
-                      </div>
-                      <div className="col-3 col-md-3 col-lg-4 mt-1 px-1 d-flex justify-content-end">
-                        <button
-                          type="button"
-                          className="btn btn-sm mb-2 mt-1"
-                          style={{ backgroundColor: "#001f3f", color: "#fff" }}
-                          onClick={() => {
-                            InSertBasicInfo(
-                              value?.CollectingOfficer,
-                              "OfficerID",
-                              "TaskList/Insert_TaskList",
-                              taskToSend
-                            );
-                            setTaskToSend("");
-                          }}
-                          disabled={!value.OfficerID}
-                        >
-                          Send
-                        </button>
-                      </div>
-                    </>
+                     {
+                                             value?.IsSendToTaskList ?
+                   
+                                               <>
+                                                 <div className="col-1 col-md-1 col-lg-1 ">
+                                                   <label
+                                                     className="form-check-label mb-0"
+                                                     htmlFor="sendToPropertyRoom"
+                                                   >
+                                                     Assignee
+                                                   </label>
+                                                 </div>
+                   
+                                                 <div className="col-3 col-md-3 col-lg-5 g-1 row align-items-center">
+                                                   <>
+                                                     <div className="col-6 col-md-6 col-lg-3 ">
+                                                       <div className="form-check ml-2">
+                                                         <input
+                                                           type="radio"
+                                                           name="approverType"
+                                                           value="Individual"
+                                                           className="form-check-input"
+                                                           checked={selectedOption === "Individual"}
+                                                           onChange={handleRadioChangeArrestForward}
+                                                         />
+                                                         <label
+                                                           className="form-check-label mb-0"
+                                                           htmlFor="Individual"
+                                                         >
+                                                           By User
+                                                         </label>
+                                                       </div>
+                                                     </div>
+                                                     <div className="col-6 col-md-6 col-lg-3 ">
+                                                       <div className="form-check ml-2">
+                                                         <input
+                                                           type="radio"
+                                                           name="approverType"
+                                                           value="Group"
+                                                           className="form-check-input"
+                                                           checked={selectedOption === "Group"}
+                                                           onChange={handleRadioChangeArrestForward}
+                                                         />
+                                                         <label
+                                                           className="form-check-label mb-0"
+                                                           htmlFor="Group"
+                                                         >
+                                                           By Group
+                                                         </label>
+                                                       </div>
+                                                     </div>
+                                                     <>
+                                                       {selectedOption === "Individual" ? (
+                                                         <>
+                                                           {/* <div className="col-2 col-md-2 col-lg-2">
+                                                         <span className="label-name">
+                                                           {errors.ApprovingOfficerError !==
+                                                             "true" && (
+                                                               <p
+                                                                 style={{
+                                                                   color: "red",
+                                                                   fontSize: "13px",
+                                                                   margin: "0px",
+                                                                   padding: "0px",
+                                                                   fontWeight: "400",
+                                                                 }}
+                                                               >
+                                                                 {errors.ApprovingOfficerError}
+                                                               </p>
+                                                             )}
+                                                         </span>
+                                                       </div> */}
+                                                           <div className="col-4 col-md-12 col-lg-6 dropdown__box mt-0">
+                                                             <SelectBox
+                                                               className="custom-multiselect"
+                                                               classNamePrefix="custom"
+                                                               options={agencyOfficerDrpData}
+                                                               isMulti
+                                                               required
+                                                               menuPlacement="top"
+                                                               styles={colourStylesUsers}
+                                                               // isDisabled={value.Status === "Pending Review" || value.Status === "Approved"}
+                                                               closeMenuOnSelect={false}
+                                                               // menuPlacement="top"
+                                                               // hideSelectedOptions={true}
+                                                               onChange={Agencychange}
+                                                               // allowSelectAll={true}
+                                                               value={multiSelected.optionSelected}
+                                                             />
+                                                           </div>
+                                                         </>
+                                                       ) : (
+                                                         <>
+                                                           {/* <div className="col-2 col-md-2 col-lg-2 ">
+                                                         <span className="label-name">
+                                                           {errors.ApprovingOfficerError !==
+                                                             "true" && (
+                                                               <p
+                                                                 style={{
+                                                                   color: "red",
+                                                                   fontSize: "13px",
+                                                                   margin: "0px",
+                                                                   padding: "0px",
+                                                                   fontWeight: "400",
+                                                                 }}
+                                                               >
+                                                                 {errors.ApprovingOfficerError}
+                                                               </p>
+                                                             )}
+                                                         </span>
+                                                       </div> */}
+                                                           <div className="col-4 col-md-12 col-lg-6 dropdown__box mt-0">
+                                                             <SelectBox
+                                                               className="custom-multiselect"
+                                                               classNamePrefix="custom"
+                                                               options={groupList}
+                                                               menuPlacement="top"
+                                                               isMulti
+                                                               styles={colourStylesUsers}
+                                                               closeMenuOnSelect={false}
+                                                               hideSelectedOptions={true}
+                                                               onChange={Agencychange}
+                                                               // allowSelectAll={true}
+                                                               value={multiSelected.optionSelected}
+                                                             />
+                                                           </div>
+                                                         </>
+                                                       )}
+                                                     </>
+                                                   </>
+                                                 </div>
+                                                 <div className="col-3 col-md-3 col-lg-4 mt-1 px-1 d-flex justify-content-end">
+                                                   <button
+                                                     type="button"
+                                                     className="btn btn-sm mb-2 mt-1"
+                                                     style={{
+                                                       backgroundColor: "#001f3f",
+                                                       color: "#fff",
+                                                     }}
+                                                     onClick={() => {
+                                                       // InSertBasicInfo(
+                                                       //   value?.CollectingOfficer,
+                                                       //   "OfficerID",
+                                                       //   "TaskList/Insert_TaskList",
+                                                       //   taskToSend
+                                                       // );
+                                                       // setTaskToSend("");
+                                                       check_Validation_Error();
+                                                     }}
+                                                     disabled={!value.OfficerID || IsNonPropertyStatus === true}
+                                                   >
+                                                     Send
+                                                   </button>
+                                                 </div>
+                                               </> : <></>
+                                           }
 
                     {value?.IsNonPropertyRoom && !value?.IsSendToTaskList && (
                       <>

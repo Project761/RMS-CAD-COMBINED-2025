@@ -26,7 +26,7 @@ const Home = (props) => {
 
     const { setStatus, DecPropID, DecMPropID, SelectedCategory, CallStatus, ProType, ProNumber, ProTransfer, CheckboxStatus } = props
 
-    const { GetDataTimeZone, datezone, } = useContext(AgencyContext);
+    const { GetDataTimeZone, datezone, setChangesStatus } = useContext(AgencyContext);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -76,6 +76,7 @@ const Home = (props) => {
     const [selectedStatus, setSelectedStatus] = useState('');
     // functionality states
     const [propertyNumber, setPropertyNumber] = useState('');
+    const [vehicleNumber, setvehicleNumber] = useState('');
     const [rowClicked, setRowClicked] = useState(false);
     const [nameModalStatus, setNameModalStatus] = useState(false);
     const [mainIncidentID, setMainIncidentID] = useState('');
@@ -118,6 +119,10 @@ const Home = (props) => {
     const [transferdate, settransferdate] = useState();
     const [storagetype, setstoragetype] = useState();
     const [radioButtonStatus, setradioButtonStatus] = useState(false);
+    const [LastTask, setLastTask] = useState("");
+    const [isSendButtonDisabled, setIsSendButtonDisabled] = useState(false);
+    const [IsNonPropertyStatus, setIsNonPropertyStatus] = useState(false);
+    const [SendToPropertyRoomStatus, setSendToPropertyRoomStatus] = useState(false);
 
 
     const AddType = [
@@ -125,6 +130,7 @@ const Home = (props) => {
         { value: 'StorageLocationID', label: 'Location' },
         { value: 'IncidentNumber', label: 'Incident Number' },
         { value: 'PropertyTypeID', label: 'Property Type' },
+        { value: 'VehicleNumber', label: 'Vehicle Number' },
     ]
     const AddTransfer = [
         { value: 1, label: 'CheckIn' },
@@ -160,8 +166,11 @@ const Home = (props) => {
             }
             // setValue({ ...value, 'PropertyTypeID': parseInt(ProNumber), 'ActivityType': ProTransfer })
             settransfer(ProTransfer); setPropertyNumber(ProNumber); GetDataTimeZone(localStoreData?.AgencyID);
+            setvehicleNumber();
         }
     }, [localStoreData, ProType, ProNumber, CallStatus, DecPropID, SelectedCategory, propertyTypeData, ProTransfer]);
+
+    console.log(selectedOptions)
 
     useEffect(() => {
         dispatch(get_Masters_Name_Drp_Data(possessionID, 0, 0, IncID));
@@ -245,6 +254,13 @@ const Home = (props) => {
         })
     };
 
+    const handleInputChangeVehicle = (e) => {
+        setvehicleNumber(e.target.value);
+        setsearcherror(prevValues => {
+            return { ...prevValues, 'SearchError': '', }
+        })
+    };
+
     const check_Validation_Error = (e) => {
 
         const ReasonError = RequiredFieldIncident(value.ActivityReasonID);
@@ -310,7 +326,7 @@ const Home = (props) => {
 
     const check_Validation_Errorr = (e) => {
         sessionStorage.removeItem('selectedRows')
-        const SearchError = RequiredFieldIncident(propertyNumber);
+        const SearchError = RequiredFieldIncident(propertyNumber || vehicleNumber);
         setsearcherror(prevValues => {
             return {
                 ...prevValues,
@@ -410,7 +426,7 @@ const Home = (props) => {
     }, [chainreport]);
 
     const SearchButtons = (ProType, ProNumber, loginAgencyID) => {
-        const val = { 'AgencyID': loginAgencyID, [ProType]: ProNumber, 'ActivityType': transfer, };
+        const val = { 'AgencyID': loginAgencyID, [ProType]: ProNumber || vehicleNumber, 'ActivityType': transfer, };
         AddDeleteUpadate('Propertyroom/SearchPropertyRoom', val).then((res) => {
             const parsedData = JSON.parse(res.data);
             setSearchData(parsedData.Table);
@@ -428,7 +444,7 @@ const Home = (props) => {
     };
 
     const SearchButton = () => {
-        const val = { 'AgencyID': loginAgencyID, [selectedOptions.value]: propertyNumber, 'ActivityType': ((transfer === "null" || transfer === null) ? "" : transfer), ReportedDtTm: value?.ReportedDate, ReportedDtTmTo: value?.ReportedDateTo };
+        const val = { 'AgencyID': loginAgencyID, [selectedOptions.value]: propertyNumber || vehicleNumber, 'ActivityType': ((transfer === "null" || transfer === null) ? "" : transfer), ReportedDtTm: value?.ReportedDate, ReportedDtTmTo: value?.ReportedDateTo };
         AddDeleteUpadate('Propertyroom/SearchPropertyRoom', val).then((res) => {
             const parsedData = JSON.parse(res.data);
             setSearchData(parsedData.Table);
@@ -522,10 +538,11 @@ const Home = (props) => {
 
 
     const Get_SendTask_Data = (PropertyID, MasterPropertyID) => {
-        const val = { "PropertyID": PropertyID, "MasterPropertyID": MasterPropertyID }
+        const val = { "PropertyID": PropertyID.toString(), "MasterPropertyID": MasterPropertyID.toString() }
         fetchPostData('TaskList/GetData_TaskList', val).then((res) => {
             if (res) {
-                setTask(res[res.length - 1]?.Task)
+                setLastTask(res[res.length - 1]?.Task);
+                setTask(res[0]);
             } else {
                 setTask("");
             }
@@ -536,9 +553,12 @@ const Home = (props) => {
     }
 
     const InSertBasicInfo = (id, col1, url, task) => {
+        const documentAccess =
+            selectedOptiontask === "Individual" ? "Individual" : "Group";
         const val = {
             "PropertyID": selectedRows[0].PropertyID, "MasterPropertyID": selectedRows[0].MasterPropertyID,
-            'OfficerID': collectingOfficer, 'CreatedByUserFK': loginPinID, 'Task': task
+            'OfficerID': value?.OfficerID, 'CreatedByUserFK': loginPinID, 'Task': task,
+            AssigneeType: documentAccess,
         }
         AddDeleteUpadate(url, val).then((res) => {
             if (res) {
@@ -550,7 +570,7 @@ const Home = (props) => {
                 //   col1 === 'PropertyID' && get_Offender_Property_Data(); get_Offender_Property_Drp(incidentID, nameID);
                 //   col1 === 'InjuryID' && get_InjuryType_Data();
                 //   col1 === 'AssaultID' && get_Offender_Assault_Data(); get_Offender_Assault_Drp(incidentID, nameID);
-                Get_SendTask_Data(DecPropID, DecMPropID)
+                Get_SendTask_Data(propertyId, masterpropertyId)
                 //    Get_SendTask_DrpVal(DecPropID, DecMPropID)
             } else {
                 console.log("Somthing Wrong");
@@ -736,26 +756,103 @@ const Home = (props) => {
     };
 
     const TaskListvalidation = (selectedStatus) => {
-        setTaskListStatus("")
-        if (task === "CheckIn" && selectedStatus === "CheckIn") {
-            setTaskListStatus("Task already send to task list ")
+        setTaskListStatus("");
+        let tasksInList = [];
 
-        } else if (task === "CheckOut" && selectedStatus === "CheckOut") {
-            setTaskListStatus("Already Checkout ")
-
-        } else if (task === "CheckOut" && selectedStatus === "TransferLocation") {
-            setTaskListModalStatus(true)
+        try {
+            const parsed = JSON.parse(task?.tasklistdata || "[]");
+            tasksInList = parsed.map((item) => item.Task);
+        } catch (err) {
+            console.error("Error parsing tasklistdata:", err);
         }
-    }
+
+        setIsSendButtonDisabled(false);
+        console.log(tasksInList, 'hello');
+        if (tasksInList.includes("CheckIn") && selectedStatus === "CheckOut" || tasksInList.includes("CheckIn") && selectedStatus === "Release" || tasksInList.includes("CheckIn") && selectedStatus === "Destroy" || tasksInList.includes("CheckIn") && selectedStatus === "Update" || tasksInList.includes("CheckIn") && selectedStatus === "Transfer Location") {
+            setTaskListStatus("Other task already pending in task list.");
+            setChangesStatus(false);
+            setIsSendButtonDisabled(true);
+        }
+
+        // else if (tasksInList.includes("CheckIn") && selectedStatus === "Release") {
+        //     setTaskListStatus("Please complete CheckIn");
+        //     setChangesStatus(false);
+        //     setIsSendButtonDisabled(true);
+        // }
+        //  else if (tasksInList.includes("CheckIn") && selectedStatus === "Destroy") {
+        //     setTaskListStatus("Please complete CheckIn");
+        //     setChangesStatus(false);
+        //     setIsSendButtonDisabled(true);
+        // }
+        else if (tasksInList.includes("Release") || tasksInList.includes("CheckIn") || tasksInList.includes("Update") || tasksInList.includes("CheckOut") || tasksInList.includes("Destroy") || tasksInList.includes("Transfer Location") && selectedStatus === "Release") {
+            setTaskListStatus("Other task already pending in task list.");
+            setChangesStatus(false);
+            setIsSendButtonDisabled(true);
+        }
+        else if (tasksInList.includes("Release") || tasksInList.includes("CheckIn") || tasksInList.includes("Update") || tasksInList.includes("CheckOut") || tasksInList.includes("Destroy") || tasksInList.includes("Transfer Location") && selectedStatus === "Destroy") {
+            setTaskListStatus("Other task already pending in task list.");
+            setChangesStatus(false);
+            setIsSendButtonDisabled(true);
+        }
+        else if (tasksInList.includes("Release") || tasksInList.includes("CheckIn") || tasksInList.includes("Update") || tasksInList.includes("CheckOut") || tasksInList.includes("Destroy") || tasksInList.includes("Transfer Location") && selectedStatus === "Transfer Location") {
+            setTaskListStatus("Other task already pending in task list.");
+            setChangesStatus(false);
+            setIsSendButtonDisabled(true);
+        }
+        else if (tasksInList.includes("Release") || tasksInList.includes("CheckIn") || tasksInList.includes("Update") || tasksInList.includes("CheckOut") || tasksInList.includes("Destroy") || tasksInList.includes("Transfer Location") && selectedStatus === "Update") {
+            setTaskListStatus("Other task already pending in task list.");
+            setChangesStatus(false);
+            setIsSendButtonDisabled(true);
+        }
+        else if (tasksInList.includes("Release") || tasksInList.includes("CheckIn") || tasksInList.includes("Update") || tasksInList.includes("CheckOut") || tasksInList.includes("Destroy") || tasksInList.includes("Transfer Location") && selectedStatus === "CheckIn") {
+            setTaskListStatus("CheckIn task already sent to task list.");
+            setChangesStatus(false);
+            setIsSendButtonDisabled(true);
+        } else if (tasksInList.includes("Release") || tasksInList.includes("CheckIn") || tasksInList.includes("Update") || tasksInList.includes("CheckOut") || tasksInList.includes("Destroy") || tasksInList.includes("Transfer Location") && selectedStatus === "CheckOut") {
+            setTaskListStatus("Already checked out.");
+            setChangesStatus(false);
+            setIsSendButtonDisabled(true);
+        } else if (tasksInList.includes("CheckOut") && selectedStatus === "Transfer Location") {
+            setChangesStatus(false);
+            setTaskListModalStatus(true);
+            setIsSendButtonDisabled(true);
+        } else {
+            setChangesStatus(true);
+            setTaskListStatus("");
+            setIsSendButtonDisabled(false);
+        }
+    };
+
+
 
     const HandleStatusOption = () => {
-        const status = task;
-        const arr = [{ value: "1", label: "CheckIn" }]
-        if (status) {
-            return StatusOption
+        let arr = [];
+        if (LastTask) {
+            arr = StatusOption.filter((item) => !(item.label === LastTask));
+            return arr;
+        } else {
+            console.log("Task::", task , selectedStatus , LastTask);
+            const status = LastTask;
+            arr = [{ value: "1", label: "CheckIn" }];
+            if (LastTask) {
+                const filteredvalue = StatusOption.filter(
+                    (item) => item.label !== LastTask
+                );
+                console.log(filteredvalue);
+                return filteredvalue;
+                // return StatusOption;
+            }
+            else if (selectedStatus && (LastTask === null || LastTask === undefined)) {
+
+                const filteredvalue = StatusOption.filter(
+                    (item) => item.label !== selectedStatus
+                );
+                console.log(filteredvalue);
+                return filteredvalue;
+            }
+            return arr;
         }
-        return arr;
-    }
+    };
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -775,6 +872,7 @@ const Home = (props) => {
         navigate(`/Property-room?&ProId=${0}&MProId=${0}&ProRomId=${0}&ProRoomStatus=${true}&selectedCategory=${''}&ProType=${''}&ProNumber=${''}&ProTransfer=${''}&CallStatus=${false}`);
         setPropertyId(''); setClickedRow(null);
         setPropertyNumber('');
+        setvehicleNumber('');
         setSelectedRows([]);
         setSearchStoragePath(''); setSelectedOptions(AddType[0]);
         setPossessionID('');
@@ -820,6 +918,7 @@ const Home = (props) => {
             }
         }
         if (tempSelectedRows?.length > 0) {
+
             const { Status, Description, PropertyID, PropertyCategoryCode } = tempSelectedRows[0];
             const propertyIds = tempSelectedRows.map(row => row.PropertyID);
             const masterpropertyIds = tempSelectedRows.map(row => row.MasterPropertyID);
@@ -827,6 +926,8 @@ const Home = (props) => {
             setSelectedStatus(Status); setRowClicked(true);
             sessionStorage.setItem('selectedRows', JSON.stringify(tempSelectedRows));
             setPropertyId(propertyIds); setMasterPropertyId(masterpropertyIds); setStatus(!!Status);
+            console.log(propertyIds, propertyIds)
+            Get_SendTask_Data(propertyIds, propertyIds);
         } else {
             setRowClicked(false); setStatus(false);
         }
@@ -1154,7 +1255,7 @@ const Home = (props) => {
     }
 
 
-   
+
 
     return (
         <>
@@ -1200,6 +1301,20 @@ const Home = (props) => {
                                     <div className="col-4 col-md-3 col-lg-2">
                                         <div className="text-field mt-1">
                                             <input type="text" className='requiredColor' maxLength={12} value={propertyNumber} onChange={handleInputChange} />
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                            {selectedOptions?.value === 'VehicleNumber' && (
+                                <>
+                                    <div className="col-3 col-md-2 col-lg-2 mt-2 px-1">
+                                        <label htmlFor="" className='new-label '>Vehicle No.{searcherror.SearchError !== 'true' ? (
+                                            <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{searcherror.SearchError}</p>
+                                        ) : null}</label>
+                                    </div>
+                                    <div className="col-4 col-md-3 col-lg-2">
+                                        <div className="text-field mt-1">
+                                            <input type="text" className='requiredColor' maxLength={12} value={vehicleNumber} onChange={handleInputChangeVehicle} />
                                         </div>
                                     </div>
                                 </>
@@ -1507,21 +1622,7 @@ const Home = (props) => {
                                             />
                                         </div>
                                     </div>
-                                    <div className='col-9 col-md-9 col-lg-2 text-center ' >
-                                        {taskListStatus && (
-                                            <p
-                                                style={{
-                                                    color: '#001f3f',
-                                                    fontSize: '16px',
-                                                    fontWeight: 500,
-                                                    margin: 0,
-                                                    whiteSpace: 'nowrap'
-                                                }}
-                                            >
-                                                {taskListStatus}
-                                            </p>
-                                        )}
-                                    </div>
+
 
                                     <>
                                         <div className="col-1 col-md-1 col-lg-1 ">
@@ -1689,6 +1790,23 @@ const Home = (props) => {
                                     </div> */}
 
 
+                                </div>
+
+                                <div className='row ' >
+                                    <div className='col-lg-1'></div>
+                                    {taskListStatus && (
+                                        <p
+                                            style={{
+                                                color: '#001f3f',
+                                                fontSize: '16px',
+                                                fontWeight: 500,
+                                                margin: 0,
+                                                whiteSpace: 'nowrap'
+                                            }}
+                                        >
+                                            {taskListStatus}
+                                        </p>
+                                    )}
                                 </div>
                             </fieldset>
 
@@ -3082,8 +3200,8 @@ const Home = (props) => {
                         <label htmlFor="" className='new-label px-0 mb-0'>Receipient Location</label>
                     </div>
                     <div className="col-12 col-md-12 col-lg-2    ">
-                        <input type="text" onChange={(e) => { handleChange(e) }} name="locationsdgf" style={{ position: 'relative' }}  value={value.locationsdgf}  className={`form-control`}
-                            />
+                        <input type="text" onChange={(e) => { handleChange(e) }} name="locationsdgf" style={{ position: 'relative' }} value={value.locationsdgf} className={`form-control`}
+                        />
 
                         {/* {value.location ? (
                             <span style={{
