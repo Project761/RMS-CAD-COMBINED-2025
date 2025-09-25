@@ -45,7 +45,7 @@ const StatusBar = forwardRef((props, ref) => {
       icon: !NameRelationshipError ? faTimes : faCheck,
     },
     {
-      label: "Narrative",
+      label: "Report",
       value: loading ? "Loading..." : narrativeApprovedStatus ? "Approved" : "Not Approved",
       border: narrativeApprovedStatus ? "left-border-green" : "left-border-yellow",
       color: "text-grays",
@@ -81,10 +81,20 @@ const StatusBar = forwardRef((props, ref) => {
         return statusData.filter(item => item.label === "Offense");
       case "/Name-Home":
         return statusData.filter(item => item.label === "Name" || item.label === "OV Links");
+      case "/Offvic-Home":
+        return statusData.filter(item => item.label === "Name" || item.label === "OV Links");
       case "/Prop-Home":
         return statusData.filter(item => item.label === "Property");
       case "/Vehicle-Home":
         return statusData.filter(item => item.label === "Property");
+      case "/Inc-Report":
+        return statusData.filter(item => item.label === "Report");
+      case "/Arrest-Home":
+      case "/Document-Home":
+      case "/NIBRSAudit-Home":
+      case "/CloseHistory-Home":
+      case "/NLETShistory-Home":
+        return []
       default:
         return statusData;
     }
