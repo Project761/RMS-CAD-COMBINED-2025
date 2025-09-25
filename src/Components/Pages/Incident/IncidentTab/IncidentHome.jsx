@@ -251,6 +251,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
       await fetchPostData("IncidentStatus/GetDataDropDown_IncidentStatus", { 'AgencyID': AgencyID }).then((res) => {
         // console.log("🚀 ~ getIncidentStatus ~ res:", res)
         if (res?.length > 0) {
+          console.log(res)
           setIncidentStatusDrpDwn(threeColArray(res, "IncidentStatusID", "Description", "IncidentStatusCode"));
         } else {
           setIncidentStatusDrpDwn([]);
@@ -294,7 +295,11 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
     const val = { IncidentID: incidentID };
     fetchPostData("Incident/GetSingleData_Incident", val).then((res) => {
       if (res?.length > 0) {
-        setEditval(res); setLoder(true); setCaseStatus(res[0]?.NIBRSStatus); setReportedDtTmInc(getShowingDateText(res[0]?.ReportedDate));
+        setEditval(res); setLoder(true);
+        const statusMap = { R: "ReOpen", C: "Closed", H: "Hold", O: "Open", };
+        const statusCode = res[0]?.CaseStatusCode;
+        setCaseStatus(statusMap[statusCode] || "Open");
+        setReportedDtTmInc(getShowingDateText(res[0]?.ReportedDate));
         setoffenseStatus(res[0]?.OffenceCount === "0" || res[0]?.OffenceCount === 0 ? true : false);
       } else {
         setCaseStatus([]);
@@ -532,7 +537,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
     setErrors({
       ...errors, OccuredError: "", CrimeLocationError: "", ExceptionalClearaceError: "", NIBRSclearancedateError: "", OffenceTypeError: "", CargoTheftError: "", PrimaryOfficerIdError: "", CaseStatusError: "",
     });
-    setExClsDateCode(""); setCaseStatus('open')
+    setExClsDateCode(""); setCaseStatus('Open')
   };
 
   const setToResetData = () => {
