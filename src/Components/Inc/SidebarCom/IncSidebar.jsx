@@ -525,28 +525,36 @@ const IncSidebar = () => {
                             </div>
                         </li>
 
-                        <li className='position-relative'>
-                            <hr className='incSiderbar_Hr mt-1 w-100' />
-                            <StatusBar
-                                ref={statusRef}
-                                loading={nibrsSideBarLoading}
+                        {
+                            IncSta === true || IncSta === "true" ?
+                                <>
+                                    <li className='position-relative'>
+                                        <hr className='incSiderbar_Hr mt-1 w-100' />
+                                        <StatusBar
+                                            ref={statusRef}
+                                            loading={nibrsSideBarLoading}
 
-                                incidentErrorStatus={incidentErrorStatus}
+                                            incidentErrorStatus={incidentErrorStatus}
 
-                                offenseCount={offenseCount}
-                                offenseErrorStatus={offenseErrorStatus}
+                                            offenseCount={offenseCount}
+                                            offenseErrorStatus={offenseErrorStatus}
 
-                                NameCount={NameCount}
-                                nameErrorStatus={nameErrorStatus}
+                                            NameCount={NameCount}
+                                            nameErrorStatus={nameErrorStatus}
 
-                                NameRelationshipError={NameRelationshipError}
-                                narrativeApprovedStatus={narrativeApprovedStatus}
+                                            NameRelationshipError={NameRelationshipError}
+                                            narrativeApprovedStatus={narrativeApprovedStatus}
 
-                                PropertyCount={PropertyCount}
-                                PropErrorStatus={PropErrorStatus}
+                                            PropertyCount={PropertyCount}
+                                            PropErrorStatus={PropErrorStatus}
 
-                            />
-                        </li>
+                                        />
+                                    </li>
+
+                                </>
+                                :
+                                <></>
+                        }
 
 
                         {/* <div className="sidebar-footer">
