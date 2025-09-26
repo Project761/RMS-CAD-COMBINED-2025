@@ -2627,11 +2627,11 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                         isDisabled={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? true : false}
                       />
                     </div>
-                    <span className='dash-name' >
+                    {/* <span className='dash-name' >
                       {errors.DLError !== 'true' ? (
                         <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.DLError}</p>
                       ) : null}
-                    </span>
+                    </span> */}
                     <div className="col-3 col-md-5 col-lg-4 text-field mt-0" >
                       <input
                         type="text"
@@ -2645,6 +2645,11 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                         required
                         autoComplete='off'
                       />
+                      {errors.DLError && errors.DLError !== 'true' && (
+                        <div style={{ fontSize: '11px', color: 'red', marginTop: '2px' }}>
+                          {errors.DLError}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="col-3 col-md-6 col-lg-4 d-flex align-items-center " >
