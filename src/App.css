@@ -2575,3 +2575,10 @@ input.readonlyColor_MasterInput {
   top: -118% !important;
   transform: none !important;
 }
+
+
+.scrollableTableBody .rdt_TableBody {
+  max-height: 94px;
+  min-height: 92px;
+
+}

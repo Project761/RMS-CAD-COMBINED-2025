@@ -91,9 +91,9 @@ const Tab = () => {
     const query = useQuery();
     var IncID = query?.get("IncId");
     var IncNo = query?.get("IncNo");
+    var IncSta = query?.get("IncSta");
     var documentID = query?.get("documentId");
 
-    var IncSta = query?.get("IncSta");
     var NameID = query?.get("NameID");
     var MasterNameID = query?.get("MasterNameID");
     var NameStatus = query?.get('NameStatus');
