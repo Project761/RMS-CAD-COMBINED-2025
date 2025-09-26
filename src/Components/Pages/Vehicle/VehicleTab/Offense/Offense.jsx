@@ -24,7 +24,8 @@ const Offense = (props) => {
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
   const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
   const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
-
+  const selectBoxRef = useRef(null);
+  const inputRef = useRef(null);
   const useQuery = () => {
     const params = new URLSearchParams(useLocation().search);
     return {
@@ -269,6 +270,22 @@ const Offense = (props) => {
     return check_OffenceCode_NoneUnknown(Code, propLossCode, AttmComp, categoryCode, nibrsCodeArr) ? { backgroundColor: "rgb(255 202 194)" } : {};
   };
 
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        selectBoxRef.current &&
+        !selectBoxRef.current.contains(event.target) &&
+        !inputRef.current.contains(event.target)
+      ) {
+        document.getElementById('customSelectBox').style.display = 'none';
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   return (
     <>
       <VehicleListing {...{ ListData }} />
@@ -282,6 +299,7 @@ const Offense = (props) => {
           </div>
           <div className="col-6 col-md-6 col-lg-4 mt-2 text-field"  >
             <input
+              ref={inputRef} // 👈 Input ref
               type="text"
               name='NoofHoles'
               id='NoofHoles'
@@ -321,7 +339,7 @@ const Offense = (props) => {
                   null
                 )}
             </span>
-            <div id='customSelectBox' className="col-12 col-md-12 col-lg-12 modal-table" style={{ display: 'none', width: '700px' }}>
+            <div id='customSelectBox' ref={selectBoxRef} className="col-12 col-md-12 col-lg-12 modal-table" style={{ display: 'none', width: '700px' }}>
               <DataTable
                 dense
                 fixedHeader
@@ -349,7 +367,7 @@ const Offense = (props) => {
             }
           </div>
         </div>
-      </div>
+      </div >
       <div className="col-12" >
         <div className="new-offensetable modal-table" >
           {
