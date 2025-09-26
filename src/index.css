@@ -3275,3 +3275,10 @@ div[data-testid="table-header"],
   border-left: 10px solid transparent;
   /* z-index: 0; */
 }
+
+
+/* .scrollableTableBody .rdt_TableBody {
+  max-height: 94px;
+  min-height: 92px;
+
+} */
