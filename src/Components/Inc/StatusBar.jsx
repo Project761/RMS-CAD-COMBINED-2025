@@ -132,7 +132,7 @@ const StatusBar = forwardRef((props, ref) => {
       backgroundColor: "#fff",
       boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
       // border: "1px solid #ccc",
-      borderRadius: "6px",
+      borderRadius: "6px", 
       // width: "81.22%",
     }}>
       {getFilteredStatusData(pathname).map((item, index) => (
