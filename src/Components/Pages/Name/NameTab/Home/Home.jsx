@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import Select, { components } from "react-select";
 import DatePicker from "react-datepicker";
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Decrypt_Id_Name, getShowingDateText, base64ToString, stringToBase64, getShowingWithOutTime, tableCustomStyles, Aes256Encrypt, Requiredcolour, colourStylesRole, customStylesWithOutColor, LockFildscolour } from '../../../../Common/Utility';
+import { Decrypt_Id_Name, getShowingDateText, base64ToString, stringToBase64, getShowingWithOutTime, tableCustomStyles, Aes256Encrypt, Requiredcolour, colourStylesRole, customStylesWithOutColor, LockFildscolour, tableCustomStyle } from '../../../../Common/Utility';
 import { AddDeleteUpadate, AddDelete_Img, fetchPostData } from '../../../../hooks/Api';
 import { Comman_changeArrayFormat, Comman_changeArrayFormatReasonCode, Comman_changeArrayFormat_With_Name, changeArray, fourColArrayReasonCode, sixColArray, threeColArray } from '../../../../Common/ChangeArrayFormat';
 import { toastifyError, toastifySuccess } from '../../../../Common/AlertMsg';
@@ -2108,11 +2108,11 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
               {
                 (!value.IsUnknown && ((masterNameID && MstPage === "MST-Name-Dash") || nameID)) ? (
                   // <div className="col-lg-5">
-                    <AlertTable
-                      availableAlert={availableAlert}
-                      masterPropertyID={masterNameID ? masterNameID : ''}
-                      ProSta={NameStatus}
-                    />
+                  <AlertTable
+                    availableAlert={availableAlert}
+                    masterPropertyID={masterNameID ? masterNameID : ''}
+                    ProSta={NameStatus}
+                  />
                   // </div>
                 ) : null
               }
@@ -3101,7 +3101,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
             paginationRowsPerPageOptions={[10, 15, 20, 50]}
 
             fixedHeaderScrollHeight='150px'
-            customStyles={tableCustomStyles}
+            customStyles={tableCustomStyle}
             conditionalRowStyles={conditionalRowStyles}
             onRowClicked={(row) => {
               set_Edit_Value(row);

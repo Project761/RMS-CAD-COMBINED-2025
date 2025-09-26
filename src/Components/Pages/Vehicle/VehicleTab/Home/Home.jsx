@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import Select from "react-select";
 import DatePicker from "react-datepicker";
-import { Aes256Encrypt, Decrypt_Id_Name, Encrypted_Id_Name, LockFildscolour, Requiredcolour, base64ToString, filterPassedDateTime, filterPassedTime, filterPassedTimeZone, filterPassedTimeZonesProperty, filterPastDate, getMonthWithOutDateTime, getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime, getYearWithOutDateTime, stringToBase64, tableCustomStyles } from '../../../../Common/Utility';
+import { Aes256Encrypt, Decrypt_Id_Name, Encrypted_Id_Name, LockFildscolour, Requiredcolour, base64ToString, filterPassedDateTime, filterPassedTime, filterPassedTimeZone, filterPassedTimeZonesProperty, filterPastDate, getMonthWithOutDateTime, getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime, getYearWithOutDateTime, stringToBase64, tableCustomStyle, tableCustomStyles } from '../../../../Common/Utility';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AddDeleteUpadate, fetchPostData, fetchData, AddDelete_Img, fetchPostDataNibrs } from '../../../../hooks/Api';
 import { Comman_changeArrayFormat, threeColArray } from '../../../../Common/ChangeArrayFormat';
@@ -1124,6 +1124,8 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
         return !isNaN(d.getTime()) ? d : null;
     };
 
+
+
     return (
         <>
             <div className="col-12 col-md-12 col-lg-12 p-0">
@@ -1950,22 +1952,17 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                 fixedHeaderScrollHeight="150px"
                                 fixedHeader
                                 persistTableHead={true}
-                                customStyles={tableCustomStyles}
+                                customStyles={tableCustomStyle}
                                 onRowClicked={(row) => {
                                     setClickedRow(row);
                                     setEditVal(row);
                                 }}
                                 pagination
                                 paginationRowsPerPageOptions={[5, 10, 15, 20]}
-                                paginationPerPage={'5'}
+                                paginationPerPage={5}
                                 conditionalRowStyles={conditionalRowStyles}
                                 showHeader={true}
-                                // pagination
-                                // paginationPerPage={'100'}
-                                // paginationRowsPerPageOptions={[100, 150, 200, 500]}
-                                // showPaginationBottom={100}
 
-                                // fixedHeaderScrollHeight='80px'
                                 noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : 'There are no data to display'}
                             />
                         }

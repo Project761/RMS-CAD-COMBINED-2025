@@ -416,6 +416,8 @@ export const customStylesWithOutColor = {
 //   }),
 // };
 
+
+//---------------old------------------------
 export const tableCustomStyles = {
   headRow: {
     style: {
@@ -426,6 +428,19 @@ export const tableCustomStyles = {
     },
   },
 }
+
+//-------------------new Update 26-09-2026 Use In Name/Property/Vehicle--------------------------//
+export const tableCustomStyle = {
+  headRow: {
+    style: { color: '#fff', backgroundColor: '#001f3f', borderBottomColor: '#FFFFFF', outline: '1px solid #FFFFFF', },
+  },
+  rows: { style: { minHeight: '48px', borderBottom: '1px solid #ccc', }, },
+  cells: {
+    style: {
+      paddingTop: '10px', paddingBottom: '10px', paddingLeft: '8px', paddingRight: '8px',
+    },
+  },
+};
 
 export const subTableCustomStyles = {
   headRow: {
