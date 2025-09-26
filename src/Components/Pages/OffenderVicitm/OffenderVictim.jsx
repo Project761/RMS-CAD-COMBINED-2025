@@ -520,7 +520,9 @@ const OffenderVictim = () => {
                 const parsedData = JSON.parse(data.data);
                 const message = parsedData.Table[0].Message;
                 if (message === 'Victim-Offender Relationship Already Present') {
-                    toastifyError(message)
+                    toastifyError(message); setErrors({
+                        ...errors, 'RelationshipTypeIDErrors': '', ' VictimNameIDErrors': '', 'RelationshipIDErrors': '', 'OffenseIDIDErrors': ''
+                    });
                 } else {
                     toastifySuccess(message);
                     get_Data_VictimOffenderName(IncID); setStatus(false);

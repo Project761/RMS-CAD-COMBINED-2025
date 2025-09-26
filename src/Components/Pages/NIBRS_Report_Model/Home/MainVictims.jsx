@@ -2630,13 +2630,16 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
             if (value1?.RelationshipTypeID && value1?.OffenderNameID) {
                 AddDeleteUpadate('NameRelationship/Insert_NameRelationship', value1).then((data) => {
                     if (data.success) {
-
                         const parsedData = JSON.parse(data.data);
                         const message = parsedData.Table[0]?.Message;
-                        toastifySuccess(message);
-                        Get_Relationship_Data(DeNameID); setStatus(false); resetHooks(); get_NameVictim_Count(victimID)
-                        get_Name_Count(DeNameID);
-                        setStatesChangeStatus(false); setChangesStatus(false)
+                        if (message === 'Victim-Offender Relationship Already Present') {
+                            toastifyError(message); setErrors1({ ...errors1, ['RelationshipTypeIDErrors']: '' });
+                        } else {
+                            toastifySuccess(message);
+                            Get_Relationship_Data(DeNameID); setStatus(false); resetHooks(); get_NameVictim_Count(victimID)
+                            get_Name_Count(DeNameID); setErrors1({ ...errors1, ['RelationshipTypeIDErrors']: '' });
+                            setStatesChangeStatus(false); setChangesStatus(false)
+                        }
                     } else {
                         toastifyError(data.Message)
                     }
@@ -2666,7 +2669,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
                         const parsedData = JSON.parse(data.data);
                         const message = parsedData.Table[0].Message;
                         toastifySuccess(message);
-
                         Get_Relationship_Data(DeNameID); setStatus(true);
                         setStatesChangeStatus(false); setChangesStatus(false)
                         get_Name_Count(DeNameID);
