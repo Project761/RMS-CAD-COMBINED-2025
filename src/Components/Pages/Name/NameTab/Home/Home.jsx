@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import Select, { components } from "react-select";
 import DatePicker from "react-datepicker";
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Decrypt_Id_Name, getShowingDateText, base64ToString, stringToBase64, getShowingWithOutTime, tableCustomStyles, Aes256Encrypt, Requiredcolour, colourStylesRole, customStylesWithOutColor, LockFildscolour } from '../../../../Common/Utility';
+import { Decrypt_Id_Name, getShowingDateText, base64ToString, stringToBase64, getShowingWithOutTime, Aes256Encrypt, Requiredcolour, colourStylesRole, customStylesWithOutColor, LockFildscolour, tableCustomStyles, } from '../../../../Common/Utility';
 import { AddDeleteUpadate, AddDelete_Img, fetchPostData } from '../../../../hooks/Api';
 import { Comman_changeArrayFormat, Comman_changeArrayFormatReasonCode, Comman_changeArrayFormat_With_Name, changeArray, fourColArrayReasonCode, sixColArray, threeColArray } from '../../../../Common/ChangeArrayFormat';
 import { toastifyError, toastifySuccess } from '../../../../Common/AlertMsg';
@@ -1649,6 +1649,10 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
   ];
 
 
+
+
+ 
+
   const colourStylesVictimCode = {
     control: (styles) => ({
       ...styles, backgroundColor: "rgb(255 202 194)",
@@ -1730,6 +1734,10 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
     }),
   };
 
+
+
+
+
   const startRef = React.useRef();
   const startRef1 = React.useRef();
 
@@ -1767,6 +1775,9 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
     }
 
   };
+
+
+
 
   const getFiltredReasonCode = (arr) => {
     const selectedReasonArr = multiSelected.optionSelected ? multiSelected.optionSelected : [];
@@ -2050,6 +2061,31 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
   const handleMouseLeave = () => setIsHovered(false); return (
     <>
       <div className="row child">
+
+        <div className="col-12  modal-table mt-3 "  >
+          {
+            MstPage != "MST-Name-Dash" &&
+            <DataTable
+              className="scrollableTableBody"
+              dense
+              columns={columns}
+              data={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? nameFilterData : [] : nameFilterData}
+              selectableRowsHighlight
+              highlightOnHover
+              responsive
+              fixedHeader
+              fixedHeaderScrollHeight='135px'
+              customStyles={tableCustomStyles}
+              conditionalRowStyles={conditionalRowStyles}
+
+              onRowClicked={(row) => {
+                set_Edit_Value(row);
+              }}
+              persistTableHead={true}
+              noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : 'There are no data to display'}
+            />
+          }
+        </div>
         {/* bb */}
         <div className="col-12 col-md-12 col-lg-12 ">
           <div className="row align-items-center mt-2" style={{ rowGap: "8px" }}>
@@ -2108,11 +2144,11 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
               {
                 (!value.IsUnknown && ((masterNameID && MstPage === "MST-Name-Dash") || nameID)) ? (
                   // <div className="col-lg-5">
-                    <AlertTable
-                      availableAlert={availableAlert}
-                      masterPropertyID={masterNameID ? masterNameID : ''}
-                      ProSta={NameStatus}
-                    />
+                  <AlertTable
+                    availableAlert={availableAlert}
+                    masterPropertyID={masterNameID ? masterNameID : ''}
+                    ProSta={NameStatus}
+                  />
                   // </div>
                 ) : null
               }
@@ -3084,33 +3120,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
         }
 
       </div >
-      <div className="col-12  modal-table "  >
-        {
-          MstPage != "MST-Name-Dash" &&
-          <DataTable
-            dense
-            columns={columns}
 
-            data={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? nameFilterData : [] : nameFilterData}
-            selectableRowsHighlight
-            highlightOnHover
-            responsive
-            fixedHeader
-            pagination
-            paginationPerPage={'10'}
-            paginationRowsPerPageOptions={[10, 15, 20, 50]}
-
-            fixedHeaderScrollHeight='150px'
-            customStyles={tableCustomStyles}
-            conditionalRowStyles={conditionalRowStyles}
-            onRowClicked={(row) => {
-              set_Edit_Value(row);
-            }}
-            persistTableHead={true}
-            noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : 'There are no data to display'}
-          />
-        }
-      </div>
 
       <ListModal {...{ openPage, setOpenPage }} />
       <NameSearchModal {...{ mainIncidentID, nameSearchValue, loginAgencyID, setValue, ResetSearch, setMultiSelected, value, setDobDate, get_Name_MultiImage, setUpdateStatus, updateStatus, MstPage }} />
