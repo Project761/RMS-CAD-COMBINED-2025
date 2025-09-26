@@ -479,6 +479,9 @@ const Home = (props) => {
     };
 
     const SearchButton = () => {
+        if(selectedOptions.value === 'VehicleTypeID'){
+            selectedOptions.value = 'PropertyTypeID' ;
+        }
         const val = { 'AgencyID': loginAgencyID, [selectedOptions.value]: propertyNumber || vehicleNumber, 'ActivityType': ((transfer === "null" || transfer === null) ? "" : transfer), ReportedDtTm: value?.ReportedDate, ReportedDtTmTo: value?.ReportedDateTo };
         AddDeleteUpadate('Propertyroom/SearchPropertyRoom', val).then((res) => {
             const parsedData = JSON.parse(res.data);
