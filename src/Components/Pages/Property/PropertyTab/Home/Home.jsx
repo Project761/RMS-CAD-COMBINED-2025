@@ -1234,7 +1234,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
           Reset();
           if (uploadImgFiles?.length > 0) {
             upload_Image_File(res.PropertyID, res.MasterPropertyID)
-            setuploadImgFiles('')
+            setuploadImgFiles('')  
           }
           if (drugLocalArr?.length > 0 && value.PropertyCategoryCode === 'D') {
             Add_Drug(true, res.PropertyID, res.MasterPropertyID);
@@ -3444,7 +3444,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                             </button>
                           }
                         </div> */}
-                        <div className="btn-box text-right col-3 col-md-2  pt-2" style={{ marginTop: '28px', marginLeft: 'auto' }}>
+                        <div className="btn-box text-right col-3 col-md-3 mt-4  pt-2" s>
                           {
                             (!propertyID || !masterPropertyID) && (ProSta != 'true' || ProSta != true) && (value.PropertyCategoryCode === 'D') &&
                             <button
