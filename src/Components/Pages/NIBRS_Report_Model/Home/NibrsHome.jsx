@@ -13,11 +13,9 @@ import Tab from "../../../Utility/Tab/Tab";
 import VehicleTab from "./VehicleTab";
 import { base64ToString, Decrypt_Id_Name, stringToBase64 } from "../../../Common/Utility";
 import { fetchPostData, fetchPostDataNibrs } from "../../../hooks/Api";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { get_Inc_ReportedDate, get_LocalStoreData } from "../../../../redux/actions/Agency";
 import Loader from "../../../Common/Loader";
-import NirbsErrorShowModal from "../../../Common/NirbsErrorShowModal";
 import NirbsAllModuleErrorShowModal from "../../../Common/NibrsAllModuleErrShowModal";
 
 const NibrsHome = () => {
@@ -36,7 +34,6 @@ const NibrsHome = () => {
   const [nibrsValidateloder, setnibrsValidateLoder] = useState(false);
   const [nibrsValidateIncidentData, setnibrsValidateIncidentData] = useState([]);
   const [nibrsErrModalStatus, setNibrsErrModalStatus] = useState(false);
-
 
   const [incidentErrorStatus, setIncidentErrorStatus] = useState(false);
   const [vehErrorStatus, setVehErrorStatus] = useState(false);
@@ -65,18 +62,14 @@ const NibrsHome = () => {
   const [isCrimeAgainstPropertyError, setIsCrimeAgainstPropertyError] = useState(false)
   const [isVictimConnectedError, setIsVictimConnectedError] = useState(false);
 
-
   /// Error String
   const [administrativeErrorString, setAdministrativeErrorString] = useState('');
-
   const [incidentErrorString, setIncidentErrorString] = useState('');
   const [offenseErrorString, setOffenseErrorString] = useState('');
   const [victimErrorString, setVictimErrorString] = useState('');
   const [offenderErrorString, setOffenderErrorString] = useState('');
   const [propertyErrorString, setPropertyErrorString] = useState('');
   const [vehicleErrorString, setVehicleErrorString] = useState('');
-
-
 
   const offenseCount = incidentCount[0]?.OffenseCount || 0;
   const NameCount = incidentCount[0]?.NameCount || 0;
@@ -119,26 +112,19 @@ const NibrsHome = () => {
     setOpenSection(openSection === section ? null : section);
 
     switch (section) {
-      case "admin":
-        setIncidentClick(true);
+      case "admin": setIncidentClick(true);
         break;
-      case "offenses":
-        setoffenseClick(true);
+      case "offenses": setoffenseClick(true);
         break;
-      case "offenders":
-        setOffenderClick(true);
+      case "offenders": setOffenderClick(true);
         break;
-      case "Victims":
-        setVictimClick(true);
+      case "Victims": setVictimClick(true);
         break;
-      case "Properties":
-        setPropertyClick(true);
+      case "Properties": setPropertyClick(true);
         break;
-      case "VehicleTab":
-        setVehicleClick(true);
+      case "VehicleTab": setVehicleClick(true);
         break;
-      case "Arrestees":
-        setArrestClick(true);
+      case "Arrestees": setArrestClick(true);
         break;
       default:
         break;
@@ -172,34 +158,24 @@ const NibrsHome = () => {
   const ValidateProperty = async (incidentID) => {
     // loader
     setnibrsValidateLoder(true);
-
     // Administrative
     setAdministrativeErrorString(''); setIsGroup_B_Offense_ArrestInc(false); setIsOffenseInc(false);
-
     // incident
     setIncidentErrorStatus(false); setIncidentErrorString('');
-
     // property
     setSuspectedDrugTypeErrorStatus(false); setIsCrimeAgainstPropertyError(false); setIsPropertyIdZeroError(false); setPropErrorStatus(false); setPropertyErrorString('');
-
     // vehicle
     setVehErrorStatus(false); setVehicleErrorString('');
-
     // offense
     setOffenseErrorStatus(false); setOffenseErrorString('');
-
     // offender
     setOffenderErrorStatus(false); setOffenderErrorString('');
-
     // victim
     setVictimErrorStatus(false); setVictimErrorString(''); setIsVictimConnectedError(false);
-
     const res = await TXIBRSValidateCall(incidentID, incReportedDate, baseDate, oriNumber);
     // console.log("🚀 ~ ValidateProperty ~ res:", res)
-
     if (res) {
       try {
-
         const [incidentError, victimError, offenseError, propertyError, offenderError] = await Promise.all([
           // fetchPostData("NIBRS/TXIBRS", { gIncidentID: incidentID, dtpDateTo: incReportedDate, dtpDateFrom: incReportedDate, BaseDate: baseDate, strORINumber: oriNumber, strComputerName: uniqueId, rdbSubmissionFile: false, rdbErrorLog: false, rdbNonReportable: false, chkPastErrorPrint: false, rdbOne: false, rdbTwoMonth: false, rdbThreeMonth: false, rdbAllLogFile: false, IPAddress: "", IsIncidentCheck: true }),
           fetchPostDataNibrs('NIBRS/GetIncidentNIBRSError', { 'StrIncidentID': incidentID, 'StrIncidentNumber': IncNo, 'StrAgencyID': loginAgencyID }),
@@ -208,12 +184,9 @@ const NibrsHome = () => {
           fetchPostDataNibrs('NIBRS/GetPropertyNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'PropertyId': "", 'gIntAgencyID': loginAgencyID }),
           fetchPostDataNibrs('NIBRS/GetOffenderNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'NameID': "", 'gIntAgencyID': loginAgencyID }),
         ])
-
-
         // if (true) {
         if (incidentError?.Incident) {
           const incObj = incidentError?.Incident ? incidentError?.Incident : [];
-
           var ErrorStr = ""
 
           // if (incObj?.OnPageError) {
@@ -316,76 +289,43 @@ const NibrsHome = () => {
             const isPropertyIdZeroError = proObj[0]?.OnPageError?.includes("{074} Need a property loss code of 5,7 for offense  23B");
 
             if (isCrimeAgainstError) {
-              setIsCrimeAgainstPropertyError(true);
-              setSuspectedDrugTypeErrorStatus(false);
-              setIsPropertyIdZeroError(false);
-
+              setIsCrimeAgainstPropertyError(true); setSuspectedDrugTypeErrorStatus(false); setIsPropertyIdZeroError(false);
             } else if (isSuspectedDrugType) {
-              setSuspectedDrugTypeErrorStatus(true);
-              setIsPropertyIdZeroError(false);
-              setIsCrimeAgainstPropertyError(false);
-
+              setSuspectedDrugTypeErrorStatus(true); setIsPropertyIdZeroError(false); setIsCrimeAgainstPropertyError(false);
             } else if (isPropertyIdZeroError) {
-              setIsPropertyIdZeroError(true);
-              setSuspectedDrugTypeErrorStatus(false);
-              setIsCrimeAgainstPropertyError(false);
-
+              setIsPropertyIdZeroError(true); setSuspectedDrugTypeErrorStatus(false); setIsCrimeAgainstPropertyError(false);
             } else {
-              setSuspectedDrugTypeErrorStatus(false);
-              setIsPropertyIdZeroError(false);
-              setIsCrimeAgainstPropertyError(false);
-
+              setSuspectedDrugTypeErrorStatus(false); setIsPropertyIdZeroError(false); setIsCrimeAgainstPropertyError(false);
             }
-
             const VehArr = proObj?.filter((item) => item?.PropertyType === 'V');
             const PropArr = proObj?.filter((item) => item?.PropertyType !== 'V');
 
             if (VehArr?.length > 0) {
-              setVehicleErrorString(VehArr[0]?.OnPageError ? VehArr[0]?.OnPageError : '');
-              setVehErrorStatus(true);
-
+              setVehicleErrorString(VehArr[0]?.OnPageError ? VehArr[0]?.OnPageError : ''); setVehErrorStatus(true);
             } else {
               setVehErrorStatus(false); setVehicleErrorString('');
-
             }
-
             // set property error string
             if (PropArr?.length > 0) {
-              setPropertyErrorString(PropArr[0]?.OnPageError ? PropArr[0]?.OnPageError : '');
-              setPropErrorStatus(true);
-
+              setPropertyErrorString(PropArr[0]?.OnPageError ? PropArr[0]?.OnPageError : ''); setPropErrorStatus(true);
             } else {
-              setPropErrorStatus(false);
-              setPropertyErrorString('');
-
+              setPropErrorStatus(false); setPropertyErrorString('');
             }
-
           } else {
-
           }
-
         } else {
-          setPropErrorStatus(false); setPropertyErrorString('');
-          setVehErrorStatus(false); setVehicleErrorString('');
-
+          setPropErrorStatus(false); setPropertyErrorString(''); setVehErrorStatus(false); setVehicleErrorString('');
         }
-
         // set offender error string
         if (offenderError) {
           const offenderObj = offenderError?.Offender ? offenderError?.Offender : [];
-
           if (offenderObj?.length > 0) {
-            setOffenderErrorString(offenderObj[0]?.OnPageError ? offenderObj[0]?.OnPageError : '');
-            setOffenderErrorStatus(true);
-
+            setOffenderErrorString(offenderObj[0]?.OnPageError ? offenderObj[0]?.OnPageError : ''); setOffenderErrorStatus(true);
           } else {
-            setOffenderErrorStatus(false);
-            setOffenderErrorString('');
-
+            setOffenderErrorStatus(false); setOffenderErrorString('');
           }
         } else {
           setOffenderErrorStatus(false); setOffenderErrorString('');
-
         }
 
         // set victim error string
@@ -393,38 +333,25 @@ const NibrsHome = () => {
           const victimObj = victimError?.Victim ? victimError?.Victim : [];
           if (victimObj?.length > 0) {
             const isVictimConnectedError = victimObj[0]?.OnPageError?.includes("At least one victim must be present and must be connected with offence.");
-
             if (isVictimConnectedError) {
               setIsVictimConnectedError(true);
             } else {
               setIsVictimConnectedError(false);
             }
-
-            setVictimErrorString(victimObj[0]?.OnPageError ? victimObj[0]?.OnPageError : '');
-            setVictimErrorStatus(true);
-
+            setVictimErrorString(victimObj[0]?.OnPageError ? victimObj[0]?.OnPageError : ''); setVictimErrorStatus(true);
           } else {
-            setVictimErrorStatus(false);
-            setVictimErrorString('');
-            setIsVictimConnectedError(false);
-
+            setVictimErrorStatus(false); setVictimErrorString(''); setIsVictimConnectedError(false);
           }
         } else {
           setVictimErrorStatus(false); setVictimErrorString('');
-
         }
-
         // set loader false
         setnibrsValidateLoder(false);
-
       } catch (error) {
         console.log("🚀 ~ ValidateProperty ~ error:", error);
-
         setnibrsValidateLoder(false);
       }
-
     } else {
-
       setnibrsValidateLoder(false);
     }
 
@@ -436,13 +363,7 @@ const NibrsHome = () => {
     try {
       setnibrsValidateLoder(true);
       const val = {
-        gIntAgencyID: loginAgencyID,
-        gIncidentID: incidentID,
-        dtpDateTo: reportDate,
-        dtpDateFrom: reportDate,
-        BaseDate: baseDate,
-        strORINumber: oriNumber,
-        strComputerName: uniqueId,
+        gIntAgencyID: loginAgencyID, gIncidentID: incidentID, dtpDateTo: reportDate, dtpDateFrom: reportDate, BaseDate: baseDate, strORINumber: oriNumber, strComputerName: uniqueId,
         //no use
         rdbSubmissionFile: false, rdbErrorLog: false, rdbNonReportable: false, chkPastErrorPrint: false,
         rdbOne: false, rdbTwoMonth: false, rdbThreeMonth: false, rdbAllLogFile: false, IPAddress: "", IsIncidentCheck: true,
@@ -498,7 +419,10 @@ const NibrsHome = () => {
       list: <MainOffender offenderClick={offenderClick} isNibrsSummited={isNibrsSummited} ValidateProperty={ValidateProperty} />
     },
     {
-      title: isVictimConnectedError ? <span className="text-center" style={{ textAlign: 'center' }}> <u style={{ color: 'red', }}>Victim --- At least one victim must be present and must be connected with offense</u></span> : `Victim (${VictimCount})`,
+      title: isVictimConnectedError ? <span className="text-center" style={{
+        border: '1px solid red', backgroundColor: '#ffe6e6', color: 'red', padding: '3px', borderRadius: '4px', display: 'inline-block',
+        transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
+      }}>Victim --- At least one victim must be present and must be connected with offense</span> : `Victim (${VictimCount})`,
       status: !victimErrorStatus && !isVictimConnectedError ? "completed" : "attention highlighted",
       sectionKey: "Victims",
       list: <MainVictims victimClick={victimClick} isNibrsSummited={isNibrsSummited} ValidateProperty={ValidateProperty} />
@@ -506,11 +430,19 @@ const NibrsHome = () => {
     {
       title: !isSuspectedDrugTypeErrorStatus && !isPropertyIdZeroError && !isCrimeAgainstPropertyError ? `Property (${PropertyCount})`
         :
-        isCrimeAgainstPropertyError ? <span className="text-center" style={{ textAlign: 'center' }}> <u style={{ color: 'red', }}>Property --- For Crime Against Property Property must be present.</u></span>
+        isCrimeAgainstPropertyError ? <span className="text-center" style={{
+          border: '1px solid red', backgroundColor: '#ffe6e6', color: 'red', padding: '3px', borderRadius: '4px', display: 'inline-block', transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
+        }}>Property --- For Crime Against Property Property must be present.</span>
           :
-          isSuspectedDrugTypeErrorStatus ? <span className="text-center" style={{ textAlign: 'center' }}> <u style={{ color: 'red', }}>Property --- Add at least one suspected drug type(create a Property with type 'Drug')</u></span>
+          isSuspectedDrugTypeErrorStatus ? <span className="text-center" style={{
+            border: '1px solid red', backgroundColor: '#ffe6e6', color: 'red', padding: '3px', borderRadius: '4px', display: 'inline-block',
+            transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
+          }}>Property --- Add at least one suspected drug type(create a Property with type 'Drug')</span>
             :
-            isPropertyIdZeroError ? <span className="text-center" style={{ textAlign: 'center' }}> <u style={{ color: 'red', }}>Property --- Need a property loss code of 5,7 for offense  23B</u></span> : `Property (${PropertyCount})`,
+            isPropertyIdZeroError ? <span className="text-center" style={{
+              border: '1px solid red', backgroundColor: '#ffe6e6', color: 'red', padding: '3px', borderRadius: '4px', display: 'inline-block',
+              transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
+            }}>Property --- Need a property loss code of 5,7 for offense  23B</span> : `Property (${PropertyCount})`,
 
       status: !propErrorStatus ? "completed" : "attention highlighted",
       sectionKey: "Properties",
@@ -523,7 +455,11 @@ const NibrsHome = () => {
       list: <VehicleTab vehicleClick={vehicleClick} isNibrsSummited={isNibrsSummited} ValidateProperty={ValidateProperty} />
     },
     {
-      title: !isGroup_B_Offense_ArrestInc ? `Arrestee (${ArrestCount})` : <span className="text-center" style={{ textAlign: 'center' }}> <u style={{ color: 'red', }}>Arrestee --- Warning: There is no arrest attached to this Group B offense Incident</u></span>,
+      title: !isGroup_B_Offense_ArrestInc ? `Arrestee (${ArrestCount})` : <span className="text-center" style={{
+        border: '1px solid red', backgroundColor: '#ffe6e6', color: 'red',
+        padding: '3px', borderRadius: '4px', display: 'inline-block',
+        transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
+      }}>Arrestee --- Warning: There is no arrest attached to this Group B offense Incident</span>,
       status: !nibrsValidateIncidentData?.Arrestees && !isGroup_B_Offense_ArrestInc ? "completed" : "attention highlighted",
       sectionKey: "Arrestees",
       list: <Arrestees arrestClick={arrestClick} isNibrsSummited={isNibrsSummited} />
