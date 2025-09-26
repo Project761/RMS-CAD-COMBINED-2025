@@ -29,7 +29,7 @@ const AddInformation = (props) => {
   const reportApproveOfficer = useSelector((state) => state.Incident.reportApproveOfficer);
   const narrativeTypeDrpData = useSelector((state) => state.DropDown.narrativeTypeDrpData);
 
-  const { setChangesStatus, GetDataTimeZone, incidentReportedDate, datezone } = useContext(AgencyContext);
+  const { setChangesStatus, GetDataTimeZone, incidentReportedDate } = useContext(AgencyContext);
 
   const useQuery = () => {
     const params = new URLSearchParams(useLocation().search);
@@ -168,7 +168,12 @@ const AddInformation = (props) => {
 
   useEffect(() => {
     if (editval) {
-      const IsSendToPropertyRoom = editval[0]?.IsSendToPropertyRoom === false && editval[0]?.CollectionDtTm === null && editval[0]?.CollectingOfficer === null ? true : editval[0]?.IsSendToPropertyRoom;
+      // const IsSendToPropertyRoom = editval[0].IsSendToPropertyRoom === false && editval[0].CollectionDtTm === null && editval[0].CollectingOfficer === null ? true : editval[0]?.IsSendToPropertyRoom;
+       const IsSendToPropertyRoom = editval[0].IsSendToPropertyRoom === false && (editval[0].CollectionDtTm === null || editval[0].CollectionDtTm === undefined) &&
+         (editval[0].CollectingOfficer === null || editval[0].CollectingOfficer === undefined)
+          ? true
+          : editval[0]?.IsSendToPropertyRoom;
+
       dispatch({ type: MasterVehicle_ID, payload: editval[0]?.MasterPropertyID, });
       let tempTasklistStatus = null;
       if (!editval[0]?.IsNonPropertyRoom) {
@@ -858,7 +863,7 @@ const AddInformation = (props) => {
                     </label>
                   </div>
                   <div className="col-3 col-md-3 col-lg-2 ">
-                    {/* <DatePicker
+                    <DatePicker
                       id="ReportedDate"
                       name="ReportedDate"
                       dateFormat="MM/dd/yyyy HH:mm"
@@ -943,49 +948,8 @@ const AddInformation = (props) => {
 
                         return time.getTime() <= now.getTime();
                       }}
-                    /> */}
-                    <DatePicker
-                      name='CollectionDtTm'
-                      id='CollectionDtTm'
-                      onChange={(date) => {
-                        if (date) {
-                          let selectedDate = new Date(date);
-                          const currentDateTimeFromZone = new Date(datezone);
-                          // If time is midnight (user selected only date), set time from `datezone`
-                          if (selectedDate?.getHours() === 0 && selectedDate.getMinutes() === 0 && selectedDate?.getSeconds() === 0) {
-                            selectedDate?.setHours(currentDateTimeFromZone.getHours()); selectedDate?.setMinutes(currentDateTimeFromZone?.getMinutes()); selectedDate?.setSeconds(currentDateTimeFromZone?.getSeconds());
-                          }
-                          setCollectiondate(selectedDate); setValue({ ...value, ['CollectionDtTm']: getShowingMonthDateYear(selectedDate), });
-                        } else {
-                          setCollectiondate(null); setValue({ ...value, ['CollectionDtTm']: null, });
-                        }
-                      }}
-                      isClearable={collectiondate ? true : false}
-                      selected={collectiondate}
-                      placeholderText={collectiondate ? collectiondate : 'Select...'}
-                      dateFormat="MM/dd/yyyy HH:mm"
-                      timeFormat="HH:mm"
-                      is24Hour
-                      timeInputLabel
-                      showTimeSelect
-                      timeIntervals={1}
-                      timeCaption="Time"
-                      showMonthDropdown
-                      showYearDropdown
-                      dropdownMode="select"
-                      showDisabledMonthNavigation
-                      autoComplete='off'
-                      minDate={new Date(incidentReportedDate)}
-                      maxDate={new Date(datezone)}
-                      filterTime={(time) => {
-                        const timeValue = new Date(time).getTime();
-                        const minTime = new Date(incidentReportedDate).getTime();
-                        const maxTime = new Date(datezone).getTime();
-                        return timeValue > minTime && timeValue <= maxTime;
-                      }}
-                      disabled={selectedOption === null || selectedOption === ''}
-                      className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                     />
+
                   </div>
                   <div className="col-3 col-md-2 col-lg-2 mt-2 px-1">
                     <label htmlFor="" className="new-label">
@@ -2031,16 +1995,27 @@ const AddInformation = (props) => {
                   <fieldset className="px-0">
                     <legend>Task List</legend>
                     <div className="row px-0 align-items-center">
-                      <div className="col-3 col-md-3 col-lg-2 ">
+                      <div className="col-3 col-md-3 col-lg-1 ">
                         <label
                           htmlFor=""
                           className="new-label text-nowrap mb-0"
                         >
                           Send Task to List
-                          {errors.tasklistError && (<p style={{ color: "red", fontSize: "13px", margin: "0px", padding: "0px", }}>{errors.tasklistError}</p>)}
+                          {errors.tasklistError && (
+                            <p
+                              style={{
+                                color: "red",
+                                fontSize: "13px",
+                                margin: "0px",
+                                padding: "0px",
+                              }}
+                            >
+                              {errors.tasklistError}
+                            </p>
+                          )}
                         </label>
                       </div>
-                      <div className="col-9 col-md-9 col-lg-2 text-field mt-0">
+                      <div className="col-9 col-md-9 col-lg-2 text-field mt-1">
                         {/* Flex wrapper for Select + inline message */}
                         <div
                           style={{
@@ -2066,7 +2041,22 @@ const AddInformation = (props) => {
                           />
                         </div>
                       </div>
-
+                      <div className="col-9 col-md-9 col-lg-2 mt-2 ">
+                        {taskListStatus && (
+                          <p
+                            style={{
+                              color: "#001f3f",
+                              fontSize: "16px",
+                              fontWeight: 500,
+                              marginLeft: "20px",
+                              margin: 0,
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {taskListStatus}
+                          </p>
+                        )}
+                      </div>
                       <>
                         <div className="col-1 col-md-1 col-lg-1 ">
                           <label
@@ -2077,7 +2067,7 @@ const AddInformation = (props) => {
                           </label>
                         </div>
 
-                        <div className="col-3 col-md-3 col-lg-6 g-1 d-flex align-items-center   ">
+                        <div className="col-3 col-md-3 col-lg-5 g-1 d-flex align-items-center   ">
                           <>
                             <div className="col-6 col-md-6 col-lg-3 ">
                               <div className="form-check ml-2">
@@ -2222,24 +2212,24 @@ const AddInformation = (props) => {
                         </button>
                       </div>
 
-                    </div>
-                    <div className="row">
-                      <div className="col-9 col-md-9 col-lg-1"></div>
-                      {taskListStatus && (
-                        <p
-                          style={{
-                            color: "#001f3f",
-                            fontSize: "16px",
-                            fontWeight: 500,
-                            marginLeft: "20px",
-                            margin: 0,
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          {taskListStatus}
-                        </p>
-                      )}
-
+                      <div className="col-12 col-md-12 col-lg-12 mt-2">
+                        {/* <DataTable
+                                                                            dense
+                                                                            fixedHeader
+                                                                            persistTableHead={true}
+                                                                            customStyles={tableCustomStyles}
+                                                                            columns={columns1}
+                                                                            selectableRowsHighlight
+                                                                            highlightOnHover
+                                                                            responsive
+                
+                                                                            fxedHeaderScrollHeight='90px'
+                                                                            pagination
+                                                                            paginationPerPage={'100'}
+                                                                            paginationRowsPerPageOptions={[100, 150, 200, 500]}
+                
+                                                                        /> */}
+                      </div>
                     </div>
                   </fieldset>
                 ) : null
