@@ -479,10 +479,7 @@ const Home = (props) => {
     };
 
     const SearchButton = () => {
-        if(selectedOptions.value === 'VehicleTypeID'){
-            selectedOptions.value = 'PropertyTypeID' ;
-        }
-        const val = { 'AgencyID': loginAgencyID, [selectedOptions.value]: propertyNumber || vehicleNumber, 'ActivityType': ((transfer === "null" || transfer === null) ? "" : transfer), ReportedDtTm: value?.ReportedDate, ReportedDtTmTo: value?.ReportedDateTo };
+        const val = { 'AgencyID': loginAgencyID, [selectedOptions.value === 'VehicleTypeID' ? 'PropertyTypeID' : selectedOptions.value ]: propertyNumber || vehicleNumber, 'ActivityType': ((transfer === "null" || transfer === null) ? "" : transfer), ReportedDtTm: value?.ReportedDate, ReportedDtTmTo: value?.ReportedDateTo };
         AddDeleteUpadate('Propertyroom/SearchPropertyRoom', val).then((res) => {
             const parsedData = JSON.parse(res.data);
             setSearchData(parsedData.Table);
@@ -496,6 +493,7 @@ const Home = (props) => {
             }
         }).catch((error) => {
             if (error.response.data.Message == "No Data Available") {
+                toastifyError('No Data Available');
                 setSearchData([])
             }
             // toastifyError('No Data Available');
@@ -1355,6 +1353,7 @@ const Home = (props) => {
                                             ...value,
                                             'PropertyTypeID': '',
                                             'VehicleTypeID': '',
+
                                         })
                                     }}
                                     defaultValue={AddType[0]}
