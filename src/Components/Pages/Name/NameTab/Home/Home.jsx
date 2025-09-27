@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import Select, { components } from "react-select";
 import DatePicker from "react-datepicker";
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Decrypt_Id_Name, getShowingDateText, base64ToString, stringToBase64, getShowingWithOutTime, tableCustomStyles, Aes256Encrypt, Requiredcolour, colourStylesRole, customStylesWithOutColor, LockFildscolour } from '../../../../Common/Utility';
+import { Decrypt_Id_Name, getShowingDateText, base64ToString, stringToBase64, getShowingWithOutTime, tableCustomStyles, Aes256Encrypt, Requiredcolour, colourStylesRole, customStylesWithOutColor, LockFildscolour, tableCustomStyle } from '../../../../Common/Utility';
 import { AddDeleteUpadate, AddDelete_Img, fetchPostData } from '../../../../hooks/Api';
 import { Comman_changeArrayFormat, Comman_changeArrayFormatReasonCode, Comman_changeArrayFormat_With_Name, changeArray, fourColArrayReasonCode, sixColArray, threeColArray } from '../../../../Common/ChangeArrayFormat';
 import { toastifyError, toastifySuccess } from '../../../../Common/AlertMsg';
@@ -2108,11 +2108,11 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
               {
                 (!value.IsUnknown && ((masterNameID && MstPage === "MST-Name-Dash") || nameID)) ? (
                   // <div className="col-lg-5">
-                    <AlertTable
-                      availableAlert={availableAlert}
-                      masterPropertyID={masterNameID ? masterNameID : ''}
-                      ProSta={NameStatus}
-                    />
+                  <AlertTable
+                    availableAlert={availableAlert}
+                    masterPropertyID={masterNameID ? masterNameID : ''}
+                    ProSta={NameStatus}
+                  />
                   // </div>
                 ) : null
               }
@@ -2627,11 +2627,11 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                         isDisabled={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? true : false}
                       />
                     </div>
-                    <span className='dash-name' >
+                    {/* <span className='dash-name' >
                       {errors.DLError !== 'true' ? (
                         <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.DLError}</p>
                       ) : null}
-                    </span>
+                    </span> */}
                     <div className="col-3 col-md-5 col-lg-4 text-field mt-0" >
                       <input
                         type="text"
@@ -2645,6 +2645,11 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                         required
                         autoComplete='off'
                       />
+                      {errors.DLError && errors.DLError !== 'true' && (
+                        <div style={{ fontSize: '11px', color: 'red', marginTop: '2px' }}>
+                          {errors.DLError}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="col-3 col-md-6 col-lg-4 d-flex align-items-center " >
@@ -3101,7 +3106,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
             paginationRowsPerPageOptions={[10, 15, 20, 50]}
 
             fixedHeaderScrollHeight='150px'
-            customStyles={tableCustomStyles}
+            customStyles={tableCustomStyle}
             conditionalRowStyles={conditionalRowStyles}
             onRowClicked={(row) => {
               set_Edit_Value(row);

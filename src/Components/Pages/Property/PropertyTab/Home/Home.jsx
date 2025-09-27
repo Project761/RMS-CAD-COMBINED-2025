@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import Select from "react-select";
 import DatePicker from "react-datepicker";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Aes256Encrypt, Decrypt_Id_Name, DecryptedList, EncryptedList, Encrypted_Id_Name, LockFildscolour, Requiredcolour, base64ToString, customStylesWithOutColor, encryptAndEncodeToBase64, filterPassedDateTime, filterPassedTime, filterPassedTimeZone, filterPassedTimeZonesCurrent, filterPassedTimeZonesProperty, getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime, getYearWithOutDateTime, stringToBase64, tableCustomStyles } from '../../../../Common/Utility';
+import { Aes256Encrypt, Decrypt_Id_Name, DecryptedList, EncryptedList, Encrypted_Id_Name, LockFildscolour, Requiredcolour, base64ToString, customStylesWithOutColor, encryptAndEncodeToBase64, filterPassedDateTime, filterPassedTime, filterPassedTimeZone, filterPassedTimeZonesCurrent, filterPassedTimeZonesProperty, getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime, getYearWithOutDateTime, stringToBase64, tableCustomStyle, tableCustomStyles } from '../../../../Common/Utility';
 import { AddDeleteUpadate, AddDelete_Img, ScreenPermision, fetchData, fetchPostData, fetchPostDataNibrs } from '../../../../hooks/Api';
 import { Comman_changeArrayFormat, fourColwithExtraCode, threeColArray } from '../../../../Common/ChangeArrayFormat';
 import { toastifyError, toastifySuccess } from '../../../../Common/AlertMsg';
@@ -1234,7 +1234,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
           Reset();
           if (uploadImgFiles?.length > 0) {
             upload_Image_File(res.PropertyID, res.MasterPropertyID)
-            setuploadImgFiles('')
+            setuploadImgFiles('')  
           }
           if (drugLocalArr?.length > 0 && value.PropertyCategoryCode === 'D') {
             Add_Drug(true, res.PropertyID, res.MasterPropertyID);
@@ -2554,24 +2554,9 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                   </span>
                 )}
               </div> */}
-              <div className="text-center p-1 mt-2">
-                {navigateStatus && (
-                  <span
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                    onClick={handleClick}
-                    style={{
-                      border: '1px solid red', backgroundColor: '#ffe6e6', color: isHovered ? 'blue' : 'red',
-                      padding: '3px', borderRadius: '4px', display: 'inline-block',
-                      transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '15px',
-                    }}
-                  >
-                    Navigate to Miscellaneous Information
-                  </span>
-                )}
-              </div>
 
-              <div className="col-5 col-md-5 col-lg-6 text-right " >
+
+              {/* <div className="col-5 col-md-5 col-lg-6 text-right " >
                 {
                   (!propertyID || !masterPropertyID) && (ProSta != 'true' || ProSta != true) && (value.PropertyCategoryCode === 'D') &&
                   <button
@@ -2596,9 +2581,25 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                     Search
                   </button>
                 }
-              </div>
+              </div> */}
 
 
+            </div>
+            <div className="text-center p-1 mt-2">
+              {navigateStatus && (
+                <span
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                  onClick={handleClick}
+                  style={{
+                    border: '1px solid red', backgroundColor: '#ffe6e6', color: isHovered ? 'blue' : 'red',
+                    padding: '3px', borderRadius: '4px', display: 'inline-block',
+                    transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '15px',
+                  }}
+                >
+                  Navigate to Miscellaneous Information
+                </span>
+              )}
             </div>
           </div>
           <div className="col-3 col-md-3 col-lg-1 pt-3 " >
@@ -3417,8 +3418,57 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                             <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{drugErrors.EstimatedDrugQtyError}</p>
                           ) : null}
                         </div>
-
-                        <div className="btn-box text-right col-3 col-md-2  pt-2" style={{ marginTop: '28px', marginLeft: 'auto' }}>
+                        {/* <div className="col-5 col-md-5 col-lg-6 text-right " >
+                          {
+                            (!propertyID || !masterPropertyID) && (ProSta != 'true' || ProSta != true) && (value.PropertyCategoryCode === 'D') &&
+                            <button
+                              type="button"
+                              id='Drugbtn'
+                              className="btn btn-sm btn-success"
+                              data-toggle="modal"
+                              data-target="#PropertyModal"
+                              onClick={() => {
+                                dispatch(get_Property_Drug_Search_Data(value?.LossCodeID,
+                                  value?.Value,
+                                  value?.PropertyTypeID,
+                                  value?.PropertyCategoryCode,
+                                  value?.CategoryID,
+                                  value?.ClassificationID,
+                                  value?.OfficerID,
+                                  loginAgencyID,
+                                  setSearchModalState,))
+                                setSearchModalState(true);
+                              }}
+                            >
+                              Search
+                            </button>
+                          }
+                        </div> */}
+                        <div className="btn-box text-right col-3 col-md-3 mt-4  pt-2" s>
+                          {
+                            (!propertyID || !masterPropertyID) && (ProSta != 'true' || ProSta != true) && (value.PropertyCategoryCode === 'D') &&
+                            <button
+                              type="button"
+                              id='Drugbtn'
+                              className="btn btn-sm btn-success mr-1"
+                              data-toggle="modal"
+                              data-target="#PropertyModal"
+                              onClick={() => {
+                                dispatch(get_Property_Drug_Search_Data(value?.LossCodeID,
+                                  value?.Value,
+                                  value?.PropertyTypeID,
+                                  value?.PropertyCategoryCode,
+                                  value?.CategoryID,
+                                  value?.ClassificationID,
+                                  value?.OfficerID,
+                                  loginAgencyID,
+                                  setSearchModalState,))
+                                setSearchModalState(true);
+                              }}
+                            >
+                              Search
+                            </button>
+                          }
                           <button type="button" data-dismiss="modal" className="btn btn-sm btn-success mr-1" onClick={onDrugClose}>New</button>
                           {
                             propertyDrugID ?
@@ -3435,20 +3485,21 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
 
 
 
+
                 </div>
                 <div className="row ">
                   <div className="col-12 modal-table mt-1">
                     <DataTable
                       fixedHeader
                       persistTableHead={true}
-                      customStyles={tableCustomStyles}
+                      customStyles={tableCustomStyle}
                       dense
                       conditionalRowStyles={conditionalRowStylesDrug}
                       columns={columns}
                       data={drugData?.length > 0 ? drugData : drugLocalArr}
                       onRowClicked={(row) => set_Edit_Value(row)}
                       pagination
-                      paginationPerPage={'5'}
+                      paginationPerPage={5}
                       fixedHeaderScrollHeight='150px'
                       paginationRowsPerPageOptions={[5, 10, 15, 20]}
                       highlightOnHover
@@ -3702,7 +3753,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
             dense
             fixedHeader
             persistTableHead={true}
-            customStyles={tableCustomStyles}
+            customStyles={tableCustomStyle}
             conditionalRowStyles={conditionalRowStyles}
             columns={columns1}
 

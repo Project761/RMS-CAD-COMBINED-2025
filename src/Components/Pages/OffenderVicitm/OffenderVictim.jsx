@@ -519,17 +519,24 @@ const OffenderVictim = () => {
             if (data.success) {
                 const parsedData = JSON.parse(data.data);
                 const message = parsedData.Table[0].Message;
-                toastifySuccess(message); get_Data_VictimOffenderName(IncID); setStatus(false);
-                setStatusFalse(); setStatesChangeStatus(false); setChangesStatus(false)
-                setErrors({
-                    ...errors, 'RelationshipTypeIDErrors': '', ' VictimNameIDErrors': '', 'RelationshipIDErrors': '', 'OffenseIDIDErrors': ''
-                });
+                if (message === 'Victim-Offender Relationship Already Present') {
+                    toastifyError(message); setErrors({
+                        ...errors, 'RelationshipTypeIDErrors': '', ' VictimNameIDErrors': '', 'RelationshipIDErrors': '', 'OffenseIDIDErrors': ''
+                    });
+                } else {
+                    toastifySuccess(message);
+                    get_Data_VictimOffenderName(IncID); setStatus(false);
+                    setStatusFalse(); setStatesChangeStatus(false); setChangesStatus(false)
+                    setErrors({
+                        ...errors, 'RelationshipTypeIDErrors': '', ' VictimNameIDErrors': '', 'RelationshipIDErrors': '', 'OffenseIDIDErrors': ''
+                    });
+                }
             } else {
                 toastifyError(data.Message)
             }
         })
-        // }
     }
+
 
     const update_Relationship = () => {
         AddDeleteUpadate('NameRelationship/Update_NameRelationship', value).then((data) => {

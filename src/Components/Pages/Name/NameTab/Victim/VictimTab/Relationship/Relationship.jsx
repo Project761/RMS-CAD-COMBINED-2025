@@ -230,13 +230,17 @@ const Relationship = (props) => {
       if (value.OffenderNameID && value.RelationshipTypeID) {
         AddDeleteUpadate('NameRelationship/Insert_NameRelationship', value).then((data) => {
           if (data.success) {
-
             const parsedData = JSON.parse(data.data);
             const message = parsedData.Table[0].Message;
-            toastifySuccess(message);
-            Get_Relationship_Data(nameID); setStatus(false); resetHooks(); get_NameVictim_Count(victimID)
-            get_Name_Count(DecNameID);
-            setStatesChangeStatus(false); setChangesStatus(false)
+            if (message === 'Victim-Offender Relationship Already Present') {
+              toastifyError(message); setErrors({ ...errors, 'RelationshipTypeIDErrors': '', ' VictimNameIDErrors': '', });
+            } else {
+              toastifySuccess(message);
+              Get_Relationship_Data(nameID); setStatus(false); resetHooks(); get_NameVictim_Count(victimID)
+              get_Name_Count(DecNameID);
+              setStatesChangeStatus(false); setChangesStatus(false)
+              setErrors({ ...errors, 'RelationshipTypeIDErrors': '', ' VictimNameIDErrors': '', });
+            }
           } else {
             toastifyError(data.Message)
           }
@@ -266,7 +270,6 @@ const Relationship = (props) => {
           const parsedData = JSON.parse(data.data);
           const message = parsedData.Table[0].Message;
           toastifySuccess(message);
-
           Get_Relationship_Data(nameID); setStatus(true);
           setStatesChangeStatus(false); setChangesStatus(false)
           get_Name_Count(DecNameID);

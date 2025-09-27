@@ -19,12 +19,15 @@ import { check_OffenceCode_NoneUnknown, TableErrorTooltip } from '../../Property
 
 const Offense = (props) => {
 
-  const { ListData, DecPropID, DecMPropID, DecIncID, isViewEventDetails = false,  } = props
+  const { ListData, DecPropID, DecMPropID, DecIncID, isViewEventDetails = false, } = props
 
   const dispatch = useDispatch();
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
   const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
   const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
+
+  const selectBoxRef = useRef(null);
+  const inputRef = useRef(null);
 
   const useQuery = () => {
     const params = new URLSearchParams(useLocation().search);
@@ -53,8 +56,8 @@ const Offense = (props) => {
   // permissions
   const [permissionForAdd, setPermissionForAdd] = useState(false);
   const [permissionForEdit, setPermissionForEdit] = useState(false);
-      // Add Update Permission
-      const [addUpdatePermission, setaddUpdatePermission] = useState();
+  // Add Update Permission
+  const [addUpdatePermission, setaddUpdatePermission] = useState();
   const [value, setValue] = useState({
     'MasterPropertyID': '', 'PropertyID': '', 'labal': '', 'IncidentID': '', 'OffenseID': null,
     'CreatedByUserFK': '', 'IsMaster': MstPage === "MST-Property-Dash" ? true : false,
@@ -289,7 +292,7 @@ const Offense = (props) => {
   ]
 
   const notebookEntryHandler = row => {
-    !addUpdatePermission &&  setChangesStatus(true)
+    !addUpdatePermission && setChangesStatus(true)
     setValue(pre => {
       return {
         ...pre,
@@ -310,6 +313,24 @@ const Offense = (props) => {
     return check_OffenceCode_NoneUnknown(Code, propLossCode, AttmComp, categoryCode) ? { backgroundColor: "rgb(255 202 194)" } : {};
   };
 
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        selectBoxRef.current &&
+        !selectBoxRef.current.contains(event.target) &&
+        !inputRef.current.contains(event.target)
+      ) {
+        document.getElementById('customSelectBox').style.display = 'none';
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+
   return (
     <>
       <PropListng {...{ ListData }} />
@@ -327,6 +348,7 @@ const Offense = (props) => {
             <input
               type="text"
               name='NoofHoles'
+              ref={inputRef} // 👈 Input ref
               id='NoofHoles'
               readOnly={value.OffenseID ? true : false}
               value={value.labal}
@@ -366,7 +388,7 @@ const Offense = (props) => {
                 )}
 
             </span>
-            <div id='customSelectBox' className="col-12 col-md-12 col-lg-12 modal-table" style={{ display: 'none', width: '700px' }}>
+            <div id='customSelectBox' ref={selectBoxRef} className="col-12 col-md-12 col-lg-12 modal-table" style={{ display: 'none', width: '700px' }}>
               <DataTable
                 dense
                 fixedHeader
@@ -425,7 +447,7 @@ const Offense = (props) => {
       {
         deleteStatus ? <DeletePopUpModal func={DeletePin} /> : ''
       }
-      <ChangesModal  func={check_Validation_Error} setToReset={onClear} />
+      <ChangesModal func={check_Validation_Error} setToReset={onClear} />
     </>
   )
 }
