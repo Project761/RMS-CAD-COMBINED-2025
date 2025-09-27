@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useState, useEffect, useContext } from 'react'
 import IdentifyFieldColor from '../../../../Common/IdentifyFieldColor'
 import Select from 'react-select';
-import { Aes256Encrypt, Decrypt_Id_Name, DecryptedList, EncryptedList, base64ToString, stringToBase64, tableCustomStyles } from '../../../../Common/Utility';
+import { Aes256Encrypt, Decrypt_Id_Name, DecryptedList, EncryptedList, base64ToString, stringToBase64, tableCustomStyle, tableCustomStyles } from '../../../../Common/Utility';
 import { FaxField, MunicipalityCodeValidator, ORIValidator, PhoneField, RequiredField } from '../../AgencyValidation/validators';
 import { AgencyContext } from '../../../../../Context/Agency/Index';
 import { toastifyError, toastifySuccess } from '../../../../Common/AlertMsg';
@@ -961,7 +961,6 @@ const Home = ({ allowMultipleLogin }) => {
                         persistTableHead={true}
                         dense
 
-
                         data={
                             effectiveScreenPermission ?
                                 effectiveScreenPermission[0]?.DisplayOK ?
@@ -979,7 +978,7 @@ const Home = ({ allowMultipleLogin }) => {
                         showPaginationBottom={agencyFilterData?.length > 10 ? true : false}
 
                         conditionalRowStyles={conditionalRowStyles}
-                        customStyles={tableCustomStyles}
+                        customStyles={tableCustomStyle}
                         onRowClicked={(row) => {
                             setEditValue(row); setClickedRow(row);
                         }}
