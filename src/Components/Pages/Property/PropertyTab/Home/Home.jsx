@@ -1234,7 +1234,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
           Reset();
           if (uploadImgFiles?.length > 0) {
             upload_Image_File(res.PropertyID, res.MasterPropertyID)
-            setuploadImgFiles('')  
+            setuploadImgFiles('')
           }
           if (drugLocalArr?.length > 0 && value.PropertyCategoryCode === 'D') {
             Add_Drug(true, res.PropertyID, res.MasterPropertyID);
@@ -2526,7 +2526,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
             <div className="row">
               <div className="col-3 col-md-3 col-lg-1 ml-1">
               </div>
-              <div className="col-3 col-md-3 col-lg-2 ml-1">
+              <div className="col-3 col-md-3 col-lg-4 ml-1">
                 <div className="col-3 col-md-3 col-lg-1">
                   <div className="form-check px-2">
                     <input className="form-check-input" name='IsEvidence' value={value?.IsEvidence} onChange={HandleChanges} checked={value?.IsEvidence} type="checkbox" id="flexCheckDefault" disabled={editval[0]?.IsEvidence ? true : false} />
@@ -2538,69 +2538,26 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                 </div>
 
               </div>
-              {/* <div className="col-2 col-md-2 col-lg-3 mt-1">
+
+              <div className="text-center p-1 mt-1">
                 {navigateStatus && (
                   <span
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
                     onClick={handleClick}
                     style={{
-                      color: isHovered ? "blue" : "red",
-                      transition: "background-color 0.3s ease",
-                      cursor: "pointer",
+                      border: '1px solid red', backgroundColor: '#ffe6e6', color: isHovered ? 'blue' : 'red',
+                      padding: '3px', borderRadius: '4px', display: 'inline-block',
+                      transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '15px',
                     }}
                   >
-                    <u>Navigate to Miscellaneous Information</u>
+                    Navigate to Miscellaneous Information
                   </span>
                 )}
-              </div> */}
-
-
-              {/* <div className="col-5 col-md-5 col-lg-6 text-right " >
-                {
-                  (!propertyID || !masterPropertyID) && (ProSta != 'true' || ProSta != true) && (value.PropertyCategoryCode === 'D') &&
-                  <button
-                    type="button"
-                    id='Drugbtn'
-                    className="btn btn-sm btn-success"
-                    data-toggle="modal"
-                    data-target="#PropertyModal"
-                    onClick={() => {
-                      dispatch(get_Property_Drug_Search_Data(value?.LossCodeID,
-                        value?.Value,
-                        value?.PropertyTypeID,
-                        value?.PropertyCategoryCode,
-                        value?.CategoryID,
-                        value?.ClassificationID,
-                        value?.OfficerID,
-                        loginAgencyID,
-                        setSearchModalState,))
-                      setSearchModalState(true);
-                    }}
-                  >
-                    Search
-                  </button>
-                }
-              </div> */}
-
+              </div>
 
             </div>
-            <div className="text-center p-1 mt-2">
-              {navigateStatus && (
-                <span
-                  onMouseEnter={handleMouseEnter}
-                  onMouseLeave={handleMouseLeave}
-                  onClick={handleClick}
-                  style={{
-                    border: '1px solid red', backgroundColor: '#ffe6e6', color: isHovered ? 'blue' : 'red',
-                    padding: '3px', borderRadius: '4px', display: 'inline-block',
-                    transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '15px',
-                  }}
-                >
-                  Navigate to Miscellaneous Information
-                </span>
-              )}
-            </div>
+
           </div>
           <div className="col-3 col-md-3 col-lg-1 pt-3 " >
             <div className="img-box" >
