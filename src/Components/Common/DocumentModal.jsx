@@ -154,6 +154,8 @@ const DocumentModal = (props) => {
         }
     }
 
+    
+
     const changeHandler = (e) => {
         const files = e.target.files
         setSelectedFile(files)
