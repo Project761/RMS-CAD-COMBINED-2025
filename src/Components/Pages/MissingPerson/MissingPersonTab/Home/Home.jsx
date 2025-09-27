@@ -495,28 +495,28 @@ const Home = ({ DecMissPerID, DecIncID }) => {
     return (
         <>
             <div className="col-12">
-                <div className="row">
-                    <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
-                        <label htmlFor="" className='new-label'>Missing Person No.</label>
+                <div className="row align-items-center mt-1 mb-1" style={{ rowGap: "8px" }}>
+                    <div className="col-2 col-md-2 col-lg-2 ">
+                        <label htmlFor="" className='new-label mb-0'>Missing Person No.</label>
                     </div>
-                    <div className="col-4 col-md-4 col-lg-2 mt-1 text-field">
+                    <div className="col-4 col-md-4 col-lg-2 mt-0 text-field">
                         <input type="text" className='form-control' value={value?.MissingPersonNumber ? value?.MissingPersonNumber : 'Auto Generated'} placeholder='Auto Generated' onChange={''} name='MissingPersonNumber' id='MissingPersonNumber' required readOnly />
                     </div>
-                    <div className="col-2 col-md-2 col-lg-2 mt-2 ">
-                        <label htmlFor="" className='new-label'>
+                    <div className="col-2 col-md-2 col-lg-2">
+                        <label htmlFor="" className='new-label mb-0'>
                             Incident No.
                         </label>
                     </div>
-                    <div className="col-4 col-md-4 col-lg-2 mt-1 text-field">
+                    <div className="col-4 col-md-4 col-lg-2 mt-0 text-field">
                         <input type="text" className='readonlyColor' value={value?.IncidentNumber} onChange={HandleChange} name='IncidentNumber' required readOnly />
                     </div>
 
-                    <div className="col-2 col-md-2 col-lg-2 mt-1 pt-2">
-                        <label htmlFor="" className='new-label'>Reported Date/Time {errors.ReportedDttmError !== 'true' ? (
+                    <div className="col-2 col-md-2 col-lg-2 ">
+                        <label htmlFor="" className='new-label mb-0'>Reported Date/Time {errors.ReportedDttmError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReportedDttmError}</p>
                         ) : null}</label>
                     </div>
-                    <div className="col-4 col-md-4 col-lg-2 mt-1 ">
+                    <div className="col-4 col-md-4 col-lg-2">
                         <DatePicker
                             id="ReportedDttm"
                             name='ReportedDttm'
@@ -553,8 +553,7 @@ const Home = ({ DecMissPerID, DecIncID }) => {
 
                         />
                     </div>
-                    <div className="col-2 col-md-2 col-lg-2 mt-2">
-
+                    <div className="col-2 col-md-2 col-lg-2">
                         <span data-toggle="modal" data-target="#ListModel" className='new-link' onClick={() => { setOpenPage('Missing Person') }}>
                             Missing Person {errors.PersonIDError !== 'true' ? (
                                 <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.PersonIDError}</p>
@@ -572,12 +571,12 @@ const Home = ({ DecMissPerID, DecIncID }) => {
                             placeholder="Select..."
                         />
                     </div>
-                    <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
-                        <label htmlFor="" className='new-label'>Reporting Officer{errors.ReportingOfficerIDError !== 'true' ? (
+                    <div className="col-2 col-md-2 col-lg-2">
+                        <label htmlFor="" className='new-label mb-0'>Reporting Officer{errors.ReportingOfficerIDError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReportingOfficerIDError}</p>
                         ) : null}</label>
                     </div>
-                    <div className="col-4 col-md-4 col-lg-2 mt-1 ">
+                    <div className="col-4 col-md-4 col-lg-2">
                         <Select
                             styles={Requiredcolour}
                             name="ReportingOfficerID"
@@ -589,13 +588,13 @@ const Home = ({ DecMissPerID, DecIncID }) => {
                         />
                     </div>
 
-                    <div className="col-2 col-md-2 col-lg-2 mt-2 ">
+                    <div className="col-2 col-md-2 col-lg-2">
 
                         <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Message Key') }}>
                             Message Key
                         </span>
                     </div>
-                    <div className="col-4 col-md-4 col-lg-2 mt-1 ">
+                    <div className="col-4 col-md-4 col-lg-2">
                         <Select
                             styles={customStylesWithOutColor}
                             name="MessageKeyID"
@@ -606,28 +605,28 @@ const Home = ({ DecMissPerID, DecIncID }) => {
                             placeholder="Select..."
                         />
                     </div>
-                    <div className="col-2 col-md-2 col-lg-2 mt-2 ">
-                        <label htmlFor="" className='new-label'>Possible Destination</label>
+                    <div className="col-2 col-md-2 col-lg-2">
+                        <label htmlFor="" className='new-label mb-0'>Possible Destination</label>
                     </div>
-                    <div className="col-4 col-md-4 col-lg-2 mt-1 text-field">
+                    <div className="col-4 col-md-4 col-lg-2 mt-0 text-field">
                         <input type="text" className='' name='PossibleDestination' value={value?.PossibleDestination} onChange={HandleChange} required />
                     </div>
-                    <div className="col-2 col-md-2 col-lg-2 mt-2 ">
-                        <label htmlFor="" className='new-label'>Missing Person Occupation</label>
+                    <div className="col-2 col-md-2 col-lg-2">
+                        <label htmlFor="" className='new-label mb-0'>Missing Person Occupation</label>
                     </div>
-                    <div className="col-4 col-md-4 col-lg-2 mt-1 text-field">
+                    <div className="col-4 col-md-4 col-lg-2 mt-0 text-field">
                         <input type="text" className='' name='Occupation' value={value?.Occupation} onChange={HandleChange} required />
                     </div>
-                    <div className="col-2 col-md-2 col-lg-2 mt-2 ">
-                        <label htmlFor="" className='new-label'>Physical Condition</label>
+                    <div className="col-2 col-md-2 col-lg-2">
+                        <label htmlFor="" className='new-label mb-0'>Physical Condition</label>
                     </div>
-                    <div className="col-4 col-md-4 col-lg-2 mt-1 text-field">
+                    <div className="col-4 col-md-4 col-lg-2 mt-0 text-field">
                         <input type="text" className='' name='PhysicalCondition' value={value?.PhysicalCondition} onChange={HandleChange} required />
                     </div>
-                    <div className="col-2 col-md-2 col-lg-2 mt-2 ">
-                        <label htmlFor="" className='new-label'>Date Of Emancipation</label>
+                    <div className="col-2 col-md-2 col-lg-2">
+                        <label htmlFor="" className='new-label mb-0'>Date Of Emancipation</label>
                     </div>
-                    <div className="col-4 col-md-4 col-lg-2 mt-1 ">
+                    <div className="col-4 col-md-4 col-lg-2">
                         <DatePicker
                             id="EmancipationDt"
                             name='EmancipationDt'
@@ -651,10 +650,10 @@ const Home = ({ DecMissPerID, DecIncID }) => {
                             isClearable={emancipationDt ? true : false}
                         />
                     </div>
-                    <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
-                        <label htmlFor="" className='new-label'>Complainant Name </label>
+                    <div className="col-2 col-md-2 col-lg-2">
+                        <label htmlFor="" className='new-label mb-0'>Complainant Name </label>
                     </div>
-                    <div className="col-4 col-md-4 col-lg-2 mt-1 ">
+                    <div className="col-4 col-md-4 col-lg-2">
                         <Select
                             styles={customStylesWithOutColor}
                             name="CompaintID"
@@ -666,7 +665,7 @@ const Home = ({ DecMissPerID, DecIncID }) => {
                         />
 
                     </div>
-                    <div className="col-1 pt-1 mt-1" data-toggle="modal" data-target="#MasterModal"  >
+                    <div className="col-1" data-toggle="modal" data-target="#MasterModal"  >
                         <button
                             onClick={() => {
                                 if (value.CompaintID) {
@@ -687,10 +686,10 @@ const Home = ({ DecMissPerID, DecIncID }) => {
                             <i className="fa fa-plus" > </i>
                         </button>
                     </div>
-                    <div className="col-2 col-md-2 col-lg-1 mt-2 pt-1">
-                        <label htmlFor="" className='new-label text-nowrap'>Relationship With M.P</label>
+                    <div className="col-2 col-md-2 col-lg-1">
+                        <label htmlFor="" className='new-label text-nowrap mb-0'>Relationship With M.P</label>
                     </div>
-                    <div className="col-4 col-md-4 col-lg-2 mt-1 text-field">
+                    <div className="col-4 col-md-4 col-lg-2 mt-0 text-field">
                         <input type="text" className='' name='Relationwithmp' value={value?.Relationwithmp} onChange={HandleChange} required />
                     </div>
 
@@ -789,9 +788,18 @@ const Home = ({ DecMissPerID, DecIncID }) => {
             <ChangesModal func={check_Validation_Error} setToReset={setToReset} />
 
 
+
+
+
         </>
     )
 }
 
 export default Home
+
+
+
+
+
+
 
