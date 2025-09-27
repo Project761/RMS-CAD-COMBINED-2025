@@ -2797,7 +2797,7 @@ const MiscellaneousInformation = (props) => {
 
 
                         <div className="row">
-                          <div className="col-lg-1"></div>
+                          <div className="col-lg-2"></div>
                           {taskListStatus && (
                             <p
                               style={{

@@ -169,10 +169,10 @@ const AddInformation = (props) => {
   useEffect(() => {
     if (editval) {
       // const IsSendToPropertyRoom = editval[0].IsSendToPropertyRoom === false && editval[0].CollectionDtTm === null && editval[0].CollectingOfficer === null ? true : editval[0]?.IsSendToPropertyRoom;
-       const IsSendToPropertyRoom = editval[0].IsSendToPropertyRoom === false && (editval[0].CollectionDtTm === null || editval[0].CollectionDtTm === undefined) &&
-         (editval[0].CollectingOfficer === null || editval[0].CollectingOfficer === undefined)
-          ? true
-          : editval[0]?.IsSendToPropertyRoom;
+      const IsSendToPropertyRoom = editval[0].IsSendToPropertyRoom === false && (editval[0].CollectionDtTm === null || editval[0].CollectionDtTm === undefined) &&
+        (editval[0].CollectingOfficer === null || editval[0].CollectingOfficer === undefined)
+        ? true
+        : editval[0]?.IsSendToPropertyRoom;
 
       dispatch({ type: MasterVehicle_ID, payload: editval[0]?.MasterPropertyID, });
       let tempTasklistStatus = null;
@@ -635,7 +635,7 @@ const AddInformation = (props) => {
     }
   }, [loginAgencyID]);
 
-  
+
 
   return (
     <>
@@ -2041,22 +2041,7 @@ const AddInformation = (props) => {
                           />
                         </div>
                       </div>
-                      <div className="col-9 col-md-9 col-lg-2 mt-2 ">
-                        {taskListStatus && (
-                          <p
-                            style={{
-                              color: "#001f3f",
-                              fontSize: "16px",
-                              fontWeight: 500,
-                              marginLeft: "20px",
-                              margin: 0,
-                              whiteSpace: "nowrap",
-                            }}
-                          >
-                            {taskListStatus}
-                          </p>
-                        )}
-                      </div>
+
                       <>
                         <div className="col-1 col-md-1 col-lg-1 ">
                           <label
@@ -2230,6 +2215,24 @@ const AddInformation = (props) => {
                 
                                                                         /> */}
                       </div>
+                    </div>
+
+                    <div className="row mt-2 ">
+                      <div className="col-lg-1"></div>
+                      {taskListStatus && (
+                        <p
+                          style={{
+                            color: "#001f3f",
+                            fontSize: "16px",
+                            fontWeight: 500,
+                            marginLeft: "20px",
+                            margin: 0,
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {taskListStatus}
+                        </p>
+                      )}
                     </div>
                   </fieldset>
                 ) : null
