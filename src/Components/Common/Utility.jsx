@@ -429,7 +429,7 @@ export const tableCustomStyles = {
   },
 }
 
-//-------------------new Update 26-09-2026 Use In Name/Property/Vehicle--------------------------//
+//-------------------new Update 26-09-2026 Use In Name/Property/Vehicle/Agency--------------------------//
 export const tableCustomStyle = {
   headRow: {
     style: { color: '#fff', backgroundColor: '#001f3f', borderBottomColor: '#FFFFFF', outline: '1px solid #FFFFFF', },
