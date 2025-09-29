@@ -24,7 +24,7 @@ import SelectBox from '../../../../Common/SelectBox';
 
 const Home = (props) => {
 
-    const { setStatus, DecPropID, DecMPropID, SelectedCategory, CallStatus, ProType, ProNumber, ProTransfer, CheckboxStatus } = props
+    const { setStatus, DecPropID, DecMPropID, SelectedCategory, CallStatus, ProType, SelectedOption , ProNumber, VehNumber , ProTransfer, CheckboxStatus } = props
 
     const { GetDataTimeZone, datezone, setChangesStatus } = useContext(AgencyContext);
     const navigate = useNavigate();
@@ -163,18 +163,22 @@ const Home = (props) => {
             setMasterPropertyId(prev => (prev?.length ? prev : DecPropID));
             if (!CheckboxStatus) { sessionStorage.removeItem('selectedRows'); }
             if (CallStatus === 'true') { GetData_Propertyroom(DecPropID, SelectedCategory); }
-            else if (CallStatus === 'false' && (ProType && ProNumber)) {
-                SearchButtons(ProType, ProNumber, localStoreData?.AgencyID);
+            else if (CallStatus === 'false' && (ProType && (ProNumber || VehNumber && SelectedOption !== 'VehicleTypeID') )) {
+                SearchButtons(ProType, (ProNumber || VehNumber), localStoreData?.AgencyID);
                 const matchedOption = AddType.find(option => option.value === ProType);
+                if (matchedOption) { setSelectedOptions(matchedOption); settransfer(ProTransfer); setPropertyNumber(ProNumber); }
+            }
+            else if(SelectedOption === 'VehicleTypeID'){
+                 const matchedOption = AddType.find(option => option.value === SelectedOption);
                 if (matchedOption) { setSelectedOptions(matchedOption); }
             }
             // setValue({ ...value, 'PropertyTypeID': parseInt(ProNumber), 'ActivityType': ProTransfer })
             settransfer(ProTransfer); setPropertyNumber(ProNumber); GetDataTimeZone(localStoreData?.AgencyID);
-            setvehicleNumber();
+           if(VehNumber) {setvehicleNumber(VehNumber);}
         }
     }, [localStoreData, ProType, ProNumber, CallStatus, DecPropID, SelectedCategory, propertyTypeData, ProTransfer]);
 
-    console.log(vehicleCategorydata , propertyCategorydata)
+    console.log(SelectedOption)
 
     useEffect(() => {
         dispatch(get_Masters_Name_Drp_Data(possessionID, 0, 0, IncID));
@@ -360,7 +364,7 @@ const Home = (props) => {
 
     const check_Validation_Errorr = (e) => {
         sessionStorage.removeItem('selectedRows')
-        console.log(value.VehicleTypeID , 'hello')
+        console.log(value.VehicleTypeID, 'hello')
         const SearchError = RequiredFieldIncident(propertyNumber || vehicleNumber);
         setsearcherror(prevValues => {
             return {
@@ -461,7 +465,7 @@ const Home = (props) => {
     }, [chainreport]);
 
     const SearchButtons = (ProType, ProNumber, loginAgencyID) => {
-        const val = { 'AgencyID': loginAgencyID, [ProType]: ProNumber || vehicleNumber, 'ActivityType': transfer, };
+        const val = { 'AgencyID': loginAgencyID, [ProType]: ProNumber || VehNumber, 'ActivityType': transfer, };
         AddDeleteUpadate('Propertyroom/SearchPropertyRoom', val).then((res) => {
             const parsedData = JSON.parse(res.data);
             setSearchData(parsedData.Table);
@@ -479,7 +483,7 @@ const Home = (props) => {
     };
 
     const SearchButton = () => {
-        const val = { 'AgencyID': loginAgencyID, [selectedOptions.value === 'VehicleTypeID' ? 'PropertyTypeID' : selectedOptions.value ]: propertyNumber || vehicleNumber, 'ActivityType': ((transfer === "null" || transfer === null) ? "" : transfer), ReportedDtTm: value?.ReportedDate, ReportedDtTmTo: value?.ReportedDateTo };
+        const val = { 'AgencyID': loginAgencyID, [selectedOptions.value === 'VehicleTypeID' ? 'PropertyTypeID' : selectedOptions.value]: propertyNumber || vehicleNumber, 'ActivityType': ((transfer === "null" || transfer === null) ? "" : transfer), ReportedDtTm: value?.ReportedDate, ReportedDtTmTo: value?.ReportedDateTo };
         AddDeleteUpadate('Propertyroom/SearchPropertyRoom', val).then((res) => {
             const parsedData = JSON.parse(res.data);
             setSearchData(parsedData.Table);
@@ -487,7 +491,8 @@ const Home = (props) => {
             setSelectedRows([])
             if (parsedData.Table && parsedData.Table?.length > 0) {
                 setDescription(''); setPropertyId(''); setEnabledStatus('');
-                navigate(`/Property-room?&ProId=${stringToBase64('')}&MProId=${stringToBase64('')}&ProRomId=${stringToBase64('')}&ProRoomStatus=${true}&selectedCategory=${selectedCategory}&ProType=${selectedOptions.value}&ProNumber=${propertyNumber}&ProTransfer=${transfer}&CallStatus=${false}&CheckboxStatus=${true}`)
+                navigate(`/Property-room?&ProId=${stringToBase64('')}&MProId=${stringToBase64('')}&ProRomId=${stringToBase64('')}&ProRoomStatus=${true}&selectedCategory=${selectedCategory}&ProType=${selectedOptions.value === 'VehicleTypeID' ? 'PropertyTypeID' : selectedOptions.value}&ProNumber=${propertyNumber}&VehNumber=${vehicleNumber}&SelectedOption=${selectedOptions.value}&ProTransfer=${transfer}&CallStatus=${false}&CheckboxStatus=${true}`)
+                // navigate(`/Property-room?&ProId=${stringToBase64('')}&MProId=${stringToBase64('')}&ProRomId=${stringToBase64('')}&ProRoomStatus=${true}&selectedCategory=${selectedCategory}&ProType=${selectedOptions.value}&ProNumber=${propertyNumber}&ProTransfer=${transfer}&CallStatus=${false}&CheckboxStatus=${true}`)
             } else {
                 toastifyError('No Data Available')
             }
@@ -748,7 +753,7 @@ const Home = (props) => {
     ]
 
     const ChangeDropDowns = (e, name) => {
-         console.log(e)
+        console.log(e)
         if (e) {
             setValue({ ...value, [name]: e.value })
             setPropertyNumber(e.value)
@@ -770,8 +775,8 @@ const Home = (props) => {
         }
     };
 
-     const ChangeDropDownsVehicle = (e, name) => {
-       
+    const ChangeDropDownsVehicle = (e, name) => {
+
         if (e) {
             setValue({ ...value, [name]: e.value })
             setvehicleNumber(e.value)
@@ -938,7 +943,7 @@ const Home = (props) => {
 
         setIsClearing(true);
         setSelectedRows([]); setSelectedStatus('');
-        navigate(`/Property-room?&ProId=${0}&MProId=${0}&ProRomId=${0}&ProRoomStatus=${true}&selectedCategory=${''}&ProType=${''}&ProNumber=${''}&ProTransfer=${''}&CallStatus=${false}`);
+        navigate(`/Property-room?&ProId=${0}&MProId=${0}&ProRomId=${0}&ProRoomStatus=${true}&selectedCategory=${''}&ProType=${''}&ProNumber=${''}&ProTransfer=${''}&CallStatus=${false}&SelectedOption=${''}`);
         setPropertyId(''); setClickedRow(null);
         setPropertyNumber('');
         setvehicleNumber('');

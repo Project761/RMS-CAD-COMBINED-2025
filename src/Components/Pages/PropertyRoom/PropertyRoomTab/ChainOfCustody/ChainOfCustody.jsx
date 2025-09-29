@@ -7,14 +7,25 @@ const ChainOfCustodyData = (props) => {
   const { DecMPropID, DecPropID } = props
 
   const [data, setData] = useState([]);
+ 
+
+  // useEffect(() => {
+  //   get_ChainOfCustodyData(DecPropID);
+  // }, []);
+
 
   useEffect(() => {
-    get_ChainOfCustodyData(DecPropID);
+    const savedSelectedRows = JSON.parse(sessionStorage.getItem('selectedRows')) || [];
+    if (savedSelectedRows.length > 0) {
+       get_ChainOfCustodyData(savedSelectedRows[0].PropertyID);
+    }
+    console.log(savedSelectedRows);
   }, []);
 
-  const get_ChainOfCustodyData = () => {
+
+  const get_ChainOfCustodyData = (propertyID , masterpropertyID) => {
     const val = {
-      'PropertyID': DecPropID, 'MasterpropertyID': 0,
+      'PropertyID': propertyID, 'MasterpropertyID': 0,
     };
     fetchPostData('Propertyroom/GetData_ChainOfCustody', val).then((res) => {
       if (res) {
@@ -23,7 +34,7 @@ const ChainOfCustodyData = (props) => {
     });
   };
 
-  console.log(DecPropID)
+ 
 
   const columns = [
     {
@@ -38,13 +49,13 @@ const ChainOfCustodyData = (props) => {
     },
     {
       name: 'Date & Time',
-      selector: (row) => row.ExpectedDate ? getShowingWithFixedTime01(row.ExpectedDate) : '',
+      selector: (row) => row.ExpectedDate ||  row.ReceiveDate ? getShowingWithFixedTime01(row.ExpectedDate || row.ReceiveDate) : '',
       // selector: (row) => row.ExpectedDate,
       sortable: true,
     },
     {
       name: 'Officer Name',
-      selector: (row) => row.Officer_Name,
+      selector: (row) => row.CreatedByOfficer,
       sortable: true,
     },
     {
