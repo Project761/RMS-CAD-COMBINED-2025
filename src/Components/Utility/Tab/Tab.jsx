@@ -304,7 +304,7 @@ const Tab = () => {
         }
     }
 
-
+    console.log(tabCount.NarrativeCount)
     return (
         <div className="col-12 inc__tabs">
             {/* <StatusBar /> */}
@@ -338,12 +338,12 @@ const Tab = () => {
                         <Link
                             className={`nav-link${active === `/Inc-Report?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}` ? 'active' : ''} ${incidentStatus ? '' : 'disabled'}`}
                             to={changesStatus ? currentLocation : `/Inc-Report?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}`}
-                            style={{ color: currentTab === 'Report' ? 'Red' : incidentCount[0]?.OffenseCount > 0 ? 'blue' : '#130e0e', fontWeight: '600' }}
+                            style={{ color: currentTab === 'Report' ? 'Red' : tabCount?.NarrativeCount > 0 ? 'blue' : '#130e0e', fontWeight: '600' }}
                             data-toggle={changesStatus ? "modal" : "pill"}
                             data-target={changesStatus ? "#SaveModal" : ''}
                             onClick={() => { if (!changesStatus) { setCurrentTab('Report') } }}
                         >
-                            Report
+                            Report{`${tabCount?.NarrativeCount > 0 ? '(' + tabCount?.NarrativeCount + ')' : ''}`}
                         </Link>
                     </li>
                     <li className="nav-item">
