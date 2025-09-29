@@ -407,12 +407,12 @@ const CadPropertyModel = (props) => {
     const CreatedByUserFK = loginPinID;
     const AgencyId = loginAgencyID;
     const { ActivityReasonID, ExpectedDate, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
-      CourtDate, ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId,
+      CourtDate, ReleaseDate, PropertyTag, RecoveryNumber, LastSeenDtTm , StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId,
       IsCheckIn, IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, ReleasingOfficerID, ReceipentOfficerID, ReceipentID, DestructionOfficerID,
       ApprovalOfficerID, WitnessID, TransferDate, PackagingDetails, EvidenceType, UpdatingOfficerID, DestinationStorageLocation, CurrentStorageLocation
     } = value;
     const val = {
-      PropertyID, ActivityType, ActivityReasonID, ExpectedDate, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
+      PropertyID, ActivityType, ActivityReasonID, ExpectedDate, LastSeenDtTm , ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
       CourtDate, ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId,
       MasterPropertyId, IsCheckIn, IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, CreatedByUserFK, AgencyId,
       ReleasingOfficerID, ReceipentOfficerID, ReceipentID, DestructionOfficerID, EvidenceType, PackagingDetails,

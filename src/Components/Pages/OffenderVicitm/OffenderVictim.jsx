@@ -259,6 +259,7 @@ const OffenderVictim = () => {
         }
         else if (possessionIDVictim && (type === "Victim")) {
             get_Data_Victim_Drp(IncID); setValue({ ...value, ['VictimNameID']: parseInt(possessionIDVictim) })
+            setDrpNameID(possessionIDVictim);
         }
     }, [possessionID, possessionIDVictim, nameModalStatus]);
 

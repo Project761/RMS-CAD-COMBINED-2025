@@ -38,6 +38,8 @@ const PropertyRoomTab = () => {
     var ProType = query?.get('ProType');
     var ProNumber = query?.get('ProNumber');
     var ProTransfer = query?.get('ProTransfer');
+    var VehNumber = query?.get('VehNumber');
+    var SelectedOption = query?.get('SelectedOption');
     var CallStatus = query?.get('CallStatus');
     var CheckboxStatus = query?.get('CheckboxStatus');
 
@@ -75,7 +77,7 @@ const PropertyRoomTab = () => {
                                             <ul className='nav nav-tabs'>
                                                 <Link
                                                     className={`nav-item ${showIncPage === 'home' ? 'active' : ''} `}
-                                                    to={`/Property-room?&ProId=${ProId}&MProId=${MProId}&ProRomId=${ProRomId}&ProRoomStatus=${ProRoomStatus}&selectedCategory=${SelectedCategory}&ProType=${ProType}&ProNumber=${ProNumber}&ProTransfer=${ProTransfer}&ProRomId=${ProRomId}&CallStatus=${CallStatus}&CheckboxStatus=${CheckboxStatus}`}
+                                                    to={`/Property-room?&ProId=${ProId}&MProId=${MProId}&ProRomId=${ProRomId}&ProRoomStatus=${ProRoomStatus}&selectedCategory=${SelectedCategory}&ProType=${ProType}&ProNumber=${ProNumber}&SelectedOption=${SelectedOption}&VehNumber=${VehNumber}&ProTransfer=${ProTransfer}&ProRomId=${ProRomId}&CallStatus=${CallStatus}&CheckboxStatus=${CheckboxStatus}`}
                                                     data-toggle={changesStatus ? "modal" : "pill"}
                                                     data-target={changesStatus ? "#SaveModal" : ''}
                                                     style={{ color: showIncPage === 'home' ? 'Red' : '#000' }}
@@ -131,7 +133,7 @@ const PropertyRoomTab = () => {
                                     {
                                         showIncPage === 'home' ?
                                             // <Home {...{ setStatus, DecProRomId, DecPropID, DecMPropID }} />
-                                            <Home {...{ setStatus, showIncPage, DecPropID, DecMPropID, DecProRomId, ProRoomStatus, SelectedCategory, CallStatus, ProType, ProNumber, ProTransfer, CheckboxStatus }} />
+                                            <Home {...{ setStatus, showIncPage, DecPropID, DecMPropID, SelectedOption, DecProRomId, ProRoomStatus, SelectedCategory, CallStatus, ProType, ProNumber, VehNumber, ProTransfer, CheckboxStatus }} />
 
                                             :
                                             showIncPage === 'ChainOfCustody' ?
