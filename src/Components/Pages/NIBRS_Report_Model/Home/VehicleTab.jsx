@@ -827,6 +827,7 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
         setclickNibLoder(true); setnibrsValidateData([]);
         try {
             fetchPostDataNibrs('NIBRS/GetPropertyNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'PropertyId': '', 'gIntAgencyID': loginAgencyID }).then((data) => {
+                console.log("🚀 ~ ValidateVehicle ~ data:", data)
                 if (data) {
 
                     if (data?.Properties?.length > 0) {

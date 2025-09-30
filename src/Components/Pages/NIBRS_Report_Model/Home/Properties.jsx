@@ -1421,6 +1421,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
         setclickNibLoder(true); setSuspectedDrugTypeErrorStatus(false); setIsPropertyIdZeroError(false); setnibrsValidateData([]);
         try {
             fetchPostDataNibrs('NIBRS/GetPropertyNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'PropertyId': '', 'gIntAgencyID': loginAgencyID }).then((data) => {
+                console.log("🚀 ~ ValidateIncidentProperty ~ data:", data)
                 if (data) {
                     if (data?.Properties?.length > 0) {
                         const propArr = data?.Properties?.filter((item) => item?.PropertyType !== 'V' && item?.PropertyType !== null);
