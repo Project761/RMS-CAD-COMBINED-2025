@@ -44,7 +44,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
 
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
 
-    const { get_Incident_Count, nameSearchStatus, nameSingleData, nibrsSubmittedName, nibrsSubmittedVictim, setnibrsSubmittedVictim, get_NameVictim_Count, get_Name_Count, setChangesStatus, setcountAppear, setAuditCount, setNameSearchStatus, setcountStatus, setNameSingleData, changesStatus, setoffenceCountStatus, } = useContext(AgencyContext);
+    const { get_Incident_Count, nameSearchStatus, nameSingleData, nibrsSubmittedName, nibrsSubmittedVictim, setnibrsSubmittedVictim, get_NameVictim_Count, get_Name_Count, setChangesStatus, setcountAppear, setAuditCount, setNameSearchStatus, setcountStatus, setNameSingleData, changesStatus, setoffenceCountStatus, validate_IncSideBar } = useContext(AgencyContext);
 
 
     const useQuery = () => {
@@ -1440,6 +1440,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
             const AgencyID = loginAgencyID;
             const IncidentID = mainIncidentID;
             const CreatedByUserFK = loginPinID;
+
             const { NameTypeID, BusinessTypeID, IsMaster, NameIDNumber, IsUnListedPhNo, IsVerify, IsCurrentPh, SuffixID, VerifyID, SexID, RaceID, PhoneTypeID, NameReasonCodeID, CertifiedByID, EthnicityID, AgeUnitID, IsJuvenile, LastName, FirstName, MiddleName, SSN, WeightFrom, WeightTo, HeightFrom, HeightTo, Address, Contact, OwnerNameID, OwnerPhoneNumber, OwnerFaxNumber, DateOfBirth, CertifiedDtTm, AgeFrom, AgeTo, Years, ModifiedByUserFK, MasterNameID, NameID, ArrestID, WarrantID, TicketID, checkVictem, EventType,
                 checkOffender, checkArrest, NameLocationID, DLNumber, DLStateID, IsUnknown, Role, ResidentID, IsInjury, VictimTypeID, ORI, AssignmentTypeID, CallTypeID
             } = value;
@@ -1522,6 +1523,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
                                 ValidateProperty(mainIncidentID);
                                 ValidateIncNames(mainIncidentID, IncNo);
                                 getNibrsErrorToolTip(res?.NameID, mainIncidentID, IncNo);
+                                // validateIncSideBar
+                                validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
                             } else {
                                 toastifyError(res.Message); setErrors({ ...errors, ['NameTypeIDError']: '', ['ContactError']: '', });
                                 setChangesStatus(false)
@@ -1625,7 +1628,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
                                 get_Offense_DropDown(incidentID, nameID);
                                 setStatesChangeStatus(true);
                                 if (uploadImgFiles?.length > 0) {
-
                                     setuploadImgFiles('')
                                 }
 
@@ -1635,6 +1637,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
                                 ValidateProperty(mainIncidentID);
                                 ValidateIncNames(mainIncidentID, IncNo);
                                 getNibrsErrorToolTip(nameID, mainIncidentID, IncNo);
+                                // validateIncSideBar
+                                validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
                             } else {
                                 setChangesStatus(false);
                                 toastifyError(res.Message);

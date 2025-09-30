@@ -30,7 +30,7 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
     const rmsDispositionDrpData = useSelector((state) => state.DropDown.rmsDispositionDrpData);
 
-    const { updateCount, get_IncidentTab_Count, get_Incident_Count, nibrsSubmittedAdministartive, setnibrsSubmittedAdministartive, incidentCount, exceptionalClearID, setChangesStatus, GetDataTimeZone, datezone, } = useContext(AgencyContext);
+    const { updateCount, get_IncidentTab_Count, get_Incident_Count, nibrsSubmittedAdministartive, setnibrsSubmittedAdministartive, incidentCount, exceptionalClearID, setChangesStatus, GetDataTimeZone, datezone, validate_IncSideBar } = useContext(AgencyContext);
 
     const [reportedDate, setReportedDate] = useState(new Date(datezone));
     const [loder, setLoder] = useState(false);
@@ -336,6 +336,8 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
                 if (res.IncidentID) {
                     get_IncidentTab_Count(parseInt(res?.IncidentID), loginPinID); GetEditData(parseInt(res?.IncidentID));
                     setIncidentID(parseInt(res?.IncidentID)); setChangesStatus(false); setStatesChangeStatus(false); toastifySuccess(res?.Message);
+                    // validateIncSideBar
+                    validate_IncSideBar(res?.IncidentID, res?.IncidentNumber, loginAgencyID);
                 }
                 navigate(`/Inc-Home?IncId=${stringToBase64(res?.IncidentID?.trim())}&IncNo=${res?.IncidentNumber?.trim()}&IncSta=${true}`);
                 setErrors({ ...errors, ['OccuredError']: '', ['IncNumberError']: '', ['NIBRSclearancedateError']: '', });
@@ -346,13 +348,15 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
     }
 
     const UpdateIncident = () => {
-        AddDeleteUpadate('Incident/IncidentUpdate', value).then((res) => {
+        AddDeleteUpadate('Incident/IncidentUpdate', value).then((res) => {  
             const parsedData = JSON.parse(res.data);
             const message = parsedData.Table[0].Message;
             toastifySuccess(message); get_IncidentTab_Count(incidentID, loginPinID); setChangesStatus(false);
             setStatesChangeStatus(false);
             GetEditData(IncID);
             nibrsValidateInc(IncID);
+            // validateIncSideBar
+            validate_IncSideBar(IncID, IncNo, loginAgencyID);
             setErrors({ ...errors, ['OccuredError']: '', ['ExceptionalClearaceError']: '', });
         })
     }
@@ -400,14 +404,9 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
     // validate property/vehicle
     const nibrsValidateInc = async (incidentID) => {
         try {
-            const [incidentError, victimError, offenseError, propertyError, offenderError] = await Promise.all([
+            const [incidentError] = await Promise.all([
                 fetchPostDataNibrs('NIBRS/GetIncidentNIBRSError', { 'StrIncidentID': incidentID, 'StrIncidentNumber': IncNo, 'StrAgencyID': loginAgencyID }),
-                // fetchPostDataNibrs('NIBRS/GetVictimNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'NameID': 0, 'gIntAgencyID': loginAgencyID }),
-                // fetchPostDataNibrs("NIBRS/Nibrs_OffenseError", { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'CrimeId': 0, 'gIntAgencyID': loginAgencyID }),
-                // fetchPostDataNibrs('NIBRS/GetPropertyNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'PropertyId': 0, 'gIntAgencyID': loginAgencyID }),
-                // fetchPostDataNibrs('NIBRS/GetOffenderNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'NameID': 0, 'gIntAgencyID': loginAgencyID }),
             ])
-            // console.log("🚀 ~ nibrsValidateInc ~ incidentError:", incidentError)
 
             if (incidentError?.Incident) {
                 const incObj = incidentError?.Incident ? incidentError?.Incident : [];

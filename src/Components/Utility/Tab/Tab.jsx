@@ -304,7 +304,7 @@ const Tab = () => {
         }
     }
 
-    console.log(tabCount.NarrativeCount)
+
     return (
         <div className="col-12 inc__tabs">
             {/* <StatusBar /> */}

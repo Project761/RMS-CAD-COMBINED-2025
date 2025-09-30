@@ -60,7 +60,7 @@ const StatusBar = forwardRef((props, ref) => {
       color: "text-grays",
       bg: !NameRelationshipError ? "bg-red" : "bg-green",
       icon: !NameRelationshipError ? faTimes : faCheck,
-      link: `/Name-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}`,
+      link: `/Offvic-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}`,
     },
     {
       label: "Report",
@@ -132,7 +132,7 @@ const StatusBar = forwardRef((props, ref) => {
       backgroundColor: "#fff",
       boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
       // border: "1px solid #ccc",
-      borderRadius: "6px", 
+      borderRadius: "6px",
       // width: "81.22%",
     }}>
       {getFilteredStatusData(pathname).map((item, index) => (
@@ -140,11 +140,14 @@ const StatusBar = forwardRef((props, ref) => {
           key={index}
           className={`d-flex flex-column status-card ${item.border}`}
           onClick={() => {
-            if (pathname === item.link?.split("?")[0]) {
+            if (pathname === item.link?.split("?")[0] || item.label === "TIBRS") {
               return;
             } else {
               navigate(item.link)
             }
+          }}
+          style={{
+            cursor: "pointer",
           }}
         >
           <div className="d-flex align-items-center justify-content-between ">

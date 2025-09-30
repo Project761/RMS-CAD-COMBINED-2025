@@ -66,7 +66,7 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
     if (!MVehId) VehId = 0;
     else DecMVehId = parseInt(base64ToString(MVehId));
 
-    const { get_vehicle_Count, get_Incident_Count, updateCount, setUpdateCount, changesStatus, nibrsSubmittedVehicle, setnibrsSubmittedVehicle, changesStatusCount, setChangesStatus, setVehicleStatus, vehicleStatus, VehicleFilterData, get_Data_Vehicle, get_Name_Count, datezone, GetDataTimeZone, setcountoffaduit } = useContext(AgencyContext)
+    const { get_vehicle_Count, get_Incident_Count, updateCount, setUpdateCount, changesStatus, nibrsSubmittedVehicle, setnibrsSubmittedVehicle, changesStatusCount, setChangesStatus, setVehicleStatus, vehicleStatus, VehicleFilterData, get_Data_Vehicle, get_Name_Count, datezone, GetDataTimeZone, setcountoffaduit, validate_IncSideBar } = useContext(AgencyContext)
 
 
     const [categoryIdDrp, setCategoryIdDrp] = useState([]);
@@ -421,6 +421,8 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                 ValidateProperty(mainIncidentID);
                 ValidateVehicle(mainIncidentID);
                 NibrsErrorReturn(res?.PropertyID);
+                // validateIncSideBar
+                validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
             } else {
                 toastifyError('Error');
                 setErrors({ ...errors, ['LossCodeIDError']: '' });
@@ -446,7 +448,8 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                 ValidateProperty(mainIncidentID);
                 ValidateVehicle(mainIncidentID);
                 NibrsErrorReturn(vehicleID);
-
+                // validateIncSideBar
+                validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
             } else {
                 toastifyError('Error');
                 setErrors({ ...errors, ['LossCodeIDError']: '' });
@@ -820,13 +823,11 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
         }
     }, [vehicleClick, mainIncidentID]);
 
-
     const ValidateVehicle = (incidentID, isDefaultSelected = false) => {
         setclickNibLoder(true); setnibrsValidateData([]);
         try {
             fetchPostDataNibrs('NIBRS/GetPropertyNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'PropertyId': '', 'gIntAgencyID': loginAgencyID }).then((data) => {
                 if (data) {
-                    console.log("🚀 ~ ValidateProperty ~ data:", data);
 
                     if (data?.Properties?.length > 0) {
                         const VehArr = data?.Properties?.filter((item) => item?.PropertyType === 'V');
@@ -861,7 +862,6 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
         }
     }
 
-
     const NibrsErrorReturn = async (propertyID) => {
         setclickNibLoder(true); setnibrsFieldError([]); setShowLossCodeError(false); setNibrsErrStr('');
         try {
@@ -871,6 +871,7 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                     if (data?.Properties?.length > 0) {
 
                         const VehArr = data?.Properties?.filter((item) => item?.PropertyType === 'V');
+                        console.log("🚀 ~ NibrsErrorReturn ~ VehArr:", VehArr)
 
                         if (VehArr?.length > 0) {
                             setclickNibLoder(false); setnibrsFieldError(VehArr[0]); setNibrsErrStr(VehArr[0]?.OnPageError);
@@ -941,7 +942,7 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                             ) : null}</label>
                         </div>
                         <div className="col-4 col-md-4 col-lg-3 mt-1">
-                            {nibrsFieldError?.OnPageError && (
+                            {nibrsFieldError?.OnPageError && !nibrsFieldError?.IsCategory && (
                                 <div className="nibrs-tooltip-error">
                                     <div className="tooltip-arrow"></div>
 
@@ -1064,12 +1065,12 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                             ) : null}</label>
                         </div>
                         <div className="col-4 col-md-4 col-lg-2  mt-1">
-                            {false && (
+                            {nibrsFieldError?.IsCategory && (
                                 <div className="nibrs-tooltip-error" style={{ left: '-147px' }}>
                                     <div className="tooltip-arrow"></div>
 
                                     <div className="tooltip-content">
-                                        <span className="text-danger">⚠️ {nibrsFieldError?.OnPageError || 'dfdsfsdfsdfsdfsdf'}</span>
+                                        <span className="text-danger">⚠️ {nibrsFieldError?.Category || ''}</span>
                                     </div>
                                 </div>
                             )}

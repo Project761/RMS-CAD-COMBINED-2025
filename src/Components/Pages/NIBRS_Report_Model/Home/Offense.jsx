@@ -41,7 +41,7 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
   const navigate = useNavigate();
   const uniqueId = sessionStorage.getItem("UniqueUserID") ? Decrypt_Id_Name(sessionStorage.getItem("UniqueUserID"), "UForUniqueUserID") : "";
 
-  const { get_Offence_Count, updateCount, setUpdateCount, setChangesStatus, get_Offence_Data, nibrsSubmittedStatus, setnibrsSubmittedStatus, nibrsSubmittedOffense, setnibrsSubmittedOffense, changesStatus, get_Incident_Count, setIncidentStatus, setIncStatus, offenceFillterData, setcountoffaduit } = useContext(AgencyContext);
+  const { get_Offence_Count, updateCount, setUpdateCount, setChangesStatus, get_Offence_Data, nibrsSubmittedStatus, setnibrsSubmittedStatus, nibrsSubmittedOffense, setnibrsSubmittedOffense, changesStatus, get_Incident_Count, setIncidentStatus, setIncStatus, offenceFillterData, setcountoffaduit, validate_IncSideBar } = useContext(AgencyContext);
 
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
   const loginAgencyState = useSelector((state) => state.Ip.loginAgencyState);
@@ -1094,6 +1094,8 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
           ValidateProperty(IncID);
           ValidateOffense(IncID);
           NibrsErrorReturn(res?.CrimeID);
+          // validateIncSideBar
+          validate_IncSideBar(IncID, IncNo, loginAgencyID);
         }
         setChangesStatus(false);
         setStatesChangeStatus(false);
@@ -1128,7 +1130,7 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
       if (res.success) {
         Reset();
         toastifySuccess(res.Message); setChangesStatus(false);
-        setStatesChangeStatus(false); get_Offence_Data(mainIncidentID); setStatusFalse();
+        setStatesChangeStatus(false); get_Offence_Data(IncID); setStatusFalse();
         setErrors({ ...errors, ["ChargeCodeIDError"]: "", CommentsError: "" });
         get_Offence_Count(offenceID);
 
@@ -1136,6 +1138,8 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
         ValidateProperty(IncID);
         ValidateOffense(IncID);
         NibrsErrorReturn(CrimeID);
+        // validateIncSideBar
+        validate_IncSideBar(IncID, IncNo, loginAgencyID);
       }
       LawTitleIdDrpDwnVal(loginAgencyID, null); NIBRSCodeDrpDwnVal(loginAgencyID, null);
 
@@ -1644,12 +1648,6 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
     }
     return true; // Default: show all options
   });
-
-  // const isCrimeAgainstPerson = nibrsCodeDrp?.find((item) => item.value === value?.NIBRSCodeId)?.IsCrimeAgainsPerson;
-
-  // const isCrimeAgainstProperty = nibrsCodeDrp?.find((item) => item.value === value?.NIBRSCodeId)?.IsCrimeAgainstProperty;
-
-  // const isCrimeAgainstSociety = nibrsCodeDrp?.find((item) => item.value === value?.NIBRSCodeId)?.IsCrimeAgainstSociety;
 
   useEffect(() => {
     const selectedItem = nibrsCodeDrp?.find((item) => item.value === value?.NIBRSCodeId);
@@ -2274,15 +2272,15 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
               </div>
               <div className="col-9 col-md-9 col-lg-8 ">
                 {nibrsFieldError?.Bias && showBiasError &&
-        
-                    (<div className="nibrs-tooltip-error" style={{ left: '-80px' }}>
-                      <div className="tooltip-arrow"></div>
-                      <div className="tooltip-content">
-                        <span className="text-danger">
-                          ⚠️ {nibrsFieldError?.BiasError || ""}
-                        </span>
-                      </div>
+
+                  (<div className="nibrs-tooltip-error" style={{ left: '-80px' }}>
+                    <div className="tooltip-arrow"></div>
+                    <div className="tooltip-content">
+                      <span className="text-danger">
+                        ⚠️ {nibrsFieldError?.BiasError || ""}
+                      </span>
                     </div>
+                  </div>
                   )}
                 <SelectBox
                   className="basic-multi-select"
