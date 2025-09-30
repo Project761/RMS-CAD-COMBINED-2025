@@ -61,7 +61,7 @@ const ReportModule = (props) => {
     const reportApproveOfficer = useSelector((state) => state.Incident.reportApproveOfficer);
     const narrativeTypeDrpData = useSelector((state) => state.DropDown.narrativeTypeDrpData);
 
-    const { get_IncidentTab_Count, get_Incident_Count, changesStatus, setChangesStatus, nibrsStatus, GetDataTimeZone, datezone, setassignedReportID } = useContext(AgencyContext);
+    const { get_IncidentTab_Count, get_Incident_Count, changesStatus, setChangesStatus, nibrsStatus, GetDataTimeZone, datezone, setassignedReportID, validate_IncSideBar } = useContext(AgencyContext);
 
     const [narrativeData, setNarrativeData] = useState([]);
     const [upDateCount, setUpDateCount] = useState(0);
@@ -134,8 +134,6 @@ const ReportModule = (props) => {
         }
     }, [localStoreData, IncID]);
 
-
-    console.log(narrativeID)
     const checkId = (id, obj) => {
         const status = obj?.filter((item) => item?.value == id)
         return status?.length > 0
@@ -153,7 +151,7 @@ const ReportModule = (props) => {
     }, [IncID,]);
 
     useEffect(() => {
-        console.log('hello-0')
+
         if (loginAgencyID) {
             dispatch(get_AgencyOfficer_Data(loginAgencyID, IncID));
             Get_WrittenForDataDrp(loginAgencyID, IncID);
@@ -373,6 +371,8 @@ const ReportModule = (props) => {
                     get_IncidentTab_Count(incidentID, loginPinID); setNarrativeID(res?.NarrativeID);
                     GetSingleData(res?.NarrativeID); setStatesChangeStatus(false);
                     setChangesStatus(false); setErrors(prev => ({ ...prev, AsOfDateError: '' }));
+                    // validateIncSideBar
+                    validate_IncSideBar(IncID, IncNo, loginAgencyID);
                 }
             });
     };
@@ -419,6 +419,8 @@ const ReportModule = (props) => {
                     // setStatus(true);  setStatusFalse();
                     setErrors({ ...errors, 'ReportedByPinError': '', 'AsOfDateError': '', 'NarrativeIDError': '', 'CommentsError': '', ['ApprovingOfficerError']: '' });
                     get_NarrativesData(incidentID, loginPinID);
+                    // validateIncSideBar
+                    validate_IncSideBar(IncID, IncNo, loginAgencyID);
                 })
         }
     }

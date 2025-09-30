@@ -26,7 +26,7 @@ const OffenderVictim = () => {
     const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
 
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
-    const { setChangesStatus, get_Offence_Count, get_Incident_Count, } = useContext(AgencyContext);
+    const { setChangesStatus, get_Offence_Count, get_Incident_Count, validate_IncSideBar } = useContext(AgencyContext);
 
     const [offenseDrp, setOffenseDrp] = useState();
     const [isCrimeIDSelected, setIsCrimeIDSelected] = useState(false);
@@ -99,6 +99,7 @@ const OffenderVictim = () => {
 
     const query = useQuery();
     var IncID = query?.get("IncId");
+    var IncNo = query?.get("IncNo");
     if (!IncID) IncID = 0;
     else IncID = parseInt(base64ToString(IncID));
 
@@ -532,6 +533,8 @@ const OffenderVictim = () => {
                         ...errors, 'RelationshipTypeIDErrors': '', ' VictimNameIDErrors': '', 'RelationshipIDErrors': '', 'OffenseIDIDErrors': ''
                     });
                 }
+                // validateIncSideBar
+                validate_IncSideBar(IncID, IncNo, loginAgencyID);
             } else {
                 toastifyError(data.Message)
             }
@@ -552,6 +555,8 @@ const OffenderVictim = () => {
                     ...errors,
                     'RelationshipTypeIDErrors': '', ' VictimNameIDErrors': '', 'RelationshipIDErrors': '', 'OffenseIDIDErrors': ''
                 });
+                // validateIncSideBar
+                validate_IncSideBar(IncID, IncNo, loginAgencyID);
             } else {
                 toastifyError(data.Message)
             }
