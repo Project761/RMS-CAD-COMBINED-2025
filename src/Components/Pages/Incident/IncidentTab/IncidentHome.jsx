@@ -78,7 +78,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
   const [IncReportCount, setIncReportCount] = useState(1);
   //nibrs
   const [checkValidOffender, setcheckValidOffender] = useState([]);
-  const [carboTheft, setcarboTheft] = useState(false);
+  const [carboTheft, setcarboTheft] = useState(false);  
   const [adultArrestStatus, setadultArrestStatus] = useState(false);
   // nibrs Validate Incident
   const [baseDate, setBaseDate] = useState("");

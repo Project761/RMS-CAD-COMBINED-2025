@@ -40,7 +40,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, ValidateP
     const incReportedDate = useSelector((state) => state.Agency.incReportedDate);
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
 
-    const { get_Incident_Count, get_Name_Count, nameSearchStatus, setcountAppear, nibrsSubmittedOffender, setoffenceCountStatus, setnibrsSubmittedOffender, setAuditCount, setNameSearchStatus, setcountStatus, setChangesStatus, setNameSingleData, changesStatus, } = useContext(AgencyContext);
+    const { get_Incident_Count, get_Name_Count, nameSearchStatus, setcountAppear, nibrsSubmittedOffender, setoffenceCountStatus, setnibrsSubmittedOffender, setAuditCount, setNameSearchStatus, setcountStatus, setChangesStatus, setNameSingleData, changesStatus, validate_IncSideBar } = useContext(AgencyContext);
 
 
     const useQuery = () => {
@@ -1225,6 +1225,8 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, ValidateP
                                 ValidateProperty(IncID);
                                 getNibrs_Names_Error(IncID, IncNo);
                                 getNibrsErrorToolTip(res?.NameID, IncNo, IncID);
+                                // validateIncSideBar
+                                validate_IncSideBar(IncID, IncNo, loginAgencyID);
                             } else {
                                 toastifyError(res.Message); setErrors({ ...errors, ['NameTypeIDError']: '', ['ContactError']: '', });
                                 setChangesStatus(false)
@@ -1287,10 +1289,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, ValidateP
                                 const parseData = JSON.parse(res.data);
                                 toastifySuccess(parseData?.Table[0].Message);
                                 if (MstPage === "MST-Name-Dash") {
-
-
                                     navigate(`/nibrs-Home?page=MST-Name-Dash&MasterNameID=${stringToBase64(MasterNameID)}&ModNo=${ModNo}&NameStatus=${true}`);
-
                                 }
                                 setChangesStatus(false);
                                 setValue({
@@ -1318,6 +1317,8 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, ValidateP
                                 ValidateProperty(IncID);
                                 getNibrs_Names_Error(IncID, IncNo);
                                 getNibrsErrorToolTip(nameID, IncNo, IncID);
+                                // validateIncSideBar
+                                validate_IncSideBar(IncID, IncNo, loginAgencyID);
                             } else {
                                 setChangesStatus(false); toastifyError(res.Message); setErrors({ ...errors, ['NameTypeIDError']: '', });
                             }
@@ -1429,9 +1430,6 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, ValidateP
             setMultiSelected({ optionSelected: newArray });
         }
     };
-
-
-
 
     const handleDOBChange = (date, e) => {
         setStatesChangeStatus(true)
@@ -1773,13 +1771,12 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, ValidateP
         });
     };
 
-
-
     useEffect(() => {
         if (offenderClick && mainIncidentID && IncNo) {
             getNibrs_Names_Error(mainIncidentID, IncNo, true);
         }
     }, [offenderClick, IncNo, mainIncidentID])
+
 
     // validate Incident
     const getNibrs_Names_Error = (incidentID, IncNo, isDefaultSelected = false) => {
@@ -1860,12 +1857,9 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, ValidateP
 
     const setStatusFalse = () => {
         if (MstPage === "MST-Name-Dash") {
-
             navigate(`/nibrs-Home?page=MST-Name-Dash&IncId=${0}&IncNo=${0}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}`)
-
         }
         else {
-
             navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}`)
 
             setMasterNameID('');
@@ -2000,8 +1994,6 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, ValidateP
             </components.Option>
         );
     };
-
-
 
     //  RelationShip
     const [selectedNameData, setSelectedNameData] = useState([]);
@@ -2370,7 +2362,6 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, ValidateP
         setChangesStatus(true);
         setStatesChangeStatus(true);
     };
-
 
     return (
         <>
