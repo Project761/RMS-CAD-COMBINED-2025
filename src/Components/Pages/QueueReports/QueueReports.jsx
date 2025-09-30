@@ -1254,20 +1254,16 @@ const QueueReportsModal = (props) => {
                       },
                     }}
                   /> */}
-                  {/* <ReactQuill
-                    className={`editor-class`}
-                    // disabled={value.Status === 'Pending Review' || value.Status === 'Approved' || ((value.Status === 'Draft' || value.Status === 'Rejected') &&
-                    //   !IsSuperadmin &&
-                    //   !(value.ReportedByPINActivityID === loginPinID || value.WrittenForID === loginPinID))}
-
-                    // readOnly={value.Status === 'Pending Review' || value.Status === 'Approved' || ((value.Status === 'Draft' || value.Status === 'Rejected') && !IsSuperadmin && !(value.ReportedByPINActivityID === loginPinID || value.WrittenForID === loginPinID))}
-
+                  <ReactQuill
+                    className={`editor-class ${reviewStatus === true ? 'readonly' : ''}`}
+                
                     value={value.CommentsDoc}
                     onChange={(value, delta, source, editor) => {
                       const text = editor?.getText();
                       // console.log(text, "text");
                       // console.log(value, "value");
-                      // setChangesStatus(true); setStatesChangeStatus(true);
+                      // setChangesStatus(true);
+                      //  setStatesChangeStatus(true);
 
                       setValue((prevValue) => ({
                         ...prevValue,
@@ -1305,8 +1301,8 @@ const QueueReportsModal = (props) => {
                       maxHeight: '210px',
                       overflowY: 'auto',
                     }}
-                  /> */}
-                  <div className="raditer-mainQue">
+                  />
+                  {/* <div className="raditer-mainQue">
                     <CKEditor
                       editor={ClassicEditor}
                       config={editorConfig}
@@ -1336,7 +1332,7 @@ const QueueReportsModal = (props) => {
                     {errors.CommentsDocumentsError !== 'true' ? (
                       <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.CommentsDocumentsError}</p>
                     ) : null}
-                  </div>
+                  </div> */}
                 </div>
 
               </div>
