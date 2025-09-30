@@ -62,6 +62,7 @@ function QueueReports({ isPreview }) {
   const [pendingApprovalData, setPendingApprovalData] = useState([]);
 
 
+
   const [arrsetPoliceForceID, setArrsetPoliceForceID] = useState();
   const [ArrestNumber, setArrestNumber] = useState();
   const [IncidentNumber, setIncidentNumber] = useState();
@@ -626,6 +627,7 @@ const QueueReportsModal = (props) => {
   const [IncidentNo, setIncidentNo] = useState('');
   const [multiSelected, setMultiSelected] = useState({ optionSelected: null });
   const [checkWebWorkFlowStatus, setcheckWebWorkFlowStatus] = useState(false);
+  const [reviewStatus, setreviewStatus] = useState(false);
 
 
   const [editorState, setEditorState] = useState(
@@ -635,7 +637,8 @@ const QueueReportsModal = (props) => {
   const [value, setValue] = useState({
     'NameIDNumber': 'Auto Generated', 'NameTypeID': '', 'BusinessTypeID': '', 'SuffixID': '', 'VerifyID': '', 'SexID': '',
     'IsApprove': true, 'IsReject': false, 'Comments': '', 'CommentsDoc': '', 'ApprovalComments': '', 'IsApprovedForward': '',
-    'WrittenID': ''
+    'WrittenID': '',
+    'IsReview': '',
 
   })
 
@@ -743,13 +746,16 @@ const QueueReportsModal = (props) => {
         'CommentsDoc': editval[0]?.CommentsDoc,
         'Comments': editval[0]?.Comments,
         'NarrativeReport_Comments': editval[0]?.NarrativeReport_Comments,
-        'WrittenID': editval[0]?.WrittenForID
+        'WrittenID': editval[0]?.WrittenForID,
+        'IsReview': editval[0]?.IsReview,
       })
+      setApprovalStatus(editval[0]?.IsReview ? 'ApproveAndReview' : 'Approve');
+
       setIsSaved(false);
       if (editval[0]?.CommentsDoc?.trim()) {
         setEditorState(EditorState.createWithContent(ContentState.createFromBlockArray(htmlToDraft(editval[0]?.CommentsDoc ? editval[0].CommentsDoc?.trim() : <p></p>))));
       }
-
+      setreviewStatus(editval[0]?.IsReview);
       setIncidentID(editval[0]?.IncidentID)
       // setapprovingSuperVisorId(editval[0]?.IncidentID)
       // setCreatedByUserFK(editval[0]?.IncidentID)
@@ -854,12 +860,21 @@ const QueueReportsModal = (props) => {
   }
 
   const Add_Type_Comments = () => {
-    const { IsApprove, IsReject, Comments, CommentsDoc, ApprovalComments, ApprovingSupervisorID, IsApprovedForward } = value
+    const { IsApprove, IsReject, Comments, CommentsDoc, ApprovalComments, ApprovingSupervisorID, IsApprovedForward, IsReview } = value
     const type = selectedOption === "Individual" ? 'Individual' : 'Group';
 
     const val = {
       'AgencyID': loginAgencyID,
-      'IncidentId': incidentID, 'NarrativeID': narrativeID, 'ApprovingSupervisorType': type, 'ApprovingSupervisorID': ApprovingSupervisorID, 'IsApprove': (value.IsApprove === undefined && value.IsReject === undefined) || IsApprovedForward ? true : value.IsApprove, 'CreatedByUserFK': loginPinID, 'IsApprovedForward': IsApprovedForward, 'IsReject': IsApprove === undefined && IsReject === undefined ? false : IsReject, 'Comments': ApprovalComments,
+      'IncidentId': incidentID, 'NarrativeID': narrativeID, 'ApprovingSupervisorType': type, 'ApprovingSupervisorID': ApprovingSupervisorID,
+      'IsApprove': reviewStatus ? false : (value.IsApprove === undefined && value.IsReject === undefined) || IsApprovedForward ? true : value.IsApprove,
+      //  'IsApprove':  (value.IsApprove === undefined && value.IsReject === undefined) || IsApprovedForward ? true : value.IsApprove,
+      'CreatedByUserFK': loginPinID,
+      // 'IsApprovedForward': IsApprovedForward,
+      'IsApprovedForward': reviewStatus ? false : IsApprovedForward,
+      'IsReview': IsReview,
+      // 'IsReject': IsApprove === undefined && IsReject === undefined ? false : IsReject,
+      'IsReject': IsApprove === undefined && IsReject === undefined || reviewStatus ? false : IsReject,
+      'Comments': ApprovalComments,
       // 'IncidentId': incidentID, 'NarrativeID': narrativeID, 'ApprovingSupervisorType': type, 'ApprovingSupervisorID': ApprovingSupervisorID, 'IsApprove': IsApprovedForward ? 'true' : IsApprove, 'CreatedByUserFK': loginPinID, 'IsApprovedForward': IsApprovedForward, 'IsReject': IsReject, 'Comments': ApprovalComments,
 
     };
@@ -905,6 +920,7 @@ const QueueReportsModal = (props) => {
       IsApprove: selectedOptionnew === 'Approve',
       IsReject: selectedOptionnew === 'Reject',
       IsApprovedForward: selectedOptionnew === 'ApproveAndForward',
+      IsReview: selectedOptionnew === 'ApproveAndReview',
     }));
 
     setErrors({ ...errors, ['ApprovalCommentsError']: '', ['CommentsDocumentsError']: '', ['ApprovingOfficerError']: '', ['GroupError']: '' })
@@ -946,7 +962,7 @@ const QueueReportsModal = (props) => {
   };
 
   const check_Validation_ErrorApproval = () => {
-    if (value.IsApprovedForward) {
+    if (value.IsApprovedForward || value.IsReview) {
       const ApprovalCommentsErr = RequiredFieldIncident(value?.ApprovalComments);
       const CommentsDocumentsErr = RequiredFieldIncident(value.Comments?.trim());
       const ApprovingOfficerErr = RequiredFieldIncident(value?.ApprovingSupervisorID);
@@ -992,7 +1008,7 @@ const QueueReportsModal = (props) => {
 
 
   useEffect(() => {
-    if (value.IsApprovedForward) {
+    if (value.IsApprovedForward || value.IsReview) {
       if (ApprovalCommentsError === 'true' && CommentsDocumentsError === 'true' && ApprovingOfficerError === 'true') {
         Add_Type()
         // reset();
@@ -1094,7 +1110,7 @@ const QueueReportsModal = (props) => {
     }
   }
 
-  console.log(setApproverStatus(checkapproveStatus, reportApprovalStatus))
+  console.log(reviewStatus)
 
   return (
     <div className="modal fade show d-block" style={{ background: "rgba(0,0,0,0.5)" }}>
@@ -1238,20 +1254,16 @@ const QueueReportsModal = (props) => {
                       },
                     }}
                   /> */}
-                  {/* <ReactQuill
-                    className={`editor-class`}
-                    // disabled={value.Status === 'Pending Review' || value.Status === 'Approved' || ((value.Status === 'Draft' || value.Status === 'Rejected') &&
-                    //   !IsSuperadmin &&
-                    //   !(value.ReportedByPINActivityID === loginPinID || value.WrittenForID === loginPinID))}
-
-                    // readOnly={value.Status === 'Pending Review' || value.Status === 'Approved' || ((value.Status === 'Draft' || value.Status === 'Rejected') && !IsSuperadmin && !(value.ReportedByPINActivityID === loginPinID || value.WrittenForID === loginPinID))}
-
+                  <ReactQuill
+                    className={`editor-class ${reviewStatus === true ? 'readonly' : ''}`}
+                
                     value={value.CommentsDoc}
                     onChange={(value, delta, source, editor) => {
                       const text = editor?.getText();
                       // console.log(text, "text");
                       // console.log(value, "value");
-                      // setChangesStatus(true); setStatesChangeStatus(true);
+                      // setChangesStatus(true);
+                      //  setStatesChangeStatus(true);
 
                       setValue((prevValue) => ({
                         ...prevValue,
@@ -1289,8 +1301,8 @@ const QueueReportsModal = (props) => {
                       maxHeight: '210px',
                       overflowY: 'auto',
                     }}
-                  /> */}
-                  <div className="raditer-mainQue">
+                  />
+                  {/* <div className="raditer-mainQue">
                     <CKEditor
                       editor={ClassicEditor}
                       config={editorConfig}
@@ -1309,102 +1321,135 @@ const QueueReportsModal = (props) => {
                           Comments: plainText.trim()
                         }));
                       }}
-                      className="editor-class ck-editor__editable_inline"
+                      className={`editor-class ck-editor__editable_inline ${reviewStatus === true ? 'readonly' : ''}`}
+                      disabled={reviewStatus === true}
+         
+
+                      readOnly={reviewStatus === true}
+                      // className="editor-class ck-editor__editable_inline"
                       placeholder="Write something..."
                     />
                     {errors.CommentsDocumentsError !== 'true' ? (
                       <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.CommentsDocumentsError}</p>
                     ) : null}
-                  </div>
+                  </div> */}
                 </div>
 
               </div>
 
               <div className='row mt-1'>
-                <div className='col-md-2'>
-                  {
-                    setApproverStatus(checkapproveStatus, reportApprovalStatus) === true ?
-                      < div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          value="Approve"
-                          name="flexRadioDefault"
-                          id="Group"
-                          checked={value.IsApprove}
-                          onChange={handleRadioChange}
-                        // checked={ === "Group"}
-                        // onChange={}
-                        />
-                        <label className="form-check-label " >
-                          Approve
-                        </label>
+                {
+                  (reviewStatus === false || reviewStatus === 'false') && (
+                    <>
+                      <div className='col-md-2'>
+                        {
+                          setApproverStatus(checkapproveStatus, reportApprovalStatus) === true ?
+                            < div className="form-check">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                value="Approve"
+                                name="flexRadioDefault"
+                                // id="Group"
+                                checked={value.IsApprove}
+                                onChange={handleRadioChange}
+                              // checked={ === "Group"}
+                              // onChange={}
+                              />
+                              <label className="form-check-label " >
+                                Approve
+                              </label>
+                            </div>
+                            :
+                            <></>
+                        }
+                        {
+
+                          (setApproverStatus(checkapproveStatus, reportApprovalStatus) === false && checkapproveStatus === "0") &&
+
+                          < div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              value="Approve"
+                              name="flexRadioDefault"
+                              // id="Group"
+                              checked={value.IsApprove}
+                              onChange={handleRadioChange}
+                            // checked={ === "Group"}
+                            // onChange={}
+                            />
+                            <label className="form-check-label ">
+                              Approve
+                            </label>
+                          </div>
+
+
+                        }
                       </div>
-                      :
-                      <></>
-                  }
-                  {
+                      <div className='col-md-2'>
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="radio"
+                            value="Reject"
+                            name="flexRadioDefault"
+                            // id="Group"
+                            checked={value.IsReject}
+                            onChange={handleRadioChange}
+                          // checked={ === "Group"}
+                          // onChange={}
+                          />
+                          <label className="form-check-label ">
+                            Reject
+                          </label>
+                        </div>
+                      </div>
 
-                    (setApproverStatus(checkapproveStatus, reportApprovalStatus) === false && checkapproveStatus === "0") &&
+                      <div className='col-md-2'>
 
-                    < div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        value="Approve"
-                        name="flexRadioDefault"
-                        id="Group"
-                        checked={value.IsApprove}
-                        onChange={handleRadioChange}
-                      // checked={ === "Group"}
-                      // onChange={}
-                      />
-                      <label className="form-check-label ">
-                        Approve
-                      </label>
-                    </div>
+                        {
+                          (!setApproverStatus(checkapproveStatus, reportApprovalStatus) && checkapproveStatus === "1") || checkWebWorkFlowStatus &&
+                          < div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              value="ApproveAndForward"
+                              name="flexRadioDefault"
+                              // id="Group"
+                              checked={value.IsApprovedForward}
+                              onChange={handleRadioChange}
+                            />
+                            <label className="form-check-label ">
+                              Approve and Forward
+                            </label>
+                          </div>
+                        }
 
+                      </div>
+                    </>
+                  )
 
-                  }
-                </div>
+                }
+
                 <div className='col-md-2'>
-                  <div className="form-check">
+
+
+                  < div className="form-check">
                     <input
                       className="form-check-input"
                       type="radio"
-                      value="Reject"
+                      value="ApproveAndReview"
                       name="flexRadioDefault"
-                      id="Group"
-                      checked={value.IsReject}
+                      // id="Group"
+                      checked={value.IsReview}
                       onChange={handleRadioChange}
-                    // checked={ === "Group"}
-                    // onChange={}
                     />
                     <label className="form-check-label ">
-                      Reject
+                      Approve and Review
                     </label>
                   </div>
-                </div>
 
-                <div className='col-md-2'>
-
-                  {
-                    (!setApproverStatus(checkapproveStatus, reportApprovalStatus) && checkapproveStatus === "1") || checkWebWorkFlowStatus &&
-                    < div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        value="ApproveAndForward"
-                        name="flexRadioDefault"
-                        id="Group"
-                        checked={value.IsApprovedForward}
-                        onChange={handleRadioChange}
-                      />
-                      <label className="form-check-label ">
-                        Approve and Forward
-                      </label>
-                    </div>
-                  }
 
                 </div>
               </div>
@@ -1413,7 +1458,7 @@ const QueueReportsModal = (props) => {
               <div className="row ">
                 <div className="col-12 col-md-12 col-lg-12">
                   <div className="row ">
-                    {approvalStatus === 'ApproveAndForward' && (
+                    {(approvalStatus === 'ApproveAndForward' || approvalStatus === 'ApproveAndReview') && (
                       <>
                         <div className="col-6 col-md-6 col-lg-3 mt-2 pt-1">
                           <div className="form-check ml-2">
@@ -1449,7 +1494,7 @@ const QueueReportsModal = (props) => {
                     )}
 
 
-                    {approvalStatus?.trim() === "ApproveAndForward" && (
+                    {(approvalStatus?.trim() === "ApproveAndForward" || approvalStatus?.trim() === "ApproveAndReview") && (
                       <>
                         {selectedOption === "Individual" ? (
                           <>
@@ -1518,7 +1563,7 @@ const QueueReportsModal = (props) => {
               </div>
 
               {/* Approve Section */}
-              {(approvalStatus === 'Approve' || approvalStatus === 'ApproveAndForward') && (
+              {(approvalStatus === 'Approve' || approvalStatus === 'ApproveAndForward' || approvalStatus === 'ApproveAndReview') && (
                 <>
                   {/* <div className="mb-3 mt-4">
                 <h6 className="fw-bold">Approve Report Comment</h6>

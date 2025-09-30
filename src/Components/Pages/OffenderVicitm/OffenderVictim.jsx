@@ -458,6 +458,8 @@ const OffenderVictim = () => {
             } else {
                 console.log("Somthing Wrong");
             }
+        }).catch((error)=>{
+            
         })
     }
 
