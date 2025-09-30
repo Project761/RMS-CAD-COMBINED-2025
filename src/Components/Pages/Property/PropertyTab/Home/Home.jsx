@@ -3444,7 +3444,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                             </button>
                           }
                         </div> */}
-                        <div className="btn-box text-right col-3 col-md-3 mt-4  pt-2" s>
+                        <div className="btn-box text-right col-3 col-md-3 mt-4  pt-2" >
                           {
                             (!propertyID || !masterPropertyID) && (ProSta != 'true' || ProSta != true) && (value.PropertyCategoryCode === 'D') &&
                             <button
