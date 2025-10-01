@@ -593,7 +593,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
           ...value,
           'MasterNameID': editval[0]?.MasterNameID, 'NameID': editval[0]?.NameID, 'IsUnknown': editval[0]?.IsUnknown, 'NameIDNumber': editval[0]?.NameIDNumber ? editval[0]?.NameIDNumber : 'Auto Generated', 'checkVictem': editval[0]?.NewVictimID ? editval[0]?.NewVictimID[0]?.NewVictimID : "", 'checkOffender': editval[0]?.NewOffenderID ? editval[0]?.NewOffenderID[0]?.NewOffenderID : "", 'checkArrest': editval[0]?.ArrestID ? editval[0]?.ArrestID[0]?.ArrestID : "",
           // DropDown
-          'NameTypeID': editval[0]?.NameTypeID, 'BusinessTypeID': editval[0]?.BusinessTypeID, 'SuffixID': editval[0]?.SuffixID, 'VerifyID': editval[0]?.DLVerifyID, 'SexID': editval[0]?.SexID, 'RaceID': editval[0]?.RaceID, 'PhoneTypeID': editval[0]?.PhoneTypeID, 'EthnicityID': editval[0]?.EthnicityID, 'AgeUnitID': editval[0]?.AgeUnitID, 'NameReasonCodeID': editval[0]?.ReasonCode ? changeArray(editval[0]?.ReasonCode, 'NameReasonCodeID') : '', 'CertifiedByID': editval[0]?.CertifiedByID, 'Role': MstPage === "MST-Name-Dash" ? '' : editval[0]?.Role,
+          'NameTypeID': editval[0]?.NameTypeID, 'BusinessTypeID': editval[0]?.BusinessTypeID, 'SuffixID': editval[0]?.SuffixID, 'VerifyID': editval[0]?.DLVerifyID, 'SexID': editval[0]?.SexID, 'RaceID': editval[0]?.RaceID, 'PhoneTypeID': editval[0]?.PhoneTypeID, 'EthnicityID': editval[0]?.EthnicityID, 'AgeUnitID': editval[0]?.AgeUnitID, 'NameReasonCodeID': editval[0]?.ReasonCode ? changeArray(editval[0]?.ReasonCode, 'NameReasonCodeID') : '', 'CertifiedByID': editval[0]?.CertifiedByID, 'Role': editval[0]?.Role,
           // checkbox
           'IsJuvenile': editval[0]?.IsJuvenile, 'IsVerify': editval[0]?.IsVerify, 'IsUnListedPhNo': editval[0]?.IsUnListedPhNo,
           //textbox
@@ -629,7 +629,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
           optionSelected: editval[0]?.ReasonCode ? fourColArrayReasonCode(editval[0]?.ReasonCode, 'NameReasonCodeID', 'ReasonCode_Description', 'IsVictimName', 'IsOffenderName'
           ) : '',
         });
-        setMultiSelectedReason({ optionSelected: MstPage === "MST-Name-Dash" ? '' : editval[0]?.Role ? makeRoleArr(editval[0]?.Role) : [], });
+        setMultiSelectedReason({ optionSelected: editval[0]?.Role ? makeRoleArr(editval[0]?.Role) : [], });
         setShowOffender(editval[0]?.ReasonCode?.some(function (item) { return item.IsOffenderName })); setShowVictim(editval[0]?.ReasonCode?.some(function (item) { return item.IsVictimName })); setshowWarrant(editval[0]?.ReasonCode?.some(function (item) { return item.ReasonCode === "WAR" }));
       }
     } else {
@@ -637,17 +637,27 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
         setAuditCount(false); setShowOffender(false); setShowVictim(false); setshowWarrant(false);
         setValue({
           ...value,
-          'MasterNameID': '', 'NameID': '', 'NameIDNumber': 'Auto Generated', 'BusinessTypeID': '', 'SuffixID': '', 'VerifyID': '', 'SexID': '', 'EthnicityID': '', 'RaceID': '', 'PhoneTypeID': '', 'NameReasonCodeID': '', 'CertifiedByID': '', 'AgeUnitID': '', 'Role': '',
+          'MasterNameID': '', 'NameID': '', 'NameIDNumber': 'Auto Generated', 'BusinessTypeID': '', 'SuffixID': '', 'VerifyID': '', 'SexID': '', 'EthnicityID': '', 'RaceID': '', 'PhoneTypeID': '', 'NameReasonCodeID': '', 'CertifiedByID': '', 'AgeUnitID': '', 'Role': MstPage === "MST-Name-Dash" ? ReasonCodeRoleArr.filter(item => item.value === 3).map(item => item?.value) : '',
           'IsVerify': true, 'IsUnListedPhNo': '', 'LastName': '', 'FirstName': '', 'MiddleName': '', 'SSN': '', 'WeightFrom': '', 'WeightTo': '', 'HeightFrom': '', 'HeightTo': '', 'Address': '', 'Contact': '', 'DateOfBirth': '', 'CertifiedDtTm': null, 'AgeFrom': '', 'AgeTo': '', 'Years': '', 'checkVictem': 0, 'checkOffender': 0, 'checkArrest': 0,
           'DLNumber': '', 'DLStateID': '', 'ResidentID': '',
         }); setPhoneTypeCode('')
       }
+
       const id = nameTypeData?.filter((val) => { if (val.id === "I") return val })
       if (id.length > 0) {
         setValue(prevValues => { return { ...prevValues, ['NameTypeID']: id[0].value } })
         setNameTypeCode(id[0].NameTypeCode); setIsBusinessName(false);
       }
-      setMultiSelected({ optionSelected: [], }); setMultiSelectedReason({ optionSelected: [], });
+      if (MstPage === "MST-Name-Dash") {
+        const filteredReasonCodeRoleArr = ReasonCodeRoleArr.filter(item => item.value === 3);
+        const finalValueList = filteredReasonCodeRoleArr.map(item => item?.value);
+        setMultiSelectedReason({ optionSelected: filteredReasonCodeRoleArr, });
+      }
+      else {
+        setMultiSelected({ optionSelected: [], }); setMultiSelectedReason({ optionSelected: [], });
+      }
+
+
     }
   }, [editval])
 
@@ -1826,6 +1836,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
     } else {
       setroleStatus(false);
     }
+
     setMultiSelected(prev => ({ ...prev, optionSelected: updatedOptionSelected }));
     setValue(prev => ({
       ...prev,
@@ -2842,22 +2853,25 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
             <div className="col-lg-5" style={{ margin: '0 auto' }} >
               <div className='row align-items-center' style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'nowrap' }}>
                 {
-                  nameID && NameTabCount?.NameOffenseCount <= 0 && (
-                    <span
-                      onMouseEnter={handleMouseEnter}
-                      onMouseLeave={handleMouseLeave}
-                      style={{
-                        display: 'flex', justifyContent: 'center', alignItems: 'center',
-                        color: isHovered ? 'blue' : 'red', border: '1px solid red', backgroundColor: '#fbecec',
-                        borderRadius: '4px', padding: '4px 8px', margin: '0 auto',
-                        cursor: 'pointer', fontSize: '14px', fontWeight: 500,
-                        width: 'fit-content', height: 'fit-content',
+                  nameID && MstPage !== "MST-Name-Dash" && NameTabCount?.NameOffenseCount <= 0 ?
+                    <>
+                      <span
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                        style={{
+                          display: 'flex', justifyContent: 'center', alignItems: 'center',
+                          color: isHovered ? 'blue' : 'red', border: '1px solid red', backgroundColor: '#fbecec',
+                          borderRadius: '4px', padding: '4px 8px', margin: '0 auto',
+                          cursor: 'pointer', fontSize: '14px', fontWeight: 500,
+                          width: 'fit-content', height: 'fit-content',
 
-                      }}
-                      className="col-12 col-md-4" onClick={() => setNameShowPage('Offense')}>
-                      Add Offense
-                    </span>
-                  )
+                        }}
+                        className="col-12 col-md-4" onClick={() => setNameShowPage('Offense')}>
+                        Add Offense
+                      </span>
+                    </>
+                    : <></>
+
                 }
                 {
                   isMissing && MstPage !== "MST-Name-Dash" ? (

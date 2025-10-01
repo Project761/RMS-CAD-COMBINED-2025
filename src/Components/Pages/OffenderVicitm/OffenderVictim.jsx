@@ -264,6 +264,15 @@ const OffenderVictim = () => {
         }
     }, [possessionID, possessionIDVictim, nameModalStatus]);
 
+    // new start //
+    useEffect(() => {
+        const filteredVictim = VictimDrpp?.filter((obj) => obj.NameID === value.VictimNameID);
+        setVictimID(filteredVictim[0]?.VictimID)
+
+    }, [VictimDrpp, nameModalStatus])
+
+     // new end //
+
     const get_Data_Name_Drp = (IncID) => {
         const val = { 'IncidentID': IncID, }
         fetchPostData('NameRelationship/GetDataDropDown_OffenderName', val).then((data) => {
@@ -458,8 +467,8 @@ const OffenderVictim = () => {
             } else {
                 console.log("Somthing Wrong");
             }
-        }).catch((error)=>{
-            
+        }).catch((error) => {
+
         })
     }
 
