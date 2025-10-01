@@ -225,7 +225,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
     });
   };
 
-  // ---- DS
+  // ---- DS 
   const handleInputChange = (inputValue) => {
     if (inputValue) {
       const filtered = nibrsCodeDrp.filter((option) =>
@@ -845,14 +845,13 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
       setIncidentStatus(true);
     }
   };
+
   useEffect(() => {
     if (offenceFillterData?.length > 0) {
       const arrestChargeCounts = offenceFillterData.map(item => item.ArrestChargeCount);
       SetDeleteshowCounts(arrestChargeCounts);
     }
   }, [offenceFillterData]);
-
-
 
 
   const columns = [
@@ -988,7 +987,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
           )}
         </div>
       ),
-
     },
     {
       minWidth: "40px",
@@ -1053,7 +1051,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
         </div>
       ),
     },
-
   ];
 
   const getCrimeInfoErrorButton = (crimeId, nibrsValidateOffenseData) => {
@@ -1169,7 +1166,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
   //   }),
   // };
 
-  // Custom Style
+
   const nibrsSuccessStyles = {
     control: (styles) => ({
       ...styles,
@@ -1204,10 +1201,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
     { value: false, label: "No" },
   ];
 
-  const StatusOptionGang = [
-    { value: true, label: "Yes" },
-    { value: false, label: "No" },
-  ];
 
   const changeDropDowns = (e, name) => {
     !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
@@ -1302,12 +1295,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
       const res = await fetchPostDataNibrs("NIBRS/Nibrs_OffenseError", val);
       if (res) {
         const offenceError = res?.Offense && res?.Offense[0] ? res?.Offense[0] : [];
-        // console.log("🚀 ~ fetchPostData ~ res:", res);
 
-        // if (offenceError?.AttempComp) {
-        //   setAttemptComplteStatus(offenceError?.AttempComp);
-        //   setattemptCompleteError(offenceError?.AttempCompError);
-        // }
         if (offenceError.LocationType) {
           setlocationTypeComplteStatus(offenceError?.LocationType);
           setlocationTypeComplteError(offenceError?.LocationTypeError);
@@ -1345,13 +1333,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => setIsHovered(false);
 
-  const nibrsColor = (val) => {
-    if (val) {
-      return "nibrsSuccessColor";
-    } else {
-      return "requiredField";
-    }
-  }
 
   // DS
   useEffect(() => {
@@ -1379,20 +1360,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
       setValue({ ...value, [name]: null });
     }
   };
-
-  const nibSuccessStyles = {
-    control: (styles) => ({
-      ...styles,
-      backgroundColor: "#9fd4ae",
-      height: 20,
-      minHeight: 35,
-      fontSize: 14,
-      margintop: 2,
-      boxShadow: 0,
-    }),
-  };
-
-
 
   return (
     <>
@@ -1525,15 +1492,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
           <div className="col-7 col-md-7 col-lg-4 ">
             <Select
               name="PrimaryLocationId"
-              // styles={
-              //   nibrsSubmittedOffenseMain === 1 ? "readonlyColor"
-              //     :
-              //     loginAgencyState === "TX"
-              //       ?
-              //       chekLocationType(nibrsCode, primaryLocationCode) ? nibrscolourStyles : check_Valid_Nibrs_Code(nibrsCode) ? customStylesWithOutColor : colourStyles
-              //       :
-              //       colourStyles
-              // }
               styles={
                 nibrsSubmittedOffenseMain === 1 ? LockFildscolour
                   :
@@ -1614,13 +1572,10 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
               Gang Information
               {gangInformationStatus && (<ErrorTooltip ErrorStr={gangInformationError} />)}
             </label>
-
           </div>
           <div className="custom-col-20">
             <Select
               isMulti
-              // styles={ loginAgencyState === 'TX' ? getGangInfoStyleColor(nibrsCode) ? getGangInfoStyleColor(nibrsCode) : customStylesWithOutColor : customStylesWithOutColor}
-              // isDisabled={ loginAgencyState === 'TX' ? isGangDisabled(nibrsCode) ? false : true : false }
               styles={
                 nibrsSubmittedOffenseMain === 1 ? LockFildscolour
                   :
@@ -1640,7 +1595,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
                     : false
               }
               value={gangInfoVal}
-
               onChange={(e) => onChangeGangInfo(e, "IsGangInfo")}
               options={gangInfoDrpVal}
               isClearable
@@ -1673,7 +1627,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
               required
               autoComplete="off"
             />
-
           </div>
           <div className="col-2 " style={{ lineHeight: 1.1 }}>
             <span data-toggle="modal" onClick={() => setOpenPage("Method Of Entry")} data-target="#ListModel"
@@ -1783,25 +1736,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
           </div>
         </div>
       </div>
-      {/* <div className="text-center p-1">
-        {
-          isNibrs999 || nibrsCode === "999" ? (
-            <>
-              <span></span>
-            </>
-          ) : (
-            <span
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-              style={{
-                color: isHovered ? "blue" : "red",
-                transition: "background-color 0.3s ease",
-              }}
-            >
-              <u>Each Offense must have at least one victim Connected</u>
-            </span>
-          )}
-      </div> */}
+
       <div className="text-center p-1">
         {
           isNibrs999 || nibrsCode === "999" ? null : (
@@ -1819,21 +1754,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
           )
         }
       </div>
-
-      {/* {!donotCount && (
-        <div className="text-center p-1">
-          <span
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            style={{
-              color: isHovered ? "blue" : "red",
-              transition: "background-color 0.3s ease",
-            }}
-          >
-            <u>Each Offense must have at least one victim Connected</u>
-          </span>
-        </div>
-      )} */}
 
       <div className="col-12 text-right mb-1 mt-1 field-button  d-flex justify-content-between">
         <div>

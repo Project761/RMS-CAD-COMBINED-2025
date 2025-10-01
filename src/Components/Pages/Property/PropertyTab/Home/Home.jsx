@@ -67,7 +67,6 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
   const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
   const loginAgencyState = useSelector((state) => state.Ip.loginAgencyState);
 
-
   const measureTypeDrpData = useSelector((state) => state.DropDown.measureTypeDrpData);
 
   const useQuery = () => {
@@ -1314,6 +1313,9 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
   }
 
   useEffect(() => {
+    console.log("MstPage", MstPage);
+    console.log("MstPage", MstPage);
+    console.log("masterPropertyStatus", masterPropertyStatus);
     if (MstPage === "MST-Property-Dash" && masterPropertyStatus == true) { newProperty() }
   }, [MstPage, masterPropertyStatus]);
 
