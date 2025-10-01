@@ -1446,7 +1446,7 @@ const QueueReportsModal = (props) => {
                       onChange={handleRadioChange}
                     />
                     <label className="form-check-label ">
-                      Approve and Review
+                       Review
                     </label>
                   </div>
 
@@ -1458,7 +1458,7 @@ const QueueReportsModal = (props) => {
               <div className="row ">
                 <div className="col-12 col-md-12 col-lg-12">
                   <div className="row ">
-                    {(approvalStatus === 'ApproveAndForward' || approvalStatus === 'ApproveAndReview') && (
+                    {(approvalStatus === 'ApproveAndForward' || approvalStatus === 'ApproveAndReview' && reviewStatus === false) && (
                       <>
                         <div className="col-6 col-md-6 col-lg-3 mt-2 pt-1">
                           <div className="form-check ml-2">
@@ -1494,7 +1494,7 @@ const QueueReportsModal = (props) => {
                     )}
 
 
-                    {(approvalStatus?.trim() === "ApproveAndForward" || approvalStatus?.trim() === "ApproveAndReview") && (
+                    {(approvalStatus?.trim() === "ApproveAndForward" || approvalStatus?.trim() === "ApproveAndReview" &&  reviewStatus === false) && (
                       <>
                         {selectedOption === "Individual" ? (
                           <>
@@ -1563,7 +1563,7 @@ const QueueReportsModal = (props) => {
               </div>
 
               {/* Approve Section */}
-              {(approvalStatus === 'Approve' || approvalStatus === 'ApproveAndForward' || approvalStatus === 'ApproveAndReview') && (
+              {(approvalStatus === 'Approve' || approvalStatus === 'ApproveAndForward' || approvalStatus === 'ApproveAndReview' &&  reviewStatus === false) && (
                 <>
                   {/* <div className="mb-3 mt-4">
                 <h6 className="fw-bold">Approve Report Comment</h6>
