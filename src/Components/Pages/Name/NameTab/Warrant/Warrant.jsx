@@ -20,7 +20,7 @@ import CreatableSelect from 'react-select/creatable';
 import { get_ScreenPermissions_Data } from '../../../../../redux/actions/IncidentAction';
 
 const Warrant = (props) => {
-
+  
     const { ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails = false } = props
 
     const { get_Name_Count, setChangesStatus, GetDataTimeZone, datezone } = useContext(AgencyContext)
@@ -540,7 +540,7 @@ const Warrant = (props) => {
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.DateTimeIssuedErrors}</p>
                         ) : null}</label>
                     </div>
-                    <div className="col-3 col-md-3 col-lg-3 ">
+                    <div className="col-3 col-md-3 col-lg-3 mt-2">
                         <DatePicker
                             id='DateTimeIssued'
                             name='DateTimeIssued'
@@ -602,7 +602,7 @@ const Warrant = (props) => {
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.DateExpiredErrors}</p>
                         ) : null}</label>
                     </div>
-                    <div className="col-3 col-md-3 col-lg-2 ">
+                    <div className="col-3 col-md-3 col-lg-2 mt-2">
                         <DatePicker
                             id="DateExpired"
                             name="DateExpired"
