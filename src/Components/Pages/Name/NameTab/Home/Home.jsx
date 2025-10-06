@@ -81,6 +81,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
   var MasterNameID = query?.get("MasterNameID");
   let MstPage = query?.get('page');
   let ModNo = query?.get('ModNo');
+  let isNew = query?.get('isNew');
 
 
   if (!IncID) IncID = 0;
@@ -1986,7 +1987,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
 
   return (
     <>
-      {((incidentCount[0]?.NameCount === 0) || (incidentCount[0]?.NameCount > 0)) && (
+      {((incidentCount[0]?.NameCount === 0 || incidentCount[0]?.NameCount === "0") || (NameStatus === true || NameStatus === 'true') || isNew === "true" || isNew === true) && (
         <>
           <div className="row child">
             <div className="col-12 col-md-12 col-lg-12 mt-1 ">
@@ -2768,7 +2769,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                         </span>
                       ) : <></>
                     }
-                   
+
                     {isAdultArrest && MstPage !== "MST-Name-Dash" ? (
                       <span
                         onMouseEnter={handleMouseEnter}
