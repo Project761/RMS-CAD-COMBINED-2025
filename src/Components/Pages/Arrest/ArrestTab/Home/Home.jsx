@@ -1487,9 +1487,8 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
     return (
         <>
             <div className="col-12 child " id="display-not-form">
-                <div className="row">
-                    <div className="col-12 col-md-12 col-lg-11 pt-2 p-0">
-
+                <div className="row align-items-center mt-1">
+                    <div className="col-12 col-md-12 col-lg-11">
                         <div className="row px-2">
                             <div className="col-2 col-md-2 col-lg-1  mt-2 ">
                                 <label htmlFor="" className='new-label '> Arrest No.</label>
@@ -1665,7 +1664,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                             </div>
                         </div>
                     </div>
-                    <div className=" col-4 col-md-4 col-lg-1 mt-4 ">
+                    <div className=" col-4 col-md-4 col-lg-1 ">
                         <div className="img-box" >
                             <Carousel autoPlay={true} className="carousel-style" showArrows={true} showThumbs={false} showStatus={false} >
                                 {
@@ -1685,15 +1684,11 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                         </div>
                     </div>
 
-                    <div className="col-12 col-md-12 col-lg-11 pt-2 p-0">
-                        <div className="row px-2">
-                        </div>
-                    </div>
                 </div>
                 {/* <fieldset className='mt-2'> */}
                 {/* <legend>Name Information </legend> */}
                 <div className="row ">
-                    <div className="col-12 col-md-12 col-lg-12 pt-2 p-0 ">
+                    <div className="col-12 col-md-12 col-lg-12">
                         <div className="row ">
                             <div className="col-2 col-md-2 col-lg-1 mt-2 ">
                                 <label htmlFor="" className='new-label'>Arrestee

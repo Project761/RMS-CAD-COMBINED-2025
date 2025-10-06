@@ -1892,16 +1892,16 @@ input[type=number] {
 
   @page {
     size: letter;
-    margin: 0mm 20mm 40mm 20mm;
+    margin: 0mm 20mm 40mm 20mm !important;
   }
 
   .printable-area {
     box-sizing: border-box;
-    padding-bottom: 50mm;
+    padding-bottom: 50mm !important;
   }
 
   .print-footer {
-    bottom: 3px;
+    bottom: 2px;
     width: 70%;
     height: 40px;
     align-items: center;
@@ -1915,8 +1915,10 @@ input[type=number] {
     @bottom-right {
       content: counter(page) " of " counter(pages);
       font-size: 12px;
+      position: absolute !important;
+      right: 5px !important;
       z-index: 99;
-      bottom: 5px;
+      bottom: 5px !important;
     }
   }
 }

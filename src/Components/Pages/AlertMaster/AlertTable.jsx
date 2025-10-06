@@ -54,12 +54,14 @@ const AlertTable = (props) => {
     return (
         <div className='col-12 bt bb'>
             <div className='row'>
-                <div className={`${labelCol ? labelCol : "col-lg-2"} mt-2 text-nowrap`}>
+                <div className={`${labelCol ? labelCol : "col-lg-1"} mt-2 text-nowrap`}>
                     {
                         masterPropertyID && (ProSta === 'true' || ProSta === true) && <span data-toggle="modal" data-target="#MasterAlert" style={{ cursor: "pointer" }} className='alert-link pt-1' >Alerts:</span>
                     }
                 </div>
-                <div className='alert-name col-lg-10 mt-2' style={{ alignContent: "center", height: "30px", overflowY: 'auto' }} >
+                <div className='alert-name col-lg-10 mt-2' style={{
+                    alignContent: "center", height: "30px", overflowY: 'auto',
+                }} >
                     {availableAlert?.filter((alert) => alert?.AlertDateTo ? new Date(alert?.AlertDateTo) >= new Date(year, month, day) : alert)?.length > 0 ?
                         availableAlert?.filter((alert) => alert?.AlertDateTo ? new Date(alert?.AlertDateTo) >= new Date(year, month, day) : alert)?.map((alert) => (
                             <span style={{ margin: "0 2px 0 2px", padding: "1px 4px 1px 4px", border: "1px solid", background: `${alert?.BackColor}`, color: alert?.BackColor && alert?.ForeColor, cursor: "pointer" }} onMouseOver={() => setAlertStatus(true)}>{alert?.AlertType}</span>
@@ -75,8 +77,9 @@ const AlertTable = (props) => {
                         </>
                     }
                 </div>
+
                 {(availableAlert?.filter((alert) => alert?.AlertDateTo ? new Date(alert?.AlertDateTo) >= new Date(year, month, day) : alert)?.length > 0 && alertStatus) &&
-                    <div className='alert-table' >
+                    <div className='alert-table' style={{ boxShadow: "rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px", }} >
                         <div className="modal-content" onClick={handleModalClick}>
                             <button type="button" className="border-0" aria-label="Close" data-dismiss="modal" style={{ alignSelf: "end" }} onClick={() => { setAlertStatus(false) }}><b>X</b>
                             </button>
