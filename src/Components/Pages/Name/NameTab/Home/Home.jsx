@@ -40,6 +40,8 @@ const MultiValue = props => (
 );
 
 const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender, setIsBusinessName, get_List, isCad = false, isCADSearch = false, isViewEventDetails = false, editval, setEditval, setNameSingleData, masterNameID, setMasterNameID, nameID, setNameID, GetSingleData, get_Data_Name, nibrsErrModalStatus, setNibrsErrModalStatus, ResetErrors, setResetErrors, nibrsErrStr, setNibrsErrStr, nibrsValidateNameData, setnibrsValidateNameData, addName, setAddName }) => {
+
+
   const carouselRef = useRef(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -425,6 +427,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
 
   // Check All Field Format is True Then Submit   
   const { LastNameError, OwnerPhoneNumberError, CrimeLocationError, AgeFromError, EthnicityErrorr, ResidentError, VictimTypeError, RoleError, OwnerFaxNumberError, FirstNameError, MiddleNameError, NameTypeIDError, NameReasonCodeIDError, ContactError, DLError, SSN, WeightError, HeightError, AgeError, DateOfBirthError, RaceIDError, SexIDError, } = errors
+
   useEffect(() => {
     if (nameTypeCode === 'B') {
       if (LastNameError === 'true' && FirstNameError === 'true' && CrimeLocationError === 'true' && RoleError === 'true' && CrimeLocationError === 'true' && OwnerPhoneNumberError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true') {
@@ -915,6 +918,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
       !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true); setValue({ ...value, [name]: null }); setNameTypeCode(''); setIsBusinessName(false); setPhoneTypeCode('')
     }
   }
+
   function getLabelsString(data) {
     return data.map(item => item.label).join(',');
   }
@@ -1075,8 +1079,6 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
     }
     else setValue({ ...value, [e.target.name]: e.target.value })
   };
-
-
 
   const InsertName = () => {
 
@@ -1410,8 +1412,6 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
       days: diffInDays,
     };
   }
-
-
 
   useEffect(() => {
     if (yearsVal < 18 || parseInt(value.AgeFrom) < 18 || value.AgeUnitID === 1 || value.AgeUnitID === 2) {
@@ -1794,16 +1794,13 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
     setMultiSelectedReason({ optionSelected: newArray });
   };
 
-
   const ReasonCodeRoleArr = [
     { value: 1, label: 'Victim' },
     { value: 2, label: 'Offender' },
     { value: 3, label: 'Other' }
   ]
 
-  const filteredReasonCodeRoleArr = nameTypeCode === 'B'
-    ? ReasonCodeRoleArr.filter(item => item.value !== 2)
-    : ReasonCodeRoleArr;
+  const filteredReasonCodeRoleArr = nameTypeCode === 'B' ? ReasonCodeRoleArr.filter(item => item.value !== 2) : ReasonCodeRoleArr;
 
   useEffect(() => {
     if (openPage || loginAgencyID) {
@@ -1862,8 +1859,6 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
       }
     });
   };
-
-
 
   // validate Incident
   const nibrsValidateName = (incidentID, reportDate, baseDate, oriNumber) => {
@@ -1958,37 +1953,11 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
     setDobDate(date); updateAllowTimeSelect(date); handleDOBChange(date, e); !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
   };
 
-  const setToReset = () => {
-  }
-
-  // const DeleteContactDetail = () => {
-  //   const val = { 'NameID': nameID, 'DeletedByUserFK': loginPinID, }
-  //   AddDeleteUpadate('MasterName/Delete_NameEvent', val).then((res) => {
-  //     if (res) {
-  //       const parseData = JSON.parse(res.data);
-  //       toastifySuccess(parseData?.Table[0].Message);
-  //       get_NameTypeData(loginAgencyID); get_Data_Name(mainIncidentID, MstPage === "MST-Name-Dash" ? true : false);
-  //       setStatesChangeStatus(false); get_Incident_Count(mainIncidentID, loginPinID); Reset();  setStatusFalse();
-  //     } else console.log("Somthing Wrong");
-  //   })
-  // }
-
+  const setToReset = () => { }
 
   const [isHovered, setIsHovered] = useState(false);
-
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => setIsHovered(false);
-
-  // const scrollCards = (direction) => {
-  //   const container = document.getElementById('cardCarousel');
-  //   const scrollAmount = 250;
-
-  //   if (direction === 'left') {
-  //     container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-  //   } else {
-  //     container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-  //   }
-  // };
 
 
   useEffect(() => {
@@ -2002,6 +1971,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
     window.addEventListener('resize', checkOverflow);
     return () => window.removeEventListener('resize', checkOverflow);
   }, [nameFilterData]);
+
 
   const scrollCards = (direction) => {
     const carousel = carouselRef.current;
@@ -2019,7 +1989,6 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
       {((incidentCount[0]?.NameCount === 0) || (incidentCount[0]?.NameCount > 0)) && (
         <>
           <div className="row child">
-            {/* bb */}
             <div className="col-12 col-md-12 col-lg-12 mt-1 ">
               <div className="row align-items-center mt-2" style={{ rowGap: "8px" }}>
                 <div className="col-2 col-md-2 col-lg-1">
@@ -2039,7 +2008,6 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                     placeholder="Select..."
                     styles={nibrsSubmittedName === 1 ? LockFildscolour : Requiredcolour}
                     isDisabled={nameID || masterNameID || nibrsSubmittedName === 1 ? true : false}
-
                   />
                 </div>
                 <div className="col-2 col-md-2 col-lg-1">
@@ -2050,7 +2018,6 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                 </div>
                 <div className="col-3 col-md-2 col-lg-1">
                   <div className="form-check ">
-
                     {
                       !(nameTypeCode === "B") && (
                         value.DateOfBirth || value.AgeFrom ? (
@@ -2086,14 +2053,8 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                     ) : null
                   }
                 </div>
-
-
-
-
-
                 {
                   nameTypeCode === "B" ?
-
                     <>
                       <div className="col-1 col-md-1 col-lg-1 ">
                         <label htmlFor="" className='label-name mb-0 text-nowrap'>Business Name
@@ -2254,10 +2215,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                         </div>
                       </div>
                     </>
-
                 }
-
-
 
                 {
                   nameTypeCode === "B" ?
@@ -2265,14 +2223,11 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                     </>
                     :
                     <>
-
-
                       <div className="col-1 col-md-2 col-lg-1">
                         <label htmlFor="" className='label-name mb-0'>DOB
                           {errors.DateOfBirthError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.DateOfBirthError}</p>
                           ) : null}</label>
-
                       </div>
                       <div className="col-2 col-md-3 col-lg-2">
                         <DatePicker
@@ -2312,8 +2267,6 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                           }
                         />
                       </div>
-
-
                       <div className="col-12 col-md-7 col-lg-3">
                         <div className="row align-items-center">
                           <div className="col-12 col-md-1">
@@ -2341,7 +2294,6 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                                   : {}
                               }}
                               value={value?.AgeFrom}
-
                               onBlur={(e) => AgeFromOnBlur(e)}
                               onChange={HandleChange} required
                               disabled={(value.DateOfBirth ? true : false) || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
@@ -2363,7 +2315,6 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                                 }
                                   : {}
                               }}
-
                               value={value?.AgeTo} onChange={HandleChange} required
                               // className={value.DateOfBirth || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? 'LockFildsColor' : ''}
                               className={
@@ -2371,8 +2322,6 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                                   : nibrsSubmittedName === 1 ? 'LockFildscolour' : ''
                               }
                               disabled={value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1} readOnly={value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1} placeholder='To' autoComplete='off' />
-
-
                           </div>
                           <div className="col-5 col-md-6" >
                             <Select
@@ -2390,9 +2339,6 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                           </div>
                         </div>
                       </div>
-
-
-
                       <div className="col-2 col-md-2 col-lg-1">
                         <span data-toggle="modal" onClick={() => { setOpenPage('Gender') }} data-target="#ListModel" className='new-link px-0'>
                           Gender {errors.SexIDError !== 'true' ? (
@@ -2402,9 +2348,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                       </div>
                       <div className="col-10 col-md-10 col-lg-2 ">
                         <Select
-
                           styles={nibrsSubmittedName === 1 ? LockFildscolour : (value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.SexID && value?.IsUnknown !== 'true' && value?.IsUnknown !== true && !isAdult ? colourStylesVictimCode : (isAdult || IsOffender || victimTypeStatus ? Requiredcolour : customStylesWithOutColor)}
-
                           name='SexID'
                           value={sexIdDrp?.filter((obj) => obj.value === value?.SexID)}
                           options={sexIdDrp}
@@ -2430,14 +2374,9 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                           isClearable
                           placeholder="Select..."
                           isDisabled={nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
-
                           styles={nibrsSubmittedName === 1 ? LockFildscolour : (value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.RaceID && value?.IsUnknown !== 'true' && value?.IsUnknown !== true && !isAdult ? colourStylesVictimCode : (isAdult || IsOffender || victimTypeStatus ? Requiredcolour : customStylesWithOutColor)}
-
                         />
                       </div>
-
-
-
                       <div className="col-2 col-md-2 col-lg-1">
                         <span data-toggle="modal" onClick={() => { setOpenPage('Ethnicity') }} data-target="#ListModel" className='new-link px-0'>
                           Ethnicity{errors.EthnicityErrorr !== 'true' ? (
@@ -2455,11 +2394,9 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                           isClearable
                           placeholder="Select..."
                           styles={nibrsSubmittedName === 1 ? LockFildscolour : (value?.IsUnknown === 'true' || value?.IsUnknown === true) ? customStylesWithOutColor : victimTypeStatus ? Requiredcolour : ''}
-
                           isDisabled={value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
                         />
                       </div>
-
                       <div className='col-lg-3'>
                         <div className='row align-items-center'>
                           <div className="col-12 col-md-3 ">
@@ -2640,19 +2577,8 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                           />
                         </div>
                       </div>
-
-
-
-
                     </>
                 }
-
-
-
-
-
-
-
                 <div className="col-2 col-md-2 col-lg-1">
                   <label htmlFor="" className='label-name mb-0 '>
                     Role {errors.RoleError !== 'true' ? (
@@ -2671,7 +2597,6 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                     allowSelectAll={false}
                     value={multiSelectedReason?.optionSelected}
                     components={{ MultiValue }}
-
                     onChange={(selectedOptions, actionMeta) => {
                       const removedOption = actionMeta.removedValue;
                       const action = actionMeta.action;
@@ -2694,11 +2619,9 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                       }
                       onChangeReaonsRole(selectedOptions, 'Role');
                     }}
-
                     styles={nibrsSubmittedName === 1 || isSocietyName ? LockFildscolour : MstPage === "MST-Name-Dash" ? 'readonlyColor' : colourStylesRole}
                     isDisabled={nibrsSubmittedName === 1 || isSocietyName || MstPage === "MST-Name-Dash"}
                   />
-
                 </div>
                 <div className="col-2 col-md-2 col-lg-1">
                   <label htmlFor="" className='label-name mb-0'>
@@ -2769,10 +2692,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                       if (value.checkVictem === 1 || (value.checkVictem === 0 && value.checkOffender === 1) || value.checkOffender === 0) {
                         OnChangeSelectedReason(selectedOptions, 'NameReasonCodeID');
                       }
-
-
                     }}
-
                   />
                 </div>
                 {
@@ -2804,7 +2724,6 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                     <></>
                 }
 
-                {/*  */}
                 <div className="col-lg-5" style={{ margin: '0 auto' }} >
                   <div className='row align-items-center' style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'nowrap' }}>
                     {
@@ -2849,9 +2768,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                         </span>
                       ) : <></>
                     }
-                    {
-
-                    }
+                   
                     {isAdultArrest && MstPage !== "MST-Name-Dash" ? (
                       <span
                         onMouseEnter={handleMouseEnter}
@@ -2872,23 +2789,14 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                     }
                   </div>
                 </div>
-
-
-
-
-
-
-
               </div>
             </div >
           </div >
-
           <div className='col-12 col-md-12 col-lg-12'>
             <fieldset className='mt-0 pb-1' style={{ width: "100%" }}>
               <legend>Address/Contact Info </legend>
             </fieldset>
           </div>
-
           <div className='row align-items-center mt-1' style={{ rowGap: "8px" }}>
             <div className='col-5 col-md-8 col-lg-11'>
               <div className='row align-items-center' style={{ rowGap: "8px" }}>
@@ -2927,17 +2835,12 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                     onChange={(e) => ChangePhoneType(e, 'PhoneTypeID')}
                     isClearable
                     placeholder="Select..."
-
                     disabled={phoneTypeCode ? false : true}
                     styles={customStylesWithOutColor}
-
-
-
                   />
                 </div>
                 <div className="col-1 col-md-2 col-lg-1">
                   <label htmlFor="" className='label-name mb-0'>Contact
-
                   </label>
                 </div>
                 <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
@@ -2961,8 +2864,6 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                 </div>
               </div>
             </div>
-
-
             <div className="col-4 col-md-4 col-lg-1" >
               <div className="img-box" data-toggle="modal" data-target="#ImageModel">
                 <Carousel autoPlay={true} className="carousel-style" showArrows={true} showThumbs={false} showStatus={false} >
@@ -2982,18 +2883,18 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                 </Carousel>
               </div>
             </div>
-
           </div >
-
           <div className='row mb-2'>
             {!isViewEventDetails &&
               <div className="col-12 col-md-12 col-lg-12 text-right" >
                 <div className=" mt-1 text-md-right " >
 
-                  {
+
+                  {/* {
+                  Don't Remove this code ----->  Devendra Kashyap
+                   
                     MstPage !== "MST-Name-Dash" && nameFilterData?.length > 0 && <button type="button"
                       className="btn btn-sm  text-white mr-1"
-
                       onClick={() => { nibrsValidateName(mainIncidentID, incReportedDate, baseDate, oriNumber) }}
                       style={{
                         backgroundColor: `${nibrsValidateNameData?.length > 0 ? nibrsValidateNameData?.length > 0 ? 'Red' : 'green' : 'teal'}`,
@@ -3001,7 +2902,8 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                     >
                       Validate TIBRS
                     </button>
-                  }
+                  } */}
+
                   <button type="button" className="btn btn-sm btn-success mr-1" data-toggle="modal" data-target="#NCICModal" onClick={() => { setOpenNCICModal(true) }}>TLETS</button>
 
                   {/* <button type="button" ref={crossButtonRef} className="btn btn-sm btn-success  mr-1" onClick={() => { setStatusFalse(); }}>
@@ -3078,7 +2980,6 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
           }
         </>
       )}
-
     </>
   )
 }

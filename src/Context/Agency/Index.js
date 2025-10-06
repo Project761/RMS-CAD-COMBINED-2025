@@ -695,6 +695,8 @@ const AgencyData = ({ children }) => {
     const [PropErrorStatus, setPropErrorStatus] = useState(false);
     // nibrs sideBar Loding Status
     const [nibrsSideBarLoading, setNibrsSideBarLoading] = useState(false);
+    // nibrs Name Validate Array
+    const [nibrsNameValidateArray, setNibrsNameValidateArray] = useState([]);
 
 
 
@@ -740,11 +742,15 @@ const AgencyData = ({ children }) => {
 
             if (victimObj?.length > 0 || offenderObj?.length > 0) {
                 setNameErrorStatus(true);
+                const combinedArray = [...victimObj, ...offenderObj];
+                setNibrsNameValidateArray(combinedArray);
             } else {
                 setNameErrorStatus(false);
+                setNibrsNameValidateArray([]);
             }
         } else {
             setNameErrorStatus(false);
+            setNibrsNameValidateArray([]);
         }
 
 
@@ -855,8 +861,14 @@ const AgencyData = ({ children }) => {
             searchObject, setSearchObject,
             searchCertificationData, setSearchCertificationData,
             Is2FAEnabled, setIs2FAEnabled,
-            // sideBar Nibrs Status
-            validate_IncSideBar, incidentErrorStatus, offenseErrorStatus, nameErrorStatus, NameRelationshipError, narrativeApprovedStatus, PropErrorStatus, nibrsSideBarLoading, setNibrsSideBarLoading
+            // sideBar Nibrs Validate function
+            validate_IncSideBar,
+            // sideBar Nibrs Error Status
+            incidentErrorStatus, offenseErrorStatus, nameErrorStatus, NameRelationshipError, narrativeApprovedStatus, PropErrorStatus,
+            // sideBar Nibrs Loading
+            nibrsSideBarLoading, setNibrsSideBarLoading,
+            // sideBar Nibrs Name Validate Array
+            nibrsNameValidateArray, setNibrsNameValidateArray
         }}>
             {children}
         </AgencyContext.Provider>

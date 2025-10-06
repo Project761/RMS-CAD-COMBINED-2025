@@ -1156,39 +1156,39 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
   const canEditIncidentNumber = isSystemGenratedStatus && !incNumberGenrateStatus;
 
   // Location
-  const receiveSourceKey = `/CAD/CallTakerReceiveSource/GetData_ReceiveSource`;
-  const { data: receiveSourceData, isSuccess: isFetchReceiveSourceData } = useQuery([receiveSourceKey, { Action: "GetData_ReceiveSource", AgencyID: loginAgencyID }], CallTakerServices.getReceiveSource,
-    {
-      refetchOnWindowFocus: false,
-      enabled: true,
-      // enabled: !!loginAgencyID && true,
-    }
-  );
+  // const receiveSourceKey = `/CAD/CallTakerReceiveSource/GetData_ReceiveSource`;
+  // const { data: receiveSourceData, isSuccess: isFetchReceiveSourceData } = useQuery([receiveSourceKey, { Action: "GetData_ReceiveSource", AgencyID: loginAgencyID }], CallTakerServices.getReceiveSource,
+  //   {
+  //     refetchOnWindowFocus: false,
+  //     enabled: true,
+  //     // enabled: !!loginAgencyID && true,
+  //   }
+  // );
 
 
-  useEffect(() => {
-    if (isFetchReceiveSourceData && receiveSourceData) {
-      const data = JSON.parse(receiveSourceData?.data?.data);
-      setReceiveSourceDropDown(data?.Table || []);
-    }
-  }, [isFetchReceiveSourceData, receiveSourceData]);
+  // useEffect(() => {
+  //   if (isFetchReceiveSourceData && receiveSourceData) {
+  //     const data = JSON.parse(receiveSourceData?.data?.data);
+  //     setReceiveSourceDropDown(data?.Table || []);
+  //   }
+  // }, [isFetchReceiveSourceData, receiveSourceData]);
 
 
-  const getPremiseKey = `/CAD/GeoPremiseType/GetData_Premise`;
-  const { data: premiseData, isSuccess: isFetchPremiseData } = useQuery([getPremiseKey,], GeoServices.getPremise,
-    {
-      refetchOnWindowFocus: false,
-      enabled: true
-      // enabled: openCallTakerModal
-    }
-  );
+  // const getPremiseKey = `/CAD/GeoPremiseType/GetData_Premise`;
+  // const { data: premiseData, isSuccess: isFetchPremiseData } = useQuery([getPremiseKey,], GeoServices.getPremise,
+  //   {
+  //     refetchOnWindowFocus: false,
+  //     enabled: true
+  //     // enabled: openCallTakerModal
+  //   }
+  // );
 
-  useEffect(() => {
-    if (isFetchPremiseData && premiseData) {
-      const data = JSON.parse(premiseData?.data?.data);
-      setPremiseDropDown(dropDownDataModel(data?.Table, "ID", "PremiseType"));
-    }
-  }, [isFetchPremiseData, premiseData]);
+  // useEffect(() => {
+  //   if (isFetchPremiseData && premiseData) {
+  //     const data = JSON.parse(premiseData?.data?.data);
+  //     setPremiseDropDown(dropDownDataModel(data?.Table, "ID", "PremiseType"));
+  //   }
+  // }, [isFetchPremiseData, premiseData]);
 
   const getZoneData = async (AgencyID) => {
     await fetchPostData('/CAD/GeoPetrolZone/GetData_Zone', { IsActive: 1, AgencyID: AgencyID, })

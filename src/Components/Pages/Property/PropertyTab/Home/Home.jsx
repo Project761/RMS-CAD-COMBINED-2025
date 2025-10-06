@@ -2054,8 +2054,6 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
     },
   ];
 
-
-
   const stylesNoColorSourceDrug = {
     control: base => ({
       ...base,
