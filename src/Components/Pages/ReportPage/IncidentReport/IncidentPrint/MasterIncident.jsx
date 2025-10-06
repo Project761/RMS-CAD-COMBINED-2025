@@ -920,7 +920,7 @@ const MasterIncident = ({ comments }) => {
 
                             <hr />
                             <div className="container mt-1"  >
-                                <div className="row printable-area" ref={componentRef} style={{ border: '1px solid #80808085', marginBottom: '100px' }}>
+                                <div className="row printable-area p-2" ref={componentRef} style={{ border: '1px solid #80808085', marginBottom: '100px' }}>
                                     <>
                                         <ReportAddress {...{ multiImage, masterReportData }} />
                                     </>

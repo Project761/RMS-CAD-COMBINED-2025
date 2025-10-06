@@ -1844,7 +1844,6 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                         <div className="col-12 col-md-12 col-lg-2 mt-2 text-right" >
                         </div>
                         <div className='col-11  mt-1 mb-md-5 mb-sm-5 mb-lg-0'>
-
                             <AlertTable availableAlert={availableAlert} masterPropertyID={masterPropertyID} ProSta={VehSta} />
 
                             <div className='row  mt-1 justify-content-between align-items-center'>
