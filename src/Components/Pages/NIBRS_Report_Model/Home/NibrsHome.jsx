@@ -22,7 +22,7 @@ const NibrsHome = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { incidentCount, get_Incident_Count } = useContext(AgencyContext);
+  const { incidentCount, get_Incident_Count, validate_IncSideBar } = useContext(AgencyContext);
 
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
   const incReportedDate = useSelector((state) => state.Agency.incReportedDate);
@@ -189,43 +189,6 @@ const NibrsHome = () => {
           const incObj = incidentError?.Incident ? incidentError?.Incident : [];
           var ErrorStr = ""
 
-          // if (incObj?.OnPageError) {
-          //   ErrorStr += incObj?.OnPageError ? incObj?.OnPageError : ''
-
-          //   setIncidentErrorStatus(true);
-
-          // } else {
-          //   setIncidentErrorStatus(false);
-
-          // }
-
-          // if (incObj?.IsGroupBArrest) {
-          //   ErrorStr += incObj?.IsGroupBArrestError ? incObj?.IsGroupBArrestError : ''
-
-          //   setIsGroup_B_Offense_ArrestInc(true);
-
-          // } else {
-          //   setIsGroup_B_Offense_ArrestInc(false);
-
-          // }
-
-          // setAdministrativeErrorString(ErrorStr)
-          // console.log("🚀 ~ ValidateProperty ~ ErrorStr:", ErrorStr)
-
-
-
-          // set administrative error string
-
-          // if (incObj?.OnPageError) {
-          //   setIncidentErrorString(incObj?.OnPageError ? incObj?.OnPageError : '')
-          //   setIncidentErrorStatus(true);
-
-          // } else {
-          //   setIncidentErrorStatus(false);
-          //   setIncidentErrorString('');
-
-          // }
-
           if (incObj?.IsGroupBArrest) {
             setAdministrativeErrorString(incObj?.IsGroupBArrestError ? incObj?.IsGroupBArrestError : '');
             setIsGroup_B_Offense_ArrestInc(true);
@@ -234,15 +197,6 @@ const NibrsHome = () => {
             setIsGroup_B_Offense_ArrestInc(false);
 
           }
-
-          // if (incObj?.IsOffence) {
-          //   setAdministrativeErrorString(incObj?.IsOffenceError ? incObj?.IsOffenceError : '');
-          //   setIsOffenseInc(true);
-
-          // } else {
-          //   setIsOffenseInc(false);
-
-          // }
 
         }
 
@@ -345,6 +299,9 @@ const NibrsHome = () => {
         } else {
           setVictimErrorStatus(false); setVictimErrorString('');
         }
+
+        // validateIncSideBar
+        validate_IncSideBar(incidentID, IncNo, loginAgencyID);
         // set loader false
         setnibrsValidateLoder(false);
       } catch (error) {

@@ -526,10 +526,10 @@ const ChargeCodeAddUp = (props) => {
                                                 </div>
                                                 <div className="col-4 col-md-4 col-lg-5 mt-1 text-field">
                                                     <textarea className='requiredColor' name='Description'
-                                                       
+
                                                         disabled={
                                                             isSuperadmin !== 'true' && isSuperadmin !== true ?
-                                                                status && (value.IsEditable === '0' || value.IsEditable === false) ? true
+                                                                status && (value.IsEditable === '0' || value.IsEditable === false || value.IsEditable === 0) ? true
                                                                     :
                                                                     false
                                                                 :
@@ -541,7 +541,15 @@ const ChargeCodeAddUp = (props) => {
                                                     <label htmlFor="" className='new-label'>Agency Code</label>
                                                 </div>
                                                 <div className="col-4 col-md-4 col-lg-2 mt-1 text-field">
-                                                    <input type="text" name='AgencyCode' maxLength={10} disabled={status && value.IsEditable === '0' || value.IsEditable === false ? true : false} onChange={handlChanges} value={value.AgencyCode} />
+                                                    <input type="text" name='AgencyCode' maxLength={10}
+                                                        // disabled={status && value.IsEditable === '0' || value.IsEditable === false ? true : false} 
+                                                        disabled={
+                                                            isSuperadmin !== 'true' && isSuperadmin !== true ?
+                                                                status && (value.IsEditable === '0' || value.IsEditable === false || value.IsEditable === 0) ? true
+                                                                    : false : false
+                                                        }
+
+                                                        onChange={handlChanges} value={value.AgencyCode} />
                                                 </div>
 
 
@@ -566,7 +574,7 @@ const ChargeCodeAddUp = (props) => {
                                                     <label htmlFor="" className='new-label'>FBI ID</label>
                                                 </div>
                                                 <div className="col-4 col-md-4 col-lg-5 mt-1">
-                                                 
+
                                                     {
                                                         value?.FBIName ?
                                                             <Select
@@ -918,7 +926,7 @@ const ChargeCodeAddUp = (props) => {
                                                     <label className='ml-2' htmlFor="IsReportable">Is Reportable</label>
                                                 </div>
 
-                                               
+
                                                 <div className="col-6 col-md-6 col-lg-2 ">
                                                     <input type="checkbox" name="IsEditable" checked={value.IsEditable} value={value.IsEditable}
                                                         onChange={handlChanges}

@@ -70,7 +70,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
 
     const navigate = useNavigate();
 
-    const { get_Incident_Count, setChangesStatus, get_Property_Count, nibrsSubmittedProperty, setnibrsSubmittedProperty, setcountoffaduit, datezone, GetDataTimeZone } = useContext(AgencyContext);
+    const { get_Incident_Count, setChangesStatus, get_Property_Count, nibrsSubmittedProperty, setnibrsSubmittedProperty, setcountoffaduit, datezone, GetDataTimeZone, validate_IncSideBar } = useContext(AgencyContext);
 
     const [incidentReportedDate, setIncidentReportedDate] = useState(null);
     const [propertyCategoryData, setPropertyCategoryData] = useState([]);
@@ -787,6 +787,8 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
                     ValidateProperty(mainIncidentID);
                     ValidateIncidentProperty(mainIncidentID);
                     NibrsErrorReturn(res?.PropertyID);
+                    // validateIncSideBar
+                    validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
 
                 } else {
                     toastifyError('error');
@@ -816,6 +818,8 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
                 ValidateProperty(mainIncidentID);
                 ValidateIncidentProperty(mainIncidentID);
                 NibrsErrorReturn(DecPropID);
+                // validateIncSideBar
+                validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
 
             } else {
                 toastifyError('error');
@@ -1417,10 +1421,11 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
         setclickNibLoder(true); setSuspectedDrugTypeErrorStatus(false); setIsPropertyIdZeroError(false); setnibrsValidateData([]);
         try {
             fetchPostDataNibrs('NIBRS/GetPropertyNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'PropertyId': '', 'gIntAgencyID': loginAgencyID }).then((data) => {
+                console.log("🚀 ~ ValidateIncidentProperty ~ data:", data)
                 if (data) {
                     if (data?.Properties?.length > 0) {
                         const propArr = data?.Properties?.filter((item) => item?.PropertyType !== 'V' && item?.PropertyType !== null);
-                        console.log("🚀 ~ Validate All Property :", propArr);
+
 
                         if (propArr?.length > 0) {
 
@@ -1566,7 +1571,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
                                 )} */}
 
                                 {
-                                    nibrsFieldError?.OnPageError && (
+                                    nibrsFieldError?.OnPageError && !nibrsFieldError?.IsCategory && (
 
                                         nibrsFieldError?.OnPageError?.includes("{201} Criminal Activity must be present - Mandatory field") ?
                                             <></>
@@ -1649,12 +1654,12 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
                                 </span>
                             </div>
                             <div className="col-3 col-md-3 col-lg-3 mt-1">
-                                {false && (
+                                {nibrsFieldError?.IsCategory && (
                                     <div className="nibrs-tooltip-error" style={{ left: '-20px' }}>
                                         <div className="tooltip-arrow"></div>
 
                                         <div className="tooltip-content">
-                                            <span className="text-danger">⚠️ {'dfdsfsdfsdfsdfsdf'}</span>
+                                            <span className="text-danger">⚠️ {nibrsFieldError?.Category || ''}</span>
                                         </div>
                                     </div>
                                 )}

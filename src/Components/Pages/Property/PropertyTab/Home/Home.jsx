@@ -67,7 +67,6 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
   const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
   const loginAgencyState = useSelector((state) => state.Ip.loginAgencyState);
 
-
   const measureTypeDrpData = useSelector((state) => state.DropDown.measureTypeDrpData);
 
   const useQuery = () => {
@@ -1314,6 +1313,9 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
   }
 
   useEffect(() => {
+    console.log("MstPage", MstPage);
+    console.log("MstPage", MstPage);
+    console.log("masterPropertyStatus", masterPropertyStatus);
     if (MstPage === "MST-Property-Dash" && masterPropertyStatus == true) { newProperty() }
   }, [MstPage, masterPropertyStatus]);
 
@@ -2524,22 +2526,21 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
 
             </div>
             <div className="row">
-              <div className="col-3 col-md-3 col-lg-1 ml-1">
+              <div className="col-3 col-md-3 col-lg-1">
               </div>
-              <div className="col-3 col-md-3 col-lg-4 ml-1">
-                <div className="col-3 col-md-3 col-lg-1">
-                  <div className="form-check px-2">
-                    <input className="form-check-input" name='IsEvidence' value={value?.IsEvidence} onChange={HandleChanges} checked={value?.IsEvidence} type="checkbox" id="flexCheckDefault" disabled={editval[0]?.IsEvidence ? true : false} />
-                    <label className="form-check-label" for="flexCheckDefault">
-                      Evidence
-                    </label>
-                  </div>
-
+              <div className="col-3 col-md-3 col-lg-4">
+                <div className="form-check">
+                  <input className="form-check-input" name='IsEvidence' value={value?.IsEvidence} onChange={HandleChanges} checked={value?.IsEvidence} type="checkbox" id="flexCheckDefault" disabled={editval[0]?.IsEvidence ? true : false} />
+                  <label className="form-check-label" for="flexCheckDefault">
+                    Evidence
+                  </label>
                 </div>
 
+
+
               </div>
 
-              <div className="text-center p-1 mt-1">
+              <div className=" col-3 col-md-3 col-lg-3 px-1 mt-1">
                 {navigateStatus && (
                   <span
                     onMouseEnter={handleMouseEnter}
@@ -2548,7 +2549,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                     style={{
                       border: '1px solid red', backgroundColor: '#ffe6e6', color: isHovered ? 'blue' : 'red',
                       padding: '3px', borderRadius: '4px', display: 'inline-block',
-                      transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '15px',
+                      transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '15px', width: "100%", textAlign: "center"
                     }}
                   >
                     Navigate to Miscellaneous Information
@@ -3401,7 +3402,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                             </button>
                           }
                         </div> */}
-                        <div className="btn-box text-right col-3 col-md-3 mt-4  pt-2" s>
+                        <div className="btn-box text-right col-3 col-md-3 mt-4  pt-2" >
                           {
                             (!propertyID || !masterPropertyID) && (ProSta != 'true' || ProSta != true) && (value.PropertyCategoryCode === 'D') &&
                             <button

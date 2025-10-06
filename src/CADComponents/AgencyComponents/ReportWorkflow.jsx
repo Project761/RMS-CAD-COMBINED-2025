@@ -8,7 +8,7 @@ import { AddDeleteUpadate, fetchPostData } from '../../Components/hooks/Api';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { get_LocalStoreData } from '../../redux/actions/Agency';
-import { toastifySuccess } from '../../Components/Common/AlertMsg';
+import { toastifyError, toastifySuccess } from '../../Components/Common/AlertMsg';
 import { RequiredFieldIncident } from '../../Components/Pages/Utility/Personnel/Validation';
 import { get_Narrative_Type_Drp_Data } from '../../redux/actions/DropDownsData';
 import { Comman_changeArrayFormat } from '../../Components/Common/ChangeArrayFormat';
@@ -266,22 +266,49 @@ function ReportWorkflow() {
         const Value = {
             AgencyID: aId, WorkflowName: WorkflowName, AppliesReportTypeID: AppliesReportTypeID, Notes: Notes, ReportApproverGroupID: ReportApproverGroupID, ReportApproverRequired: ReportApproverRequired, ReportReviewerGroupID: ReportReviewerGroupID, IsMultipleLevel: IsMultipleLevel, IsSingleLevel: IsSingleLevel, IsNoApproval: IsNoApproval, IsSelfApproved: IsSelfApproved, CreatedByUserFK: loginPinID
         };
-        AddDeleteUpadate('ReportWorkFlow/Insert_ReportWorkFlow', Value).then((res) => {
-            const parsedData = JSON.parse(res.data); const message = parsedData.Table[0].Message;
-            toastifySuccess(message); get_Data_ReportWorkflow(aId); setStatus(false); reset(); setErrors({ ...errors, 'WorkflowNameErrors': '', });
-        })
+        console.log(ReportWorkflowData);
+        const result = ReportWorkflowData?.find(item => {
+            if (item.AppliesReportTypeID === value.AppliesReportTypeID) {
+                return item.AppliesReportTypeID === value.AppliesReportTypeID
+            } else return item.AppliesReportTypeID === value.AppliesReportTypeID
+        });
+        if (result) {
+
+            toastifyError('Report Type  Already Exists')
+            setErrors({ ...errors, 'AppliesReportTypeErrors': '', })
+        }
+        else {
+            AddDeleteUpadate('ReportWorkFlow/Insert_ReportWorkFlow', Value).then((res) => {
+                const parsedData = JSON.parse(res.data); const message = parsedData.Table[0].Message;
+                toastifySuccess(message); get_Data_ReportWorkflow(aId); setStatus(false); reset(); setErrors({ ...errors, 'WorkflowNameErrors': '', });
+            })
+        }
+
     }
     const update_Juvenile = () => {
         const { AgencyID, ReportWorkFlowID, WorkflowName, AppliesReportTypeID, Notes, ReportApproverGroupID, ReportApproverRequired, ReportReviewerGroupID, IsMultipleLevel, IsSingleLevel, IsNoApproval, IsSelfApproved, CreatedByUserFK } = value;
         const Value = {
             AgencyID: aId, ReportWorkFlowID: reportWorkFlowID, WorkflowName: WorkflowName, AppliesReportTypeID: AppliesReportTypeID, Notes: Notes, ReportApproverGroupID: ReportApproverGroupID, ReportApproverRequired: ReportApproverRequired, ReportReviewerGroupID: ReportReviewerGroupID, IsMultipleLevel: IsMultipleLevel, IsSingleLevel: IsSingleLevel, IsNoApproval: IsNoApproval, IsSelfApproved: IsSelfApproved, ModifiedByUserFK: loginPinID
         };
-        AddDeleteUpadate('ReportWorkFlow/Update_ReportWorkFlow', Value).then((res) => {
-            const parsedData = JSON.parse(res.data); const message = parsedData.Table[0].Message;
-            toastifySuccess(message);
-            setStatus(false); setErrors({ ...errors, 'WorkflowNameErrors': '', 'WorkflowNameErrors': '' });
-            reset(); get_Data_ReportWorkflow(aId);
-        })
+        const result = ReportWorkflowData?.find(item => {
+            if (item.AppliesReportTypeID === value.AppliesReportTypeID) {
+                return item.AppliesReportTypeID === value.AppliesReportTypeID
+            } else return item.AppliesReportTypeID === value.AppliesReportTypeID
+        });
+        if (result) {
+
+            toastifyError('Report Type  Already Exists')
+            setErrors({ ...errors, 'AppliesReportTypeErrors': '', })
+        }
+        else {
+            AddDeleteUpadate('ReportWorkFlow/Update_ReportWorkFlow', Value).then((res) => {
+                const parsedData = JSON.parse(res.data); const message = parsedData.Table[0].Message;
+                toastifySuccess(message);
+                setStatus(false); setErrors({ ...errors, 'WorkflowNameErrors': '', 'WorkflowNameErrors': '' });
+                reset(); get_Data_ReportWorkflow(aId);
+            })
+        }
+
     }
 
     // const HandleChange = (e) => {
