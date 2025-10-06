@@ -1441,7 +1441,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                         <div className="col-2 col-md-2 col-lg-1 mt-2 ">
                             <label htmlFor="" className='new-label text-nowrap'>Plate Expiration</label>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-2 d-flex align-items-center  ">
+                        <div className="col-4 col-md-4 col-lg-2 d-flex align-items-center mt-1">
                             <DatePicker
                                 selected={
                                     value?.PlateExpirationMonth
@@ -1666,39 +1666,13 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                         <div className="col-2 col-md-2 col-lg-2 mt-2 ">
                             <label htmlFor="" className='new-label'>Inspection Sticker</label>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-1 mt-1 text-field">
+                        <div className="col-4 col-md-4 col-lg-1 mt-1 text-field ">
                             <input type="text" name='Inspection_Sticker' id='Inspection_Sticker' value={value?.Inspection_Sticker} onChange={HandleChanges} className='' required autoComplete='off' />
                         </div>
                         <div className="col-2 col-md-2 col-lg-2 mt-2 ">
                             <label htmlFor="" className='new-label'>Inspection Expires</label>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-2 ">
-                            {/* <DatePicker
-                                id='InspectionExpiresDtTm'
-                                name='InspectionExpiresDtTm'
-                                ref={startRef3}
-                                onKeyDown={(e) => {
-                                    if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
-                                        e.preventDefault();
-                                    } else {
-                                        onKeyDown(e);
-                                    }
-                                }}
-                                onChange={(date) => {
-                                    !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
-                                    setInspectionExpDate(date); setValue({ ...value, ['InspectionExpiresDtTm']: date ? getShowingMonthDateYear(date) : null })
-                                }}
-                                dateFormat="MM/dd/yyyy"
-                                isClearable={value?.InspectionExpiresDtTm ? true : false}
-                                selected={inspectionExpDate}
-                                placeholderText={value?.InspectionExpiresDtTm ? value?.InspectionExpiresDtTm : 'Select...'}
-                                autoComplete="off"
-                                showYearDropdown
-                                showMonthDropdown
-                                dropdownMode="select"
-                                minDate={new Date(value?.ReportedDtTm)}
-                                filterTime={(time) => filterPassedDateTime(time, value?.InspectionExpiresDtTm, value?.ReportedDtTm)}
-                            /> */}
+                        <div className="col-4 col-md-4 col-lg-2 mt-1">
                             <DatePicker
                                 id='InspectionExpiresDtTm'
                                 name='InspectionExpiresDtTm'
@@ -1748,7 +1722,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                         <div className="col-2 col-md-2 col-lg-1 mt-2 ">
                             <label htmlFor="" className='new-label'>Manu. Year</label>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-1 ">
+                        <div className="col-4 col-md-4 col-lg-1 mt-1">
                             <DatePicker
                                 name='ManufactureYear'
                                 id='ManufactureYear'

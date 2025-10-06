@@ -3282,3 +3282,72 @@ div[data-testid="table-header"],
   min-height: 92px;
 
 } */
+
+
+/* //------------------------------Name Grid ------------------------------------- */
+.card-carousel-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+} 
+
+ .card-carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  flex-grow: 1;
+} 
+
+.card-carousel.list-view {
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+.info-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  margin-right: 10px;
+  min-width: 250px;
+  flex-shrink: 0;
+    position: relative;
+}
+
+.info-card.list-item {
+  min-width: 100%;
+  margin-bottom: 10px;
+}
+
+.carousel-arrow {
+  border: none;
+  background: #f0f0f0;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.right-controls {
+  display: flex;
+  align-items: center;
+}
+icon-buttons {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+}
+
+.icon-wrapper {
+  background-color: #05294d;
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+

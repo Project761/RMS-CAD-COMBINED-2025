@@ -20,7 +20,7 @@ import CreatableSelect from 'react-select/creatable';
 import { get_ScreenPermissions_Data } from '../../../../../redux/actions/IncidentAction';
 
 const Warrant = (props) => {
-
+  
     const { ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails = false } = props
 
     const { get_Name_Count, setChangesStatus, GetDataTimeZone, datezone } = useContext(AgencyContext)
