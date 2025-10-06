@@ -291,10 +291,15 @@ function ReportWorkflow() {
             AgencyID: aId, ReportWorkFlowID: reportWorkFlowID, WorkflowName: WorkflowName, AppliesReportTypeID: AppliesReportTypeID, Notes: Notes, ReportApproverGroupID: ReportApproverGroupID, ReportApproverRequired: ReportApproverRequired, ReportReviewerGroupID: ReportReviewerGroupID, IsMultipleLevel: IsMultipleLevel, IsSingleLevel: IsSingleLevel, IsNoApproval: IsNoApproval, IsSelfApproved: IsSelfApproved, ModifiedByUserFK: loginPinID
         };
         const result = ReportWorkflowData?.find(item => {
-            if (item.AppliesReportTypeID === value.AppliesReportTypeID) {
-                return item.AppliesReportTypeID === value.AppliesReportTypeID
-            } else return item.AppliesReportTypeID === value.AppliesReportTypeID
+            if (item?.ReportWorkFlowID != reportWorkFlowID) {
+                
+                if (item.AppliesReportTypeID === value.AppliesReportTypeID) {
+                    return item.AppliesReportTypeID === value.AppliesReportTypeID
+                } else return item.AppliesReportTypeID === value.AppliesReportTypeID
+            }
+
         });
+        
         if (result) {
 
             toastifyError('Report Type  Already Exists')
