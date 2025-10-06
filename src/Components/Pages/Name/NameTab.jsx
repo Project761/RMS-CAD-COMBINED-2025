@@ -62,6 +62,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
     var ModNo = query?.get('ModNo');
     var ProSta = query?.get('ProSta');
     var SideBarStatus = query?.get("SideBarStatus");
+    var isNew = query?.get("isNew");
 
     let DecNameID = 0, DecMasterNameID = 0, DecIncID = 0;
 
@@ -76,7 +77,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
     if (!IncID) IncID = 0;
     else IncID = parseInt(base64ToString(IncID));
 
-    const { nameShowPage, changesStatus, auditCount, offenderCount, nameFilterData, victimCount, tabCount, NameTabCount, setNameShowPage, countStatus, countAppear, localStoreArray, get_LocalStorage, setNameSingleData, get_Data_Name, nibrsNameValidateArray } = useContext(AgencyContext);
+    const { nameShowPage, changesStatus, auditCount, offenderCount, nameFilterData, victimCount, tabCount, NameTabCount, setNameShowPage, countStatus, countAppear, localStoreArray, get_LocalStorage, setNameSingleData, get_Data_Name, nibrsNameValidateArray, incidentCount } = useContext(AgencyContext);
     // console.log("🚀 ~ NameTab ~ nibrsNameValidateArray:", nibrsNameValidateArray)
 
     const carouselRef = useRef(null);
@@ -84,6 +85,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
     const [status, setStatus] = useState();
     const iconHome = <i className="fa fa-home" style={{ fontSize: '20px' }}></i>
     const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
+    const NameCount = incidentCount[0]?.NameCount || 0;
 
     const [showOffender, setShowOffender] = useState(false);
     const [showVictim, setShowVictim] = useState(false);
@@ -285,16 +287,16 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
     const setStatusFalse = () => {
         if (MstPage === "MST-Name-Dash") {
             if (isCADSearch) {
-                navigate(`/cad/name-search?page=MST-Name-Dash&IncId=${stringToBase64(IncID)}&IncNo=${0}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}`)
+                navigate(`/cad/name-search?page=MST-Name-Dash&IncId=${stringToBase64(IncID)}&IncNo=${0}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}&isNew=${true}`)
             } else {
-                navigate(`/Name-Home?page=MST-Name-Dash&&IncId=${stringToBase64(IncID)}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}`)
+                navigate(`/Name-Home?page=MST-Name-Dash&&IncId=${stringToBase64(IncID)}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}&isNew=${true}`)
             }
         }
         else {
             if (isCad) {
-                navigate(`/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}`)
+                navigate(`/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}&isNew=${true}`)
             } else {
-                navigate(`/Name-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}`)
+                navigate(`/Name-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}&isNew=${true}`)
             }
             setMasterNameID(''); setNameID('');
         }
@@ -520,7 +522,6 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                             responsive
                                                             fixedHeader
                                                             fixedHeaderScrollHeight="150px"
-
                                                             customStyles={tableCustomStyle}
                                                             conditionalRowStyles={conditionalRowStyles}
                                                             onRowClicked={(row) => { set_Edit_Value(row); }}
@@ -545,268 +546,273 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                     </div>
                                 )}
 
-                                <div className="row mt-2 " style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
-                                    <div className="col-12 name-tab">
-                                        <ul className='nav nav-tabs'>
-                                            {isCad ? <Link
-                                                className={`nav-item ${nameShowPage === 'home' ? 'active' : ''}`}
-                                                to={
-                                                    isCADSearch ? `/cad/name-search?page=MST-Name-Dash&MasterNameID=${MasterNameID}&NameID=${NameID}&NameStatus=${NameStatus}&ModNo=${ModNo}` :
-                                                        MstPage ?
-                                                            `/cad/dispatcher?page=MST-Name-Dash&MasterNameID=${MasterNameID}&NameID=${NameID}&NameStatus=${NameStatus}&ModNo=${ModNo}`
-                                                            :
-                                                            `/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${NameID}&MasterNameID=${MasterNameID}&NameStatus=${NameStatus}`
-                                                }
-                                                data-target={changesStatus ? "#SaveModal" : ''}
-                                                style={{ color: nameShowPage === 'home' ? 'Red' : '#000' }}
-                                                data-toggle={changesStatus ? "modal" : "pill"}
-                                                aria-current="page"
-                                                onClick={() => { if (!changesStatus) setNameShowPage('home') }}
-                                            >
-                                                {iconHome}
-                                            </Link> : <Link
-                                                className={`nav-item ${nameShowPage === 'home' ? 'active' : ''}`}
-                                                to={
-                                                    MstPage ?
-                                                        `/Name-Home?page=MST-Name-Dash&MasterNameID=${MasterNameID}&NameID=${NameID}&NameStatus=${NameStatus}&ModNo=${ModNo}`
-                                                        :
-                                                        `/Name-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${NameID}&MasterNameID=${MasterNameID}&NameStatus=${NameStatus}`
-                                                }
-                                                data-target={changesStatus ? "#SaveModal" : ''}
-                                                style={{ color: nameShowPage === 'home' ? 'Red' : '#000' }}
-                                                data-toggle={changesStatus ? "modal" : "pill"}
-                                                aria-current="page"
-                                                onClick={() => { if (!changesStatus) setNameShowPage('home') }}
-                                            >
-                                                {iconHome}
-                                            </Link>}
-
-                                            {isBusinessName && (
-                                                <>
-                                                    <span
-                                                        className={`nav-item ${nameShowPage === 'Contact_Details' ? 'active' : ''}${!status ? ' disabled' : ''}`}
-
-                                                        data-toggle={changesStatus ? "modal" : "pill"}
+                                {
+                                    (status || isNew === "true" || isNew === true || NameCount === 0 || NameCount === "0") && (
+                                        <div className="row mt-2 " style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
+                                            <div className="col-12 name-tab">
+                                                <ul className='nav nav-tabs'>
+                                                    {isCad ? <Link
+                                                        className={`nav-item ${nameShowPage === 'home' ? 'active' : ''}`}
+                                                        to={
+                                                            isCADSearch ? `/cad/name-search?page=MST-Name-Dash&MasterNameID=${MasterNameID}&NameID=${NameID}&NameStatus=${NameStatus}&ModNo=${ModNo}` :
+                                                                MstPage ?
+                                                                    `/cad/dispatcher?page=MST-Name-Dash&MasterNameID=${MasterNameID}&NameID=${NameID}&NameStatus=${NameStatus}&ModNo=${ModNo}`
+                                                                    :
+                                                                    `/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${NameID}&MasterNameID=${MasterNameID}&NameStatus=${NameStatus}`
+                                                        }
                                                         data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: nameShowPage === 'Contact_Details' ? 'Red' : NameTabCount?.ContactDetailsCount > 0 ? 'blue' : '#000' }}
-                                                        aria-current="page"
-
-                                                        onClick={() => { if (!changesStatus) setNameShowPage('Contact_Details') }}
-                                                    >
-                                                        Contact Details{`${NameTabCount?.ContactDetailsCount > 0 ? '(' + NameTabCount?.ContactDetailsCount + ')' : ''}`}
-                                                    </span>
-                                                    <span
-                                                        className={`nav-item ${nameShowPage === 'Address' ? 'active' : ''}${!status ? ' disabled' : ''}`}
-
+                                                        style={{ color: nameShowPage === 'home' ? 'Red' : '#000' }}
                                                         data-toggle={changesStatus ? "modal" : "pill"}
-                                                        data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: nameShowPage === 'Address' ? 'Red' : NameTabCount?.AddressCount > 0 ? 'blue' : '#000' }}
                                                         aria-current="page"
-
-                                                        onClick={() => { if (!changesStatus) setNameShowPage('Address') }}
+                                                        onClick={() => { if (!changesStatus) setNameShowPage('home') }}
                                                     >
-                                                        Address{`${NameTabCount?.AddressCount > 0 ? '(' + NameTabCount?.AddressCount + ')' : ''}`}
-                                                    </span>
-
-                                                    <span
-                                                        className={`nav-item ${nameShowPage === 'TransactionLog' ? 'active' : ''}${!status ? ' disabled' : ''}`}
-
+                                                        {iconHome}
+                                                    </Link> : <Link
+                                                        className={`nav-item ${nameShowPage === 'home' ? 'active' : ''}`}
+                                                        to={
+                                                            MstPage ?
+                                                                `/Name-Home?page=MST-Name-Dash&MasterNameID=${MasterNameID}&NameID=${NameID}&NameStatus=${NameStatus}&ModNo=${ModNo}`
+                                                                :
+                                                                `/Name-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${NameID}&MasterNameID=${MasterNameID}&NameStatus=${NameStatus}`
+                                                        }
+                                                        data-target={changesStatus ? "#SaveModal" : ''}
+                                                        style={{ color: nameShowPage === 'home' ? 'Red' : '#000' }}
                                                         data-toggle={changesStatus ? "modal" : "pill"}
-                                                        data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: nameShowPage === 'TransactionLog' ? 'Red' : NameTabCount?.TransactionLogCount > 0 ? 'blue' : '#000' }}
                                                         aria-current="page"
-
-                                                        onClick={() => { if (!changesStatus) setNameShowPage('TransactionLog') }}
+                                                        onClick={() => { if (!changesStatus) setNameShowPage('home') }}
                                                     >
-                                                        Involvement{`${NameTabCount?.TransactionLogCount > 0 ? '(' + NameTabCount?.TransactionLogCount + ')' : ''}`}
-                                                    </span>
-                                                </>
-                                            )}
-                                            {!isBusinessName && (
-                                                <>
-                                                    <span
-                                                        className={`nav-item ${nameShowPage === 'general' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+                                                        {iconHome}
+                                                    </Link>}
 
-                                                        data-toggle={changesStatus ? "modal" : "pill"}
-                                                        data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: nameShowPage === 'general' ? 'Red' : countStatus === true ? 'blue' : '#000' }}
-                                                        aria-current="page"
+                                                    {isBusinessName && (
+                                                        <>
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'Contact_Details' ? 'active' : ''}${!status ? ' disabled' : ''}`}
 
-                                                        onClick={() => { if (!changesStatus) setNameShowPage('general') }}
-                                                    >
-                                                        General{`${NameTabCount?.GeneralCount > 0 ? '(' + NameTabCount?.GeneralCount + ')' : ''}`}
-                                                    </span>
-                                                    <span
-                                                        className={`nav-item ${nameShowPage === 'Appearance' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'Contact_Details' ? 'Red' : NameTabCount?.ContactDetailsCount > 0 ? 'blue' : '#000' }}
+                                                                aria-current="page"
 
-                                                        data-toggle={changesStatus ? "modal" : "pill"}
-                                                        data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: nameShowPage === 'Appearance' ? 'Red' : countAppear === true ? 'blue' : '#000' }}
-                                                        aria-current="page"
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('Contact_Details') }}
+                                                            >
+                                                                Contact Details{`${NameTabCount?.ContactDetailsCount > 0 ? '(' + NameTabCount?.ContactDetailsCount + ')' : ''}`}
+                                                            </span>
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'Address' ? 'active' : ''}${!status ? ' disabled' : ''}`}
 
-                                                        onClick={() => { if (!changesStatus) setNameShowPage('Appearance') }}
-                                                    >
-                                                        Appearance{`${NameTabCount?.AppearanceCount > 0 ? '(' + NameTabCount?.AppearanceCount + ')' : ''}`}
-                                                    </span>
-                                                    <span
-                                                        className={`nav-item ${nameShowPage === 'aliases' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'Address' ? 'Red' : NameTabCount?.AddressCount > 0 ? 'blue' : '#000' }}
+                                                                aria-current="page"
 
-                                                        data-toggle={changesStatus ? "modal" : "pill"}
-                                                        data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: nameShowPage === 'aliases' ? 'Red' : NameTabCount?.AliasesCount > 0 ? 'blue' : '#000' }}
-                                                        aria-current="page"
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('Address') }}
+                                                            >
+                                                                Address{`${NameTabCount?.AddressCount > 0 ? '(' + NameTabCount?.AddressCount + ')' : ''}`}
+                                                            </span>
 
-                                                        onClick={() => { if (!changesStatus) setNameShowPage('aliases') }}
-                                                    >
-                                                        Aliases{`${NameTabCount?.AliasesCount > 0 ? '(' + NameTabCount?.AliasesCount + ')' : ''}`}
-                                                    </span>
-                                                    <span
-                                                        className={`nav-item ${nameShowPage === 'SMT' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'TransactionLog' ? 'active' : ''}${!status ? ' disabled' : ''}`}
 
-                                                        data-toggle={changesStatus ? "modal" : "pill"}
-                                                        data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: nameShowPage === 'SMT' ? 'Red' : NameTabCount?.NameSMTCount > 0 ? 'blue' : '#000' }}
-                                                        aria-current="page"
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'TransactionLog' ? 'Red' : NameTabCount?.TransactionLogCount > 0 ? 'blue' : '#000' }}
+                                                                aria-current="page"
 
-                                                        onClick={() => { if (!changesStatus) setNameShowPage('SMT') }}
-                                                    >
-                                                        SMT{`${NameTabCount?.NameSMTCount > 0 ? '(' + NameTabCount?.NameSMTCount + ')' : ''}`}
-                                                    </span>
-                                                    <span
-                                                        className={`nav-item ${nameShowPage === 'Identification_Number' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('TransactionLog') }}
+                                                            >
+                                                                Involvement{`${NameTabCount?.TransactionLogCount > 0 ? '(' + NameTabCount?.TransactionLogCount + ')' : ''}`}
+                                                            </span>
+                                                        </>
+                                                    )}
+                                                    {!isBusinessName && (
+                                                        <>
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'general' ? 'active' : ''}${!status ? 'disabled' : ''}`}
 
-                                                        data-toggle={changesStatus ? "modal" : "pill"}
-                                                        data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: nameShowPage === 'Identification_Number' ? 'Red' : NameTabCount?.IdentificationNumberCount > 0 ? 'blue' : '#000' }}
-                                                        aria-current="page"
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'general' ? 'Red' : countStatus === true ? 'blue' : '#000' }}
+                                                                aria-current="page"
 
-                                                        onClick={() => { if (!changesStatus) setNameShowPage('Identification_Number') }}
-                                                    >
-                                                        Identification Number{`${NameTabCount?.IdentificationNumberCount > 0 ? '(' + NameTabCount?.IdentificationNumberCount + ')' : ''}`}
-                                                    </span>
-                                                    <span
-                                                        className={`nav-item ${nameShowPage === 'Contact_Details' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('general') }}
+                                                            >
+                                                                General{`${NameTabCount?.GeneralCount > 0 ? '(' + NameTabCount?.GeneralCount + ')' : ''}`}
+                                                            </span>
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'Appearance' ? 'active' : ''}${!status ? ' disabled' : ''}`}
 
-                                                        data-toggle={changesStatus ? "modal" : "pill"}
-                                                        data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: nameShowPage === 'Contact_Details' ? 'Red' : NameTabCount?.ContactDetailsCount > 0 ? 'blue' : '#000' }}
-                                                        aria-current="page"
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'Appearance' ? 'Red' : countAppear === true ? 'blue' : '#000' }}
+                                                                aria-current="page"
 
-                                                        onClick={() => { if (!changesStatus) setNameShowPage('Contact_Details') }}
-                                                    >
-                                                        Contact Details{`${NameTabCount?.ContactDetailsCount > 0 ? '(' + NameTabCount?.ContactDetailsCount + ')' : ''}`}
-                                                    </span>
-                                                    <span
-                                                        className={`nav-item ${nameShowPage === 'Address' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('Appearance') }}
+                                                            >
+                                                                Appearance{`${NameTabCount?.AppearanceCount > 0 ? '(' + NameTabCount?.AppearanceCount + ')' : ''}`}
+                                                            </span>
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'aliases' ? 'active' : ''}${!status ? ' disabled' : ''}`}
 
-                                                        data-toggle={changesStatus ? "modal" : "pill"}
-                                                        data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: nameShowPage === 'Address' ? 'Red' : NameTabCount?.AddressCount > 0 ? 'blue' : '#000' }}
-                                                        aria-current="page"
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'aliases' ? 'Red' : NameTabCount?.AliasesCount > 0 ? 'blue' : '#000' }}
+                                                                aria-current="page"
 
-                                                        onClick={() => { if (!changesStatus) setNameShowPage('Address') }}
-                                                    >
-                                                        Address{`${NameTabCount?.AddressCount > 0 ? '(' + NameTabCount?.AddressCount + ')' : ''}`}
-                                                    </span>
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('aliases') }}
+                                                            >
+                                                                Aliases{`${NameTabCount?.AliasesCount > 0 ? '(' + NameTabCount?.AliasesCount + ')' : ''}`}
+                                                            </span>
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'SMT' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'SMT' ? 'Red' : NameTabCount?.NameSMTCount > 0 ? 'blue' : '#000' }}
+                                                                aria-current="page"
+
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('SMT') }}
+                                                            >
+                                                                SMT{`${NameTabCount?.NameSMTCount > 0 ? '(' + NameTabCount?.NameSMTCount + ')' : ''}`}
+                                                            </span>
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'Identification_Number' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'Identification_Number' ? 'Red' : NameTabCount?.IdentificationNumberCount > 0 ? 'blue' : '#000' }}
+                                                                aria-current="page"
+
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('Identification_Number') }}
+                                                            >
+                                                                Identification Number{`${NameTabCount?.IdentificationNumberCount > 0 ? '(' + NameTabCount?.IdentificationNumberCount + ')' : ''}`}
+                                                            </span>
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'Contact_Details' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'Contact_Details' ? 'Red' : NameTabCount?.ContactDetailsCount > 0 ? 'blue' : '#000' }}
+                                                                aria-current="page"
+
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('Contact_Details') }}
+                                                            >
+                                                                Contact Details{`${NameTabCount?.ContactDetailsCount > 0 ? '(' + NameTabCount?.ContactDetailsCount + ')' : ''}`}
+                                                            </span>
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'Address' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'Address' ? 'Red' : NameTabCount?.AddressCount > 0 ? 'blue' : '#000' }}
+                                                                aria-current="page"
+
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('Address') }}
+                                                            >
+                                                                Address{`${NameTabCount?.AddressCount > 0 ? '(' + NameTabCount?.AddressCount + ')' : ''}`}
+                                                            </span>
 
 
-                                                    <span
-                                                        className={`nav-item ${nameShowPage === 'Warrant' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'Warrant' ? 'active' : ''}${!status ? ' disabled' : ''}`}
 
-                                                        data-toggle={changesStatus ? "modal" : "pill"}
-                                                        data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: nameShowPage === 'Warrant' ? 'Red' : NameTabCount?.NameWarrantCount > 0 ? 'blue' : '#000' }}
-                                                        aria-current="page"
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'Warrant' ? 'Red' : NameTabCount?.NameWarrantCount > 0 ? 'blue' : '#000' }}
+                                                                aria-current="page"
 
-                                                        onClick={() => { if (!changesStatus) setNameShowPage('Warrant') }}
-                                                    >
-                                                        Warrant{`${NameTabCount?.NameWarrantCount > 0 ? '(' + NameTabCount?.NameWarrantCount + ')' : ''}`}
-                                                    </span>
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('Warrant') }}
+                                                            >
+                                                                Warrant{`${NameTabCount?.NameWarrantCount > 0 ? '(' + NameTabCount?.NameWarrantCount + ')' : ''}`}
+                                                            </span>
 
 
-                                                    <span
-                                                        className={`nav-item ${nameShowPage === 'TransactionLog' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'TransactionLog' ? 'active' : ''}${!status ? ' disabled' : ''}`}
 
-                                                        data-toggle={changesStatus ? "modal" : "pill"}
-                                                        data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: nameShowPage === 'TransactionLog' ? 'Red' : NameTabCount?.TransactionLogCount > 0 ? 'blue' : '#000' }}
-                                                        aria-current="page"
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'TransactionLog' ? 'Red' : NameTabCount?.TransactionLogCount > 0 ? 'blue' : '#000' }}
+                                                                aria-current="page"
 
-                                                        onClick={() => { if (!changesStatus) setNameShowPage('TransactionLog') }}
-                                                    >
-                                                        Involvement{`${NameTabCount?.TransactionLogCount > 0 ? '(' + NameTabCount?.TransactionLogCount + ')' : ''}`}
-                                                    </span>
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('TransactionLog') }}
+                                                            >
+                                                                Involvement{`${NameTabCount?.TransactionLogCount > 0 ? '(' + NameTabCount?.TransactionLogCount + ')' : ''}`}
+                                                            </span>
+                                                            {
+                                                                MstPage &&
+                                                                <span
+                                                                    className={`nav-item ${nameShowPage === 'History' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+
+                                                                    data-toggle={changesStatus ? "modal" : "pill"}
+                                                                    data-target={changesStatus ? "#SaveModal" : ''}
+                                                                    style={{ color: nameShowPage === 'History' ? 'Red' : '#000' }}
+                                                                    aria-current="page"
+
+                                                                    onClick={() => { if (!changesStatus) setNameShowPage('History') }}
+                                                                >
+                                                                    History
+                                                                </span>
+
+                                                            }
+                                                        </>
+                                                    )}
                                                     {
-                                                        MstPage &&
+                                                        showVictim && !isBusinessName && MstPage !== "MST-Name-Dash" &&
                                                         <span
-                                                            className={`nav-item ${nameShowPage === 'History' ? 'active' : ''}${!status ? 'disabled' : ''}`}
-
+                                                            className={`nav-item ${nameShowPage === 'Victim' ? 'active' : ''}${!status ? 'disabled' : ''}`}
                                                             data-toggle={changesStatus ? "modal" : "pill"}
                                                             data-target={changesStatus ? "#SaveModal" : ''}
-                                                            style={{ color: nameShowPage === 'History' ? 'Red' : '#000' }}
+                                                            style={{ color: nameShowPage === 'Victim' ? 'Red' : victimCount === true ? 'blue' : '#000' }}
                                                             aria-current="page"
-
-                                                            onClick={() => { if (!changesStatus) setNameShowPage('History') }}
+                                                            onClick={() => { if (!changesStatus) setNameShowPage('Victim') }}
                                                         >
-                                                            History
+                                                            Victim
                                                         </span>
-
                                                     }
-                                                </>
-                                            )}
-                                            {
-                                                showVictim && !isBusinessName && MstPage !== "MST-Name-Dash" &&
-                                                <span
-                                                    className={`nav-item ${nameShowPage === 'Victim' ? 'active' : ''}${!status ? 'disabled' : ''}`}
-                                                    data-toggle={changesStatus ? "modal" : "pill"}
-                                                    data-target={changesStatus ? "#SaveModal" : ''}
-                                                    style={{ color: nameShowPage === 'Victim' ? 'Red' : victimCount === true ? 'blue' : '#000' }}
-                                                    aria-current="page"
-                                                    onClick={() => { if (!changesStatus) setNameShowPage('Victim') }}
-                                                >
-                                                    Victim
-                                                </span>
-                                            }
 
-                                            {
-                                                showOffender && MstPage !== "MST-Name-Dash" &&
-                                                <span
-                                                    className={`nav-item ${nameShowPage === 'Offender' ? 'active' : ''}${!status ? 'disabled' : ''}`}
-                                                    data-toggle={changesStatus ? "modal" : "pill"}
-                                                    data-target={changesStatus ? "#SaveModal" : ''}
-                                                    style={{ color: nameShowPage === 'Offender' ? 'Red' : offenderCount === true ? 'blue' : '#000' }}
-                                                    aria-current="page"
-                                                    onClick={() => { if (!changesStatus) setNameShowPage('Offender') }}
-                                                >
-                                                    Offender{`${tabCount?.OffenderCount > 0 ? '(' + tabCount?.OffenderCount + ')' : ''}`}
-                                                </span>
-                                            }
-                                            {MstPage !== "MST-Name-Dash" && (
-                                                <span
-                                                    className={`nav-item ${nameShowPage === 'Offense' ? 'active' : ''}${!status ? 'disabled' : ''}`}
-                                                    data-toggle={changesStatus ? "modal" : "pill"}
-                                                    data-target={changesStatus ? "#SaveModal" : ''}
-                                                    style={{ color: nameShowPage === 'Offense' ? 'Red' : NameTabCount?.NameOffenseCount > 0 ? 'blue' : '#000' }}
-                                                    aria-current="page"
-                                                    onClick={() => { if (!changesStatus) setNameShowPage('Offense') }}
-                                                >
-                                                    Associated Offenses
-                                                </span>
-                                            )}
-                                            <span
-                                                className={`nav-item ${nameShowPage === 'AuditLog' ? 'active' : ''}${!status ? 'disabled' : ''}`}
-                                                data-toggle={changesStatus ? "modal" : "pill"}
-                                                data-target={changesStatus ? "#SaveModal" : ''}
-                                                style={{ color: nameShowPage === 'AuditLog' ? 'Red' : auditCount === true ? 'blue' : '#000' }}
-                                                aria-current="page"
-                                                onClick={() => { if (!changesStatus) setNameShowPage('AuditLog') }}
-                                            >
-                                                {isCad ? "Change Log" : " Audit Log"}
-                                            </span>
+                                                    {
+                                                        showOffender && MstPage !== "MST-Name-Dash" &&
+                                                        <span
+                                                            className={`nav-item ${nameShowPage === 'Offender' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+                                                            data-toggle={changesStatus ? "modal" : "pill"}
+                                                            data-target={changesStatus ? "#SaveModal" : ''}
+                                                            style={{ color: nameShowPage === 'Offender' ? 'Red' : offenderCount === true ? 'blue' : '#000' }}
+                                                            aria-current="page"
+                                                            onClick={() => { if (!changesStatus) setNameShowPage('Offender') }}
+                                                        >
+                                                            Offender{`${tabCount?.OffenderCount > 0 ? '(' + tabCount?.OffenderCount + ')' : ''}`}
+                                                        </span>
+                                                    }
+                                                    {MstPage !== "MST-Name-Dash" && (
+                                                        <span
+                                                            className={`nav-item ${nameShowPage === 'Offense' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+                                                            data-toggle={changesStatus ? "modal" : "pill"}
+                                                            data-target={changesStatus ? "#SaveModal" : ''}
+                                                            style={{ color: nameShowPage === 'Offense' ? 'Red' : NameTabCount?.NameOffenseCount > 0 ? 'blue' : '#000' }}
+                                                            aria-current="page"
+                                                            onClick={() => { if (!changesStatus) setNameShowPage('Offense') }}
+                                                        >
+                                                            Associated Offenses
+                                                        </span>
+                                                    )}
+                                                    <span
+                                                        className={`nav-item ${nameShowPage === 'AuditLog' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+                                                        data-toggle={changesStatus ? "modal" : "pill"}
+                                                        data-target={changesStatus ? "#SaveModal" : ''}
+                                                        style={{ color: nameShowPage === 'AuditLog' ? 'Red' : auditCount === true ? 'blue' : '#000' }}
+                                                        aria-current="page"
+                                                        onClick={() => { if (!changesStatus) setNameShowPage('AuditLog') }}
+                                                    >
+                                                        {isCad ? "Change Log" : " Audit Log"}
+                                                    </span>
 
-                                        </ul>
-                                    </div>
-                                </div>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    )
+                                }
+
                                 {
                                     nameShowPage === 'home' ?
                                         <Home {...{
