@@ -39,8 +39,8 @@ const MultiValue = props => (
   </components.MultiValue>
 );
 
-const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender, setIsBusinessName, get_List, isCad = false, isCADSearch = false, isViewEventDetails = false }) => {
-
+const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender, setIsBusinessName, get_List, isCad = false, isCADSearch = false, isViewEventDetails = false, editval, setEditval, setNameSingleData, masterNameID, setMasterNameID, nameID, setNameID, GetSingleData, get_Data_Name, nibrsErrModalStatus, setNibrsErrModalStatus, ResetErrors, setResetErrors, nibrsErrStr, setNibrsErrStr, nibrsValidateNameData, setnibrsValidateNameData, addName, setAddName }) => {
+  const carouselRef = useRef(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const agencyOfficerDrpData = useSelector((state) => state.DropDown.agencyOfficerDrpData);
@@ -52,7 +52,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
 
   const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
 
-  const { get_Incident_Count, get_Name_Count, NameTabCount, nameSearchStatus, nibrsSubmittedName, setnibrsSubmittedName, get_Data_Name, setcountAppear, setAuditCount, setNameSearchStatus, setcountStatus, setChangesStatus, setNameSingleData, changesStatus, nameFilterData, validate_IncSideBar } = useContext(AgencyContext);
+  const { get_Incident_Count, get_Name_Count, NameTabCount, nameSearchStatus, nibrsSubmittedName, setnibrsSubmittedName, setcountAppear, setAuditCount, setNameSearchStatus, setcountStatus, setChangesStatus, incidentCount, changesStatus, nameFilterData, validate_IncSideBar, } = useContext(AgencyContext);
 
 
   const useQuery = () => {
@@ -88,7 +88,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
   if (!MasterNameID) MasterNameID = 0;
   else DeMasterNameID = parseInt(base64ToString(MasterNameID));
 
-  const [editval, setEditval] = useState([]);
+  // const [editval, setEditval] = useState([]);
   //Datepicker
   const [dobDate, setDobDate] = useState();
   const [yearsVal, setYearsVal] = useState();
@@ -131,8 +131,8 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
   const [addVerifySingleData, setAddVerifySingleData] = useState([]);
   const [locationStatus, setLocationStatus] = useState(false);
   const [mainIncidentID, setMainIncidentID] = useState('');
-  const [masterNameID, setMasterNameID] = useState();
-  const [nameID, setNameID] = useState();
+  // const [masterNameID, setMasterNameID] = useState();
+  // const [nameID, setNameID] = useState();
   const [loginAgencyID, setLoginAgencyID] = useState('');
   const [loginPinID, setLoginPinID] = useState(1);
   const [possessionID, setPossessionID] = useState('');
@@ -156,10 +156,10 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
 
   const [newClicked, setNewClicked] = useState(0);
   // nibrs 
-  const [nibrsValidateNameData, setnibrsValidateNameData] = useState([]);
-  const [nibrsErrStr, setNibrsErrStr] = useState('');
+  // const [nibrsValidateNameData, setnibrsValidateNameData] = useState([]);
+  // const [nibrsErrStr, setNibrsErrStr] = useState('');
   const [clickNibloder, setclickNibLoder] = useState(false);
-  const [nibrsErrModalStatus, setNibrsErrModalStatus] = useState(false);
+  // const [nibrsErrModalStatus, setNibrsErrModalStatus] = useState(false);
   const [nibFieldStatusOrErr, setNibFieldStatusOrErr] = useState()
   const [imageModalOfficerID, setImageModalOfficerID] = useState(null)
   const [permissionForAdd, setPermissionForAdd] = useState(false);
@@ -167,6 +167,8 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
   // Add Update Permission
   const [addUpdatePermission, setaddUpdatePermission] = useState();
   const [juvenilestatus, setjuvenilestatus] = useState(false);
+  const [showArrows, setShowArrows] = useState(false);
+  const [viewType, setViewType] = useState('card'); // 'card' or 'list'
 
   const [multiSelected, setMultiSelected] = useState({
     optionSelected: null
@@ -175,23 +177,14 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
   const [multiSelectedReason, setMultiSelectedReason] = useState({
     optionSelected: null
   });
-  console.log(NameTabCount)
 
   const [value, setValue] = useState({
-    'NameIDNumber': 'Auto Generated', 'NameTypeID': '', 'BusinessTypeID': '', 'SuffixID': '', 'VerifyID': '', 'SexID': '',
-    'RaceID': '', 'PhoneTypeID': '', 'NameReasonCodeID': '', 'CertifiedByID': '', 'EthnicityID': '', 'AgeUnitID': '',
-    'IsJuvenile': '', 'IsCurrentPh': true, 'IsVerify': true, 'IsUnListedPhNo': '', 'LastName': '', 'FirstName': '', 'MiddleName': '',
-    'SSN': '', 'WeightFrom': '', 'WeightTo': '', 'HeightFrom': '', 'HeightTo': '', 'Address': '', 'Contact': '',
-    'OwnerNameID': '', 'OwnerPhoneNumber': '', 'OwnerFaxNumber': '', 'DateOfBirth': '', 'CertifiedDtTm': '', 'AgeFrom': '',
-    'AgeTo': '', 'Years': '', 'EventType': 'I', 'ModifiedByUserFK': '', 'MasterNameID': '', 'NameID': '',
-    'ArrestID': "", 'WarrantID': "", 'TicketID': "", 'checkVictem': 0, 'checkOffender': 0, 'checkArrest': 0, 'VictimCode': '',
-    'CreatedByUserFK': '', 'AgencyID': '', 'IncidentID': '', 'NameLocationID': '', 'DLNumber': "", 'DLStateID': '', 'IsUnknown': false, 'IsMaster': MstPage === "MST-Name-Dash" ? true : false,
-    'Role': '', 'ResidentID': '', 'IsInjury': '', 'VictimTypeID': ''
+    'NameIDNumber': 'Auto Generated', 'NameTypeID': '', 'BusinessTypeID': '', 'SuffixID': '', 'VerifyID': '', 'SexID': '', 'RaceID': '', 'PhoneTypeID': '', 'NameReasonCodeID': '', 'CertifiedByID': '', 'EthnicityID': '', 'AgeUnitID': '', 'IsJuvenile': '', 'IsCurrentPh': true, 'IsVerify': true, 'IsUnListedPhNo': '', 'LastName': '', 'FirstName': '', 'MiddleName': '', 'SSN': '', 'WeightFrom': '', 'WeightTo': '', 'HeightFrom': '', 'HeightTo': '', 'Address': '', 'Contact': '', 'OwnerNameID': '', 'OwnerPhoneNumber': '', 'OwnerFaxNumber': '', 'DateOfBirth': '', 'CertifiedDtTm': '', 'AgeFrom': '',
+    'AgeTo': '', 'Years': '', 'EventType': 'I', 'ModifiedByUserFK': '', 'MasterNameID': '', 'NameID': '', 'ArrestID': "", 'WarrantID': "", 'TicketID': "", 'checkVictem': 0, 'checkOffender': 0, 'checkArrest': 0, 'VictimCode': '', 'CreatedByUserFK': '', 'AgencyID': '', 'IncidentID': '', 'NameLocationID': '', 'DLNumber': "", 'DLStateID': '', 'IsUnknown': false, 'IsMaster': MstPage === "MST-Name-Dash" ? true : false, 'Role': '', 'ResidentID': '', 'IsInjury': '', 'VictimTypeID': ''
   })
 
   const [errors, setErrors] = useState({
-    'NameTypeIDError': '', 'LastNameError': '', 'FirstNameError': '', 'MiddleNameError': '', 'NameReasonCodeIDError': '', 'CertifiedByIDError': '', 'ContactError': 'true', 'WeightError': 'true',
-    'HeightError': 'true', 'AgeError': 'true', 'DateOfBirthError': '', 'RaceIDError': '', 'DLError': 'true', 'SexIDError': '', 'AddressError': 'true', 'CrimeLocationError': '', 'InjuryError': '', 'ResidentError': '', 'EthnicityErrorr': '',
+    'NameTypeIDError': '', 'LastNameError': '', 'FirstNameError': '', 'MiddleNameError': '', 'NameReasonCodeIDError': '', 'CertifiedByIDError': '', 'ContactError': 'true', 'WeightError': 'true', 'HeightError': 'true', 'AgeError': 'true', 'DateOfBirthError': '', 'RaceIDError': '', 'DLError': 'true', 'SexIDError': '', 'AddressError': 'true', 'CrimeLocationError': '', 'InjuryError': '', 'ResidentError': '', 'EthnicityErrorr': '',
   })
 
   const [imgData, setImgData] = useState({
@@ -205,14 +198,15 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
     }
   }, []);
 
-
-
+  useEffect(() => {
+    if (ResetErrors) {
+      Reset()
+    }
+  }, [ResetErrors]);
 
   useEffect(() => {
     if (localStoreData) {
-      setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
-      dispatch(get_ScreenPermissions_Data("N046", localStoreData?.AgencyID, localStoreData?.PINID));
-      setBaseDate(localStoreData?.BaseDate ? localStoreData?.BaseDate : null); setOriNumber(localStoreData?.ORI);
+      setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID); dispatch(get_ScreenPermissions_Data("N046", localStoreData?.AgencyID, localStoreData?.PINID)); setBaseDate(localStoreData?.BaseDate ? localStoreData?.BaseDate : null); setOriNumber(localStoreData?.ORI); get_Data_Name(IncID);
     }
   }, [localStoreData]);
 
@@ -228,8 +222,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
 
   useEffect(() => {
     if (effectiveScreenPermission?.length > 0) {
-      setPermissionForAdd(effectiveScreenPermission[0]?.AddOK);
-      setPermissionForEdit(effectiveScreenPermission[0]?.Changeok);
+      setPermissionForAdd(effectiveScreenPermission[0]?.AddOK); setPermissionForEdit(effectiveScreenPermission[0]?.Changeok);
       setaddUpdatePermission(effectiveScreenPermission[0]?.AddOK != 1 || effectiveScreenPermission[0]?.Changeok != 1 ? true : false);
     } else {
       setaddUpdatePermission(false);
@@ -533,24 +526,24 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
         }
         else { setIsAdultArrest(false); }
 
-        if (data.Victim === 0 && isVictim?.length > 0) { setIsVictim(true); }
+        if (data?.Victim === 0 && isVictim?.length > 0) { setIsVictim(true); }
         else { setIsVictim(false); }
 
-        if (data.MissingPerson === 0 && isMissingPerson?.length > 0) { setisMissing(true); }
+        if (data?.MissingPerson === 0 && isMissingPerson?.length > 0) { setisMissing(true); }
         else { setisMissing(false); }
       }
     })
   }
 
-  const GetSingleData = (nameID, masterNameID) => {
-    const val = { 'NameID': nameID, 'MasterNameID': masterNameID, 'IsMaster': MstPage === "MST-Name-Dash" ? true : false, }
-    const val2 = { 'MasterNameID': masterNameID, 'NameID': 0, 'IsMaster': MstPage === "MST-Name-Dash" ? true : false, }
-    fetchPostData('MasterName/GetSingleData_MasterName', MstPage === "MST-Property-Dash" ? val2 : val).then((res) => {
-      if (res) {
-        setEditval(res); setNameSingleData(res);
-      } else { setEditval([]); setNameSingleData([]) }
-    })
-  }
+  // const GetSingleData = (nameID, masterNameID) => {
+  //   const val = { 'NameID': nameID, 'MasterNameID': masterNameID, 'IsMaster': MstPage === "MST-Name-Dash" ? true : false, }
+  //   const val2 = { 'MasterNameID': masterNameID, 'NameID': 0, 'IsMaster': MstPage === "MST-Name-Dash" ? true : false, }
+  //   fetchPostData('MasterName/GetSingleData_MasterName', MstPage === "MST-Property-Dash" ? val2 : val).then((res) => {
+  //     if (res) {
+  //       setEditval(res); setNameSingleData(res);
+  //     } else { setEditval([]); setNameSingleData([]) }
+  //   })
+  // }
 
   const GetMasterSingleData = () => {
     const val = { 'MasterNameID': masterNameID, 'NameID': 0, }
@@ -719,6 +712,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
       setNameSearchStatus(false); toastifyError('Please Enter Details');
     }
   }
+
 
   const set_Edit_Value = (row) => {
     if (changesStatus) {
@@ -1115,11 +1109,9 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
       const fetchParams = MstPage === "MST-Name-Dash" ?
         { "MasterNameID": masterNameID, "SSN": SSN, 'NameID': NameID, 'AgencyID': AgencyID } :
         { "SSN": SSN, "IncidentID": mainIncidentID, "MasterNameID": masterNameID, 'NameID': NameID, 'AgencyID': AgencyID };
-
       fetchPostData("MasterName/GetData_EventNameExists", fetchParams).then((data) => {
         setErrors({ ...errors, ['ContactError']: 'true', ['NameTypeIDError']: '', });
         if (data) {
-
           if (data[0]?.Total === 0) {
             setsaveValue(true);
             AddDeleteUpadate('MasterName/Insert_MasterName', val).then((res) => {
@@ -1127,7 +1119,6 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                 if (MstPage === "MST-Name-Dash") {
                   if (isCad) {
                     navigate(`/cad/dispatcher?page=MST-Name-Dash&NameID=${stringToBase64(res?.NameID)}&MasterNameID=${stringToBase64(res?.MasterNameID)}&ModNo=${res?.NameNumber}&NameStatus=${true}`);
-
                   } else {
                     navigate(`/Name-Home?page=MST-Name-Dash&NameID=${stringToBase64(res?.NameID)}&MasterNameID=${stringToBase64(res?.MasterNameID)}&ModNo=${res?.NameNumber}&NameStatus=${true}`);
                   }
@@ -1146,9 +1137,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                   'Contact': '', 'OwnerPhoneNumber': '', 'OwnerFaxNumber': '', 'OwnerNameID': '', 'DateOfBirth': '', 'CertifiedDtTm': null, 'AgeFrom': '', 'AgeTo': '', 'Years': '', 'MasterNameID': '', 'NameID': '', 'EthnicityID': '', 'DLNumber': "", 'DLStateID': '', 'IsUnknown': '', 'IsJuvenile': '',
                 })
                 get_NameTypeData(loginAgencyID); get_Data_Name(mainIncidentID, MstPage === "MST-Name-Dash" ? true : false);
-
                 setChangesStatus(false); setLocationStatus(true); setUpdateStatus(updateStatus + 1); setIsAdult(false); setIsOffender(false);
-
                 setStatesChangeStatus(false); get_Incident_Count(mainIncidentID, loginPinID);
                 if (uploadImgFiles?.length > 0) { upload_Image_File(res?.NameID, res?.MasterNameID); setuploadImgFiles('') }
                 setErrors({ ...errors, ['AddressError']: 'true', ['WeightError']: 'true', ['AgeError']: 'true', ['ContactError']: 'true', ['NameTypeIDError']: '', });
@@ -1195,10 +1184,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
       }
       const RoleName = multiSelectedReason?.optionSelected?.length > 0 ? getLabelsString(multiSelectedReason.optionSelected) : "";
       const val = {
-        'AgencyID': AgencyID,
-        'NameIDNumber': IsJuvenile === editval[0]?.IsJuvenile ? NameIDNumber : 'Auto Generated',
-        'NameTypeID': NameTypeID, 'EventType': EventType, 'IsMaster': IsMaster, 'IsVerify': IsVerify, 'IsUnListedPhNo': IsUnListedPhNo, 'PhoneTypeID': PhoneTypeID, 'OwnerFaxNumber': OwnerFaxNumber, 'IsCurrentPh': IsCurrentPh, 'BusinessTypeID': BusinessTypeID, 'SuffixID': SuffixID, 'DLVerifyID': VerifyID, 'SexID': SexID, 'RaceID': RaceID, 'PhoneTypeID': PhoneTypeID, 'NameReasonCodeID': NameReasonCodeID, 'CertifiedByID': CertifiedByID, 'EthnicityID': EthnicityID, 'AgeUnitID': AgeUnitID, 'IsJuvenile': IsJuvenile, 'LastName': LastName ? LastName : null, 'FirstName': trimmedFirstName ? trimmedFirstName : null, 'MiddleName': trimmedMiddleName ? trimmedMiddleName : null, 'SSN': SSN, 'WeightFrom': WeightFrom, 'WeightTo': WeightTo, 'HeightFrom': HeightFrom, 'HeightTo': HeightTo, 'Address': Address, 'Contact': Contact, 'OwnerNameID': OwnerNameID, 'OwnerPhoneNumber': OwnerPhoneNumber,
-        'OwnerFaxNumber': OwnerFaxNumber, 'DateOfBirth': DateOfBirth, 'CertifiedDtTm': CertifiedDtTm, 'AgeFrom': AgeFrom, 'AgeTo': AgeTo, 'Years': Years, 'ModifiedByUserFK': ModifiedByUserFK, 'MasterNameID': MasterNameID, 'NameID': NameID, 'ArrestID': ArrestID, 'WarrantID': WarrantID, 'TicketID': TicketID, 'checkVictem': checkVictem, 'checkOffender': checkOffender, 'checkArrest': checkArrest, 'CreatedByUserFK': CreatedByUserFK, 'IncidentID': IncidentID, 'NameLocationID': NameLocationID, 'DLNumber': DLNumber, 'DLStateID': DLStateID, 'IsUnknown': IsUnknown, 'Role': formattedRole, 'ResidentID': ResidentID, 'IsInjury': IsInjury, 'VictimTypeID': VictimTypeID, 'RoleName': RoleName,
+        'AgencyID': AgencyID, 'NameIDNumber': IsJuvenile === editval[0]?.IsJuvenile ? NameIDNumber : 'Auto Generated', 'NameTypeID': NameTypeID, 'EventType': EventType, 'IsMaster': IsMaster, 'IsVerify': IsVerify, 'IsUnListedPhNo': IsUnListedPhNo, 'PhoneTypeID': PhoneTypeID, 'OwnerFaxNumber': OwnerFaxNumber, 'IsCurrentPh': IsCurrentPh, 'BusinessTypeID': BusinessTypeID, 'SuffixID': SuffixID, 'DLVerifyID': VerifyID, 'SexID': SexID, 'RaceID': RaceID, 'PhoneTypeID': PhoneTypeID, 'NameReasonCodeID': NameReasonCodeID, 'CertifiedByID': CertifiedByID, 'EthnicityID': EthnicityID, 'AgeUnitID': AgeUnitID, 'IsJuvenile': IsJuvenile, 'LastName': LastName ? LastName : null, 'FirstName': trimmedFirstName ? trimmedFirstName : null, 'MiddleName': trimmedMiddleName ? trimmedMiddleName : null, 'SSN': SSN, 'WeightFrom': WeightFrom, 'WeightTo': WeightTo, 'HeightFrom': HeightFrom, 'HeightTo': HeightTo, 'Address': Address, 'Contact': Contact, 'OwnerNameID': OwnerNameID, 'OwnerPhoneNumber': OwnerPhoneNumber, 'OwnerFaxNumber': OwnerFaxNumber, 'DateOfBirth': DateOfBirth, 'CertifiedDtTm': CertifiedDtTm, 'AgeFrom': AgeFrom, 'AgeTo': AgeTo, 'Years': Years, 'ModifiedByUserFK': ModifiedByUserFK, 'MasterNameID': MasterNameID, 'NameID': NameID, 'ArrestID': ArrestID, 'WarrantID': WarrantID, 'TicketID': TicketID, 'checkVictem': checkVictem, 'checkOffender': checkOffender, 'checkArrest': checkArrest, 'CreatedByUserFK': CreatedByUserFK, 'IncidentID': IncidentID, 'NameLocationID': NameLocationID, 'DLNumber': DLNumber, 'DLStateID': DLStateID, 'IsUnknown': IsUnknown, 'Role': formattedRole, 'ResidentID': ResidentID, 'IsInjury': IsInjury, 'VictimTypeID': VictimTypeID, 'RoleName': RoleName,
       };
       fetchPostData("MasterName/GetData_EventNameExists", {
         "SSN": SSN, "IncidentID": MstPage === "MST-Name-Dash" ? '' : mainIncidentID, 'masterNameID': masterNameID, 'NameID': NameID, 'AgencyID': AgencyID
@@ -1239,11 +1225,9 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
   }
 
   const Reset = () => {
-    setroleStatus(false); setIsAdultArrest(false); setisMissing(false); setIsVictim(false); setIsSocietyName(false);
-    setarrestCount(''); setmissingpersonCount(''); setpropertyOwnerCount('');
-    setIsSecondDropdownDisabled(true); setvictimTypeStatus(false); setnibrsSubmittedName(0); setIsAdult(false);
+    setroleStatus(false); setIsAdultArrest(false); setisMissing(false); setIsVictim(false); setIsSocietyName(false); setarrestCount(''); setmissingpersonCount(''); setpropertyOwnerCount(''); setIsSecondDropdownDisabled(true); setvictimTypeStatus(false); setnibrsSubmittedName(0); setIsAdult(false);
     setIsOffender(false); setcalled(false); setShowOffender(false); setShowVictim(false); setshowWarrant(false); setDobDate(''); setAvailableAlert([])
-    setStatesChangeStatus(false); setOnSelectLocation(true); setChangesStatus(false);
+    setStatesChangeStatus(false); setOnSelectLocation(true); setChangesStatus(false); setResetErrors(false)
     setErrors({
       ...value, 'NameTypeIDError': '', 'LastNameError': '', 'FirstNameError': '', 'MiddleNameError': '', 'NameReasonCodeIDError': '', 'CertifiedByIDError': '', 'ContactError': 'true', 'WeightError': 'true', 'HeightError': 'true', 'AgeError': 'true', 'DateOfBirthError': '', 'RaceIDError': '', 'SexIDError': '', 'AddressError': 'true', 'SSN': '', 'DLError': 'true', "CrimeLocationError": '', 'AgeFromError': '', 'InjuryError': '', 'ResidentError': '', 'EthnicityErrorr': '',
     })
@@ -1406,7 +1390,6 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
         if (value?.LastName) {
           getNameSearchPopup(loginAgencyID, value?.NameTypeID, value.LastName, value.FirstName, value.MiddleName, getShowingWithOutTime(date), value.SSN, false)
         }
-
       }
     }
   };
@@ -1433,11 +1416,9 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
   useEffect(() => {
     if (yearsVal < 18 || parseInt(value.AgeFrom) < 18 || value.AgeUnitID === 1 || value.AgeUnitID === 2) {
       // setJuvinile(true)
-      setjuvenilestatus(true)
-      setValue({ ...value, ['IsJuvenile']: true })
+      setjuvenilestatus(true); setValue({ ...value, ['IsJuvenile']: true })
     } else {
-      setValue({ ...value, ['IsJuvenile']: false })
-      setjuvenilestatus(false)
+      setValue({ ...value, ['IsJuvenile']: false }); setjuvenilestatus(false)
     }
   }, [value.DateOfBirth, value.AgeFrom, value.AgeUnitID]);
 
@@ -1527,27 +1508,19 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
     else {
       heights = heightstates;
     }
-
     const globalname_Fromarray = globalname.replace("\"", "").replace("'", "");
     const globalname_Toarray = heights.replace("\"", "").replace("'", "");
-
     if ((parseInt(globalname_Fromarray) > parseInt(globalname_Toarray))) {
       toastifyError('height should be greater');
-
     }
     if (parseInt(heights.replace("\"", "").replace("'", "")) < 101) {
       toastifyError('Height should be greater than or equal to 1\'01"');
       heights = '';
     }
-
     if (heights != '') {
       setglobalnameto(heights)
     }
-
-    setValue({
-      ...value,
-      ['HeightTo']: heights,
-    })
+    setValue({ ...value, ['HeightTo']: heights, })
 
   }
 
@@ -1604,11 +1577,8 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
         'PictureTypeID': imgData?.PictureTypeID, 'ImageViewID': imgData?.ImageViewID, 'ImgDtTm': imgData?.ImgDtTm, 'OfficerID': imgData?.OfficerID, 'AgencyID': loginAgencyID,
       }
       const val1 = {
-        'NameID': 0, 'MasterNameID': masterNameID ? masterNameID : namMID, 'CreatedByUserFK': loginPinID,
-        'PictureTypeID': imgData?.PictureTypeID, 'ImageViewID': imgData?.ImageViewID, 'ImgDtTm': imgData?.ImgDtTm,
-        'OfficerID': imgData?.OfficerID, 'Comments': imgData?.Comments, 'AgencyID': loginAgencyID,
+        'NameID': 0, 'MasterNameID': masterNameID ? masterNameID : namMID, 'CreatedByUserFK': loginPinID, 'PictureTypeID': imgData?.PictureTypeID, 'ImageViewID': imgData?.ImageViewID, 'ImgDtTm': imgData?.ImgDtTm, 'OfficerID': imgData?.OfficerID, 'Comments': imgData?.Comments, 'AgencyID': loginAgencyID,
       }
-
       const values = JSON.stringify(openPageName === 'MST-Name-Dash' ? val1 : val);
       newData.push(values);
       const EncPostData = await Aes256Encrypt(JSON.stringify([JSON.stringify(openPageName === 'MST-Name-Dash' ? val1 : val)]));
@@ -1616,7 +1586,6 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
       formdata.append("file", file);
       EncFormdata.append("file", file);
     }
-
     formdata.append("Data", JSON.stringify(newData));
     EncFormdata.append("Data", EncDocs);
     AddDelete_Img('MasterName/MasterName_Photo', formdata, EncFormdata).then((res) => {
@@ -1635,8 +1604,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
       if (data.success) {
         const parsedData = JSON.parse(data.data);
         const message = parsedData.Table[0].Message;
-        toastifySuccess(message); get_Name_MultiImage(nameID, masterNameID);
-        setModalStatus(false); setImageId('');
+        toastifySuccess(message); get_Name_MultiImage(nameID, masterNameID); setModalStatus(false); setImageId('');
         if (openPageName === 'MST-Name-Dash') { GetMasterSingleData(masterNameID) } else { GetSingleData(nameID, masterNameID); }
       } else {
         toastifyError(data?.Message);
@@ -1714,32 +1682,6 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
     }),
   };
 
-
-
-  const customStylesWithColor2 = {
-    control: base => ({
-      ...base,
-      backgroundColor: "#fce9bf",
-      height: 20,
-      minHeight: 35,
-      fontSize: 14,
-      margintop: 2,
-      boxShadow: 0,
-    }),
-  };
-
-  const customWithOutColor = {
-    control: base => ({
-      ...base,
-      height: 20,
-      minHeight: 33,
-      fontSize: 14,
-      margintop: 2,
-      boxShadow: 0,
-      width: 130,
-    }),
-  };
-
   const startRef = React.useRef();
   const startRef1 = React.useRef();
 
@@ -1794,9 +1736,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
   }
 
   const blinkAnimationStyle = {
-    animation: 'blink-animation 1s infinite',
-    fontSize: '16px',
-    color: 'red',
+    animation: 'blink-animation 1s infinite', fontSize: '16px', color: 'red',
   };
 
   const onChangeReaonsRole = (e, name) => {
@@ -1929,23 +1869,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
   const nibrsValidateName = (incidentID, reportDate, baseDate, oriNumber) => {
     setclickNibLoder(true);
     const val = {
-      'gIntAgencyID': loginAgencyID,
-      "IsIncidentCheck": true,
-      "gIncidentID": incidentID,
-      "dtpDateTo": reportDate,
-      "dtpDateFrom": reportDate,
-      "BaseDate": baseDate,
-      "strORINumber": oriNumber,
-      "strComputerName": uniqueId,
-      "rdbSubmissionFile": false,
-      "rdbErrorLog": false,
-      "rdbNonReportable": false,
-      "chkPastErrorPrint": false,
-      "rdbOne": false,
-      "rdbTwoMonth": false,
-      "rdbThreeMonth": false,
-      "rdbAllLogFile": false,
-      "IPAddress": ""
+      'gIntAgencyID': loginAgencyID, "IsIncidentCheck": true, "gIncidentID": incidentID, "dtpDateTo": reportDate, "dtpDateFrom": reportDate, "BaseDate": baseDate, "strORINumber": oriNumber, "strComputerName": uniqueId, "rdbSubmissionFile": false, "rdbErrorLog": false, "rdbNonReportable": false, "chkPastErrorPrint": false, "rdbOne": false, "rdbTwoMonth": false, "rdbThreeMonth": false, "rdbAllLogFile": false, "IPAddress": ""
     }
     fetchPostData('NIBRS/TXIBRS', val).then((data) => {
       if (data) {
@@ -2037,1126 +1961,1125 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
   const setToReset = () => {
   }
 
-  const DeleteContactDetail = () => {
-    const val = { 'NameID': nameID, 'DeletedByUserFK': loginPinID, }
-    AddDeleteUpadate('MasterName/Delete_NameEvent', val).then((res) => {
-      if (res) {
-        const parseData = JSON.parse(res.data);
-        toastifySuccess(parseData?.Table[0].Message);
-        get_NameTypeData(loginAgencyID); get_Data_Name(mainIncidentID, MstPage === "MST-Name-Dash" ? true : false);
-        setStatesChangeStatus(false); get_Incident_Count(mainIncidentID, loginPinID);
-        // get_Name_Count(DecNameID, DecMasterNameID, MstPage === "MST-Name-Dash" ? true : false);
-
-        Reset();
-        setStatusFalse();
-        // Get_ContactDetailsData(DecNameID, DecMasterNameID)
-      } else console.log("Somthing Wrong");
-    })
-  }
+  // const DeleteContactDetail = () => {
+  //   const val = { 'NameID': nameID, 'DeletedByUserFK': loginPinID, }
+  //   AddDeleteUpadate('MasterName/Delete_NameEvent', val).then((res) => {
+  //     if (res) {
+  //       const parseData = JSON.parse(res.data);
+  //       toastifySuccess(parseData?.Table[0].Message);
+  //       get_NameTypeData(loginAgencyID); get_Data_Name(mainIncidentID, MstPage === "MST-Name-Dash" ? true : false);
+  //       setStatesChangeStatus(false); get_Incident_Count(mainIncidentID, loginPinID); Reset();  setStatusFalse();
+  //     } else console.log("Somthing Wrong");
+  //   })
+  // }
 
 
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseEnter = () => setIsHovered(true);
-  const handleMouseLeave = () => setIsHovered(false); return (
+  const handleMouseLeave = () => setIsHovered(false);
+
+  // const scrollCards = (direction) => {
+  //   const container = document.getElementById('cardCarousel');
+  //   const scrollAmount = 250;
+
+  //   if (direction === 'left') {
+  //     container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+  //   } else {
+  //     container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  //   }
+  // };
+
+
+  useEffect(() => {
+    const checkOverflow = () => {
+      const carousel = carouselRef.current;
+      if (carousel) {
+        setShowArrows(carousel.scrollWidth > carousel.clientWidth);
+      }
+    };
+    checkOverflow();
+    window.addEventListener('resize', checkOverflow);
+    return () => window.removeEventListener('resize', checkOverflow);
+  }, [nameFilterData]);
+
+  const scrollCards = (direction) => {
+    const carousel = carouselRef.current;
+    if (carousel) {
+      const scrollAmount = 300;
+      carousel.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth',
+      });
+    }
+  };
+
+  return (
     <>
-      <div className="row child">
-        {/* bb */}
-        <div className="col-12 col-md-12 col-lg-12 ">
-          <div className="row align-items-center mt-2" style={{ rowGap: "8px" }}>
-            <div className="col-2 col-md-2 col-lg-1">
-              <label htmlFor="" className='label-name mb-0'>Name Type
-                {errors.NameTypeIDError !== 'true' ? (
-                  <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.NameTypeIDError}</p>
-                ) : null}
-              </label>
-            </div>
-            <div className="col-3 col-md-3 col-lg-2">
-              <Select
-                name='NameTypeID'
-                value={nameTypeData?.filter((obj) => obj.value === value?.NameTypeID)}
-                options={nameTypeData}
-                onChange={(e) => ChangeNameType(e, 'NameTypeID')}
-
-                placeholder="Select..."
-                styles={nibrsSubmittedName === 1 ? LockFildscolour : Requiredcolour}
-                isDisabled={nameID || masterNameID || nibrsSubmittedName === 1 ? true : false}
-
-              />
-            </div>
-            <div className="col-2 col-md-2 col-lg-1">
-              <label htmlFor="" className='label-name mb-0'>MNI</label>
-            </div>
-            <div className="col-2 col-md-3 col-lg-2 text-field mt-0">
-              <input type="text" className='readonlyColor' value={value?.NameIDNumber} name='nameid' required readOnly />
-            </div>
-            <div className="col-3 col-md-2 col-lg-1">
-              <div className="form-check ">
-
-                {
-                  !(nameTypeCode === "B") && (
-                    value.DateOfBirth || value.AgeFrom ? (
-                      <>
-                        <input className="form-check-input" type="checkbox" name="IsJuvenile" value={value?.IsJuvenile} checked={value?.IsJuvenile} id="flexCheckDefault" disabled={nameTypeCode === "B" || nibrsSubmittedName === 1} />
-                        <label className="form-check-label" htmlFor="flexCheckDefault">
-                          Juvenile
-                        </label>
-                      </>
-                    ) : (
-                      <>
-                        <input className="form-check-input" type="checkbox" name="IsJuvenile" value={value?.IsJuvenile} checked={false} id="flexCheckDefault" disabled={nameTypeCode === "B" || nibrsSubmittedName === 1} />
-                        <label className="form-check-label" htmlFor="flexCheckDefault">
-                          Juvenile
-                        </label>
-                      </>
-                    )
-                  )
-                }
-              </div>
-            </div>
-
-            <div className='col-3 col-md-2 col-lg-5'>
-              {
-                (!value.IsUnknown && ((masterNameID && MstPage === "MST-Name-Dash") || nameID)) ? (
-                  // <div className="col-lg-5">
-                  <AlertTable
-                    availableAlert={availableAlert}
-                    masterPropertyID={masterNameID ? masterNameID : ''}
-                    ProSta={NameStatus}
-                  />
-                  // </div>
-                ) : null
-              }
-            </div>
-
-
-
-
-
-            {
-              nameTypeCode === "B" ?
-
-                <>
-                  <div className="col-1 col-md-1 col-lg-1 ">
-                    <label htmlFor="" className='label-name mb-0 text-nowrap'>Business Name
-                      {errors.LastNameError !== 'true' && nameTypeCode === 'B' ? (
-                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.LastNameError}</p>
-                      ) : null}</label>
+      {((incidentCount[0]?.NameCount === 0 && !nameID) ||
+        (incidentCount[0]?.NameCount > 0 && nameID)) && (
+          <>
+            <div className="row child">
+              {/* bb */}
+              <div className="col-12 col-md-12 col-lg-12 mt-1 ">
+                <div className="row align-items-center mt-2" style={{ rowGap: "8px" }}>
+                  <div className="col-2 col-md-2 col-lg-1">
+                    <label htmlFor="" className='label-name mb-0'>Name Type
+                      {errors.NameTypeIDError !== 'true' ? (
+                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.NameTypeIDError}</p>
+                      ) : null}
+                    </label>
                   </div>
-                  <div className="col-2 col-md-2 col-lg-4 text-field mt-0">
-                    <input type="text" name='LastName'
-                      className={isSocietyName ? 'readonlyColor' : 'requiredColor'}
-                      value={value?.LastName}
-                      disabled={isSocietyName}
-                      onChange={HandleChange}
-                      required />
-                  </div>
-                  {
-                    !nameID &&
-                    <div className="col-12 col-md-3 col-lg-1 name-box mt-0 text-center " >
-                      <button type="button" data-toggle="modal" data-target="#SearchModal" className="btn btn-sm btn-success" onClick={() => getNameSearch(loginAgencyID, value?.NameTypeID, value.LastName, value.FirstName, value.MiddleName, value.DateOfBirth, value.SSN, value.HeightFrom, value.HeightTo, value.WeightFrom, value.WeightTo, value.EthnicityID, value.RaceID, value.SexID, value.PhoneTypeID, value.Contact, true)}>Search</button>
-                    </div>
-                  }
-                  <div className="col-1 col-md-1 col-lg-1">
-                    <label htmlFor="" className='label-name mb-0'>Business Type</label>
-                  </div>
-                  <div className="col-2 col-md-2 col-lg-5">
+                  <div className="col-3 col-md-3 col-lg-2">
                     <Select
-                      name='BusinessTypeID'
-                      value={businessTypeDrp?.filter((obj) => obj.value === value?.BusinessTypeID)}
-                      options={businessTypeDrp}
-                      onChange={(e) => ChangeDropDown(e, 'BusinessTypeID')}
-                      isClearable
+                      name='NameTypeID'
+                      value={nameTypeData?.filter((obj) => obj.value === value?.NameTypeID)}
+                      options={nameTypeData}
+                      onChange={(e) => ChangeNameType(e, 'NameTypeID')}
+
                       placeholder="Select..."
-                      styles={customStylesWithOutColor}
+                      styles={nibrsSubmittedName === 1 ? LockFildscolour : Requiredcolour}
+                      isDisabled={nameID || masterNameID || nibrsSubmittedName === 1 ? true : false}
+
                     />
                   </div>
-
-                  <div className="col-1 col-md-1 col-lg-1">
-                    <label htmlFor="" className='label-name mb-0 '>Owner Name</label>
+                  <div className="col-2 col-md-2 col-lg-1">
+                    <label htmlFor="" className='label-name mb-0'>MNI</label>
                   </div>
-                  <div className="col-2 col-md-2 col-lg-3">
+                  <div className="col-2 col-md-3 col-lg-2 text-field mt-0">
+                    <input type="text" className='readonlyColor' value={value?.NameIDNumber} name='nameid' required readOnly />
+                  </div>
+                  <div className="col-3 col-md-2 col-lg-1">
+                    <div className="form-check ">
+
+                      {
+                        !(nameTypeCode === "B") && (
+                          value.DateOfBirth || value.AgeFrom ? (
+                            <>
+                              <input className="form-check-input" type="checkbox" name="IsJuvenile" value={value?.IsJuvenile} checked={value?.IsJuvenile} id="flexCheckDefault" disabled={nameTypeCode === "B" || nibrsSubmittedName === 1} />
+                              <label className="form-check-label" htmlFor="flexCheckDefault">
+                                Juvenile
+                              </label>
+                            </>
+                          ) : (
+                            <>
+                              <input className="form-check-input" type="checkbox" name="IsJuvenile" value={value?.IsJuvenile} checked={false} id="flexCheckDefault" disabled={nameTypeCode === "B" || nibrsSubmittedName === 1} />
+                              <label className="form-check-label" htmlFor="flexCheckDefault">
+                                Juvenile
+                              </label>
+                            </>
+                          )
+                        )
+                      }
+                    </div>
+                  </div>
+
+                  <div className='col-3 col-md-2 col-lg-5'>
                     {
-                      MstPage === "MST-Name-Dash" ?
-                        <Select
-                          name='OwnerNameID'
-                          styles={customStylesWithOutColor}
-                          options={mastersNameDrpData}
-                          value={mastersNameDrpData?.filter((obj) => obj.value === value?.OwnerNameID)}
-                          isClearable={value?.OwnerNameID ? true : false}
-                          onChange={(e) => ChangeDropDown(e, 'OwnerNameID')}
-                          placeholder="Select..."
+                      (!value.IsUnknown && ((masterNameID && MstPage === "MST-Name-Dash") || nameID)) ? (
+                        // <div className="col-lg-5">
+                        <AlertTable
+                          availableAlert={availableAlert}
+                          masterPropertyID={masterNameID ? masterNameID : ''}
+                          ProSta={NameStatus}
                         />
-                        :
-                        <Select
-                          name='OwnerNameID'
-                          styles={customStylesWithOutColor}
-                          options={ownerNameData}
-                          value={ownerNameData?.filter((obj) => obj.value === value?.OwnerNameID)}
-                          isClearable={value?.OwnerNameID ? true : false}
-                          onChange={(e) => ChangeDropDown(e, 'OwnerNameID')}
-                          placeholder="Select..."
-                        />
+                        // </div>
+                      ) : null
                     }
                   </div>
-                  <div className="col-1 " data-toggle="modal" data-target="#MasterModal"  >
-                    <button onClick={() => {
-                      if (possessionID) {
-                        setTimeout(() => {
-                          GetSingleDataPassion(possessionID);
-                        }, [200])
-
-                      }
-                      setNameModalStatus(true);
-                    }} className=" btn btn-sm bg-green text-white py-1" >
-                      <i className="fa fa-plus" >
-                      </i>
-                    </button>
-                  </div>
-                  <div className="col-1 col-md-1 col-lg-1">
-                    <label htmlFor="" className='label-name mb-0'>Owner&nbsp;Phone&nbsp;No.{errors.OwnerPhoneNumberError !== 'true' ? (
-                      <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.OwnerPhoneNumberError}</p>
-                    ) : null}</label>
-                  </div>
-                  <div className="col-2 col-md-2 col-lg-2 text-field mt-0">
-                    <input type="text" name='OwnerPhoneNumber' maxLength={11} className={''} value={value?.OwnerPhoneNumber} onChange={HandleChange} required />
-
-                  </div>
-
-                  <div className="col-1 col-md-1 col-lg-2 ">
-                    <label htmlFor="" className='label-name px-0 mb-0'>Business Fax No.{errors.OwnerFaxNumberError !== 'true' ? (
-                      <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.OwnerFaxNumberError}</p>
-                    ) : null}</label>
-                  </div>
-                  <div className="col-2 col-md-2 col-lg-2 text-field mt-0">
-                    <input type="text" name='OwnerFaxNumber' className={''} value={value?.OwnerFaxNumber} onChange={HandleChange} required />
-                  </div>
-                </>
-
-                :
-
-                <>
-                  <div className="col-2 col-md-2 col-lg-1">
-                    <label htmlFor="" className='label-name mb-0'>Last Name
-                      {errors.LastNameError !== 'true' && nameTypeCode !== 'B' ? (
-                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.LastNameError}</p>
-                      ) : null}</label>
-                  </div>
-                  <div className="col-10 col-md-10 col-lg-2 text-field mt-0">
-                    <input type="text" name='LastName' maxLength={100} onBlur={(e) => { e.relatedTarget !== saveButtonRef.current && e.relatedTarget !== closeButtonRef.current && LastFirstNameOnBlur(e) }} className={nameTypeCode === "B" || nibrsSubmittedName === 1 ? 'LockFildsColor' : 'requiredColor'} value={value?.LastName} onClick={() => { !addUpdatePermission && setChangesStatus(true); }} onChange={HandleChange} required disabled={nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false} readOnly={nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false} autoComplete='off' />
-                  </div>
-                  <div className="col-2 col-md-2 col-lg-1">
-                    <label htmlFor="" className='label-name mb-0'>First Name
-                      {errors.FirstNameError !== 'true' && nameTypeCode !== 'B' ? (
-                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.FirstNameError}</p>
-                      ) : null}
-                    </label>
-                  </div>
-                  <div className="col-2 col-md-4 col-lg-2 text-field mt-0">
-                    <input type="text" maxLength={50} ref={firstNameInputRef} name='FirstName'
-                      onBlur={(e) => { e.relatedTarget !== saveButtonRef.current && LastFirstNameOnBlur(e) }}
-                      className={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? 'LockFildsColor' : ''} value={value?.FirstName} onChange={HandleChange} required disabled={nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false} readOnly={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? true : false} onClick={() => { !addUpdatePermission && setChangesStatus(true); }} autoComplete='off' />
-                  </div>
-                  <div className="col-2 col-md-2 col-lg-1">
-                    <label htmlFor="" className='label-name mb-0 '>Middle Name
-                      {errors.MiddleNameError !== 'true' && nameTypeCode !== 'B' ? (
-                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.MiddleNameError}</p>
-                      ) : null}
-                    </label>
-                  </div>
-                  <div className="col-2 col-md-4 col-lg-2 text-field mt-0">
-                    <input type="text" name='MiddleName' maxLength={50} value={value?.MiddleName} className={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? 'LockFildsColor' : ''} onChange={HandleChange} required disabled={nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false} readOnly={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? true : false} onClick={() => { !addUpdatePermission && setChangesStatus(true); }} autoComplete='off' />
-                  </div>
-                  <div className="col-12 col-md-12 col-lg-3 d-flex align-items-center ">
-                    <div className="col-2 col-md-2 col-lg-2 ml-4 ml-md-0">
-                      <label htmlFor="" className='label-name mb-0'>Suffix</label>
-                    </div>
-                    <div className="col-8 col-md-8 col-lg-6 ">
-                      <Select
-                        name='SuffixID'
-                        value={suffixIdDrp?.filter((obj) => obj.value === value?.SuffixID)}
-                        options={suffixIdDrp}
-                        onChange={(e) => ChangeDropDown(e, 'SuffixID')}
-                        isClearable
-                        placeholder="Select..."
-
-                        isDisabled={nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false}
-
-                        styles={nibrsSubmittedName === 1 ? LockFildscolour : customStylesWithOutColor}
-
-                      />
-                    </div>
-                    <div className="col-4 col-md-2 col-lg-4">
-                      <div className="form-check">
-                        <input className="form-check-input " type="checkbox" name='IsUnknown' value={value?.IsUnknown} checked={value?.IsUnknown} onChange={HandleChange} id="flexCheckDefault1" disabled={nameTypeCode === "B" ? true : false} readOnly={nameTypeCode === "B" ? true : false} />
-                        <label className="form-check-label label-name  pr-md-2" htmlFor="flexCheckDefault1">
-                          Unknown
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </>
-
-            }
 
 
 
-            {
-              nameTypeCode === "B" ?
-                <>
-                </>
-                :
-                <>
 
 
-                  <div className="col-1 col-md-2 col-lg-1">
-                    <label htmlFor="" className='label-name mb-0'>DOB
-                      {errors.DateOfBirthError !== 'true' ? (
-                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.DateOfBirthError}</p>
-                      ) : null}</label>
+                  {
+                    nameTypeCode === "B" ?
 
-                  </div>
-                  <div className="col-2 col-md-3 col-lg-2">
-                    <DatePicker
-                      id='DateOfBirth'
-                      name='DateOfBirth'
-                      ref={startRef}
-                      selected={dobDate}
-                      onChange={handleDateChange}
-                      onKeyDown={(e) => {
-                        if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
-                          e.preventDefault();
-                        } else {
-                          onKeyDown(e);
+                      <>
+                        <div className="col-1 col-md-1 col-lg-1 ">
+                          <label htmlFor="" className='label-name mb-0 text-nowrap'>Business Name
+                            {errors.LastNameError !== 'true' && nameTypeCode === 'B' ? (
+                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.LastNameError}</p>
+                            ) : null}</label>
+                        </div>
+                        <div className="col-2 col-md-2 col-lg-4 text-field mt-0">
+                          <input type="text" name='LastName'
+                            className={isSocietyName ? 'readonlyColor' : 'requiredColor'}
+                            value={value?.LastName}
+                            disabled={isSocietyName}
+                            onChange={HandleChange}
+                            required />
+                        </div>
+                        {
+                          !nameID &&
+                          <div className="col-12 col-md-3 col-lg-1 name-box mt-0 text-center " >
+                            <button type="button" data-toggle="modal" data-target="#SearchModal" className="btn btn-sm btn-success" onClick={() => getNameSearch(loginAgencyID, value?.NameTypeID, value.LastName, value.FirstName, value.MiddleName, value.DateOfBirth, value.SSN, value.HeightFrom, value.HeightTo, value.WeightFrom, value.WeightTo, value.EthnicityID, value.RaceID, value.SexID, value.PhoneTypeID, value.Contact, true)}>Search</button>
+                          </div>
                         }
-                      }}
-                      dateFormat={allowTimeSelect ? "MM/dd/yyyy" : "MM/dd/yyyy"}
-                      // showTimeSelect={allowTimeSelect} // Always show time picker
-                      timeFormat="HH:mm"
-                      timeIntervals={1}
-                      timeCaption="Time"
-                      placeholderText={value.DateOfBirth ? value.DateOfBirth : 'Select...'}
-                      isClearable={value.DateOfBirth ? true : false}
-                      showMonthDropdown
-                      showYearDropdown
-                      dropdownMode="select"
-                      autoComplete="off"
-                      maxDate={maxAllowedDate}
-                      disabled={nameTypeCode === "B" || nibrsSubmittedName === 1}
-                      className={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? 'LockFildsColor' : '' ? 'requiredColor' : ''}
-                      readOnly={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1)}
-                      // Disable time input if not allowed
-                      timeInputLabel={allowTimeSelect ? "" : "Time Not Available"}
-                      includeTimes={
-                        dobDate && isSameDate(dobDate, maxAllowedDate)
-                          ? getLimitedTimesUpTo(maxAllowedDate)
-                          : undefined
-                      }
-                    />
-                  </div>
-
-
-                  <div className="col-12 col-md-7 col-lg-3">
-                    <div className="row align-items-center">
-                      <div className="col-12 col-md-1">
-                        <label htmlFor="" className='label-name mb-0'>Age {errors.AgeFromError !== 'true' ? (
-                          <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.AgeFromError}</p>
-                        ) : null}</label>
-                      </div>
-                      <div className="col-5 col-md-2 mt-0 text-field px-0" >
-                        <input type="text" name='AgeFrom' maxLength={3}
-                          // className={value.DateOfBirth || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? 'LockFildsColor' : victimTypeStatus || isAdult || IsOffender ? 'requiredColor' : ''}
-                          className={
-                            nibrsSubmittedName === 1 ? 'LockFieldsColor' : value.DateOfBirth || value?.IsUnknown === 'true' || value?.IsUnknown === true ? 'readonlyColor'
-                              : victimTypeStatus || isAdult || IsOffender ? 'requiredColor' : ''
-                          }
-
-                          style={{
-                            textAlign: 'center', ...(value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.AgeFrom ? {
-                              backgroundColor: 'rgb(255 202 194)',
-                              height: 20,
-                              minHeight: 33,
-                              fontSize: 14,
-                              marginTop: 2,
-                              boxShadow: 0,
-                            }
-                              : {}
-                          }}
-                          value={value?.AgeFrom}
-
-                          onBlur={(e) => AgeFromOnBlur(e)}
-                          onChange={HandleChange} required
-                          disabled={(value.DateOfBirth ? true : false) || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
-                          readOnly={(value.DateOfBirth ? true : false) || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1} placeholder='From' autoComplete='off' />
-                      </div>
-                      <div className="col-1 text-center px-0">
-                        <span className="dash-name">_</span>
-                      </div>
-                      <div className="col-5 col-md-2 mt-0 text-field px-0 " >
-                        <input type="text" name='AgeTo' maxLength={3}
-                          style={{
-                            textAlign: 'center', ...(value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.AgeTo ? {
-                              backgroundColor: 'rgb(255 202 194)',
-                              height: 20,
-                              minHeight: 33,
-                              fontSize: 14,
-                              marginTop: 2,
-                              boxShadow: 0,
-                            }
-                              : {}
-                          }}
-
-                          value={value?.AgeTo} onChange={HandleChange} required
-                          // className={value.DateOfBirth || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? 'LockFildsColor' : ''}
-                          className={
-                            value.DateOfBirth || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true ? 'readonlyColor'
-                              : nibrsSubmittedName === 1 ? 'LockFildscolour' : ''
-                          }
-                          disabled={value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1} readOnly={value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1} placeholder='To' autoComplete='off' />
-
-
-                      </div>
-                      <div className="col-5 col-md-6" >
-                        <Select
-                          name='AgeUnitID'
-                          value={ageUnitDrpData?.filter((obj) => obj.value === value?.AgeUnitID)}
-                          options={ageUnitDrpData}
-                          onChange={(e) => ChangeDropDown(e, 'AgeUnitID')}
-                          isClearable
-                          placeholder="Age Unit..."
-                          styles={value.AgeFrom ? Requiredcolour : customStylesWithOutColor}
-
-                          isDisabled={value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
-
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-
-
-                  <div className="col-2 col-md-2 col-lg-1">
-                    <span data-toggle="modal" onClick={() => { setOpenPage('Gender') }} data-target="#ListModel" className='new-link px-0'>
-                      Gender {errors.SexIDError !== 'true' ? (
-                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.SexIDError}</p>
-                      ) : null}
-                    </span>
-                  </div>
-                  <div className="col-10 col-md-10 col-lg-2 ">
-                    <Select
-
-                      styles={nibrsSubmittedName === 1 ? LockFildscolour : (value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.SexID && value?.IsUnknown !== 'true' && value?.IsUnknown !== true && !isAdult ? colourStylesVictimCode : (isAdult || IsOffender || victimTypeStatus ? Requiredcolour : customStylesWithOutColor)}
-
-                      name='SexID'
-                      value={sexIdDrp?.filter((obj) => obj.value === value?.SexID)}
-                      options={sexIdDrp}
-                      onChange={(e) => ChangeDropDown(e, 'SexID')}
-                      isClearable
-                      placeholder="Select..."
-                      isDisabled={nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
-                    />
-                  </div>
-                  <div className="col-2 col-md-2 col-lg-1 px-0">
-                    <span data-toggle="modal" onClick={() => { setOpenPage('Race') }} data-target="#ListModel" className='new-link px-0'>
-                      Race{errors.RaceIDError !== 'true' ? (
-                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.RaceIDError}</p>
-                      ) : null}
-                    </span>
-                  </div>
-                  <div className="col-10 col-md-10 col-lg-2">
-                    <Select
-                      name='RaceID'
-                      value={raceIdDrp?.filter((obj) => obj.value === value?.RaceID)}
-                      options={raceIdDrp}
-                      onChange={(e) => ChangeDropDown(e, 'RaceID')}
-                      isClearable
-                      placeholder="Select..."
-                      isDisabled={nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
-
-                      styles={nibrsSubmittedName === 1 ? LockFildscolour : (value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.RaceID && value?.IsUnknown !== 'true' && value?.IsUnknown !== true && !isAdult ? colourStylesVictimCode : (isAdult || IsOffender || victimTypeStatus ? Requiredcolour : customStylesWithOutColor)}
-
-                    />
-                  </div>
-
-
-
-                  <div className="col-2 col-md-2 col-lg-1">
-                    <span data-toggle="modal" onClick={() => { setOpenPage('Ethnicity') }} data-target="#ListModel" className='new-link px-0'>
-                      Ethnicity{errors.EthnicityErrorr !== 'true' ? (
-                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.EthnicityErrorr}</p>
-                      ) : null}
-
-                    </span>
-                  </div>
-                  <div className="col-10 col-md-10 col-lg-2">
-                    <Select
-                      name='EthnicityID'
-                      value={ethinicityDrpData?.filter((obj) => obj.value === value?.EthnicityID)}
-                      options={ethinicityDrpData}
-                      onChange={(e) => ChangeDropDown(e, 'EthnicityID')}
-                      isClearable
-                      placeholder="Select..."
-                      styles={nibrsSubmittedName === 1 ? LockFildscolour : (value?.IsUnknown === 'true' || value?.IsUnknown === true) ? customStylesWithOutColor : victimTypeStatus ? Requiredcolour : ''}
-
-                      isDisabled={value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
-                    />
-                  </div>
-
-                  <div className='col-lg-3'>
-                    <div className='row align-items-center'>
-                      <div className="col-12 col-md-3 ">
-                        <label htmlFor="" className='label-name mb-0 text-nowrap'>Weight
-                          <p className='text-center mb-0' style={{ fontWeight: 'bold', fontSize: '10px' }}>(LBS)</p>
-                          {errors.WeightError !== 'true' ? (
-                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.WeightError}</p>
-                          ) : null}
-                        </label>
-                      </div>
-                      <div className="col-5 col-md-4  text-field mt-0" >
-                        <input type="text" name='WeightFrom' ref={crossButtonRef} onBlur={(e) => {
-                          if (e.target.name === 'WeightFrom' &&
-                            e.relatedTarget !== crossButtonRef.current &&
-                            e.relatedTarget?.name !== 'HeightFrom' &&
-                            e.relatedTarget?.name !== 'HeightTo') {
-                            handleWeightFromBlur(e);
-                          }
-                        }} value={value?.WeightFrom} maxLength={3} onKeyDown={handleKeyDown} onChange={HandleChange} required disabled={nameTypeCode === "B" ? true : false} readOnly={nameTypeCode === "B" ? true : false} className={nameTypeCode === "B" ? 'readonlyColor' : ''} placeholder='From' autoComplete='off' />
-                      </div>
-                      <div className="col-2 col-md-1 text-center">
-                        <span className="dash-name">_</span>
-                      </div>
-                      <div className="col-5 col-md-4 ">
-                        <div className="text-field mt-0">
-                          <input type="text" name='WeightTo' ref={crossButtonRef} onBlur={(e) => {
-                            if (e.target.name === 'WeightTo' &&
-                              e.relatedTarget !== crossButtonRef.current &&
-                              e.relatedTarget?.name !== 'HeightFrom' &&
-                              e.relatedTarget?.name !== 'HeightTo') {
-                              handleWeightToBlur(e);
-                            }
-                          }} value={value?.WeightTo} maxLength={3} onChange={HandleChange} required className={(nameTypeCode === "B" || !value?.WeightFrom || value.WeightFrom === '0' || value.WeightFrom === '00' || value.WeightFrom === '000') ? 'readonlyColor' : ''} disabled={(nameTypeCode === "B" || !value?.WeightFrom || value.WeightFrom === '0' || value.WeightFrom === '00' || value.WeightFrom === '000') ? true : false} readOnly={nameTypeCode === "B" ? true : false} placeholder='To' autoComplete='off' />
+                        <div className="col-1 col-md-1 col-lg-1">
+                          <label htmlFor="" className='label-name mb-0'>Business Type</label>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className='col-lg-3'>
-                    <div className='row align-items-center'>
-                      <div className="col-12 col-md-3  ">
-                        <label htmlFor="" className='label-name mb-0 text-nowrap'>Height
-                          <p className='text-center mb-0' style={{ fontWeight: 'bold', fontSize: '10px' }}>(FT)</p>
-                          {errors.HeightError !== 'true' ? (
-                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.HeightError}</p>
-                          ) : null}
-                        </label>
-                      </div>
-                      <div className="col-5 col-md-4 text-field mt-0" >
-                        <input type="text" name='HeightFrom' maxLength={3} value={value?.HeightFrom}
-                          onBlur={(e) => {
-                            if (e.target.name === 'HeightFrom' && e.relatedTarget !== crossButtonRef.current &&
-                              e.relatedTarget?.name !== 'WeightFrom' &&
-                              e.relatedTarget?.name !== 'WeightTo') {
-                              HeightFromOnBlur(e);
-                            }
-                          }}
-                          onChange={HandleChange}
-                          required
-                          onKeyDown={handleKeyDown} disabled={nameTypeCode === "B" ? true : false} readOnly={nameTypeCode === "B" ? true : false} className={nameTypeCode === "B" ? 'readonlyColor' : ''} placeholder='From' autoComplete='off' />
-                      </div>
-                      <div className="col-2 col-md-1 text-center">
-                        <span className="dash-name">_</span>
-                      </div>
-                      <div className="col-5 col-md-4 ">
-                        <div className="text-field mt-0">
-                          <input type="text" name='HeightTo' maxLength={3} value={value?.HeightTo} onBlur={(e) => {
-                            if (e.target.name === 'HeightTo' && e.relatedTarget !== crossButtonRef.current &&
-                              e.relatedTarget?.name !== 'WeightFrom' &&
-                              e.relatedTarget?.name !== 'WeightTo') {
-                              HeightOnChange(e);
-                            }
-                          }}
-                            onChange={HandleChange} required className={nameTypeCode === "B" || !value.HeightFrom ? 'readonlyColor' : ''} disabled={nameTypeCode === "B" || !value.HeightFrom ? true : false} readOnly={nameTypeCode === "B" ? true : false} placeholder='To' autoComplete='off' />
+                        <div className="col-2 col-md-2 col-lg-5">
+                          <Select
+                            name='BusinessTypeID'
+                            value={businessTypeDrp?.filter((obj) => obj.value === value?.BusinessTypeID)}
+                            options={businessTypeDrp}
+                            onChange={(e) => ChangeDropDown(e, 'BusinessTypeID')}
+                            isClearable
+                            placeholder="Select..."
+                            styles={customStylesWithOutColor}
+                          />
                         </div>
-                      </div>
-                    </div>
-                  </div>
 
-                  <div className="col-2 col-md-2 col-lg-1 px-0" >
-                    <span data-toggle="modal" onClick={() => { setOpenPage('Resident') }} data-target="#ListModel" className='new-link px-0'>
-                      Resident{errors.ResidentError !== 'true' ? (
-                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ResidentError}</p>
-                      ) : null}
-                    </span>
-                  </div>
-                  <div className="col-10 col-md-10 col-lg-2">
-                    <Select
-                      name="ResidentID"
-                      value={residentIDDrp?.filter((obj) => obj.value === value?.ResidentID) || null}
-                      options={residentIDDrp}
-                      onChange={(e) => ChangeDropDownResident(e, 'ResidentID')}
-                      isClearable
-                      placeholder="Select..."
-                      menuPlacement="bottom"
-                      styles={nibrsSubmittedName === 1 ? LockFildscolour : victimTypeStatus ? Requiredcolour : ''}
-                      isDisabled={nibrsSubmittedName === 1 ? true : false}
-                    />
-                  </div>
+                        <div className="col-1 col-md-1 col-lg-1">
+                          <label htmlFor="" className='label-name mb-0 '>Owner Name</label>
+                        </div>
+                        <div className="col-2 col-md-2 col-lg-3">
+                          {
+                            MstPage === "MST-Name-Dash" ?
+                              <Select
+                                name='OwnerNameID'
+                                styles={customStylesWithOutColor}
+                                options={mastersNameDrpData}
+                                value={mastersNameDrpData?.filter((obj) => obj.value === value?.OwnerNameID)}
+                                isClearable={value?.OwnerNameID ? true : false}
+                                onChange={(e) => ChangeDropDown(e, 'OwnerNameID')}
+                                placeholder="Select..."
+                              />
+                              :
+                              <Select
+                                name='OwnerNameID'
+                                styles={customStylesWithOutColor}
+                                options={ownerNameData}
+                                value={ownerNameData?.filter((obj) => obj.value === value?.OwnerNameID)}
+                                isClearable={value?.OwnerNameID ? true : false}
+                                onChange={(e) => ChangeDropDown(e, 'OwnerNameID')}
+                                placeholder="Select..."
+                              />
+                          }
+                        </div>
+                        <div className="col-1 " data-toggle="modal" data-target="#MasterModal"  >
+                          <button onClick={() => {
+                            if (possessionID) {
+                              setTimeout(() => {
+                                GetSingleDataPassion(possessionID);
+                              }, [200])
+
+                            }
+                            setNameModalStatus(true);
+                          }} className=" btn btn-sm bg-green text-white py-1" >
+                            <i className="fa fa-plus" >
+                            </i>
+                          </button>
+                        </div>
+                        <div className="col-1 col-md-1 col-lg-1">
+                          <label htmlFor="" className='label-name mb-0'>Owner&nbsp;Phone&nbsp;No.{errors.OwnerPhoneNumberError !== 'true' ? (
+                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.OwnerPhoneNumberError}</p>
+                          ) : null}</label>
+                        </div>
+                        <div className="col-2 col-md-2 col-lg-2 text-field mt-0">
+                          <input type="text" name='OwnerPhoneNumber' maxLength={11} className={''} value={value?.OwnerPhoneNumber} onChange={HandleChange} required />
+
+                        </div>
+
+                        <div className="col-1 col-md-1 col-lg-2 ">
+                          <label htmlFor="" className='label-name px-0 mb-0'>Business Fax No.{errors.OwnerFaxNumberError !== 'true' ? (
+                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.OwnerFaxNumberError}</p>
+                          ) : null}</label>
+                        </div>
+                        <div className="col-2 col-md-2 col-lg-2 text-field mt-0">
+                          <input type="text" name='OwnerFaxNumber' className={''} value={value?.OwnerFaxNumber} onChange={HandleChange} required />
+                        </div>
+                      </>
+
+                      :
+
+                      <>
+                        <div className="col-2 col-md-2 col-lg-1">
+                          <label htmlFor="" className='label-name mb-0'>Last Name
+                            {errors.LastNameError !== 'true' && nameTypeCode !== 'B' ? (
+                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.LastNameError}</p>
+                            ) : null}</label>
+                        </div>
+                        <div className="col-10 col-md-10 col-lg-2 text-field mt-0">
+                          <input type="text" name='LastName' maxLength={100} onBlur={(e) => { e.relatedTarget !== saveButtonRef.current && e.relatedTarget !== closeButtonRef.current && LastFirstNameOnBlur(e) }} className={nameTypeCode === "B" || nibrsSubmittedName === 1 ? 'LockFildsColor' : 'requiredColor'} value={value?.LastName} onClick={() => { !addUpdatePermission && setChangesStatus(true); }} onChange={HandleChange} required disabled={nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false} readOnly={nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false} autoComplete='off' />
+                        </div>
+                        <div className="col-2 col-md-2 col-lg-1">
+                          <label htmlFor="" className='label-name mb-0'>First Name
+                            {errors.FirstNameError !== 'true' && nameTypeCode !== 'B' ? (
+                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.FirstNameError}</p>
+                            ) : null}
+                          </label>
+                        </div>
+                        <div className="col-2 col-md-4 col-lg-2 text-field mt-0">
+                          <input type="text" maxLength={50} ref={firstNameInputRef} name='FirstName'
+                            onBlur={(e) => { e.relatedTarget !== saveButtonRef.current && LastFirstNameOnBlur(e) }}
+                            className={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? 'LockFildsColor' : ''} value={value?.FirstName} onChange={HandleChange} required disabled={nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false} readOnly={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? true : false} onClick={() => { !addUpdatePermission && setChangesStatus(true); }} autoComplete='off' />
+                        </div>
+                        <div className="col-2 col-md-2 col-lg-1">
+                          <label htmlFor="" className='label-name mb-0 '>Middle Name
+                            {errors.MiddleNameError !== 'true' && nameTypeCode !== 'B' ? (
+                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.MiddleNameError}</p>
+                            ) : null}
+                          </label>
+                        </div>
+                        <div className="col-2 col-md-4 col-lg-2 text-field mt-0">
+                          <input type="text" name='MiddleName' maxLength={50} value={value?.MiddleName} className={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? 'LockFildsColor' : ''} onChange={HandleChange} required disabled={nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false} readOnly={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? true : false} onClick={() => { !addUpdatePermission && setChangesStatus(true); }} autoComplete='off' />
+                        </div>
+                        <div className="col-12 col-md-12 col-lg-3 d-flex align-items-center ">
+                          <div className="col-2 col-md-2 col-lg-2 ml-4 ml-md-0">
+                            <label htmlFor="" className='label-name mb-0'>Suffix</label>
+                          </div>
+                          <div className="col-8 col-md-8 col-lg-6 ">
+                            <Select
+                              name='SuffixID'
+                              value={suffixIdDrp?.filter((obj) => obj.value === value?.SuffixID)}
+                              options={suffixIdDrp}
+                              onChange={(e) => ChangeDropDown(e, 'SuffixID')}
+                              isClearable
+                              placeholder="Select..."
+
+                              isDisabled={nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false}
+
+                              styles={nibrsSubmittedName === 1 ? LockFildscolour : customStylesWithOutColor}
+
+                            />
+                          </div>
+                          <div className="col-4 col-md-2 col-lg-4">
+                            <div className="form-check">
+                              <input className="form-check-input " type="checkbox" name='IsUnknown' value={value?.IsUnknown} checked={value?.IsUnknown} onChange={HandleChange} id="flexCheckDefault1" disabled={nameTypeCode === "B" ? true : false} readOnly={nameTypeCode === "B" ? true : false} />
+                              <label className="form-check-label label-name  pr-md-2" htmlFor="flexCheckDefault1">
+                                Unknown
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                      </>
+
+                  }
 
 
-                  <div className='col-12 col-md-12 col-lg-12'>
-                    <fieldset className='mt-0 pb-1' style={{ width: "100%" }}>
-                      <legend>SSN/DL Info </legend>
-                    </fieldset>
-                  </div>
 
-                  <div className="col-2 col-md-2 col-lg-1">
-                    <label htmlFor="" className='label-name mb-0 '>SSN
-                      {errors.SSN !== 'true' ? (
-                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.SSN}</p>
-                      ) : null}</label>
-                  </div>
-                  <div className="col-3 col-md-3 col-lg-2 text-field mt-0" >
-                    <input style={{ height: "35px" }} type="text"
-                      readOnly={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? true : false}
-                      className={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? 'readonlyColor' : ''} maxLength={10} name='SSN' value={value?.SSN}
-                      onChange={HandleChange} required autoComplete='off' />
-                  </div>
-                  <div className="col-3 col-md-6 col-lg-5 d-flex row align-items-center " >
-                    <div className="col-2 col-md-2 col-lg-2 pl-2">
-                      <label htmlFor="" className='label-name mb-0'>State/DL#</label>
-                    </div>
-                    <div className="col-3 col-md-5 col-lg-6" >
-                      <Select
-                        name='DLStateID'
-                        value={stateList?.filter((obj) => obj.value === value?.DLStateID)}
-                        options={stateList}
-                        onChange={(e) => ChangeDropDown(e, 'DLStateID')}
-                        isClearable
-                        placeholder="State"
-                        styles={customStylesWithOutColor}
-                        className={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? 'readonlyColor' : ''}
-                        isDisabled={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? true : false}
-                      />
-                    </div>
-                    {/* <span className='dash-name' >
+                  {
+                    nameTypeCode === "B" ?
+                      <>
+                      </>
+                      :
+                      <>
+
+
+                        <div className="col-1 col-md-2 col-lg-1">
+                          <label htmlFor="" className='label-name mb-0'>DOB
+                            {errors.DateOfBirthError !== 'true' ? (
+                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.DateOfBirthError}</p>
+                            ) : null}</label>
+
+                        </div>
+                        <div className="col-2 col-md-3 col-lg-2">
+                          <DatePicker
+                            id='DateOfBirth'
+                            name='DateOfBirth'
+                            ref={startRef}
+                            selected={dobDate}
+                            onChange={handleDateChange}
+                            onKeyDown={(e) => {
+                              if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                                e.preventDefault();
+                              } else {
+                                onKeyDown(e);
+                              }
+                            }}
+                            dateFormat={allowTimeSelect ? "MM/dd/yyyy" : "MM/dd/yyyy"}
+                            // showTimeSelect={allowTimeSelect} // Always show time picker
+                            timeFormat="HH:mm"
+                            timeIntervals={1}
+                            timeCaption="Time"
+                            placeholderText={value.DateOfBirth ? value.DateOfBirth : 'Select...'}
+                            isClearable={value.DateOfBirth ? true : false}
+                            showMonthDropdown
+                            showYearDropdown
+                            dropdownMode="select"
+                            autoComplete="off"
+                            maxDate={maxAllowedDate}
+                            disabled={nameTypeCode === "B" || nibrsSubmittedName === 1}
+                            className={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? 'LockFildsColor' : '' ? 'requiredColor' : ''}
+                            readOnly={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1)}
+                            // Disable time input if not allowed
+                            timeInputLabel={allowTimeSelect ? "" : "Time Not Available"}
+                            includeTimes={
+                              dobDate && isSameDate(dobDate, maxAllowedDate)
+                                ? getLimitedTimesUpTo(maxAllowedDate)
+                                : undefined
+                            }
+                          />
+                        </div>
+
+
+                        <div className="col-12 col-md-7 col-lg-3">
+                          <div className="row align-items-center">
+                            <div className="col-12 col-md-1">
+                              <label htmlFor="" className='label-name mb-0'>Age {errors.AgeFromError !== 'true' ? (
+                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.AgeFromError}</p>
+                              ) : null}</label>
+                            </div>
+                            <div className="col-5 col-md-2 mt-0 text-field px-0" >
+                              <input type="text" name='AgeFrom' maxLength={3}
+                                // className={value.DateOfBirth || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? 'LockFildsColor' : victimTypeStatus || isAdult || IsOffender ? 'requiredColor' : ''}
+                                className={
+                                  nibrsSubmittedName === 1 ? 'LockFieldsColor' : value.DateOfBirth || value?.IsUnknown === 'true' || value?.IsUnknown === true ? 'readonlyColor'
+                                    : victimTypeStatus || isAdult || IsOffender ? 'requiredColor' : ''
+                                }
+
+                                style={{
+                                  textAlign: 'center', ...(value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.AgeFrom ? {
+                                    backgroundColor: 'rgb(255 202 194)',
+                                    height: 20,
+                                    minHeight: 33,
+                                    fontSize: 14,
+                                    marginTop: 2,
+                                    boxShadow: 0,
+                                  }
+                                    : {}
+                                }}
+                                value={value?.AgeFrom}
+
+                                onBlur={(e) => AgeFromOnBlur(e)}
+                                onChange={HandleChange} required
+                                disabled={(value.DateOfBirth ? true : false) || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
+                                readOnly={(value.DateOfBirth ? true : false) || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1} placeholder='From' autoComplete='off' />
+                            </div>
+                            <div className="col-1 text-center px-0">
+                              <span className="dash-name">_</span>
+                            </div>
+                            <div className="col-5 col-md-2 mt-0 text-field px-0 " >
+                              <input type="text" name='AgeTo' maxLength={3}
+                                style={{
+                                  textAlign: 'center', ...(value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.AgeTo ? {
+                                    backgroundColor: 'rgb(255 202 194)',
+                                    height: 20,
+                                    minHeight: 33,
+                                    fontSize: 14,
+                                    marginTop: 2,
+                                    boxShadow: 0,
+                                  }
+                                    : {}
+                                }}
+
+                                value={value?.AgeTo} onChange={HandleChange} required
+                                // className={value.DateOfBirth || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? 'LockFildsColor' : ''}
+                                className={
+                                  value.DateOfBirth || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true ? 'readonlyColor'
+                                    : nibrsSubmittedName === 1 ? 'LockFildscolour' : ''
+                                }
+                                disabled={value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1} readOnly={value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1} placeholder='To' autoComplete='off' />
+
+
+                            </div>
+                            <div className="col-5 col-md-6" >
+                              <Select
+                                name='AgeUnitID'
+                                value={ageUnitDrpData?.filter((obj) => obj.value === value?.AgeUnitID)}
+                                options={ageUnitDrpData}
+                                onChange={(e) => ChangeDropDown(e, 'AgeUnitID')}
+                                isClearable
+                                placeholder="Age Unit..."
+                                styles={value.AgeFrom ? Requiredcolour : customStylesWithOutColor}
+
+                                isDisabled={value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
+
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+
+
+                        <div className="col-2 col-md-2 col-lg-1">
+                          <span data-toggle="modal" onClick={() => { setOpenPage('Gender') }} data-target="#ListModel" className='new-link px-0'>
+                            Gender {errors.SexIDError !== 'true' ? (
+                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.SexIDError}</p>
+                            ) : null}
+                          </span>
+                        </div>
+                        <div className="col-10 col-md-10 col-lg-2 ">
+                          <Select
+
+                            styles={nibrsSubmittedName === 1 ? LockFildscolour : (value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.SexID && value?.IsUnknown !== 'true' && value?.IsUnknown !== true && !isAdult ? colourStylesVictimCode : (isAdult || IsOffender || victimTypeStatus ? Requiredcolour : customStylesWithOutColor)}
+
+                            name='SexID'
+                            value={sexIdDrp?.filter((obj) => obj.value === value?.SexID)}
+                            options={sexIdDrp}
+                            onChange={(e) => ChangeDropDown(e, 'SexID')}
+                            isClearable
+                            placeholder="Select..."
+                            isDisabled={nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
+                          />
+                        </div>
+                        <div className="col-2 col-md-2 col-lg-1 px-0">
+                          <span data-toggle="modal" onClick={() => { setOpenPage('Race') }} data-target="#ListModel" className='new-link px-0'>
+                            Race{errors.RaceIDError !== 'true' ? (
+                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.RaceIDError}</p>
+                            ) : null}
+                          </span>
+                        </div>
+                        <div className="col-10 col-md-10 col-lg-2">
+                          <Select
+                            name='RaceID'
+                            value={raceIdDrp?.filter((obj) => obj.value === value?.RaceID)}
+                            options={raceIdDrp}
+                            onChange={(e) => ChangeDropDown(e, 'RaceID')}
+                            isClearable
+                            placeholder="Select..."
+                            isDisabled={nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
+
+                            styles={nibrsSubmittedName === 1 ? LockFildscolour : (value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.RaceID && value?.IsUnknown !== 'true' && value?.IsUnknown !== true && !isAdult ? colourStylesVictimCode : (isAdult || IsOffender || victimTypeStatus ? Requiredcolour : customStylesWithOutColor)}
+
+                          />
+                        </div>
+
+
+
+                        <div className="col-2 col-md-2 col-lg-1">
+                          <span data-toggle="modal" onClick={() => { setOpenPage('Ethnicity') }} data-target="#ListModel" className='new-link px-0'>
+                            Ethnicity{errors.EthnicityErrorr !== 'true' ? (
+                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.EthnicityErrorr}</p>
+                            ) : null}
+
+                          </span>
+                        </div>
+                        <div className="col-10 col-md-10 col-lg-2">
+                          <Select
+                            name='EthnicityID'
+                            value={ethinicityDrpData?.filter((obj) => obj.value === value?.EthnicityID)}
+                            options={ethinicityDrpData}
+                            onChange={(e) => ChangeDropDown(e, 'EthnicityID')}
+                            isClearable
+                            placeholder="Select..."
+                            styles={nibrsSubmittedName === 1 ? LockFildscolour : (value?.IsUnknown === 'true' || value?.IsUnknown === true) ? customStylesWithOutColor : victimTypeStatus ? Requiredcolour : ''}
+
+                            isDisabled={value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
+                          />
+                        </div>
+
+                        <div className='col-lg-3'>
+                          <div className='row align-items-center'>
+                            <div className="col-12 col-md-3 ">
+                              <label htmlFor="" className='label-name mb-0 text-nowrap'>Weight
+                                <p className='text-center mb-0' style={{ fontWeight: 'bold', fontSize: '10px' }}>(LBS)</p>
+                                {errors.WeightError !== 'true' ? (
+                                  <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.WeightError}</p>
+                                ) : null}
+                              </label>
+                            </div>
+                            <div className="col-5 col-md-4  text-field mt-0" >
+                              <input type="text" name='WeightFrom' ref={crossButtonRef} onBlur={(e) => {
+                                if (e.target.name === 'WeightFrom' &&
+                                  e.relatedTarget !== crossButtonRef.current &&
+                                  e.relatedTarget?.name !== 'HeightFrom' &&
+                                  e.relatedTarget?.name !== 'HeightTo') {
+                                  handleWeightFromBlur(e);
+                                }
+                              }} value={value?.WeightFrom} maxLength={3} onKeyDown={handleKeyDown} onChange={HandleChange} required disabled={nameTypeCode === "B" ? true : false} readOnly={nameTypeCode === "B" ? true : false} className={nameTypeCode === "B" ? 'readonlyColor' : ''} placeholder='From' autoComplete='off' />
+                            </div>
+                            <div className="col-2 col-md-1 text-center">
+                              <span className="dash-name">_</span>
+                            </div>
+                            <div className="col-5 col-md-4 ">
+                              <div className="text-field mt-0">
+                                <input type="text" name='WeightTo' ref={crossButtonRef} onBlur={(e) => {
+                                  if (e.target.name === 'WeightTo' &&
+                                    e.relatedTarget !== crossButtonRef.current &&
+                                    e.relatedTarget?.name !== 'HeightFrom' &&
+                                    e.relatedTarget?.name !== 'HeightTo') {
+                                    handleWeightToBlur(e);
+                                  }
+                                }} value={value?.WeightTo} maxLength={3} onChange={HandleChange} required className={(nameTypeCode === "B" || !value?.WeightFrom || value.WeightFrom === '0' || value.WeightFrom === '00' || value.WeightFrom === '000') ? 'readonlyColor' : ''} disabled={(nameTypeCode === "B" || !value?.WeightFrom || value.WeightFrom === '0' || value.WeightFrom === '00' || value.WeightFrom === '000') ? true : false} readOnly={nameTypeCode === "B" ? true : false} placeholder='To' autoComplete='off' />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className='col-lg-3'>
+                          <div className='row align-items-center'>
+                            <div className="col-12 col-md-3  ">
+                              <label htmlFor="" className='label-name mb-0 text-nowrap'>Height
+                                <p className='text-center mb-0' style={{ fontWeight: 'bold', fontSize: '10px' }}>(FT)</p>
+                                {errors.HeightError !== 'true' ? (
+                                  <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.HeightError}</p>
+                                ) : null}
+                              </label>
+                            </div>
+                            <div className="col-5 col-md-4 text-field mt-0" >
+                              <input type="text" name='HeightFrom' maxLength={3} value={value?.HeightFrom}
+                                onBlur={(e) => {
+                                  if (e.target.name === 'HeightFrom' && e.relatedTarget !== crossButtonRef.current &&
+                                    e.relatedTarget?.name !== 'WeightFrom' &&
+                                    e.relatedTarget?.name !== 'WeightTo') {
+                                    HeightFromOnBlur(e);
+                                  }
+                                }}
+                                onChange={HandleChange}
+                                required
+                                onKeyDown={handleKeyDown} disabled={nameTypeCode === "B" ? true : false} readOnly={nameTypeCode === "B" ? true : false} className={nameTypeCode === "B" ? 'readonlyColor' : ''} placeholder='From' autoComplete='off' />
+                            </div>
+                            <div className="col-2 col-md-1 text-center">
+                              <span className="dash-name">_</span>
+                            </div>
+                            <div className="col-5 col-md-4 ">
+                              <div className="text-field mt-0">
+                                <input type="text" name='HeightTo' maxLength={3} value={value?.HeightTo} onBlur={(e) => {
+                                  if (e.target.name === 'HeightTo' && e.relatedTarget !== crossButtonRef.current &&
+                                    e.relatedTarget?.name !== 'WeightFrom' &&
+                                    e.relatedTarget?.name !== 'WeightTo') {
+                                    HeightOnChange(e);
+                                  }
+                                }}
+                                  onChange={HandleChange} required className={nameTypeCode === "B" || !value.HeightFrom ? 'readonlyColor' : ''} disabled={nameTypeCode === "B" || !value.HeightFrom ? true : false} readOnly={nameTypeCode === "B" ? true : false} placeholder='To' autoComplete='off' />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="col-2 col-md-2 col-lg-1 px-0" >
+                          <span data-toggle="modal" onClick={() => { setOpenPage('Resident') }} data-target="#ListModel" className='new-link px-0'>
+                            Resident{errors.ResidentError !== 'true' ? (
+                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ResidentError}</p>
+                            ) : null}
+                          </span>
+                        </div>
+                        <div className="col-10 col-md-10 col-lg-2">
+                          <Select
+                            name="ResidentID"
+                            value={residentIDDrp?.filter((obj) => obj.value === value?.ResidentID) || null}
+                            options={residentIDDrp}
+                            onChange={(e) => ChangeDropDownResident(e, 'ResidentID')}
+                            isClearable
+                            placeholder="Select..."
+                            menuPlacement="bottom"
+                            styles={nibrsSubmittedName === 1 ? LockFildscolour : victimTypeStatus ? Requiredcolour : ''}
+                            isDisabled={nibrsSubmittedName === 1 ? true : false}
+                          />
+                        </div>
+
+
+                        <div className='col-12 col-md-12 col-lg-12'>
+                          <fieldset className='mt-0 pb-1' style={{ width: "100%" }}>
+                            <legend>SSN/DL Info </legend>
+                          </fieldset>
+                        </div>
+
+                        <div className="col-2 col-md-2 col-lg-1">
+                          <label htmlFor="" className='label-name mb-0 '>SSN
+                            {errors.SSN !== 'true' ? (
+                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.SSN}</p>
+                            ) : null}</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2 text-field mt-0" >
+                          <input style={{ height: "35px" }} type="text"
+                            readOnly={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? true : false}
+                            className={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? 'readonlyColor' : ''} maxLength={10} name='SSN' value={value?.SSN}
+                            onChange={HandleChange} required autoComplete='off' />
+                        </div>
+                        <div className="col-3 col-md-6 col-lg-5 d-flex row align-items-center " >
+                          <div className="col-2 col-md-2 col-lg-2 pl-2">
+                            <label htmlFor="" className='label-name mb-0'>State/DL#</label>
+                          </div>
+                          <div className="col-3 col-md-5 col-lg-6" >
+                            <Select
+                              name='DLStateID'
+                              value={stateList?.filter((obj) => obj.value === value?.DLStateID)}
+                              options={stateList}
+                              onChange={(e) => ChangeDropDown(e, 'DLStateID')}
+                              isClearable
+                              placeholder="State"
+                              styles={customStylesWithOutColor}
+                              className={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? 'readonlyColor' : ''}
+                              isDisabled={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? true : false}
+                            />
+                          </div>
+                          {/* <span className='dash-name' >
                       {errors.DLError !== 'true' ? (
                         <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.DLError}</p>
                       ) : null}
                     </span> */}
-                    <div className="col-3 col-md-5 col-lg-4 text-field mt-0" >
-                      <input
-                        type="text"
-                        className={value?.DLStateID ? 'requiredColor' : 'readonlyColor'}
-                        style={{ textTransform: "uppercase" }}
-                        value={value?.DLNumber ? value.DLNumber.replace(/[^\w\s]/g, '') : ''}
-                        maxLength={15}
-                        disabled={value?.DLStateID ? false : true}
-                        onChange={HandleChange}
-                        name="DLNumber"
-                        required
-                        autoComplete='off'
-                      />
-                      {errors.DLError && errors.DLError !== 'true' && (
-                        <div style={{ fontSize: '11px', color: 'red', marginTop: '2px' }}>
-                          {errors.DLError}
+                          <div className="col-3 col-md-5 col-lg-4 text-field mt-0" >
+                            <input
+                              type="text"
+                              className={value?.DLStateID ? 'requiredColor' : 'readonlyColor'}
+                              style={{ textTransform: "uppercase" }}
+                              value={value?.DLNumber ? value.DLNumber.replace(/[^\w\s]/g, '') : ''}
+                              maxLength={15}
+                              disabled={value?.DLStateID ? false : true}
+                              onChange={HandleChange}
+                              name="DLNumber"
+                              required
+                              autoComplete='off'
+                            />
+                            {errors.DLError && errors.DLError !== 'true' && (
+                              <div style={{ fontSize: '11px', color: 'red', marginTop: '2px' }}>
+                                {errors.DLError}
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      )}
-                    </div>
+                        <div className="col-3 col-md-6 col-lg-4 d-flex align-items-center " >
+                          <div className="col-2 col-md-2 col-lg-4">
+                            <span data-toggle="modal" onClick={() => { setOpenPage('Verify') }} data-target="#ListModel" className='new-link px-0'>
+                              How Verify
+                            </span>
+                          </div>
+                          <div className="col-10 col-md-10 col-lg-8">
+                            <Select
+                              name='VerifyID'
+                              value={verifyIdDrp?.filter((obj) => obj.value === value?.VerifyID)}
+                              options={verifyIdDrp}
+                              onChange={(e) => ChangeDropDown(e, 'VerifyID')}
+                              isClearable
+                              placeholder="Verify ID"
+                              styles={customStylesWithOutColor}
+                              isDisabled={!value?.DLStateID}
+                            />
+                          </div>
+                        </div>
+
+
+
+
+                      </>
+                  }
+
+
+
+
+
+
+
+                  <div className="col-2 col-md-2 col-lg-1">
+                    <label htmlFor="" className='label-name mb-0 '>
+                      Role {errors.RoleError !== 'true' ? (
+                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.RoleError}</p>
+                      ) : null}
+                    </label>
                   </div>
-                  <div className="col-3 col-md-6 col-lg-4 d-flex align-items-center " >
-                    <div className="col-2 col-md-2 col-lg-4">
-                      <span data-toggle="modal" onClick={() => { setOpenPage('Verify') }} data-target="#ListModel" className='new-link px-0'>
-                        How Verify
-                      </span>
-                    </div>
-                    <div className="col-10 col-md-10 col-lg-8">
-                      <Select
-                        name='VerifyID'
-                        value={verifyIdDrp?.filter((obj) => obj.value === value?.VerifyID)}
-                        options={verifyIdDrp}
-                        onChange={(e) => ChangeDropDown(e, 'VerifyID')}
-                        isClearable
-                        placeholder="Verify ID"
-                        styles={customStylesWithOutColor}
-                        isDisabled={!value?.DLStateID}
-                      />
-                    </div>
+                  <div className="col-3 col-md-3 col-lg-3">
+                    <SelectBox
+                      options={filteredReasonCodeRoleArr || []}
+                      menuPlacement="bottom"
+                      isMulti
+                      closeMenuOnSelect={false}
+                      hideSelectedOptions={true}
+                      isClearable={false}
+                      allowSelectAll={false}
+                      value={multiSelectedReason?.optionSelected}
+                      components={{ MultiValue }}
+
+                      onChange={(selectedOptions, actionMeta) => {
+                        const removedOption = actionMeta.removedValue;
+                        const action = actionMeta.action;
+                        if ((action === 'remove-value' || action === 'pop-value') && removedOption?.value === 3 && NameTabCount?.NameWarrantCount > 0
+                        ) { return; }
+                        if ((action === 'remove-value' || action === 'pop-value') && removedOption?.value === 3 && arrestCount > 0
+                        ) { return; }
+                        if ((action === 'remove-value' || action === 'pop-value') && removedOption?.value === 3 && missingpersonCount > 0
+                        ) { return; }
+                        if ((action === 'remove-value' || action === 'pop-value') && removedOption?.value === 3 && propertyOwnerCount > 0
+                        ) { return; }
+                        const isRemovingVictim = removedOption?.value === 1;
+
+                        if ((action === 'remove-value' || action === 'pop-value') && isRemovingVictim && value.checkVictem === 1 && nameID) {
+                          return;
+                        }
+                        if ((action === 'remove-value' || action === 'pop-value') && isRemovingVictim && value.checkVictem !== 1) {
+                          setMultiSelected({ optionSelected: [] });
+                          setValue(prev => ({ ...prev, NameReasonCodeID: null }));
+                        }
+                        onChangeReaonsRole(selectedOptions, 'Role');
+                      }}
+
+                      styles={nibrsSubmittedName === 1 || isSocietyName ? LockFildscolour : MstPage === "MST-Name-Dash" ? 'readonlyColor' : colourStylesRole}
+                      isDisabled={nibrsSubmittedName === 1 || isSocietyName || MstPage === "MST-Name-Dash"}
+                    />
+
                   </div>
-
-
-
-
-                </>
-            }
-
-
-
-
-
-
-
-            <div className="col-2 col-md-2 col-lg-1">
-              <label htmlFor="" className='label-name mb-0 '>
-                Role {errors.RoleError !== 'true' ? (
-                  <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.RoleError}</p>
-                ) : null}
-              </label>
-            </div>
-            <div className="col-3 col-md-3 col-lg-3">
-              <SelectBox
-                options={filteredReasonCodeRoleArr || []}
-                menuPlacement="bottom"
-                isMulti
-                closeMenuOnSelect={false}
-                hideSelectedOptions={true}
-                isClearable={false}
-                allowSelectAll={false}
-                value={multiSelectedReason?.optionSelected}
-                components={{ MultiValue }}
-
-                onChange={(selectedOptions, actionMeta) => {
-                  const removedOption = actionMeta.removedValue;
-                  const action = actionMeta.action;
-                  if ((action === 'remove-value' || action === 'pop-value') && removedOption?.value === 3 && NameTabCount?.NameWarrantCount > 0
-                  ) { return; }
-                  if ((action === 'remove-value' || action === 'pop-value') && removedOption?.value === 3 && arrestCount > 0
-                  ) { return; }
-                  if ((action === 'remove-value' || action === 'pop-value') && removedOption?.value === 3 && missingpersonCount > 0
-                  ) { return; }
-                  if ((action === 'remove-value' || action === 'pop-value') && removedOption?.value === 3 && propertyOwnerCount > 0
-                  ) { return; }
-                  const isRemovingVictim = removedOption?.value === 1;
-
-                  if ((action === 'remove-value' || action === 'pop-value') && isRemovingVictim && value.checkVictem === 1 && nameID) {
-                    return;
-                  }
-                  if ((action === 'remove-value' || action === 'pop-value') && isRemovingVictim && value.checkVictem !== 1) {
-                    setMultiSelected({ optionSelected: [] });
-                    setValue(prev => ({ ...prev, NameReasonCodeID: null }));
-                  }
-                  onChangeReaonsRole(selectedOptions, 'Role');
-                }}
-
-                styles={nibrsSubmittedName === 1 || isSocietyName ? LockFildscolour : MstPage === "MST-Name-Dash" ? 'readonlyColor' : colourStylesRole}
-                isDisabled={nibrsSubmittedName === 1 || isSocietyName || MstPage === "MST-Name-Dash"}
-              />
-
-            </div>
-            <div className="col-2 col-md-2 col-lg-1">
-              <label htmlFor="" className='label-name mb-0'>
-                Reason Code
-                {errors.NameReasonCodeIDError !== 'true' ? (
-                  <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.NameReasonCodeIDError}</p>
-                ) : null}</label>
-            </div>
-            <div className="col-10 col-md-10 col-lg-4" >
-              <SelectBox
-                styles={nibrsSubmittedName === 1 || isSocietyName ? LockFildscolour : MstPage === "MST-Name-Dash" ? colourStylesMasterReason : colourStylesReason}
-                isDisabled={nibrsSubmittedName === 1 || isSocietyName || isSecondDropdownDisabled && MstPage !== "MST-Name-Dash" ? true : false}
-                options={reasonIdDrp ? getFiltredReasonCode(reasonIdDrp) : []}
-                menuPlacement="bottom"
-                isMulti
-                closeMenuOnSelect={false}
-                hideSelectedOptions={true}
-                isClearable={false}
-                allowSelectAll={false}
-                value={multiSelected.optionSelected}
-                components={{ MultiValue }}
-                onChange={(selectedOptions, actionMeta) => {
-                  const victimLabels = [
-                    "Victim", "Business Is A Victim", "Domestic Victim", "Individual Is A Victim",
-                    "Individual Victim", "Other Is A Victim", "Restraint Victim", "Society Is A Victim"
-                  ];
-
-                  const removedOption = actionMeta.removedValue;
-                  const action = actionMeta.action;
-                  console.log(removedOption?.reasonCode);
-                  if (
-                    (action === 'remove-value' || action === 'pop-value') &&
-                    removedOption?.reasonCode === 'WAR' &&
-                    NameTabCount?.NameWarrantCount > 0
-                  ) {
-                    return;
-                  }
-                  if (
-                    (action === 'remove-value' || action === 'pop-value') &&
-                    (removedOption?.reasonCode === 'ADAR' || removedOption?.reasonCode === 'JVA') &&
-                    arrestCount > 0
-                  ) {
-                    return;
-                  }
-                  if (
-                    (action === 'remove-value' || action === 'pop-value') &&
-                    (removedOption?.reasonCode === 'MIS') &&
-                    missingpersonCount > 0
-                  ) {
-                    return;
-                  }
-                  if (
-                    (action === 'remove-value' || action === 'pop-value') &&
-                    (removedOption?.reasonCode === 'OWN') &&
-                    propertyOwnerCount > 0
-                  ) {
-                    return;
-                  }
-                  if ((action === 'remove-value' || action === 'pop-value') && removedOption) {
-                    const isVictim = victimLabels.includes(removedOption.label);
-                    const currentVictimCount = multiSelected.optionSelected.filter(opt =>
-                      victimLabels.includes(opt.label)
-                    ).length;
-
-                    if (nameID && isVictim && currentVictimCount <= 1) {
-                      return;
-                    }
-                  }
-                  if (value.checkVictem === 1 || (value.checkVictem === 0 && value.checkOffender === 1) || value.checkOffender === 0) {
-                    OnChangeSelectedReason(selectedOptions, 'NameReasonCodeID');
-                  }
-
-
-                }}
-
-              />
-            </div>
-            {
-
-              roleStatus && MstPage !== "MST-Name-Dash" ?
-
-                <>
-                  <div className="col-3 col-md-3 col-lg-1 mt-3">
-                    <label htmlFor="" className='label-name '>
-                      Victim Type
-                      {errors.VictimTypeError !== 'true' ? (
-                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.VictimTypeError}</p>
+                  <div className="col-2 col-md-2 col-lg-1">
+                    <label htmlFor="" className='label-name mb-0'>
+                      Reason Code
+                      {errors.NameReasonCodeIDError !== 'true' ? (
+                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.NameReasonCodeIDError}</p>
                       ) : null}</label>
                   </div>
-                  <div className="col-3 col-md-3 col-lg-2  mt-2" >
-                    <Select
-                      name='VictimTypeID'
-                      value={victimTypeDrp?.filter((obj) => obj.value === value?.VictimTypeID)}
-                      isClearable
-                      isDisabled={isSocietyName}
+                  <div className="col-10 col-md-10 col-lg-4" >
+                    <SelectBox
+                      styles={nibrsSubmittedName === 1 || isSocietyName ? LockFildscolour : MstPage === "MST-Name-Dash" ? colourStylesMasterReason : colourStylesReason}
+                      isDisabled={nibrsSubmittedName === 1 || isSocietyName || isSecondDropdownDisabled && MstPage !== "MST-Name-Dash" ? true : false}
+                      options={reasonIdDrp ? getFiltredReasonCode(reasonIdDrp) : []}
+                      menuPlacement="bottom"
+                      isMulti
+                      closeMenuOnSelect={false}
+                      hideSelectedOptions={true}
+                      isClearable={false}
+                      allowSelectAll={false}
+                      value={multiSelected.optionSelected}
+                      components={{ MultiValue }}
+                      onChange={(selectedOptions, actionMeta) => {
+                        const victimLabels = [
+                          "Victim", "Business Is A Victim", "Domestic Victim", "Individual Is A Victim",
+                          "Individual Victim", "Other Is A Victim", "Restraint Victim", "Society Is A Victim"
+                        ];
 
-                      options={victimTypeDrp}
-                      onChange={(e) => { ChangeDropDown(e, 'VictimTypeID'); }}
-                      placeholder="Select.."
-                      styles={roleStatus ? colourStylesReason : ''}
+                        const removedOption = actionMeta.removedValue;
+                        const action = actionMeta.action;
+                        if (
+                          (action === 'remove-value' || action === 'pop-value') &&
+                          removedOption?.reasonCode === 'WAR' &&
+                          NameTabCount?.NameWarrantCount > 0
+                        ) {
+                          return;
+                        }
+                        if (
+                          (action === 'remove-value' || action === 'pop-value') &&
+                          (removedOption?.reasonCode === 'ADAR' || removedOption?.reasonCode === 'JVA') &&
+                          arrestCount > 0
+                        ) {
+                          return;
+                        }
+                        if (
+                          (action === 'remove-value' || action === 'pop-value') &&
+                          (removedOption?.reasonCode === 'MIS') &&
+                          missingpersonCount > 0
+                        ) {
+                          return;
+                        }
+                        if (
+                          (action === 'remove-value' || action === 'pop-value') &&
+                          (removedOption?.reasonCode === 'OWN') &&
+                          propertyOwnerCount > 0
+                        ) {
+                          return;
+                        }
+                        if ((action === 'remove-value' || action === 'pop-value') && removedOption) {
+                          const isVictim = victimLabels.includes(removedOption.label);
+                          const currentVictimCount = multiSelected.optionSelected.filter(opt =>
+                            victimLabels.includes(opt.label)
+                          ).length;
+
+                          if (nameID && isVictim && currentVictimCount <= 1) {
+                            return;
+                          }
+                        }
+                        if (value.checkVictem === 1 || (value.checkVictem === 0 && value.checkOffender === 1) || value.checkOffender === 0) {
+                          OnChangeSelectedReason(selectedOptions, 'NameReasonCodeID');
+                        }
+
+
+                      }}
 
                     />
                   </div>
-                </>
-                :
-                <></>
-            }
+                  {
+                    roleStatus && MstPage !== "MST-Name-Dash" ?
+                      <>
+                        <div className="col-3 col-md-3 col-lg-1 mt-3">
+                          <label htmlFor="" className='label-name '>
+                            Victim Type
+                            {errors.VictimTypeError !== 'true' ? (
+                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.VictimTypeError}</p>
+                            ) : null}</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2  mt-2" >
+                          <Select
+                            name='VictimTypeID'
+                            value={victimTypeDrp?.filter((obj) => obj.value === value?.VictimTypeID)}
+                            isClearable
+                            isDisabled={isSocietyName}
 
-            {/*  */}
-            <div className="col-lg-5" style={{ margin: '0 auto' }} >
-              <div className='row align-items-center' style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'nowrap' }}>
-                {
-                  nameID && MstPage !== "MST-Name-Dash" && NameTabCount?.NameOffenseCount <= 0 ?
-                    <>
-                      <span
-                        onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
-                        style={{
-                          display: 'flex', justifyContent: 'center', alignItems: 'center',
-                          color: isHovered ? 'blue' : 'red', border: '1px solid red', backgroundColor: '#fbecec',
-                          borderRadius: '4px', padding: '4px 8px', margin: '0 auto',
-                          cursor: 'pointer', fontSize: '14px', fontWeight: 500,
-                          width: 'fit-content', height: 'fit-content',
+                            options={victimTypeDrp}
+                            onChange={(e) => { ChangeDropDown(e, 'VictimTypeID'); }}
+                            placeholder="Select.."
+                            styles={roleStatus ? colourStylesReason : ''}
 
-                        }}
-                        className="col-12 col-md-4" onClick={() => setNameShowPage('Offense')}>
-                        Add Offense
-                      </span>
-                    </>
-                    : <></>
+                          />
+                        </div>
+                      </>
+                      :
+                      <></>
+                  }
 
-                }
-                {
-                  isMissing && MstPage !== "MST-Name-Dash" ? (
-                    <span
-                      onMouseEnter={handleMouseEnter}
-                      onMouseLeave={handleMouseLeave}
-                      className="col-12 col-md-4"
-                      // style={{ color: 'red', display: "flex", justifyContent: "end" }}
-                      style={{
-                        display: 'flex', justifyContent: 'center', alignItems: 'center',
-                        color: isHovered ? 'blue' : 'red', border: '1px solid red', backgroundColor: '#fbecec',
-                        borderRadius: '4px', padding: '4px 8px', margin: '0 auto',
-                        cursor: 'pointer', fontSize: '14px', fontWeight: 500,
-                        width: 'fit-content', height: 'fit-content',
+                  {/*  */}
+                  <div className="col-lg-5" style={{ margin: '0 auto' }} >
+                    <div className='row align-items-center' style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'nowrap' }}>
+                      {
+                        nameID && MstPage !== "MST-Name-Dash" && NameTabCount?.NameOffenseCount <= 0 ?
+                          <>
+                            <span
+                              onMouseEnter={handleMouseEnter}
+                              onMouseLeave={handleMouseLeave}
+                              style={{
+                                display: 'flex', justifyContent: 'center', alignItems: 'center',
+                                color: isHovered ? 'blue' : 'red', border: '1px solid red', backgroundColor: '#fbecec',
+                                borderRadius: '4px', padding: '4px 8px', margin: '0 auto',
+                                cursor: 'pointer', fontSize: '14px', fontWeight: 500,
+                                width: 'fit-content', height: 'fit-content',
 
-                      }}
-                      onClick={(e) => { navigate(`/Missing-Home?IncId=${stringToBase64(mainIncidentID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(nameID)}&MasterNameID=${stringToBase64(masterNameID)}&NameStatus=${true}&MissPerSta=${false}`) }}
-                    >
-                      Missing Person
-                    </span>
-                  ) : <></>
-                }
-                {
+                              }}
+                              className="col-12 col-md-4" onClick={() => setNameShowPage('Offense')}>
+                              Add Offense
+                            </span>
+                          </>
+                          : <></>
 
-                }
-                {isAdultArrest && MstPage !== "MST-Name-Dash" ? (
-                  <span
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                    className="col-12 col-md-4"
-                    style={{
-                      display: 'flex', justifyContent: 'center', alignItems: 'center',
-                      color: isHovered ? 'blue' : 'red', border: '1px solid red', backgroundColor: '#fbecec',
-                      borderRadius: '4px', padding: '4px 8px', margin: '0 auto',
-                      cursor: 'pointer', fontSize: '14px', fontWeight: 500,
-                      width: 'fit-content', height: 'fit-content',
-                    }}
-                    onClick={(e) => { navigate(`/Arrest-Home?IncId=${stringToBase64(mainIncidentID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(nameID)}&MasterNameID=${stringToBase64(masterNameID)}&NameStatus=${true}`) }}
-                  >
-                    Arrest
-                  </span>
-                ) : <></>
-                }
-              </div>
-            </div>
+                      }
+                      {
+                        isMissing && MstPage !== "MST-Name-Dash" ? (
+                          <span
+                            onMouseEnter={handleMouseEnter}
+                            onMouseLeave={handleMouseLeave}
+                            className="col-12 col-md-4"
+                            // style={{ color: 'red', display: "flex", justifyContent: "end" }}
+                            style={{
+                              display: 'flex', justifyContent: 'center', alignItems: 'center',
+                              color: isHovered ? 'blue' : 'red', border: '1px solid red', backgroundColor: '#fbecec',
+                              borderRadius: '4px', padding: '4px 8px', margin: '0 auto',
+                              cursor: 'pointer', fontSize: '14px', fontWeight: 500,
+                              width: 'fit-content', height: 'fit-content',
 
+                            }}
+                            onClick={(e) => { navigate(`/Missing-Home?IncId=${stringToBase64(mainIncidentID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(nameID)}&MasterNameID=${stringToBase64(masterNameID)}&NameStatus=${true}&MissPerSta=${false}`) }}
+                          >
+                            Missing Person
+                          </span>
+                        ) : <></>
+                      }
+                      {
 
-
-
-
-
-
-          </div>
-        </div >
-      </div>
-
-      <div className='col-12 col-md-12 col-lg-12'>
-        <fieldset className='mt-0 pb-1' style={{ width: "100%" }}>
-          <legend>Address/Contact Info </legend>
-        </fieldset>
-      </div>
-
-      <div className='row align-items-center mt-1' style={{ rowGap: "8px" }}>
-        <div className='col-5 col-md-8 col-lg-11'>
-          <div className='row align-items-center' style={{ rowGap: "8px" }}>
-            <div className="col-3 col-md-2 col-lg-1">
-              <label htmlFor="" className='label-name mb-0'>Address
-                {errors.CrimeLocationError !== 'true' ? (
-                  <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.CrimeLocationError}</p>
-                ) : null}</label>
-            </div>
-            <div className="col-7  col-md-7 col-lg-9 mt-0 text-field" >
-              <Location {...{ value, setValue, setChangesStatus, locationStatus, setLocationStatus, updateStatus, setOnSelectLocation, setStatesChangeStatus }} col='Address' locationID='NameLocationID' check={isAdult ? false : false} verify={value.IsVerify} page='Name' />
-            </div>
-            <div className="col-3 col-md-3 col-lg-2">
-              <div className="form-check ">
-                <input className="form-check-input" type="checkbox" name='IsVerify' value={value?.IsVerify} checked={(value?.IsVerify || !value?.NameLocationID)} onChange={HandleChange} data-toggle="modal" data-target="#NameVerifyModal" id="flexCheckDefault3" />
-                <label className="form-check-label mr-2" htmlFor="flexCheckDefault3">
-                  Verify
-                </label>
-                {
-                  !value?.IsVerify && addVerifySingleData.length > 0 ?
-                    <i className="fa fa-edit " onKeyDown={''} onClick={() => { if (value.NameLocationID) { get_Add_Single_Data(value.NameLocationID); setModalStatus(true); } }} data-toggle="modal" data-target="#NameVerifyModal" style={{ cursor: 'pointer', backgroundColor: '' }} > Edit </i>
-                    :
-                    <>
-                    </>
-                }
-              </div>
-            </div>
-            <div className="col-2 col-md-2 col-lg-1 px-0">
-              <label htmlFor="" className='label-name px-0 mb-0'>Contact Type</label>
-            </div>
-            <div className="col-3 col-md-3 col-lg-3">
-              <Select
-                name='PhoneTypeID'
-                value={phoneTypeIdDrp?.filter((obj) => obj.value === value?.PhoneTypeID)}
-                options={phoneTypeIdDrp}
-                onChange={(e) => ChangePhoneType(e, 'PhoneTypeID')}
-                isClearable
-                placeholder="Select..."
-
-                disabled={phoneTypeCode ? false : true}
-                styles={customStylesWithOutColor}
-
-
-
-              />
-            </div>
-            <div className="col-1 col-md-2 col-lg-1">
-              <label htmlFor="" className='label-name mb-0'>Contact
-
-              </label>
-            </div>
-            <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
-              <input type="text"
-                maxLength={phoneTypeCode !== 'E' ? 10 : ''} className={value?.PhoneTypeID ? 'requiredColor' : 'readonlyColor'}
-                name='Contact' value={value?.Contact} onChange={HandleChange} required disabled={value?.PhoneTypeID ? false : true} autoComplete='off' />
-              {errors.ContactError !== 'true' ? (
-                <span style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ContactError}</span>
-              ) : null}
-            </div>
-            <div className="col-3 col-md-1 col-lg-2">
-              {
-                phoneTypeCode !== 'E' ?
-                  <div className="form-check ">
-                    <input className="form-check-input" type="checkbox" name='IsUnListedPhNo' value={value?.IsUnListedPhNo} disabled={!value?.Contact ? true : false} checked={value?.IsUnListedPhNo} onChange={HandleChange} id="flexCheckDefault2" />
-                    <label className="form-check-label" htmlFor="flexCheckDefault2">
-                      Unlisted
-                    </label>
-                  </div> : <></>
-              }
-            </div>
-          </div>
-        </div>
-
-
-        <div className="col-4 col-md-4 col-lg-1" >
-          <div className="img-box" data-toggle="modal" data-target="#ImageModel">
-            <Carousel autoPlay={true} className="carousel-style" showArrows={true} showThumbs={false} showStatus={false} >
-              {
-                nameMultiImg.length > 0 ?
-                  nameMultiImg?.map((item) => (
-
-                    <div key={item?.PhotoID ? item?.PhotoID : item?.imgID} onClick={() => { setImageModalStatus(true) }} data-toggle="modal" data-target="#ImageModel" className='model-img'>
-                      <img src={`data:image/png;base64,${item.Photo}`} style={{ height: '90px' }} />
+                      }
+                      {isAdultArrest && MstPage !== "MST-Name-Dash" ? (
+                        <span
+                          onMouseEnter={handleMouseEnter}
+                          onMouseLeave={handleMouseLeave}
+                          className="col-12 col-md-4"
+                          style={{
+                            display: 'flex', justifyContent: 'center', alignItems: 'center',
+                            color: isHovered ? 'blue' : 'red', border: '1px solid red', backgroundColor: '#fbecec',
+                            borderRadius: '4px', padding: '4px 8px', margin: '0 auto',
+                            cursor: 'pointer', fontSize: '14px', fontWeight: 500,
+                            width: 'fit-content', height: 'fit-content',
+                          }}
+                          onClick={(e) => { navigate(`/Arrest-Home?IncId=${stringToBase64(mainIncidentID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(nameID)}&MasterNameID=${stringToBase64(masterNameID)}&NameStatus=${true}`) }}
+                        >
+                          Arrest
+                        </span>
+                      ) : <></>
+                      }
                     </div>
-                  ))
-                  :
-                  <div data-toggle="modal" data-target="#ImageModel" onClick={() => { setImageModalStatus(true) }} >
-                    <img src={defualtImage} alt='' />
                   </div>
-              }
-            </Carousel>
-          </div>
-        </div>
-
-      </div >
 
 
 
 
 
 
-      <div className='row mb-2'>
-        {!isViewEventDetails &&
-          <div className="col-12 col-md-12 col-lg-12 text-right" >
-            <div className=" mt-1 text-md-right " >
 
-              {
-                MstPage !== "MST-Name-Dash" && nameFilterData?.length > 0 && <button type="button"
-                  className="btn btn-sm  text-white mr-1"
+                </div>
+              </div >
+            </div >
 
-                  onClick={() => { nibrsValidateName(mainIncidentID, incReportedDate, baseDate, oriNumber) }}
-                  style={{
-                    backgroundColor: `${nibrsValidateNameData?.length > 0 ? nibrsValidateNameData?.length > 0 ? 'Red' : 'green' : 'teal'}`,
-                  }}
-                >
-                  Validate TIBRS
-                </button>
-              }
-              <button type="button" className="btn btn-sm btn-success mr-1" data-toggle="modal" data-target="#NCICModal" onClick={() => { setOpenNCICModal(true) }}>TLETS</button>
-
-              <button type="button" ref={crossButtonRef} className="btn btn-sm btn-success  mr-1" onClick={() => { setStatusFalse(); }}>
-                New
-              </button>
-              {
-                (masterNameID && MstPage === "MST-Name-Dash") || (nameID) ? (
-                  effectiveScreenPermission ?
-                    effectiveScreenPermission[0]?.Changeok ?
-                      <>
-                        <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); setcalled(true) }} ref={saveButtonRef} disabled={isLoading || nameSearchStatus || !statesChangeStatus}>Update</button>
-
-                      </>
-                      :
-                      <>
-                      </>
-                    :
-                    <>
-                      <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); setcalled(true) }} ref={saveButtonRef} disabled={isLoading || nameSearchStatus || !statesChangeStatus}>Update</button>
-
-                    </>
-                ) :
-                  (
-                    effectiveScreenPermission ?
-                      effectiveScreenPermission[0]?.AddOK ?
-                        <>
-                          <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); setcalled(true) }} disabled={isLoading || nameSearchStatus || saveValue} ref={saveButtonRef}>Save</button>
-                          {nameTypeCode !== "B" && (
-                            <button type="button" data-toggle="modal" data-target="#SearchModal" className="btn btn-sm btn-success mr-1" onClick={() => getNameSearch(loginAgencyID, value?.NameTypeID, value.LastName, value.FirstName, value.MiddleName, value.DateOfBirth, value.SSN, value.HeightFrom, value.HeightTo, value.WeightFrom, value.WeightTo, value.EthnicityID, value.ResidentID, value.RaceID, value.SexID, value.PhoneTypeID, value.Contact, true,)}>Search</button>
-                          )}
-                        </>
-                        :
-                        <>
-                        </>
-                      :
-                      <>
-                        <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); setcalled(true) }} disabled={isLoading || nameSearchStatus || saveValue}>Save</button>
-
-                      </>
-                  )
-              }
-
-              {
-                MstPage === "MST-Name-Dash" &&
-                <button type="button" className="btn btn-sm btn-success mx-1" ref={closeButtonRef} onClick={onMasterPropClose} data-dismiss="modal">Close</button>
-              }
+            <div className='col-12 col-md-12 col-lg-12'>
+              <fieldset className='mt-0 pb-1' style={{ width: "100%" }}>
+                <legend>Address/Contact Info </legend>
+              </fieldset>
             </div>
-          </div>
-        }
 
-      </div >
-      <div className="col-12  modal-table "  >
-        {
-          MstPage != "MST-Name-Dash" &&
-          <DataTable
-            dense
-            columns={columns}
+            <div className='row align-items-center mt-1' style={{ rowGap: "8px" }}>
+              <div className='col-5 col-md-8 col-lg-11'>
+                <div className='row align-items-center' style={{ rowGap: "8px" }}>
+                  <div className="col-3 col-md-2 col-lg-1">
+                    <label htmlFor="" className='label-name mb-0'>Address
+                      {errors.CrimeLocationError !== 'true' ? (
+                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.CrimeLocationError}</p>
+                      ) : null}</label>
+                  </div>
+                  <div className="col-7  col-md-7 col-lg-9 mt-0 text-field" >
+                    <Location {...{ value, setValue, setChangesStatus, locationStatus, setLocationStatus, updateStatus, setOnSelectLocation, setStatesChangeStatus }} col='Address' locationID='NameLocationID' check={isAdult ? false : false} verify={value.IsVerify} page='Name' />
+                  </div>
+                  <div className="col-3 col-md-3 col-lg-2">
+                    <div className="form-check ">
+                      <input className="form-check-input" type="checkbox" name='IsVerify' value={value?.IsVerify} checked={(value?.IsVerify || !value?.NameLocationID)} onChange={HandleChange} data-toggle="modal" data-target="#NameVerifyModal" id="flexCheckDefault3" />
+                      <label className="form-check-label mr-2" htmlFor="flexCheckDefault3">
+                        Verify
+                      </label>
+                      {
+                        !value?.IsVerify && addVerifySingleData.length > 0 ?
+                          <i className="fa fa-edit " onKeyDown={''} onClick={() => { if (value.NameLocationID) { get_Add_Single_Data(value.NameLocationID); setModalStatus(true); } }} data-toggle="modal" data-target="#NameVerifyModal" style={{ cursor: 'pointer', backgroundColor: '' }} > Edit </i>
+                          :
+                          <>
+                          </>
+                      }
+                    </div>
+                  </div>
+                  <div className="col-2 col-md-2 col-lg-1 px-0">
+                    <label htmlFor="" className='label-name px-0 mb-0'>Contact Type</label>
+                  </div>
+                  <div className="col-3 col-md-3 col-lg-3">
+                    <Select
+                      name='PhoneTypeID'
+                      value={phoneTypeIdDrp?.filter((obj) => obj.value === value?.PhoneTypeID)}
+                      options={phoneTypeIdDrp}
+                      onChange={(e) => ChangePhoneType(e, 'PhoneTypeID')}
+                      isClearable
+                      placeholder="Select..."
 
-            data={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? nameFilterData : [] : nameFilterData}
-            selectableRowsHighlight
-            highlightOnHover
-            responsive
-            fixedHeader
-            pagination
-            paginationPerPage={'10'}
-            paginationRowsPerPageOptions={[10, 15, 20, 50]}
+                      disabled={phoneTypeCode ? false : true}
+                      styles={customStylesWithOutColor}
 
-            fixedHeaderScrollHeight='150px'
-            customStyles={tableCustomStyle}
-            conditionalRowStyles={conditionalRowStyles}
-            onRowClicked={(row) => {
-              set_Edit_Value(row);
-            }}
-            persistTableHead={true}
-            noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : 'There are no data to display'}
-          />
-        }
-      </div>
 
-      <ListModal {...{ openPage, setOpenPage }} />
-      <NameSearchModal {...{ mainIncidentID, nameSearchValue, loginAgencyID, setValue, ResetSearch, setMultiSelected, value, setDobDate, get_Name_MultiImage, setUpdateStatus, updateStatus, MstPage }} />
-      <DeletePopUpModal func={delete_Image_File} />
-      <ChangesModal func={check_Validation_Error} setToReset={setToReset} />
-      <VerifyLocation {...{ loginAgencyID, loginPinID, modalStatus, setModalStatus, value, setStatesChangeStatus, setChangesStatus, setValue, addVerifySingleData, get_Add_Single_Data }} />
-      <MasterNameModel {...{ value, setValue, nameModalStatus, setNameModalStatus, loginPinID, loginAgencyID, type, possessionID, setPossessionID, possenSinglData, setPossenSinglData, GetSingleDataPassion, setStatesChangeStatus }} />
-      {/* <IdentifyFieldColor /> */}
-      <ImageModel multiImage={nameMultiImg} pinID={imageModalOfficerID ? imageModalOfficerID : loginPinID} setStatesChangeStatus={setStatesChangeStatus} newClicked={newClicked} entityID={value?.NameIDNumber} primaryOfficerID={agencyOfficerDrpData} setMultiImage={setNameMultiImg} uploadImgFiles={uploadImgFiles} setuploadImgFiles={setuploadImgFiles} modalStatus={modalStatus} setModalStatus={setModalStatus} imageId={imageId} setImageId={setImageId} imageModalStatus={imageModalStatus} setImageModalStatus={setImageModalStatus} delete_Image_File={delete_Image_File} setImgData={setImgData} imgData={imgData} updateImage={update_Name_MultiImage} agencyID={loginAgencyID} />
-      <AlertMasterModel masterID={masterNameID} setStatesChangeVich={setStatesChangeStatus} AlertType={"Name"} modelName={"Name"} loginPinID={loginPinID} agencyID={loginAgencyID} getAlertData={setAvailableAlert} />
-      <DeleteNameModal func={DeleteContactDetail} setToReset={Reset} setStatusFalse={setStatusFalse} />
 
-      <NirbsErrorShowModal
-        ErrorText={nibrsErrStr}
-        nibErrModalStatus={nibrsErrModalStatus}
-        setNibrsErrModalStatus={setNibrsErrModalStatus}
+                    />
+                  </div>
+                  <div className="col-1 col-md-2 col-lg-1">
+                    <label htmlFor="" className='label-name mb-0'>Contact
 
-      />
-      {openNCICModal && <NCICModal {...{ openNCICModal, setOpenNCICModal, }} isNameCallTaker nameData={value} />}
+                    </label>
+                  </div>
+                  <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
+                    <input type="text"
+                      maxLength={phoneTypeCode !== 'E' ? 10 : ''} className={value?.PhoneTypeID ? 'requiredColor' : 'readonlyColor'}
+                      name='Contact' value={value?.Contact} onChange={HandleChange} required disabled={value?.PhoneTypeID ? false : true} autoComplete='off' />
+                    {errors.ContactError !== 'true' ? (
+                      <span style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ContactError}</span>
+                    ) : null}
+                  </div>
+                  <div className="col-3 col-md-1 col-lg-2">
+                    {
+                      phoneTypeCode !== 'E' ?
+                        <div className="form-check ">
+                          <input className="form-check-input" type="checkbox" name='IsUnListedPhNo' value={value?.IsUnListedPhNo} disabled={!value?.Contact ? true : false} checked={value?.IsUnListedPhNo} onChange={HandleChange} id="flexCheckDefault2" />
+                          <label className="form-check-label" htmlFor="flexCheckDefault2">
+                            Unlisted
+                          </label>
+                        </div> : <></>
+                    }
+                  </div>
+                </div>
+              </div>
 
-      {
-        clickNibloder && (
-          <div className="loader-overlay">
-            <Loader />
-          </div>
-        )
-      }
+
+              <div className="col-4 col-md-4 col-lg-1" >
+                <div className="img-box" data-toggle="modal" data-target="#ImageModel">
+                  <Carousel autoPlay={true} className="carousel-style" showArrows={true} showThumbs={false} showStatus={false} >
+                    {
+                      nameMultiImg.length > 0 ?
+                        nameMultiImg?.map((item) => (
+
+                          <div key={item?.PhotoID ? item?.PhotoID : item?.imgID} onClick={() => { setImageModalStatus(true) }} data-toggle="modal" data-target="#ImageModel" className='model-img'>
+                            <img src={`data:image/png;base64,${item.Photo}`} style={{ height: '90px' }} />
+                          </div>
+                        ))
+                        :
+                        <div data-toggle="modal" data-target="#ImageModel" onClick={() => { setImageModalStatus(true) }} >
+                          <img src={defualtImage} alt='' />
+                        </div>
+                    }
+                  </Carousel>
+                </div>
+              </div>
+
+            </div >
+
+            <div className='row mb-2'>
+              {!isViewEventDetails &&
+                <div className="col-12 col-md-12 col-lg-12 text-right" >
+                  <div className=" mt-1 text-md-right " >
+
+                    {
+                      MstPage !== "MST-Name-Dash" && nameFilterData?.length > 0 && <button type="button"
+                        className="btn btn-sm  text-white mr-1"
+
+                        onClick={() => { nibrsValidateName(mainIncidentID, incReportedDate, baseDate, oriNumber) }}
+                        style={{
+                          backgroundColor: `${nibrsValidateNameData?.length > 0 ? nibrsValidateNameData?.length > 0 ? 'Red' : 'green' : 'teal'}`,
+                        }}
+                      >
+                        Validate TIBRS
+                      </button>
+                    }
+                    <button type="button" className="btn btn-sm btn-success mr-1" data-toggle="modal" data-target="#NCICModal" onClick={() => { setOpenNCICModal(true) }}>TLETS</button>
+
+                    {/* <button type="button" ref={crossButtonRef} className="btn btn-sm btn-success  mr-1" onClick={() => { setStatusFalse(); }}>
+                    New
+                  </button> */}
+                    {
+                      (masterNameID && MstPage === "MST-Name-Dash") || (nameID) ? (
+                        effectiveScreenPermission ?
+                          effectiveScreenPermission[0]?.Changeok ?
+                            <>
+                              <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); setcalled(true) }} ref={saveButtonRef} disabled={isLoading || nameSearchStatus || !statesChangeStatus}>Update</button>
+
+                            </>
+                            :
+                            <>
+                            </>
+                          :
+                          <>
+                            <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); setcalled(true) }} ref={saveButtonRef} disabled={isLoading || nameSearchStatus || !statesChangeStatus}>Update</button>
+
+                          </>
+                      ) :
+                        (
+                          effectiveScreenPermission ?
+                            effectiveScreenPermission[0]?.AddOK ?
+                              <>
+                                <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); setcalled(true) }} disabled={isLoading || nameSearchStatus || saveValue} ref={saveButtonRef}>Save</button>
+                                {nameTypeCode !== "B" && (
+                                  <button type="button" data-toggle="modal" data-target="#SearchModal" className="btn btn-sm btn-success mr-1" onClick={() => getNameSearch(loginAgencyID, value?.NameTypeID, value.LastName, value.FirstName, value.MiddleName, value.DateOfBirth, value.SSN, value.HeightFrom, value.HeightTo, value.WeightFrom, value.WeightTo, value.EthnicityID, value.ResidentID, value.RaceID, value.SexID, value.PhoneTypeID, value.Contact, true,)}>Search</button>
+                                )}
+                              </>
+                              :
+                              <>
+                              </>
+                            :
+                            <>
+                              <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); setcalled(true) }} disabled={isLoading || nameSearchStatus || saveValue}>Save</button>
+
+                            </>
+                        )
+                    }
+
+                    {
+                      MstPage === "MST-Name-Dash" &&
+                      <button type="button" className="btn btn-sm btn-success mx-1" ref={closeButtonRef} onClick={onMasterPropClose} data-dismiss="modal">Close</button>
+                    }
+                  </div>
+                </div>
+              }
+
+            </div >
+            <ListModal {...{ openPage, setOpenPage }} />
+            <NameSearchModal {...{ mainIncidentID, nameSearchValue, loginAgencyID, setValue, ResetSearch, setMultiSelected, value, setDobDate, get_Name_MultiImage, setUpdateStatus, updateStatus, MstPage }} />
+            <DeletePopUpModal func={delete_Image_File} />
+            <ChangesModal func={check_Validation_Error} setToReset={setToReset} />
+            <VerifyLocation {...{ loginAgencyID, loginPinID, modalStatus, setModalStatus, value, setStatesChangeStatus, setChangesStatus, setValue, addVerifySingleData, get_Add_Single_Data }} />
+            <MasterNameModel {...{ value, setValue, nameModalStatus, setNameModalStatus, loginPinID, loginAgencyID, type, possessionID, setPossessionID, possenSinglData, setPossenSinglData, GetSingleDataPassion, setStatesChangeStatus }} />
+            {/* <IdentifyFieldColor /> */}
+            < ImageModel multiImage={nameMultiImg} pinID={imageModalOfficerID ? imageModalOfficerID : loginPinID} setStatesChangeStatus={setStatesChangeStatus} newClicked={newClicked} entityID={value?.NameIDNumber} primaryOfficerID={agencyOfficerDrpData} setMultiImage={setNameMultiImg} uploadImgFiles={uploadImgFiles} setuploadImgFiles={setuploadImgFiles} modalStatus={modalStatus} setModalStatus={setModalStatus} imageId={imageId} setImageId={setImageId} imageModalStatus={imageModalStatus} setImageModalStatus={setImageModalStatus} delete_Image_File={delete_Image_File} setImgData={setImgData} imgData={imgData} updateImage={update_Name_MultiImage} agencyID={loginAgencyID} />
+            <AlertMasterModel masterID={masterNameID} setStatesChangeVich={setStatesChangeStatus} AlertType={"Name"} modelName={"Name"} loginPinID={loginPinID} agencyID={loginAgencyID} getAlertData={setAvailableAlert} />
+            {/* <DeleteNameModal func={DeleteContactDetail} setToReset={Reset} setStatusFalse={setStatusFalse} /> */}
+            <NirbsErrorShowModal
+              ErrorText={nibrsErrStr}
+              nibErrModalStatus={nibrsErrModalStatus}
+              setNibrsErrModalStatus={setNibrsErrModalStatus}
+            />
+            {openNCICModal && <NCICModal {...{ openNCICModal, setOpenNCICModal, }} isNameCallTaker nameData={value} />}
+            {
+              clickNibloder && (
+                <div className="loader-overlay">
+                  <Loader />
+                </div>
+              )
+            }
+          </>
+        )}
+
     </>
   )
 }
