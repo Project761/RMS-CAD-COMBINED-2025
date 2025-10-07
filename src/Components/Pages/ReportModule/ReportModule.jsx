@@ -1799,7 +1799,7 @@ const ReportModule = (props) => {
                                         {/* Approval  */}
                                         <div className="row ">
                                             {
-                                                narrativeID ?
+                                                narrativeID && value.Status !== null && !IsSelfApproved ?
                                                     <>
                                                         <div className="col-12 col-md-12 col-lg-12">
                                                             <div className="row ">
