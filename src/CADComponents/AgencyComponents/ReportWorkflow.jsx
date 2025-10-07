@@ -242,12 +242,13 @@ function ReportWorkflow() {
     // }
     // }
     const check_Validation_Error = (e) => {
+        
         setErrors(prev => ({
             ...prev,
             WorkflowNameErrors: RequiredFieldIncident(value.WorkflowName),
             AppliesReportTypeErrors: RequiredFieldIncident(value.AppliesReportTypeID),
-            ReportApproverGroupIDErrors: (value.ApprovalType !== "IsSelfApproved" && value.ApprovalType !== "IsNoApproval") ? RequiredFieldIncident(value.ReportApproverGroupID) : 'true',
-            ReportReviewerGroupIDErrors: (value.ApprovalType !== "IsSelfApproved" && value.ApprovalType !== "IsNoApproval") ? RequiredFieldIncident(value.ReportReviewerGroupID) : 'true',
+            ReportApproverGroupIDErrors: (value?.IsSingleLevel === true || value?.IsMultipleLevel === true) ? RequiredFieldIncident(value.ReportApproverGroupID) : 'true',
+            ReportReviewerGroupIDErrors: (value?.IsSingleLevel === true || value?.IsMultipleLevel === true) ? RequiredFieldIncident(value.ReportReviewerGroupID) : 'true',
         }));
     };
 
@@ -407,6 +408,7 @@ function ReportWorkflow() {
             IsSelfApproved: selectedOptionnew === 'IsSelfApproved',
             IsNoApproval: selectedOptionnew === 'IsNoApproval',
         }));
+        setErrors({ ...errors, 'WorkflowNameErrors': '', 'WorkflowNameErrors': '' , 'AppliesReportTypeErrors' : '' , 'ReportApproverGroupIDErrors' : '' , 'ReportReviewerGroupIDErrors' : '' });
     };
 
     return (
