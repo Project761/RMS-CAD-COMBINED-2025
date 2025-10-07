@@ -833,7 +833,6 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                     nameShowPage === 'aliases' ?
                                                         <Aliases {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
                                                         :
-
                                                         nameShowPage === 'SMT' ?
                                                             <Smt {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
                                                             :
