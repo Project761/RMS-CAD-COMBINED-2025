@@ -365,7 +365,8 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                 'PrimaryOfficerID': null, 'InProfessionOf': '', 'TagID': null, 'NICBID': null, 'DestroyDtTm': '', 'Description': '',
                 'IsEvidence': '', 'IsPropertyRecovered': '', 'IsImmobalizationDevice': '', 'IsEligibleForImmobalization': '', 'ModelName': '',
                 'PlateExpirationMonth': '', 'PlateExpirationYear': '',
-            })
+            });
+            setuploadImgFiles([]); setVehicleMultiImg([]);
         }
     }, [editval, changesStatusCount]);
 
@@ -579,7 +580,8 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                 }
                 reset();
                 if (uploadImgFiles?.length > 0) {
-                    upload_Image_File(res.PropertyID, res.MasterPropertyID); setuploadImgFiles('')
+                    upload_Image_File(res.PropertyID, res.MasterPropertyID);
+                    setuploadImgFiles([])
                 }
                 toastifySuccess(res.Message);
                 setErrors({ ...errors, ['LossCodeIDError']: '' }); get_Incident_Count(mainIncidentID, loginPinID); get_Data_Vehicle(mainIncidentID);
@@ -594,6 +596,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
     }
 
     const Update_Vehicle = () => {
+        console.log(uploadImgFiles);
         const previousValue = value.Value;
         AddDeleteUpadate('PropertyVehicle/Update_PropertyVehicle', value).then((res) => {
             if (res.success) {
@@ -604,7 +607,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                 setUpdateCount(updateCount + 1); get_Data_Vehicle(mainIncidentID);
                 setErrors({ ...errors, ['LossCodeIDError']: '' });
                 setValue({ ...value, Value: previousValue, }); get_List(vehicleID);
-                if (uploadImgFiles?.length > 0) { upload_Image_File(); setuploadImgFiles(''); }
+                if (uploadImgFiles?.length > 0) { upload_Image_File(); setuploadImgFiles([]); }
                 // validateIncSideBar
                 validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
             } else {
@@ -636,10 +639,13 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
         dispatch({ type: MasterVehicle_ID, payload: '' });
         dispatch({ type: Classification_Drp_Data, payload: [] });
         dispatch({ type: Vehicle_ID, payload: '' });
-        setVehicleID(''); setVehicleMultiImg(''); setLossCode(''); setAvailableAlert([]);
+        setVehicleID(''); setLossCode(''); setAvailableAlert([]);
         setPropertyStatus(false); setPossessionID(''); dispatch(get_Masters_Name_Drp_Data(''));
         dispatch(get_Masters_PossessionOwnerData('')); setPlateTypeCode(''); setCategoryCode(''); setVehMakeDrpData([]);
-        setStyleDrpData([]); setVehicleStatus(false);
+        setStyleDrpData([]);
+        setVehicleStatus(false);
+        setuploadImgFiles([]); setVehicleMultiImg([]);
+        console.log("Reset", uploadImgFiles);
     }
 
     const WidhoutColorStyles = {
@@ -688,12 +694,15 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
         const val1 = { 'PropertyID': 0, 'MasterPropertyID': masterPropertyID, 'IsMaster': true }
         fetchPostData('PropertyVehicle/GetData_PropertyVehiclePhoto', MstVehicle === "MST-Vehicle-Dash" ? val1 : val)
             .then((res) => {
-                if (res) {
-
+                // console.log("🚀 ~ get_Vehicle_MultiImage ~ res:", res)
+                if (res?.length > 0) {
                     setVehicleMultiImg(res);
                     SetImageModalOfficerID(res[0]?.OfficerID);
+
                 } else {
-                    setVehicleMultiImg();
+                    setVehicleMultiImg([]);
+                    // for clearing uploded img if it has on cancle button
+                    setuploadImgFiles([]);
                     SetImageModalOfficerID(null);
 
                 }
@@ -972,8 +981,8 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
             const modal = new window.bootstrap.Modal(document?.getElementById('SaveModal'));
             modal?.show();
         } else {
-            setVehicleMultiImg(''); setStatesChangeStatus(false);
-            setuploadImgFiles('');
+            setVehicleMultiImg([]); setStatesChangeStatus(false);
+            setuploadImgFiles([]);
             if (row.VehicleID || row.MasterPropertyID) {
                 if (isCad) {
                     navigate(`/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${stringToBase64(row?.PropertyID)}&MVehId=${stringToBase64(row?.MasterPropertyID)}&VehSta=${true}`)
@@ -1012,7 +1021,8 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
             reset(); setPossessionID(''); setOwnerOfID(''); setPossenSinglData([]);
             setClickedRow(null); setVehicleStatus(false);
             setStatus(false); get_vehicle_Count(''); PropertyType(loginAgencyID);
-            setVehicleMultiImg(''); setuploadImgFiles('');
+            setVehicleMultiImg([]);
+            setuploadImgFiles([]);
 
             // dispatch({ type: Master_Vehicle_Status, payload: false });
 
@@ -1025,7 +1035,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
             reset(); setPossessionID(''); setOwnerOfID(''); setPossenSinglData([]);
             setClickedRow(null); setVehicleStatus(false);
             setStatus(false); get_vehicle_Count(''); PropertyType(loginAgencyID);
-            setVehicleMultiImg(''); setuploadImgFiles('');
+            setVehicleMultiImg([]); setuploadImgFiles([]);
 
             dispatch({ type: Master_Vehicle_Status, payload: false });
         }
@@ -1123,8 +1133,6 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
         const d = new Date(date);
         return !isNaN(d.getTime()) ? d : null;
     };
-
-
 
     return (
         <>

@@ -137,7 +137,6 @@ const NibrsHome = () => {
     }
   }, [IncID])
 
-
   const GetIncData = (incidentID) => {
     try {
       const val = { IncidentID: incidentID }
@@ -299,7 +298,7 @@ const NibrsHome = () => {
         } else {
           setVictimErrorStatus(false); setVictimErrorString('');
         }
-
+  
         // validateIncSideBar
         validate_IncSideBar(incidentID, IncNo, loginAgencyID);
         // set loader false
