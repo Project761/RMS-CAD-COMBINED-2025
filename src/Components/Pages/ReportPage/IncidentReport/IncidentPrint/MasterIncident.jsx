@@ -667,25 +667,25 @@ const MasterIncident = ({ comments }) => {
                                             Print Confidential Report
                                         </label>
                                     </div>
-                                    <div className="row">
-                                        <div className="col-3 col-md-3 col-lg-2 mt-2 ">
-                                            <label htmlFor="" className='new-label'>Incident # From</label>
+                                    <div className="row align-items-center" style={{rowGap:"8px"}}>
+                                        <div className="col-3 col-md-3 col-lg-2 ">
+                                            <label htmlFor="" className='new-label mb-0'>Incident # From</label>
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-3 text-field mt-1 ">
+                                        <div className="col-3 col-md-3 col-lg-3 text-field mt-0 ">
                                             <input type="text" name='IncidentNumber' id='IncidentNumber' value={value.IncidentNumber} onChange={handleChange} className='' />
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-4 mt-2 ">
-                                            <label htmlFor="" className='new-label'>Incident # To</label>
+                                        <div className="col-3 col-md-3 col-lg-4">
+                                            <label htmlFor="" className='new-label mb-0'>Incident # To</label>
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-3 text-field mt-1 ">
+                                        <div className="col-3 col-md-3 col-lg-3 text-field mt-0 ">
                                             <input type="text" name='IncidentNumberTo'
                                                 // disabled={!value.IncidentNumber}
                                                 disabled={!value?.IncidentNumber?.trim()}
                                                 className={!value?.IncidentNumber?.trim() ? 'readonlyColor' : ''}
                                                 id='IncidentNumberTo' value={value.IncidentNumberTo} onChange={handleChange} />
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-2 mt-2 ">
-                                            <label htmlFor="" className='new-label'>Reported From Date</label>
+                                        <div className="col-3 col-md-3 col-lg-2">
+                                            <label htmlFor="" className='new-label mb-0'>Reported From Date</label>
                                         </div>
                                         <div className="col-3 col-md-3 col-lg-3">
                                             <DatePicker
@@ -718,8 +718,8 @@ const MasterIncident = ({ comments }) => {
                                                 placeholderText='Select...'
                                             />
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-4 mt-2 ">
-                                            <label htmlFor="" className='new-label'>Reported To Date</label>
+                                        <div className="col-3 col-md-3 col-lg-4">
+                                            <label htmlFor="" className='new-label mb-0'>Reported To Date</label>
                                         </div>
                                         <div className="col-3 col-md-3 col-lg-3">
                                             <DatePicker
@@ -750,8 +750,8 @@ const MasterIncident = ({ comments }) => {
 
                                             />
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-2 mt-2 ">
-                                            <label htmlFor="" className='new-label'>Occurred From Date</label>
+                                        <div className="col-3 col-md-3 col-lg-2  ">
+                                            <label htmlFor="" className='new-label mb-0'>Occurred From Date</label>
                                         </div>
                                         <div className="col-3 col-md-3 col-lg-3">
                                             <DatePicker
@@ -784,8 +784,8 @@ const MasterIncident = ({ comments }) => {
                                                 placeholderText='Select...'
                                             />
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-4 mt-2 ">
-                                            <label htmlFor="" className='new-label'>Occurred To Date</label>
+                                        <div className="col-3 col-md-3 col-lg-4">
+                                            <label htmlFor="" className='new-label mb-0'>Occurred To Date</label>
                                         </div>
                                         <div className="col-3 col-md-3 col-lg-3">
                                             <DatePicker
@@ -816,10 +816,10 @@ const MasterIncident = ({ comments }) => {
                                         </div>
 
 
-                                        <div className="col-4 col-md-4 col-lg-2 mt-2 pt-1">
-                                            <label htmlFor="" className='new-label'> Law Title</label>
+                                        <div className="col-4 col-md-4 col-lg-2">
+                                            <label htmlFor="" className='new-label mb-0'> Law Title</label>
                                         </div>
-                                        <div className="col-7 col-md-7 col-lg-3  mt-2">
+                                        <div className="col-7 col-md-7 col-lg-3">
                                             <Select
                                                 name="LawTitleId"
                                                 value={lawTitleIdDrp?.filter((obj) => obj.value === value?.LawTitleId)}
@@ -829,14 +829,14 @@ const MasterIncident = ({ comments }) => {
                                                 placeholder="Select..."
                                             />
                                         </div>
-                                        <div className="col-4 col-md-4 col-lg-4 mt-2 pt-1">
-                                            <label htmlFor="" className="new-label text-nowrap"  >   TIBRS Code
+                                        <div className="col-4 col-md-4 col-lg-4">
+                                            <label htmlFor="" className="new-label text-nowrap mb-0">   TIBRS Code
                                                 <br />
                                             </label>
                                         </div>
 
 
-                                        <div className="col-7 col-md-7 col-lg-3 mt-2">
+                                        <div className="col-7 col-md-7 col-lg-3">
                                             <Select
                                                 name="FBIID"
                                                 styles={colourStyles}
@@ -849,11 +849,11 @@ const MasterIncident = ({ comments }) => {
                                             />
                                         </div>
 
-                                        <div className="col-4 col-md-4 col-lg-2 mt-2 pt-1"  >
-                                            <label htmlFor="" className='new-label'>Offense Code/Name</label>
+                                        <div className="col-4 col-md-4 col-lg-2 "  >
+                                            <label htmlFor="" className='new-label mb-0'>Offense Code/Name</label>
                                             <br />
                                         </div>
-                                        <div className="col-7 col-md-7 col-lg-10  mt-2">
+                                        <div className="col-7 col-md-7 col-lg-10">
                                             <Select
                                                 name="RMSCFSCodeList"
                                                 styles={colourStyles}
@@ -867,10 +867,10 @@ const MasterIncident = ({ comments }) => {
 
 
 
-                                        <div className="col-3 col-md-3 col-lg-2 mt-2 ">
-                                            <label htmlFor="" className='new-label'>Location</label>
+                                        <div className="col-3 col-md-3 col-lg-2 ">
+                                            <label htmlFor="" className='new-label mb-0'>Location</label>
                                         </div>
-                                        <div className="col-9 col-md-9 col-lg-10 mt-1 text-field">
+                                        <div className="col-9 col-md-9 col-lg-10 mt-0 text-field">
                                             {/* <input type="text" name='Location' value={value?.Location} onChange={handleChange} id='Location' className='' /> */}
                                             <Location
                                                 {...{ value, setValue, locationStatus, setLocationStatus, updateStatus, setOnSelectLocation, setChangesStatus, setStatesChangeStatus }}

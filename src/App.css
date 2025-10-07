@@ -1892,12 +1892,14 @@ input[type=number] {
 
   @page {
     size: letter;
-    margin: 0mm 20mm 40mm 20mm !important;
+    /* margin: 0mm 20mm 40mm 20mm ; */
+        margin: 5mm 5mm 5mm 5mm !important;
   }
 
   .printable-area {
     box-sizing: border-box;
     padding-bottom: 50mm !important;
+    margin-bottom: 50mm !important;
   }
 
   .print-footer {
