@@ -688,7 +688,7 @@ const PropertyInventoryReport = () => {
                                         <div className="col-12 ">
                                             <fieldset>
                                                 <legend>Property Inventory Information</legend>
-                                                <div className="form-check ml-2 col-9 col-md-9 col-lg-12 mt-1 pt-1 text-right">
+                                                <div className="form-check mr-2 col-9 col-md-9 col-lg-11 mt-1 pt-1 text-right">
                                                     <input
                                                         type="checkbox"
                                                         className="form-check-input"
@@ -700,34 +700,34 @@ const PropertyInventoryReport = () => {
                                                         Print Confidential Report
                                                     </label>
                                                 </div>
-                                                <div className="row">
-                                                    <div className="col-2 col-md-2 col-lg-2  mt-2 pt-2">
-                                                        <label htmlFor="" className='new-label'>Property # From</label>
+                                                <div className="row align-items-center" style={{rowGap:"8px"}}>
+                                                    <div className="col-2 col-md-2 col-lg-2">
+                                                        <label htmlFor="" className='new-label mb-0'>Property # From</label>
                                                     </div>
-                                                    <div className="col-4 col-md-4 col-lg-3 text-field ">
+                                                    <div className="col-4 col-md-4 col-lg-3 text-field mt-0 ">
                                                         <input type="text" id='PropertyNumber' style={{ textTransform: "uppercase" }} maxLength={11} name='PropertyNumber' value={value.PropertyNumber} onChange={handlChange}
 
                                                         />
                                                     </div>
-                                                    <div className="col-2 col-md-2 col-lg-3  mt-2 pt-2">
-                                                        <label htmlFor="" className='new-label'>Property # To</label>
+                                                    <div className="col-2 col-md-2 col-lg-3 ">
+                                                        <label htmlFor="" className='new-label mb-0'>Property # To</label>
                                                     </div>
-                                                    <div className="col-4 col-md-4 col-lg-3 text-field ">
+                                                    <div className="col-4 col-md-4 col-lg-3 text-field mt-0">
                                                         <input type="text" id='PropertyNumberTo' style={{ textTransform: "uppercase" }} maxLength={11} name='PropertyNumberTo' value={value.PropertyNumberTo} onChange={handlChange}
                                                             disabled={!value?.PropertyNumber?.trim()}
                                                             className={!value?.PropertyNumber?.trim() ? 'readonlyColor' : ''}
                                                         />
                                                     </div>
-                                                    <div className="col-2 col-md-2 col-lg-2  mt-2 ">
-                                                        <label htmlFor="" className='new-label'>Incident # From</label>
+                                                    <div className="col-2 col-md-2 col-lg-2">
+                                                        <label htmlFor="" className='new-label mb-0'>Incident # From</label>
                                                     </div>
-                                                    <div className="col-4 col-md-4 col-lg-3 text-field mt-1">
+                                                    <div className="col-4 col-md-4 col-lg-3 text-field mt-0">
                                                         <input type="text" id='IncidentNumber' style={{ textTransform: "uppercase" }} name='IncidentNumber' value={value.IncidentNumber} onChange={handlChange} />
                                                     </div>
-                                                    <div className="col-2 col-md-2 col-lg-3  mt-2 ">
-                                                        <label htmlFor="" className='new-label'>Incident # To</label>
+                                                    <div className="col-2 col-md-2 col-lg-3 ">
+                                                        <label htmlFor="" className='new-label mb-0'>Incident # To</label>
                                                     </div>
-                                                    <div className="col-4 col-md-4 col-lg-3 text-field mt-1">
+                                                    <div className="col-4 col-md-4 col-lg-3 text-field mt-0">
                                                         <input type="text" id='IncidentNumberTo' style={{ textTransform: "uppercase" }} name='IncidentNumberTo' value={value.IncidentNumberTo} onChange={handlChange}
                                                             disabled={!value?.IncidentNumber?.trim()}
                                                             className={!value?.IncidentNumber?.trim() ? 'readonlyColor' : ''}
@@ -748,8 +748,8 @@ const PropertyInventoryReport = () => {
                                                             className={!value?.WarrantNumber?.trim() ? 'readonlyColor' : ''}
                                                         />
                                                     </div> */}
-                                                    <div className="col-2 col-md-2 col-lg-2  mt-2 ">
-                                                        <label htmlFor="" className='new-label'>Reported From Date</label>
+                                                    <div className="col-2 col-md-2 col-lg-2">
+                                                        <label htmlFor="" className='new-label mb-0'>Reported From Date</label>
                                                     </div>
                                                     <div className="col-4 col-md-4 col-lg-3">
                                                         <DatePicker
@@ -781,8 +781,8 @@ const PropertyInventoryReport = () => {
                                                             placeholderText={value?.ReportedDtTm ? value.ReportedDtTm : 'Select...'}
                                                         />
                                                     </div>
-                                                    <div className="col-2 col-md-2 col-lg-3  mt-2 ">
-                                                        <label htmlFor="" className='new-label'>Reported To Date</label>
+                                                    <div className="col-2 col-md-2 col-lg-3">
+                                                        <label htmlFor="" className='new-label mb-0'>Reported To Date</label>
                                                     </div>
                                                     <div className="col-4 col-md-4 col-lg-3">
                                                         <DatePicker
@@ -812,8 +812,8 @@ const PropertyInventoryReport = () => {
                                                             className={!value?.ReportedDtTm && 'readonlyColor'}
                                                         />
                                                     </div>
-                                                    <div className="col-3 col-md-3 col-lg-2 mt-2 ">
-                                                        <label htmlFor="" className='new-label'>Occurred From Date</label>
+                                                    <div className="col-3 col-md-3 col-lg-2">
+                                                        <label htmlFor="" className='new-label mb-0'>Occurred From Date</label>
                                                     </div>
                                                     <div className="col-3 col-md-3 col-lg-3">
                                                         <DatePicker
@@ -846,8 +846,8 @@ const PropertyInventoryReport = () => {
                                                             placeholderText='Select...'
                                                         />
                                                     </div>
-                                                    <div className="col-3 col-md-3 col-lg-3 mt-2 ">
-                                                        <label htmlFor="" className='new-label'>Occurred To Date</label>
+                                                    <div className="col-3 col-md-3 col-lg-3">
+                                                        <label htmlFor="" className='new-label mb-0'>Occurred To Date</label>
                                                     </div>
                                                     <div className="col-3 col-md-3 col-lg-3">
                                                         <DatePicker
@@ -876,8 +876,8 @@ const PropertyInventoryReport = () => {
                                                             className={!value?.OccurredFrom && 'readonlyColor'}
                                                         />
                                                     </div>
-                                                    <div className="col-3 col-md-3 col-lg-2 mt-2 ">
-                                                        <label htmlFor="" className='new-label'>Issued From Date</label>
+                                                    <div className="col-3 col-md-3 col-lg-2">
+                                                        <label htmlFor="" className='new-label mb-0'>Issued From Date</label>
                                                     </div>
                                                     <div className="col-3 col-md-3 col-lg-3">
                                                         <DatePicker
@@ -910,8 +910,8 @@ const PropertyInventoryReport = () => {
                                                             placeholderText='Select...'
                                                         />
                                                     </div>
-                                                    <div className="col-3 col-md-3 col-lg-3 mt-2 ">
-                                                        <label htmlFor="" className='new-label'>Issued To Date</label>
+                                                    <div className="col-3 col-md-3 col-lg-3 ">
+                                                        <label htmlFor="" className='new-label mb-0'>Issued To Date</label>
                                                     </div>
                                                     <div className="col-3 col-md-3 col-lg-3">
                                                         <DatePicker

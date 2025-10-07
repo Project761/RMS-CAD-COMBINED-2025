@@ -54,9 +54,9 @@ const AlertTable = (props) => {
     return (
         <div className='col-12 bt bb'>
             <div className='row'>
-                <div className={`${labelCol ? labelCol : "col-lg-1"} mt-2 text-nowrap`}>
+                <div className={`${labelCol ? labelCol : "col-lg-1"} mt-2 text-nowrap text-right`}>
                     {
-                        masterPropertyID && (ProSta === 'true' || ProSta === true) && <span data-toggle="modal" data-target="#MasterAlert" style={{ cursor: "pointer" }} className='alert-link pt-1' >Alerts:</span>
+                        masterPropertyID && (ProSta === 'true' || ProSta === true) && <span data-toggle="modal" data-target="#MasterAlert" style={{ cursor: "pointer" }} className='alert-link pt-1' >Alerts :</span>
                     }
                 </div>
                 <div className='alert-name col-lg-10 mt-2' style={{

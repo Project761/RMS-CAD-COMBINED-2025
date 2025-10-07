@@ -1016,17 +1016,17 @@ const StateReport = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="row">
-                                            <div className="col-3 col-md-3 col-lg-2 mt-2 ">
-                                                <label htmlFor="" className='new-label'>Incident Number From</label>
+                                        <div className="row align-items-center" style={{ rowGap: "8px" }}>
+                                            <div className="col-3 col-md-3 col-lg-2 ">
+                                                <label htmlFor="" className='new-label mb-0'>Incident Number From</label>
                                             </div>
-                                            <div className="col-3 col-md-3 col-lg-2 text-field mt-1 ">
+                                            <div className="col-3 col-md-3 col-lg-2 text-field mt-0 ">
                                                 <input type="text" name='IncidentNumber' id='IncidentNumber' value={value.IncidentNumber} onChange={handleChange} className='' />
                                             </div>
-                                            <div className="col-3 col-md-3 col-lg-2 mt-2 ">
-                                                <label htmlFor="" className='new-label'>Incident Number To</label>
+                                            <div className="col-3 col-md-3 col-lg-2">
+                                                <label htmlFor="" className='new-label mb-0'>Incident Number To</label>
                                             </div>
-                                            <div className="col-3 col-md-3 col-lg-2 text-field mt-1 ">
+                                            <div className="col-3 col-md-3 col-lg-2 text-field mt-0 ">
                                                 <input type="text" name='IncidentNumberTo'
                                                     disabled={value?.IncidentNumber?.trim() ? false : true}
                                                     className={!value?.IncidentNumber?.trim() && 'readonlyColor'}
@@ -1034,10 +1034,10 @@ const StateReport = () => {
                                             </div>
                                             {selectedOption == 'Missing' ?
                                                 <>
-                                                    <div className="col-3 col-md-3 col-lg-1 mt-2 px-0">
-                                                        <label htmlFor="" className='new-label px-0'>Missing&nbsp;Person</label>
+                                                    <div className="col-3 col-md-3 col-lg-1 ">
+                                                        <label htmlFor="" className='new-label px-0 mb-0'>Missing&nbsp;Person</label>
                                                     </div>
-                                                    <div className="col-3 col-md-3 col-lg-3  mt-1 ">
+                                                    <div className="col-3 col-md-3 col-lg-3">
                                                         <Select
                                                             name='SexID'
                                                             value={sexIdDrp?.filter((obj) => obj.value === value?.SexID)}
@@ -1048,10 +1048,10 @@ const StateReport = () => {
                                                             styles={customStylesWithOutColor}
                                                         />
                                                     </div>
-                                                    <div className="col-3 col-md-3 col-lg-2 mt-2 px-0">
-                                                        <label htmlFor="" className='new-label px-0'>Circumstances</label>
+                                                    <div className="col-3 col-md-3 col-lg-2">
+                                                        <label htmlFor="" className='new-label px-0 mb-0'>Circumstances</label>
                                                     </div>
-                                                    <div className="col-3 col-md-3 col-lg-5  mt-1 ">
+                                                    <div className="col-3 col-md-3 col-lg-5">
                                                         <Select
                                                             styles={customStylesWithOutColor}
                                                             name="CircumstancesID"
@@ -1062,18 +1062,18 @@ const StateReport = () => {
                                                             placeholder="Select..."
                                                         />
                                                     </div>
-                                                    <div className="col-3 col-md-3 col-lg-1 mt-2 ">
+                                                    <div className="col-3 col-md-3 col-lg-1  ">
                                                         <div className="form-check">
                                                             <input className="form-check-input" type="checkbox" defaultValue id="flexCheckDefault" />
-                                                            <label className="form-check-label" htmlFor="flexCheckDefault">
+                                                            <label className="form-check-label mb-0" htmlFor="flexCheckDefault">
                                                                 DNA
                                                             </label>
                                                         </div>
                                                     </div>
-                                                    <div className="col-3 col-md-3 col-lg-1 mt-2 px-0">
-                                                        <label htmlFor="" className='new-label px-0'>CMC</label>
+                                                    <div className="col-3 col-md-3 col-lg-1">
+                                                        <label htmlFor="" className='new-label px-0 mb-0'>CMC</label>
                                                     </div>
-                                                    <div className="col-3 col-md-3 col-lg-3  mt-1 ">
+                                                    <div className="col-3 col-md-3 col-lg-3">
                                                         <Select
                                                             styles={customStylesWithOutColor}
                                                             name="CMCID"
@@ -1088,10 +1088,10 @@ const StateReport = () => {
                                                 </>
                                                 :
                                                 <>
-                                                    <div className="col-3 col-md-3 col-lg-1 mt-2 ">
-                                                        <label htmlFor="" className='new-label'>Location</label>
+                                                    <div className="col-3 col-md-3 col-lg-1">
+                                                        <label htmlFor="" className='new-label mb-0'>Location</label>
                                                     </div>
-                                                    <div className="col-9 col-md-9 col-lg-3 mt-1 text-field">
+                                                    <div className="col-9 col-md-9 col-lg-3 mt-0 text-field">
                                                         <input type="text" name='CrimeLocation' value={value?.CrimeLocation} onChange={handleChange} id='CrimeLocation'
                                                             className={selectedOption === null || selectedOption === '' || selectedOption === 'Missing' ? 'readonlyColor' : ''}
                                                             disabled={selectedOption === null || selectedOption === '' || selectedOption === 'Missing'}
@@ -1099,8 +1099,8 @@ const StateReport = () => {
                                                     </div>
                                                 </>
                                             }
-                                            <div className="col-3 col-md-3 col-lg-2 mt-2 ">
-                                                <label htmlFor="" className='new-label'>Reported From Date</label>
+                                            <div className="col-3 col-md-3 col-lg-2">
+                                                <label htmlFor="" className='new-label mb-0'>Reported From Date</label>
                                             </div>
                                             <div className="col-3 col-md-3 col-lg-2">
                                                 <DatePicker
@@ -1131,8 +1131,8 @@ const StateReport = () => {
                                                     placeholderText='Select...'
                                                 />
                                             </div>
-                                            <div className="col-3 col-md-3 col-lg-2 mt-2 ">
-                                                <label htmlFor="" className='new-label'>Reported To Date</label>
+                                            <div className="col-3 col-md-3 col-lg-2 ">
+                                                <label htmlFor="" className='new-label mb-0'>Reported To Date</label>
                                             </div>
                                             <div className="col-3 col-md-3 col-lg-2">
                                                 <DatePicker
@@ -1162,10 +1162,10 @@ const StateReport = () => {
                                                     className={!value?.ReportedDate && 'readonlyColor'}
                                                 />
                                             </div>
-                                            <div className="col-3 col-md-3 col-lg-1 mt-2 ">
-                                                <label htmlFor="" className='new-label'>Officer</label>
+                                            <div className="col-3 col-md-3 col-lg-1">
+                                                <label htmlFor="" className='new-label mb-0'>Officer</label>
                                             </div>
-                                            <div className="col-9 col-md-9 col-lg-3 mt-1">
+                                            <div className="col-9 col-md-9 col-lg-3">
                                                 <Select
                                                     styles={customStylesWithOutColor}
                                                     name='PINID'
@@ -1176,8 +1176,8 @@ const StateReport = () => {
                                                     placeholder="Select..."
                                                 />
                                             </div>
-                                            <div className="col-3 col-md-3 col-lg-2 mt-2 ">
-                                                <label htmlFor="" className='new-label'>Occurred From Date</label>
+                                            <div className="col-3 col-md-3 col-lg-2">
+                                                <label htmlFor="" className='new-label mb-0'>Occurred From Date</label>
                                             </div>
                                             <div className="col-3 col-md-3 col-lg-2">
                                                 <DatePicker
@@ -1210,8 +1210,8 @@ const StateReport = () => {
                                                     placeholderText='Select...'
                                                 />
                                             </div>
-                                            <div className="col-3 col-md-3 col-lg-2 mt-2 ">
-                                                <label htmlFor="" className='new-label'>Occurred To Date</label>
+                                            <div className="col-3 col-md-3 col-lg-2">
+                                                <label htmlFor="" className='new-label mb-0'>Occurred To Date</label>
                                             </div>
                                             <div className="col-3 col-md-3 col-lg-2">
                                                 <DatePicker
@@ -1332,11 +1332,11 @@ const StateReport = () => {
 
                                         {selectedOption == 'Hate' && (
                                             <div className="col-12">
-                                                <div className="row">
-                                                    <div className="col-3 col-md-3 col-lg-2 mt-2 ">
-                                                        <label htmlFor="" className='new-label'>Bais</label>
+                                                <div className="row align-items-center" style={{ rowGap: "8px" }}>
+                                                    <div className="col-3 col-md-3 col-lg-2 ">
+                                                        <label htmlFor="" className='new-label mb-0'>Bais</label>
                                                     </div>
-                                                    <div className="col-9 col-md-9 col-lg-4 mt-1">
+                                                    <div className="col-9 col-md-9 col-lg-4 ">
                                                         <SelectBox
                                                             className="basic-multi-select"
                                                             name='CrimeBiasCategoryID'
@@ -1357,10 +1357,10 @@ const StateReport = () => {
 
                                                         />
                                                     </div>
-                                                    <div className="col-3 col-md-3 col-lg-2 mt-2 ">
-                                                        <label htmlFor="" className='new-label'>Vicitm Type</label>
+                                                    <div className="col-3 col-md-3 col-lg-2 ">
+                                                        <label htmlFor="" className='new-label mb-0'>Vicitm Type</label>
                                                     </div>
-                                                    <div className="col-9 col-md-9 col-lg-4 mt-1">
+                                                    <div className="col-9 col-md-9 col-lg-4">
                                                         <Select
                                                             name='VictimTypeID'
                                                             value={victimTypeDrp?.filter((obj) => obj.value === value?.VictimTypeID)}
@@ -1378,42 +1378,42 @@ const StateReport = () => {
                                 </fieldset>
                                 <fieldset>
                                     <legend>Name Information</legend>
-                                    <div className="row mt-1">
-                                        <div className="col-3 col-md-3 col-lg-1 mt-2 ">
-                                            <label htmlFor="" className='new-label'>MNI</label>
+                                    <div className="row align-items-center  mt-2 " style={{ rowGap: "8px" }}>
+                                        <div className="col-3 col-md-3 col-lg-1">
+                                            <label htmlFor="" className='new-label mb-0'>MNI</label>
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-3 text-field mt-1 ">
+                                        <div className="col-3 col-md-3 col-lg-3 text-field mt-0 ">
                                             <input type="text" name='NameIDNumber' maxLength={11} value={value?.NameIDNumber} onChange={onChangeNameIDNum} id='NameIDNumber' className='' />
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-5 mt-2 ">
-                                            <label htmlFor="" className='new-label'>SSN</label>
+                                        <div className="col-3 col-md-3 col-lg-5">
+                                            <label htmlFor="" className='new-label mb-0'>SSN</label>
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-3 text-field mt-1 ">
+                                        <div className="col-3 col-md-3 col-lg-3 text-field mt-0 ">
                                             <input type="text" name='SSN' value={value?.SSN} onChange={handlChange} id='SSN' maxLength={9} className='' />
                                         </div>
 
-                                        <div className="col-3 col-md-3 col-lg-1 mt-2 ">
-                                            <label htmlFor="" className='new-label'>Last Name</label>
+                                        <div className="col-3 col-md-3 col-lg-1">
+                                            <label htmlFor="" className='new-label mb-0'>Last Name</label>
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-3 text-field mt-1 ">
+                                        <div className="col-3 col-md-3 col-lg-3 text-field mt-0 ">
                                             <input type="text" name='LastName' value={value?.LastName} onChange={handlChange} id='LastName' className='' />
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-1 mt-2 ">
-                                            <label htmlFor="" className='new-label'>First Name</label>
+                                        <div className="col-3 col-md-3 col-lg-1">
+                                            <label htmlFor="" className='new-label mb-0'>First Name</label>
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-3 text-field mt-1 ">
+                                        <div className="col-3 col-md-3 col-lg-3 text-field mt-0 ">
                                             <input type="text" name='FirstName' value={value?.FirstName} onChange={handlChange} id='FirstName' className='' />
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-1 mt-2 px-0">
-                                            <label htmlFor="" className='new-label px-0'>Middle&nbsp;Name</label>
+                                        <div className="col-3 col-md-3 col-lg-1">
+                                            <label htmlFor="" className='new-label mb-0'>Middle&nbsp;Name</label>
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-3 text-field mt-1 ">
+                                        <div className="col-3 col-md-3 col-lg-3 text-field mt-0 ">
                                             <input type="text" name='MiddleName' value={value?.MiddleName} onChange={handlChange} id='MiddleName' className='' />
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-1 mt-2 ">
-                                            <label htmlFor="" className='new-label'>Gender</label>
+                                        <div className="col-3 col-md-3 col-lg-1">
+                                            <label htmlFor="" className='new-label mb-0'>Gender</label>
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-3  mt-1 ">
+                                        <div className="col-3 col-md-3 col-lg-3 ">
                                             <Select
                                                 name='SexID'
                                                 value={sexIdDrp?.filter((obj) => obj.value === value?.SexID)}
@@ -1424,10 +1424,10 @@ const StateReport = () => {
                                                 styles={customStylesWithOutColor}
                                             />
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-1 mt-2 ">
-                                            <label htmlFor="" className='new-label'>Race</label>
+                                        <div className="col-3 col-md-3 col-lg-1">
+                                            <label htmlFor="" className='new-label mb-0'>Race</label>
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-3  mt-1 ">
+                                        <div className="col-3 col-md-3 col-lg-3">
                                             <Select
                                                 name='RaceID'
                                                 value={raceIdDrp?.filter((obj) => obj.value === value?.RaceID)}
@@ -1438,8 +1438,8 @@ const StateReport = () => {
                                                 styles={customStylesWithOutColor}
                                             />
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-1 mt-2 ">
-                                            <label htmlFor="" className='new-label'>Ethnicity</label>
+                                        <div className="col-3 col-md-3 col-lg-1">
+                                            <label htmlFor="" className='new-label mb-0'>Ethnicity</label>
                                         </div>
                                         <div className="col-3 col-md-3 col-lg-3  mt-1 ">
                                             <Select
@@ -1452,8 +1452,8 @@ const StateReport = () => {
                                                 styles={customStylesWithOutColor}
                                             />
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-1 mt-2 ">
-                                            <label htmlFor="" className='new-label'>DOB From</label>
+                                        <div className="col-3 col-md-3 col-lg-1">
+                                            <label htmlFor="" className='new-label mb-0'>DOB From</label>
                                         </div>
                                         <div className="col-3 col-md-3 col-lg-3  ">
                                             <DatePicker
@@ -1478,8 +1478,8 @@ const StateReport = () => {
                                             />
                                         </div>
 
-                                        <div className="col-3 col-md-3 col-lg-1 mt-2 ">
-                                            <label htmlFor="" className='new-label'>DOB To</label>
+                                        <div className="col-3 col-md-3 col-lg-1">
+                                            <label htmlFor="" className='new-label mb-0'>DOB To</label>
                                         </div>
                                         <div className="col-3 col-md-3 col-lg-3  ">
                                             <DatePicker
@@ -1506,10 +1506,10 @@ const StateReport = () => {
                                         </div>
                                         {selectedOption == 'Missing' && (
                                             <>
-                                                <div className="col-3 col-md-3 col-lg-1 mt-2 ">
-                                                    <label htmlFor="" className='new-label'>Hair Color</label>
+                                                <div className="col-3 col-md-3 col-lg-1">
+                                                    <label htmlFor="" className='new-label mb-0'>Hair Color</label>
                                                 </div>
-                                                <div className="col-3 col-md-3 col-lg-3  mt-1 ">
+                                                <div className="col-3 col-md-3 col-lg-3">
                                                     <Select
                                                         name='RaceID'
                                                         value={raceIdDrp?.filter((obj) => obj.value === value?.RaceID)}
@@ -1578,11 +1578,11 @@ const StateReport = () => {
                                         <>
                                             <fieldset>
                                                 <legend>Relationship</legend>
-                                                <div className="row mt-1">
-                                                    <div className="col-3 col-md-3 col-lg-1 mt-2 ">
-                                                        <label htmlFor="" className='new-label'>Relationship</label>
+                                                <div className="row align-items-center mt-1" style={{ rowGap: "8px" }}>
+                                                    <div className="col-3 col-md-3 col-lg-1">
+                                                        <label htmlFor="" className='new-label mb-0'>Relationship</label>
                                                     </div>
-                                                    <div className="col-3 col-md-3 col-lg-4  mt-1 ">
+                                                    <div className="col-3 col-md-3 col-lg-4">
                                                         <Select
                                                             name='RelationshipTypeID'
                                                             styles={colourStyles}

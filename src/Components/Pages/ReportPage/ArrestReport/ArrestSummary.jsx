@@ -610,7 +610,7 @@ const ArrestSummary = () => {
                                         <div className="col-3 col-md-3 col-lg-2 mt-2 ">
                                             <label htmlFor="" className='new-label'>Arrest From Date</label>
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-3">
+                                        <div className="col-3 col-md-3 col-lg-3 mt-2">
                                             <DatePicker
                                                 id='ArrestDtTm'
                                                 name='ArrestDtTm'
@@ -634,7 +634,7 @@ const ArrestSummary = () => {
                                         <div className="col-3 col-md-3 col-lg-4 mt-2 ">
                                             <label htmlFor="" className='new-label'>Arrest To Date</label>
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-3">
+                                        <div className="col-3 col-md-3 col-lg-3 mt-2">
                                             <DatePicker
                                                 name='ArrestDtTmTo'
                                                 id='ArrestDtTmTo'
