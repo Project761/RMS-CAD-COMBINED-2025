@@ -36,7 +36,7 @@ const StatusBar = forwardRef((props, ref) => {
     },
     {
       label: "Offense",
-      value: loading ? "Loading..." : offenseCount && !offenseErrorStatus ? ` Added` : `${offenseCount} Added`,
+      value: loading ? "Loading..." : offenseCount && !offenseErrorStatus ? `Added` : `${offenseCount} Added`,
       // value: loading ? "Loading..." : !offenseErrorStatus ? `${offenseCount} Added` : "0/1",
       border: offenseCount && !offenseErrorStatus ? "left-border-green" : "left-border-red",
       color: "text-grays",
@@ -100,11 +100,9 @@ const StatusBar = forwardRef((props, ref) => {
       case "/Off-Home":
         return statusData.filter(item => item.label === "Offense");
       case "/Name-Home":
-        return statusData.filter(item => item.label === "Name" || item.label === "OV Links");
       case "/Offvic-Home":
         return statusData.filter(item => item.label === "Name" || item.label === "OV Links");
       case "/Prop-Home":
-        return statusData.filter(item => item.label === "Property");
       case "/Vehicle-Home":
         return statusData.filter(item => item.label === "Property");
       case "/Inc-Report":

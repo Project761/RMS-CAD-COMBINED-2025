@@ -219,7 +219,6 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
       GetDataTimeZone(localStoreData?.AgencyID);
       setBaseDate(localStoreData?.BaseDate ? localStoreData?.BaseDate : null);
       setOriNumber(localStoreData?.ORI); get_Incident_Count(IncID);
-
     }
   }, [localStoreData]);
 
@@ -1312,41 +1311,6 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
     })
   }
 
-  useEffect(() => {
-    console.log("MstPage", MstPage);
-    console.log("MstPage", MstPage);
-    console.log("masterPropertyStatus", masterPropertyStatus);
-    if (MstPage === "MST-Property-Dash" && masterPropertyStatus == true) { newProperty() }
-  }, [MstPage, masterPropertyStatus]);
-
-  const newProperty = () => {
-    SetNavigateStatus(false);
-    if (MstPage === "MST-Property-Dash") {
-      if (isCad) {
-        navigate(`/cad/dispatcher?page=MST-Property-Dash&ProId=${0}&MProId=${0}&ModNo=${''}&ProSta=${false}&ProCategory=${''}`);
-      } else {
-        navigate(`/Prop-Home?page=MST-Property-Dash&ProId=${0}&MProId=${0}&ModNo=${''}&ProSta=${false}&ProCategory=${''}`);
-      }
-      Reset();
-      setMultiImage([]);
-
-      dispatch({ type: Master_Property_Status, payload: false })
-      get_Property_Count(''); setChangesStatus(false); setStatesChangeStatus(false);
-    } else {
-      if (isCad) {
-        navigate(`/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${0}&MProId=${0}&ProSta=${false}&ProCategory=${''}`)
-      } else {
-        navigate(`/Prop-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${0}&MProId=${0}&ProSta=${false}&ProCategory=${''}`)
-      }
-      Reset(); setMultiImage([]); setPossessionID(''); setPossenSinglData([]);
-
-      dispatch({ type: Master_Property_Status, payload: false })
-      get_Property_Count(''); setChangesStatus(false); setStatesChangeStatus(false);
-      setErrors({});
-    }
-    setPropertyStatus(false);
-  }
-
   const columns1 = [
     {
       grow: 1, minwidth: "100px",
@@ -2066,7 +2030,6 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
   };
 
 
-
   const GetSingleDataPassion = (nameID, masterNameID) => {
     const val = { 'NameID': nameID, 'MasterNameID': masterNameID }
     fetchPostData('MasterName/GetSingleData_MasterName', val).then((res) => {
@@ -2167,6 +2130,42 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
   }, []);
+
+  // For Reset Property
+  useEffect(() => {
+    // console.log("MstPage", MstPage);
+    // console.log("MstPage", MstPage);
+    // console.log("masterPropertyStatus", masterPropertyStatus);
+    if (MstPage === "MST-Property-Dash" && masterPropertyStatus == true) { newProperty() }
+  }, [MstPage, masterPropertyStatus]);
+
+  const newProperty = () => {
+    SetNavigateStatus(false);
+    if (MstPage === "MST-Property-Dash") {
+      if (isCad) {
+        navigate(`/cad/dispatcher?page=MST-Property-Dash&ProId=${0}&MProId=${0}&ModNo=${''}&ProSta=${false}&ProCategory=${''}`);
+      } else {
+        navigate(`/Prop-Home?page=MST-Property-Dash&ProId=${0}&MProId=${0}&ModNo=${''}&ProSta=${false}&ProCategory=${''}`);
+      }
+      Reset();
+      setMultiImage([]);
+
+      dispatch({ type: Master_Property_Status, payload: false })
+      get_Property_Count(''); setChangesStatus(false); setStatesChangeStatus(false);
+    } else {
+      if (isCad) {
+        navigate(`/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${0}&MProId=${0}&ProSta=${false}&ProCategory=${''}`)
+      } else {
+        navigate(`/Prop-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${0}&MProId=${0}&ProSta=${false}&ProCategory=${''}`)
+      }
+      Reset(); setMultiImage([]); setPossessionID(''); setPossenSinglData([]);
+
+      dispatch({ type: Master_Property_Status, payload: false })
+      get_Property_Count(''); setChangesStatus(false); setStatesChangeStatus(false);
+      setErrors({});
+    }
+    setPropertyStatus(false);
+  }
 
   return (
     <>
