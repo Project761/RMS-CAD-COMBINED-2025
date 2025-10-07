@@ -223,7 +223,7 @@ function ReportWorkflow() {
 
     const reset = () => {
         setValue({
-            ...value, 'WorkflowName': '', 'AppliesReportTypeID': '', 'Notes': '', 'ReportApproverGroupID': '', 'ReportApproverRequired': '', 'ReportReviewerGroupID': '', 'IsMultipleLevel': '', 'IsSingleLevel': '', 'IsNoApproval': '', 'IsSelfApproved': '', 'AppliesReportTypeErrors': '', 'ReportApproverGroupIDErrors': ''
+            ...value, 'WorkflowName': '', 'AppliesReportTypeID': '', 'Notes': '', 'ReportApproverGroupID': '', 'ReportApproverRequired': '', 'ReportReviewerGroupID': '', 'IsMultipleLevel': true, 'IsSingleLevel': '', 'IsNoApproval': '', 'IsSelfApproved': '', 'AppliesReportTypeErrors': '', 'ReportApproverGroupIDErrors': ''
         }); setErrors({ ...errors, 'WorkflowNameErrors': '', 'ReportApproverGroupIDErrors': '', 'AppliesReportTypeErrors': '', 'ReportReviewerGroupIDErrors': '' }); setStatus(false); setClickedRow(null)
     }
 
