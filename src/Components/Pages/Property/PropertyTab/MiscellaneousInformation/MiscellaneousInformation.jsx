@@ -19,6 +19,9 @@ import { get_Report_Approve_Officer_Data, get_ScreenPermissions_Data, } from "..
 import { RequiredFieldIncident } from "../../../Utility/Personnel/Validation";
 import { threeColArray } from "../../../../Common/ChangeArrayFormat";
 import { get_AgencyOfficer_Data, get_Narrative_Type_Drp_Data, } from "../../../../../redux/actions/DropDownsData";
+import SendPropertyConfirmModel from "../../../../Common/SendPropertyConfirmModel";
+import { toBeRequired } from "@testing-library/jest-dom/matchers";
+import { faTruckField } from "@fortawesome/free-solid-svg-icons";
 
 const MultiValue = (props) => (
   <components.MultiValue {...props}>
@@ -84,6 +87,7 @@ const MiscellaneousInformation = (props) => {
   const [isSendButtonDisabled, setIsSendButtonDisabled] = useState(false);
   const [IsNonPropertyStatus, setIsNonPropertyStatus] = useState(false);
   const [SendToPropertyRoomStatus, setSendToPropertyRoomStatus] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
 
   // Add Update Permission
@@ -455,6 +459,7 @@ const MiscellaneousInformation = (props) => {
               "TaskList/Insert_TaskList",
               taskToSend
             );
+            setShowModal(false);
           }
           if (value?.IsSendToTaskList && IsNonPropertyStatus === false && value.IsNonPropertyRoom) {
             InSertBasicInfo(
@@ -463,6 +468,7 @@ const MiscellaneousInformation = (props) => {
               "TaskList/Insert_TaskList",
 
             );
+            setShowModal(false);
           }
 
 
@@ -1620,6 +1626,7 @@ const MiscellaneousInformation = (props) => {
                                 <button
                                   type="button"
                                   className="btn btn-sm mb-2 mt-1"
+                                  data-toggle="modal" data-target="#myModal"
                                   style={{
                                     backgroundColor: "#001f3f",
                                     color: "#fff",
@@ -1632,7 +1639,13 @@ const MiscellaneousInformation = (props) => {
                                     //   taskToSend
                                     // );
                                     // setTaskToSend("");
-                                    check_Validation_Error();
+                                    if (value.IsSendToPropertyRoom || value.IsNonPropertyRoom && value.IsSendToTaskList) {
+                                      setShowModal(true);
+                                    }
+                                    else {
+                                      check_Validation_Error()
+                                    }
+                                    // check_Validation_Error();
                                   }}
                                   disabled={!value.OfficerID || IsNonPropertyStatus === true}
                                 >
@@ -2769,18 +2782,25 @@ const MiscellaneousInformation = (props) => {
                             <button
                               type="button"
                               className="btn btn-sm mb-2 mt-1"
+                              data-toggle="modal" data-target="#myModal"
                               style={{
                                 backgroundColor: "#001f3f",
                                 color: "#fff",
                               }}
                               onClick={() => {
-                                check_Validation_Error();
+                                // check_Validation_Error();
                                 // InSertBasicInfo(
                                 //   value?.CollectingOfficer,
                                 //   "OfficerID",
                                 //   "TaskList/Insert_TaskList",
                                 //   taskToSend
                                 // );
+                                if (value.IsSendToPropertyRoom || value.IsNonPropertyRoom && value.IsSendToTaskList) {
+                                  setShowModal(true);
+                                }
+                                else {
+                                  check_Validation_Error()
+                                }
 
                               }}
                               disabled={
@@ -2826,10 +2846,18 @@ const MiscellaneousInformation = (props) => {
                   effectiveScreenPermission[0]?.Changeok ? (
                     <button
                       type="button"
+                      data-toggle="modal" data-target="#myModal"
                       disabled={!statesChangeStatus || taskToSend}
                       className="btn btn-md py-1 btn-success "
                       onClick={(e) => {
-                        check_Validation_Error();
+                        // check_Validation_Error();
+                        if (value.IsSendToPropertyRoom || value.IsNonPropertyRoom && value.IsSendToTaskList) {
+                          setShowModal(true);
+                        }
+                        else {
+                          check_Validation_Error()
+                        }
+
                       }}
                     >
                       Update
@@ -2840,10 +2868,17 @@ const MiscellaneousInformation = (props) => {
                 ) : (
                   <button
                     type="button"
+                    data-toggle="modal" data-target="#myModal"
                     disabled={!statesChangeStatus || taskToSend}
                     className="btn btn-md py-1 btn-success "
                     onClick={(e) => {
-                      check_Validation_Error();
+                      // check_Validation_Error();
+                      if (value.IsSendToPropertyRoom || value.IsNonPropertyRoom && value.IsSendToTaskList) {
+                        setShowModal(true);
+                      }
+                      else {
+                        check_Validation_Error()
+                      }
                     }}
                   >
                     Update
@@ -2863,6 +2898,7 @@ const MiscellaneousInformation = (props) => {
         taskToSend={taskToSend}
         value={value}
       />
+      <SendPropertyConfirmModel showModal={showModal} func={check_Validation_Error} value={value} setShowModal={setShowModal} />
     </>
   );
 };

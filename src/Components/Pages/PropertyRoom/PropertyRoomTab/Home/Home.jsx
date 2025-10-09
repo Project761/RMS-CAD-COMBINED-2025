@@ -1350,7 +1350,8 @@ const Home = (props) => {
                                     onChange={(selectedOption) => {
                                         setSelectedOptions(selectedOption);
                                         setPropertyNumber('');
-                                        setvehicleNumber('');
+                                        setvehicleNumber(''); setSearchData([]);
+                                        
                                         setsearcherror(prevValues => {
                                             return { ...prevValues, 'SearchError': '', }
                                         })

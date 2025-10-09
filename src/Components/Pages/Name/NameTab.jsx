@@ -71,8 +71,8 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
     if (!MasterNameID) MasterNameID = 0;
     else DecMasterNameID = parseInt(base64ToString(MasterNameID));
 
-    // if (!IncID) IncID = 0;
-    // else DecIncID = parseInt(base64ToString(IncID));
+    if (!IncID) IncID = 0;
+    else DecIncID = parseInt(base64ToString(IncID));
 
     if (!IncID) IncID = 0;
     else IncID = parseInt(base64ToString(IncID));

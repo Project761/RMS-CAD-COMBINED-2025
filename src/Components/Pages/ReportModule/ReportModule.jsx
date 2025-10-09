@@ -103,6 +103,7 @@ const ReportModule = (props) => {
     const [redactedComment, setRedactedComment] = useState("");
     const [checkWebWorkFlowStatus, setcheckWebWorkFlowStatus] = useState(false);
     const [IsSelfApproved, setIsSelfApproved] = useState(false);
+    const [skipApproverAuthor , setskipApproverAuthor] = useState(false);
     const detectedWordsRef = useRef([]);
 
     const [value, setValue] = useState({
@@ -487,10 +488,12 @@ const ReportModule = (props) => {
                 console.log(res);
 
                 const workflowData = res[0];
+                const approverAuthor = res[0];
                 const canShowApprovalButton = workflowData?.IsMultipleLevel || workflowData?.IsSingleLevel;
                 const canApproved = workflowData?.IsSelfApproved;
                 setcheckWebWorkFlowStatus(canShowApprovalButton);
                 setIsSelfApproved(canApproved);
+                setskipApproverAuthor(approverAuthor.IsSkipApproverAuthor);
                 // setLoder(true);
             } else {
                 // Handle case where no data is returned
@@ -1416,7 +1419,7 @@ const ReportModule = (props) => {
         })
     }
 
-
+console.log(checkWebWorkFlowStatus , skipApproverAuthor)
 
     // editor end
     return (
@@ -1799,7 +1802,7 @@ const ReportModule = (props) => {
                                         {/* Approval  */}
                                         <div className="row ">
                                             {
-                                                narrativeID && value.Status !== null && !IsSelfApproved ?
+                                                narrativeID && value.Status !== null && !IsSelfApproved && !skipApproverAuthor ?
                                                     <>
                                                         <div className="col-12 col-md-12 col-lg-12">
                                                             <div className="row ">
@@ -1941,7 +1944,7 @@ const ReportModule = (props) => {
                                                 <></>
                                             } */}
                                                         {
-                                                            checkWebWorkFlowStatus ? (
+                                                            (checkWebWorkFlowStatus && (skipApproverAuthor === false || skipApproverAuthor === null)) ? (
                                                                 narrativeID && (
                                                                     (value.Status !== "Pending Review" &&
                                                                         value.Status !== "Rejected" &&
@@ -1972,7 +1975,7 @@ const ReportModule = (props) => {
                                                             ) : null
                                                         }
                                                         {
-                                                            IsSelfApproved ? (
+                                                            (IsSelfApproved || skipApproverAuthor) ? (
                                                                 narrativeID && (
                                                                     (value.Status !== "Pending Review" &&
                                                                         value.Status !== "Rejected" &&
