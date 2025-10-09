@@ -959,7 +959,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
     }
 
     const getStatusColors = (ID, nibrsValidateData) => {
-        return getNibrsError(ID, nibrsValidateData) ? { backgroundColor: "#001f3fbd" } : {};
+        return getNibrsError(ID, nibrsValidateData) ? { backgroundColor: "rgb(255 202 194)" } : {};
     };
 
     const conditionalRowStyles = [
@@ -1098,7 +1098,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
             setclickNibLoder(false); setnibrsValidateData([]);
         }
     }
-  
+
     useEffect(() => {
         const handleEsc = (event) => {
             if (event.key === 'Escape') {
@@ -1824,7 +1824,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
 
                             <div className='row mt-1 justify-content-between align-items-center'>
                                 <div>
-                                    {vehicleStatus && (VehSta === 'true' || VehSta === true) &&
+                                    {/* {vehicleStatus && (VehSta === 'true' || VehSta === true) &&
                                         <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => { setPrintStatus(true) }}>Print Barcode</button>
                                     }
                                     {
@@ -1840,7 +1840,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                         >
                                             Validate TIBRS Vehicle
                                         </button>
-                                    }
+                                    } */}
                                 </div>
 
 
