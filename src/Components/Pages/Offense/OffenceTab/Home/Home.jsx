@@ -154,11 +154,11 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
     }
   }, [IncID]);
 
-  useEffect(() => {
-    if (IncID && IncNo && offenceFillterData?.length > 0) {
-      nibrsValidateOffense(IncID, IncNo);
-    }
-  }, [IncID, IncNo, offenceFillterData]);
+  // useEffect(() => {
+  //   if (IncID && IncNo && offenceFillterData?.length > 0) {
+  //     nibrsValidateOffense(IncID, IncNo);
+  //   }
+  // }, [IncID, IncNo, offenceFillterData]);
 
   useEffect(() => {
     if (OffId && (OffSta === true || OffSta === "true")) {
@@ -1757,7 +1757,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
 
       <div className="col-12 text-right mb-1 mt-1 field-button  d-flex justify-content-between">
         <div>
-          {offenceFillterData?.length > 0 && (
+          {/* {offenceFillterData?.length > 0 && (
             <button
               type="button"
               onClick={() => nibrsValidateOffense(mainIncidentID, IncNo)}
@@ -1766,7 +1766,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
             >
               Validate TIBRS Offense
             </button>
-          )}
+          )} */}
         </div>
         <div>
           {OffId ? (

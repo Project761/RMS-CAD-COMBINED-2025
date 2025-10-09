@@ -589,7 +589,10 @@ const NibrsHome = () => {
       title: isVictimConnectedError ? <span className="text-center" style={{
         border: '1px solid red', backgroundColor: '#ffe6e6', color: 'red', padding: '3px', borderRadius: '4px', display: 'inline-block',
         transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
-      }}>Victim --- At least one victim must be present and must be connected with offense</span> : `Victim (${VictimCount})`,
+      }}>
+        Victim --- Connection of victim and Offense is needed
+        {/* Victim --- At least one victim must be present and must be connected with offense */}
+      </span> : `Victim (${VictimCount})`,
       status: !victimErrorStatus && !isVictimConnectedError ? "completed" : "attention highlighted",
       sectionKey: "Victims",
       list: <MainVictims victimClick={victimClick} isNibrsSummited={isNibrsSummited} ValidateProperty={ValidateProperty} />

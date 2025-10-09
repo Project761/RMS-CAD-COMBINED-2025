@@ -2087,12 +2087,19 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
       fetchPostDataNibrs('NIBRS/GetPropertyNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'PropertyId': '', 'gIntAgencyID': loginAgencyID }).then((data) => {
         if (data) {
           if (data?.Properties?.length > 0) {
-            const propArr = data?.Properties?.filter((item) => item?.PropertyType !== 'V');
-            console.log("🚀 ~ fetchPostDataNibrs ~ propArr:", propArr)
+            const propArr = data?.Properties?.filter((item) => item?.PropertyType !== 'V' && item?.PropertyType);
+            // console.log("🚀 ~ fetchPostDataNibrs ~ propArr:", propArr)
 
             if (propArr?.length > 0) {
-              setnibrsValidateData(propArr || []); setclickNibLoder(false);
+              const propErrorArray = propArr || []
 
+              if (propErrorArray.every(item => item === null || item === undefined)) {
+                setnibrsValidateData([]); setclickNibLoder(false);
+
+              } else {
+                setnibrsValidateData(propArr || []); setclickNibLoder(false);
+
+              }
             } else {
               setnibrsValidateData([]); setclickNibLoder(false);
 
@@ -3470,7 +3477,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
           {!isViewEventDetails &&
             <div className="col-12 text-right mb-1 mt-1 field-button  d-flex justify-content-between" style={{ marginTop: "1px" }}>
               <div>
-                {
+                {/* {
                   propertyMainModuleData?.length > 0 &&
                   <button
                     type="button"
@@ -3482,7 +3489,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                   >
                     Validate TIBRS Property
                   </button>
-                }
+                } */}
               </div>
               <div>
                 {
