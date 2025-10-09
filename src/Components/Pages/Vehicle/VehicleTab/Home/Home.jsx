@@ -1004,11 +1004,6 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
         SetNewClciked((prev) => prev + 1);
         SetImageModalOfficerID(null);
         if (MstVehicle === 'MST-Vehicle-Dash') {
-            // if (isCad) {
-            //     navigate(`/cad/dispatcher?page=MST-Vehicle-Dash&?VehId=${0}&?MVehId=${0}&ModNo=${''}`)
-            // } else {
-            //     navigate(`/Vehicle-Home?page=MST-Vehicle-Dash&?VehId=${0}&?MVehId=${0}&ModNo=${''}`)
-            // }
             if (isCad) {
                 if (isCADSearch) {
                     navigate(`/cad/vehicle_search?page=MST-Vehicle-Dash&?VehId=${0}&?MVehId=${0}&ModNo=${''}`);
@@ -1103,7 +1098,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
             setclickNibLoder(false); setnibrsValidateData([]);
         }
     }
-
+  
     useEffect(() => {
         const handleEsc = (event) => {
             if (event.key === 'Escape') {
