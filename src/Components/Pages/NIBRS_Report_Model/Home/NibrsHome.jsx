@@ -414,24 +414,21 @@ const NibrsHome = () => {
 
         if (propertyValidateNibrsData) {
           const proObj = propertyValidateNibrsData?.Properties ? propertyValidateNibrsData?.Properties : [];
-          // console.log("🚀 ~ ValidateProperty ~ proObj:", proObj)
+          console.log("🚀 ~ ValidateProperty ~ proObj:", proObj)
 
           // set property error string
           if (proObj?.length > 0) {
 
-            const isCrimeAgainstError = proObj[0]?.OnPageError?.includes("Property must be present.");
-            // const isCrimeAgainstError = proObj[0]?.OnPageError?.includes("For Crime Against Property Property must be present.");
-            const isSuspectedDrugType = proObj[0]?.OnPageError?.includes("{352} Add at least one suspected drug type(create a property with type 'Drug')") || proObj[0]?.OnPageError?.includes("Add at least one suspected drug type(create a property with type 'Drug').") ;
-            // const isSuspectedDrugType = proObj[0]?.OnPageError?.includes("{352} There should be atleast 1 Suspected Drug Type entry.");
-            const isPropertyIdZeroError = proObj[0]?.OnPageError?.includes("{074} Need a property loss code of 5,7 for offense  23B");
-
-            if (isCrimeAgainstError) {
+            if (proObj[0]?.OnPageError?.includes("Property must be present.") && proObj[0]?.PropertyType != 'V') {
               setIsCrimeAgainstPropertyError(true); setSuspectedDrugTypeErrorStatus(false); setIsPropertyIdZeroError(false);
 
-            } else if (isSuspectedDrugType) {
+            } else if (proObj[0]?.OnPageError?.includes("For Crime Against Property Property must be present.") && proObj[0]?.PropertyType != 'V') {
+              setIsCrimeAgainstPropertyError(true); setSuspectedDrugTypeErrorStatus(false); setIsPropertyIdZeroError(false);
+
+            } else if (proObj[0]?.OnPageError?.includes("{352} Add at least one suspected drug type(create a property with type 'Drug')") || proObj[0]?.OnPageError?.includes("Add at least one suspected drug type(create a property with type 'Drug').") && proObj[0]?.PropertyType != 'V') {
               setSuspectedDrugTypeErrorStatus(true); setIsPropertyIdZeroError(false); setIsCrimeAgainstPropertyError(false);
 
-            } else if (isPropertyIdZeroError) {
+            } else if (proObj[0]?.OnPageError?.includes("{074} Need a property loss code of 5,7 for offense  23B") && proObj[0]?.PropertyType != 'V') {
               setIsPropertyIdZeroError(true); setSuspectedDrugTypeErrorStatus(false); setIsCrimeAgainstPropertyError(false);
 
             } else {
@@ -439,25 +436,66 @@ const NibrsHome = () => {
 
             }
 
+            // const isCrimeAgainstError = proObj[0]?.OnPageError?.includes("Property must be present.");
+
+            // const isSuspectedDrugType = proObj[0]?.OnPageError?.includes("{352} Add at least one suspected drug type(create a property with type 'Drug')") || proObj[0]?.OnPageError?.includes("Add at least one suspected drug type(create a property with type 'Drug').");
+
+            // const isPropertyIdZeroError = (proObj[0]?.OnPageError?.includes("{074} Need a property loss code of 5,7 for offense  23B") && proObj[0]?.PropertyType != 'V');
+
+            // if (isCrimeAgainstError) {
+            //   setIsCrimeAgainstPropertyError(true); setSuspectedDrugTypeErrorStatus(false); setIsPropertyIdZeroError(false);
+
+            // } else if (isSuspectedDrugType) {
+            //   setSuspectedDrugTypeErrorStatus(true); setIsPropertyIdZeroError(false); setIsCrimeAgainstPropertyError(false);
+
+            // } else if (isPropertyIdZeroError) {
+            //   setIsPropertyIdZeroError(true); setSuspectedDrugTypeErrorStatus(false); setIsCrimeAgainstPropertyError(false);
+
+            // } else {
+            //   setSuspectedDrugTypeErrorStatus(false); setIsPropertyIdZeroError(false); setIsCrimeAgainstPropertyError(false);
+
+            // }
+
             const VehArr = proObj?.filter((item) => item?.PropertyType === 'V');
+            // console.log("🚀 ~ validateNibrs ~ VehArr:", VehArr)
             const PropArr = proObj?.filter((item) => item?.PropertyType !== 'V' && item?.PropertyType !== null);
+            console.log("🚀 ~ validateNibrs ~ PropArr:", PropArr)
+
+
 
             if (VehArr?.length > 0) {
-              setVehicleErrorString(VehArr[0]?.OnPageError ? VehArr[0]?.OnPageError : ''); setVehErrorStatus(true);
+              const VehErrorArray = VehArr || []
+              if (VehErrorArray.every(item => item === null || item === undefined)) {
+                setVehErrorStatus(false); setVehicleErrorString('');
+
+              } else {
+                setVehicleErrorString(VehArr[0]?.OnPageError ? VehArr[0]?.OnPageError : ''); setVehErrorStatus(true);
+
+              }
             } else {
               setVehErrorStatus(false); setVehicleErrorString('');
             }
 
             // set property error string
             if (PropArr?.length > 0) {
-              setPropertyErrorString(PropArr[0]?.OnPageError ? PropArr[0]?.OnPageError : ''); setPropErrorStatus(true);
+              const PropErrorArray = PropArr || []
+              if (PropErrorArray.every(item => item === null || item === undefined)) {
+                setPropErrorStatus(false); setPropertyErrorString('');
+
+              } else {
+                setPropertyErrorString(PropArr[0]?.OnPageError ? PropArr[0]?.OnPageError : ''); setPropErrorStatus(true);
+
+              }
+
             } else {
               setPropErrorStatus(false); setPropertyErrorString('');
+
             }
 
           } else {
 
           }
+
         } else {
           setPropErrorStatus(false); setPropertyErrorString(''); setVehErrorStatus(false); setVehicleErrorString('');
 

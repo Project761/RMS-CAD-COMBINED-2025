@@ -834,13 +834,14 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                         const VehArr = data?.Properties?.filter((item) => item?.PropertyType === 'V');
                         // console.log("🚀 ~ fetchPostDataNibrs ~ VehArr:", VehArr);
 
+
                         if (VehArr?.length > 0) {
                             setnibrsValidateData(VehArr || []); setclickNibLoder(false);
 
                             const row = VehArr[0];
                             // get selected By Default
                             isDefaultSelected && setEditVal(row);
-  
+
                         } else {
                             setnibrsValidateData([]); setclickNibLoder(false);
                         }
