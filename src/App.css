@@ -1894,20 +1894,25 @@ input[type=number] {
     size: letter;
     /* margin: 0mm 20mm 40mm 20mm ; */
     margin: 5mm 5mm 5mm 5mm !important;
+    /* margin: 5mm 2mm 5mm 2mm !important; */
+
   }
 
   .printable-area {
     padding-bottom: 0 !important;
     margin-bottom: 0 !important;
-    page-break-inside: avoid;
-    break-inside: avoid
-  }
-  .section-item, .row, .print-section {
-    page-break-inside: avoid;
-    break-inside: avoid;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 
- 
+  .section-item,
+  .row,
+  .print-section {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+
   .print-footer {
     bottom: 2px;
     width: 70%;
@@ -1917,8 +1922,8 @@ input[type=number] {
     text-align: center;
     font-size: 10px;
     background: white;
-    page-break-after: always;
-    break-after: page;
+    page-break-after: always !important;
+    break-after: page !important;
   }
 
 
@@ -2596,3 +2601,20 @@ input.readonlyColor_MasterInput {
   min-height: 92px;
 
 }
+
+
+@media print {
+  .row-print {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;             
+    justify-content: space-between !important;
+  }
+
+  .print-col-6 {
+    flex: 0 0 calc(50% - 5px) !important; 
+    max-width: calc(50% - 5px) !important;
+  }
+
+}
+
