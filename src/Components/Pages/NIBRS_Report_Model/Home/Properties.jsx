@@ -1014,9 +1014,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
 
     const set_EditRow = (row) => {
         setStatesChangeStatus(false); setShowLossCodeError(false);
-        if (row.PropertyID || row.MasterPropertyID) {
-
-
+        if (row?.PropertyID || row?.MasterPropertyID) {
 
             navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${stringToBase64(row?.PropertyID)}&MProId=${stringToBase64(row?.MasterPropertyID)}&ProSta=${true}&ProCategory=${row.PropertyType_Description}`)
 
@@ -1429,34 +1427,42 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
 
                         if (propArr?.length > 0) {
 
-                            const isSuspectedDrugType = propArr[0]?.OnPageError?.includes("{352} Add at least one suspected drug type(create a property with type 'Drug')");
-                            const isPropertyIdZeroError = propArr[0]?.OnPageError?.includes("{074} Need a property loss code of 5,7 for offense  23B");
-
-                            if (isSuspectedDrugType) {
-                                setSuspectedDrugTypeErrorStatus(true);
-                                setIsPropertyIdZeroError(false);
-
-                            } else if (isPropertyIdZeroError) {
-                                setIsPropertyIdZeroError(true);
-                                setSuspectedDrugTypeErrorStatus(false);
+                            const propErrorArray = propArr || []
+                            if (propErrorArray.every(item => item === null || item === undefined)) {
+                                setnibrsValidateData([]); setclickNibLoder(false);
 
                             } else {
-                                setSuspectedDrugTypeErrorStatus(false);
-                                setIsPropertyIdZeroError(false);
+                                const isSuspectedDrugType = propArr[0]?.OnPageError?.includes("{352} Add at least one suspected drug type(create a property with type 'Drug')");
+                                const isPropertyIdZeroError = propArr[0]?.OnPageError?.includes("{074} Need a property loss code of 5,7 for offense  23B");
 
+                                if (isSuspectedDrugType) {
+                                    setSuspectedDrugTypeErrorStatus(true);
+                                    setIsPropertyIdZeroError(false);
+
+                                } else if (isPropertyIdZeroError) {
+                                    setIsPropertyIdZeroError(true);
+                                    setSuspectedDrugTypeErrorStatus(false);
+
+                                } else {
+                                    setSuspectedDrugTypeErrorStatus(false);
+                                    setIsPropertyIdZeroError(false);
+
+                                    setclickNibLoder(false);
+
+                                }
+
+                                const row = propArr[0];
+
+                                isDefaultSelected && set_EditRow(row);
+
+                                setnibrsValidateData(propArr || []);
                                 setclickNibLoder(false);
+
+
+                                // ValidateProperty(mainIncidentID);
 
                             }
 
-                            const row = propArr[0];
-
-                            isDefaultSelected && set_EditRow(row);
-
-                            setnibrsValidateData(propArr || []);
-                            setclickNibLoder(false);
-
-
-                            // ValidateProperty(mainIncidentID);
                         } else {
                             setnibrsValidateData([]); setclickNibLoder(false);
 

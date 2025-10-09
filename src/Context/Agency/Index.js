@@ -785,29 +785,40 @@ const AgencyData = ({ children }) => {
                 setNarrativeApprovedStatus(false);
             }
 
-            // console.log("🚀 ~ validate_IncSideBar ~ propertyError:", propertyError)
             if (propertyError) {
-                setPropertyValidateNibrsData(propertyError);
-                const proObj = propertyError?.Properties ? propertyError?.Properties : [];
 
-                const isCrimeAgainstError = proObj[0]?.OnPageError?.includes("Property must be present.");
-                const isSuspectedDrugType = proObj[0]?.OnPageError?.includes("{352} Add at least one suspected drug type(create a property with type 'Drug')") || proObj[0]?.OnPageError?.includes("Add at least one suspected drug type(create a property with type 'Drug').") ;
-                const isPropertyIdZeroError = proObj[0]?.OnPageError?.includes("{074} Need a property loss code of 5,7 for offense  23B");
-
-                const VehArr = proObj?.filter((item) => item?.PropertyType === 'V');
-                const PropArr = proObj?.filter((item) => item?.PropertyType !== 'V' && item?.PropertyType !== null);
-
-                if (PropArr?.length > 0 || VehArr?.length > 0 || isCrimeAgainstError || isSuspectedDrugType || isPropertyIdZeroError) {
-                    setPropErrorStatus(true);
+                const propertyErrorArray = propertyError?.Properties || [];
+                // Check if all items are null or undefined
+                if (propertyErrorArray.every(item => item === null || item === undefined)) {
+                    setPropertyValidateNibrsData([]);
+                    setPropErrorStatus(false);
 
                 } else {
-                    setPropErrorStatus(false);
-                }
+                    setPropertyValidateNibrsData(propertyError);
 
+                    const proObj = propertyError?.Properties || [];
+
+                    const firstError = proObj[0]?.OnPageError || "";
+
+                    const isCrimeAgainstError = firstError.includes("Property must be present.");
+                    const isSuspectedDrugType = firstError.includes("{352} Add at least one suspected drug type(create a property with type 'Drug')") || firstError.includes("Add at least one suspected drug type(create a property with type 'Drug').");
+                    const isPropertyIdZeroError = firstError.includes("{074} Need a property loss code of 5,7 for offense  23B");
+
+                    const VehArr = proObj.filter(item => item?.PropertyType === 'V');
+                    const PropArr = proObj.filter(item => item?.PropertyType && item?.PropertyType !== 'V');
+
+                    if (PropArr.length > 0 || VehArr.length > 0 || isCrimeAgainstError || isSuspectedDrugType || isPropertyIdZeroError) {
+                        setPropErrorStatus(true);
+
+                    } else {
+                        setPropErrorStatus(false);
+
+                    }
+                }
             } else {
                 setPropErrorStatus(false);
-
             }
+
 
         } else {
             setNibrsSideBarLoading(false);
