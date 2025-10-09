@@ -1347,7 +1347,7 @@ const QueueReportsModal = (props) => {
                   (reviewStatus === false || reviewStatus === 'false') && (
                     <>
                       <div className='col-md-2'>
-                        {
+                        {/* {
                           setApproverStatus(checkapproveStatus, reportApprovalStatus) === true ?
                             < div className="form-check">
                               <input
@@ -1367,10 +1367,8 @@ const QueueReportsModal = (props) => {
                             </div>
                             :
                             <></>
-                        }
-                        {
-
-                          (setApproverStatus(checkapproveStatus, reportApprovalStatus) === false && checkapproveStatus === "0") &&
+                        } */}
+                       
 
                           < div className="form-check">
                             <input
@@ -1390,7 +1388,7 @@ const QueueReportsModal = (props) => {
                           </div>
 
 
-                        }
+                       
                       </div>
                       <div className='col-md-2'>
                         <div className="form-check">
@@ -1411,11 +1409,33 @@ const QueueReportsModal = (props) => {
                         </div>
                       </div>
 
-                      <div className='col-md-2'>
+                      {/* <div className='col-md-2'>
 
                         {
                           ((!setApproverStatus(checkapproveStatus, reportApprovalStatus) && checkapproveStatus === "1") || checkWebWorkFlowStatus ||
                             (appRequiredCountCurrentStatus <= approverRequiredCount)) &&
+                          < div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              value="ApproveAndForward"
+                              name="flexRadioDefault"
+                              // id="Group"
+                              checked={value.IsApprovedForward}
+                              onChange={handleRadioChange}
+                            />
+                            <label className="form-check-label ">
+                              Approve and Forward
+                            </label>
+                          </div>
+                        }
+
+                      </div> */}
+                       <div className='col-md-2'>
+
+                        {
+                          (checkWebWorkFlowStatus &&
+                            (Number(appRequiredCountCurrentStatus) < Number(approverRequiredCount))) &&
                           < div className="form-check">
                             <input
                               className="form-check-input"
