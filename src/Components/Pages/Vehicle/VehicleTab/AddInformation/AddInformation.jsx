@@ -17,6 +17,7 @@ import { MasterVehicle_ID } from "../../../../../redux/actionTypes";
 import { RequiredFieldIncident } from "../../../Utility/Personnel/Validation";
 import { get_AgencyOfficer_Data, get_Narrative_Type_Drp_Data } from "../../../../../redux/actions/DropDownsData";
 import SelectBox from "../../../../Common/SelectBox";
+import SendPropertyConfirmModel from "../../../../Common/SendPropertyConfirmModel";
 
 const AddInformation = (props) => {
 
@@ -83,6 +84,7 @@ const AddInformation = (props) => {
   const [isSendButtonDisabled, setIsSendButtonDisabled] = useState(false);
   const [IsNonPropertyStatus, setIsNonPropertyStatus] = useState(false);
   const [SendToPropertyRoomStatus, setSendToPropertyRoomStatus] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [LastTask, setLastTask] = useState("");
 
   const [value, setValue] = useState({
@@ -274,6 +276,7 @@ const AddInformation = (props) => {
         toastifySuccess(message);
         if (taskToSend && value.OfficerID) {
           InSertBasicInfo(value?.CollectingOfficer, "OfficerID", "TaskList/Insert_TaskList", taskToSend);
+          setShowModal(false);
         }
         if (value?.IsSendToTaskList && IsNonPropertyStatus === false && value.IsNonPropertyRoom) {
           InSertBasicInfo(
@@ -282,6 +285,7 @@ const AddInformation = (props) => {
             "TaskList/Insert_TaskList",
 
           );
+          setShowModal(false);
         }
         if (selectedFiles?.length > 0 && fileUploadStatus) {
           uploadNonPropertyRoomDocuments(PropertyID, MasterPropertyID, loginPinID, selectedFiles);
@@ -1180,6 +1184,7 @@ const AddInformation = (props) => {
                             <button
                               type="button"
                               className="btn btn-sm mb-2 mt-1"
+                               data-toggle="modal" data-target="#myModal"
                               style={{
                                 backgroundColor: "#001f3f",
                                 color: "#fff",
@@ -1192,7 +1197,13 @@ const AddInformation = (props) => {
                                 //   taskToSend
                                 // );
                                 // setTaskToSend("");
-                                check_Validation_Error();
+                                if (value.IsSendToPropertyRoom || value.IsNonPropertyRoom && value.IsSendToTaskList) {
+                                  setShowModal(true);
+                                }
+                                else {
+                                  check_Validation_Error()
+                                }
+                                // check_Validation_Error();
                               }}
                               disabled={!value.OfficerID || IsNonPropertyStatus === true}
                             >
@@ -2176,8 +2187,15 @@ const AddInformation = (props) => {
                           type="button"
                           className="btn btn-sm mb-2 mt-1"
                           style={{ backgroundColor: "#001f3f", color: "#fff" }}
+                          data-toggle="modal" data-target="#myModal"
                           onClick={() => {
-                            check_Validation_Error();
+                            // check_Validation_Error();
+                            if (value.IsSendToPropertyRoom || value.IsNonPropertyRoom && value.IsSendToTaskList) {
+                              setShowModal(true);
+                            }
+                            else {
+                              check_Validation_Error()
+                            }
                             // InSertBasicInfo(
                             //   value?.CollectingOfficer,
                             //   "OfficerID",
@@ -2248,8 +2266,15 @@ const AddInformation = (props) => {
                   type="button"
                   disabled={!statesChangeStatus || taskToSend}
                   className="btn btn-md py-1 btn-success "
+                  data-toggle="modal" data-target="#myModal"
                   onClick={(e) => {
-                    check_Validation_Error();
+                    // check_Validation_Error();
+                    if (value.IsSendToPropertyRoom || value.IsNonPropertyRoom && value.IsSendToTaskList) {
+                      setShowModal(true);
+                    }
+                    else {
+                      check_Validation_Error()
+                    }
                   }}
                 >
                   Update
@@ -2262,8 +2287,15 @@ const AddInformation = (props) => {
                 type="button"
                 disabled={!statesChangeStatus || taskToSend}
                 className="btn btn-md py-1 btn-success "
+                data-toggle="modal" data-target="#myModal"
                 onClick={(e) => {
-                  check_Validation_Error();
+                  // check_Validation_Error();
+                  if (value.IsSendToPropertyRoom || value.IsNonPropertyRoom && value.IsSendToTaskList) {
+                    setShowModal(true);
+                  }
+                  else {
+                    check_Validation_Error()
+                  }
                 }}
               >
                 Update
@@ -2281,6 +2313,7 @@ const AddInformation = (props) => {
         taskToSend={taskToSend}
         value={value}
       />
+      <SendPropertyConfirmModel showModal={showModal} func={check_Validation_Error} value={value} setShowModal={setShowModal} />
     </>
   );
 };

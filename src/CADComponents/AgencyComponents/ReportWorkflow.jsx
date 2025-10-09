@@ -36,13 +36,13 @@ function ReportWorkflow() {
     const [showModal, setShowModal] = useState(false);
     const [isChange, setIsChange] = React.useState(false);
 
-    const [reportWorkflowState, setReportWorkflowState, handleReportWorkflowState, clearReportWorkflowState,
+    const [reportWorkflowState, setReportWorkflowState, clearReportWorkflowState,
     ] = useObjState({
     })
 
     const [value, setValue] = useState({
         'AgencyID': '', 'WorkflowName': '', 'ApprovalType': "IsMultipleLevel", 'AppliesReportTypeID': '', 'Notes': '', 'ReportApproverGroupID': '',
-        'ReportApproverRequired': '', 'ReportReviewerGroupID': '', 'IsMultipleLevel': true, 'IsSingleLevel': '', 'IsNoApproval': '', 'IsSelfApproved': '', 'CreatedByUserFK': '',
+        'ReportApproverRequired': '', 'ReportReviewerGroupID': '', 'IsSkipApproverAuthor' : '' , 'IsMultipleLevel': true, 'IsSingleLevel': '', 'IsNoApproval': '', 'IsSelfApproved': '', 'CreatedByUserFK': '',
     });
 
     const [errors, setErrors] = useState({
@@ -216,14 +216,15 @@ function ReportWorkflow() {
                 'WorkflowName': editval[0]?.WorkflowName, 'ReportApproverGroupID': Number(editval[0]?.ReportApproverGroupID),
                 'Notes': editval[0]?.Notes, 'ReportReviewerGroupID': Number(editval[0]?.ReportReviewerGroupID),
                 'ReportApproverRequired': editval[0]?.ReportApproverRequired, 'ReportApproverRequired': editval[0]?.ReportApproverRequired != null ? Number(editval[0].ReportApproverRequired) : '', 'AppliesReportTypeID': editval[0]?.AppliesReportTypeID, 'IsMultipleLevel': editval[0]?.IsMultipleLevel,
-                'IsSingleLevel': editval[0]?.IsSingleLevel, 'IsSelfApproved': editval[0]?.IsSelfApproved, 'IsNoApproval': editval[0]?.IsNoApproval, 'ModifiedByUserFK': loginPinID,
+                'IsSingleLevel': editval[0]?.IsSingleLevel, 'IsSkipApproverAuthor' :  editval[0]?.IsSkipApproverAuthor ,
+                 'IsSelfApproved': editval[0]?.IsSelfApproved, 'IsNoApproval': editval[0]?.IsNoApproval, 'ModifiedByUserFK': loginPinID,
             })
         }
     }, [editval])
 
     const reset = () => {
         setValue({
-            ...value, 'WorkflowName': '', 'AppliesReportTypeID': '', 'Notes': '', 'ReportApproverGroupID': '', 'ReportApproverRequired': '', 'ReportReviewerGroupID': '', 'IsMultipleLevel': true, 'IsSingleLevel': '', 'IsNoApproval': '', 'IsSelfApproved': '', 'AppliesReportTypeErrors': '', 'ReportApproverGroupIDErrors': ''
+            ...value, 'WorkflowName': '', 'AppliesReportTypeID': '', 'Notes': '', 'IsSkipApproverAuthor' : '' , 'ReportApproverGroupID': '', 'ReportApproverRequired': '', 'ReportReviewerGroupID': '', 'IsMultipleLevel': true, 'IsSingleLevel': '', 'IsNoApproval': '', 'IsSelfApproved': '', 'AppliesReportTypeErrors': '', 'ReportApproverGroupIDErrors': ''
         }); setErrors({ ...errors, 'WorkflowNameErrors': '', 'ReportApproverGroupIDErrors': '', 'AppliesReportTypeErrors': '', 'ReportReviewerGroupIDErrors': '' }); setStatus(false); setClickedRow(null)
     }
 
@@ -263,9 +264,9 @@ function ReportWorkflow() {
 
 
     const Add_Type = () => {
-        const { AgencyID, WorkflowName, AppliesReportTypeID, Notes, ReportApproverGroupID, ReportApproverRequired, ReportReviewerGroupID, IsMultipleLevel, IsSingleLevel, IsNoApproval, IsSelfApproved, CreatedByUserFK } = value;
+        const { AgencyID, WorkflowName, IsSkipApproverAuthor , AppliesReportTypeID, Notes, ReportApproverGroupID, ReportApproverRequired, ReportReviewerGroupID, IsMultipleLevel, IsSingleLevel, IsNoApproval, IsSelfApproved, CreatedByUserFK } = value;
         const Value = {
-            AgencyID: aId, WorkflowName: WorkflowName, AppliesReportTypeID: AppliesReportTypeID, Notes: Notes, ReportApproverGroupID: ReportApproverGroupID, ReportApproverRequired: ReportApproverRequired, ReportReviewerGroupID: ReportReviewerGroupID, IsMultipleLevel: IsMultipleLevel, IsSingleLevel: IsSingleLevel, IsNoApproval: IsNoApproval, IsSelfApproved: IsSelfApproved, CreatedByUserFK: loginPinID
+            AgencyID: aId, WorkflowName: WorkflowName, IsSkipApproverAuthor: IsSkipApproverAuthor , AppliesReportTypeID: AppliesReportTypeID, Notes: Notes, ReportApproverGroupID: ReportApproverGroupID, ReportApproverRequired: ReportApproverRequired, ReportReviewerGroupID: ReportReviewerGroupID, IsMultipleLevel: IsMultipleLevel, IsSingleLevel: IsSingleLevel, IsNoApproval: IsNoApproval, IsSelfApproved: IsSelfApproved, CreatedByUserFK: loginPinID
         };
         console.log(ReportWorkflowData);
         const result = ReportWorkflowData?.find(item => {
@@ -287,9 +288,9 @@ function ReportWorkflow() {
 
     }
     const update_Juvenile = () => {
-        const { AgencyID, ReportWorkFlowID, WorkflowName, AppliesReportTypeID, Notes, ReportApproverGroupID, ReportApproverRequired, ReportReviewerGroupID, IsMultipleLevel, IsSingleLevel, IsNoApproval, IsSelfApproved, CreatedByUserFK } = value;
+        const { AgencyID, ReportWorkFlowID, IsSkipApproverAuthor , WorkflowName, AppliesReportTypeID, Notes, ReportApproverGroupID, ReportApproverRequired, ReportReviewerGroupID, IsMultipleLevel, IsSingleLevel, IsNoApproval, IsSelfApproved, CreatedByUserFK } = value;
         const Value = {
-            AgencyID: aId, ReportWorkFlowID: reportWorkFlowID, WorkflowName: WorkflowName, AppliesReportTypeID: AppliesReportTypeID, Notes: Notes, ReportApproverGroupID: ReportApproverGroupID, ReportApproverRequired: ReportApproverRequired, ReportReviewerGroupID: ReportReviewerGroupID, IsMultipleLevel: IsMultipleLevel, IsSingleLevel: IsSingleLevel, IsNoApproval: IsNoApproval, IsSelfApproved: IsSelfApproved, ModifiedByUserFK: loginPinID
+            AgencyID: aId, ReportWorkFlowID: reportWorkFlowID, IsSkipApproverAuthor : IsSkipApproverAuthor , WorkflowName: WorkflowName, AppliesReportTypeID: AppliesReportTypeID, Notes: Notes, ReportApproverGroupID: ReportApproverGroupID, ReportApproverRequired: ReportApproverRequired, ReportReviewerGroupID: ReportReviewerGroupID, IsMultipleLevel: IsMultipleLevel, IsSingleLevel: IsSingleLevel, IsNoApproval: IsNoApproval, IsSelfApproved: IsSelfApproved, ModifiedByUserFK: loginPinID
         };
         const result = ReportWorkflowData?.find(item => {
             if (item?.ReportWorkFlowID != reportWorkFlowID) {
@@ -411,6 +412,31 @@ function ReportWorkflow() {
         setErrors({ ...errors, 'WorkflowNameErrors': '', 'WorkflowNameErrors': '' , 'AppliesReportTypeErrors' : '' , 'ReportApproverGroupIDErrors' : '' , 'ReportReviewerGroupIDErrors' : '' });
     };
 
+     const handleReportWorkflowState = (e) => {
+        let { name, value: inputValue } = e.target;
+        if (e) {
+            if (e.target.name === "IsSkipApproverAuthor") {
+                setValue({
+                    ...value,
+                    [e.target.name]: e.target.checked
+                })
+                // setChangesStatus(true)
+                // setStatesChangeStatus(true);
+
+            } else {
+                // setValue({ ...value, [e.target.name]: e.target.value.replace(/\D/g, '') })
+            }
+        } else {
+            // setChangesStatus(true)
+            // setStatesChangeStatus(true);
+
+            setValue({
+                ...value,
+                [e.target.name]: " "
+            })
+        }
+    };
+
     return (
         <div className="col-12 mt-3 mb-1 cad-css">
             <div className="utilities-tab-content-table-container mb-1">
@@ -484,7 +510,10 @@ function ReportWorkflow() {
                                     </small>
                                 </div>
                             </div>
-                            <div className="col-12 d-flex align-items-center mb-2">
+                            {
+                                !value.IsSkipApproverAuthor ?
+                                <>
+                                 <div className="col-12 d-flex align-items-center mb-2">
                                 <div className="col-7 offset-1 d-flex gap-2 align-content-center">
                                     <div className="form-check mr-3">
                                         <input
@@ -576,12 +605,15 @@ function ReportWorkflow() {
                                     />
                                 </div>
                             </div>
+                                </> : <></>
+                            }
+                           
                             <div className="col-4 d-flex align-items-center offset-1 mt-1">
                                 <div className="form-check">
-                                    <input className="form-check-input" type="checkbox" id="skipIfApproverIsAuthor"
-                                        checked={value.skipIfApproverIsAuthor} disabled={value.IsNoApproval || value.IsSelfApproved} onChange={(e) => handleReportWorkflowState("skipIfApproverIsAuthor", e.target.checked)}
+                                    <input className="form-check-input" type="checkbox" id="IsSkipApproverAuthor"
+                                       name='IsSkipApproverAuthor'  checked={value.IsSkipApproverAuthor} disabled={value.IsNoApproval || value.IsSelfApproved} onChange={handleReportWorkflowState}
                                     />
-                                    <label className="form-check-label" htmlFor="skipIfApproverIsAuthor">  Skip if the approver is the author </label>
+                                    <label className="form-check-label" htmlFor="IsSkipApproverAuthor">  Skip if the approver is the author </label>
                                 </div>
                                 <div className='ml-2'><span className='hovertext' data-hover="If the author belongs to the approver’s group level, they cannot approve their own report. 
     The system skips the author, and another officer from the same level will take action" ><i className='fa fa-exclamation-circle'></i></span></div>
