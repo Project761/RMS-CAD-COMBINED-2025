@@ -667,7 +667,7 @@ const MasterIncident = ({ comments }) => {
                                             Print Confidential Report
                                         </label>
                                     </div>
-                                    <div className="row align-items-center" style={{rowGap:"8px"}}>
+                                    <div className="row align-items-center" style={{ rowGap: "8px" }}>
                                         <div className="col-3 col-md-3 col-lg-2 ">
                                             <label htmlFor="" className='new-label mb-0'>Incident # From</label>
                                         </div>
@@ -920,7 +920,7 @@ const MasterIncident = ({ comments }) => {
 
                             <hr />
                             <div className="container mt-1"  >
-                                <div className="row printable-area p-2" ref={componentRef} style={{ border: '1px solid #80808085', marginBottom: '100px' }}>
+                                <div className="row printable-area" ref={componentRef} style={{ border: '1px solid #80808085', marginBottom: '100px' }}>
                                     <>
                                         <ReportAddress {...{ multiImage, masterReportData }} />
                                     </>
@@ -931,7 +931,7 @@ const MasterIncident = ({ comments }) => {
                                         <hr style={{ border: '1px solid rgb(3, 105, 184)' }} />
                                         <h5 className="text-center text-white text-bold bg-green  py-1" >Master Incident Report</h5>
                                     </div>
-                                    <div className="col-12 bb">
+                                    <div className="col-12 ">
                                         <fieldset>
                                             <legend>Search Criteria</legend>
                                             <div className="row">
@@ -1128,11 +1128,11 @@ const MasterIncident = ({ comments }) => {
                                     {
                                         masterReportData?.Incident?.map((obj) =>
                                             <>
-                                                <div className="container mt-3" style={{ pageBreakAfter: 'always', }}>
+                                                <div className="container mt-3 px-2" style={{ pageBreakAfter: 'always', }}>
                                                     <h5 className=" text-white text-bold bg-green py-1 px-3"> Incident Number:- {obj.IncidentNumber}</h5>
                                                     {/* incident */}
                                                     <div className="col-12  mt-2" style={{ border: '1px solid #80808085', }}>
-                                                        <div className="container bb">
+                                                        <div className="container">
                                                             <div className="col-12 mb-2">
                                                                 <h6 className=' text-dark mt-2'>Incident Information</h6>
                                                                 <div className="row px-3" >
@@ -1265,12 +1265,12 @@ const MasterIncident = ({ comments }) => {
                                                             {
                                                                 JSON.parse(obj?.PINActivity)?.length > 0 ?
                                                                     <>
-                                                                        <div className="container bb">
+                                                                        <div className="container">
                                                                             <h6 className=' text-dark mt-2'>PIN Activity</h6>
                                                                             <div className="col-12 ">
                                                                                 {
                                                                                     JSON.parse(obj?.PINActivity)?.map((item, key) => (
-                                                                                        <div className="row bb px-3 ">
+                                                                                        <div className="row  px-3 ">
                                                                                             <div className="col-12 mb-2" >
                                                                                                 <div className="row ">
                                                                                                     <div className="col-4 col-md-4 col-lg-4 mt-2 pt-1 ">
@@ -1349,12 +1349,12 @@ const MasterIncident = ({ comments }) => {
                                                             {
                                                                 JSON.parse(obj?.IncidentSecurity)?.length > 0 ?
                                                                     <>
-                                                                        <div className="container bb">
+                                                                        <div className="container ">
                                                                             <h6 className=' text-dark mt-2'>Types Of Security</h6>
                                                                             <div className="col-12 ">
                                                                                 {
                                                                                     JSON.parse(obj?.IncidentSecurity)?.map((item, key) => (
-                                                                                        <div className="row bb px-3 ">
+                                                                                        <div className="row  px-3 ">
                                                                                             <div className="col-12 mb-2" >
                                                                                                 <div className="row ">
                                                                                                     <div className="col-12 col-md-12 col-lg-12 mt-2 pt-1 ">
@@ -1397,12 +1397,12 @@ const MasterIncident = ({ comments }) => {
                                                             {
                                                                 JSON.parse(obj?.Dispatch)?.length > 0 ?
                                                                     <>
-                                                                        <div className="container bb">
+                                                                        <div className="container">
                                                                             <h6 className=' text-dark mt-2'>Dispatch Activity</h6>
                                                                             <div className="col-12 ">
                                                                                 {
                                                                                     JSON.parse(obj?.Dispatch)?.map((item, key) => (
-                                                                                        <div className="row bb px-3 ">
+                                                                                        <div className="row  px-3 ">
                                                                                             <div className="col-12 mb-2" >
                                                                                                 <div className="row ">
                                                                                                     <div className="col-6 col-md-6 col-lg-6 mt-2 pt-1 ">
@@ -1471,12 +1471,12 @@ const MasterIncident = ({ comments }) => {
                                                             {
                                                                 JSON.parse(obj?.Narrative)?.length > 0 ?
                                                                     <>
-                                                                        <div className="container bb">
+                                                                        <div className="container">
                                                                             <h6 className=' text-dark mt-2'>Report</h6>
                                                                             <div className="col-12 ">
                                                                                 {
                                                                                     JSON.parse(obj?.Narrative)?.map((item, key) => (
-                                                                                        <div className="row bb px-3 ">
+                                                                                        <div className="row  px-3 ">
                                                                                             {/* <div className="col-2" >
                                                                                             <div className="col-10 col-md-10 col-lg-10 mt-4 ">
                                                                                                 <div className=" text-field">
@@ -1524,10 +1524,8 @@ const MasterIncident = ({ comments }) => {
                                                                                                                     border: '1px solid #ccc',
                                                                                                                     borderRadius: '4px',
                                                                                                                     padding: '10px',
-                                                                                                                    // minHeight: '100px',
                                                                                                                     backgroundColor: '#f9f9f9',
-                                                                                                                    // overflowY: 'auto', // Allows scrolling if content overflows
-                                                                                                                    lineBreak: 'anywhere'
+                                                                                                                    // lineBreak: 'anywhere'
                                                                                                                 }}
                                                                                                                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item?.CommentsDoc) }}
                                                                                                             />
@@ -1552,13 +1550,13 @@ const MasterIncident = ({ comments }) => {
                                                             {
                                                                 JSON.parse(obj?.Offence)?.length > 0 ?
                                                                     <>
-                                                                        <div className="container bb">
+                                                                        <div className="container">
                                                                             <h6 className=' text-dark mt-2'>Offense Information</h6>
                                                                             <div className="col-12">
                                                                                 {
                                                                                     JSON.parse(obj?.Offence)?.map((item, key) => (
-                                                                                        <div className="row  mb-2 px-3 bb" >
-                                                                                            <div className="col-5 col-md-5 col-lg-5 mt-1">
+                                                                                        <div className="row row-print mb-2 px-3" >
+                                                                                            <div className="col-lg-6 print-col-6 mt-1">
                                                                                                 <div className='text-field'>
                                                                                                     <input type="text" className='readonlyColor' name='DocFileName' required readOnly
                                                                                                         value={item.FBIID_Description}
@@ -1566,8 +1564,8 @@ const MasterIncident = ({ comments }) => {
                                                                                                     <label htmlFor="" className='new-summary'>TIBRS Code</label>
                                                                                                 </div>
                                                                                             </div>
-                                                                                            {/* <div className="col-2"></div> */}
-                                                                                            <div className="col-5 col-md-5 col-lg-7 mt-1">
+
+                                                                                            <div className="col-lg-6 print-col-6 mt-1">
                                                                                                 <div className='text-field'>
                                                                                                     <input type="text" className='readonlyColor' name='DocFileName' required readOnly
                                                                                                         value={item.OffenseName_Description}
@@ -1575,7 +1573,7 @@ const MasterIncident = ({ comments }) => {
                                                                                                     <label htmlFor="" className='new-summary'>Offense Code/Name</label>
                                                                                                 </div>
                                                                                             </div>
-                                                                                            <div className="col-5 col-md-5 col-lg-5 mt-4">
+                                                                                            <div className="col-lg-6 print-col-6 mt-4">
                                                                                                 <div className='text-field'>
                                                                                                     <input type="text" className='readonlyColor' name='DocFileName' required readOnly
                                                                                                         value={item.PrimaryLocation}
@@ -1583,8 +1581,8 @@ const MasterIncident = ({ comments }) => {
                                                                                                     <label htmlFor="" className='new-summary'>Primary Location</label>
                                                                                                 </div>
                                                                                             </div>
-                                                                                            <div className="col-2"></div>
-                                                                                            <div className="col-5 col-md-5 col-lg-5 mt-4 ">
+
+                                                                                            <div className="col-lg-6 print-col-6 mt-4 ">
                                                                                                 <div className='text-field'>
                                                                                                     <input type="text" className='readonlyColor' name='DocFileName' required readOnly
                                                                                                         value={item.SecondaryLocation}
@@ -1592,24 +1590,26 @@ const MasterIncident = ({ comments }) => {
                                                                                                     <label htmlFor="" className='new-summary'>Secondary Location</label>
                                                                                                 </div>
                                                                                             </div>
-                                                                                            <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
-                                                                                                {
-                                                                                                    item.AttemptComplete == "A" ?
-                                                                                                        <div className="form-check  ">
-                                                                                                            <input className="form-check-input mt-1" type="checkbox" checked={true} name="AttemptComplete" id="flexRadioDefault1" />
-                                                                                                            <label className="form-check-label" htmlFor="flexRadioDefault2">
-                                                                                                                Attempted
-                                                                                                            </label>
-                                                                                                        </div>
-                                                                                                        :
-                                                                                                        <div className="form-check  ">
-                                                                                                            <input className="form-check-input mt-1" type="checkbox" value={false} checked={false} onChange={(e) => { e.preventDefault(); }} name="AttemptComplete" id="flexRadioDefault1" />
-                                                                                                            <label className="form-check-label" htmlFor="flexRadioDefault2">
-                                                                                                                Attempted
-                                                                                                            </label>
-                                                                                                        </div>
-                                                                                                }
-                                                                                                {/* <div className="form-check ">
+                                                                                            <div className='col-lg-12'>
+                                                                                                <div className='row'>
+                                                                                                    <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
+                                                                                                        {
+                                                                                                            item.AttemptComplete == "A" ?
+                                                                                                                <div className="form-check  ">
+                                                                                                                    <input className="form-check-input mt-1" type="checkbox" checked={true} name="AttemptComplete" id="flexRadioDefault1" />
+                                                                                                                    <label className="form-check-label" htmlFor="flexRadioDefault2">
+                                                                                                                        Attempted
+                                                                                                                    </label>
+                                                                                                                </div>
+                                                                                                                :
+                                                                                                                <div className="form-check  ">
+                                                                                                                    <input className="form-check-input mt-1" type="checkbox" value={false} checked={false} onChange={(e) => { e.preventDefault(); }} name="AttemptComplete" id="flexRadioDefault1" />
+                                                                                                                    <label className="form-check-label" htmlFor="flexRadioDefault2">
+                                                                                                                        Attempted
+                                                                                                                    </label>
+                                                                                                                </div>
+                                                                                                        }
+                                                                                                        {/* <div className="form-check ">
                                                                                                 {
                                                                                                     item.AttemptComplete === "A" ?
                                                                                                         <input className="form-check-input mt-1" type="radio" value="A" checked={item.AttemptComplete === "A"} name="AttemptComplete" id="flexRadioDefault1" />
@@ -1621,25 +1621,25 @@ const MasterIncident = ({ comments }) => {
                                                                                                     Attempted
                                                                                                 </label>
                                                                                             </div> */}
-                                                                                            </div>
-                                                                                            <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
-                                                                                                {
-                                                                                                    item.AttemptComplete === "C" ?
-                                                                                                        <div className="form-check  ">
-                                                                                                            <input className="form-check-input mt-1" type="checkbox" checked={true} name="AttemptComplete" id="flexRadioDefault2" />
-                                                                                                            <label className="form-check-label" htmlFor="flexRadioDefault2">
-                                                                                                                Completed
-                                                                                                            </label>
-                                                                                                        </div>
-                                                                                                        :
-                                                                                                        <div className="form-check  ">
-                                                                                                            <input className="form-check-input mt-1" type="checkbox" value={false} checked={false} onChange={(e) => { e.preventDefault(); }} name="AttemptComplete" id="flexRadioDefault2" />
-                                                                                                            <label className="form-check-label" htmlFor="flexRadioDefault2">
-                                                                                                                Completed
-                                                                                                            </label>
-                                                                                                        </div>
-                                                                                                }
-                                                                                                {/* <div className="form-check  ">
+                                                                                                    </div>
+                                                                                                    <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
+                                                                                                        {
+                                                                                                            item.AttemptComplete === "C" ?
+                                                                                                                <div className="form-check  ">
+                                                                                                                    <input className="form-check-input mt-1" type="checkbox" checked={true} name="AttemptComplete" id="flexRadioDefault2" />
+                                                                                                                    <label className="form-check-label" htmlFor="flexRadioDefault2">
+                                                                                                                        Completed
+                                                                                                                    </label>
+                                                                                                                </div>
+                                                                                                                :
+                                                                                                                <div className="form-check  ">
+                                                                                                                    <input className="form-check-input mt-1" type="checkbox" value={false} checked={false} onChange={(e) => { e.preventDefault(); }} name="AttemptComplete" id="flexRadioDefault2" />
+                                                                                                                    <label className="form-check-label" htmlFor="flexRadioDefault2">
+                                                                                                                        Completed
+                                                                                                                    </label>
+                                                                                                                </div>
+                                                                                                        }
+                                                                                                        {/* <div className="form-check  ">
                                                                                                 {
                                                                                                     item.AttemptComplete === "C" ?
                                                                                                         <input className="form-check-input mt-1" type="radio" value="C" checked={item.AttemptComplete === "C"} name="AttemptComplete" id="flexRadioDefault2" />
@@ -1651,6 +1651,8 @@ const MasterIncident = ({ comments }) => {
                                                                                                     Completed
                                                                                                 </label>
                                                                                             </div> */}
+                                                                                                    </div>
+                                                                                                </div>
                                                                                             </div>
                                                                                         </div>
                                                                                     ))
@@ -1663,7 +1665,7 @@ const MasterIncident = ({ comments }) => {
                                                             }
                                                         </div>
                                                         {/* name */}
-                                                        <div className="col-12  " >
+                                                        <div className="col-12 " >
                                                             {
                                                                 JSON.parse(obj?.Name)?.length > 0 ?
                                                                     <>
@@ -1677,7 +1679,7 @@ const MasterIncident = ({ comments }) => {
                                                                                             // (JSON.parse(obj?.Name) || [])
                                                                                             // .filter(item => item.NameType_Description !== 'Business')
                                                                                             // .map((item, key) => {
-                                                                                            <div className="row bb">
+                                                                                            <div className="row">
                                                                                                 <div className="col-2" >
                                                                                                     <div className="col-10 col-md-10 col-lg-10 mt-4 ">
                                                                                                         <div className=" text-field">
@@ -1957,7 +1959,7 @@ const MasterIncident = ({ comments }) => {
                                                                                             // (JSON.parse(obj?.Name) || [])
                                                                                             // .filter(item => item.NameType_Description !== 'Business')
                                                                                             // .map((item, key) => {
-                                                                                            <div className="row bb ">
+                                                                                            <div className="row">
                                                                                                 <h6 className=' text-dark mt-2 col-12'>Name Information Business</h6>
                                                                                                 <div className="col-2" >
                                                                                                     <div className="col-10 col-md-10 col-lg-10 mt-4 ">
@@ -2113,7 +2115,7 @@ const MasterIncident = ({ comments }) => {
                                                                             <div className="col-12 ">
                                                                                 {
                                                                                     JSON.parse(obj?.Property)?.map((item, key) => (
-                                                                                        <div className="row  bb ">
+                                                                                        <div className="row ">
                                                                                             <div className="col-2" >
                                                                                                 <div className="col-10 col-md-10 col-lg-10 mt-4 ">
                                                                                                     <div className=" text-field">
@@ -2284,7 +2286,7 @@ const MasterIncident = ({ comments }) => {
                                                                                 {
                                                                                     JSON.parse(obj?.PropertyVehicle
                                                                                     )?.map((item, key) => (
-                                                                                        <div className="row bb px-3">
+                                                                                        <div className="row px-3">
                                                                                             <div className="col-2" >
                                                                                                 <div className="col-10 col-md-10 col-lg-10 mt-4 ">
                                                                                                     <div className=" text-field">
@@ -2527,13 +2529,13 @@ const MasterIncident = ({ comments }) => {
                                                             {
                                                                 JSON.parse(obj?.Arrest)?.length > 0 ?
                                                                     <>
-                                                                        <div className="container bb">
+                                                                        <div className="container">
                                                                             <h6 className=' text-dark mt-2'>Arrest Information</h6>
 
                                                                             <div className="col-12 mb-2">
                                                                                 {
                                                                                     JSON.parse(obj?.Arrest)?.map((item, key) => (
-                                                                                        <div className="row bb px-3">
+                                                                                        <div className="row px-3">
                                                                                             <div className="col-2" >
                                                                                                 <div className="col-12 col-md-12 col-lg-12 mt-4 ">
                                                                                                     <div className=" text-field">
