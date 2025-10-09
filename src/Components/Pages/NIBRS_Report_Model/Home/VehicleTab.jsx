@@ -840,7 +840,7 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                             const row = VehArr[0];
                             // get selected By Default
                             isDefaultSelected && setEditVal(row);
-
+  
                         } else {
                             setnibrsValidateData([]); setclickNibLoder(false);
                         }
