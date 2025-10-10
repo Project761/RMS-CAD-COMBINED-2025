@@ -294,7 +294,7 @@ const CurrentIncMasterReport = (props) => {
                                                                                         <input type="text" className='readonlyColor' name='DocFileName' required readOnly
                                                                                             value={obj.isPoliceForceApplied}
                                                                                         />
-                                                                                        <label htmlFor="" className='new-summary'>Police Force Applied</label>
+                                                                                        <label htmlFor="" className='new-summary'>Use of Force Applied</label>
                                                                                     </div>
                                                                                 </div>
 
@@ -303,7 +303,7 @@ const CurrentIncMasterReport = (props) => {
                                                                                         <input type="text" className='readonlyColor' name='DocFileName' required readOnly
                                                                                             value={obj.OfficerName}
                                                                                         />
-                                                                                        <label htmlFor="" className='new-summary'>Officer Name</label>
+                                                                                        <label htmlFor="" className='new-summary'>Primary Officer</label>
                                                                                     </div>
                                                                                 </div>
 
@@ -313,7 +313,7 @@ const CurrentIncMasterReport = (props) => {
                                                                                         <input type="text" className='readonlyColor' name='DocFileName' required readOnly
                                                                                             value={obj.NIBRSStatus}
                                                                                         />
-                                                                                        <label htmlFor="" className='new-summary'>NIBRS Status</label>
+                                                                                        <label htmlFor="" className='new-summary'>Case Status</label>
                                                                                     </div>
                                                                                 </div>
 

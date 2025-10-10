@@ -1347,8 +1347,9 @@ const QueueReportsModal = (props) => {
                   (reviewStatus === false || reviewStatus === 'false') && (
                     <>
                       <div className='col-md-2'>
-                        {/* {
-                          setApproverStatus(checkapproveStatus, reportApprovalStatus) === true ?
+                        {
+                          (!checkWebWorkFlowStatus &&
+                            !(Number(appRequiredCountCurrentStatus) < Number(approverRequiredCount))) ?
                             < div className="form-check">
                               <input
                                 className="form-check-input"
@@ -1367,10 +1368,10 @@ const QueueReportsModal = (props) => {
                             </div>
                             :
                             <></>
-                        } */}
+                        }
                        
 
-                          < div className="form-check">
+                          {/* < div className="form-check">
                             <input
                               className="form-check-input"
                               type="radio"
@@ -1385,7 +1386,7 @@ const QueueReportsModal = (props) => {
                             <label className="form-check-label ">
                               Approve
                             </label>
-                          </div>
+                          </div> */}
 
 
                        

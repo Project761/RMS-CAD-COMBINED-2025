@@ -158,7 +158,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
 
   useEffect(() => {
     if (loginAgencyID) {
-      const defaultDate = datezone ? new Date(datezone) : null;
+      const defaultDate = incReportedDate ? getShowingDateText(incReportedDate) : null;
       setValue({
         ...value,
         'OffenseDateTime': defaultDate
@@ -194,6 +194,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
     const AttemptRequiredErr = RequiredFieldIncident(value?.AttemptComplete);
     const CommentsErr = nibrsCode === "11B" && loginAgencyState === "TX" ? RequiredFieldIncident(value?.Comments) : "true";
     const MethodEntryError = nibrsCode === '220' ? RequiredFieldIncident(value?.CrimeMethodOfEntryID) : 'true'
+    const OffenseDttmError = nibrsCode === '220' ? RequiredFieldIncident(value?.OffenseDateTime) : 'true'
     // const CargoTheftErrorErr = carboTheft ? RequiredFieldIncidentCarboTheft(value.IsCargoTheftInvolved) : "true";
     // const CargoTheftErrorErr = RequiredFieldIncident(value.);
     const CargoTheftErrorErr = !nibrsCode === "220" || nibrsCode === "210" || nibrsCode === "120" || nibrsCode === "23D" || nibrsCode === "23F" || nibrsCode === "23H" || nibrsCode === "240" || nibrsCode === "26A" || nibrsCode === "26A" || nibrsCode === "23D" || nibrsCode === "26C" || nibrsCode === "26E" || nibrsCode === "26F" || nibrsCode === "26G" || nibrsCode === "270" || nibrsCode === "510" ? RequiredFieldIncident(value?.IsCargoTheftInvolved) : "true";
@@ -210,22 +211,23 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
         ["AttemptRequiredError"]: AttemptRequiredErr || pre["AttemptRequiredError"],
         ["CommentsError"]: CommentsErr || pre["CommentsError"],
         ["CargoTheftError"]: CargoTheftErrorErr || pre["CargoTheftError"],
+        ["OffenseDttmError"]: OffenseDttmError || pre["OffenseDttmError"],
       };
     });
   };
 
   // Check All Field Format is True Then Submit
-  const { ChargeCodeIDError, NibrsIdError, PremisesEnteredError, AttemptRequiredError, PrimaryLocationError, CommentsError, MethodEntryError, CargoTheftError } = errors;
+  const { ChargeCodeIDError, NibrsIdError, PremisesEnteredError, AttemptRequiredError, OffenseDttmError, PrimaryLocationError, CommentsError, MethodEntryError, CargoTheftError } = errors;
 
   useEffect(() => {
-    if (ChargeCodeIDError === "true" && NibrsIdError === "true" && PremisesEnteredError === "true" && AttemptRequiredError === "true" && PrimaryLocationError === "true" && CommentsError === "true" && MethodEntryError === 'true' && CargoTheftError === 'true') {
+    if (ChargeCodeIDError === "true" && NibrsIdError === "true" && PremisesEnteredError === "true" && OffenseDttmError === "true" && AttemptRequiredError === "true" && PrimaryLocationError === "true" && CommentsError === "true" && MethodEntryError === 'true' && CargoTheftError === 'true') {
       if (OffId && (OffSta === true || OffSta === "true")) {
         Update_Offence();
       } else {
         Add_Offense();
       }
     }
-  }, [ChargeCodeIDError, NibrsIdError, PremisesEnteredError, PrimaryLocationError, AttemptRequiredError, CommentsError, MethodEntryError, CargoTheftError]);
+  }, [ChargeCodeIDError, NibrsIdError, PremisesEnteredError, PrimaryLocationError, OffenseDttmError, AttemptRequiredError, CommentsError, MethodEntryError, CargoTheftError]);
 
   const getScreenPermision = (LoginAgencyID, PinID) => {
     ScreenPermision("O036", LoginAgencyID, PinID).then((res) => {
@@ -395,7 +397,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
 
   const Reset = () => {
     setValue({
-      ...value, ChargeCodeID: "",  LawTitleId: "", OffenseCodeId: "", NIBRSCodeId: "",  'OffenseDateTime':  incReportedDate ? getShowingDateText(incReportedDate) : getShowingMonthDateYear(new Date()), OffenderLeftSceneId: "", CategoryId: "", PrimaryLocationId: "", SecondaryLocationId: "", Fine: "", CourtCost: "", FTAAmt: "", LitigationTax: "", DamageProperty: "", OfRoomsInvolved: "", PremisesEntered: "", PropertyAbandoned: "", IsForceused: "", AttemptComplete: "", FTADate: "", CrimeID: "", IsDomesticViolence: "", IsGangInfo: "", CrimeMethodOfEntryID: "", Comments: "", IsCargoTheftInvolved: '',
+      ...value, ChargeCodeID: "", LawTitleId: "", OffenseCodeId: "", NIBRSCodeId: "", 'OffenseDateTime': incReportedDate ? getShowingDateText(incReportedDate) : getShowingMonthDateYear(new Date()), OffenderLeftSceneId: "", CategoryId: "", PrimaryLocationId: "", SecondaryLocationId: "", Fine: "", CourtCost: "", FTAAmt: "", LitigationTax: "", DamageProperty: "", OfRoomsInvolved: "", PremisesEntered: "", PropertyAbandoned: "", IsForceused: "", AttemptComplete: "", FTADate: "", CrimeID: "", IsDomesticViolence: "", IsGangInfo: "", CrimeMethodOfEntryID: "", Comments: "", IsCargoTheftInvolved: '',
     });
     setErrors({
       ...errors, ChargeCodeIDError: "", NibrsIdError: "", PremisesEnteredError: "", PrimaryLocationError: "", AttemptRequiredError: "", CommentsError: "",
@@ -1682,7 +1684,9 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
 
           <div className="col-3 col-md-3 col-lg-2 ">
             <label htmlFor="" className="new-label px-0 mb-0">
-              Offense  Date/Time
+              Offense  Date/Time{errors.OffenseDttmError !== 'true' ? (
+                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.OffenseDttmError}</p>
+              ) : null}
             </label>
           </div>
           <div className="custom-col-20">
@@ -1703,7 +1707,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
 
               isClearable={false}
               onChange={(date) => {
-                // !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
+                !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
                 // setIncidentReportedDate(date ? getShowingMonthDateYear(date) : null)
                 if (date > new Date(datezone)) {
                   date = new Date(datezone);
@@ -1719,7 +1723,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
               selected={value?.OffenseDateTime && new Date(value?.OffenseDateTime)}
 
               // disabled={nibrsSubmittedPropertyMain === 1}
-              // className={nibrsSubmittedPropertyMain === 1 ? 'LockFildsColour' : 'requiredColor'}
+              className={'requiredColor'}
               autoComplete="Off"
               placeholderText={'Select...'}
               timeInputLabel
