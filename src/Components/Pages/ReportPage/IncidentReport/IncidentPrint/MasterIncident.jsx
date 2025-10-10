@@ -919,514 +919,547 @@ const MasterIncident = ({ comments }) => {
                             </div>
 
                             <hr />
-                            <div className="container mt-1"  >
-                                <div className="row printable-area" ref={componentRef} style={{ border: '1px solid #80808085', marginBottom: '100px' }}>
-                                    <>
-                                        <ReportAddress {...{ multiImage, masterReportData }} />
-                                    </>
-                                    {showWatermark && (
-                                        <div className="watermark-print">Confidential</div>
-                                    )}
-                                    <div className="col-12">
-                                        <hr style={{ border: '1px solid rgb(3, 105, 184)' }} />
-                                        <h5 className="text-center text-white text-bold bg-green  py-1" >Master Incident Report</h5>
-                                    </div>
-                                    <div className="col-12 ">
-                                        <fieldset>
-                                            <legend>Search Criteria</legend>
-                                            <div className="row">
-                                                {showFields.showIncidentNumber && (
-                                                    <>
-                                                        <div className="col-12 col-sm-4 col-md-2 mt-2">
-                                                            <label className="new-label">Incident Number</label>
-                                                        </div>
-                                                        <div className="col-12 col-sm-8 col-md-3 text-field mt-1">
-                                                            <input
-                                                                type="text"
-                                                                className="readonlyColor form-control"
-                                                                value={searchValue.IncidentNumber || ""}
-                                                                readOnly
-                                                            />
-                                                        </div>
-                                                    </>
-                                                )}
 
-                                                {showFields.showIncidentNumberTo && (
-                                                    <>
-                                                        <div className="col-12 col-sm-4 col-md-4 mt-2">
-                                                            <label className="new-label">Incident Number To</label>
-                                                        </div>
-                                                        <div className="col-12 col-sm-8 col-md-3 text-field mt-1">
-                                                            <input
-                                                                type="text"
-                                                                className="readonlyColor form-control"
-                                                                value={searchValue.IncidentNumberTo || ""}
-                                                                readOnly
-                                                            />
-                                                        </div>
-                                                    </>
-                                                )}
+                            <div className="container mt-1 position-relative"  >
+                                <div className="print-page">
+                                    <div className="row printable-area" ref={componentRef} style={{ border: '1px solid #80808085', marginBottom: '100px' }}>
+                                        <>
+                                            <ReportAddress {...{ multiImage, masterReportData }} />
+                                        </>
+                                        {showWatermark && (
+                                            <div className="watermark-print">Confidential</div>
+                                        )}
 
-                                                {showFields.showReportedDateFrom && (
-                                                    <>
-                                                        <div className="col-12 col-sm-4 col-md-2 mt-2">
-                                                            <label className="new-label">Reported Date From</label>
-                                                        </div>
-                                                        <div className="col-12 col-sm-8 col-md-3 text-field mt-1">
-                                                            <input
-                                                                type="text"
-                                                                className="readonlyColor form-control"
-                                                                value={
-                                                                    searchValue.ReportedDate
-                                                                        ? getShowingWithOutTime(searchValue.ReportedDate)
-                                                                        : ""
-                                                                }
-                                                                readOnly
-                                                            />
-                                                        </div>
-                                                    </>
-                                                )}
 
-                                                {showFields.showReportedDateTo && (
-                                                    <>
-                                                        <div className="col-12 col-sm-4 col-md-4 mt-2">
-                                                            <label className="new-label">Reported Date To</label>
-                                                        </div>
-                                                        <div className="col-12 col-sm-8 col-md-3 text-field mt-1">
-                                                            <input
-                                                                type="text"
-                                                                className="readonlyColor form-control"
-                                                                value={
-                                                                    searchValue.ReportedDateTo
-                                                                        ? getShowingWithOutTime(searchValue.ReportedDateTo)
-                                                                        : ""
-                                                                }
-                                                                readOnly
-                                                            />
-                                                        </div>
-                                                    </>
-                                                )}
+                                        <div className="col-12">
+                                            <hr style={{ border: '1px solid rgb(3, 105, 184)' }} />
+                                            <h5 className="text-center text-white text-bold bg-green  py-1" >Master Incident Report</h5>
+                                        </div>
+                                        <div className="col-12  ">
+                                            <fieldset>
+                                                <legend>Search Criteria</legend>
+                                                <div className="row">
+                                                    {showFields.showIncidentNumber && (
+                                                        <>
+                                                            <div className="col-12 col-sm-4 col-md-2 mt-2">
+                                                                <label className="new-label">Incident Number</label>
+                                                            </div>
+                                                            <div className="col-12 col-sm-8 col-md-3 text-field mt-1">
+                                                                <input
+                                                                    type="text"
+                                                                    className="readonlyColor form-control"
+                                                                    value={searchValue.IncidentNumber || ""}
+                                                                    readOnly
+                                                                />
+                                                            </div>
+                                                        </>
+                                                    )}
 
-                                                {showFields.showOccurredFrom && (
-                                                    <>
-                                                        <div className="col-12 col-sm-4 col-md-2 mt-2">
-                                                            <label className="new-label">Occurred Date From</label>
-                                                        </div>
-                                                        <div className="col-12 col-sm-8 col-md-3 text-field mt-1">
-                                                            <input
-                                                                type="text"
-                                                                className="readonlyColor form-control"
-                                                                value={
-                                                                    searchValue.OccurredFrom
-                                                                        ? getShowingWithOutTime(searchValue.OccurredFrom)
-                                                                        : ""
-                                                                }
-                                                                readOnly
-                                                            />
-                                                        </div>
-                                                    </>
-                                                )}
+                                                    {showFields.showIncidentNumberTo && (
+                                                        <>
+                                                            <div className="col-12 col-sm-4 col-md-4 mt-2">
+                                                                <label className="new-label">Incident Number To</label>
+                                                            </div>
+                                                            <div className="col-12 col-sm-8 col-md-3 text-field mt-1">
+                                                                <input
+                                                                    type="text"
+                                                                    className="readonlyColor form-control"
+                                                                    value={searchValue.IncidentNumberTo || ""}
+                                                                    readOnly
+                                                                />
+                                                            </div>
+                                                        </>
+                                                    )}
 
-                                                {showFields.showOccurredTo && (
-                                                    <>
-                                                        <div className="col-12 col-sm-4 col-md-4 mt-2">
-                                                            <label className="new-label">Occurred Date To</label>
-                                                        </div>
-                                                        <div className="col-12 col-sm-8 col-md-3 text-field mt-1">
-                                                            <input
-                                                                type="text"
-                                                                className="readonlyColor form-control"
-                                                                value={
-                                                                    searchValue.OccurredTo
-                                                                        ? getShowingWithOutTime(searchValue.OccurredTo)
-                                                                        : ""
-                                                                }
-                                                                readOnly
-                                                            />
-                                                        </div>
-                                                    </>
-                                                )}
-                                                {showFields.showLocation && (
-                                                    <>
-                                                        <div className="col-12 col-sm-4 col-md-2 mt-2">
-                                                            <label className="new-label">Location</label>
-                                                        </div>
-                                                        <div className="col-12 col-sm-8 col-md-3 text-field mt-1">
-                                                            <input
-                                                                type="text"
-                                                                className="readonlyColor form-control"
-                                                                value={searchValue.Location || ""}
-                                                                readOnly
-                                                            />
-                                                        </div>
-                                                    </>
-                                                )}
+                                                    {showFields.showReportedDateFrom && (
+                                                        <>
+                                                            <div className="col-12 col-sm-4 col-md-2 mt-2">
+                                                                <label className="new-label">Reported Date From</label>
+                                                            </div>
+                                                            <div className="col-12 col-sm-8 col-md-3 text-field mt-1">
+                                                                <input
+                                                                    type="text"
+                                                                    className="readonlyColor form-control"
+                                                                    value={
+                                                                        searchValue.ReportedDate
+                                                                            ? getShowingWithOutTime(searchValue.ReportedDate)
+                                                                            : ""
+                                                                    }
+                                                                    readOnly
+                                                                />
+                                                            </div>
+                                                        </>
+                                                    )}
 
-                                                {showFields.showLawTitleId && searchValue.LawTitleId && (
-                                                    <>
-                                                        <div className="col-12 col-sm-3 col-md-1 mt-2">
-                                                            <label className="new-label">Law Title</label>
-                                                        </div>
-                                                        <div className="col-12 col-sm-9 col-md-5 text-field mt-1">
-                                                            <input
-                                                                type="text"
-                                                                className="readonlyColor form-control"
-                                                                value={
-                                                                    lawTitleIdDrp.find((obj) => obj.value === searchValue.LawTitleId)
-                                                                        ?.label || ""
-                                                                }
-                                                                readOnly
-                                                            />
-                                                        </div>
-                                                    </>
-                                                )}
+                                                    {showFields.showReportedDateTo && (
+                                                        <>
+                                                            <div className="col-12 col-sm-4 col-md-4 mt-2">
+                                                                <label className="new-label">Reported Date To</label>
+                                                            </div>
+                                                            <div className="col-12 col-sm-8 col-md-3 text-field mt-1">
+                                                                <input
+                                                                    type="text"
+                                                                    className="readonlyColor form-control"
+                                                                    value={
+                                                                        searchValue.ReportedDateTo
+                                                                            ? getShowingWithOutTime(searchValue.ReportedDateTo)
+                                                                            : ""
+                                                                    }
+                                                                    readOnly
+                                                                />
+                                                            </div>
+                                                        </>
+                                                    )}
 
-                                                {showFields.showFBIID && searchValue.FBIID && (
-                                                    <>
-                                                        <div className="col-12 col-sm-2 col-md-1 mt-2">
-                                                            <label className="new-label">TIBRS Code</label>
-                                                        </div>
-                                                        <div className="col-12 col-sm-10 col-md-5 text-field mt-1">
-                                                            <input
-                                                                type="text"
-                                                                className="readonlyColor readonlyColor_MasterInput form-control"
-                                                                value={
-                                                                    NIBRSDrpData?.find((obj) => obj.value === searchValue.FBIID)?.label ||
-                                                                    ""
-                                                                }
-                                                                readOnly
-                                                            />
-                                                        </div>
-                                                    </>
-                                                )}
+                                                    {showFields.showOccurredFrom && (
+                                                        <>
+                                                            <div className="col-12 col-sm-4 col-md-2 mt-2">
+                                                                <label className="new-label">Occurred Date From</label>
+                                                            </div>
+                                                            <div className="col-12 col-sm-8 col-md-3 text-field mt-1">
+                                                                <input
+                                                                    type="text"
+                                                                    className="readonlyColor form-control"
+                                                                    value={
+                                                                        searchValue.OccurredFrom
+                                                                            ? getShowingWithOutTime(searchValue.OccurredFrom)
+                                                                            : ""
+                                                                    }
+                                                                    readOnly
+                                                                />
+                                                            </div>
+                                                        </>
+                                                    )}
 
-                                                <div className="col-12"></div> {/* Clear row */}
+                                                    {showFields.showOccurredTo && (
+                                                        <>
+                                                            <div className="col-12 col-sm-4 col-md-4 mt-2">
+                                                                <label className="new-label">Occurred Date To</label>
+                                                            </div>
+                                                            <div className="col-12 col-sm-8 col-md-3 text-field mt-1">
+                                                                <input
+                                                                    type="text"
+                                                                    className="readonlyColor form-control"
+                                                                    value={
+                                                                        searchValue.OccurredTo
+                                                                            ? getShowingWithOutTime(searchValue.OccurredTo)
+                                                                            : ""
+                                                                    }
+                                                                    readOnly
+                                                                />
+                                                            </div>
+                                                        </>
+                                                    )}
+                                                    {showFields.showLocation && (
+                                                        <>
+                                                            <div className="col-12 col-sm-4 col-md-2 mt-2">
+                                                                <label className="new-label">Location</label>
+                                                            </div>
+                                                            <div className="col-12 col-sm-8 col-md-3 text-field mt-1">
+                                                                <input
+                                                                    type="text"
+                                                                    className="readonlyColor form-control"
+                                                                    value={searchValue.Location || ""}
+                                                                    readOnly
+                                                                />
+                                                            </div>
+                                                        </>
+                                                    )}
 
-                                                {showFields.showRMSCFSCodeList && searchValue.RMSCFSCodeList && (
-                                                    <>
-                                                        <div className="col-12 col-sm-4 col-md-2 mt-2">
-                                                            <label className="new-label">Offense Code</label>
-                                                        </div>
-                                                        <div className="col-12 col-sm-8 col-md-10 text-field mt-1">
-                                                            <input
-                                                                type="text"
-                                                                className="readonlyColor form-control"
-                                                                value={
-                                                                    chargeCodeDrp.find((obj) => obj.value === searchValue.RMSCFSCodeList)
-                                                                        ?.label || ""
-                                                                }
-                                                                readOnly
-                                                            />
-                                                        </div>
+                                                    {showFields.showLawTitleId && searchValue.LawTitleId && (
+                                                        <>
+                                                            <div className="col-12 col-sm-3 col-md-1 mt-2">
+                                                                <label className="new-label">Law Title</label>
+                                                            </div>
+                                                            <div className="col-12 col-sm-9 col-md-5 text-field mt-1">
+                                                                <input
+                                                                    type="text"
+                                                                    className="readonlyColor form-control"
+                                                                    value={
+                                                                        lawTitleIdDrp.find((obj) => obj.value === searchValue.LawTitleId)
+                                                                            ?.label || ""
+                                                                    }
+                                                                    readOnly
+                                                                />
+                                                            </div>
+                                                        </>
+                                                    )}
 
-                                                    </>
-                                                )}
-                                            </div>
-                                        </fieldset>
-                                    </div>
+                                                    {showFields.showFBIID && searchValue.FBIID && (
+                                                        <>
+                                                            <div className="col-12 col-sm-2 col-md-1 mt-2">
+                                                                <label className="new-label">TIBRS Code</label>
+                                                            </div>
+                                                            <div className="col-12 col-sm-10 col-md-5 text-field mt-1">
+                                                                <input
+                                                                    type="text"
+                                                                    className="readonlyColor readonlyColor_MasterInput form-control"
+                                                                    value={
+                                                                        NIBRSDrpData?.find((obj) => obj.value === searchValue.FBIID)?.label ||
+                                                                        ""
+                                                                    }
+                                                                    readOnly
+                                                                />
+                                                            </div>
+                                                        </>
+                                                    )}
 
-                                    {
-                                        masterReportData?.Incident?.map((obj) =>
-                                            <>
-                                                <div className="container mt-3 px-2" style={{ pageBreakAfter: 'always', }}>
-                                                    <h5 className=" text-white text-bold bg-green py-1 px-3"> Incident Number:- {obj.IncidentNumber}</h5>
-                                                    {/* incident */}
-                                                    <div className="col-12  mt-2" style={{ border: '1px solid #80808085', }}>
-                                                        <div className="container">
-                                                            <div className="col-12 mb-2">
-                                                                <h6 className=' text-dark mt-2'>Incident Information</h6>
-                                                                <div className="row px-3" >
-                                                                    <div className="col-4 col-md-4 col-lg-4 mt-2 ">
-                                                                        <div className='text-field'>
-                                                                            <input type="text" className='readonlyColor' name='DocFileName' required readOnly
-                                                                                value={obj.IncidentNumber}
-                                                                            />
-                                                                            <label htmlFor="" className='new-summary'>Incident Number</label>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-4 col-md-4 col-lg-4 mt-2 ">
-                                                                        <div className='text-field'>
-                                                                            <input type="text" className='readonlyColor' name='DocFileName' required readOnly
-                                                                                value={obj.ReportedDate ? getShowingDateText(obj.ReportedDate) : ''}
-                                                                            />
-                                                                            <label htmlFor="" className='new-summary'>Reported Date</label>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-4 col-md-4 col-lg-4 mt-2">
-                                                                        <div className='text-field'>
-                                                                            <input type="text" className='readonlyColor' name='DocFileName' required readOnly
-                                                                                value={obj.BIBRSDate ? getShowingDateText(obj.BIBRSDate) : ''}
-                                                                            />
-                                                                            <label htmlFor="" className='new-summary'>TIBRS Date</label>
-                                                                        </div>
-                                                                    </div>
-                                                                    {/* <div className="col-2"></div> */}
-                                                                    <div className="col-4 col-md-4 col-lg-4 mt-4 ">
-                                                                        <div className='text-field'>
-                                                                            <input type="text" className='readonlyColor' name='DocFileName' required readOnly
-                                                                                value={obj.OccurredFrom ? getShowingDateText(obj.OccurredFrom) : ''}
-                                                                            />
-                                                                            <label htmlFor="" className='new-summary'>Occurred From</label>
-                                                                        </div>
-                                                                    </div>
-                                                                    {/* <div className="col-1"></div> */}
-                                                                    <div className="col-4 col-md-4 col-lg-4 mt-4 ">
-                                                                        <div className='text-field'>
-                                                                            <input type="text" className='readonlyColor' name='DocFileName' required readOnly
-                                                                                value={obj.OccurredTo ? getShowingDateText(obj.OccurredTo) : ''}
-                                                                            />
-                                                                            <label htmlFor="" className='new-summary'>Occurred To</label>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-4 col-md-4 col-lg-4 mt-4">
-                                                                        <div className='text-field'>
-                                                                            <input type="text" className='readonlyColor' name='DocFileName' required readOnly
-                                                                                value={obj.ReceiveSource}
-                                                                            />
-                                                                            <label htmlFor="" className='new-summary'>How Reported</label>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-9 col-md-9 col-lg-10 mt-4">
-                                                                        <div className='text-field'>
-                                                                            <input type="text" className='readonlyColor' name='DocFileName' required readOnly
-                                                                                value={obj.CrimeLocation}
-                                                                            />
-                                                                            <label htmlFor="" className='new-summary'>Crime Location</label>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-3 col-md-3 col-lg-2 mt-4 pt-3">
-                                                                        <div className=''>
-                                                                            <input
-                                                                                type="checkbox"
-                                                                                name=""
-                                                                                id=""
-                                                                                checked={obj && Object.keys(obj).length > 0 ? obj.IsVerify : false}
-                                                                                disabled={!obj || Object.keys(obj).length === 0}
-                                                                            />
-                                                                            <label htmlFor="" className='new-summary pl-2'>Verified</label>
+                                                    <div className="col-12"></div> {/* Clear row */}
 
+                                                    {showFields.showRMSCFSCodeList && searchValue.RMSCFSCodeList && (
+                                                        <>
+                                                            <div className="col-12 col-sm-4 col-md-2 mt-2">
+                                                                <label className="new-label">Offense Code</label>
+                                                            </div>
+                                                            <div className="col-12 col-sm-8 col-md-10 text-field mt-1">
+                                                                <input
+                                                                    type="text"
+                                                                    className="readonlyColor form-control"
+                                                                    value={
+                                                                        chargeCodeDrp.find((obj) => obj.value === searchValue.RMSCFSCodeList)
+                                                                            ?.label || ""
+                                                                    }
+                                                                    readOnly
+                                                                />
+                                                            </div>
+
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </fieldset>
+                                        </div>
+
+                                        {
+                                            masterReportData?.Incident?.map((obj) =>
+                                                <>
+                                                    <div className="container mt-3 px-2 ">
+                                                        <h5 className=" text-white text-bold bg-green py-1 px-3"> Incident Number:- {obj.IncidentNumber}</h5>
+                                                        {/* incident */}
+                                                        <div className="col-12  mt-2" style={{ border: '1px solid #80808085', }}>
+                                                            <div className="container">
+                                                                <div className="col-12 mb-2">
+                                                                    <h6 className=' text-dark mt-2'>Incident Information</h6>
+                                                                    <div className="row px-3" >
+                                                                        <div className="col-4 col-md-4 col-lg-4 mt-2 ">
+                                                                            <div className='text-field'>
+                                                                                <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                    value={obj.IncidentNumber}
+                                                                                />
+                                                                                <label htmlFor="" className='new-summary'>Incident Number</label>
+                                                                            </div>
                                                                         </div>
-                                                                    </div>
-                                                                    <div className="col-12 col-md-12 col-lg-12 mt-4">
-                                                                        <div className='text-field'>
-                                                                            <input type="text" className='readonlyColor' name='DocFileName' required readOnly
-                                                                                value={obj.OffenseType}
-                                                                            />
-                                                                            <label htmlFor="" className='new-summary'>Offense Type</label>
+                                                                        <div className="col-4 col-md-4 col-lg-4 mt-2 ">
+                                                                            <div className='text-field'>
+                                                                                <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                    value={obj.ReportedDate ? getShowingDateText(obj.ReportedDate) : ''}
+                                                                                />
+                                                                                <label htmlFor="" className='new-summary'>Reported Date</label>
+                                                                            </div>
                                                                         </div>
-                                                                    </div>
-                                                                    <div className="col-12 col-md-12 col-lg-12 mt-4">
-                                                                        <div className='text-field'>
-                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                value={obj.RMS_Disposition}
-                                                                            />
-                                                                            <label htmlFor="" className='new-summary'>Exceptional Clearance(Yes/No)</label>
+                                                                        <div className="col-4 col-md-4 col-lg-4 mt-2">
+                                                                            <div className='text-field'>
+                                                                                <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                    value={obj.BIBRSDate ? getShowingDateText(obj.BIBRSDate) : ''}
+                                                                                />
+                                                                                <label htmlFor="" className='new-summary'>TIBRS Date</label>
+                                                                            </div>
                                                                         </div>
-                                                                    </div>
-                                                                    <div className="col-6 col-md-6 col-lg-6 mt-4">
-                                                                        <div className='text-field'>
-                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                value={obj.NIBRSClearance || ''}
-                                                                            />
-                                                                            <label htmlFor="" className='new-summary'>Exceptional Clearance Code</label>
+                                                                        {/* <div className="col-2"></div> */}
+                                                                        <div className="col-4 col-md-4 col-lg-4 mt-4 ">
+                                                                            <div className='text-field'>
+                                                                                <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                    value={obj.OccurredFrom ? getShowingDateText(obj.OccurredFrom) : ''}
+                                                                                />
+                                                                                <label htmlFor="" className='new-summary'>Occurred From</label>
+                                                                            </div>
                                                                         </div>
-                                                                    </div>
-                                                                    <div className="col-6 col-md-6 col-lg-6 mt-4">
-                                                                        <div className='text-field'>
-                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                value={obj.NIBRSclearancedate ? getShowingDateText(obj.NIBRSclearancedate) : ''}
-                                                                            />
-                                                                            <label htmlFor="" className='new-summary'>Exceptional Clearance Date/Time</label>
+                                                                        {/* <div className="col-1"></div> */}
+                                                                        <div className="col-4 col-md-4 col-lg-4 mt-4 ">
+                                                                            <div className='text-field'>
+                                                                                <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                    value={obj.OccurredTo ? getShowingDateText(obj.OccurredTo) : ''}
+                                                                                />
+                                                                                <label htmlFor="" className='new-summary'>Occurred To</label>
+                                                                            </div>
                                                                         </div>
-                                                                    </div>
-                                                                    <div className="col-6 col-md-6 col-lg-6 mt-4">
-                                                                        <div className='text-field'>
-                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                value={obj.CADCFSCode_Description}
-                                                                            />
-                                                                            <label htmlFor="" className='new-summary'>CAD CFS Code</label>
+                                                                        <div className="col-4 col-md-4 col-lg-4 mt-4">
+                                                                            <div className='text-field'>
+                                                                                <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                    value={obj.ReceiveSource}
+                                                                                />
+                                                                                <label htmlFor="" className='new-summary'>How Reported</label>
+                                                                            </div>
                                                                         </div>
-                                                                    </div>
-                                                                    <div className="col-6 col-md-6 col-lg-6 mt-4">
-                                                                        <div className='text-field'>
-                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                value={obj.CADDispositions_Description || ''}
-                                                                            />
-                                                                            <label htmlFor="" className='new-summary'>CAD Dispositions</label>
+
+                                                                        <div className="col-4 col-md-4 col-lg-4 mt-4">
+                                                                            <div className='text-field'>
+                                                                                <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                    value={obj.isPoliceForceApplied}
+                                                                                />
+                                                                                <label htmlFor="" className='new-summary'>Police Force Applied</label>
+                                                                            </div>
                                                                         </div>
+
+                                                                        <div className="col-4 col-md-4 col-lg-4 mt-4">
+                                                                            <div className='text-field'>
+                                                                                <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                    value={obj.OfficerName}
+                                                                                />
+                                                                                <label htmlFor="" className='new-summary'>Officer Name</label>
+                                                                            </div>
+                                                                        </div>
+
+
+                                                                        <div className="col-4 col-md-4 col-lg-4 mt-4">
+                                                                            <div className='text-field'>
+                                                                                <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                    value={obj.NIBRSStatus}
+                                                                                />
+                                                                                <label htmlFor="" className='new-summary'>NIBRS Status</label>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div className="col-9 col-md-9 col-lg-10 mt-4">
+                                                                            <div className='text-field'>
+                                                                                <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                    value={obj.CrimeLocation}
+                                                                                />
+                                                                                <label htmlFor="" className='new-summary'>Crime Location</label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="col-3 col-md-3 col-lg-2 mt-4 pt-3">
+                                                                            <div className=''>
+                                                                                <input
+                                                                                    type="checkbox"
+                                                                                    name=""
+                                                                                    id=""
+                                                                                    checked={obj && Object.keys(obj).length > 0 ? obj.IsVerify : false}
+                                                                                    disabled={!obj || Object.keys(obj).length === 0}
+                                                                                />
+                                                                                <label htmlFor="" className='new-summary pl-2'>Verified</label>
+
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="col-12 col-md-12 col-lg-12 mt-4">
+                                                                            <div className='text-field'>
+                                                                                <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                    value={obj.OffenseType}
+                                                                                />
+                                                                                <label htmlFor="" className='new-summary'>Offense Type</label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="col-12 col-md-12 col-lg-12 mt-4">
+                                                                            <div className='text-field'>
+                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                    value={obj.RMS_Disposition}
+                                                                                />
+                                                                                <label htmlFor="" className='new-summary'>Exceptional Clearance(Yes/No)</label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="col-6 col-md-6 col-lg-6 mt-4">
+                                                                            <div className='text-field'>
+                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                    value={obj.NIBRSClearance || ''}
+                                                                                />
+                                                                                <label htmlFor="" className='new-summary'>Exceptional Clearance Code</label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="col-6 col-md-6 col-lg-6 mt-4">
+                                                                            <div className='text-field'>
+                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                    value={obj.NIBRSclearancedate ? getShowingDateText(obj.NIBRSclearancedate) : ''}
+                                                                                />
+                                                                                <label htmlFor="" className='new-summary'>Exceptional Clearance Date/Time</label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="col-6 col-md-6 col-lg-6 mt-4">
+                                                                            <div className='text-field'>
+                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                    value={obj.CADCFSCode_Description}
+                                                                                />
+                                                                                <label htmlFor="" className='new-summary'>CAD CFS Code</label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="col-6 col-md-6 col-lg-6 mt-4">
+                                                                            <div className='text-field'>
+                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                    value={obj.CADDispositions_Description || ''}
+                                                                                />
+                                                                                <label htmlFor="" className='new-summary'>CAD Dispositions</label>
+                                                                            </div>
+                                                                        </div>
+
                                                                     </div>
 
                                                                 </div>
-
                                                             </div>
-                                                        </div>
-                                                        {/* pin-activity */}
-                                                        <div className="col-12  " >
-                                                            {
-                                                                JSON.parse(obj?.PINActivity)?.length > 0 ?
-                                                                    <>
-                                                                        <div className="container">
-                                                                            <h6 className=' text-dark mt-2'>PIN Activity</h6>
-                                                                            <div className="col-12 ">
-                                                                                {
-                                                                                    JSON.parse(obj?.PINActivity)?.map((item, key) => (
-                                                                                        <div className="row  px-3 ">
-                                                                                            <div className="col-12 mb-2" >
-                                                                                                <div className="row ">
-                                                                                                    <div className="col-4 col-md-4 col-lg-4 mt-2 pt-1 ">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='DocFileName' required readOnly
-                                                                                                                // value={item.ActivityDateTime ? getShowingDateText(obj.ActivityDateTime) : ''}
-                                                                                                                // value={item.ActivityDateTime}
-                                                                                                                value={item.ActivityDateTime ? getShowingDateText(item.ActivityDateTime) : ''}
+                                                            {/* pin-activity */}
+                                                            <div className="col-12  " >
+                                                                {
+                                                                    JSON.parse(obj?.PINActivity)?.length > 0 ?
+                                                                        <>
+                                                                            <div className="container">
+                                                                                <h6 className=' text-dark mt-2'>PIN Activity</h6>
+                                                                                <div className="col-12 ">
+                                                                                    {
+                                                                                        JSON.parse(obj?.PINActivity)?.map((item, key) => (
+                                                                                            <div className="row  px-3 ">
+                                                                                                <div className="col-12 mb-2" >
+                                                                                                    <div className="row ">
+                                                                                                        <div className="col-4 col-md-4 col-lg-4 mt-2 pt-1 ">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                                                    // value={item.ActivityDateTime ? getShowingDateText(obj.ActivityDateTime) : ''}
+                                                                                                                    // value={item.ActivityDateTime}
+                                                                                                                    value={item.ActivityDateTime ? getShowingDateText(item.ActivityDateTime) : ''}
 
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Date/Time</label>
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Date/Time</label>
 
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-4 col-md-4 col-lg-4 mt-2 pt-1 ">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='OfficerName' required readOnly
-                                                                                                                value={item.OfficerName}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Officer Name</label>
+                                                                                                        <div className="col-4 col-md-4 col-lg-4 mt-2 pt-1 ">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='OfficerName' required readOnly
+                                                                                                                    value={item.OfficerName}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Officer Name</label>
 
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-4 col-md-4 col-lg-4 mt-2 pt-1 ">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='OfficerName' required readOnly
-                                                                                                                value={item.ActivityRole}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Role</label>
+                                                                                                        <div className="col-4 col-md-4 col-lg-4 mt-2 pt-1 ">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='OfficerName' required readOnly
+                                                                                                                    value={item.ActivityRole}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Role</label>
 
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-4 col-md-4 col-lg-4 mt-2 pt-1 ">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='OfficerName' required readOnly
-                                                                                                                value={item.ActivityStatus}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Activity Details</label>
+                                                                                                        <div className="col-4 col-md-4 col-lg-4 mt-2 pt-1 ">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='OfficerName' required readOnly
+                                                                                                                    value={item.ActivityStatus}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Activity Details</label>
 
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-4 col-md-4 col-lg-4 mt-2 pt-1 ">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='OfficerName' required readOnly
-                                                                                                                value={item.ResourceNumber}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Module</label>
+                                                                                                        <div className="col-4 col-md-4 col-lg-4 mt-2 pt-1 ">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='OfficerName' required readOnly
+                                                                                                                    value={item.ResourceNumber}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Module</label>
 
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-4 col-md-4 col-lg-4 mt-2 pt-1 ">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='OfficerName' required readOnly
-                                                                                                                value={item.ShiftDescription}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Shift</label>
+                                                                                                        <div className="col-4 col-md-4 col-lg-4 mt-2 pt-1 ">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='OfficerName' required readOnly
+                                                                                                                    value={item.ShiftDescription}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Shift</label>
 
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
 
+                                                                                                    </div>
                                                                                                 </div>
                                                                                             </div>
-                                                                                        </div>
-                                                                                    ))
-                                                                                }
-                                                                            </div>
+                                                                                        ))
+                                                                                    }
+                                                                                </div>
 
-                                                                        </div>
-                                                                    </>
-                                                                    :
-                                                                    <></>
-                                                            }
-                                                        </div >
-                                                        {/* type of secruity */}
-                                                        <div className="col-12  ">
-                                                            {
-                                                                JSON.parse(obj?.IncidentSecurity)?.length > 0 ?
-                                                                    <>
-                                                                        <div className="container ">
-                                                                            <h6 className=' text-dark mt-2'>Types Of Security</h6>
-                                                                            <div className="col-12 ">
-                                                                                {
-                                                                                    JSON.parse(obj?.IncidentSecurity)?.map((item, key) => (
-                                                                                        <div className="row  px-3 ">
-                                                                                            <div className="col-12 mb-2" >
-                                                                                                <div className="row ">
-                                                                                                    <div className="col-12 col-md-12 col-lg-12 mt-2 pt-1 ">
-                                                                                                        {/* <div className="text-field">
+                                                                            </div>
+                                                                        </>
+                                                                        :
+                                                                        <></>
+                                                                }
+                                                            </div >
+                                                            {/* type of secruity */}
+                                                            <div className="col-12  ">
+                                                                {
+                                                                    JSON.parse(obj?.IncidentSecurity)?.length > 0 ?
+                                                                        <>
+                                                                            <div className="container ">
+                                                                                <h6 className=' text-dark mt-2'>Types Of Security</h6>
+                                                                                <div className="col-12 ">
+                                                                                    {
+                                                                                        JSON.parse(obj?.IncidentSecurity)?.map((item, key) => (
+                                                                                            <div className="row  px-3 ">
+                                                                                                <div className="col-12 mb-2" >
+                                                                                                    <div className="row ">
+                                                                                                        <div className="col-12 col-md-12 col-lg-12 mt-2 pt-1 ">
+                                                                                                            {/* <div className="text-field">
                                                                                                             <input type="text" className='readonlyColor' name='DocFileName' required readOnly
                                                                                                                 value={item.Security_Description}
                                                                                                             />
                                                                                                             <label htmlFor="" className='new-summary'>Types Of Security</label>
 
                                                                                                         </div> */}
-                                                                                                        <label htmlFor="" className='new-summary'>Types Of Security</label>
-                                                                                                        <div
-                                                                                                            className="readonlyColor "
-                                                                                                            style={{
-                                                                                                                border: '1px solid #ccc',
-                                                                                                                borderRadius: '4px',
-                                                                                                                padding: '10px',
-                                                                                                                backgroundColor: '#f9f9f9',
-                                                                                                                lineBreak: 'anywhere'
-                                                                                                            }}
-                                                                                                            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.Security_Description) }}
-                                                                                                        />
+                                                                                                            <label htmlFor="" className='new-summary'>Types Of Security</label>
+                                                                                                            <div
+                                                                                                                className="readonlyColor "
+                                                                                                                style={{
+                                                                                                                    border: '1px solid #ccc',
+                                                                                                                    borderRadius: '4px',
+                                                                                                                    padding: '10px',
+                                                                                                                    backgroundColor: '#f9f9f9',
+                                                                                                                    lineBreak: 'anywhere'
+                                                                                                                }}
+                                                                                                                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.Security_Description) }}
+                                                                                                            />
 
+                                                                                                        </div>
                                                                                                     </div>
                                                                                                 </div>
                                                                                             </div>
-                                                                                        </div>
-                                                                                    ))
-                                                                                }
+                                                                                        ))
+                                                                                    }
+                                                                                </div>
+
                                                                             </div>
+                                                                        </>
+                                                                        :
+                                                                        <></>
+                                                                }
+                                                            </div >
+                                                            {/* dispatch */}
+                                                            <div className="col-12  " >
+                                                                {
+                                                                    JSON.parse(obj?.Dispatch)?.length > 0 ?
+                                                                        <>
+                                                                            <div className="container">
+                                                                                <h6 className=' text-dark mt-2'>Dispatch Activity</h6>
+                                                                                <div className="col-12 ">
+                                                                                    {
+                                                                                        JSON.parse(obj?.Dispatch)?.map((item, key) => (
+                                                                                            <div className="row  px-3 ">
+                                                                                                <div className="col-12 mb-2" >
+                                                                                                    <div className="row ">
+                                                                                                        <div className="col-6 col-md-6 col-lg-6 mt-2 pt-1 ">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                                                    // value={item.DispatchDate ? getShowingDateText(obj.DispatchDate) : ''}
+                                                                                                                    value={item.DispatchDate ? getShowingDateText(item.DispatchDate) : ''}
 
-                                                                        </div>
-                                                                    </>
-                                                                    :
-                                                                    <></>
-                                                            }
-                                                        </div >
-                                                        {/* dispatch */}
-                                                        <div className="col-12  " >
-                                                            {
-                                                                JSON.parse(obj?.Dispatch)?.length > 0 ?
-                                                                    <>
-                                                                        <div className="container">
-                                                                            <h6 className=' text-dark mt-2'>Dispatch Activity</h6>
-                                                                            <div className="col-12 ">
-                                                                                {
-                                                                                    JSON.parse(obj?.Dispatch)?.map((item, key) => (
-                                                                                        <div className="row  px-3 ">
-                                                                                            <div className="col-12 mb-2" >
-                                                                                                <div className="row ">
-                                                                                                    <div className="col-6 col-md-6 col-lg-6 mt-2 pt-1 ">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='DocFileName' required readOnly
-                                                                                                                // value={item.DispatchDate ? getShowingDateText(obj.DispatchDate) : ''}
-                                                                                                                value={item.DispatchDate ? getShowingDateText(item.DispatchDate) : ''}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Dispatch Date/Time</label>
 
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Dispatch Date/Time</label>
-
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-6 col-md-6 col-lg-6 mt-2 pt-1 ">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='DocFileName' required readOnly
-                                                                                                                value={item.OfficerName}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Officer Name</label>
+                                                                                                        <div className="col-6 col-md-6 col-lg-6 mt-2 pt-1 ">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                                                    value={item.OfficerName}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Officer Name</label>
 
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-12 col-md-12 col-lg-12 mt-2 pt-1 ">
-                                                                                                        {/* <div className="text-field">
+                                                                                                        <div className="col-12 col-md-12 col-lg-12 mt-2 pt-1 ">
+                                                                                                            {/* <div className="text-field">
                                                                                                             <textarea
                                                                                                                 ref={textareaRef}
                                                                                                                 type="text"
@@ -1440,44 +1473,44 @@ const MasterIncident = ({ comments }) => {
                                                                                                             />
                                                                                                             <label htmlFor="" className='new-summary'>Dispatch Activity Comments</label>
                                                                                                         </div> */}
-                                                                                                        <label htmlFor="" className='new-summary'>Dispatch Activity Comments</label>
+                                                                                                            <label htmlFor="" className='new-summary'>Dispatch Activity Comments</label>
 
-                                                                                                        <div
-                                                                                                            className="readonlyColor  "
-                                                                                                            style={{
-                                                                                                                border: '1px solid #ccc',
-                                                                                                                borderRadius: '4px',
-                                                                                                                padding: '10px',
-                                                                                                                backgroundColor: '#f9f9f9',
-                                                                                                                lineBreak: 'anywhere'
-                                                                                                            }}
-                                                                                                            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item?.Comments) }}
-                                                                                                        />
+                                                                                                            <div
+                                                                                                                className="readonlyColor  "
+                                                                                                                style={{
+                                                                                                                    border: '1px solid #ccc',
+                                                                                                                    borderRadius: '4px',
+                                                                                                                    padding: '10px',
+                                                                                                                    backgroundColor: '#f9f9f9',
+                                                                                                                    lineBreak: 'anywhere'
+                                                                                                                }}
+                                                                                                                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item?.Comments) }}
+                                                                                                            />
+                                                                                                        </div>
                                                                                                     </div>
                                                                                                 </div>
                                                                                             </div>
-                                                                                        </div>
-                                                                                    ))
-                                                                                }
-                                                                            </div>
+                                                                                        ))
+                                                                                    }
+                                                                                </div>
 
-                                                                        </div>
-                                                                    </>
-                                                                    :
-                                                                    <></>
-                                                            }
-                                                        </div >
-                                                        <div className="col-12  " >
-                                                            {
-                                                                JSON.parse(obj?.Narrative)?.length > 0 ?
-                                                                    <>
-                                                                        <div className="container">
-                                                                            <h6 className=' text-dark mt-2'>Report</h6>
-                                                                            <div className="col-12 ">
-                                                                                {
-                                                                                    JSON.parse(obj?.Narrative)?.map((item, key) => (
-                                                                                        <div className="row  px-3 ">
-                                                                                            {/* <div className="col-2" >
+                                                                            </div>
+                                                                        </>
+                                                                        :
+                                                                        <></>
+                                                                }
+                                                            </div >
+                                                            <div className="col-12  " >
+                                                                {
+                                                                    JSON.parse(obj?.Narrative)?.length > 0 ?
+                                                                        <>
+                                                                            <div className="container">
+                                                                                <h6 className=' text-dark mt-2'>Report</h6>
+                                                                                <div className="col-12 ">
+                                                                                    {
+                                                                                        JSON.parse(obj?.Narrative)?.map((item, key) => (
+                                                                                            <div className="row  px-3 ">
+                                                                                                {/* <div className="col-2" >
                                                                                             <div className="col-10 col-md-10 col-lg-10 mt-4 ">
                                                                                                 <div className=" text-field">
                                                                                                     <input type="text" className='readonlyColor' name='' required readOnly
@@ -1487,129 +1520,129 @@ const MasterIncident = ({ comments }) => {
                                                                                                 </div>
                                                                                             </div>
                                                                                         </div> */}
-                                                                                            <div className="col-12 mb-2">
-                                                                                                <div className="row ">
-                                                                                                    <div className="col-3 col-md-3 col-lg-3 mt-2 pt-1 ">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='DocFileName' required readOnly
-                                                                                                                value={item.AsOfDate ? getShowingDateText(item.AsOfDate) : ''}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Date/Time</label>
+                                                                                                <div className="col-12 mb-2">
+                                                                                                    <div className="row ">
+                                                                                                        <div className="col-3 col-md-3 col-lg-3 mt-2 pt-1 ">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                                                    value={item.AsOfDate ? getShowingDateText(item.AsOfDate) : ''}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Date/Time</label>
 
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-3 col-md-3 col-lg-3 mt-2 pt-1 ">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='DocFileName' required readOnly
-                                                                                                                value={item.Description}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Report Type</label>
+                                                                                                        <div className="col-3 col-md-3 col-lg-3 mt-2 pt-1 ">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                                                    value={item.Description}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Report Type</label>
 
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-6 col-md-6 col-lg-6 mt-2 pt-1  ">
-                                                                                                        <div className=" text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='DocFileName' required readOnly
-                                                                                                                value={item.ReportedBy}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Written for</label>
+                                                                                                        <div className="col-6 col-md-6 col-lg-6 mt-2 pt-1  ">
+                                                                                                            <div className=" text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                                                    value={item.ReportedBy}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Written for</label>
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-12 col-md-12 col-lg-12 mt-2">
-                                                                                                        <div>
-                                                                                                            <label htmlFor="" className='new-summary'>Notes</label>
-                                                                                                            <div
-                                                                                                                className="readonlyColor text-justify "
-                                                                                                                style={{
-                                                                                                                    border: '1px solid #ccc',
-                                                                                                                    borderRadius: '4px',
-                                                                                                                    padding: '10px',
-                                                                                                                    backgroundColor: '#f9f9f9',
-                                                                                                                    // lineBreak: 'anywhere'
-                                                                                                                }}
-                                                                                                                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item?.CommentsDoc) }}
-                                                                                                            />
+                                                                                                        <div className="col-12 col-md-12 col-lg-12 mt-2">
+                                                                                                            <div>
+                                                                                                                <label htmlFor="" className='new-summary'>Notes</label>
+                                                                                                                <div
+                                                                                                                    className="readonlyColor text-justify "
+                                                                                                                    style={{
+                                                                                                                        border: '1px solid #ccc',
+                                                                                                                        borderRadius: '4px',
+                                                                                                                        padding: '10px',
+                                                                                                                        backgroundColor: '#f9f9f9',
+                                                                                                                        // lineBreak: 'anywhere'
+                                                                                                                    }}
+                                                                                                                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item?.CommentsDoc) }}
+                                                                                                                />
+                                                                                                            </div>
                                                                                                         </div>
                                                                                                     </div>
                                                                                                 </div>
                                                                                             </div>
-                                                                                        </div>
-                                                                                    ))
-                                                                                }
+                                                                                        ))
+                                                                                    }
+                                                                                </div>
+
                                                                             </div>
+                                                                        </>
+                                                                        :
+                                                                        <></>
+                                                                }
+                                                            </div >
 
-                                                                        </div>
-                                                                    </>
-                                                                    :
-                                                                    <></>
-                                                            }
-                                                        </div >
+                                                            {/* offense */}
+                                                            <div className="col-12  " >
+                                                                {
+                                                                    JSON.parse(obj?.Offence)?.length > 0 ?
+                                                                        <>
+                                                                            <div className="container">
+                                                                                <h6 className=' text-dark mt-2'>Offense Information</h6>
+                                                                                <div className="col-12">
+                                                                                    {
+                                                                                        JSON.parse(obj?.Offence)?.map((item, key) => (
+                                                                                            <div className="row row-print mb-2 px-3" >
+                                                                                                <div className="col-lg-6 print-col-6 mt-1">
+                                                                                                    <div className='text-field'>
+                                                                                                        <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                                            value={item.FBIID_Description}
+                                                                                                        />
+                                                                                                        <label htmlFor="" className='new-summary'>TIBRS Code</label>
+                                                                                                    </div>
+                                                                                                </div>
 
-                                                        {/* offense */}
-                                                        <div className="col-12  " >
-                                                            {
-                                                                JSON.parse(obj?.Offence)?.length > 0 ?
-                                                                    <>
-                                                                        <div className="container">
-                                                                            <h6 className=' text-dark mt-2'>Offense Information</h6>
-                                                                            <div className="col-12">
-                                                                                {
-                                                                                    JSON.parse(obj?.Offence)?.map((item, key) => (
-                                                                                        <div className="row row-print mb-2 px-3" >
-                                                                                            <div className="col-lg-6 print-col-6 mt-1">
-                                                                                                <div className='text-field'>
-                                                                                                    <input type="text" className='readonlyColor' name='DocFileName' required readOnly
-                                                                                                        value={item.FBIID_Description}
-                                                                                                    />
-                                                                                                    <label htmlFor="" className='new-summary'>TIBRS Code</label>
+                                                                                                <div className="col-lg-6 print-col-6 mt-1">
+                                                                                                    <div className='text-field'>
+                                                                                                        <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                                            value={item.OffenseName_Description}
+                                                                                                        />
+                                                                                                        <label htmlFor="" className='new-summary'>Offense Code/Name</label>
+                                                                                                    </div>
                                                                                                 </div>
-                                                                                            </div>
+                                                                                                <div className="col-lg-6 print-col-6 mt-4">
+                                                                                                    <div className='text-field'>
+                                                                                                        <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                                            value={item.PrimaryLocation}
+                                                                                                        />
+                                                                                                        <label htmlFor="" className='new-summary'>Primary Location</label>
+                                                                                                    </div>
+                                                                                                </div>
 
-                                                                                            <div className="col-lg-6 print-col-6 mt-1">
-                                                                                                <div className='text-field'>
-                                                                                                    <input type="text" className='readonlyColor' name='DocFileName' required readOnly
-                                                                                                        value={item.OffenseName_Description}
-                                                                                                    />
-                                                                                                    <label htmlFor="" className='new-summary'>Offense Code/Name</label>
+                                                                                                <div className="col-lg-6 print-col-6 mt-4 ">
+                                                                                                    <div className='text-field'>
+                                                                                                        <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                                            value={item.SecondaryLocation}
+                                                                                                        />
+                                                                                                        <label htmlFor="" className='new-summary'>Secondary Location</label>
+                                                                                                    </div>
                                                                                                 </div>
-                                                                                            </div>
-                                                                                            <div className="col-lg-6 print-col-6 mt-4">
-                                                                                                <div className='text-field'>
-                                                                                                    <input type="text" className='readonlyColor' name='DocFileName' required readOnly
-                                                                                                        value={item.PrimaryLocation}
-                                                                                                    />
-                                                                                                    <label htmlFor="" className='new-summary'>Primary Location</label>
-                                                                                                </div>
-                                                                                            </div>
-
-                                                                                            <div className="col-lg-6 print-col-6 mt-4 ">
-                                                                                                <div className='text-field'>
-                                                                                                    <input type="text" className='readonlyColor' name='DocFileName' required readOnly
-                                                                                                        value={item.SecondaryLocation}
-                                                                                                    />
-                                                                                                    <label htmlFor="" className='new-summary'>Secondary Location</label>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div className='col-lg-12'>
-                                                                                                <div className='row'>
-                                                                                                    <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
-                                                                                                        {
-                                                                                                            item.AttemptComplete == "A" ?
-                                                                                                                <div className="form-check  ">
-                                                                                                                    <input className="form-check-input mt-1" type="checkbox" checked={true} name="AttemptComplete" id="flexRadioDefault1" />
-                                                                                                                    <label className="form-check-label" htmlFor="flexRadioDefault2">
-                                                                                                                        Attempted
-                                                                                                                    </label>
-                                                                                                                </div>
-                                                                                                                :
-                                                                                                                <div className="form-check  ">
-                                                                                                                    <input className="form-check-input mt-1" type="checkbox" value={false} checked={false} onChange={(e) => { e.preventDefault(); }} name="AttemptComplete" id="flexRadioDefault1" />
-                                                                                                                    <label className="form-check-label" htmlFor="flexRadioDefault2">
-                                                                                                                        Attempted
-                                                                                                                    </label>
-                                                                                                                </div>
-                                                                                                        }
-                                                                                                        {/* <div className="form-check ">
+                                                                                                <div className='col-lg-12'>
+                                                                                                    <div className='row'>
+                                                                                                        <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
+                                                                                                            {
+                                                                                                                item.AttemptComplete == "A" ?
+                                                                                                                    <div className="form-check  ">
+                                                                                                                        <input className="form-check-input mt-1" type="checkbox" checked={true} name="AttemptComplete" id="flexRadioDefault1" />
+                                                                                                                        <label className="form-check-label" htmlFor="flexRadioDefault2">
+                                                                                                                            Attempted
+                                                                                                                        </label>
+                                                                                                                    </div>
+                                                                                                                    :
+                                                                                                                    <div className="form-check  ">
+                                                                                                                        <input className="form-check-input mt-1" type="checkbox" value={false} checked={false} onChange={(e) => { e.preventDefault(); }} name="AttemptComplete" id="flexRadioDefault1" />
+                                                                                                                        <label className="form-check-label" htmlFor="flexRadioDefault2">
+                                                                                                                            Attempted
+                                                                                                                        </label>
+                                                                                                                    </div>
+                                                                                                            }
+                                                                                                            {/* <div className="form-check ">
                                                                                                 {
                                                                                                     item.AttemptComplete === "A" ?
                                                                                                         <input className="form-check-input mt-1" type="radio" value="A" checked={item.AttemptComplete === "A"} name="AttemptComplete" id="flexRadioDefault1" />
@@ -1621,25 +1654,25 @@ const MasterIncident = ({ comments }) => {
                                                                                                     Attempted
                                                                                                 </label>
                                                                                             </div> */}
-                                                                                                    </div>
-                                                                                                    <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
-                                                                                                        {
-                                                                                                            item.AttemptComplete === "C" ?
-                                                                                                                <div className="form-check  ">
-                                                                                                                    <input className="form-check-input mt-1" type="checkbox" checked={true} name="AttemptComplete" id="flexRadioDefault2" />
-                                                                                                                    <label className="form-check-label" htmlFor="flexRadioDefault2">
-                                                                                                                        Completed
-                                                                                                                    </label>
-                                                                                                                </div>
-                                                                                                                :
-                                                                                                                <div className="form-check  ">
-                                                                                                                    <input className="form-check-input mt-1" type="checkbox" value={false} checked={false} onChange={(e) => { e.preventDefault(); }} name="AttemptComplete" id="flexRadioDefault2" />
-                                                                                                                    <label className="form-check-label" htmlFor="flexRadioDefault2">
-                                                                                                                        Completed
-                                                                                                                    </label>
-                                                                                                                </div>
-                                                                                                        }
-                                                                                                        {/* <div className="form-check  ">
+                                                                                                        </div>
+                                                                                                        <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
+                                                                                                            {
+                                                                                                                item.AttemptComplete === "C" ?
+                                                                                                                    <div className="form-check  ">
+                                                                                                                        <input className="form-check-input mt-1" type="checkbox" checked={true} name="AttemptComplete" id="flexRadioDefault2" />
+                                                                                                                        <label className="form-check-label" htmlFor="flexRadioDefault2">
+                                                                                                                            Completed
+                                                                                                                        </label>
+                                                                                                                    </div>
+                                                                                                                    :
+                                                                                                                    <div className="form-check  ">
+                                                                                                                        <input className="form-check-input mt-1" type="checkbox" value={false} checked={false} onChange={(e) => { e.preventDefault(); }} name="AttemptComplete" id="flexRadioDefault2" />
+                                                                                                                        <label className="form-check-label" htmlFor="flexRadioDefault2">
+                                                                                                                            Completed
+                                                                                                                        </label>
+                                                                                                                    </div>
+                                                                                                            }
+                                                                                                            {/* <div className="form-check  ">
                                                                                                 {
                                                                                                     item.AttemptComplete === "C" ?
                                                                                                         <input className="form-check-input mt-1" type="radio" value="C" checked={item.AttemptComplete === "C"} name="AttemptComplete" id="flexRadioDefault2" />
@@ -1651,241 +1684,241 @@ const MasterIncident = ({ comments }) => {
                                                                                                     Completed
                                                                                                 </label>
                                                                                             </div> */}
+                                                                                                        </div>
                                                                                                     </div>
                                                                                                 </div>
                                                                                             </div>
-                                                                                        </div>
-                                                                                    ))
-                                                                                }
+                                                                                        ))
+                                                                                    }
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
-                                                                    </>
-                                                                    :
-                                                                    <></>
-                                                            }
-                                                        </div>
-                                                        {/* name */}
-                                                        <div className="col-12 " >
-                                                            {
-                                                                JSON.parse(obj?.Name)?.length > 0 ?
-                                                                    <>
-                                                                        <div className="container">
-                                                                            <h6 className=' text-dark mt-2'>Name Information Person</h6>
+                                                                        </>
+                                                                        :
+                                                                        <></>
+                                                                }
+                                                            </div>
+                                                            {/* name */}
+                                                            <div className="col-12 " >
+                                                                {
+                                                                    JSON.parse(obj?.Name)?.length > 0 ?
+                                                                        <>
+                                                                            <div className="container">
+                                                                                <h6 className=' text-dark mt-2'>Name Information Person</h6>
 
-                                                                            <div className="col-12 mb-2 ">
-                                                                                {
-                                                                                    JSON.parse(obj?.Name).filter(item => item.NameType_Description !== 'Business')
-                                                                                        .map((item, key) => (
-                                                                                            // (JSON.parse(obj?.Name) || [])
-                                                                                            // .filter(item => item.NameType_Description !== 'Business')
-                                                                                            // .map((item, key) => {
-                                                                                            <div className="row">
-                                                                                                <div className="col-2" >
-                                                                                                    <div className="col-10 col-md-10 col-lg-10 mt-4 ">
-                                                                                                        <div className=" text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item?.NameIDNumber || ''}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>MNI:</label>
+                                                                                <div className="col-12 mb-2 ">
+                                                                                    {
+                                                                                        JSON.parse(obj?.Name).filter(item => item.NameType_Description !== 'Business')
+                                                                                            .map((item, key) => (
+                                                                                                // (JSON.parse(obj?.Name) || [])
+                                                                                                // .filter(item => item.NameType_Description !== 'Business')
+                                                                                                // .map((item, key) => {
+                                                                                                <div className="row">
+                                                                                                    <div className="col-2" >
+                                                                                                        <div className="col-10 col-md-10 col-lg-10 mt-4 ">
+                                                                                                            <div className=" text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item?.NameIDNumber || ''}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>MNI:</label>
+                                                                                                            </div>
                                                                                                         </div>
                                                                                                     </div>
-                                                                                                </div>
-                                                                                                <div className="col-10 mb-2">
-                                                                                                    <div className="row ">
-                                                                                                        <div className="col-6 col-md-6 col-lg-6 mt-2 pt-1  ">
-                                                                                                            <div className=" text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    value={item?.NameType_Description || ''}
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>Name Type</label>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                        <div className="col-1"></div>
-
-                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-2 pt-1 ">
-                                                                                                            <div className="text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    value={item?.LastName && item?.FirstName && item?.MiddleName ?
-                                                                                                                        item?.LastName + '  ' + item?.FirstName + '  ' + item?.MiddleName
-                                                                                                                        :
-                                                                                                                        item?.LastName && item?.FirstName ?
-                                                                                                                            item?.LastName + '  ' + item?.FirstName
-                                                                                                                            :
-                                                                                                                            item?.LastName && item?.MiddleName ?
-                                                                                                                                item?.LastName + '  ' + item?.MiddleName
-                                                                                                                                :
-                                                                                                                                item?.LastName ?
-                                                                                                                                    item?.LastName
-                                                                                                                                    :
-                                                                                                                                    ""}
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>Name:</label>
-
-                                                                                                            </div>
-                                                                                                        </div>
-
-                                                                                                        <div className="col-12 col-md-12 col-lg-12 mt-2 pt-1  ">
-                                                                                                            <div className=" text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    value={item?.Address}
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>Address</label>
-                                                                                                            </div>
-                                                                                                        </div>
-
-
-                                                                                                        <div className="col-12 col-md-12 col-lg-12 mt-4 print-full-width">
-                                                                                                            <div className="text-field">
-                                                                                                                <div
-                                                                                                                    className="readonlyColor form-control"
-                                                                                                                    style={{
-                                                                                                                        overflowY: 'hidden',          // No scroll, just expand
-                                                                                                                        whiteSpace: 'pre-wrap',       // Respect line breaks
-                                                                                                                        wordWrap: 'break-word',       // Wrap long words
-                                                                                                                        padding: '0.5rem',
-                                                                                                                    }}
-                                                                                                                >
-                                                                                                                    {item?.NameReasonCode_Description || ''}
+                                                                                                    <div className="col-10 mb-2">
+                                                                                                        <div className="row ">
+                                                                                                            <div className="col-6 col-md-6 col-lg-6 mt-2 pt-1  ">
+                                                                                                                <div className=" text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        value={item?.NameType_Description || ''}
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>Name Type</label>
                                                                                                                 </div>
-                                                                                                                <label className="new-summary">Reason Code</label>
+                                                                                                            </div>
+                                                                                                            <div className="col-1"></div>
+
+                                                                                                            <div className="col-5 col-md-5 col-lg-5 mt-2 pt-1 ">
+                                                                                                                <div className="text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        value={item?.LastName && item?.FirstName && item?.MiddleName ?
+                                                                                                                            item?.LastName + '  ' + item?.FirstName + '  ' + item?.MiddleName
+                                                                                                                            :
+                                                                                                                            item?.LastName && item?.FirstName ?
+                                                                                                                                item?.LastName + '  ' + item?.FirstName
+                                                                                                                                :
+                                                                                                                                item?.LastName && item?.MiddleName ?
+                                                                                                                                    item?.LastName + '  ' + item?.MiddleName
+                                                                                                                                    :
+                                                                                                                                    item?.LastName ?
+                                                                                                                                        item?.LastName
+                                                                                                                                        :
+                                                                                                                                        ""}
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>Name:</label>
+
+                                                                                                                </div>
+                                                                                                            </div>
+
+                                                                                                            <div className="col-12 col-md-12 col-lg-12 mt-2 pt-1  ">
+                                                                                                                <div className=" text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        value={item?.Address}
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>Address</label>
+                                                                                                                </div>
                                                                                                             </div>
 
 
-                                                                                                        </div>
+                                                                                                            <div className="col-12 col-md-12 col-lg-12 mt-4 print-full-width">
+                                                                                                                <div className="text-field">
+                                                                                                                    <div
+                                                                                                                        className="readonlyColor form-control"
+                                                                                                                        style={{
+                                                                                                                            overflowY: 'hidden',          // No scroll, just expand
+                                                                                                                            whiteSpace: 'pre-wrap',       // Respect line breaks
+                                                                                                                            wordWrap: 'break-word',       // Wrap long words
+                                                                                                                            padding: '0.5rem',
+                                                                                                                        }}
+                                                                                                                    >
+                                                                                                                        {item?.NameReasonCode_Description || ''}
+                                                                                                                    </div>
+                                                                                                                    <label className="new-summary">Reason Code</label>
+                                                                                                                </div>
 
 
-                                                                                                        <div className="col-3 col-md-3 col-lg-3 mt-4 ">
-                                                                                                            <div className="text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    value={item?.Suffix_Description || ''}
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>Suffix</label>
                                                                                                             </div>
-                                                                                                        </div>
-
-                                                                                                        <div className="col-2 col-md-2 col-lg-2 mt-4 ">
-                                                                                                            <div className="text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    value={item?.Gender_Description || ''}
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>Gender</label>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                        <div className="col-1"></div>
-
-                                                                                                        <div className="col-2 col-md-2 col-lg-2 mt-4 ">
-                                                                                                            <div className="text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    // value={item?.DateOfBirth}
-                                                                                                                    value={item.DateOfBirth ? getShowingWithOutTime(item.DateOfBirth) : ''}
-
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>DOB</label>
-                                                                                                            </div>
-                                                                                                        </div>
-
-                                                                                                        <div className="col-2 col-md-2 col-lg-2 mt-4 ">
-                                                                                                            <div className="text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    value={item?.AgeFrom || ''}
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>Age From</label>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                        <div className="col-2 col-md-2 col-lg-2 mt-4 ">
-                                                                                                            <div className="text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    value={item?.AgeTo || ''}
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>Age To</label>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                        <div className="col-2 col-md-2 col-lg-2 mt-4 ">
-                                                                                                            <div className="text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    value={item?.AgeUnit_Decsription || ''}
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>Age Unit</label>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                        <div className="col-2 col-md-2 col-lg-2 mt-4 ">
-                                                                                                            <div className="text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    value={item?.SSN || ''}
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>SSN</label>
-                                                                                                            </div>
-                                                                                                        </div>
-
-                                                                                                        <div className="col-2 col-md-2 col-lg-2 mt-4 ">
-                                                                                                            <div className="text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    value={item?.DLNumber}
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>DL Number</label>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                        <div className="col-2 col-md-2 col-lg-2 mt-4 ">
-                                                                                                            <div className="text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    value={item?.HeightTo}
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>Height To</label>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                        <div className="col-2 col-md-2 col-lg-2 mt-4 ">
-                                                                                                            <div className="text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    value={item?.WeightFrom}
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>Weight From</label>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                        <div className="col-2 col-md-2 col-lg-2 mt-4 ">
-                                                                                                            <div className="text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    value={item?.WeightTo}
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>Weight To</label>
-                                                                                                            </div>
-                                                                                                        </div>
-
-                                                                                                        {/* <div className="col-1"></div> */}
-                                                                                                        <div className="col-3 col-md-3 col-lg-3 mt-4 ">
-                                                                                                            <div className="text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    value={item?.Hair_Color}
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>Hair Color</label>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                        <div className="col-3 col-md-3 col-lg-3 mt-4 ">
-                                                                                                            <div className="text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    value={item?.Eye_Color}
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>Eye Color</label>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                        <div className="col-4 col-md-4 col-lg-4 mt-4 ">
-                                                                                                            <div className="text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    value={item?.Contact}
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>Contact</label>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                        <div className="col-2 col-md-2 col-lg-2 mt-4 ">
-                                                                                                            <div className="text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    value={item?.HeightFrom}
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>Height From</label>
-                                                                                                            </div>
-                                                                                                        </div>
 
 
-                                                                                                        {/* <div className="row mt-3 g-3 image_content">
+                                                                                                            <div className="col-3 col-md-3 col-lg-3 mt-4 ">
+                                                                                                                <div className="text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        value={item?.Suffix_Description || ''}
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>Suffix</label>
+                                                                                                                </div>
+                                                                                                            </div>
+
+                                                                                                            <div className="col-2 col-md-2 col-lg-2 mt-4 ">
+                                                                                                                <div className="text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        value={item?.Gender_Description || ''}
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>Gender</label>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            <div className="col-1"></div>
+
+                                                                                                            <div className="col-2 col-md-2 col-lg-2 mt-4 ">
+                                                                                                                <div className="text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        // value={item?.DateOfBirth}
+                                                                                                                        value={item.DateOfBirth ? getShowingWithOutTime(item.DateOfBirth) : ''}
+
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>DOB</label>
+                                                                                                                </div>
+                                                                                                            </div>
+
+                                                                                                            <div className="col-2 col-md-2 col-lg-2 mt-4 ">
+                                                                                                                <div className="text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        value={item?.AgeFrom || ''}
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>Age From</label>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            <div className="col-2 col-md-2 col-lg-2 mt-4 ">
+                                                                                                                <div className="text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        value={item?.AgeTo || ''}
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>Age To</label>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            <div className="col-2 col-md-2 col-lg-2 mt-4 ">
+                                                                                                                <div className="text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        value={item?.AgeUnit_Decsription || ''}
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>Age Unit</label>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            <div className="col-2 col-md-2 col-lg-2 mt-4 ">
+                                                                                                                <div className="text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        value={item?.SSN || ''}
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>SSN</label>
+                                                                                                                </div>
+                                                                                                            </div>
+
+                                                                                                            <div className="col-2 col-md-2 col-lg-2 mt-4 ">
+                                                                                                                <div className="text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        value={item?.DLNumber}
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>DL Number</label>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            <div className="col-2 col-md-2 col-lg-2 mt-4 ">
+                                                                                                                <div className="text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        value={item?.HeightTo}
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>Height To</label>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            <div className="col-2 col-md-2 col-lg-2 mt-4 ">
+                                                                                                                <div className="text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        value={item?.WeightFrom}
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>Weight From</label>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            <div className="col-2 col-md-2 col-lg-2 mt-4 ">
+                                                                                                                <div className="text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        value={item?.WeightTo}
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>Weight To</label>
+                                                                                                                </div>
+                                                                                                            </div>
+
+                                                                                                            {/* <div className="col-1"></div> */}
+                                                                                                            <div className="col-3 col-md-3 col-lg-3 mt-4 ">
+                                                                                                                <div className="text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        value={item?.Hair_Color}
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>Hair Color</label>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            <div className="col-3 col-md-3 col-lg-3 mt-4 ">
+                                                                                                                <div className="text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        value={item?.Eye_Color}
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>Eye Color</label>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            <div className="col-4 col-md-4 col-lg-4 mt-4 ">
+                                                                                                                <div className="text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        value={item?.Contact}
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>Contact</label>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                            <div className="col-2 col-md-2 col-lg-2 mt-4 ">
+                                                                                                                <div className="text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        value={item?.HeightFrom}
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>Height From</label>
+                                                                                                                </div>
+                                                                                                            </div>
+
+
+                                                                                                            {/* <div className="row mt-3 g-3 image_content">
                                                                                                             {item.NamePhoto ? (
                                                                                                                 JSON.parse(item.NamePhoto).map((photo, index) => (
                                                                                                                     <div className="col-2 d-flex  justify-content-center" key={index}>
@@ -1901,7 +1934,7 @@ const MasterIncident = ({ comments }) => {
                                                                                                         </div> */}
 
 
-                                                                                                        {/* <div className="row mt-3 g-3 ">
+                                                                                                            {/* <div className="row mt-3 g-3 ">
                                                                                                             {item.NamePhoto ? (
                                                                                                                 JSON.parse(item.NamePhoto).map((photo, index) => (
                                                                                                                     <div className="col-2 d-flex justify-content-center" key={index}>
@@ -1915,142 +1948,142 @@ const MasterIncident = ({ comments }) => {
                                                                                                                 ))
                                                                                                             ) : null}
                                                                                                         </div> */}
-                                                                                                        <div className="col-12">
-                                                                                                            <div className="row">
-                                                                                                                {item.NamePhoto ? (
-                                                                                                                    JSON.parse(item.NamePhoto).map((photo, index) => (
-                                                                                                                        <div className="col-3 mb-1 mt-1 d-flex justify-content-center" key={index}>
-                                                                                                                            <img
-                                                                                                                                src={photo.Path}
-                                                                                                                                alt={`Image ${index + 1}`}
-                                                                                                                                className="img-fluid"
-                                                                                                                                style={{ width: "100%", height: "200px", padding: "5px" }}
-                                                                                                                            />
-                                                                                                                        </div>
-                                                                                                                    ))
-                                                                                                                ) : null}
+                                                                                                            <div className="col-12">
+                                                                                                                <div className="row">
+                                                                                                                    {item.NamePhoto ? (
+                                                                                                                        JSON.parse(item.NamePhoto).map((photo, index) => (
+                                                                                                                            <div className="col-3 mb-1 mt-1 d-flex justify-content-center" key={index}>
+                                                                                                                                <img
+                                                                                                                                    src={photo.Path}
+                                                                                                                                    alt={`Image ${index + 1}`}
+                                                                                                                                    className="img-fluid"
+                                                                                                                                    style={{ width: "100%", height: "200px", padding: "5px" }}
+                                                                                                                                />
+                                                                                                                            </div>
+                                                                                                                        ))
+                                                                                                                    ) : null}
+                                                                                                                </div>
                                                                                                             </div>
-                                                                                                        </div>
 
+                                                                                                        </div>
                                                                                                     </div>
                                                                                                 </div>
-                                                                                            </div>
-                                                                                        ))
-                                                                                }
+                                                                                            ))
+                                                                                    }
+                                                                                </div>
+
                                                                             </div>
+                                                                        </>
+                                                                        :
+                                                                        <></>
+                                                                }
+                                                            </div >
+                                                            <div className="col-12  " >
+                                                                {
+                                                                    JSON.parse(obj?.Name)?.length > 0 ?
+                                                                        <>
+                                                                            <div className="container ">
 
-                                                                        </div>
-                                                                    </>
-                                                                    :
-                                                                    <></>
-                                                            }
-                                                        </div >
-                                                        <div className="col-12  " >
-                                                            {
-                                                                JSON.parse(obj?.Name)?.length > 0 ?
-                                                                    <>
-                                                                        <div className="container ">
+                                                                                <div className="col-12 mb-2 ">
+                                                                                    {
+                                                                                        JSON.parse(obj?.Name).filter(item => item.NameType_Description === 'Business')
+                                                                                            .map((item, key) => (
 
-                                                                            <div className="col-12 mb-2 ">
-                                                                                {
-                                                                                    JSON.parse(obj?.Name).filter(item => item.NameType_Description === 'Business')
-                                                                                        .map((item, key) => (
-
-                                                                                            // (JSON.parse(obj?.Name) || [])
-                                                                                            // .filter(item => item.NameType_Description !== 'Business')
-                                                                                            // .map((item, key) => {
-                                                                                            <div className="row">
-                                                                                                <h6 className=' text-dark mt-2 col-12'>Name Information Business</h6>
-                                                                                                <div className="col-2" >
-                                                                                                    <div className="col-10 col-md-10 col-lg-10 mt-4 ">
-                                                                                                        <div className=" text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item?.NameIDNumber}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>MNI:</label>
+                                                                                                // (JSON.parse(obj?.Name) || [])
+                                                                                                // .filter(item => item.NameType_Description !== 'Business')
+                                                                                                // .map((item, key) => {
+                                                                                                <div className="row">
+                                                                                                    <h6 className=' text-dark mt-2 col-12'>Name Information Business</h6>
+                                                                                                    <div className="col-2" >
+                                                                                                        <div className="col-10 col-md-10 col-lg-10 mt-4 ">
+                                                                                                            <div className=" text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item?.NameIDNumber}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>MNI:</label>
+                                                                                                            </div>
                                                                                                         </div>
                                                                                                     </div>
-                                                                                                </div>
-                                                                                                <div className="col-10 mb-2">
-                                                                                                    <div className="row ">
-                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-2 pt-1 ">
-                                                                                                            <div className="text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    value={item?.LastName && item?.FirstName && item?.MiddleName ?
-                                                                                                                        item?.LastName + '  ' + item?.FirstName + '  ' + item?.MiddleName
-                                                                                                                        :
-                                                                                                                        item?.LastName && item?.FirstName ?
-                                                                                                                            item?.LastName + '  ' + item?.FirstName
+                                                                                                    <div className="col-10 mb-2">
+                                                                                                        <div className="row ">
+                                                                                                            <div className="col-5 col-md-5 col-lg-5 mt-2 pt-1 ">
+                                                                                                                <div className="text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        value={item?.LastName && item?.FirstName && item?.MiddleName ?
+                                                                                                                            item?.LastName + '  ' + item?.FirstName + '  ' + item?.MiddleName
                                                                                                                             :
-                                                                                                                            item?.LastName && item?.MiddleName ?
-                                                                                                                                item?.LastName + '  ' + item?.MiddleName
+                                                                                                                            item?.LastName && item?.FirstName ?
+                                                                                                                                item?.LastName + '  ' + item?.FirstName
                                                                                                                                 :
-                                                                                                                                item?.LastName ?
-                                                                                                                                    item?.LastName
+                                                                                                                                item?.LastName && item?.MiddleName ?
+                                                                                                                                    item?.LastName + '  ' + item?.MiddleName
                                                                                                                                     :
-                                                                                                                                    ""}
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>Business Name:</label>
+                                                                                                                                    item?.LastName ?
+                                                                                                                                        item?.LastName
+                                                                                                                                        :
+                                                                                                                                        ""}
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>Business Name:</label>
 
+                                                                                                                </div>
                                                                                                             </div>
-                                                                                                        </div>
-                                                                                                        <div className="col-1"></div>
-                                                                                                        <div className="col-6 col-md-6 col-lg-6 mt-2 pt-1  ">
-                                                                                                            <div className=" text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    value={item?.NameType_Description}
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>Name Type</label>
+                                                                                                            <div className="col-1"></div>
+                                                                                                            <div className="col-6 col-md-6 col-lg-6 mt-2 pt-1  ">
+                                                                                                                <div className=" text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        value={item?.NameType_Description}
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>Name Type</label>
+                                                                                                                </div>
                                                                                                             </div>
-                                                                                                        </div>
-                                                                                                        <div className="col-6 col-md-6 col-lg-6 mt-2 pt-1  ">
-                                                                                                            <div className=" text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    value={item?.OwnerName}
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>Owner Name</label>
+                                                                                                            <div className="col-6 col-md-6 col-lg-6 mt-2 pt-1  ">
+                                                                                                                <div className=" text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        value={item?.OwnerName}
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>Owner Name</label>
+                                                                                                                </div>
                                                                                                             </div>
-                                                                                                        </div>
-                                                                                                        <div className="col-6 col-md-6 col-lg-6 mt-2 pt-1  ">
-                                                                                                            <div className=" text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    value={item?.OwnerPhoneNumber}
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>Owner Phone Number</label>
+                                                                                                            <div className="col-6 col-md-6 col-lg-6 mt-2 pt-1  ">
+                                                                                                                <div className=" text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        value={item?.OwnerPhoneNumber}
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>Owner Phone Number</label>
+                                                                                                                </div>
                                                                                                             </div>
-                                                                                                        </div>
-                                                                                                        <div className="col-6 col-md-6 col-lg-6 mt-2 pt-1  ">
-                                                                                                            <div className=" text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    value={item?.OwnerFaxNumber}
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>Business Fax Number</label>
+                                                                                                            <div className="col-6 col-md-6 col-lg-6 mt-2 pt-1  ">
+                                                                                                                <div className=" text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        value={item?.OwnerFaxNumber}
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>Business Fax Number</label>
+                                                                                                                </div>
                                                                                                             </div>
-                                                                                                        </div>
 
-                                                                                                        <div className="col-6 col-md-6 col-lg-6 pt-1 mt-2 ">
-                                                                                                            <div className="text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    value={item?.Contact}
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>Contact</label>
+                                                                                                            <div className="col-6 col-md-6 col-lg-6 pt-1 mt-2 ">
+                                                                                                                <div className="text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        value={item?.Contact}
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>Contact</label>
+                                                                                                                </div>
                                                                                                             </div>
-                                                                                                        </div>
 
 
 
-                                                                                                        <div className="col-12 col-md-12 col-lg-12 mt-2 pt-1  ">
-                                                                                                            <div className=" text-field">
-                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                    value={item?.Address}
-                                                                                                                />
-                                                                                                                <label htmlFor="" className='new-summary'>Address</label>
+                                                                                                            <div className="col-12 col-md-12 col-lg-12 mt-2 pt-1  ">
+                                                                                                                <div className=" text-field">
+                                                                                                                    <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                        value={item?.Address}
+                                                                                                                    />
+                                                                                                                    <label htmlFor="" className='new-summary'>Address</label>
+                                                                                                                </div>
                                                                                                             </div>
-                                                                                                        </div>
 
-                                                                                                        <div className="container ">
-                                                                                                            {/* //--------------------------Old------------------------------? */}
-                                                                                                            {/* <div className="col-12">
+                                                                                                            <div className="container ">
+                                                                                                                {/* //--------------------------Old------------------------------? */}
+                                                                                                                {/* <div className="col-12">
                                                                                                                 <div className="row">
                                                                                                                     {item.NamePhoto ? (
                                                                                                                         JSON.parse(item.NamePhoto).map((photo, index) => (
@@ -2065,141 +2098,141 @@ const MasterIncident = ({ comments }) => {
                                                                                                                 </div>
                                                                                                             </div> */}
 
-                                                                                                            <div className="col-12">
-                                                                                                                <div className="row">
-                                                                                                                    {item.NamePhoto ? (
-                                                                                                                        JSON.parse(item.NamePhoto).map((photo, index) => (
-                                                                                                                            <div className="col-3 mb-1 mt-1 d-flex justify-content-center" key={index}>
-                                                                                                                                <img
-                                                                                                                                    src={photo.Path}
-                                                                                                                                    alt={`Image ${index + 1}`}
-                                                                                                                                    className="img-fluid"
-                                                                                                                                    style={{
-                                                                                                                                        width: "100%",
-                                                                                                                                        height: "200px",
-                                                                                                                                        padding: "5px"
-                                                                                                                                    }}
-                                                                                                                                />
-                                                                                                                            </div>
-                                                                                                                        ))
-                                                                                                                    ) : null}
+                                                                                                                <div className="col-12">
+                                                                                                                    <div className="row">
+                                                                                                                        {item.NamePhoto ? (
+                                                                                                                            JSON.parse(item.NamePhoto).map((photo, index) => (
+                                                                                                                                <div className="col-3 mb-1 mt-1 d-flex justify-content-center" key={index}>
+                                                                                                                                    <img
+                                                                                                                                        src={photo.Path}
+                                                                                                                                        alt={`Image ${index + 1}`}
+                                                                                                                                        className="img-fluid"
+                                                                                                                                        style={{
+                                                                                                                                            width: "100%",
+                                                                                                                                            height: "200px",
+                                                                                                                                            padding: "5px"
+                                                                                                                                        }}
+                                                                                                                                    />
+                                                                                                                                </div>
+                                                                                                                            ))
+                                                                                                                        ) : null}
+                                                                                                                    </div>
                                                                                                                 </div>
+
+
                                                                                                             </div>
-
-
                                                                                                         </div>
+
+
+
+                                                                                                        {/* </div> */}
                                                                                                     </div>
-
-
-
-                                                                                                    {/* </div> */}
                                                                                                 </div>
-                                                                                            </div>
-                                                                                        ))
-                                                                                }
+                                                                                            ))
+                                                                                    }
+                                                                                </div>
+
                                                                             </div>
-
-                                                                        </div>
-                                                                    </>
-                                                                    :
-                                                                    <></>
-                                                            }
-                                                        </div >
-                                                        {/* property */}
-                                                        <div className="col-12  " >
-                                                            {
-                                                                JSON.parse(obj?.Property)?.length > 0 ?
-                                                                    <>
-                                                                        <div className="container ">
-                                                                            <h6 className=' text-dark mt-2'>Property Information</h6>
-                                                                            <div className="col-12 ">
-                                                                                {
-                                                                                    JSON.parse(obj?.Property)?.map((item, key) => (
-                                                                                        <div className="row ">
-                                                                                            <div className="col-2" >
-                                                                                                <div className="col-10 col-md-10 col-lg-10 mt-4 ">
-                                                                                                    <div className=" text-field">
-                                                                                                        <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                            value={item?.PropertyNumber}
-                                                                                                        />
-                                                                                                        <label htmlFor="" className='new-summary'>Property No.</label>
+                                                                        </>
+                                                                        :
+                                                                        <></>
+                                                                }
+                                                            </div >
+                                                            {/* property */}
+                                                            <div className="col-12  " >
+                                                                {
+                                                                    JSON.parse(obj?.Property)?.length > 0 ?
+                                                                        <>
+                                                                            <div className="container ">
+                                                                                <h6 className=' text-dark mt-2'>Property Information</h6>
+                                                                                <div className="col-12 ">
+                                                                                    {
+                                                                                        JSON.parse(obj?.Property)?.map((item, key) => (
+                                                                                            <div className="row ">
+                                                                                                <div className="col-2" >
+                                                                                                    <div className="col-10 col-md-10 col-lg-10 mt-4 ">
+                                                                                                        <div className=" text-field">
+                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                value={item?.PropertyNumber}
+                                                                                                            />
+                                                                                                            <label htmlFor="" className='new-summary'>Property No.</label>
+                                                                                                        </div>
                                                                                                     </div>
                                                                                                 </div>
-                                                                                            </div>
-                                                                                            <div className="col-10 mb-2">
-                                                                                                <div className="row ">
-                                                                                                    <div className="col-3 col-md-3 col-lg-3 mt-2 pt-1 ">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item?.PropertyType_Description}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Property Type</label>
+                                                                                                <div className="col-10 mb-2">
+                                                                                                    <div className="row ">
+                                                                                                        <div className="col-3 col-md-3 col-lg-3 mt-2 pt-1 ">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item?.PropertyType_Description}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Property Type</label>
 
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-3 col-md-3 col-lg-3 mt-2 pt-1 ">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item?.PropertyClassification_Description}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Property Classification</label>
+                                                                                                        <div className="col-3 col-md-3 col-lg-3 mt-2 pt-1 ">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item?.PropertyClassification_Description}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Property Classification</label>
 
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-1"></div>
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-2 pt-1  ">
-                                                                                                        <div className=" text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item?.Officer_Name}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Officer Name</label>
+                                                                                                        <div className="col-1"></div>
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-2 pt-1  ">
+                                                                                                            <div className=" text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item?.Officer_Name}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Officer Name</label>
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-3 col-md-3 col-lg-3 mt-4 ">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item.ReportedDtTm && getShowingDateText(item.ReportedDtTm)}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Reported Date/Time</label>
+                                                                                                        <div className="col-3 col-md-3 col-lg-3 mt-4 ">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item.ReportedDtTm && getShowingDateText(item.ReportedDtTm)}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Reported Date/Time</label>
 
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-3 col-md-3 col-lg-3 mt-4 ">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item?.Value}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Value</label>
+                                                                                                        <div className="col-3 col-md-3 col-lg-3 mt-4 ">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item?.Value}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Value</label>
 
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-1"></div>
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-4 ">
-                                                                                                        <div className=" text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item?.PropertyLossCode_Description}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Loss Code</label>
+                                                                                                        <div className="col-1"></div>
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-4 ">
+                                                                                                            <div className=" text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item?.PropertyLossCode_Description}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Loss Code</label>
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-4 ">
-                                                                                                        <div className=" text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item?.PossessionName}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'> Possession Of</label>
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-4 ">
+                                                                                                            <div className=" text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item?.PossessionName}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'> Possession Of</label>
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-2"></div>
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-4 ">
-                                                                                                        <div className=" text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item?.PropertyCategory_Description}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Category</label>
+                                                                                                        <div className="col-2"></div>
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-4 ">
+                                                                                                            <div className=" text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item?.PropertyCategory_Description}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Category</label>
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    {/* <div className="col-4 col-md-3 col-lg-2">
+                                                                                                        {/* <div className="col-4 col-md-3 col-lg-2">
                                                                                                     <div className="img-box">
                                                                                                         {item.PropertyPhoto ? (
                                                                                                             JSON.parse(item.PropertyPhoto).map((photo, index) => (
@@ -2210,8 +2243,8 @@ const MasterIncident = ({ comments }) => {
                                                                                                         )}
                                                                                                     </div>
                                                                                                 </div> */}
-                                                                                                    <div className="container">
-                                                                                                        {/* <div className="col-12 mb-2">
+                                                                                                        <div className="container">
+                                                                                                            {/* <div className="col-12 mb-2">
                                                                                                         <tbody className=''>
                                                                                                             <div className="row ">
 
@@ -2226,8 +2259,8 @@ const MasterIncident = ({ comments }) => {
                                                                                                             </div>
                                                                                                         </tbody>
                                                                                                     </div> */}
-                                                                                                        {/* //---------------Old-------------------------- */}
-                                                                                                        {/* <div className="col-12">
+                                                                                                            {/* //---------------Old-------------------------- */}
+                                                                                                            {/* <div className="col-12">
                                                                                                             <div className="row ">
                                                                                                                 {item.PropertyPhoto ? (
                                                                                                                     JSON.parse(item.PropertyPhoto).map((photo, index) => (
@@ -2243,208 +2276,208 @@ const MasterIncident = ({ comments }) => {
                                                                                                             </div>
                                                                                                         </div> */}
 
-                                                                                                        <div className="col-12">
-                                                                                                            <div className="row">
-                                                                                                                {item.PropertyPhoto ? (
-                                                                                                                    JSON.parse(item.PropertyPhoto).map((photo, index) => (
-                                                                                                                        <div className="col-3 mb-1 mt-1 d-flex justify-content-center" key={index}>
-                                                                                                                            <img
-                                                                                                                                src={photo.Path}
-                                                                                                                                alt={`Property ${index + 1}`}
-                                                                                                                                className="img-fluid"
-                                                                                                                                style={{ width: "100%", height: "200px", padding: "5px" }}
-                                                                                                                            />
-                                                                                                                        </div>
-                                                                                                                    ))
-                                                                                                                ) : null}
+                                                                                                            <div className="col-12">
+                                                                                                                <div className="row">
+                                                                                                                    {item.PropertyPhoto ? (
+                                                                                                                        JSON.parse(item.PropertyPhoto).map((photo, index) => (
+                                                                                                                            <div className="col-3 mb-1 mt-1 d-flex justify-content-center" key={index}>
+                                                                                                                                <img
+                                                                                                                                    src={photo.Path}
+                                                                                                                                    alt={`Property ${index + 1}`}
+                                                                                                                                    className="img-fluid"
+                                                                                                                                    style={{ width: "100%", height: "200px", padding: "5px" }}
+                                                                                                                                />
+                                                                                                                            </div>
+                                                                                                                        ))
+                                                                                                                    ) : null}
+                                                                                                                </div>
+                                                                                                            </div>
+
+                                                                                                        </div>
+
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        ))
+                                                                                    }
+                                                                                </div>
+
+                                                                            </div>
+                                                                        </>
+                                                                        :
+                                                                        <></>
+                                                                }
+                                                            </div >
+                                                            {/* Vehicle */}
+                                                            <div className="col-12  " >
+                                                                {
+                                                                    JSON.parse(obj?.PropertyVehicle)?.length > 0 ?
+                                                                        <>
+                                                                            <div className="container ">
+                                                                                <h6 className=' text-dark mt-2'>Vehicle Information</h6>
+                                                                                <div className="col-12 mb-2">
+                                                                                    {
+                                                                                        JSON.parse(obj?.PropertyVehicle
+                                                                                        )?.map((item, key) => (
+                                                                                            <div className="row px-3">
+                                                                                                <div className="col-2" >
+                                                                                                    <div className="col-10 col-md-10 col-lg-10 mt-4 ">
+                                                                                                        <div className=" text-field">
+                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                value={item?.VehicleNumber || ''}
+                                                                                                            />
+                                                                                                            <label htmlFor="" className='new-summary'>Vehicle No.</label>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div className="col-10 mb-2">
+                                                                                                    <div className="row ">
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-2 pt-1 ">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item?.Category_Description || ''}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Vehicle Category</label>
+
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div className="col-2"></div>
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-2 pt-1 ">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item?.PropertyClassification_Description || ''}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Vehicle Classification</label>
+
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-4 ">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item?.Officer_Name || ''}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Officer Name</label>
+
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div className="col-2"></div>
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-4 ">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item.ReportedDtTm && getShowingDateText(item.ReportedDtTm)}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Reported Date/Time</label>
+
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-3">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item.Value || ''}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Value</label>
+
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div className="col-2"></div>
+
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-3">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item.StatePlateNumber || ''}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Plate State & No.</label>
                                                                                                             </div>
                                                                                                         </div>
 
-                                                                                                    </div>
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-3">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item.VIN || ''}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>VIN</label>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div className="col-2"></div>
 
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    ))
-                                                                                }
-                                                                            </div>
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-3">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item.Make_Description || ''}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Make</label>
+                                                                                                            </div>
+                                                                                                        </div>
 
-                                                                        </div>
-                                                                    </>
-                                                                    :
-                                                                    <></>
-                                                            }
-                                                        </div >
-                                                        {/* Vehicle */}
-                                                        <div className="col-12  " >
-                                                            {
-                                                                JSON.parse(obj?.PropertyVehicle)?.length > 0 ?
-                                                                    <>
-                                                                        <div className="container ">
-                                                                            <h6 className=' text-dark mt-2'>Vehicle Information</h6>
-                                                                            <div className="col-12 mb-2">
-                                                                                {
-                                                                                    JSON.parse(obj?.PropertyVehicle
-                                                                                    )?.map((item, key) => (
-                                                                                        <div className="row px-3">
-                                                                                            <div className="col-2" >
-                                                                                                <div className="col-10 col-md-10 col-lg-10 mt-4 ">
-                                                                                                    <div className=" text-field">
-                                                                                                        <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                            value={item?.VehicleNumber || ''}
-                                                                                                        />
-                                                                                                        <label htmlFor="" className='new-summary'>Vehicle No.</label>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div className="col-10 mb-2">
-                                                                                                <div className="row ">
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-2 pt-1 ">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item?.Category_Description || ''}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Vehicle Category</label>
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-3">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item.Model_Description || ''}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Model</label>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div className="col-2"></div>
 
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-3">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item.style_Desc || ''}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Style</label>
+                                                                                                            </div>
+                                                                                                        </div>
+
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-3">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item.PrimaryColor_Description || ''}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Primary Color</label>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div className="col-2"></div>
+
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-3">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item.SecondaryColor_Description || ''}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Secondary Color</label>
+                                                                                                            </div>
+                                                                                                        </div>
+
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-3">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item.LossCode_Description || ''}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Loss Code</label>
+                                                                                                            </div>
+                                                                                                        </div>
+
+                                                                                                        <div className="col-2"></div>
+
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-3">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item.PlateType || ''}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Plate Type</label>
+                                                                                                            </div>
+                                                                                                        </div>
+
+
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-3">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item.PossessionName || ''}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'> Possession Of</label>
+                                                                                                            </div>
                                                                                                         </div>
                                                                                                     </div>
-                                                                                                    <div className="col-2"></div>
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-2 pt-1 ">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item?.PropertyClassification_Description || ''}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Vehicle Classification</label>
-
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-4 ">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item?.Officer_Name || ''}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Officer Name</label>
-
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-2"></div>
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-4 ">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item.ReportedDtTm && getShowingDateText(item.ReportedDtTm)}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Reported Date/Time</label>
-
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-3">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item.Value || ''}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Value</label>
-
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-2"></div>
-
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-3">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item.StatePlateNumber || ''}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Plate State & No.</label>
-                                                                                                        </div>
-                                                                                                    </div>
-
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-3">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item.VIN || ''}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>VIN</label>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-2"></div>
-
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-3">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item.Make_Description || ''}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Make</label>
-                                                                                                        </div>
-                                                                                                    </div>
-
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-3">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item.Model_Description || ''}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Model</label>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-2"></div>
-
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-3">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item.style_Desc || ''}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Style</label>
-                                                                                                        </div>
-                                                                                                    </div>
-
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-3">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item.PrimaryColor_Description || ''}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Primary Color</label>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-2"></div>
-
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-3">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item.SecondaryColor_Description || ''}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Secondary Color</label>
-                                                                                                        </div>
-                                                                                                    </div>
-
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-3">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item.LossCode_Description || ''}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Loss Code</label>
-                                                                                                        </div>
-                                                                                                    </div>
-
-                                                                                                    <div className="col-2"></div>
-
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-3">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item.PlateType || ''}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Plate Type</label>
-                                                                                                        </div>
-                                                                                                    </div>
-
-
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-3">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item.PossessionName || ''}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'> Possession Of</label>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                {/* <div className="col-4 col-md-3 col-lg-2">
+                                                                                                    {/* <div className="col-4 col-md-3 col-lg-2">
                                                                                                 <div className="img-box">
                                                                                                     {item.VehiclePhoto ? (
                                                                                                         JSON.parse(item.VehiclePhoto).map((photo, index) => (
@@ -2455,8 +2488,8 @@ const MasterIncident = ({ comments }) => {
                                                                                                     )}
                                                                                                 </div>
                                                                                             </div> */}
-                                                                                                <div className="container ">
-                                                                                                    {/* <div className="col-12 mb-2">
+                                                                                                    <div className="container ">
+                                                                                                        {/* <div className="col-12 mb-2">
                                                                                                     <tbody className=''>
                                                                                                         <div className="row">
 
@@ -2472,7 +2505,7 @@ const MasterIncident = ({ comments }) => {
                                                                                                     </tbody>
                                                                                                 </div> */}
 
-                                                                                                    {/* <div className="col-12">
+                                                                                                        {/* <div className="col-12">
                                                                                                         <div className="row">
 
                                                                                                             {item.VehiclePhoto ? (
@@ -2491,122 +2524,122 @@ const MasterIncident = ({ comments }) => {
 
 
 
-                                                                                                    <div className="col-12">
-                                                                                                        <div className="row">
-                                                                                                            {item.VehiclePhoto ? (
-                                                                                                                JSON.parse(item.VehiclePhoto).map((photo, index) => (
-                                                                                                                    <div className="col-3 mb-1 mt-1 d-flex justify-content-center" key={index}>
-                                                                                                                        <img
-                                                                                                                            src={photo.Path}
-                                                                                                                            alt={`Property ${index + 1}`}
-                                                                                                                            className="img-fluid"
-                                                                                                                            style={{ width: "100%", height: "200px", padding: "5px" }}
-                                                                                                                        />
-                                                                                                                    </div>
-                                                                                                                ))
-                                                                                                            ) : null}
+                                                                                                        <div className="col-12">
+                                                                                                            <div className="row">
+                                                                                                                {item.VehiclePhoto ? (
+                                                                                                                    JSON.parse(item.VehiclePhoto).map((photo, index) => (
+                                                                                                                        <div className="col-3 mb-1 mt-1 d-flex justify-content-center" key={index}>
+                                                                                                                            <img
+                                                                                                                                src={photo.Path}
+                                                                                                                                alt={`Property ${index + 1}`}
+                                                                                                                                className="img-fluid"
+                                                                                                                                style={{ width: "100%", height: "200px", padding: "5px" }}
+                                                                                                                            />
+                                                                                                                        </div>
+                                                                                                                    ))
+                                                                                                                ) : null}
+                                                                                                            </div>
                                                                                                         </div>
+
                                                                                                     </div>
 
+
                                                                                                 </div>
-
-
                                                                                             </div>
-                                                                                        </div>
 
-                                                                                    ))
-                                                                                }
+                                                                                        ))
+                                                                                    }
+                                                                                </div>
+
                                                                             </div>
+                                                                        </>
+                                                                        :
+                                                                        <></>
+                                                                }
+                                                            </div >
+                                                            {/* Arrest */}
+                                                            <div className="col-12  " >
+                                                                {
+                                                                    JSON.parse(obj?.Arrest)?.length > 0 ?
+                                                                        <>
+                                                                            <div className="container">
+                                                                                <h6 className=' text-dark mt-2'>Arrest Information</h6>
 
-                                                                        </div>
-                                                                    </>
-                                                                    :
-                                                                    <></>
-                                                            }
-                                                        </div >
-                                                        {/* Arrest */}
-                                                        <div className="col-12  " >
-                                                            {
-                                                                JSON.parse(obj?.Arrest)?.length > 0 ?
-                                                                    <>
-                                                                        <div className="container">
-                                                                            <h6 className=' text-dark mt-2'>Arrest Information</h6>
-
-                                                                            <div className="col-12 mb-2">
-                                                                                {
-                                                                                    JSON.parse(obj?.Arrest)?.map((item, key) => (
-                                                                                        <div className="row px-3">
-                                                                                            <div className="col-2" >
-                                                                                                <div className="col-12 col-md-12 col-lg-12 mt-4 ">
-                                                                                                    <div className=" text-field">
-                                                                                                        <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                            value={item?.ArrestNumber}
-                                                                                                        />
-                                                                                                        <label htmlFor="" className='new-summary'>Arrest No.</label>
+                                                                                <div className="col-12 mb-2">
+                                                                                    {
+                                                                                        JSON.parse(obj?.Arrest)?.map((item, key) => (
+                                                                                            <div className="row px-3">
+                                                                                                <div className="col-2" >
+                                                                                                    <div className="col-12 col-md-12 col-lg-12 mt-4 ">
+                                                                                                        <div className=" text-field">
+                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                value={item?.ArrestNumber}
+                                                                                                            />
+                                                                                                            <label htmlFor="" className='new-summary'>Arrest No.</label>
+                                                                                                        </div>
                                                                                                     </div>
                                                                                                 </div>
-                                                                                            </div>
-                                                                                            <div className="col-10 mb-2">
-                                                                                                <div className="row ">
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-2 pt-1 ">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item?.Agency_Name}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Agency Name</label>
+                                                                                                <div className="col-10 mb-2">
+                                                                                                    <div className="row ">
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-2 pt-1 ">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item?.Agency_Name}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Agency Name</label>
 
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-2"></div>
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-2 pt-1 ">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item?.Arrestee_Name}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Arrestee Name</label>
+                                                                                                        <div className="col-2"></div>
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-2 pt-1 ">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item?.Arrestee_Name}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Arrestee Name</label>
 
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-2 pt-1 ">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item.ArrestDtTm && getShowingDateText(item.ArrestDtTm)}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Arrest Date/Time</label>
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-2 pt-1 ">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item.ArrestDtTm && getShowingDateText(item.ArrestDtTm)}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Arrest Date/Time</label>
 
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-2"></div>
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-2 pt-1 ">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item?.Supervisor_Name}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Supervisor Name</label>
+                                                                                                        <div className="col-2"></div>
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-2 pt-1 ">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item?.Supervisor_Name}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Supervisor Name</label>
 
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-2 pt-1 ">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item?.ArrestType}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Arrest Type</label>
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-2 pt-1 ">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item?.ArrestType}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Arrest Type</label>
 
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <div className="col-2"></div>
-                                                                                                    <div className="col-5 col-md-5 col-lg-5 mt-2 pt-1 ">
-                                                                                                        <div className="text-field">
-                                                                                                            <input type="text" className='readonlyColor' name='' required readOnly
-                                                                                                                value={item?.PrimaryOfficer}
-                                                                                                            />
-                                                                                                            <label htmlFor="" className='new-summary'>Primary Officer</label>
+                                                                                                        <div className="col-2"></div>
+                                                                                                        <div className="col-5 col-md-5 col-lg-5 mt-2 pt-1 ">
+                                                                                                            <div className="text-field">
+                                                                                                                <input type="text" className='readonlyColor' name='' required readOnly
+                                                                                                                    value={item?.PrimaryOfficer}
+                                                                                                                />
+                                                                                                                <label htmlFor="" className='new-summary'>Primary Officer</label>
 
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                    <div className="container ">
-                                                                                                        {/* <div className="col-12 mb-2">
+                                                                                                        <div className="container ">
+                                                                                                            {/* <div className="col-12 mb-2">
                                                                                                         <tbody className=''>
                                                                                                             <div className="row ">
 
@@ -2621,8 +2654,8 @@ const MasterIncident = ({ comments }) => {
                                                                                                             </div>
                                                                                                         </tbody>
                                                                                                     </div> */}
-                                                                                                        {/* //---old------ */}
-                                                                                                        {/* <div className="col-12">
+                                                                                                            {/* //---old------ */}
+                                                                                                            {/* <div className="col-12">
                                                                                                             <div className="row">
 
                                                                                                                 {item.ArrestPhoto ? (
@@ -2638,25 +2671,25 @@ const MasterIncident = ({ comments }) => {
 
                                                                                                             </div>
                                                                                                         </div> */}
-                                                                                                        <div className="col-12">
-                                                                                                            <div className="row">
-                                                                                                                {item.ArrestPhoto ? (
-                                                                                                                    JSON.parse(item.ArrestPhoto).map((photo, index) => (
-                                                                                                                        <div className="col-3 mb-1 mt-1 d-flex justify-content-center" key={index}>
-                                                                                                                            <img
-                                                                                                                                src={photo.Path}
-                                                                                                                                alt={`Property ${index + 1}`}
-                                                                                                                                className="img-fluid"
-                                                                                                                                style={{ width: "100%", height: "200px", padding: "5px" }}
-                                                                                                                            />
-                                                                                                                        </div>
-                                                                                                                    ))
-                                                                                                                ) : null}
+                                                                                                            <div className="col-12">
+                                                                                                                <div className="row">
+                                                                                                                    {item.ArrestPhoto ? (
+                                                                                                                        JSON.parse(item.ArrestPhoto).map((photo, index) => (
+                                                                                                                            <div className="col-3 mb-1 mt-1 d-flex justify-content-center" key={index}>
+                                                                                                                                <img
+                                                                                                                                    src={photo.Path}
+                                                                                                                                    alt={`Property ${index + 1}`}
+                                                                                                                                    className="img-fluid"
+                                                                                                                                    style={{ width: "100%", height: "200px", padding: "5px" }}
+                                                                                                                                />
+                                                                                                                            </div>
+                                                                                                                        ))
+                                                                                                                    ) : null}
+                                                                                                                </div>
                                                                                                             </div>
-                                                                                                        </div>
 
-                                                                                                    </div>
-                                                                                                    {/* <div className="row">
+                                                                                                        </div>
+                                                                                                        {/* <div className="row">
                                                                                                     {item.ArrestPhoto ? (
                                                                                                         JSON.parse(item.ArrestPhoto).map((photo, index) => (
                                                                                                             <div className="col-4 col-md-4 col-lg-4">
@@ -2669,34 +2702,37 @@ const MasterIncident = ({ comments }) => {
                                                                                                         null
                                                                                                     )}
                                                                                                 </div> */}
+                                                                                                    </div>
+
                                                                                                 </div>
-
                                                                                             </div>
-                                                                                        </div>
 
-                                                                                    ))
-                                                                                }
+                                                                                        ))
+                                                                                    }
+                                                                                </div>
+
                                                                             </div>
-
-                                                                        </div>
-                                                                    </>
-                                                                    :
-                                                                    <></>
-                                                            }
-                                                        </div >
-                                                        <div className="conatiner  mb-1">
+                                                                        </>
+                                                                        :
+                                                                        <></>
+                                                                }
+                                                            </div >
+                                                            <div className="conatiner mb-1">
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </>
-                                        )
-                                    }
-                                    {showFooter && (
-                                        <div className="print-footer">
-                                            <p> Officer Name: {LoginUserName || ''} | Date/Time: {getShowingWithFixedTime01(datezone || '')} | IP Address: {ipAddress || ''}</p>
-                                        </div>
-                                    )}
+                                                </>
+                                            )
+                                        }
+                                        {showFooter && (
+                                            <div className="print-footer">
+                                                <p> Officer Name: {LoginUserName || ''} | Date/Time: {getShowingWithFixedTime01(datezone || '')} | IP Address: {ipAddress || ''}</p>
+                                            </div>
+                                        )}
+
+                                    </div>
                                 </div>
+
                             </div>
                         </>
                         :
