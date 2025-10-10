@@ -1742,7 +1742,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
 
           {nibrsCode === "220" || nibrsCode === "210" || nibrsCode === "120" || nibrsCode === "23D" || nibrsCode === "23F" || nibrsCode === "23H" || nibrsCode === "240" || nibrsCode === "26A" || nibrsCode === "26A" || nibrsCode === "23D" || nibrsCode === "26C" || nibrsCode === "26E" || nibrsCode === "26F" || nibrsCode === "26G" || nibrsCode === "270" || nibrsCode === "510" ?
             <>
-              <div className="col-2 col-md-2 col-lg-2" style={{ display: "flex", flexDirection: "column" }}>
+              <div className="custom-col-12 " style={{ display: "flex", flexDirection: "column" }}>
                 <div>
                   <span className="new-label">
                     Cargo Theft
@@ -1755,7 +1755,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
                 </div>
               </div>
 
-              <div className="custom-col-20">
+              <div className="col-7 col-md-7 col-lg-2">
                 <Select
                   name="IsCargoTheftInvolved"
                   value={YesNoArr?.filter((obj) => obj.value === value?.IsCargoTheftInvolved)}
