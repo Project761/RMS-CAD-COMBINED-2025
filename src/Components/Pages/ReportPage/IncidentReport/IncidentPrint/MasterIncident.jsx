@@ -1132,7 +1132,7 @@ const MasterIncident = ({ comments }) => {
                                         {
                                             masterReportData?.Incident?.map((obj) =>
                                                 <>
-                                                    <div className="container mt-3 px-2 ">
+                                                    <div className="container mt-3 mb-5 px-2 footer_margin">
                                                         <h5 className=" text-white text-bold bg-green py-1 px-3"> Incident Number:- {obj.IncidentNumber}</h5>
                                                         {/* incident */}
                                                         <div className="col-12  mt-2" style={{ border: '1px solid #80808085', }}>
@@ -2724,11 +2724,13 @@ const MasterIncident = ({ comments }) => {
                                                 </>
                                             )
                                         }
+
                                         {showFooter && (
                                             <div className="print-footer">
                                                 <p> Officer Name: {LoginUserName || ''} | Date/Time: {getShowingWithFixedTime01(datezone || '')} | IP Address: {ipAddress || ''}</p>
                                             </div>
                                         )}
+
 
                                     </div>
                                 </div>
