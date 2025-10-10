@@ -4,6 +4,8 @@ import Select from "react-select";
 import DatePicker from "react-datepicker";
 import {
   Decrypt_Id_Name, DecryptedList, EncryptedList, LockFildscolour, Requiredcolour, base64ToString,
+  filterPassedTimeZonesProperty,
+  getShowingDateText,
   getShowingMonthDateYear, getShowingWithOutTime,
   nibrscolourStyles,
   stringToBase64, tableCustomStyles,
@@ -35,7 +37,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
   const incReportedDate = useSelector((state) => state.Agency.incReportedDate);
   const uniqueId = sessionStorage.getItem("UniqueUserID") ? Decrypt_Id_Name(sessionStorage.getItem("UniqueUserID"), "UForUniqueUserID") : "";
 
-  const { get_Offence_Count, updateCount, setUpdateCount, setChangesStatus, nibrsSubmittedStatus, setnibrsSubmittedStatus, nibrsSubmittedOffenseMain, setnibrsSubmittedOffenseMain, get_Offence_Data, changesStatus, get_Incident_Count, setIncidentStatus, setIncStatus, offenceFillterData, setcountoffaduit, PanelCode, setPanelCode,
+  const { get_Offence_Count, updateCount, setUpdateCount, datezone, setChangesStatus, nibrsSubmittedStatus, setnibrsSubmittedStatus, nibrsSubmittedOffenseMain, setnibrsSubmittedOffenseMain, get_Offence_Data, changesStatus, get_Incident_Count, setIncidentStatus, setIncStatus, offenceFillterData, setcountoffaduit, PanelCode, setPanelCode,
     incidentCount, validate_IncSideBar
   } = useContext(AgencyContext);
 
@@ -100,7 +102,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
   const [addUpdatePermission, setaddUpdatePermission] = useState();
 
   const [value, setValue] = useState({
-    ChargeCodeID: "", NIBRSCodeId: null, OffenseCodeId: null, LawTitleId: null, OffenderLeftSceneId: null, CategoryId: null,
+    ChargeCodeID: "", NIBRSCodeId: null, OffenseCodeId: null, LawTitleId: null, OffenseDateTime: '', OffenderLeftSceneId: null, CategoryId: null,
     PrimaryLocationId: null, SecondaryLocationId: null, FTADate: "", Fine: "", CourtCost: "", FTAAmt: "", LitigationTax: "", DamageProperty: "", OfRoomsInvolved: "", PremisesEntered: "", PropertyAbandoned: "", IsForceused: "", IsIncidentC: false, AttemptComplete: "", CrimeID: "", IncidentID: "", CreatedByUserFK: "", ModifiedByUserFK: "", IsDomesticViolence: "", IsGangInfo: "", CrimeMethodOfEntryID: "", Comments: "", IsCargoTheftInvolved: null,
   });
 
@@ -146,13 +148,24 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
     if (IncID) {
       setValue({
         ...value,
-        IncidentID: IncID, CreatedByUserFK: "", ChargeCodeID: "", NIBRSCodeId: null, OffenseCodeId: null, LawTitleId: null, OffenderLeftSceneId: null, CategoryId: null, PrimaryLocationId: null, SecondaryLocationId: null, FTADate: "", Fine: "", CourtCost: "", FTAAmt: "", LitigationTax: "", DamageProperty: "", OfRoomsInvolved: "", PremisesEntered: "", PropertyAbandoned: "", IsForceused: "",
+        IncidentID: IncID, CreatedByUserFK: "", ChargeCodeID: "", NIBRSCodeId: null, OffenseDateTime: '', OffenseCodeId: null, LawTitleId: null, OffenderLeftSceneId: null, CategoryId: null, PrimaryLocationId: null, SecondaryLocationId: null, FTADate: "", Fine: "", CourtCost: "", FTAAmt: "", LitigationTax: "", DamageProperty: "", OfRoomsInvolved: "", PremisesEntered: "", PropertyAbandoned: "", IsForceused: "",
         IsInciden: false, AttemptComplete: "", CrimeID: "", ModifiedByUserFK: "", Comments: "", IsCargoTheftInvolved: ''
       });
       get_Offence_Data(IncID); setMainIncidentID(IncID);
       if (!incReportedDate) { dispatch(get_Inc_ReportedDate(IncID)); }
     }
   }, [IncID]);
+
+  useEffect(() => {
+    if (loginAgencyID) {
+      const defaultDate = datezone ? new Date(datezone) : null;
+      setValue({
+        ...value,
+        'OffenseDateTime': defaultDate
+      });
+      // dispatch(get_PropertyTypeData(loginAgencyID));
+    }
+  }, [loginAgencyID, incReportedDate]);
 
   // useEffect(() => {
   //   if (IncID && IncNo && offenceFillterData?.length > 0) {
@@ -279,6 +292,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
           'IsCargoTheftInvolved': editval[0]?.IsCargoTheftInvolved || editval[0]?.IsCargoTheftInvolved === "Y" ? editval[0]?.IsCargoTheftInvolved === "N" ? "N" : "Y" : "",
           // other
           ModifiedByUserFK: loginPinID, CreatedByUserFK: loginPinID,
+          OffenseDateTime: editval[0]?.OffenseDateTime,
         });
 
         const filteredChargeData = Object.values(chargedata).filter((item) => item.ChargeCodeID === editval[0]?.ChargeCodeID);
@@ -381,7 +395,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
 
   const Reset = () => {
     setValue({
-      ...value, ChargeCodeID: "", LawTitleId: "", OffenseCodeId: "", NIBRSCodeId: "", OffenderLeftSceneId: "", CategoryId: "", PrimaryLocationId: "", SecondaryLocationId: "", Fine: "", CourtCost: "", FTAAmt: "", LitigationTax: "", DamageProperty: "", OfRoomsInvolved: "", PremisesEntered: "", PropertyAbandoned: "", IsForceused: "", AttemptComplete: "", FTADate: "", CrimeID: "", IsDomesticViolence: "", IsGangInfo: "", CrimeMethodOfEntryID: "", Comments: "", IsCargoTheftInvolved: '',
+      ...value, ChargeCodeID: "",  LawTitleId: "", OffenseCodeId: "", NIBRSCodeId: "",  'OffenseDateTime':  incReportedDate ? getShowingDateText(incReportedDate) : getShowingMonthDateYear(new Date()), OffenderLeftSceneId: "", CategoryId: "", PrimaryLocationId: "", SecondaryLocationId: "", Fine: "", CourtCost: "", FTAAmt: "", LitigationTax: "", DamageProperty: "", OfRoomsInvolved: "", PremisesEntered: "", PropertyAbandoned: "", IsForceused: "", AttemptComplete: "", FTADate: "", CrimeID: "", IsDomesticViolence: "", IsGangInfo: "", CrimeMethodOfEntryID: "", Comments: "", IsCargoTheftInvolved: '',
     });
     setErrors({
       ...errors, ChargeCodeIDError: "", NibrsIdError: "", PremisesEnteredError: "", PrimaryLocationError: "", AttemptRequiredError: "", CommentsError: "",
@@ -743,12 +757,12 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
       PrimaryLocationId, SecondaryLocationId, FTADate, Fine, CourtCost, FTAAmt, LitigationTax,
       DamageProperty, OfRoomsInvolved, PremisesEntered, PropertyAbandoned,
       IsForceused, IsIncidentCode, AttemptComplete, CrimeID, IncidentID, IsCargoTheftInvolved,
-      CreatedByUserFK, ModifiedByUserFK, IsDomesticViolence, IsGangInfo, CrimeMethodOfEntryID, Comments,
+      CreatedByUserFK, ModifiedByUserFK, IsDomesticViolence, OffenseDateTime, IsGangInfo, CrimeMethodOfEntryID, Comments,
     } = value;
     const val = {
       ChargeCodeID, NIBRSCodeId, OffenseCodeId, LawTitleId, OffenderLeftSceneId, CategoryId,
       PrimaryLocationId, SecondaryLocationId, FTADate, Fine, CourtCost, FTAAmt, LitigationTax,
-      DamageProperty, OfRoomsInvolved, PremisesEntered, PropertyAbandoned, IsCargoTheftInvolved,
+      DamageProperty, OfRoomsInvolved, PremisesEntered, OffenseDateTime, PropertyAbandoned, IsCargoTheftInvolved,
       IsForceused, IsIncidentCode, AttemptComplete, CrimeID,
       IncidentID: mainIncidentID,
       CreatedByUserFK: loginPinID,
@@ -782,7 +796,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
   const Update_Offence = async () => {
     const {
       ChargeCodeID, NIBRSCodeId, OffenseCodeId, LawTitleId, OffenderLeftSceneId, CategoryId,
-      PrimaryLocationId, SecondaryLocationId, FTADate, Fine, CourtCost, FTAAmt, LitigationTax,
+      PrimaryLocationId, SecondaryLocationId, FTADate, Fine, OffenseDateTime, CourtCost, FTAAmt, LitigationTax,
       DamageProperty, OfRoomsInvolved, PremisesEntered, PropertyAbandoned,
       IsForceused, IsIncidentCode, AttemptComplete, CrimeID, IncidentID, IsCargoTheftInvolved,
       CreatedByUserFK, ModifiedByUserFK, IsDomesticViolence, IsGangInfo, CrimeMethodOfEntryID,
@@ -790,7 +804,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
     } = value;
 
     const val = {
-      ChargeCodeID, NIBRSCodeId, OffenseCodeId, LawTitleId, OffenderLeftSceneId, CategoryId,
+      ChargeCodeID, NIBRSCodeId, OffenseDateTime, OffenseCodeId, LawTitleId, OffenderLeftSceneId, CategoryId,
       PrimaryLocationId, SecondaryLocationId, FTADate, Fine, CourtCost, FTAAmt,
       LitigationTax, DamageProperty, OfRoomsInvolved, PremisesEntered, PropertyAbandoned,
       IsIncidentCode, AttemptComplete, CrimeID, IncidentID: mainIncidentID,
@@ -1658,6 +1672,70 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
               value={methodEntryDrp?.filter((obj) => obj.value === value?.CrimeMethodOfEntryID)}
               onChange={(e) => changeDropDown(e, "CrimeMethodOfEntryID")}
               placeholder="Select..."
+            />
+
+
+
+
+          </div>
+
+
+          <div className="col-3 col-md-3 col-lg-2 ">
+            <label htmlFor="" className="new-label px-0 mb-0">
+              Offense  Date/Time
+            </label>
+          </div>
+          <div className="custom-col-20">
+            <DatePicker
+              id='OffenseDateTime'
+              name='OffenseDateTime'
+              ref={startRef}
+
+
+              onKeyDown={(e) => {
+                if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                  e?.preventDefault();
+                } else {
+                  onKeyDown(e);
+                }
+              }}
+              dateFormat="MM/dd/yyyy HH:mm"
+
+              isClearable={false}
+              onChange={(date) => {
+                // !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
+                // setIncidentReportedDate(date ? getShowingMonthDateYear(date) : null)
+                if (date > new Date(datezone)) {
+                  date = new Date(datezone);
+                }
+                if (date >= new Date()) {
+                  setValue({ ...value, ['OffenseDateTime']: new Date() ? getShowingDateText(new Date(date)) : null })
+                } else if (date <= new Date(incReportedDate)) {
+                  setValue({ ...value, ['OffenseDateTime']: new Date() ? getShowingDateText(new Date(date)) : null })
+                } else {
+                  setValue({ ...value, ['OffenseDateTime']: date ? getShowingDateText(date) : null })
+                }
+              }}
+              selected={value?.OffenseDateTime && new Date(value?.OffenseDateTime)}
+
+              // disabled={nibrsSubmittedPropertyMain === 1}
+              // className={nibrsSubmittedPropertyMain === 1 ? 'LockFildsColour' : 'requiredColor'}
+              autoComplete="Off"
+              placeholderText={'Select...'}
+              timeInputLabel
+              showTimeSelect
+              timeIntervals={1}
+              timeCaption="Time"
+              showYearDropdown
+              showMonthDropdown
+              dropdownMode="select"
+              minDate={new Date(incReportedDate)}
+              maxDate={new Date(datezone)}
+              // maxDate={new Date(datezone)}
+              filterTime={(date) => filterPassedTimeZonesProperty(date, incReportedDate, datezone)}
+              timeFormat="HH:mm "
+              is24Hour
+
             />
           </div>
 
