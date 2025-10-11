@@ -421,15 +421,23 @@ const NibrsHome = () => {
 
             if (proObj[0]?.OnPageError?.includes("Property must be present.") && proObj[0]?.PropertyType != 'V') {
               setIsCrimeAgainstPropertyError(true); setSuspectedDrugTypeErrorStatus(false); setIsPropertyIdZeroError(false);
+              // Error Status
+              setPropErrorStatus(true); setPropertyErrorString(proObj[0]?.OnPageError ? proObj[0]?.OnPageError : '');
 
             } else if (proObj[0]?.OnPageError?.includes("For Crime Against Property Property must be present.") && proObj[0]?.PropertyType != 'V') {
               setIsCrimeAgainstPropertyError(true); setSuspectedDrugTypeErrorStatus(false); setIsPropertyIdZeroError(false);
+              // Error Status
+              setPropErrorStatus(true); setPropertyErrorString(proObj[0]?.OnPageError ? proObj[0]?.OnPageError : '');
 
             } else if (proObj[0]?.OnPageError?.includes("{352} Add at least one suspected drug type(create a property with type 'Drug')") || proObj[0]?.OnPageError?.includes("Add at least one suspected drug type(create a property with type 'Drug').") && proObj[0]?.PropertyType != 'V') {
               setSuspectedDrugTypeErrorStatus(true); setIsPropertyIdZeroError(false); setIsCrimeAgainstPropertyError(false);
+              // Error Status
+              setPropErrorStatus(true); setPropertyErrorString(proObj[0]?.OnPageError ? proObj[0]?.OnPageError : '');
 
             } else if (proObj[0]?.OnPageError?.includes("{074} Need a property loss code of 5,7 for offense  23B") && proObj[0]?.PropertyType != 'V') {
               setIsPropertyIdZeroError(true); setSuspectedDrugTypeErrorStatus(false); setIsCrimeAgainstPropertyError(false);
+              // Error Status
+              setPropErrorStatus(true); setPropertyErrorString(proObj[0]?.OnPageError ? proObj[0]?.OnPageError : '');
 
             } else {
               setSuspectedDrugTypeErrorStatus(false); setIsPropertyIdZeroError(false); setIsCrimeAgainstPropertyError(false);
@@ -479,6 +487,7 @@ const NibrsHome = () => {
             // set property error string
             if (PropArr?.length > 0) {
               const PropErrorArray = PropArr || []
+              console.log("🚀 ~ validateNibrs ~ PropErrorArray:", PropErrorArray)
               if (PropErrorArray.every(item => item === null || item === undefined)) {
                 setPropErrorStatus(false); setPropertyErrorString('');
 
@@ -488,7 +497,12 @@ const NibrsHome = () => {
               }
 
             } else {
-              setPropErrorStatus(false); setPropertyErrorString('');
+              if (isCrimeAgainstPropertyError || isSuspectedDrugTypeErrorStatus || isPropertyIdZeroError) {
+                console.log("🚀 ~ validateNibrs ~ isCrimeAgainstPropertyError:", isCrimeAgainstPropertyError)
+              } else {
+                setPropErrorStatus(false); setPropertyErrorString('');
+
+              }
 
             }
 
@@ -517,6 +531,7 @@ const NibrsHome = () => {
         // set victim error string
         if (victimValidateNibrsData) {
           const victimObj = victimValidateNibrsData?.Victim ? victimValidateNibrsData?.Victim : [];
+          console.log("🚀 ~ validateNibrs ~ victimObj:", victimObj)
           if (victimObj?.length > 0) {
             const isVictimConnectedError = victimObj[0]?.OnPageError?.includes("At least one victim must be present and must be connected with offence.");
             if (isVictimConnectedError) {
@@ -538,7 +553,7 @@ const NibrsHome = () => {
 
       } catch (error) {
         console.log("🚀 ~ ValidateProperty ~ error:", error);
-        setnibrsValidateLoder(false);
+        // setnibrsValidateLoder(false);
       }
 
       // setnibrsValidateLoder(false);
@@ -731,7 +746,8 @@ const NibrsHome = () => {
         incidentErrorStatus={incidentErrorStatus}
         nibErrModalStatus={nibrsErrModalStatus}
         setNibrsErrModalStatus={setNibrsErrModalStatus}
-        nibrsValidateloder={nibrsValidateloder}
+        nibrsValidateloder={nibrsSideBarLoading}
+        // nibrsValidateloder={nibrsValidateloder}
 
         administrativeErrorString={administrativeErrorString}
         incidentErrorString={incidentErrorString}

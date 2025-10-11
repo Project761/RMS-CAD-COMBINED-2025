@@ -1322,7 +1322,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, ValidateP
                             } else {
                                 setChangesStatus(false); toastifyError(res.Message); setErrors({ ...errors, ['NameTypeIDError']: '', });
                             }
-                        })
+                        });
                     } else {
                         toastifyError('SSN Already Exists');
                     }
@@ -1928,7 +1928,8 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, ValidateP
         } else {
             InSertBasicInfo1(multiSelected1[len]?.value, 'OffenseID', 'NameOffense/Insert_NameOffense')
         }
-
+        // validateIncSideBar
+        validate_IncSideBar(IncID, IncNo, loginAgencyID);
     }
 
     const InSertBasicInfo1 = (id, col1, url) => {
@@ -2365,7 +2366,6 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, ValidateP
 
     return (
         <>
-
             <div className="col-12 col-md-12 col-lg-12  ">
                 <div className="row px-2">
                     <div className="col-2 col-md-2 col-lg-1 mt-2">

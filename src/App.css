@@ -2378,7 +2378,7 @@ input.nibrs-reopened:disabled {
   padding: 8px 12px;
   font-size: 14px;
   font-weight: 500;
-  z-index: 10;
+  /* z-index: 10; */
   word-break: break-word;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }

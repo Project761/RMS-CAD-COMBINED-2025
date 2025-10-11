@@ -161,6 +161,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
     const [showAssignmentTypeError, setShowAssignmentTypeError] = useState(false);
     const [showOffenseTypeError, setShowOffenseTypeError] = useState(false);
     const [showJustifyHomicideError, setShowJustifyHomicideError] = useState(false);
+    const [showCallTypeError, setShowCallTypeError] = useState(false);
     const [victimCode, setVictimCode] = useState('');
 
     const [isSocietyName, setIsSocietyName] = useState(false);
@@ -2914,6 +2915,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
         setShowAssaultTypeError(false);
         setShowOffenseTypeError(false);
         setShowJustifyHomicideError(false);
+        setShowCallTypeError(false);
         const val = {
             "gIncidentID": IncidentID,
             "IncidentNumber": IncNo,
@@ -2948,6 +2950,10 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
                 }
                 if (victimError?.JustHomicide) {
                     setShowJustifyHomicideError(true);
+
+                }
+                if (victimError?.CallType) {
+                    setShowCallTypeError(true);
 
                 }
             } else {
@@ -3048,6 +3054,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
         } else {
             setoffenceCountStatus(false);
         }
+        // validateIncSideBar
+        validate_IncSideBar(IncID, IncNo, loginAgencyID);
     }
 
     const InSertBasicInfo1 = (id, col1, url) => {
@@ -3948,6 +3956,15 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
                                                     </span>
                                                 </div>
                                                 <div className="col-4 col-md-4 col-lg-5  mt-2" >
+                                                {nibrsFieldError?.CallType && showCallTypeError && (
+                                                <div className="nibrs-tooltip-error" style={{ left: '-80px' }}>
+                                                    <div className="tooltip-arrow"></div>
+
+                                                    <div className="tooltip-content">
+                                                        <span className="text-danger">⚠️ {nibrsFieldError.CallTypeError || ''}</span>
+                                                    </div>
+                                                </div>
+                                            )}
                                                     <Select
                                                         name='CallTypeID'
                                                         value={callTypeDrp?.filter((obj) => obj.value === value?.CallTypeID)}

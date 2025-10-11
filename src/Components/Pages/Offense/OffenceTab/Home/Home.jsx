@@ -43,6 +43,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
 
 
   const PropertyCount = incidentCount[0]?.PropertyCount || 0;
+  const VehicleCount = incidentCount[0]?.VehicleCount || 0;
   const PropertyDrugCount = incidentCount[0]?.PropertyDrugCount || 0;
   // Law Title
   const [lawTitleIdDrp, setLawTitleIdDrp] = useState([]);
@@ -929,7 +930,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
                   onClick={(e) => {
                     navigate(`/Off-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${stringToBase64(row?.CrimeID)}&OffSta=${true}&CrimeSta=${true}`);
                   }}
-                  className={`btn btn-sm text-white px-2 py-0 mr-1 `}
+                  className={`btn btn-sm text-white px-2 py-0 mr-1`}
                   style={{
                     backgroundColor: "#19aea3",
                   }}
@@ -992,14 +993,20 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
       cell: (row) => (
         <div >
           {row?.IsCrimeAgainstProperty === true && (
+
             <span
               onClick={(e) => {
                 navigate(`/Vehicle-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${0}&MVehId=${0}&VehSta=${false}&FbiCode=${row.FBICode}&AttComp=${row?.AttemptComplete === "Completed" ? "C" : "A"}`);
               }}
-              className={`btn btn-sm bg-green text-white px-2 py-0 mr-1`}
+              // className={`btn btn-sm bg-green text-white px-2 py-0 mr-1`}
+              className={`btn btn-sm  text-white px-2 py-0 mr-1 `}
+              style={{
+                backgroundColor: (row?.FBICode === "240" && VehicleCount === 0) ? "red" : "#19aea3",
+              }}
             >
               Vehicle
             </span>
+
           )}
         </div>
       ),
