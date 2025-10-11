@@ -1115,7 +1115,7 @@ const QueueReportsModal = (props) => {
     }
   }
 
-  console.log(approverRequiredCount, appRequiredCountCurrentStatus)
+  console.log(checkWebWorkFlowStatus , Number(approverRequiredCount) , Number(appRequiredCountCurrentStatus))
 
   return (
     <div className="modal fade show d-block" style={{ background: "rgba(0,0,0,0.5)" }}>
@@ -1348,8 +1348,7 @@ const QueueReportsModal = (props) => {
                     <>
                       <div className='col-md-2'>
                         {
-                          (!checkWebWorkFlowStatus &&
-                            !(Number(appRequiredCountCurrentStatus) < Number(approverRequiredCount))) ?
+                          !(checkWebWorkFlowStatus && (Number(appRequiredCountCurrentStatus) < Number(approverRequiredCount))) ?
                             < div className="form-check">
                               <input
                                 className="form-check-input"
