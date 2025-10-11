@@ -112,10 +112,11 @@ const IncSidebar = () => {
             if (DecEIncID) {
                 get_Incident_Count(DecEIncID)
             }
-        }
-        else {
+
+        } else {
             setIncidentID('');
             setExpandList('')
+
         }
     }, [IncID]);
 
@@ -171,7 +172,7 @@ const IncSidebar = () => {
         if (showStatus && DecEIncID && IncNo && loginAgencyID) {
             validate_IncSideBar(DecEIncID, IncNo, loginAgencyID)
         }
-    }, [showStatus, DecEIncID, IncNo, loginAgencyID, pathname]);
+    }, [pathname]);
 
     // // validate property/vehicle
     // const validate_IncSideBar_NibrsStatus = async (incidentID, incidentNumber, agencyID) => {
@@ -273,7 +274,6 @@ const IncSidebar = () => {
     //         setIncidentErrorStatus(false);
     //     }
     // }
-
 
     return (
         <>
