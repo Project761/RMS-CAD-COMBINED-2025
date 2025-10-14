@@ -22,7 +22,6 @@ export const NibrsErrorStyle = (status) => {
 };
 
 export const check_OffenceCode_NoneUnknown = (nibrsCode, lossCode, AttmComp, categoryCode, nibrsCodeArr) => {
-   
     switch (nibrsCode) {
         case '39A':
         case '39B':
@@ -332,7 +331,7 @@ export const check_OffenceCode_NoneUnknown = (nibrsCode, lossCode, AttmComp, cat
 
                     }
 
-                  
+
 
                 }
                 default: {
@@ -370,7 +369,7 @@ export const check_OffenceCode_NoneUnknown = (nibrsCode, lossCode, AttmComp, cat
                         return (lossCode !== 'RECD' && lossCode !== 'STOL') ? 'Loss Code must be Stolen, Recoverd' : '';
                     }
 
-                    
+
                 }
                 default: {
                     return ''; // Added return statement for default case
@@ -466,7 +465,7 @@ export const check_OffenceCode_NoneUnknown = (nibrsCode, lossCode, AttmComp, cat
 }
 
 export const check_Category_Nibrs = (nibrsCodeArr, propRecType, propCategoryCode, type = 'Color') => {
-   
+
     if (propCategoryCode) {
         if (propCategoryCode === '11' && propRecType === '6' && nibrsCodeArr.includes('35A')) {
             return type === 'Color' ? NibrsErrorStyle(true) : <ErrorTooltip ErrorStr={'Property Description Code Cannot = 11 For Property Loss Type=6 and Offense = 35A'} />

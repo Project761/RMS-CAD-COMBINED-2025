@@ -1,11 +1,11 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import Select from "react-select";
+import Select, { components } from "react-select";
 import DatePicker from "react-datepicker";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import DataTable from 'react-data-table-component';
 import { useDispatch, useSelector } from 'react-redux';
 import NirbsErrorShowModal from '../../../Common/NirbsErrorShowModal';
-import { check_Category_Nibrs } from '../../Property/PropertyNibrsError';
+import { check_Category_Nibrs, check_OffenceCode_NoneUnknown, ErrorShow, ErrorTooltip } from '../../Property/PropertyNibrsError';
 import { get_ScreenPermissions_Data } from '../../../../redux/actions/IncidentAction';
 import { get_PropertyMainModule_Data, } from '../../../../redux/actions/PropertyAction';
 import { get_AgencyOfficer_Data, get_ArresteeName_Data, get_DrugManufactured_Drp_Data, get_Masters_Name_Drp_Data, get_MeasureType_Drp_Data, get_PropSourceDrugDrpData, get_PropertyLossCode_Drp_Data, get_PropertyTypeData, get_SuspectedDrug_Drp_Data, get_TypeMarijuana_Drp_Data, } from '../../../../redux/actions/DropDownsData';
@@ -14,13 +14,15 @@ import { MasterProperty_ID, Master_Property_Status, Masters_Name_Drp_Data, Prope
 import { RequiredFieldIncident, RequiredFieldOnConditon, RequiredFieldHIN } from '../../Utility/Personnel/Validation';
 import { AgencyContext } from '../../../../Context/Agency/Index';
 import { toastifyError, toastifySuccess } from '../../../Common/AlertMsg';
-import { Comman_changeArrayFormat, fourColwithExtraCode, } from '../../../Common/ChangeArrayFormat';
+import { Comman_changeArrayFormat, fourColwithExtraCode, offenseArray, threeColVictimOffenseArray, } from '../../../Common/ChangeArrayFormat';
 import { AddDeleteUpadate, fetchPostData, fetchPostDataNibrs } from '../../../hooks/Api';
 import { Decrypt_Id_Name, Encrypted_Id_Name, Requiredcolour, base64ToString, filterPassedTimeZonesProperty, getShowingDateText, getShowingMonthDateYear, stringToBase64, tableCustomStyles } from '../../../Common/Utility';
 import ChangesModal from '../../../Common/ChangesModal';
 import ListModal from '../../Utility/ListManagementModel/ListModal';
 import Loader from '../../../Common/Loader';
 import DeletePopUpModal from '../../../Common/DeleteModal';
+import SelectBox from '../../../Common/SelectBox';
+
 
 const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty = () => { }, getIncident_NibrsErrors = () => { } }) => {
 
@@ -175,6 +177,8 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
         if (DecPropID || DecMPropID) {
             setPropertyID(DecPropID); GetSingleData(DecPropID, DecMPropID); setMasterPropertyID(DecMPropID); get_Property_Count(DecPropID, DecMPropID, MstPage === "MST-Property-Dash" ? true : false);
             get_Data_Porperty_Offence(DecPropID, DecMPropID, IncID)
+
+            getEditOffenseData(DecPropID, DecMPropID, IncID)
         }
     }, [DecPropID, DecMPropID]);
 
@@ -195,8 +199,18 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
             setMainIncidentID(IncID);
             dispatch(get_PropertyMainModule_Data(IncID, MstPage === "MST-Property-Dash" ? true : false));
             dispatch(get_ArresteeName_Data('', '', IncID));
+
         }
     }, [IncID, possessionID]);
+
+    useEffect(() => {
+        // get Data for offense drop down
+        if (propertyID) {
+            get_Offense_DropDown(IncID, propertyID);
+        } else {
+            get_Offense_DropDown(IncID);
+        }
+    }, [propertyID, IncID]);
 
 
     const check_Validation_Error = (e) => {
@@ -1545,6 +1559,217 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
         setDrugEditData({}); setPropertyDrugID('');
     }
 
+    // ---------------------offence-----------------------------    
+
+    const CheckboxOption = props => {
+        return (
+            <components.Option {...props}>
+                <input
+                    type="checkbox"
+                    checked={props.isSelected}
+                    onChange={() => null}
+                />
+                <label className='ml-2'>{props.label}</label>
+            </components.Option>
+        );
+    };
+
+    const [offenseDrp, setOffenseDrp] = useState();
+    const [offenseEditVal, setOffenseEditVal] = useState([]);
+    const [offensemultiSelected, setOffensemultiSelected] = useState({
+        optionSelected: null
+    })
+
+    useEffect(() => {
+        if (offenseEditVal) {
+            setOffensemultiSelected(prevValues => { return { ...prevValues, ['OffenseID']: offenseEditVal } });
+        }
+    }, [offenseEditVal])
+
+    const customStyleOffenseWithoutColor = {
+        control: base => ({
+            ...base,
+            minHeight: 60,
+            fontSize: 14,
+            margintop: 2,
+            boxShadow: 0,
+        }),
+        valueContainer: (provided) => ({
+            ...provided,
+            maxHeight: "134px",
+            overflowY: "auto",
+        }),
+    };
+
+    const customStyleOffenseNibrsErrorColor = {
+        control: base => ({
+            ...base,
+            backgroundColor: "#F29A9A",
+            minHeight: 60,
+            fontSize: 14,
+            margintop: 2,
+            boxShadow: 0,
+        }),
+        valueContainer: (provided) => ({
+            ...provided,
+            maxHeight: "134px",
+            overflowY: "auto",
+        }),
+    };
+
+    const get_Offense_DropDown = (incidentID, propertyID) => {
+        const val = { 'IncidentID': incidentID, 'PropertyID': propertyID || 0 }
+        fetchPostData('PropertyOffense/GetDataDropDown_PropertyOffense', val).then((data) => {
+            console.log("🚀 ~ get_Offense_DropDown ~ data:", data)
+            if (data) {
+                setOffenseDrp(threeColVictimOffenseArray(data, 'CrimeID', 'Offense_Description'));
+
+            } else {
+                setOffenseDrp([]);
+
+            }
+        }).catch((err) => {
+            console.log("🚀 ~get_Offense_DropDown fetchpostdata error ~ err:", err);
+        })
+    }
+
+    const getEditOffenseData = (propertyID, DecMPropID, mainIncidentID) => {
+        const val = { 'PropertyID': propertyID, 'MasterPropertyID': DecMPropID ? DecMPropID : 0, 'IncidentID': mainIncidentID, 'OffenseID': 0, 'IsMaster': MstPage === "MST-Property-Dash" ? true : false, }
+        fetchPostData('PropertyOffense/GetData_PropertyOffense', val).then((res) => {
+            console.log("🚀 ~ getEditOffenseData ~ res:", res)
+            if (res) {
+                // data, Id, Code, type, col3, col4, NIBRSCode, AttmComp
+                setOffenseEditVal(offenseArray(res, 'PropertyOffenseID', 'OffenseID', 'PropertyID', 'PropertyID', 'Offense_Description', 'NIBRSCode', 'AttemptComplete'));
+
+            } else {
+                setOffenseEditVal([]);
+
+            }
+        });
+    }
+
+    const offenseMulitiSelectOnchange = (multiSelected) => {
+        setStatesChangeStatus(true);
+        setOffensemultiSelected({
+            ...offensemultiSelected,
+            OffenseID: multiSelected
+        })
+
+        const len = multiSelected.length - 1
+        if (multiSelected?.length < offenseEditVal?.length) {
+            let missing = null;
+            let i = offenseEditVal.length;
+            while (i) {
+                missing = (~multiSelected.indexOf(offenseEditVal[--i])) ? missing : offenseEditVal[i];
+            }
+            DeleteOffense(missing.value, 'propertyOffenseID', 'PropertyOffense/Delete_PropertyOffense')
+
+        } else {
+            InsertOffense(multiSelected[len]?.value, 'OffenseID', 'PropertyOffense/Insert_PropertyOffense')
+
+        }
+        // if (multiSelected.length > 0) {
+        //     setoffenceCountStatus(true);
+        // } else {
+        //     setoffenceCountStatus(false);
+        // }
+
+    }
+
+    const DeleteOffense = (id, col1, url) => {
+        const val = {
+            'PropertyOffenseID': id,
+            'DeletedByUserFK': loginPinID,
+            'MasterPropertyID': masterPropertyID,
+            'PropertyID': propertyID,
+            'IsMaster': MstPage === "MST-Property-Dash" ? true : false
+        }
+        AddDeleteUpadate(url, val).then((res) => {
+            if (res) {
+                const parsedData = JSON.parse(res.data);
+                const message = parsedData.Table[0].Message;
+                toastifySuccess(message);
+                get_Offense_DropDown(mainIncidentID, propertyID);
+                getEditOffenseData(propertyID, masterPropertyID, mainIncidentID);
+
+            } else {
+                console.log("Somthing Wrong");
+            }
+        }).catch((err) => {
+            console.log("🚀 ~ Insert AddDeleteUpadate ~ err:", err);
+        })
+    }
+
+    const InsertOffense = (id, col1, url) => {
+        const val = {
+            'IncidentID': mainIncidentID,
+            'PropertyID': propertyID,
+            'CreatedByUserFK': loginPinID,
+            'IsMaster': MstPage === "MST-Property-Dash" ? true : false,
+            'MasterPropertyID': masterPropertyID,
+            'labal': '',
+            'OffenseID': id,
+        }
+        AddDeleteUpadate(url, val).then((res) => {
+            if (res) {
+                const parsedData = JSON.parse(res.data);
+                const message = parsedData?.Table[0].Message;
+                toastifySuccess(message);
+                get_Offense_DropDown(mainIncidentID, propertyID);
+                getEditOffenseData(propertyID, masterPropertyID, mainIncidentID);
+
+            } else {
+                console.log("Somthing Wrong");
+
+            }
+        }).catch((err) => {
+            console.log("🚀 ~ Insert AddDeleteUpadate ~ err:", err);
+        })
+    }
+
+    // don't remove code
+    const check_OffenceCode_NibrsError = (OffenceArray = [], lossCode, propCategoryCode) => {
+        try {
+            if (!Array.isArray(OffenceArray) || OffenceArray.length === 0) {
+                return '';
+            }
+
+            for (const offence of OffenceArray) {
+                const checkResult = check_OffenceCode_NoneUnknown(offence?.NIBRSCode, lossCode, offence?.AttmComp, propCategoryCode);
+
+                if (checkResult) {
+                    return checkResult; // return immediately if a match is found
+                }
+            }
+
+            // if no offences matched condition
+            return '';
+        } catch (error) {
+            console.error("🚀 ~ check_OffenceCode_NibrsError ~ error:", error);
+            return '';
+        }
+    };
+
+    // const check_OffenceCode_NibrsError = (OffenceArray) => {
+    //     try {
+    //         if (OffenceArray?.length > 0) {
+    //             for (let i = 0; i < OffenceArray?.length; i++) {
+    //                 let checkOffenceCodeNoneUnknown = check_OffenceCode_NoneUnknown(OffenceArray[i]?.NIBRSCode, lossCode, OffenceArray[i]?.AttmComp, propCategoryCode)
+    //                 if (checkOffenceCodeNoneUnknown) {
+    //                     return checkOffenceCodeNoneUnknown
+    //                  
+    //                 } else {
+    //                     return ''
+    //                 }
+    //             }
+    //         }
+    //     } catch (error) {
+    //         console.log("🚀 ~ check_OffenceCode_NibrsError ~ error:", error);
+    //         return ''
+
+    //     }
+    // }
+
     return (
         <>
             <div className="col-12">
@@ -1566,16 +1791,6 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
                                 </label>
                             </div>
                             <div className="col-3 col-md-3 col-lg-3 mt-1">
-
-                                {/* {nibrsFieldError?.OnPageError  && (
-                                    <div className="nibrs-tooltip-error">
-                                        <div className="tooltip-arrow"></div>
-                                        <div className="tooltip-content">
-                                            <span className="text-danger">⚠️ {nibrsFieldError?.OnPageError || ''}</span>
-                                        </div>
-                                    </div>
-                                )} */}
-
                                 {
                                     nibrsFieldError?.OnPageError && !nibrsFieldError?.IsCategory && (
 
@@ -1590,7 +1805,6 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
                                             </div>
                                     )
                                 }
-
                                 <Select
                                     name='LossCodeID'
                                     value={propertyLossCodeDrpData?.filter((obj) => obj.value === value?.LossCodeID)}
@@ -1659,11 +1873,10 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
                                     ) : null}
                                 </span>
                             </div>
-                            <div className="col-3 col-md-3 col-lg-3 mt-1">
+                            <div className="col-3 col-md-3 col-lg-3 mt-2">
                                 {nibrsFieldError?.IsCategory && (
                                     <div className="nibrs-tooltip-error" style={{ left: '-20px' }}>
                                         <div className="tooltip-arrow"></div>
-
                                         <div className="tooltip-content">
                                             <span className="text-danger">⚠️ {nibrsFieldError?.Category || ''}</span>
                                         </div>
@@ -1682,7 +1895,6 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
                                             :
                                             Requiredcolour
                                     }
-
                                     value={propertyCategoryData?.filter((obj) => obj.value === value?.CategoryID)}
                                     options={propertyCategoryData}
                                     onChange={(e) => ChangeDropDown(e, 'CategoryID')}
@@ -1707,7 +1919,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
                             <div className="col-3 col-md-3 col-lg-2 mt-2">
                                 <label htmlFor="" className='new-label'>Reported Date/Time</label>
                             </div>
-                            <div className="col-3 col-md-3 col-lg-2">
+                            <div className="col-3 col-md-3 col-lg-2 mt-1">
                                 <DatePicker
                                     id='ReportedDtTm'
                                     name='ReportedDtTm'
@@ -1755,6 +1967,35 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
                                 />
 
                             </div>
+                            {
+                                // // don't remove code
+                                // (propertyID || masterPropertyID) && (ProSta === 'true' || ProSta === true) &&
+                                // <>
+                                //     <div className="col-1 col-md-1 col-lg-1 mt-4">
+                                //         <label htmlFor="" className='new-label '>
+                                //             Offense{
+                                //                 check_OffenceCode_NibrsError(offensemultiSelected?.OffenseID, lossCode,propCategoryCode) ? <ErrorTooltip ErrorStr={check_OffenceCode_NibrsError(offensemultiSelected?.OffenseID, lossCode,propCategoryCode)} /> : ''
+                                //             }
+                                //         </label>
+                                //     </div>
+                                //     <div className="col-7 col-md-7 col-lg-7 mt-2">
+                                //         <SelectBox
+                                //             name='OffenseID'
+                                //             isClearable
+                                //             options={offenseDrp}
+                                //             value={offensemultiSelected.OffenseID}
+                                //             closeMenuOnSelect={false}
+                                //             components={{ Option: CheckboxOption }}
+                                //             placeholder="Select.."
+                                //             onChange={(e) => offenseMulitiSelectOnchange(e)}
+                                //             // ref={SelectedValue}
+                                //             className="basic-multi-select select-box_offence"
+                                //             isMulti
+                                //             styles={check_OffenceCode_NibrsError(offensemultiSelected?.OffenseID) ? customStyleOffenseNibrsErrorColor : customStyleOffenseWithoutColor}
+                                //         />
+                                //     </div>
+                                // </>
+                            }
                         </div>
                         <div className="text-center p-1 d-flex justify-content-center">
                             {
@@ -1786,7 +2027,6 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
                             }
                         </div>
                     </div>
-
                     {
                         value.PropertyCategoryCode === 'D' ?
                             <div className="col-12 col-md-12 pt-2 p-0" >
@@ -1928,7 +2168,6 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
                                     </div>
                                 </div>
                             </div>
-
                             :
                             <>
                             </>

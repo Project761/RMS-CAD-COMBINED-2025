@@ -826,8 +826,23 @@ const AgencyData = ({ children }) => {
         }
 
         setNibrsSideBarLoading(false);
+
+        sent_NibrsErrorStatus(incidentID, loginAgencyID, incidentErrorStatus || offenseErrorStatus || nameErrorStatus || PropErrorStatus);
+
     };
 
+    const sent_NibrsErrorStatus = (incidentID, loginAgencyID, status) => {
+        const payload = {
+            'IsNIBRSError': status,
+            'ModifiedByUserFK': loginAgencyID,
+            'IncidentID': incidentID
+        }
+        console.log("🚀 ~ sent_NibrsErrorStatus ~ payload:", payload)
+        fetchPostData('Incident/Update_IsNIBRSError', payload).then((res) => {
+            // console.log("🚀 ~ UpdateIsNIBRSError ~ res:", res)
+
+        });
+    };
 
     // validate Incident
     const TXIBRSValidateCall = async (incidentID, reportDate, baseDate, oriNumber, loginAgencyID) => {

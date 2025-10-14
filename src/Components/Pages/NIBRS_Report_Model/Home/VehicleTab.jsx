@@ -491,7 +491,6 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
     }
 
     // Custom Style
-
     const WidhoutColorStyles = {
         control: (styles) => ({
             ...styles,
@@ -814,7 +813,6 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
 
             }
         }
-
     }
 
     useEffect(() => {
@@ -925,7 +923,6 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
 
         }
     }
-
 
     return (
         <>

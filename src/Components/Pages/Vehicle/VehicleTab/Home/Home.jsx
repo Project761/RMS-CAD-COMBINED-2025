@@ -589,6 +589,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                 setChangesStatus(false); setStatesChangeStatus(false); setStatus(false); setMasterPropertyID(res?.MasterPropertyID);
                 // validateIncSideBar
                 validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
+                nibrsValidateProperty(mainIncidentID)
             } else {
                 toastifyError('Error'); setErrors({ ...errors, ['LossCodeIDError']: '' });
             }
@@ -596,7 +597,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
     }
 
     const Update_Vehicle = () => {
-        console.log(uploadImgFiles);
+
         const previousValue = value.Value;
         AddDeleteUpadate('PropertyVehicle/Update_PropertyVehicle', value).then((res) => {
             if (res.success) {
@@ -610,6 +611,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                 if (uploadImgFiles?.length > 0) { upload_Image_File(); setuploadImgFiles([]); }
                 // validateIncSideBar
                 validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
+                nibrsValidateProperty(mainIncidentID)
             } else {
                 toastifyError('Error');
                 setErrors({ ...errors, ['LossCodeIDError']: '' });
@@ -1068,6 +1070,12 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
             } else { setPossenSinglData([]); }
         })
     }
+
+    useEffect(() => {
+        if (IncID) {
+            nibrsValidateProperty(IncID);
+        }
+    }, [IncID]);
 
     const nibrsValidateProperty = (incidentID) => {
         setclickNibLoder(true);
