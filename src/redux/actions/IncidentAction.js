@@ -4,8 +4,6 @@ import { ScreenPermision, fetchPostData } from '../../Components/hooks/Api';
 import { Agency_OfficerDrp_Data, Agency_Officer_FullName_Drp_Data, INC_NO_Exist_Status, INC_NO_Genrate_Status, Report_App_Officer_Drp_Data, Screen_Permissions } from '../actionTypes';
 import * as api from '../api'
 
-// IncidentID
-// AgencyID
 export const get_AgencyOfficer_Data = (ID, IncID) => async (dispatch) => {
     // --------------------------old code change by Dinesh--------------------------------
     // const val = { AgencyID: ID, IncidentID: IncID ? IncID : 0 };
@@ -34,7 +32,6 @@ export const get_Report_Approve_Officer_Data = (ID, PinID, NarrativeID) => async
         }
     })
 };
-
 
 export const get_ScreenPermissions_Data = (code, LoginAgencyID, PinID) => async (dispatch) => {
     ScreenPermision(code, LoginAgencyID, PinID).then(res => {

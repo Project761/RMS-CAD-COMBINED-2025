@@ -45,11 +45,11 @@ export const fourColArrayReasonCode = (data, Id, Code, col3, col4) => {
 
 
 // new function formed //
-export const offenseArray = (data, Id, Code, type, col3, col4) => {
+export const offenseArray = (data, Id, Code, type, col3, col4, NIBRSCode, AttmComp) => {
     if (type === 'PretendToBeID') {
-        return data?.map((item) => ({ value: item[Id], label: item[col4], id: item[col3], code: item[Code] }));
+        return data?.map((item) => ({ value: item[Id], label: item[col4], id: item[col3], code: item[Code], NIBRSCode: item[NIBRSCode], AttmComp: item[AttmComp] }));
     } else {
-        return data?.map((item) => ({ value: item[Id], label: item[col4], code: item[Code] }));
+        return data?.map((item) => ({ value: item[Id], label: item[col4], code: item[Code], NIBRSCode: item[NIBRSCode], AttmComp: item[AttmComp] }));
     }
 };
 

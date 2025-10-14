@@ -2102,9 +2102,10 @@ input[type="file"] {
   padding: 3px 0px !important;
 }
 
+/* 
 #page_top {
   z-index: 1 !important;
-}
+} */
 
 .Toastify__toast-container--top-right {
   top: 3em !important;

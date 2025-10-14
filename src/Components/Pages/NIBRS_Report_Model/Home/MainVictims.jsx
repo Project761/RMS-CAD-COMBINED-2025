@@ -3010,7 +3010,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
     useEffect(() => {
         if (typeOfSecurityEditVal) {
             setoffensemultiSelected(prevValues => { return { ...prevValues, ['OffenseID']: typeOfSecurityEditVal } });
-
         }
     }, [typeOfSecurityEditVal])
 
@@ -3069,6 +3068,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
                 const message = parsedData.Table[0].Message;
                 toastifySuccess(message); get_Name_Count(DeNameID); get_Offense_DropDown(incidentID, DeNameID);
                 col1 === 'OffenseID' && get_OffenseName_Data(DeNameID);
+
             } else {
                 console.log("Somthing Wrong");
             }
@@ -3940,7 +3940,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
                                                 styles={assaultID20Or21 ? nibrsErrorMultiSelectStyles : customStylesWithOutColor1}
                                             />
                                         </div>
-
                                         {
                                             victimCode === 'L' && <>
                                                 <div className="col-2 col-md-2 col-lg-1 mt-4">
@@ -3956,15 +3955,15 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
                                                     </span>
                                                 </div>
                                                 <div className="col-4 col-md-4 col-lg-5  mt-2" >
-                                                {nibrsFieldError?.CallType && showCallTypeError && (
-                                                <div className="nibrs-tooltip-error" style={{ left: '-80px' }}>
-                                                    <div className="tooltip-arrow"></div>
+                                                    {nibrsFieldError?.CallType && showCallTypeError && (
+                                                        <div className="nibrs-tooltip-error" style={{ left: '-80px' }}>
+                                                            <div className="tooltip-arrow"></div>
 
-                                                    <div className="tooltip-content">
-                                                        <span className="text-danger">⚠️ {nibrsFieldError.CallTypeError || ''}</span>
-                                                    </div>
-                                                </div>
-                                            )}
+                                                            <div className="tooltip-content">
+                                                                <span className="text-danger">⚠️ {nibrsFieldError.CallTypeError || ''}</span>
+                                                            </div>
+                                                        </div>
+                                                    )}
                                                     <Select
                                                         name='CallTypeID'
                                                         value={callTypeDrp?.filter((obj) => obj.value === value?.CallTypeID)}

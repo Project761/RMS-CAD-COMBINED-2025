@@ -168,11 +168,11 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
     }
   }, [loginAgencyID, incReportedDate]);
 
-  // useEffect(() => {
-  //   if (IncID && IncNo && offenceFillterData?.length > 0) {
-  //     nibrsValidateOffense(IncID, IncNo);
-  //   }
-  // }, [IncID, IncNo, offenceFillterData]);
+  useEffect(() => {
+    if (IncID && IncNo && offenceFillterData?.length > 0) {
+      nibrsValidateOffense(IncID, IncNo);
+    }
+  }, [IncID, IncNo, offenceFillterData]);
 
   useEffect(() => {
     if (OffId && (OffSta === true || OffSta === "true")) {
@@ -993,7 +993,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
       cell: (row) => (
         <div >
           {row?.IsCrimeAgainstProperty === true && (
-
             <span
               onClick={(e) => {
                 navigate(`/Vehicle-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${0}&MVehId=${0}&VehSta=${false}&FbiCode=${row.FBICode}&AttComp=${row?.AttemptComplete === "Completed" ? "C" : "A"}`);
@@ -1006,7 +1005,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
             >
               Vehicle
             </span>
-
           )}
         </div>
       ),
@@ -1289,7 +1287,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
     };
     try {
       const data = await fetchPostDataNibrs("NIBRS/Nibrs_OffenseError", val);
-      console.log("🚀 ~ nibrsValidateOffense ~ data:", data);
+      // console.log("🚀 ~ nibrsValidateOffense ~ data:", data);
       if (data) {
         setnibrsValidateOffenseData(data?.Offense);
         setclickNibLoder(false);

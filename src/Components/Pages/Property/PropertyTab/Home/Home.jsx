@@ -1246,6 +1246,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
           setChangesStatus(false); setStatesChangeStatus(false); setPossenSinglData([]); setDrugLocalArr([]);
           // validateIncSideBar
           validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
+          nibrsValidateProperty(mainIncidentID)
         } else {
           toastifyError('error');
           setErrors({ ...errors, ['PropertyTypeIDError']: '', })
@@ -1304,6 +1305,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
         }
         // validateIncSideBar
         validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
+        nibrsValidateProperty(mainIncidentID)
       } else {
         toastifyError('error');
         setErrors({ ...errors, ['PropertyTypeIDError']: '', })
@@ -2029,7 +2031,6 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
     }),
   };
 
-
   const GetSingleDataPassion = (nameID, masterNameID) => {
     const val = { 'NameID': nameID, 'MasterNameID': masterNameID }
     fetchPostData('MasterName/GetSingleData_MasterName', val).then((res) => {
@@ -2080,6 +2081,12 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
 
     }
   }
+
+  useEffect(() => {
+    if (IncID) {
+      nibrsValidateProperty(IncID);
+    }
+  }, [IncID]);
 
   const nibrsValidateProperty = (incidentID) => {
     setclickNibLoder(true);

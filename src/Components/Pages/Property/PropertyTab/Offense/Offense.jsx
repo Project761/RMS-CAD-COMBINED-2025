@@ -135,6 +135,7 @@ const Offense = (props) => {
         setOwnerData([]);
         setCategoryCode([]);
         setPropLossCode('');
+
       }
       get_OwnerID_Drp(mainIncidentID, res);
     });
@@ -143,9 +144,7 @@ const Offense = (props) => {
   const get_OwnerID_Drp = (mainIncidentID, ownerData) => {
     const val = { 'IncidentID': mainIncidentID, 'OffenseID': 0, }
     fetchPostData('PropertyOffense/GetDataDropDown_PropertyOffense', val).then((data) => {
-      console.log("🚀 ~ fetchPostData ~ data:", data);
       if (data) {
-
 
         if (ListData[0]?.PropertyCategory_Description === "Drugs/Narcotics") {
 

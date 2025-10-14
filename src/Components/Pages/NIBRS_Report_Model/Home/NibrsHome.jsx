@@ -414,62 +414,40 @@ const NibrsHome = () => {
 
         if (propertyValidateNibrsData) {
           const proObj = propertyValidateNibrsData?.Properties ? propertyValidateNibrsData?.Properties : [];
-          console.log("🚀 ~ ValidateProperty ~ proObj:", proObj)
+          // console.log("🚀 ~ ValidateProperty ~ proObj:", proObj)
 
           // set property error string
           if (proObj?.length > 0) {
 
             if (proObj[0]?.OnPageError?.includes("Property must be present.") && proObj[0]?.PropertyType != 'V') {
               setIsCrimeAgainstPropertyError(true); setSuspectedDrugTypeErrorStatus(false); setIsPropertyIdZeroError(false);
-              // Error Status
-              setPropErrorStatus(true); setPropertyErrorString(proObj[0]?.OnPageError ? proObj[0]?.OnPageError : '');
+
+              setPropertyErrorString(proObj[0]?.OnPageError ? proObj[0]?.OnPageError : '');
 
             } else if (proObj[0]?.OnPageError?.includes("For Crime Against Property Property must be present.") && proObj[0]?.PropertyType != 'V') {
               setIsCrimeAgainstPropertyError(true); setSuspectedDrugTypeErrorStatus(false); setIsPropertyIdZeroError(false);
-              // Error Status
-              setPropErrorStatus(true); setPropertyErrorString(proObj[0]?.OnPageError ? proObj[0]?.OnPageError : '');
+
+              setPropertyErrorString(proObj[0]?.OnPageError ? proObj[0]?.OnPageError : '');
 
             } else if (proObj[0]?.OnPageError?.includes("{352} Add at least one suspected drug type(create a property with type 'Drug')") || proObj[0]?.OnPageError?.includes("Add at least one suspected drug type(create a property with type 'Drug').") && proObj[0]?.PropertyType != 'V') {
               setSuspectedDrugTypeErrorStatus(true); setIsPropertyIdZeroError(false); setIsCrimeAgainstPropertyError(false);
-              // Error Status
-              setPropErrorStatus(true); setPropertyErrorString(proObj[0]?.OnPageError ? proObj[0]?.OnPageError : '');
+
+              setPropertyErrorString(proObj[0]?.OnPageError ? proObj[0]?.OnPageError : '');
 
             } else if (proObj[0]?.OnPageError?.includes("{074} Need a property loss code of 5,7 for offense  23B") && proObj[0]?.PropertyType != 'V') {
               setIsPropertyIdZeroError(true); setSuspectedDrugTypeErrorStatus(false); setIsCrimeAgainstPropertyError(false);
-              // Error Status
-              setPropErrorStatus(true); setPropertyErrorString(proObj[0]?.OnPageError ? proObj[0]?.OnPageError : '');
+
+              setPropertyErrorString(proObj[0]?.OnPageError ? proObj[0]?.OnPageError : '');
 
             } else {
               setSuspectedDrugTypeErrorStatus(false); setIsPropertyIdZeroError(false); setIsCrimeAgainstPropertyError(false);
 
             }
 
-            // const isCrimeAgainstError = proObj[0]?.OnPageError?.includes("Property must be present.");
-
-            // const isSuspectedDrugType = proObj[0]?.OnPageError?.includes("{352} Add at least one suspected drug type(create a property with type 'Drug')") || proObj[0]?.OnPageError?.includes("Add at least one suspected drug type(create a property with type 'Drug').");
-
-            // const isPropertyIdZeroError = (proObj[0]?.OnPageError?.includes("{074} Need a property loss code of 5,7 for offense  23B") && proObj[0]?.PropertyType != 'V');
-
-            // if (isCrimeAgainstError) {
-            //   setIsCrimeAgainstPropertyError(true); setSuspectedDrugTypeErrorStatus(false); setIsPropertyIdZeroError(false);
-
-            // } else if (isSuspectedDrugType) {
-            //   setSuspectedDrugTypeErrorStatus(true); setIsPropertyIdZeroError(false); setIsCrimeAgainstPropertyError(false);
-
-            // } else if (isPropertyIdZeroError) {
-            //   setIsPropertyIdZeroError(true); setSuspectedDrugTypeErrorStatus(false); setIsCrimeAgainstPropertyError(false);
-
-            // } else {
-            //   setSuspectedDrugTypeErrorStatus(false); setIsPropertyIdZeroError(false); setIsCrimeAgainstPropertyError(false);
-
-            // }
-
             const VehArr = proObj?.filter((item) => item?.PropertyType === 'V');
             // console.log("🚀 ~ validateNibrs ~ VehArr:", VehArr)
             const PropArr = proObj?.filter((item) => item?.PropertyType !== 'V' && item?.PropertyType !== null);
-            console.log("🚀 ~ validateNibrs ~ PropArr:", PropArr)
-
-
+            // console.log("🚀 ~ validateNibrs ~ PropArr:", PropArr)
 
             if (VehArr?.length > 0) {
               const VehErrorArray = VehArr || []
@@ -487,7 +465,7 @@ const NibrsHome = () => {
             // set property error string
             if (PropArr?.length > 0) {
               const PropErrorArray = PropArr || []
-              console.log("🚀 ~ validateNibrs ~ PropErrorArray:", PropErrorArray)
+              // console.log("🚀 ~ validateNibrs ~ PropErrorArray:", PropErrorArray)
               if (PropErrorArray.every(item => item === null || item === undefined)) {
                 setPropErrorStatus(false); setPropertyErrorString('');
 
@@ -498,7 +476,8 @@ const NibrsHome = () => {
 
             } else {
               if (isCrimeAgainstPropertyError || isSuspectedDrugTypeErrorStatus || isPropertyIdZeroError) {
-                console.log("🚀 ~ validateNibrs ~ isCrimeAgainstPropertyError:", isCrimeAgainstPropertyError)
+                console.log("🚀 ~ validateNibrs ~ isCrimeAgainstPropertyError:", isCrimeAgainstPropertyError);
+                setPropErrorStatus(true);
               } else {
                 setPropErrorStatus(false); setPropertyErrorString('');
 
@@ -531,7 +510,7 @@ const NibrsHome = () => {
         // set victim error string
         if (victimValidateNibrsData) {
           const victimObj = victimValidateNibrsData?.Victim ? victimValidateNibrsData?.Victim : [];
-          console.log("🚀 ~ validateNibrs ~ victimObj:", victimObj)
+          // console.log("🚀 ~ validateNibrs ~ victimObj:", victimObj)
           if (victimObj?.length > 0) {
             const isVictimConnectedError = victimObj[0]?.OnPageError?.includes("At least one victim must be present and must be connected with offence.");
             if (isVictimConnectedError) {
@@ -561,7 +540,46 @@ const NibrsHome = () => {
     validateNibrs(incidentValidateNibrsData, offenseValidateNibrsData, victimValidateNibrsData, offenderValidateNibrsData, propertyValidateNibrsData);
   }, [incidentValidateNibrsData, offenseValidateNibrsData, victimValidateNibrsData, offenderValidateNibrsData, propertyValidateNibrsData]);
 
+  const getPropertyTitle = () => {
+    const baseStyle = {
+      border: '1px solid red',
+      backgroundColor: '#ffe6e6',
+      color: 'red',
+      padding: '3px',
+      borderRadius: '4px',
+      display: 'inline-block',
+      transition: 'color 0.3s ease',
+      fontWeight: 'bold',
+      fontSize: '14px',
+      textAlign: 'center'
+    };
 
+    if (isCrimeAgainstPropertyError) {
+      return (
+        <span style={baseStyle}>
+          Property — For crimes against property, a property record is required.
+        </span>
+      );
+    }
+
+    if (isSuspectedDrugTypeErrorStatus) {
+      return (
+        <span style={baseStyle}>
+          Property — Add at least one suspected drug type (create a Property with type ‘Drug’).
+        </span>
+      );
+    }
+
+    if (isPropertyIdZeroError) {
+      return (
+        <span style={baseStyle}>
+          Property — Need a property loss code of 5 or 7 for offense 23B.
+        </span>
+      );
+    }
+
+    return `Property (${PropertyCount})`;
+  };
 
   const sectionData = [
     {
@@ -593,7 +611,6 @@ const NibrsHome = () => {
         />
       )
     },
-
     {
       title: `Offender (${OffenderCount})`,
       status: !offenderErrorStatus ? "completed" : "attention highlighted",
@@ -613,23 +630,24 @@ const NibrsHome = () => {
       list: <MainVictims victimClick={victimClick} isNibrsSummited={isNibrsSummited} ValidateProperty={ValidateProperty} />
     },
     {
-      title: !isSuspectedDrugTypeErrorStatus && !isPropertyIdZeroError && !isCrimeAgainstPropertyError ? `Property (${PropertyCount})`
-        :
-        isCrimeAgainstPropertyError ? <span className="text-center" style={{
-          border: '1px solid red', backgroundColor: '#ffe6e6', color: 'red', padding: '3px', borderRadius: '4px', display: 'inline-block', transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
-        }}>Property --- For Crime Against Property Property must be present.</span>
-          :
-          isSuspectedDrugTypeErrorStatus ? <span className="text-center" style={{
-            border: '1px solid red', backgroundColor: '#ffe6e6', color: 'red', padding: '3px', borderRadius: '4px', display: 'inline-block',
-            transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
-          }}>Property --- Add at least one suspected drug type(create a Property with type 'Drug')</span>
-            :
-            isPropertyIdZeroError ? <span className="text-center" style={{
-              border: '1px solid red', backgroundColor: '#ffe6e6', color: 'red', padding: '3px', borderRadius: '4px', display: 'inline-block',
-              transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
-            }}>Property --- Need a property loss code of 5,7 for offense  23B</span> : `Property (${PropertyCount})`,
+      title: getPropertyTitle(),
+      // title: !isSuspectedDrugTypeErrorStatus && !isPropertyIdZeroError && !isCrimeAgainstPropertyError ? `Property (${PropertyCount})`
+      //   :
+      //   isCrimeAgainstPropertyError ? <span className="text-center" style={{
+      //     border: '1px solid red', backgroundColor: '#ffe6e6', color: 'red', padding: '3px', borderRadius: '4px', display: 'inline-block', transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
+      //   }}>Property --- For crimes against property, a property record is required.</span>
+      //     :
+      //     isSuspectedDrugTypeErrorStatus ? <span className="text-center" style={{
+      //       border: '1px solid red', backgroundColor: '#ffe6e6', color: 'red', padding: '3px', borderRadius: '4px', display: 'inline-block',
+      //       transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
+      //     }}>Property --- Add at least one suspected drug type(create a Property with type 'Drug')</span>
+      //       :
+      //       isPropertyIdZeroError ? <span className="text-center" style={{
+      //         border: '1px solid red', backgroundColor: '#ffe6e6', color: 'red', padding: '3px', borderRadius: '4px', display: 'inline-block',
+      //         transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
+      //       }}>Property --- Need a property loss code of 5,7 for offense  23B</span> : `Property (${PropertyCount})`,
 
-      status: !propErrorStatus ? "completed" : "attention highlighted",
+      status: !propErrorStatus && !isCrimeAgainstPropertyError && !isSuspectedDrugTypeErrorStatus && !isPropertyIdZeroError ? "completed" : "attention highlighted",
       sectionKey: "Properties",
       list: <Properties propertyClick={propertyClick} isNibrsSummited={isNibrsSummited} ValidateProperty={ValidateProperty} />
     },
