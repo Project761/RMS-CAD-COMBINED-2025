@@ -519,7 +519,9 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     setCrimeOffenderUse(); setCrimeBiasCategory(); setWeaponID(); setCrimeActivity();
     setlocationTypeComplteStatus(); setmethodOfEntryStatus(); setmethodOfEntryError(); setIsCrimeAgainstPerson(); setIsCrimeAgainstProperty(); setIsCrimeAgainstSociety(); setPretentedDrp();
     setPointExitDrp(); setPointEntryDrp(); setCrimeActivityDrp(); setToolsUseIDDrp();
-    setCrimeTargetDrp(); setCrimeSuspectDrp(); setCrimeSecurityviolatedDrp(); setMethodOfOperationDrp(); setWeaponDrp(); setCrimeActivityNoneStatus();
+    setCrimeTargetDrp(); setCrimeSuspectDrp(); setCrimeSecurityviolatedDrp(); setMethodOfOperationDrp();
+    //  setWeaponDrp(); 
+     setCrimeActivityNoneStatus();
     // setCrimeBiasCategoryEditVal(); setCrimeToolsUseEditVal(); setCrimeTargeteEditVal(); setCriminalActivityEditVal(); setPointEntryEditVal();
     // setCrimeSuspectEditVal(); setSecurityViolatedEditVal(); setmethodOfOperationEditVal(); setmethodOfEntryEditVal(); setweaponEditVal()
 
