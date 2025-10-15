@@ -435,7 +435,7 @@ const OffenceHomeTabs = () => {
             toastifySuccess(message);
             get_Incident_Count(mainIncidentID, loginPinID);
             get_Offence_Data(mainIncidentID);
-            // setStatusFalse();
+            setStatusFalse();
             setResetErrors(true);
             //  Reset();
         });
