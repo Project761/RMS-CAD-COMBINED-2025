@@ -1226,52 +1226,7 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
                   placeholder='Select Point Of Entry From List'
                 />
               </div>
-              <div className="col-3 col-md-3 col-lg-3 text-right">
-                <span data-toggle="modal" data-target="#ListModel" className='new-link px-0'>
-                  <span onClick={() => { setOpenPage('Criminal Activity') }}>Criminal Activity</span>
-                  <br />
-                  <span className='float-right '>
-                    {criminalActivityStatus && (<ErrorTooltip ErrorStr={criminalActivityError} />)}
-                    {
-                      loginAgencyState === 'TX' ?
-                        checkCrimeActiSuitableCode(nibrsCode, crimeActSelectedCodeArray, loginAgencyState, 'tooltip') ? checkCrimeActiSuitableCode(nibrsCode, crimeActSelectedCodeArray, loginAgencyState, 'tooltip') : <></>
-                        :
-                        <></>
-                    }
-                  </span>
-                  {errors.CriminalActivityError !== "true" ? (<div className="text-end"><span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block" }}>{errors.CriminalActivityError}</span></div>) : null}
-                </span>
-              </div>
-              <div className="col-9 col-md-9 col-lg-9">
-                <SelectBox
-                  className="basic-multi-select"
-
-                  styles={
-                    loginAgencyState === 'TX'
-                      ?
-                      checkCrimeActiSuitableCode(nibrsCode, crimeActSelectedCodeArray, loginAgencyState, 'Color') ? checkCrimeActiSuitableCode(nibrsCode, crimeActSelectedCodeArray, loginAgencyState, 'Color')
-                        :
-                        checkCriminalActivityIsRequire(nibrsCode, loginAgencyState) ? ErrorStyle_CriminalActivity(false)
-                          :
-                          customStylesWithOutColor
-                      :
-                      customStylesWithOutColor
-                  }
-                  isDisabled={nibrsSubmittedOffenseMain === 1}
-                  name='CrimeActivity'
-                  options={crimeActivityDrp?.length > 0 ? get_CriminalActivity_DrpData(crimeActivityDrp) : []}
-
-                  isClearable={false}
-                  isMulti
-                  closeMenuOnSelect={false}
-                  hideSelectedOptions={true}
-                  components={{ MultiValue, }}
-                  onChange={(e) => CrimeActivitychange(e)}
-
-                  value={filterArray(crimeActivity, 'label')}
-                  placeholder='Select Criminal Activity From List'
-                />
-              </div>
+             
               <div className="col-3 col-md-3 col-lg-3">
 
                 <span data-toggle="modal" onClick={() => { setOpenPage('Tools Use') }} data-target="#ListModel" className='new-link px-0'>
@@ -1377,89 +1332,8 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
                 />
               </div>
 
-              <div className="col-3 col-md-3 col-lg-4 text-right">
-                <span data-toggle="modal" onClick={() => { setOpenPage('Offender Suspected of Using') }} data-target="#ListModel" className='new-link px-0 text-nowrap'>
-                  Offender suspected of using {offenderUsingStatus && (<ErrorTooltip ErrorStr={offenderUsingError} />)}
-                  {loginAgencyState === 'TX' ? getCheckNotApplicable() ? <ErrorTooltip ErrorStr={NotApplicableError} /> : <> </> : <></>}
-                </span>
-
-                {errors.OffenderusingError !== "true" && (
-                  <div className="text-end"> <span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block", }}>{errors.OffenderusingError}</span>
-                  </div>
-                )}
-              </div>
-              <div className="col-9 col-md-9 col-lg-8 ">
-                <SelectBox
-                  className="basic-multi-select"
-                  name='offenderusing'
-                  options={filteredOptions}
-                  isClearable={false}
-                  isMulti
-                  isDisabled={nibrsSubmittedOffenseMain === 1}
-                  styles={loginAgencyState == 'TX' ? nibrsCode === "999" ? customStylesWithOutColor : getCheckNotApplicable() ? Nibrs_ErrorStyle : MultiSelectRequredColor : MultiSelectRequredColor}
-                  // styles={
-                  //   (PanelCode === '03' || PanelCode === '06' || PanelCode === '08') ? customStylesWithColor :
-                  //     loginAgencyState == 'TX' ? getCheckNotApplicable() ? Nibrs_ErrorStyle : customStylesWithOutColor : customStylesWithOutColor
-                  // }
-                  closeMenuOnSelect={false}
-                  hideSelectedOptions={true}
-                  components={{ MultiValue, }}
-                  onChange={(e) => OffenderUsechange(e)}
-                  value={filterArray(crimeOffenderUse, 'label')}
-                  placeholder='Select Offender Using From List'
-                />
-
-              </div>
-              <div className="col-3 col-md-3 col-lg-4 text-right">
-                <span data-toggle="modal" data-target="#ListModel" className='new-link px-0 text-right '>
-                  <span onClick={() => { setOpenPage('Bias Motivation') }}>Bias motivation (Select Upto 5)</span>
-                  {biasStatus && (<ErrorTooltip ErrorStr={biasStatusError} />)}
-                  {
-                    loginAgencyState === 'TX' ?
-                      nibrsCode === '09C' && !bias09CCodeStatus ? <ErrorTooltip ErrorStr={Bias_90C_Error} />
-                        :
-                        check_Valid_Bias_Code(BiasSelectCodeArray) ? <ErrorTooltip ErrorStr={ValidateBiasCodeError} />
-                          :
-                          <></>
-                      :
-                      <></>
-                  }
-                </span>
-                {errors.CrimeBiasCategoryError !== "true" ? (<div className="text-end"><span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block" }}>{errors.CrimeBiasCategoryError}</span></div>) : null}
-              </div>
-              <div className="col-9 col-md-9 col-lg-8 ">
-                <SelectBox
-                  className="basic-multi-select"
-                  name='bias'
-                  options={crimeBiasCategoryDrp?.length > 0 ? getBiasDrpData(crimeBiasCategoryDrp) : []}
-                  isClearable={false}
-                  styles={
-                    loginAgencyState === 'TX' ? nibrsCode === "999" ? customStylesWithOutColor :
-                      nibrsCode === '09C' && !bias09CCodeStatus ? ErrorStyle_NIBRS_09C(nibrsCode)
-                        :
-                        check_Valid_Bias_Code(BiasSelectCodeArray) ? Nibrs_ErrorStyle : MultiSelectRequredColor
-                      :
-                      MultiSelectRequredColor
-                  }
-                  // styles={
-                  //   loginAgencyState === 'TX' ?
-                  //     nibrsCode === '09C' && !bias09CCodeStatus ? ErrorStyle_NIBRS_09C(nibrsCode)
-                  //       :
-                  //       check_Valid_Bias_Code(BiasSelectCodeArray) ? Nibrs_ErrorStyle : customStylesWithOutColor
-                  //     :
-                  //     customStylesWithOutColor
-                  // }
-                  isMulti
-                  closeMenuOnSelect={false}
-                  hideSelectedOptions={true}
-                  components={{ MultiValue, }}
-                  onChange={(e) => CrimeBiasCategorychange(e)}
-                  value={filterArray(crimeBiasCategory, 'label')}
-                  placeholder='Select Bias From List'
-                  isDisabled={nibrsSubmittedOffenseMain === 1}
-                />
-
-              </div>
+             
+             
               <div className="col-3 col-md-3 col-lg-4">
 
                 <span data-toggle="modal" onClick={() => { setOpenPage('Crime Target') }} data-target="#ListModel" className='new-link px-0'>
@@ -1511,49 +1385,7 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
                   placeholder='Select Security Violated From List'
                 />
               </div>
-              <div className="col-3 col-md-3 col-lg-4 text-right">
-                <span data-toggle="modal" data-target="#ListModel" className='new-link px-0 text-nowrap'>
-                  <span onClick={() => { setOpenPage('Weapon Type') }}>Weapon Used (Select Upto 3)</span>
-                  <br />
-                  <span className='float-right '>
-                    {weaponTypeStatus && (<ErrorTooltip ErrorStr={weaponTypeError} />)}
-                    {
-                      loginAgencyState === 'TX' ?
-                        checkWeaponTypeValidate(nibrsCode, WeaponSelectCodeArray, 'ToolTip', loginAgencyState)
-                        :
-                        <></>
-                    }
-                  </span>
-                </span>
-                {errors.WeaponTypeError !== "true" ? (<div className="text-end"><span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block" }}>{errors.WeaponTypeError}</span></div>) : null}
-              </div>
-              <div className="col-9 col-md-9 col-lg-8 ">
-                <SelectBox
-                  className="basic-multi-select"
-                  name='WeaponTypeID'
-                  styles={
-                    (PanelCode === '03' || PanelCode === '06' || PanelCode === '08') ? MultiSelectRequredColor :
-                      loginAgencyState === 'TX'
-                        ?
-                        checkWeaponTypeValidate(nibrsCode, WeaponSelectCodeArray, 'Color', loginAgencyState) ? checkWeaponTypeValidate(nibrsCode, WeaponSelectCodeArray, 'Color', loginAgencyState)
-                          :
-                          customStylesWithOutColor
-                        :
-                        customStylesWithOutColor
-                  }
-                  isClearable={false}
-                  options={weaponDrp?.length > 0 ? getWeaponDrpData(weaponDrp, nibrsCode, weaponID) : []}
-                  hideSelectedOptions={true}
-                  closeMenuOnSelect={false}
-                  components={{ MultiValue, }}
-                  onChange={(e) => Weaponchange(e)}
-                  value={filterArray(weaponID, 'label')}
-                  placeholder='Select Weapon Used From List'
-                  isMulti
-                  menuPlacement='top'
-                  isDisabled={nibrsSubmittedOffenseMain === 1}
-                />
-              </div>
+             
               <div className="col-12   text-right">
                 {
                   effectiveScreenPermission ? (
