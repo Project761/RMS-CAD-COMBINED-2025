@@ -34,7 +34,7 @@ import CreatableSelect from 'react-select/creatable';
 import NCICModal from '../../../../../CADComponents/NCICModal';
 
 
-const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_List, setPropertyStatus, isCad = false, isViewEventDetails = false, isCADSearch = false }) => {
+const Home = ({ setStatus, setShowVehicleRecovered, newStatus, showVehicleRecovered, get_List, setPropertyStatus, isCad = false, isViewEventDetails = false, isCADSearch = false }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -76,7 +76,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
     var VehId = query?.get("VehId");
     var MVehId = query?.get('MVehId');
     var VehSta = query?.get('VehSta');
-
+    let isNew = query?.get('isNew');
     if (!IncID) IncID = 0;
     else IncID = parseInt(base64ToString(IncID));
     if (!VehId) VehId = 0;
@@ -85,7 +85,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
     else DecMVehId = parseInt(base64ToString(MVehId));
 
 
-    const { get_vehicle_Count, get_Incident_Count, updateCount, setUpdateCount, nibrsSubmittedStatus, nibrsSubmittedvehicleMain, setnibrsSubmittedvehicleMain, setnibrsSubmittedStatus, changesStatus, changesStatusCount, setChangesStatus, setVehicleStatus, vehicleStatus, VehicleFilterData, get_Data_Vehicle, get_Name_Count, datezone, GetDataTimeZone, setcountoffaduit, validate_IncSideBar, incidentReportedDate, setIncidentReportedDate } = useContext(AgencyContext)
+    const { get_vehicle_Count, get_Incident_Count, updateCount, setUpdateCount, incidentCount, nibrsSubmittedStatus, nibrsSubmittedvehicleMain, setnibrsSubmittedvehicleMain, setnibrsSubmittedStatus, changesStatus, changesStatusCount, setChangesStatus, setVehicleStatus, vehicleStatus, VehicleFilterData, get_Data_Vehicle, get_Name_Count, datezone, GetDataTimeZone, setcountoffaduit, validate_IncSideBar, incidentReportedDate, setIncidentReportedDate } = useContext(AgencyContext)
 
     const [clickedRow, setClickedRow] = useState(null);
     const [destoryDate, setDestoryDate] = useState();
@@ -167,6 +167,12 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
             if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
         }
     }, []);
+
+    useEffect(() => {
+       if(isNew === true) {newVehicle();}
+    }, [isNew]);
+
+
 
     useEffect(() => {
         if (localStoreData) {
@@ -647,7 +653,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
         setStyleDrpData([]);
         setVehicleStatus(false);
         setuploadImgFiles([]); setVehicleMultiImg([]);
-        console.log("Reset", uploadImgFiles);
+       
     }
 
     const WidhoutColorStyles = {
@@ -786,23 +792,23 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
         });
     }
 
-    const delete_Vehicle_Property = (e) => {
-        const value = { 'PropertyID': vehicleID, 'DeletedByUserFK': loginPinID, 'IsMaster': MstVehicle === "MST-Vehicle-Dash" ? true : false, }
-        AddDeleteUpadate('PropertyVehicle/Delete_PropertyVehicle', value).then((res) => {
-            if (res) {
-                const parsedData = JSON.parse(res.data);
-                const message = parsedData.Table[0].Message;
-                toastifySuccess(message);
-                get_Incident_Count(mainIncidentID, loginPinID);
-                get_Data_Vehicle(mainIncidentID);
-                newVehicle();
-            } else {
-                const parsedData = JSON.parse(res.data);
-                const message = parsedData.Table[0].Message;
-                toastifySuccess(message);
-            }
-        });
-    }
+    // const delete_Vehicle_Property = (e) => {
+    //     const value = { 'PropertyID': vehicleID, 'DeletedByUserFK': loginPinID, 'IsMaster': MstVehicle === "MST-Vehicle-Dash" ? true : false, }
+    //     AddDeleteUpadate('PropertyVehicle/Delete_PropertyVehicle', value).then((res) => {
+    //         if (res) {
+    //             const parsedData = JSON.parse(res.data);
+    //             const message = parsedData.Table[0].Message;
+    //             toastifySuccess(message);
+    //             get_Incident_Count(mainIncidentID, loginPinID);
+    //             get_Data_Vehicle(mainIncidentID);
+    //             newVehicle();
+    //         } else {
+    //             const parsedData = JSON.parse(res.data);
+    //             const message = parsedData.Table[0].Message;
+    //             toastifySuccess(message);
+    //         }
+    //     });
+    // }
 
     const ChangePhoneType = (e, name) => {
         !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
@@ -1127,154 +1133,158 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
         return !isNaN(d.getTime()) ? d : null;
     };
 
+    
+
     return (
         <>
-            <div className="col-12 col-md-12 col-lg-12 p-0">
-                <div className="col-12 ">
-                    <div className="row align-items-center mt-1" style={{ rowGap: "8px" }}>
-                        <div className="col-2 col-md-2 col-lg-1">
-                            <label htmlFor="" className='new-label mb-0'>Vehicle No.</label>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-2 text-field mt-0">
-                            <input style={{ padding: '5px 9px 7px 8px' }} type="text" name='VehicleNumber' id='VehicleNumber' placeholder='Auto Generated' value={value?.VehicleNumber} onChange={HandleChanges} className='readonlyColor h-100' required autoComplete='off' readOnly />
-                        </div>
-                        <div className="col-2 col-md-2 col-lg-2 ">
-                            <label htmlFor="" className='new-label mb-0'>Loss Code{errors.LossCodeIDError !== 'true' ? (
-                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.LossCodeIDError}</p>
-                            ) : null}</label>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-3">
-                            <Select
-                                name='LossCodeID'
-                                value={propertyLossCodeData?.filter((obj) => obj.value === value?.LossCodeID)}
-                                styles={nibrsSubmittedvehicleMain === 1 ? LockFildscolour : Requiredcolour}
-                                options={propertyLossCodeData}
-                                onChange={(e) => ChangePhoneType(e, 'LossCodeID')}
-                                isClearable
-                                placeholder="Select..."
-                                isDisabled={nibrsSubmittedvehicleMain === 1 ? true : false}
-                            />
-                        </div>
-                        <div className="col-2 col-md-2 col-lg-2">
-                            <label htmlFor="" className='new-label mb-0'>Reported Date/Time{errors.ReportedDtTmError !== 'true' ? (
-                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ReportedDtTmError}</p>
-                            ) : null}</label>
-                        </div>
-                        <div className="col-10 col-md-10 col-lg-2">
-                            {
-                                MstVehicle === 'MST-Vehicle-Dash' ?
-                                    <DatePicker
-                                        id='reportedDtTm'
-                                        name='reportedDtTm'
-                                        ref={startRef}
-                                        onKeyDown={(e) => {
-                                            if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
-                                                e.preventDefault();
-                                            } else {
-                                                onKeyDown(e);
-                                            }
-                                        }}
-                                        onChange={(date) => {
-                                            setIncidentReportedDate(date ? getShowingMonthDateYear(date) : null)
-                                            !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
-                                            if (date > new Date(datezone)) {
-                                                date = new Date(datezone);
-                                            }
-                                            if (date >= new Date()) {
-                                                setValue({ ...value, ['ReportedDtTm']: new Date() ? getShowingDateText(new Date(date)) : null })
-                                            } else if (date <= new Date(incReportedDate)) {
-                                                setValue({ ...value, ['ReportedDtTm']: new Date() ? getShowingDateText(new Date(date)) : null })
-                                            } else {
-                                                setValue({ ...value, ['ReportedDtTm']: date ? getShowingDateText(date) : null })
-                                            }
-                                        }}
-                                        dateFormat="MM/dd/yyyy HH:mm"
-                                        timeFormat="HH:mm"
-                                        is24Hour
-                                        isClearable={false}
-                                        // selected={value?.ReportedDtTm && new Date(value?.ReportedDtTm)}
-                                        selected={getValidDate(value?.ReportedDtTm)}
-                                        autoComplete="Off"
-                                        timeInputLabel
-                                        placeholderText={'Select...'}
-                                        showTimeSelect
-                                        showYearDropdown
-                                        showMonthDropdown
-                                        dropdownMode="select"
-                                        timeIntervals={1}
-                                        timeCaption="Time"
-                                        maxDate={new Date(datezone)}
-                                        filterTime={(date) => filterPassedTimeZone(date, datezone)}
-                                        disabled={nibrsSubmittedvehicleMain === 1}
-                                        className={nibrsSubmittedvehicleMain === 1 ? 'LockFildsColor' : 'requiredColor'}
+            {((incidentCount[0]?.VehicleCount === 0 || incidentCount[0]?.VehicleCount === "0") || (VehSta === true || VehSta === 'true') || isNew === "true" || isNew === true) && (
+                <>
+                    <div className="col-12 col-md-12 col-lg-12 p-0">
+                        <div className="col-12 ">
+                            <div className="row align-items-center mt-1" style={{ rowGap: "8px" }}>
+                                <div className="col-2 col-md-2 col-lg-1">
+                                    <label htmlFor="" className='new-label mb-0'>Vehicle No.</label>
+                                </div>
+                                <div className="col-4 col-md-4 col-lg-2 text-field mt-0">
+                                    <input style={{ padding: '5px 9px 7px 8px' }} type="text" name='VehicleNumber' id='VehicleNumber' placeholder='Auto Generated' value={value?.VehicleNumber} onChange={HandleChanges} className='readonlyColor h-100' required autoComplete='off' readOnly />
+                                </div>
+                                <div className="col-2 col-md-2 col-lg-2 ">
+                                    <label htmlFor="" className='new-label mb-0'>Loss Code{errors.LossCodeIDError !== 'true' ? (
+                                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.LossCodeIDError}</p>
+                                    ) : null}</label>
+                                </div>
+                                <div className="col-4 col-md-4 col-lg-3">
+                                    <Select
+                                        name='LossCodeID'
+                                        value={propertyLossCodeData?.filter((obj) => obj.value === value?.LossCodeID)}
+                                        styles={nibrsSubmittedvehicleMain === 1 ? LockFildscolour : Requiredcolour}
+                                        options={propertyLossCodeData}
+                                        onChange={(e) => ChangePhoneType(e, 'LossCodeID')}
+                                        isClearable
+                                        placeholder="Select..."
+                                        isDisabled={nibrsSubmittedvehicleMain === 1 ? true : false}
                                     />
-                                    :
-                                    <DatePicker
-                                        id='reportedDtTm'
-                                        name='reportedDtTm'
-                                        ref={startRef}
-                                        onKeyDown={(e) => {
-                                            if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
-                                                e.preventDefault();
-                                            } else {
-                                                onKeyDown(e);
-                                            }
-                                        }}
-                                        dateFormat="MM/dd/yyyy HH:mm"
-                                        timeFormat="HH:mm "
-                                        is24Hour
-                                        isClearable={false}
-                                        // selected={value?.ReportedDtTm && new Date(value?.ReportedDtTm)}
-                                        selected={getValidDate(value?.ReportedDtTm)}
-                                        autoComplete="Off"
-                                        onChange={(date) => {
-                                            setIncidentReportedDate(date ? getShowingMonthDateYear(date) : null);
-                                            !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
-                                            if (date > new Date(datezone)) {
-                                                date = new Date(datezone);
-                                            }
-                                            if (date >= new Date()) {
-                                                setValue({ ...value, ['ReportedDtTm']: new Date() ? getShowingDateText(new Date()) : null })
-                                            } else if (date <= new Date(incReportedDate)) {
-                                                setValue({ ...value, ['ReportedDtTm']: incReportedDate ? getShowingDateText(incReportedDate) : null })
-                                            } else {
-                                                setValue({ ...value, ['ReportedDtTm']: date ? getShowingDateText(date) : null })
-                                            }
-                                        }}
-                                        timeInputLabel
-                                        showTimeSelect
-                                        timeIntervals={1}
-                                        timeCaption="Time"
-                                        showMonthDropdown
-                                        showYearDropdown
-                                        dropdownMode="select"
-                                        minDate={new Date(incReportedDate)}
-                                        maxDate={new Date(datezone)}
-                                        showDisabledMonthNavigation
-                                        filterTime={(date) => filterPassedTimeZonesProperty(date, incReportedDate, datezone)}
-                                        disabled={nibrsSubmittedvehicleMain === 1}
-                                        className={nibrsSubmittedvehicleMain === 1 ? 'LockFildsColor' : 'requiredColor'}
+                                </div>
+                                <div className="col-2 col-md-2 col-lg-2">
+                                    <label htmlFor="" className='new-label mb-0'>Reported Date/Time{errors.ReportedDtTmError !== 'true' ? (
+                                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ReportedDtTmError}</p>
+                                    ) : null}</label>
+                                </div>
+                                <div className="col-10 col-md-10 col-lg-2">
+                                    {
+                                        MstVehicle === 'MST-Vehicle-Dash' ?
+                                            <DatePicker
+                                                id='reportedDtTm'
+                                                name='reportedDtTm'
+                                                ref={startRef}
+                                                onKeyDown={(e) => {
+                                                    if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                                                        e.preventDefault();
+                                                    } else {
+                                                        onKeyDown(e);
+                                                    }
+                                                }}
+                                                onChange={(date) => {
+                                                    setIncidentReportedDate(date ? getShowingMonthDateYear(date) : null)
+                                                    !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
+                                                    if (date > new Date(datezone)) {
+                                                        date = new Date(datezone);
+                                                    }
+                                                    if (date >= new Date()) {
+                                                        setValue({ ...value, ['ReportedDtTm']: new Date() ? getShowingDateText(new Date(date)) : null })
+                                                    } else if (date <= new Date(incReportedDate)) {
+                                                        setValue({ ...value, ['ReportedDtTm']: new Date() ? getShowingDateText(new Date(date)) : null })
+                                                    } else {
+                                                        setValue({ ...value, ['ReportedDtTm']: date ? getShowingDateText(date) : null })
+                                                    }
+                                                }}
+                                                dateFormat="MM/dd/yyyy HH:mm"
+                                                timeFormat="HH:mm"
+                                                is24Hour
+                                                isClearable={false}
+                                                // selected={value?.ReportedDtTm && new Date(value?.ReportedDtTm)}
+                                                selected={getValidDate(value?.ReportedDtTm)}
+                                                autoComplete="Off"
+                                                timeInputLabel
+                                                placeholderText={'Select...'}
+                                                showTimeSelect
+                                                showYearDropdown
+                                                showMonthDropdown
+                                                dropdownMode="select"
+                                                timeIntervals={1}
+                                                timeCaption="Time"
+                                                maxDate={new Date(datezone)}
+                                                filterTime={(date) => filterPassedTimeZone(date, datezone)}
+                                                disabled={nibrsSubmittedvehicleMain === 1}
+                                                className={nibrsSubmittedvehicleMain === 1 ? 'LockFildsColor' : 'requiredColor'}
+                                            />
+                                            :
+                                            <DatePicker
+                                                id='reportedDtTm'
+                                                name='reportedDtTm'
+                                                ref={startRef}
+                                                onKeyDown={(e) => {
+                                                    if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                                                        e.preventDefault();
+                                                    } else {
+                                                        onKeyDown(e);
+                                                    }
+                                                }}
+                                                dateFormat="MM/dd/yyyy HH:mm"
+                                                timeFormat="HH:mm "
+                                                is24Hour
+                                                isClearable={false}
+                                                // selected={value?.ReportedDtTm && new Date(value?.ReportedDtTm)}
+                                                selected={getValidDate(value?.ReportedDtTm)}
+                                                autoComplete="Off"
+                                                onChange={(date) => {
+                                                    setIncidentReportedDate(date ? getShowingMonthDateYear(date) : null);
+                                                    !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
+                                                    if (date > new Date(datezone)) {
+                                                        date = new Date(datezone);
+                                                    }
+                                                    if (date >= new Date()) {
+                                                        setValue({ ...value, ['ReportedDtTm']: new Date() ? getShowingDateText(new Date()) : null })
+                                                    } else if (date <= new Date(incReportedDate)) {
+                                                        setValue({ ...value, ['ReportedDtTm']: incReportedDate ? getShowingDateText(incReportedDate) : null })
+                                                    } else {
+                                                        setValue({ ...value, ['ReportedDtTm']: date ? getShowingDateText(date) : null })
+                                                    }
+                                                }}
+                                                timeInputLabel
+                                                showTimeSelect
+                                                timeIntervals={1}
+                                                timeCaption="Time"
+                                                showMonthDropdown
+                                                showYearDropdown
+                                                dropdownMode="select"
+                                                minDate={new Date(incReportedDate)}
+                                                maxDate={new Date(datezone)}
+                                                showDisabledMonthNavigation
+                                                filterTime={(date) => filterPassedTimeZonesProperty(date, incReportedDate, datezone)}
+                                                disabled={nibrsSubmittedvehicleMain === 1}
+                                                className={nibrsSubmittedvehicleMain === 1 ? 'LockFildsColor' : 'requiredColor'}
+                                            />
+                                    }
+                                </div>
+                                <div className="col-2 col-md-2 col-lg-1">
+                                    <label htmlFor="" className='new-label mb-0'> Category {errors.CategoryIDError !== 'true' ? (
+                                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.CategoryIDError}</p>
+                                    ) : null}</label>
+                                </div>
+                                <div className="col-4 col-md-4 col-lg-2">
+                                    <Select
+                                        name='CategoryID'
+                                        value={categoryIdDrp?.filter((obj) => obj.value === value?.CategoryID)}
+                                        styles={nibrsSubmittedvehicleMain === 1 ? LockFildscolour : Requiredcolour}
+                                        options={categoryIdDrp}
+                                        onChange={(e) => ChangeDropDown(e, 'CategoryID')}
+                                        isClearable
+                                        placeholder="Select..."
+                                        isDisabled={nibrsSubmittedvehicleMain === 1 ? true : false}
                                     />
-                            }
-                        </div>
-                        <div className="col-2 col-md-2 col-lg-1">
-                            <label htmlFor="" className='new-label mb-0'> Category {errors.CategoryIDError !== 'true' ? (
-                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.CategoryIDError}</p>
-                            ) : null}</label>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-2">
-                            <Select
-                                name='CategoryID'
-                                value={categoryIdDrp?.filter((obj) => obj.value === value?.CategoryID)}
-                                styles={nibrsSubmittedvehicleMain === 1 ? LockFildscolour : Requiredcolour}
-                                options={categoryIdDrp}
-                                onChange={(e) => ChangeDropDown(e, 'CategoryID')}
-                                isClearable
-                                placeholder="Select..."
-                                isDisabled={nibrsSubmittedvehicleMain === 1 ? true : false}
-                            />
-                        </div>
-                        {/* <div className="col-2 col-md-2 col-lg-2 mt-2 ">
+                                </div>
+                                {/* <div className="col-2 col-md-2 col-lg-2 mt-2 ">
                             <label htmlFor="" className='new-label'> Classification</label>
                         </div>
                         <div className="col-4 col-md-4 col-lg-3 mt-1">
@@ -1289,88 +1299,88 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                 placeholder="Select..."
                             />
                         </div> */}
-                        <div className="col-2 col-md-2 col-lg-2">
-                            <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Property Vehicle Plate Type') }}>
-                                Plate Type{errors.PlateTypeIDError !== 'true' ? (
-                                    <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.PlateTypeIDError}</p>
-                                ) : null}
-                            </span>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-3">
-                            <Select
-                                name='PlateTypeID'
-                                value={plateTypeIdDrp?.filter((obj) => obj.value === value?.PlateTypeID)}
-                                styles={nibrsSubmittedvehicleMain === 1 ? LockFildscolour : Requiredcolour}
-                                isDisabled={nibrsSubmittedvehicleMain === 1 ? true : false}
-                                options={plateTypeIdDrp ? getPlateTypeOption(plateTypeIdDrp) : []}
-                                onChange={(e) => ChangeDropDown(e, 'PlateTypeID')}
-                                isClearable
-                                placeholder="Select..."
-                            />
-                        </div>
-                        <div className="col-12 col-md-12 col-lg-4 d-flex align-items-center">
-                            <div className="col-3 col-md-2 col-lg-5">
-                                <label htmlFor="" className='new-label mb-0 '>
-                                    Plate&nbsp;State&nbsp;&&nbsp;No.
-                                    {errors.PlateStateNoError !== 'true' ? (
-                                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', paddingLeft: '7px' }}>{errors.PlateStateNoError}</p>
-                                    ) : null}
-                                </label>
-                            </div>
-                            <div className="col-4 col-md-6 col-lg-4" >
-                                <Select
-                                    name='PlateID'
-                                    value={stateList?.filter((obj) => obj.value === value?.PlateID)}
-                                    styles={
-                                        nibrsSubmittedvehicleMain === 1 ? LockFildscolour : getPlateStateStyle()
-                                    }
-                                    isDisabled={nibrsSubmittedvehicleMain === 1 ? true : false}
-                                    options={stateList}
-                                    onChange={(e) => {
-                                        ChangeDropDown(e, 'PlateID');
-                                        if (!e) {
-                                            setValue({ ...value, PlateID: null, VehicleNo: '' });
-                                        }
-                                    }}
-                                    isClearable
-                                    placeholder="Select..."
-                                />
-                            </div>
-
-                            <span className='' >
-                                <div className="text-field col-12 col-md-12 col-lg-12 mt-0 ">
-                                    <input
-                                        // className={`${value.PlateID ? "requiredColor" : ''} ${!value?.PlateID || nibrsSubmittedvehicleMain === 1 ? 'readonlyColor' : ''}`}
-                                        className={
-                                            nibrsSubmittedvehicleMain === 1 ? 'LockFildsColour' : `${value.PlateID ? "requiredColor" : ""} ${!value?.PlateID ? "readonlyColor" : ""}`.trim()
-                                        }
-
-                                        disabled={!value?.PlateID || nibrsSubmittedvehicleMain === 1}
-                                        type="text" name='VehicleNo' id='VehicleNo' maxLength={8}
-                                        isDisabled={!value?.PlateID}
-                                        value={value?.VehicleNo} onChange={HandleChangesPlate} required placeholder='Number..' autoComplete='off' style={{ padding: "5px" }} />
+                                <div className="col-2 col-md-2 col-lg-2">
+                                    <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Property Vehicle Plate Type') }}>
+                                        Plate Type{errors.PlateTypeIDError !== 'true' ? (
+                                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.PlateTypeIDError}</p>
+                                        ) : null}
+                                    </span>
                                 </div>
-                                {errors.VehicleNoError !== 'true' && value.PlateID ? (
-                                    <p style={{ color: 'red', fontSize: '11px', margin: '0px', paddingLeft: '7px' }}>{errors.VehicleNoError}</p>
-                                ) : null}
-                            </span>
-                        </div>
-                        <div className="col-2 col-md-2 col-lg-1">
-                            <label htmlFor="" className='new-label mb-0'> Classification</label>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-2">
-                            <Select
-                                name='ClassificationID'
-                                value={classificationID?.filter((obj) => obj.value === value?.ClassificationID)}
-                                styles={nibrsSubmittedvehicleMain === 1 ? LockFildscolour : customStylesWithOutColor}
-                                isDisabled={!value?.CategoryID || nibrsSubmittedvehicleMain === 1 ? true : false}
-                                options={classificationID}
-                                onChange={(e) => ChangeDropDown(e, 'ClassificationID')}
-                                isClearable
-                                placeholder="Select..."
-                            />
-                        </div>
-                        {/* <div className="col-2 col-md-2 col-lg-1 mt-2 ">
+                                <div className="col-4 col-md-4 col-lg-3">
+                                    <Select
+                                        name='PlateTypeID'
+                                        value={plateTypeIdDrp?.filter((obj) => obj.value === value?.PlateTypeID)}
+                                        styles={nibrsSubmittedvehicleMain === 1 ? LockFildscolour : Requiredcolour}
+                                        isDisabled={nibrsSubmittedvehicleMain === 1 ? true : false}
+                                        options={plateTypeIdDrp ? getPlateTypeOption(plateTypeIdDrp) : []}
+                                        onChange={(e) => ChangeDropDown(e, 'PlateTypeID')}
+                                        isClearable
+                                        placeholder="Select..."
+                                    />
+                                </div>
+                                <div className="col-12 col-md-12 col-lg-4 d-flex align-items-center">
+                                    <div className="col-3 col-md-2 col-lg-5">
+                                        <label htmlFor="" className='new-label mb-0 '>
+                                            Plate&nbsp;State&nbsp;&&nbsp;No.
+                                            {errors.PlateStateNoError !== 'true' ? (
+                                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', paddingLeft: '7px' }}>{errors.PlateStateNoError}</p>
+                                            ) : null}
+                                        </label>
+                                    </div>
+                                    <div className="col-4 col-md-6 col-lg-4" >
+                                        <Select
+                                            name='PlateID'
+                                            value={stateList?.filter((obj) => obj.value === value?.PlateID)}
+                                            styles={
+                                                nibrsSubmittedvehicleMain === 1 ? LockFildscolour : getPlateStateStyle()
+                                            }
+                                            isDisabled={nibrsSubmittedvehicleMain === 1 ? true : false}
+                                            options={stateList}
+                                            onChange={(e) => {
+                                                ChangeDropDown(e, 'PlateID');
+                                                if (!e) {
+                                                    setValue({ ...value, PlateID: null, VehicleNo: '' });
+                                                }
+                                            }}
+                                            isClearable
+                                            placeholder="Select..."
+                                        />
+                                    </div>
+
+                                    <span className='' >
+                                        <div className="text-field col-12 col-md-12 col-lg-12 mt-0 ">
+                                            <input
+                                                // className={`${value.PlateID ? "requiredColor" : ''} ${!value?.PlateID || nibrsSubmittedvehicleMain === 1 ? 'readonlyColor' : ''}`}
+                                                className={
+                                                    nibrsSubmittedvehicleMain === 1 ? 'LockFildsColour' : `${value.PlateID ? "requiredColor" : ""} ${!value?.PlateID ? "readonlyColor" : ""}`.trim()
+                                                }
+
+                                                disabled={!value?.PlateID || nibrsSubmittedvehicleMain === 1}
+                                                type="text" name='VehicleNo' id='VehicleNo' maxLength={8}
+                                                isDisabled={!value?.PlateID}
+                                                value={value?.VehicleNo} onChange={HandleChangesPlate} required placeholder='Number..' autoComplete='off' style={{ padding: "5px" }} />
+                                        </div>
+                                        {errors.VehicleNoError !== 'true' && value.PlateID ? (
+                                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', paddingLeft: '7px' }}>{errors.VehicleNoError}</p>
+                                        ) : null}
+                                    </span>
+                                </div>
+                                <div className="col-2 col-md-2 col-lg-1">
+                                    <label htmlFor="" className='new-label mb-0'> Classification</label>
+                                </div>
+                                <div className="col-4 col-md-4 col-lg-2">
+                                    <Select
+                                        name='ClassificationID'
+                                        value={classificationID?.filter((obj) => obj.value === value?.ClassificationID)}
+                                        styles={nibrsSubmittedvehicleMain === 1 ? LockFildscolour : customStylesWithOutColor}
+                                        isDisabled={!value?.CategoryID || nibrsSubmittedvehicleMain === 1 ? true : false}
+                                        options={classificationID}
+                                        onChange={(e) => ChangeDropDown(e, 'ClassificationID')}
+                                        isClearable
+                                        placeholder="Select..."
+                                    />
+                                </div>
+                                {/* <div className="col-2 col-md-2 col-lg-1 mt-2 ">
                             <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Property Vehicle Plate Type') }}>
                                 Plate Type{errors.PlateTypeIDError !== 'true' ? (
                                     <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.PlateTypeIDError}</p>
@@ -1389,440 +1399,440 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                 placeholder="Select..."
                             />
                         </div> */}
-                        <div className="col-2 col-md-2 col-lg-2">
-                            <label htmlFor="" className='new-label mb-0'>VIN {errors.vinLengthError !== 'true' ? (
-                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.vinLengthError}</p>
-                            ) : null}</label>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-3 mt-0 text-field d-flex align-items-center">
-                            <input type="text" name='VIN' id='VIN' style={{ textTransform: "uppercase", padding: '5px 9px 7px 8px' }} maxLength={17} value={value?.VIN} onChange={HandleChanges} className='' required autoComplete='off' />
-                            <span className=''>
-                                <span className='  col-1 col-md-1 col-lg-1'>
-                                    {
-                                        (!vehicleStatus || !masterPropertyID) && (VehSta != 'true' || VehSta != true) &&
-                                        <button
-                                            type="button"
-                                            className="btn btn-sm btn-success"
-                                            data-toggle="modal"
-                                            data-target="#PropertyModal"
-                                            onClick={() => {
-                                                dispatch(get_Vehicle_Search_Data(
-                                                    value?.VIN, value?.VODID, value?.PlateExpireDtTm, value?.OANID, value?.StyleID, value?.PrimaryColorID,
-                                                    value?.SecondaryColorID, value?.Value, value?.Inspection_Sticker, value?.InspectionExpiresDtTm,
-                                                    value?.IsEvidence, value?.LossCodeID, value?.MakeID, value?.ManufactureYear,
-                                                    value?.PlateID, value?.VehicleNo, value?.PlateTypeID, value?.CategoryID, value?.ClassificationID, value?.PrimaryOfficerID,
-                                                    loginAgencyID, setSearchModalState
-                                                ));
+                                <div className="col-2 col-md-2 col-lg-2">
+                                    <label htmlFor="" className='new-label mb-0'>VIN {errors.vinLengthError !== 'true' ? (
+                                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.vinLengthError}</p>
+                                    ) : null}</label>
+                                </div>
+                                <div className="col-4 col-md-4 col-lg-3 mt-0 text-field d-flex align-items-center">
+                                    <input type="text" name='VIN' id='VIN' style={{ textTransform: "uppercase", padding: '5px 9px 7px 8px' }} maxLength={17} value={value?.VIN} onChange={HandleChanges} className='' required autoComplete='off' />
+                                    <span className=''>
+                                        <span className='  col-1 col-md-1 col-lg-1'>
+                                            {
+                                                (!vehicleStatus || !masterPropertyID) && (VehSta != 'true' || VehSta != true) &&
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-sm btn-success"
+                                                    data-toggle="modal"
+                                                    data-target="#PropertyModal"
+                                                    onClick={() => {
+                                                        dispatch(get_Vehicle_Search_Data(
+                                                            value?.VIN, value?.VODID, value?.PlateExpireDtTm, value?.OANID, value?.StyleID, value?.PrimaryColorID,
+                                                            value?.SecondaryColorID, value?.Value, value?.Inspection_Sticker, value?.InspectionExpiresDtTm,
+                                                            value?.IsEvidence, value?.LossCodeID, value?.MakeID, value?.ManufactureYear,
+                                                            value?.PlateID, value?.VehicleNo, value?.PlateTypeID, value?.CategoryID, value?.ClassificationID, value?.PrimaryOfficerID,
+                                                            loginAgencyID, setSearchModalState
+                                                        ));
 
-                                            }}
+                                                    }}
 
-                                        >
-                                            Search
-                                        </button>
-                                    }
-                                </span>
-                            </span>
-                        </div>
-                        <div className="col-2 col-md-2 col-lg-1">
-                            <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Vehicle VOD') }}>
-                                VOD
-                            </span>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-3">
-                            <Select
-                                name='VODID'
-                                value={vodIdData?.filter((obj) => obj.value === value?.VODID)}
-                                styles={customStylesWithOutColor}
-                                options={vodIdData}
-                                onChange={(e) => ChangeDropDown(e, 'VODID')}
-                                isClearable
-                                placeholder="Select..."
-                            />
-                        </div>
-                        <div className="col-2 col-md-2 col-lg-1">
-                            <label htmlFor="" className='new-label text-nowrap mb-0'>Plate Expiration</label>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-2 d-flex align-items-center">
-                            <DatePicker
-                                selected={
-                                    value?.PlateExpirationMonth
-                                        ? new Date(2023, value.PlateExpirationMonth - 1)
-                                        : null
-                                }
-                                onChange={(date) => {
-                                    if (!date) {
-                                        setValue(prev => ({ ...prev, PlateExpirationMonth: null }));
-                                        return;
-                                    }
-                                    const selectedMonth = date.getMonth() + 1;
-                                    setValue(prev => ({ ...prev, PlateExpirationMonth: selectedMonth }));
-                                }}
-                                openToDate={new Date(2023, new Date().getMonth())}
-                                dateFormat="MM"
-                                showMonthYearPicker
-                                dropdownMode="select"
-                                autoComplete="off"
-                                maxDate={new Date(2023, 11)}
-                                isClearable
-                                renderCustomHeader={() => null}
-                            />
-
-
-                            -
-                            <DatePicker
-                                selected={value?.PlateExpirationYear ? new Date(value.PlateExpirationYear, (value?.PlateExpirationMonth ? value.PlateExpirationMonth - 1 : 0)) : null}
-                                onChange={(date) => {
-                                    !addUpdatePermission && setChangesStatus(true);
-                                    !addUpdatePermission && setStatesChangeStatus(true);
-                                    if (!date) {
-                                        setValue(prev => ({ ...prev, PlateExpirationYear: null }));
-                                        return;
-                                    }
-                                    const selectedYear = date.getFullYear();
-                                    setValue(prev => ({ ...prev, PlateExpirationYear: selectedYear }));
-                                }}
-                                openToDate={value?.PlateExpirationYear ? new Date(value.PlateExpirationYear, 0) : new Date()}
-                                yearItemNumber={8}
-                                dateFormat="yyyy"
-                                dropdownMode="select"
-                                autoComplete="off"
-                                showYearPicker
-                                isClearable
-                            />
-
-                        </div>
-                        <div className="col-2 col-md-2 col-lg-2">
-                            <label htmlFor="" className='new-label mb-0'>OAN Id</label>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-3 mt-0 text-field ">
-                            <input style={{ padding: '5px 9px 7px 8px' }} type="text" name='OANID' id='OANID' value={value?.OANID} onChange={HandleChanges} className='h-100' required maxLength={20} autoComplete='off' />
-                        </div>
-                        <div className="col-2 col-md-2 col-lg-1">
-                            <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Property Vehicle Style') }}>
-                                Style
-                            </span>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-3">
-                            <Select
-                                name='StyleID'
-                                value={styleDrp?.filter((obj) => obj.value === value?.StyleID)}
-                                styles={customStylesWithOutColor}
-                                options={styleDrp}
-                                onChange={(e) => ChangeDropDown(e, 'StyleID')}
-                                isClearable
-                                isDisabled={value?.CategoryID ? false : true}
-                                className={!value?.CategoryID ? 'readonlyColor' : ''}
-                                placeholder="Select..."
-                            />
-                        </div>
-                        <div className="col-2 col-md-2 col-lg-1">
-                            <label htmlFor="" className='new-label mb-0'>Owner</label>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-2">
-                            {
-                                MstVehicle === "MST-Vehicle-Dash" ?
-                                    <>
-                                        <Select
-                                            name='OwnerID'
-                                            value={mastersNameDrpData?.filter((obj) => obj.value === value?.OwnerID)}
-                                            styles={customStylesWithOutColor}
-                                            options={mastersNameDrpData}
-                                            onChange={(e) => { onInProfessionChange(e, 'OwnerID') }}
-                                            isClearable
-                                            placeholder="Select..."
-                                        />
-                                    </>
-                                    :
-                                    <>
-                                        <Select
-                                            name='OwnerID'
-                                            value={arresteeNameVehicle?.filter((obj) => obj.value === value?.OwnerID)}
-                                            styles={customStylesWithOutColor}
-                                            options={arresteeNameVehicle}
-                                            onChange={(e) => { onInProfessionChange(e, 'OwnerID') }}
-                                            isClearable
-                                            placeholder="Select..."
-                                        />
-                                    </>
-                            }
-                        </div>
-                        <div className="col-6 col-md-6 col-lg-1" >
-                            <button
-                                onClick={() => {
-                                    if (ownerOfID) {
-                                        setTimeout(() => {
-                                            GetSingleDataPassion(ownerOfID, 0);
-                                        }, [200])
-                                    }
-                                    setNameModalStatus(true);
-                                    setType("VehicleOwner");
-                                    get_Name_Count(ownerOfID);
-                                    get_vehicle_Count(vehicleID);
-                                }}
-                                className="btn btn-sm bg-green text-white" data-toggle="modal" data-target="#MasterModal">
-                                <i className="fa fa-plus"></i>
-                            </button>
-                        </div>
-                        <div className="col-2 col-md-2 col-lg-1">
-                            <label htmlFor="" data-toggle="modal" data-target="#ListModel" className='new-link mb-0 ' onClick={() => { setOpenPage('Property Vehicle Make') }}>Make</label>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-3">
-                            <Select
-                                name='MakeID'
-                                value={vehMakeDrpData?.filter((obj) => obj.value === value?.MakeID)}
-                                styles={customStylesWithOutColor}
-                                options={vehMakeDrpData}
-                                onChange={(e) => ChangeDropDown(e, 'MakeID')}
-                                isClearable
-                                isDisabled={value?.CategoryID ? false : true}
-                                className={!value?.CategoryID ? 'readonlyColor' : ''}
-                                placeholder="Select..."
-                            />
-                        </div>
-                        <div className="col-2 col-md-2 col-lg-1">
-                            <label htmlFor="" className='new-label mb-0'>Model</label>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-3">
-                            <CreatableSelect
-                                name="ModelID"
-                                isClearable
-                                options={modalIdDrp}
-                                styles={customStylesWithOutColor}
-                                placeholder="Select or type..."
-                                isDisabled={!value?.MakeID}
-                                className={!value?.CategoryID ? 'readonlyColor' : ''}
-                                value={
-                                    modalIdDrp?.find((obj) => obj.value?.toString() === value?.ModelID?.toString())
-                                    || (value?.ModelName ? { label: value.ModelName, value: value.ModelName } : null)
-                                }
-                                onChange={(e) => ChangeDropDown(e, "ModelID")}
-                            />
-
-                        </div>
-                        <div className="col-2 col-md-2 col-lg-1">
-                            <span data-toggle="modal" data-target="#ListModel" className='new-link mb-0 ' onClick={() => { setOpenPage('Color') }}>
-                                Primary&nbsp;Color
-                            </span>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-2">
-                            <Select
-                                name='PrimaryColorID'
-                                value={isPrimaryDrpData?.filter((obj) => obj.value === value?.PrimaryColorID)}
-                                styles={customStylesWithOutColor}
-                                options={isPrimaryDrpData}
-                                onChange={(e) => ChangeDropDown(e, 'PrimaryColorID')}
-                                isClearable
-                                placeholder="Select..."
-                            />
-                        </div>
-                        <div className="col-2 col-md-2 col-lg-2">
-                            <span data-toggle="modal" data-target="#ListModel" className='new-link mb-0' onClick={() => { setOpenPage('Color') }}>
-                                Secondary&nbsp;Color
-                            </span>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-3">
-                            <Select
-                                name='SecondaryColorID'
-                                value={isSecondaryDrpData?.filter((obj) => obj.value === value?.SecondaryColorID)}
-                                styles={customStylesWithOutColor}
-                                options={isSecondaryDrpData}
-                                onChange={(e) => ChangeDropDown(e, 'SecondaryColorID')}
-                                isClearable
-                                placeholder="Select..."
-                            />
-                        </div>
-                        <div className="col-2 col-md-2 col-lg-1">
-                            <label htmlFor="" className='new-label mb-0'>Weight</label>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-3 mt-0 text-field">
-                            <input style={{ padding: '5px 9px 7px 8px' }} type="text" name='Weight' id='Weight' maxLength={4} value={value?.Weight} onChange={HandleChanges} className='h-100' required autoComplete='off' />
-                        </div>
-                        <div className="col-2 col-md-2 col-lg-1">
-                            <label htmlFor="" className='new-label mb-0'>Value
-                                {errors.ContactError !== 'true' ? (
-                                    <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ContactError}</p>
-                                ) : null}
-                            </label>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-2 mt-0 text-field">
-                            <input
-                                style={{ padding: '5px 9px 7px 8px' }}
-                                type="text"
-                                name="Value"
-                                id="Value"
-                                // className={nibrsSubmittedvehicleMain === 1 ? 'readonlyColor' : lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD' ? 'requiredColor' : ''}
-                                // className={nibrsSubmittedvehicleMain === 1 || !value?.CategoryID ? 'readonlyColor' : lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD' ? 'requiredColor' : ''}
-                                className={`h-100 ${nibrsSubmittedvehicleMain === 1 ? 'LockFildscolour' : !value?.CategoryID ? 'readonlyColor' : (lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD') ? 'requiredColor' : ''}`}
-
-
-                                disabled={nibrsSubmittedvehicleMain === 1 || !value?.CategoryID ? true : false}
-                                maxLength={9}
-                                value={`$ ${value?.Value}`}
-                                onChange={HandleChanges}
-                                required
-                                autoComplete="off"
-                            />
-                        </div>
-                        <div className="col-2 col-md-2 col-lg-2">
-                            <label htmlFor="" className='new-label mb-0'>Inspection Sticker</label>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-1 mt-0 text-field ">
-                            <input style={{ padding: '5px 9px 7px 8px' }} type="text" name='Inspection_Sticker' id='Inspection_Sticker' value={value?.Inspection_Sticker} onChange={HandleChanges} className='h-100' required autoComplete='off' />
-                        </div>
-                        <div className="col-2 col-md-2 col-lg-2">
-                            <label htmlFor="" className='new-label mb-0'>Inspection Expires</label>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-2">
-                            <DatePicker
-                                id='InspectionExpiresDtTm'
-                                name='InspectionExpiresDtTm'
-                                ref={startRef1}
-                                onKeyDown={(e) => {
-                                    if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
-                                        e.preventDefault();
-                                    } else {
-                                        onKeyDown(e);
-                                    }
-                                }}
-                                onChange={(date) => {
-                                    // date will be null if cleared, or valid date if selected
-                                    !addUpdatePermission && setChangesStatus(true);
-                                    !addUpdatePermission && setStatesChangeStatus(true);
-                                    setInspectionExpDate(date);
-                                    setValue({ ...value, ['InspectionExpiresDtTm']: date ? getShowingMonthDateYear(date) : null });
-                                }}
-                                onChangeRaw={(e) => {
-                                    const input = e.target.value?.trim();
-
-                                    if (input === '') {
-                                        // User cleared the field
-                                        setInspectionExpDate(null);
-                                        setValue({ ...value, ['InspectionExpiresDtTm']: null });
-                                    } else {
-                                        const parsedDate = new Date(input);
-                                        if (isNaN(parsedDate?.getTime())) {
-                                            // Invalid input, set current date
-                                            const now = new Date();
-                                            setInspectionExpDate(now);
-                                            setValue({ ...value, ['InspectionExpiresDtTm']: getShowingMonthDateYear(now) });
+                                                >
+                                                    Search
+                                                </button>
+                                            }
+                                        </span>
+                                    </span>
+                                </div>
+                                <div className="col-2 col-md-2 col-lg-1">
+                                    <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Vehicle VOD') }}>
+                                        VOD
+                                    </span>
+                                </div>
+                                <div className="col-4 col-md-4 col-lg-3">
+                                    <Select
+                                        name='VODID'
+                                        value={vodIdData?.filter((obj) => obj.value === value?.VODID)}
+                                        styles={customStylesWithOutColor}
+                                        options={vodIdData}
+                                        onChange={(e) => ChangeDropDown(e, 'VODID')}
+                                        isClearable
+                                        placeholder="Select..."
+                                    />
+                                </div>
+                                <div className="col-2 col-md-2 col-lg-1">
+                                    <label htmlFor="" className='new-label text-nowrap mb-0'>Plate Expiration</label>
+                                </div>
+                                <div className="col-4 col-md-4 col-lg-2 d-flex align-items-center">
+                                    <DatePicker
+                                        selected={
+                                            value?.PlateExpirationMonth
+                                                ? new Date(2023, value.PlateExpirationMonth - 1)
+                                                : null
                                         }
-                                        // Else valid input will be handled by onChange
-                                    }
-                                }}
-                                dateFormat="MM/dd/yyyy"
-                                isClearable={!!value?.inspectionExpDate}
-                                selected={inspectionExpDate}
-                                placeholderText={value?.inspectionExpDate || 'Select...'}
-                                autoComplete="off"
-                                showYearDropdown
-                                showMonthDropdown
-                                dropdownMode="select"
-                            />
-                        </div>
-                        <div className="col-2 col-md-2 col-lg-1">
-                            <label htmlFor="" className='new-label mb-0'>Manu. Year</label>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-1">
-                            <DatePicker
-                                name='ManufactureYear'
-                                id='ManufactureYear'
-                                selected={manufactureDate}
-                                onChange={(date) => {
-                                    !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
-                                    setManufactureDate(date); setValue({ ...value, ['ManufactureYear']: date ? getYearWithOutDateTime(date) : null })
-                                }}
-                                showYearPicker
-                                dateFormat="yyyy"
-                                yearItemNumber={8}
-                                ref={startRef2}
-                                onKeyDown={onKeyDown}
-                                autoComplete="off"
-                                showYearDropdown
-                                showMonthDropdown
-                                dropdownMode="select"
-                                maxDate={new Date()}
-                                minDate={new Date(1900, 0, 1)}
-                            />
-                        </div>
-                        <div className="col-2 col-md-2 col-lg-1">
-                            <label htmlFor="" className='new-label mb-0 ' >Primary&nbsp;Officer</label>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-2">
-                            <Select
-                                name='PrimaryOfficerID'
-                                value={primaryOfficerID?.filter((obj) => obj.value == value?.PrimaryOfficerID)}
-                                styles={customStylesWithOutColor}
-                                options={primaryOfficerID}
-                                onChange={(e) => ChangeDropDown(e, 'PrimaryOfficerID')}
-                                isClearable
-                                placeholder="Select..."
-                            />
-                        </div>
-                        <div className="col-2 col-md-2 col-lg-2">
-                            <label htmlFor="" className='new-label mb-0'>In Possession Of</label>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-2">
-                            {
-                                MstVehicle ?
-                                    <>
-                                        <Select
-                                            name='InProfessionOf'
-                                            value={ownerPossessionDrpData?.filter((obj) => obj.value == value?.InProfessionOf)}
-                                            styles={customStylesWithOutColor}
-                                            options={ownerPossessionDrpData}
-                                            onChange={(e) => { onInProfessionChange(e, 'InProfessionOf') }}
-                                            isClearable
-                                            placeholder="Select..."
-                                        />
-                                    </>
-                                    :
-                                    <>
-                                        <Select
-                                            name='InProfessionOf'
-                                            value={inProfessionOf?.filter((obj) => obj.value == value?.InProfessionOf)}
-                                            styles={customStylesWithOutColor}
-                                            options={inProfessionOf}
-                                            onChange={(e) => { onInProfessionChange(e, 'InProfessionOf') }}
-                                            isClearable
-                                            placeholder="Select..."
-                                        />
-                                    </>
-                            }
-                        </div>
-                        <div className="col-1">
-                            <button
-                                onClick={() => {
-                                    if (possessionID) {
-                                        setTimeout(() => {
-                                            GetSingleDataPassion(possessionID, 0);
-                                        }, [200])
+                                        onChange={(date) => {
+                                            if (!date) {
+                                                setValue(prev => ({ ...prev, PlateExpirationMonth: null }));
+                                                return;
+                                            }
+                                            const selectedMonth = date.getMonth() + 1;
+                                            setValue(prev => ({ ...prev, PlateExpirationMonth: selectedMonth }));
+                                        }}
+                                        openToDate={new Date(2023, new Date().getMonth())}
+                                        dateFormat="MM"
+                                        showMonthYearPicker
+                                        dropdownMode="select"
+                                        autoComplete="off"
+                                        maxDate={new Date(2023, 11)}
+                                        isClearable
+                                        renderCustomHeader={() => null}
+                                    />
 
-                                    }
-                                    // setOwnerOfID();
-                                    setPossenSinglData([]);
-                                    setNameModalStatus(true);
-                                    setType("VehicleName");
-                                }}
-                                className="btn btn-sm bg-green text-white" data-toggle="modal" data-target="#MasterModal">
-                                <i className="fa fa-plus"></i>
-                            </button>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-1">
-                            <div className="form-check ">
-                                <input className="form-check-input" name='IsEvidence' value={value?.IsEvidence} checked={value?.IsEvidence} onChange={HandleChanges} type="checkbox" id="flexCheckDefault" />
-                                <label className="form-check-label" htmlFor="flexCheckDefault">
-                                    Evidence
-                                </label>
-                            </div>
-                        </div>
-                        <div className="col-12 col-md-12 col-lg-2 text-right" >
-                        </div>
-                        <div className='col-11 mb-md-5 mb-sm-5 mb-lg-0'>
-                            <AlertTable availableAlert={availableAlert} masterPropertyID={masterPropertyID} ProSta={VehSta} />
 
-                            <div className='row mt-1 justify-content-between align-items-center'>
-                                <div>
-                                    {/* {vehicleStatus && (VehSta === 'true' || VehSta === true) &&
+                                    -
+                                    <DatePicker
+                                        selected={value?.PlateExpirationYear ? new Date(value.PlateExpirationYear, (value?.PlateExpirationMonth ? value.PlateExpirationMonth - 1 : 0)) : null}
+                                        onChange={(date) => {
+                                            !addUpdatePermission && setChangesStatus(true);
+                                            !addUpdatePermission && setStatesChangeStatus(true);
+                                            if (!date) {
+                                                setValue(prev => ({ ...prev, PlateExpirationYear: null }));
+                                                return;
+                                            }
+                                            const selectedYear = date.getFullYear();
+                                            setValue(prev => ({ ...prev, PlateExpirationYear: selectedYear }));
+                                        }}
+                                        openToDate={value?.PlateExpirationYear ? new Date(value.PlateExpirationYear, 0) : new Date()}
+                                        yearItemNumber={8}
+                                        dateFormat="yyyy"
+                                        dropdownMode="select"
+                                        autoComplete="off"
+                                        showYearPicker
+                                        isClearable
+                                    />
+
+                                </div>
+                                <div className="col-2 col-md-2 col-lg-2">
+                                    <label htmlFor="" className='new-label mb-0'>OAN Id</label>
+                                </div>
+                                <div className="col-4 col-md-4 col-lg-3 mt-0 text-field ">
+                                    <input style={{ padding: '5px 9px 7px 8px' }} type="text" name='OANID' id='OANID' value={value?.OANID} onChange={HandleChanges} className='h-100' required maxLength={20} autoComplete='off' />
+                                </div>
+                                <div className="col-2 col-md-2 col-lg-1">
+                                    <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Property Vehicle Style') }}>
+                                        Style
+                                    </span>
+                                </div>
+                                <div className="col-4 col-md-4 col-lg-3">
+                                    <Select
+                                        name='StyleID'
+                                        value={styleDrp?.filter((obj) => obj.value === value?.StyleID)}
+                                        styles={customStylesWithOutColor}
+                                        options={styleDrp}
+                                        onChange={(e) => ChangeDropDown(e, 'StyleID')}
+                                        isClearable
+                                        isDisabled={value?.CategoryID ? false : true}
+                                        className={!value?.CategoryID ? 'readonlyColor' : ''}
+                                        placeholder="Select..."
+                                    />
+                                </div>
+                                <div className="col-2 col-md-2 col-lg-1">
+                                    <label htmlFor="" className='new-label mb-0'>Owner</label>
+                                </div>
+                                <div className="col-4 col-md-4 col-lg-2">
+                                    {
+                                        MstVehicle === "MST-Vehicle-Dash" ?
+                                            <>
+                                                <Select
+                                                    name='OwnerID'
+                                                    value={mastersNameDrpData?.filter((obj) => obj.value === value?.OwnerID)}
+                                                    styles={customStylesWithOutColor}
+                                                    options={mastersNameDrpData}
+                                                    onChange={(e) => { onInProfessionChange(e, 'OwnerID') }}
+                                                    isClearable
+                                                    placeholder="Select..."
+                                                />
+                                            </>
+                                            :
+                                            <>
+                                                <Select
+                                                    name='OwnerID'
+                                                    value={arresteeNameVehicle?.filter((obj) => obj.value === value?.OwnerID)}
+                                                    styles={customStylesWithOutColor}
+                                                    options={arresteeNameVehicle}
+                                                    onChange={(e) => { onInProfessionChange(e, 'OwnerID') }}
+                                                    isClearable
+                                                    placeholder="Select..."
+                                                />
+                                            </>
+                                    }
+                                </div>
+                                <div className="col-6 col-md-6 col-lg-1" >
+                                    <button
+                                        onClick={() => {
+                                            if (ownerOfID) {
+                                                setTimeout(() => {
+                                                    GetSingleDataPassion(ownerOfID, 0);
+                                                }, [200])
+                                            }
+                                            setNameModalStatus(true);
+                                            setType("VehicleOwner");
+                                            get_Name_Count(ownerOfID);
+                                            get_vehicle_Count(vehicleID);
+                                        }}
+                                        className="btn btn-sm bg-green text-white" data-toggle="modal" data-target="#MasterModal">
+                                        <i className="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                                <div className="col-2 col-md-2 col-lg-1">
+                                    <label htmlFor="" data-toggle="modal" data-target="#ListModel" className='new-link mb-0 ' onClick={() => { setOpenPage('Property Vehicle Make') }}>Make</label>
+                                </div>
+                                <div className="col-4 col-md-4 col-lg-3">
+                                    <Select
+                                        name='MakeID'
+                                        value={vehMakeDrpData?.filter((obj) => obj.value === value?.MakeID)}
+                                        styles={customStylesWithOutColor}
+                                        options={vehMakeDrpData}
+                                        onChange={(e) => ChangeDropDown(e, 'MakeID')}
+                                        isClearable
+                                        isDisabled={value?.CategoryID ? false : true}
+                                        className={!value?.CategoryID ? 'readonlyColor' : ''}
+                                        placeholder="Select..."
+                                    />
+                                </div>
+                                <div className="col-2 col-md-2 col-lg-1">
+                                    <label htmlFor="" className='new-label mb-0'>Model</label>
+                                </div>
+                                <div className="col-4 col-md-4 col-lg-3">
+                                    <CreatableSelect
+                                        name="ModelID"
+                                        isClearable
+                                        options={modalIdDrp}
+                                        styles={customStylesWithOutColor}
+                                        placeholder="Select or type..."
+                                        isDisabled={!value?.MakeID}
+                                        className={!value?.CategoryID ? 'readonlyColor' : ''}
+                                        value={
+                                            modalIdDrp?.find((obj) => obj.value?.toString() === value?.ModelID?.toString())
+                                            || (value?.ModelName ? { label: value.ModelName, value: value.ModelName } : null)
+                                        }
+                                        onChange={(e) => ChangeDropDown(e, "ModelID")}
+                                    />
+
+                                </div>
+                                <div className="col-2 col-md-2 col-lg-1">
+                                    <span data-toggle="modal" data-target="#ListModel" className='new-link mb-0 ' onClick={() => { setOpenPage('Color') }}>
+                                        Primary&nbsp;Color
+                                    </span>
+                                </div>
+                                <div className="col-4 col-md-4 col-lg-2">
+                                    <Select
+                                        name='PrimaryColorID'
+                                        value={isPrimaryDrpData?.filter((obj) => obj.value === value?.PrimaryColorID)}
+                                        styles={customStylesWithOutColor}
+                                        options={isPrimaryDrpData}
+                                        onChange={(e) => ChangeDropDown(e, 'PrimaryColorID')}
+                                        isClearable
+                                        placeholder="Select..."
+                                    />
+                                </div>
+                                <div className="col-2 col-md-2 col-lg-2">
+                                    <span data-toggle="modal" data-target="#ListModel" className='new-link mb-0' onClick={() => { setOpenPage('Color') }}>
+                                        Secondary&nbsp;Color
+                                    </span>
+                                </div>
+                                <div className="col-4 col-md-4 col-lg-3">
+                                    <Select
+                                        name='SecondaryColorID'
+                                        value={isSecondaryDrpData?.filter((obj) => obj.value === value?.SecondaryColorID)}
+                                        styles={customStylesWithOutColor}
+                                        options={isSecondaryDrpData}
+                                        onChange={(e) => ChangeDropDown(e, 'SecondaryColorID')}
+                                        isClearable
+                                        placeholder="Select..."
+                                    />
+                                </div>
+                                <div className="col-2 col-md-2 col-lg-1">
+                                    <label htmlFor="" className='new-label mb-0'>Weight</label>
+                                </div>
+                                <div className="col-4 col-md-4 col-lg-3 mt-0 text-field">
+                                    <input style={{ padding: '5px 9px 7px 8px' }} type="text" name='Weight' id='Weight' maxLength={4} value={value?.Weight} onChange={HandleChanges} className='h-100' required autoComplete='off' />
+                                </div>
+                                <div className="col-2 col-md-2 col-lg-1">
+                                    <label htmlFor="" className='new-label mb-0'>Value
+                                        {errors.ContactError !== 'true' ? (
+                                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ContactError}</p>
+                                        ) : null}
+                                    </label>
+                                </div>
+                                <div className="col-4 col-md-4 col-lg-2 mt-0 text-field">
+                                    <input
+                                        style={{ padding: '5px 9px 7px 8px' }}
+                                        type="text"
+                                        name="Value"
+                                        id="Value"
+                                        // className={nibrsSubmittedvehicleMain === 1 ? 'readonlyColor' : lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD' ? 'requiredColor' : ''}
+                                        // className={nibrsSubmittedvehicleMain === 1 || !value?.CategoryID ? 'readonlyColor' : lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD' ? 'requiredColor' : ''}
+                                        className={`h-100 ${nibrsSubmittedvehicleMain === 1 ? 'LockFildscolour' : !value?.CategoryID ? 'readonlyColor' : (lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD') ? 'requiredColor' : ''}`}
+
+
+                                        disabled={nibrsSubmittedvehicleMain === 1 || !value?.CategoryID ? true : false}
+                                        maxLength={9}
+                                        value={`$ ${value?.Value}`}
+                                        onChange={HandleChanges}
+                                        required
+                                        autoComplete="off"
+                                    />
+                                </div>
+                                <div className="col-2 col-md-2 col-lg-2">
+                                    <label htmlFor="" className='new-label mb-0'>Inspection Sticker</label>
+                                </div>
+                                <div className="col-4 col-md-4 col-lg-1 mt-0 text-field ">
+                                    <input style={{ padding: '5px 9px 7px 8px' }} type="text" name='Inspection_Sticker' id='Inspection_Sticker' value={value?.Inspection_Sticker} onChange={HandleChanges} className='h-100' required autoComplete='off' />
+                                </div>
+                                <div className="col-2 col-md-2 col-lg-2">
+                                    <label htmlFor="" className='new-label mb-0'>Inspection Expires</label>
+                                </div>
+                                <div className="col-4 col-md-4 col-lg-2">
+                                    <DatePicker
+                                        id='InspectionExpiresDtTm'
+                                        name='InspectionExpiresDtTm'
+                                        ref={startRef1}
+                                        onKeyDown={(e) => {
+                                            if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                                                e.preventDefault();
+                                            } else {
+                                                onKeyDown(e);
+                                            }
+                                        }}
+                                        onChange={(date) => {
+                                            // date will be null if cleared, or valid date if selected
+                                            !addUpdatePermission && setChangesStatus(true);
+                                            !addUpdatePermission && setStatesChangeStatus(true);
+                                            setInspectionExpDate(date);
+                                            setValue({ ...value, ['InspectionExpiresDtTm']: date ? getShowingMonthDateYear(date) : null });
+                                        }}
+                                        onChangeRaw={(e) => {
+                                            const input = e.target.value?.trim();
+
+                                            if (input === '') {
+                                                // User cleared the field
+                                                setInspectionExpDate(null);
+                                                setValue({ ...value, ['InspectionExpiresDtTm']: null });
+                                            } else {
+                                                const parsedDate = new Date(input);
+                                                if (isNaN(parsedDate?.getTime())) {
+                                                    // Invalid input, set current date
+                                                    const now = new Date();
+                                                    setInspectionExpDate(now);
+                                                    setValue({ ...value, ['InspectionExpiresDtTm']: getShowingMonthDateYear(now) });
+                                                }
+                                                // Else valid input will be handled by onChange
+                                            }
+                                        }}
+                                        dateFormat="MM/dd/yyyy"
+                                        isClearable={!!value?.inspectionExpDate}
+                                        selected={inspectionExpDate}
+                                        placeholderText={value?.inspectionExpDate || 'Select...'}
+                                        autoComplete="off"
+                                        showYearDropdown
+                                        showMonthDropdown
+                                        dropdownMode="select"
+                                    />
+                                </div>
+                                <div className="col-2 col-md-2 col-lg-1">
+                                    <label htmlFor="" className='new-label mb-0'>Manu. Year</label>
+                                </div>
+                                <div className="col-4 col-md-4 col-lg-1">
+                                    <DatePicker
+                                        name='ManufactureYear'
+                                        id='ManufactureYear'
+                                        selected={manufactureDate}
+                                        onChange={(date) => {
+                                            !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
+                                            setManufactureDate(date); setValue({ ...value, ['ManufactureYear']: date ? getYearWithOutDateTime(date) : null })
+                                        }}
+                                        showYearPicker
+                                        dateFormat="yyyy"
+                                        yearItemNumber={8}
+                                        ref={startRef2}
+                                        onKeyDown={onKeyDown}
+                                        autoComplete="off"
+                                        showYearDropdown
+                                        showMonthDropdown
+                                        dropdownMode="select"
+                                        maxDate={new Date()}
+                                        minDate={new Date(1900, 0, 1)}
+                                    />
+                                </div>
+                                <div className="col-2 col-md-2 col-lg-1">
+                                    <label htmlFor="" className='new-label mb-0 ' >Primary&nbsp;Officer</label>
+                                </div>
+                                <div className="col-4 col-md-4 col-lg-2">
+                                    <Select
+                                        name='PrimaryOfficerID'
+                                        value={primaryOfficerID?.filter((obj) => obj.value == value?.PrimaryOfficerID)}
+                                        styles={customStylesWithOutColor}
+                                        options={primaryOfficerID}
+                                        onChange={(e) => ChangeDropDown(e, 'PrimaryOfficerID')}
+                                        isClearable
+                                        placeholder="Select..."
+                                    />
+                                </div>
+                                <div className="col-2 col-md-2 col-lg-2">
+                                    <label htmlFor="" className='new-label mb-0'>In Possession Of</label>
+                                </div>
+                                <div className="col-4 col-md-4 col-lg-2">
+                                    {
+                                        MstVehicle ?
+                                            <>
+                                                <Select
+                                                    name='InProfessionOf'
+                                                    value={ownerPossessionDrpData?.filter((obj) => obj.value == value?.InProfessionOf)}
+                                                    styles={customStylesWithOutColor}
+                                                    options={ownerPossessionDrpData}
+                                                    onChange={(e) => { onInProfessionChange(e, 'InProfessionOf') }}
+                                                    isClearable
+                                                    placeholder="Select..."
+                                                />
+                                            </>
+                                            :
+                                            <>
+                                                <Select
+                                                    name='InProfessionOf'
+                                                    value={inProfessionOf?.filter((obj) => obj.value == value?.InProfessionOf)}
+                                                    styles={customStylesWithOutColor}
+                                                    options={inProfessionOf}
+                                                    onChange={(e) => { onInProfessionChange(e, 'InProfessionOf') }}
+                                                    isClearable
+                                                    placeholder="Select..."
+                                                />
+                                            </>
+                                    }
+                                </div>
+                                <div className="col-1">
+                                    <button
+                                        onClick={() => {
+                                            if (possessionID) {
+                                                setTimeout(() => {
+                                                    GetSingleDataPassion(possessionID, 0);
+                                                }, [200])
+
+                                            }
+                                            // setOwnerOfID();
+                                            setPossenSinglData([]);
+                                            setNameModalStatus(true);
+                                            setType("VehicleName");
+                                        }}
+                                        className="btn btn-sm bg-green text-white" data-toggle="modal" data-target="#MasterModal">
+                                        <i className="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                                <div className="col-4 col-md-4 col-lg-1">
+                                    <div className="form-check ">
+                                        <input className="form-check-input" name='IsEvidence' value={value?.IsEvidence} checked={value?.IsEvidence} onChange={HandleChanges} type="checkbox" id="flexCheckDefault" />
+                                        <label className="form-check-label" htmlFor="flexCheckDefault">
+                                            Evidence
+                                        </label>
+                                    </div>
+                                </div>
+                                <div className="col-12 col-md-12 col-lg-2 text-right" >
+                                </div>
+                                <div className='col-11 mb-md-5 mb-sm-5 mb-lg-0'>
+                                    <AlertTable availableAlert={availableAlert} masterPropertyID={masterPropertyID} ProSta={VehSta} />
+
+                                    <div className='row mt-1 justify-content-between align-items-center'>
+                                        <div>
+                                            {/* {vehicleStatus && (VehSta === 'true' || VehSta === true) &&
                                         <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => { setPrintStatus(true) }}>Print Barcode</button>
                                     }
                                     {
@@ -1839,81 +1849,81 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                             Validate TIBRS Vehicle
                                         </button>
                                     } */}
+                                        </div>
+
+
+                                        <div>
+                                            <button type="button" className="btn btn-sm btn-success mr-1" data-toggle="modal" data-target="#NCICModal" onClick={() => { setOpenNCICModal(true) }}>TLETS</button>
+
+                                            {/* <button type="button" className="btn btn-sm btn-success mr-1" onClick={newVehicle}>New</button> */}
+
+                                            {
+                                                vehicleStatus && (VehSta === 'true' || VehSta === true) ?
+                                                    effectiveScreenPermission ?
+                                                        effectiveScreenPermission[0]?.Changeok ?
+                                                            <>
+                                                                <button type="button" disabled={!statesChangeStatus} className="btn btn-sm btn-success  mr-1" onClick={(e) => { check_Validation_Error(); }}>Update</button>
+                                                                <button
+                                                                    type="button" className="btn btn-sm btn-success mr-4" data-toggle="modal" data-target="#QueueReportsModal"
+                                                                    onClick={() => { setShowModal(true); setPrintVehReport(true); setVehReportCount(VehReportCount + 1); }}
+                                                                >
+                                                                    Print <i className="fa fa-print"></i>
+                                                                </button>
+                                                            </>
+
+                                                            :
+                                                            <>
+                                                            </>
+                                                        :
+                                                        <>
+                                                            <button type="button" disabled={!statesChangeStatus} className="btn btn-sm btn-success  mr-1" onClick={(e) => { check_Validation_Error(); }}>Update</button>
+                                                            <button
+                                                                type="button" className="btn btn-sm btn-success mr-4" data-toggle="modal" data-target="#QueueReportsModal"
+                                                                onClick={() => { setShowModal(true); setPrintVehReport(true); setVehReportCount(VehReportCount + 1); }}
+                                                            >
+                                                                Print <i className="fa fa-print"></i>
+                                                            </button>
+                                                        </>
+                                                    :
+                                                    effectiveScreenPermission ?
+                                                        effectiveScreenPermission[0]?.AddOK ?
+                                                            <button type="button" className="btn btn-sm btn-success  mr-1" onClick={(e) => { setMasterPropertyID(''); check_Validation_Error(); }}>Save</button>
+                                                            :
+                                                            <>
+                                                            </>
+                                                        :
+                                                        <button type="button" className="btn btn-sm btn-success  mr-1" onClick={(e) => { setMasterPropertyID(''); check_Validation_Error(); }}>Save</button>
+                                            }
+                                            {
+                                                MstVehicle === 'MST-Vehicle-Dash' &&
+                                                <button type="button" className="btn btn-sm btn-success " onClick={OnClose}>Close</button>
+                                            }
+                                        </div>
+                                    </div>
                                 </div>
-
-
-                                <div>
-                                    <button type="button" className="btn btn-sm btn-success mr-1" data-toggle="modal" data-target="#NCICModal" onClick={() => { setOpenNCICModal(true) }}>TLETS</button>
-
-                                    <button type="button" className="btn btn-sm btn-success mr-1" onClick={newVehicle}>New</button>
-
-                                    {
-                                        vehicleStatus && (VehSta === 'true' || VehSta === true) ?
-                                            effectiveScreenPermission ?
-                                                effectiveScreenPermission[0]?.Changeok ?
-                                                    <>
-                                                        <button type="button" disabled={!statesChangeStatus} className="btn btn-sm btn-success  mr-1" onClick={(e) => { check_Validation_Error(); }}>Update</button>
-                                                        <button
-                                                            type="button" className="btn btn-sm btn-success mr-4" data-toggle="modal" data-target="#QueueReportsModal"
-                                                            onClick={() => { setShowModal(true); setPrintVehReport(true); setVehReportCount(VehReportCount + 1); }}
-                                                        >
-                                                            Print <i className="fa fa-print"></i>
-                                                        </button>
-                                                    </>
-
+                                <div className=" col-3 col-md-3 col-lg-1 ">
+                                    <div className="img-box" style={{ marginTop: '-18px' }}>
+                                        <Carousel autoPlay={true} className="carousel-style" showArrows={true} showThumbs={false} showStatus={false} >
+                                            {
+                                                vehicleMultiImg?.length > 0 ?
+                                                    vehicleMultiImg?.map((item) => (
+                                                        <div key={item?.PhotoID ? item?.PhotoID : item?.imgID} onClick={() => { setImageModalStatus(true) }} data-toggle="modal" data-target="#ImageModel" className='model-img'>
+                                                            <img src={`data:image/png;base64,${item?.Photo}`} style={{ height: '90px' }} />
+                                                        </div>
+                                                    ))
                                                     :
-                                                    <>
-                                                    </>
-                                                :
-                                                <>
-                                                    <button type="button" disabled={!statesChangeStatus} className="btn btn-sm btn-success  mr-1" onClick={(e) => { check_Validation_Error(); }}>Update</button>
-                                                    <button
-                                                        type="button" className="btn btn-sm btn-success mr-4" data-toggle="modal" data-target="#QueueReportsModal"
-                                                        onClick={() => { setShowModal(true); setPrintVehReport(true); setVehReportCount(VehReportCount + 1); }}
-                                                    >
-                                                        Print <i className="fa fa-print"></i>
-                                                    </button>
-                                                </>
-                                            :
-                                            effectiveScreenPermission ?
-                                                effectiveScreenPermission[0]?.AddOK ?
-                                                    <button type="button" className="btn btn-sm btn-success  mr-1" onClick={(e) => { setMasterPropertyID(''); check_Validation_Error(); }}>Save</button>
-                                                    :
-                                                    <>
-                                                    </>
-                                                :
-                                                <button type="button" className="btn btn-sm btn-success  mr-1" onClick={(e) => { setMasterPropertyID(''); check_Validation_Error(); }}>Save</button>
-                                    }
-                                    {
-                                        MstVehicle === 'MST-Vehicle-Dash' &&
-                                        <button type="button" className="btn btn-sm btn-success " onClick={OnClose}>Close</button>
-                                    }
+                                                    <div data-toggle="modal" data-target="#ImageModel" onClick={() => { setImageModalStatus(true) }}>
+                                                        <img src={defualtImage} />
+                                                    </div>
+                                            }
+                                        </Carousel>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div className=" col-3 col-md-3 col-lg-1 ">
-                            <div className="img-box" style={{ marginTop: '-18px' }}>
-                                <Carousel autoPlay={true} className="carousel-style" showArrows={true} showThumbs={false} showStatus={false} >
-                                    {
-                                        vehicleMultiImg?.length > 0 ?
-                                            vehicleMultiImg?.map((item) => (
-                                                <div key={item?.PhotoID ? item?.PhotoID : item?.imgID} onClick={() => { setImageModalStatus(true) }} data-toggle="modal" data-target="#ImageModel" className='model-img'>
-                                                    <img src={`data:image/png;base64,${item?.Photo}`} style={{ height: '90px' }} />
-                                                </div>
-                                            ))
-                                            :
-                                            <div data-toggle="modal" data-target="#ImageModel" onClick={() => { setImageModalStatus(true) }}>
-                                                <img src={defualtImage} />
-                                            </div>
-                                    }
-                                </Carousel>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="col-12 col-md-12 col-lg-12 p-0 pt-1">
-                    <div className=" col-12 modal-table">
-                        {
+                        <div className="col-12 col-md-12 col-lg-12 p-0 pt-1">
+                            <div className=" col-12 modal-table">
+                                {/* {
                             MstVehicle != 'MST-Vehicle-Dash' &&
                             <DataTable
                                 dense
@@ -1938,33 +1948,36 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
 
                                 noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : 'There are no data to display'}
                             />
-                        }
+                        } */}
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            {/* <IdentifyFieldColor /> */}
-            <DeletePopUpModal func={delete_Vehicle_Property} />
-            <ChangesModal func={check_Validation_Error} />
-            <ListModal {...{ openPage, setOpenPage }} />
-            <VehicleSearchTab {...{ GetSingleData, searchModalState, setSearchModalState, mainIncidentID, value, setValue, loginPinID, loginAgencyID, MstVehicle, setEditval, setStatesChangeStatus, setChangesStatus, isCad, get_Vehicle_MultiImage }} />
-            <MasterNameModel {...{ value, setValue, nameModalStatus, setNameModalStatus, loginPinID, loginAgencyID, type, setPossessionID, possenSinglData, possessionID, setOwnerOfID, ownerOfID, setPossenSinglData, GetSingleDataPassion }} />
-            <ImageModel multiImage={vehicleMultiImg} pinID={imageModalOfficerID ? imageModalOfficerID : loginPinID} entityID={value?.VehicleNo} newClicked={newClicked} setStatesChangeStatus={setStatesChangeStatus} primaryOfficerID={primaryOfficerID} setMultiImage={setVehicleMultiImg} uploadImgFiles={uploadImgFiles} setuploadImgFiles={setuploadImgFiles} ChangeDropDown={ChangeDropDown} modalStatus={modalStatus} setModalStatus={setModalStatus} imageId={imageId} setImageId={setImageId} imageModalStatus={imageModalStatus} setImageModalStatus={setImageModalStatus} delete_Image_File={delete_Image_File} setImgData={setImgData} imgData={imgData} updateImage={update_Vehicle_MultiImage} agencyID={loginAgencyID} />
-            <AlertMasterModel masterID={masterPropertyID} setStatesChangeVich={setStatesChangeStatus} AlertType={"Vehicle"} modelName={"Vehicle"} loginPinID={loginPinID} agencyID={loginAgencyID} getAlertData={setAvailableAlert} />
-            <BarCode agencyID={loginAgencyID} propID={DecVehId} masPropID={DecMVehId} codeNo={value?.VehicleNumber} printStatus={printStatus} setPrintStatus={setPrintStatus} />
-            <NirbsErrorShowModal
-                ErrorText={nibrsErrStr}
-                nibErrModalStatus={nibrsErrModalStatus}
-                setNibrsErrModalStatus={setNibrsErrModalStatus}
-            />
-            <CurrentVehicleReport VehNumber={value.VehicleNumber} {...{ printVehReport, setPrintVehReport, VehReportCount, setVehReportCount, showModal, setShowModal }} />
-            {openNCICModal && <NCICModal {...{ openNCICModal, setOpenNCICModal, }} vehicleIncidentData={value} />}
-            {
-                clickNibloder && (
-                    <div className="loader-overlay">
-                        <Loader />
-                    </div>
-                )
-            }
+                    {/* <IdentifyFieldColor /> */}
+                    {/* <DeletePopUpModal func={delete_Vehicle_Property} /> */}
+                    <ChangesModal func={check_Validation_Error} />
+                    <ListModal {...{ openPage, setOpenPage }} />
+                    <VehicleSearchTab {...{ GetSingleData, searchModalState, setSearchModalState, mainIncidentID, value, setValue, loginPinID, loginAgencyID, MstVehicle, setEditval, setStatesChangeStatus, setChangesStatus, isCad, get_Vehicle_MultiImage }} />
+                    <MasterNameModel {...{ value, setValue, nameModalStatus, setNameModalStatus, loginPinID, loginAgencyID, type, setPossessionID, possenSinglData, possessionID, setOwnerOfID, ownerOfID, setPossenSinglData, GetSingleDataPassion }} />
+                    <ImageModel multiImage={vehicleMultiImg} pinID={imageModalOfficerID ? imageModalOfficerID : loginPinID} entityID={value?.VehicleNo} newClicked={newClicked} setStatesChangeStatus={setStatesChangeStatus} primaryOfficerID={primaryOfficerID} setMultiImage={setVehicleMultiImg} uploadImgFiles={uploadImgFiles} setuploadImgFiles={setuploadImgFiles} ChangeDropDown={ChangeDropDown} modalStatus={modalStatus} setModalStatus={setModalStatus} imageId={imageId} setImageId={setImageId} imageModalStatus={imageModalStatus} setImageModalStatus={setImageModalStatus} delete_Image_File={delete_Image_File} setImgData={setImgData} imgData={imgData} updateImage={update_Vehicle_MultiImage} agencyID={loginAgencyID} />
+                    <AlertMasterModel masterID={masterPropertyID} setStatesChangeVich={setStatesChangeStatus} AlertType={"Vehicle"} modelName={"Vehicle"} loginPinID={loginPinID} agencyID={loginAgencyID} getAlertData={setAvailableAlert} />
+                    <BarCode agencyID={loginAgencyID} propID={DecVehId} masPropID={DecMVehId} codeNo={value?.VehicleNumber} printStatus={printStatus} setPrintStatus={setPrintStatus} />
+                    <NirbsErrorShowModal
+                        ErrorText={nibrsErrStr}
+                        nibErrModalStatus={nibrsErrModalStatus}
+                        setNibrsErrModalStatus={setNibrsErrModalStatus}
+                    />
+                    <CurrentVehicleReport VehNumber={value.VehicleNumber} {...{ printVehReport, setPrintVehReport, VehReportCount, setVehReportCount, showModal, setShowModal }} />
+                    {openNCICModal && <NCICModal {...{ openNCICModal, setOpenNCICModal, }} vehicleIncidentData={value} />}
+                    {
+                        clickNibloder && (
+                            <div className="loader-overlay">
+                                <Loader />
+                            </div>
+                        )
+                    }
+                </>
+            )}
+
         </>
     )
 }

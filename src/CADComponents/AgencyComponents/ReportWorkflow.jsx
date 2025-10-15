@@ -510,9 +510,8 @@ function ReportWorkflow() {
                                     </small>
                                 </div>
                             </div>
-                            {
-                                !value.IsSkipApproverAuthor ?
-                                <>
+                           
+                               
                                  <div className="col-12 d-flex align-items-center mb-2">
                                 <div className="col-7 offset-1 d-flex gap-2 align-content-center">
                                     <div className="form-check mr-3">
@@ -605,10 +604,11 @@ function ReportWorkflow() {
                                     />
                                 </div>
                             </div>
-                                </> : <></>
-                            }
-                           
-                            <div className="col-4 d-flex align-items-center offset-1 mt-1">
+                               
+                           {
+                            ((value?.IsSingleLevel && value.ReportApproverGroupID === 2) || (value?.IsMultipleLevel && value.ReportApproverGroupID === 2)) ?
+                            <>
+                             <div className="col-4 d-flex align-items-center offset-1 mt-1">
                                 <div className="form-check">
                                     <input className="form-check-input" type="checkbox" id="IsSkipApproverAuthor"
                                        name='IsSkipApproverAuthor'  checked={value.IsSkipApproverAuthor} disabled={value.IsNoApproval || value.IsSelfApproved} onChange={handleReportWorkflowState}
@@ -617,7 +617,10 @@ function ReportWorkflow() {
                                 </div>
                                 <div className='ml-2'><span className='hovertext' data-hover="If the author belongs to the approver’s group level, they cannot approve their own report. 
     The system skips the author, and another officer from the same level will take action" ><i className='fa fa-exclamation-circle'></i></span></div>
-                            </div>
+                            </div> 
+                            </> : <></>
+                           }
+                           
                         </div>
                         {/* Report Reviewer */}
                         <div className='h6 mb-3'>Report Reviewer</div>
