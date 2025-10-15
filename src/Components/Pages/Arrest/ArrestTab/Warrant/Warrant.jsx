@@ -21,9 +21,9 @@ import { get_ScreenPermissions_Data } from '../../../../../redux/actions/Inciden
 
 const Warrant = (props) => {
 
-    const { ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails = false } = props
+    const { ListData, DecNameID, DecArrestId, DecMasterNameID, DecIncID, isViewEventDetails = false } = props
 
-    const { get_Name_Count, setChangesStatus, GetDataTimeZone, datezone, NameId } = useContext(AgencyContext)
+    const { get_Name_Count, get_Arrest_Count, setChangesStatus, GetDataTimeZone, datezone, NameId } = useContext(AgencyContext)
 
     const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -143,7 +143,7 @@ const Warrant = (props) => {
 
     useEffect(() => {
         if (loginAgencyID) {
-
+            get_Arrest_Count(DecArrestId);
             dispatch(get_AgencyOfficer_Data(localStoreData?.AgencyID, DecIncID))
         }
     }, [loginAgencyID]);
@@ -366,7 +366,7 @@ const Warrant = (props) => {
             AddDeleteUpadate('NameWarrant/Insert_NameWarrant', value).then((res) => {
                 get_WarrentType_Data(NameId, DecMasterNameID);
                 setChangesStatus(false);
-                setStatesChangeStatus(false);
+                setStatesChangeStatus(false); get_Arrest_Count(DecArrestId);
                 const parseData = JSON.parse(res.data);
                 get_Name_Count(NameId, DecMasterNameID, MstPage === "MST-Name-Dash" ? true : false);
                 toastifySuccess(parseData?.Table[0].Message); getAgency(loginAgencyID)
@@ -409,7 +409,7 @@ const Warrant = (props) => {
                 const parseData = JSON.parse(res.data);
                 toastifySuccess(parseData?.Table[0].Message);
                 get_Name_Count(NameId, DecMasterNameID, MstPage === "MST-Name-Dash" ? true : false);
-                setChangesStatus(false); setStatesChangeStatus(false);
+                setChangesStatus(false); setStatesChangeStatus(false); get_Arrest_Count(DecArrestId);
                 get_WarrentType_Data(NameId, DecMasterNameID); getAgency(loginAgencyID)
                 setErrors({ ...errors, 'WarrantTypeIDErrors': '', })
                 reset(); setStatus(false);
@@ -424,7 +424,7 @@ const Warrant = (props) => {
                 const parseData = JSON.parse(res.data);
                 toastifySuccess(parseData?.Table[0].Message); setChangesStatus(false);
                 get_Name_Count(NameId, DecMasterNameID, MstPage === "MST-Name-Dash" ? true : false);
-                get_WarrentType_Data(NameId, DecMasterNameID); setStatus(false); reset()
+                get_WarrentType_Data(NameId, DecMasterNameID); setStatus(false); reset(); get_Arrest_Count(DecArrestId);
             } else console.log("Somthing Wrong");
         })
     }
