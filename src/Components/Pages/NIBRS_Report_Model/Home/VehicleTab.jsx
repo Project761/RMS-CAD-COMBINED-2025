@@ -491,7 +491,6 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
     }
 
     // Custom Style
-
     const WidhoutColorStyles = {
         control: (styles) => ({
             ...styles,
@@ -814,7 +813,6 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
 
             }
         }
-
     }
 
     useEffect(() => {
@@ -827,12 +825,13 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
         setclickNibLoder(true); setnibrsValidateData([]);
         try {
             fetchPostDataNibrs('NIBRS/GetPropertyNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'PropertyId': '', 'gIntAgencyID': loginAgencyID }).then((data) => {
-                console.log("🚀 ~ ValidateVehicle ~ data:", data)
+                // console.log("🚀 ~ ValidateVehicle ~ data:", data)
                 if (data) {
 
                     if (data?.Properties?.length > 0) {
                         const VehArr = data?.Properties?.filter((item) => item?.PropertyType === 'V');
                         // console.log("🚀 ~ fetchPostDataNibrs ~ VehArr:", VehArr);
+
 
                         if (VehArr?.length > 0) {
                             setnibrsValidateData(VehArr || []); setclickNibLoder(false);
@@ -924,7 +923,6 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
 
         }
     }
-
 
     return (
         <>

@@ -26,8 +26,7 @@ const Login = ({ login }) => {
     const encDecStatus = process.env.REACT_APP_ENC_DEC_STATUS;
     // var IsEncDec = encDecStatus == 'true' || encDecStatus == true
     const IsEncDec = encDecStatus == 'true' || encDecStatus === true;
-
-
+    
     const ipAddress = useSelector((state) => state.Ip.ipAddress);
 
     // Hooks initialize   

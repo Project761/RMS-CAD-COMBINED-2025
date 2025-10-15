@@ -471,17 +471,16 @@ const Warrant = (props) => {
         <>
             <NameListing  {...{ ListData }} />
             <div className="col-md-12 mt-1">
-                <div className="row">
-                    <div className="col-3 col-md-3 col-lg-1 mt-2">
-                        <label htmlFor="" className='label-name '>Warrant No.{errors.WarrantNumberErrors !== 'true' ? (
+                <div className="row align-items-center" style={{rowGap:"8px"}}>
+                    <div className="col-3 col-md-3 col-lg-1">
+                        <label htmlFor="" className='label-name mb-0 '>Warrant No.{errors.WarrantNumberErrors !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.WarrantNumberErrors}</p>
                         ) : null}</label>
                     </div>
-                    <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
+                    <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
                         <input type="text" className='requiredColor' maxLength={10} value={value?.WarrantNumber} onChange={handleChange} name='WarrantNumber' required />
                     </div>
-                    <div className="col-3 col-md-3 col-lg-2 mt-2">
-
+                    <div className="col-3 col-md-3 col-lg-2">
                         <span data-toggle="modal" onClick={() => {
                             setOpenPage('Warrant Type')
                         }} data-target="#ListModel" className='new-link'>
@@ -490,7 +489,8 @@ const Warrant = (props) => {
                             ) : null}
                         </span>
                     </div>
-                    <div className="col-3 col-md-3 col-lg-3 mt-1" >
+
+                    <div className="col-3 col-md-3 col-lg-3" >
                         <Select
                             name='WarrantTypeID'
                             styles={Requiredcolour}
@@ -501,10 +501,10 @@ const Warrant = (props) => {
                             placeholder="Select..."
                         />
                     </div>
-                    <div className="col-3 col-md-3 col-lg-2 mt-2">
-                        <label htmlFor="" className='label-name '>Assigned Officer</label>
+                    <div className="col-3 col-md-3 col-lg-2">
+                        <label htmlFor="" className='label-name mb-0'>Assigned Officer</label>
                     </div>
-                    <div className="col-3 col-md-3 col-lg-2 mt-1" >
+                    <div className="col-3 col-md-3 col-lg-2" >
                         <Select
                             name='AssignedOfficerID'
                             styles={customStylesWithOutColor}
@@ -515,8 +515,7 @@ const Warrant = (props) => {
                             placeholder="Select..."
                         />
                     </div>
-                    <div className="col-3 col-md-3 col-lg-1 mt-2">
-
+                    <div className="col-3 col-md-3 col-lg-1">
                         <span data-toggle="modal" onClick={() => {
                             setOpenPage('Warrant Status')
                         }} data-target="#ListModel" className='new-link'>
@@ -524,7 +523,7 @@ const Warrant = (props) => {
                         </span>
                     </div>
 
-                    <div className="col-3 col-md-3 col-lg-2  mt-1">
+                    <div className="col-3 col-md-3 col-lg-2">
                         <Select
                             name='WarrantStatusID'
                             styles={customStylesWithOutColor}
@@ -535,12 +534,12 @@ const Warrant = (props) => {
                             placeholder="Select..."
                         />
                     </div>
-                    <div className="col-3 col-md-3 col-lg-2 mt-2">
-                        <label htmlFor="" className='label-name '>Issued Date/Time{errors.DateTimeIssuedErrors !== 'true' ? (
+                    <div className="col-3 col-md-3 col-lg-2">
+                        <label htmlFor="" className='label-name mb-0'>Issued Date/Time{errors.DateTimeIssuedErrors !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.DateTimeIssuedErrors}</p>
                         ) : null}</label>
                     </div>
-                    <div className="col-3 col-md-3 col-lg-3 mt-2">
+                    <div className="col-3 col-md-3 col-lg-3">
                         <DatePicker
                             id='DateTimeIssued'
                             name='DateTimeIssued'
@@ -597,12 +596,12 @@ const Warrant = (props) => {
                         />
 
                     </div>
-                    <div className="col-3 col-md-3 col-lg-2 mt-2">
+                    <div className="col-3 col-md-3 col-lg-2">
                         <label htmlFor="" className='label-name '>Expired Date/Time{errors.DateExpiredErrors !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.DateExpiredErrors}</p>
                         ) : null}</label>
                     </div>
-                    <div className="col-3 col-md-3 col-lg-2 mt-2">
+                    <div className="col-3 col-md-3 col-lg-2">
                         <DatePicker
                             id="DateExpired"
                             name="DateExpired"
@@ -654,7 +653,7 @@ const Warrant = (props) => {
                     </div>
 
 
-                    <div className="col-3 col-md-3 col-lg-1 mt-2">
+                    <div className="col-3 col-md-3 col-lg-1">
                         <span data-toggle="modal" onClick={() => {
                             setOpenPage('Warrant Issuing Agency')
                         }} data-target="#ListModel" className='new-link'>
@@ -664,7 +663,7 @@ const Warrant = (props) => {
                         </span>
                     </div>
 
-                    <div className="col-9 col-md-9 col-lg-11 mt-1" >
+                    <div className="col-9 col-md-9 col-lg-11" >
                         <CreatableSelect
                             name="IssuingAgencyID"
                             isClearable

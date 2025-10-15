@@ -233,8 +233,8 @@ const CurrentIncMasterReport = (props) => {
                                                             <div className="container mt-3" style={{ pageBreakAfter: 'always', }}>
                                                                 <h5 className=" text-white text-bold bg-green py-1 px-3 text-center"> Incident Number:- {obj.IncidentNumber}</h5>
                                                                 {/* incident */}
-                                                                <div className="col-12  mt-2" style={{ border: '1px solid #80808085', }}>
-                                                                    <div className="container bb">
+                                                                <div className="col-12 mt-2 mb-3" style={{ border: '1px solid #80808085', }}>
+                                                                    <div className="container ">
                                                                         <div className="col-12 mb-2">
                                                                             <h6 className=' text-dark mt-2'>Incident Information</h6>
                                                                             <div className="row px-3" >
@@ -288,6 +288,35 @@ const CurrentIncMasterReport = (props) => {
                                                                                         <label htmlFor="" className='new-summary'>How Reported</label>
                                                                                     </div>
                                                                                 </div>
+
+                                                                                <div className="col-4 col-md-4 col-lg-4 mt-4">
+                                                                                    <div className='text-field'>
+                                                                                        <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                            value={obj.isPoliceForceApplied}
+                                                                                        />
+                                                                                        <label htmlFor="" className='new-summary'>Use of Force Applied</label>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div className="col-4 col-md-4 col-lg-4 mt-4">
+                                                                                    <div className='text-field'>
+                                                                                        <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                            value={obj.OfficerName}
+                                                                                        />
+                                                                                        <label htmlFor="" className='new-summary'>Primary Officer</label>
+                                                                                    </div>
+                                                                                </div>
+
+
+                                                                                <div className="col-4 col-md-4 col-lg-4 mt-4">
+                                                                                    <div className='text-field'>
+                                                                                        <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                            value={obj.NIBRSStatus}
+                                                                                        />
+                                                                                        <label htmlFor="" className='new-summary'>Case Status</label>
+                                                                                    </div>
+                                                                                </div>
+
                                                                                 <div className="col-9 col-md-9 col-lg-10 mt-4">
                                                                                     <div className='text-field'>
                                                                                         <input type="text"
@@ -369,12 +398,12 @@ const CurrentIncMasterReport = (props) => {
                                                                         {
                                                                             JSON.parse(obj?.PINActivity)?.length > 0 ?
                                                                                 <>
-                                                                                    <div className="container bb">
+                                                                                    <div className="container ">
                                                                                         <h6 className=' text-dark mt-2'>PIN Activity</h6>
                                                                                         <div className="col-12 ">
                                                                                             {
                                                                                                 JSON.parse(obj?.PINActivity)?.map((item, key) => (
-                                                                                                    <div className="row bb px-3 ">
+                                                                                                    <div className="row  px-3 ">
                                                                                                         <div className="col-12 mb-2" >
                                                                                                             <div className="row ">
                                                                                                                 <div className="col-4 col-md-4 col-lg-4 mt-2 pt-1 ">
@@ -453,12 +482,12 @@ const CurrentIncMasterReport = (props) => {
                                                                         {
                                                                             JSON.parse(obj?.IncidentSecurity)?.length > 0 ?
                                                                                 <>
-                                                                                    <div className="container bb">
+                                                                                    <div className="container ">
                                                                                         <h6 className=' text-dark mt-2'>Types Of Security</h6>
                                                                                         <div className="col-12 ">
                                                                                             {
                                                                                                 JSON.parse(obj?.IncidentSecurity)?.map((item, key) => (
-                                                                                                    <div className="row bb px-3 ">
+                                                                                                    <div className="row  px-3 ">
                                                                                                         <div className="col-12 mb-2" >
                                                                                                             <div className="row ">
                                                                                                                 <div className="col-12 col-md-12 col-lg-12 mt-2 pt-1 ">
@@ -495,12 +524,12 @@ const CurrentIncMasterReport = (props) => {
                                                                         {
                                                                             JSON.parse(obj?.Dispatch)?.length > 0 ?
                                                                                 <>
-                                                                                    <div className="container bb">
+                                                                                    <div className="container ">
                                                                                         <h6 className=' text-dark mt-2'>Dispatch Activity</h6>
                                                                                         <div className="col-12 ">
                                                                                             {
                                                                                                 JSON.parse(obj?.Dispatch)?.map((item, key) => (
-                                                                                                    <div className="row bb px-3 ">
+                                                                                                    <div className="row  px-3 ">
                                                                                                         <div className="col-12 mb-2" >
                                                                                                             <div className="row ">
                                                                                                                 <div className="col-6 col-md-6 col-lg-6 mt-2 pt-1 ">
@@ -555,7 +584,7 @@ const CurrentIncMasterReport = (props) => {
                                                                         {
                                                                             JSON.parse(obj?.Narrative)?.length > 0 ?
                                                                                 <>
-                                                                                    <div className="container bb">
+                                                                                    <div className="container ">
                                                                                         <h6 className=' text-dark mt-2'>Report</h6>
                                                                                         <div className="col-12 ">
                                                                                             {
@@ -569,7 +598,7 @@ const CurrentIncMasterReport = (props) => {
                                                                                                     );
 
                                                                                                     return (
-                                                                                                        <div className="row bb px-3 ">
+                                                                                                        <div className="row  px-3 ">
 
                                                                                                             <div className="col-12 mb-2">
                                                                                                                 <div className="row ">
@@ -638,12 +667,12 @@ const CurrentIncMasterReport = (props) => {
                                                                         {
                                                                             JSON.parse(obj?.Offence)?.length > 0 ?
                                                                                 <>
-                                                                                    <div className="container bb">
+                                                                                    <div className="container ">
                                                                                         <h6 className=' text-dark mt-2'>Offense Information</h6>
                                                                                         <div className="col-12">
                                                                                             {
                                                                                                 JSON.parse(obj?.Offence)?.map((item, key) => (
-                                                                                                    <div className="row  mb-2 px-3 bb" >
+                                                                                                    <div className="row  mb-2 px-3 " >
                                                                                                         <div className="col-5 col-md-5 col-lg-5 mt-1">
                                                                                                             <div className='text-field'>
                                                                                                                 <input type="text" className='readonlyColor' name='DocFileName' required readOnly
@@ -741,7 +770,7 @@ const CurrentIncMasterReport = (props) => {
                                                                                                 JSON.parse(obj?.Name).filter(item => item.NameType_Description !== 'Business')
                                                                                                     .map((item, key) => (
 
-                                                                                                        <div className="row bb">
+                                                                                                        <div className="row ">
                                                                                                             <div className="col-2" >
                                                                                                                 <div className="col-10 col-md-10 col-lg-10 mt-4 ">
                                                                                                                     <div className=" text-field">
@@ -1002,7 +1031,7 @@ const CurrentIncMasterReport = (props) => {
                                                                                                     .map((item, key) => (
 
 
-                                                                                                        <div className="row bb ">
+                                                                                                        <div className="row  ">
                                                                                                             <h6 className=' text-dark mt-2 col-12'>Name Information Business</h6>
                                                                                                             <div className="col-2" >
                                                                                                                 <div className="col-10 col-md-10 col-lg-10 mt-4 ">
@@ -1145,7 +1174,7 @@ const CurrentIncMasterReport = (props) => {
                                                                                         <div className="col-12 ">
                                                                                             {
                                                                                                 JSON.parse(obj?.Property)?.map((item, key) => (
-                                                                                                    <div className="row  bb ">
+                                                                                                    <div className="row   ">
                                                                                                         <div className="col-2" >
                                                                                                             <div className="col-10 col-md-10 col-lg-10 mt-4 ">
                                                                                                                 <div className=" text-field">
@@ -1276,7 +1305,7 @@ const CurrentIncMasterReport = (props) => {
                                                                                             {
                                                                                                 JSON.parse(obj?.PropertyVehicle
                                                                                                 )?.map((item, key) => (
-                                                                                                    <div className="row bb px-3">
+                                                                                                    <div className="row  px-3">
                                                                                                         <div className="col-2" >
                                                                                                             <div className="col-10 col-md-10 col-lg-10 mt-4 ">
                                                                                                                 <div className=" text-field">
@@ -1481,13 +1510,13 @@ const CurrentIncMasterReport = (props) => {
                                                                         {
                                                                             JSON.parse(obj?.Arrest)?.length > 0 ?
                                                                                 <>
-                                                                                    <div className="container bb">
+                                                                                    <div className="container ">
                                                                                         <h6 className=' text-dark mt-2'>Arrest Information</h6>
 
                                                                                         <div className="col-12 mb-2">
                                                                                             {
                                                                                                 JSON.parse(obj?.Arrest)?.map((item, key) => (
-                                                                                                    <div className="row bb px-3">
+                                                                                                    <div className="row  px-3">
                                                                                                         <div className="col-2" >
                                                                                                             <div className="col-12 col-md-12 col-lg-12 mt-4 ">
                                                                                                                 <div className=" text-field">

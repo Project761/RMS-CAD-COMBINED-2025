@@ -362,7 +362,6 @@ const Header = (props) => {
                             <div className="d-flex justify-content-center mt-2" key={text}>
                               {/* <span className={`${className} mt-2`}></span> */}
                               <span
-                                className="ml-2"
                                 style={{
                                   border: '1px solid',
                                   backgroundColor: bgColor,

@@ -3,19 +3,21 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Select from "react-select";
 import DatePicker from "react-datepicker";
 import {
-  Decrypt_Id_Name, DecryptedList, EncryptedList, LockFildscolour, Requiredcolour, base64ToString,
+  Decrypt_Id_Name, DecryptedList, EncryptedList, LockFildscolour, Nibrs_ErrorStyle, Requiredcolour, base64ToString,
+  filterPassedTimeZonesProperty,
+  getShowingDateText,
   getShowingMonthDateYear, getShowingWithOutTime,
   nibrscolourStyles,
-  stringToBase64, tableCustomStyles,
+  stringToBase64, tableCustomStyles, MultiSelectRequredColor,
 } from "../../../../Common/Utility";
 import { AddDeleteUpadate, ScreenPermision, fetchPostData, fetchPostDataNibrs } from "../../../../hooks/Api";
-import { Comman_changeArrayFormat, modifiedFbiCodeArray, threeColArray, threeColArrayWithCode } from "../../../../Common/ChangeArrayFormat";
+import { Comman_changeArrayFormat, Comman_changeArrayFormatBasicInfo, modifiedFbiCodeArray, threeColArray, threeColArrayWithCode } from "../../../../Common/ChangeArrayFormat";
 import { toastifyError, toastifySuccess } from "../../../../Common/AlertMsg";
 import { AgencyContext } from "../../../../../Context/Agency/Index";
-import { RequiredFieldIncident, RequiredFieldIncidentCarboTheft, RequiredForYesNo } from "../../../Utility/Personnel/Validation";
+import { RequiredFieldIncident, RequiredFieldIncidentCarboTheft, RequiredFieldIncidentOffender, RequiredForYesNo } from "../../../Utility/Personnel/Validation";
 import ChangesModal from "../../../../Common/ChangesModal";
 import {
-  AttemptCompleteError, check_NibrsCode_09C, check_Valid_Nibrs_Code, chekLocationType, CyberspaceLocationError, ErrorTooltip, MethodOFEntryMandataryError, TableErrorTooltip, ValidateNibrsCodeError,
+  AttemptCompleteError, Bias_90C_Error, check_NibrsCode_09C, check_Valid_Nibrs_Code, checkMethodOfEntryIsRequire, checkWeaponTypeIsRequire, chekLocationType, CyberspaceLocationError, ErrorTooltip, MethodOFEntryMandataryError, TableErrorTooltip, ValidateNibrsCodeError,
 } from "../ErrorNibrs";
 import DataTable from "react-data-table-component";
 import DeletePopUpModal from "../../../../Common/DeleteModal";
@@ -25,8 +27,13 @@ import { get_Inc_ReportedDate, get_LocalStoreData } from "../../../../../redux/a
 import ListModal from "../../../Utility/ListManagementModel/ListModal";
 import NirbsErrorShowModal from "../../../../Common/NirbsErrorShowModal";
 import Loader from "../../../../Common/Loader";
+import SelectBox from "../../../../Common/SelectBox";
+import { components } from "react-select";
+import { check_Valid_Bias_Code, CrimeActivitySelectSuitableCodesError, checkCriminalActivityIsRequire, checkCrimeActiSuitableCode, checkWeaponTypeValidate, ErrorStyle_NIBRS_09C, ErrorStyle_CriminalActivity, ErrorStyleOffenderUse, ErrorStyleWeapon, HomicideOffenseUnknowError, NotApplicableError, OffenderUseError_N, OffenderUseError_Other, ValidateBiasCodeError } from '../ErrorNibrs';
 
-const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCode, setshowOffPage }) => {
+
+
+const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setResetErrors, nibrsCode, setNibrsCode, setshowOffPage }) => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -35,12 +42,13 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
   const incReportedDate = useSelector((state) => state.Agency.incReportedDate);
   const uniqueId = sessionStorage.getItem("UniqueUserID") ? Decrypt_Id_Name(sessionStorage.getItem("UniqueUserID"), "UForUniqueUserID") : "";
 
-  const { get_Offence_Count, updateCount, setUpdateCount, setChangesStatus, nibrsSubmittedStatus, setnibrsSubmittedStatus, nibrsSubmittedOffenseMain, setnibrsSubmittedOffenseMain, get_Offence_Data, changesStatus, get_Incident_Count, setIncidentStatus, setIncStatus, offenceFillterData, setcountoffaduit, PanelCode, setPanelCode,
+  const { get_Offence_Count, updateCount, setUpdateCount, datezone, setChangesStatus, NotApplicableError, nibrsSubmittedStatus, setnibrsSubmittedStatus, nibrsSubmittedOffenseMain, setnibrsSubmittedOffenseMain, get_Offence_Data, changesStatus, get_Incident_Count, setIncidentStatus, setIncStatus, offenceFillterData, setcountoffaduit, PanelCode, setPanelCode,
     incidentCount, validate_IncSideBar
   } = useContext(AgencyContext);
 
 
   const PropertyCount = incidentCount[0]?.PropertyCount || 0;
+  const VehicleCount = incidentCount[0]?.VehicleCount || 0;
   const PropertyDrugCount = incidentCount[0]?.PropertyDrugCount || 0;
   // Law Title
   const [lawTitleIdDrp, setLawTitleIdDrp] = useState([]);
@@ -66,7 +74,11 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
   const [chargedata, setChargedata] = useState([]);
   const [panelCode, setpanelCode] = useState('');
   const [DeleteshowCounts, SetDeleteshowCounts] = useState('');
-
+  const [offenderUsingStatus, setoffenderUsingStatus] = useState(false);
+  const [offenderUsingError, setoffenderUsingError] = useState(false);
+  const [crimeOffenderUseDrp, setCrimeOffenderUseDrp] = useState([]);
+  const [crimeOffenderUse, setCrimeOffenderUse] = useState([]);
+  const [crimeOffenderUseEditVal, setCrimeOffenderUseEditVal] = useState([]);
 
   const [filteredOptions, setFilteredOptions] = useState(nibrsCodeDrp);
   const [methodEntryDrp, setMethodEntryDrp] = useState();
@@ -80,8 +92,9 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
   const [nibrsValidateloder] = useState(false);
   const [clickNibloder, setclickNibLoder] = useState(false);
   const [nibrsError, setnibrsError] = useState([]);
-
+  const [WeaponSelectCodeArray, setWeaponSelectCodeArray] = useState([]);
   const [attemptComplteStatus, setAttemptComplteStatus] = useState(false);
+  const [crimeActSelectedCodeArray, setCrimeActSelectedCodeArray] = useState([]);
 
   const [locationTypeComplteStatus, setlocationTypeComplteStatus] = useState(false);
   const [locationTypeComplteError, setlocationTypeComplteError] = useState("");
@@ -96,11 +109,73 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
   const [effectiveScreenPermission, setEffectiveScreenPermission] = useState([]);
   const [permissionForEdit, setPermissionForEdit] = useState(false);
   const [permissionForAdd, setPermissionForAdd] = useState(false);
+  const [biasStatus, setbiasStatus] = useState(false);
+  const [biasStatusError, setbiasStatusError] = useState(false);
+  const [crimeBiasCategoryDrp, setCrimeBiasCategoryDrp] = useState([]);
+  const [bias09CCodeStatus, setBias09CCodeStatus] = useState(false);
+  const [BiasSelectCodeArray, setBiasSelectCodeArray] = useState([]);
   // Add Update Permission
   const [addUpdatePermission, setaddUpdatePermission] = useState();
+  // DRP IDS Arrays objects
+  const [crimePointOfEntry, setCrimePointOfEntry] = useState([]);
+  const [pretendToBeID, setPretendToBeID] = useState([]);
+  const [crimePointOfExitID, setCrimePointOfExitID] = useState([]);
+  const [crimeActivity, setCrimeActivity] = useState([]);
+  const [crimeBiasCategory, setCrimeBiasCategory] = useState([]);
+  const [crimeToolsUse, setCrimeToolsUse] = useState([]);
+  const [crimeTarget, setCrimeTarget] = useState([]);
+  const [crimeSuspect, setCrimeSuspect] = useState([]);
+  const [securityViolated, setSecurityViolated] = useState([]);
+  const [methodOfOperation, setMethodOfOperation] = useState([]);
+  const [methodOfEntry, setMethodOfEntry] = useState([]);
+  const [weaponID, setWeaponID] = useState([]);
+  const [methodOfEntryCode, setMethodOfEntryCode] = useState('');
+  const [methodEntryDelID, setMethodEntryDelID] = useState('');
+  const [crimeTabValue, setcrimeTabValue] = useState(false);
+  const [weaponTypeStatus, setweaponTypeStatus] = useState(false);
+  const [weaponTypeError, setweaponTypeError] = useState(false);
+  const [criminalActivityStatus, setcriminalActivityStatus] = useState(false);
+  const [criminalActivityError, setcriminalActivityError] = useState(false);
+  const [securityViolatedStatus, setsecurityViolatedStatus] = useState(false);
+  const [securityViolatedError, setsecurityViolatedError] = useState(false);
+  const [pointOfEntryStatus, setpointOfEntryStatus] = useState(false);
+  const [pointOfEntryError, setsetpointOfEntryError] = useState(false);
+  const [pointOfExitStatus, setpointOfExitStatus] = useState(false);
+  const [pointOfExitError, setpointOfExitError] = useState(false);
+  const [methodOfOperationStatus, setmethodOfOperationStatus] = useState(false);
+  const [methodOfOperationError, setmethodOfOperationError] = useState(false);
+  // DropDown Value
+  const [pretentedDrp, setPretentedDrp] = useState([]);
+  const [pointExitDrp, setPointExitDrp] = useState([]);
+  const [pointEntryDrp, setPointEntryDrp] = useState([]);
+  const [crimeActivityDrp, setCrimeActivityDrp] = useState([]);
+  const [toolsUseIDDrp, setToolsUseIDDrp] = useState([]);
+  const [crimeTargetDrp, setCrimeTargetDrp] = useState([]);
+  const [crimeSuspectDrp, setCrimeSuspectDrp] = useState([]);
+  const [crimeSecurityviolatedDrp, setCrimeSecurityviolatedDrp] = useState([]);
+  const [methodOfOperationDrp, setMethodOfOperationDrp] = useState();
+  const [weaponDrp, setWeaponDrp] = useState();
+  const [crimeActivityNoneStatus, setCrimeActivityNoneStatus] = useState();
+  // Edit Value Data
+
+  const [pointExitEditVal, setPointExitEditVal] = useState([]);
+  const [pointEntryEditVal, setPointEntryEditVal] = useState([]);
+  const [criminalActivityEditVal, setCriminalActivityEditVal] = useState([]);
+  const [crimeBiasCategoryEditVal, setCrimeBiasCategoryEditVal] = useState([]);
+  const [crimeToolsUseEditVal, setCrimeToolsUseEditVal] = useState([]);
+  const [crimeTargeteEditVal, setCrimeTargeteEditVal] = useState([]);
+  const [crimeSuspectEditVal, setCrimeSuspectEditVal] = useState([]);
+  const [securityViolatedEditVal, setSecurityViolatedEditVal] = useState([]);
+  const [methodOfOperationEditVal, setmethodOfOperationEditVal] = useState([]);
+  const [methodOfEntryEditVal, setmethodOfEntryEditVal] = useState([]);
+  const [weaponEditVal, setweaponEditVal] = useState([]);
+
+
+
+
 
   const [value, setValue] = useState({
-    ChargeCodeID: "", NIBRSCodeId: null, OffenseCodeId: null, LawTitleId: null, OffenderLeftSceneId: null, CategoryId: null,
+    ChargeCodeID: "", NIBRSCodeId: null, OffenseCodeId: null, LawTitleId: null, OffenseDateTime: '', OffenderLeftSceneId: null, CategoryId: null,
     PrimaryLocationId: null, SecondaryLocationId: null, FTADate: "", Fine: "", CourtCost: "", FTAAmt: "", LitigationTax: "", DamageProperty: "", OfRoomsInvolved: "", PremisesEntered: "", PropertyAbandoned: "", IsForceused: "", IsIncidentC: false, AttemptComplete: "", CrimeID: "", IncidentID: "", CreatedByUserFK: "", ModifiedByUserFK: "", IsDomesticViolence: "", IsGangInfo: "", CrimeMethodOfEntryID: "", Comments: "", IsCargoTheftInvolved: null,
   });
 
@@ -108,6 +183,12 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
     NibrsIdError: "", ChargeCodeIDError: "", PremisesEnteredError: "", PrimaryLocationError: "", AttemptRequiredError: "", CommentsError: "",
     CargoTheftError: "",
   });
+
+  const MultiValue = props => (
+    <components.MultiValue {...props}>
+      <span>{props.data.label}</span>
+    </components.MultiValue>
+  );
 
 
   const useQuery = () => {
@@ -123,6 +204,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
   var IncSta = query?.get("IncSta");
   var OffId = query?.get("OffId");
   var OffSta = query?.get("OffSta");
+  let isNew = query?.get('isNew');
   if (!IncID) IncID = 0;
   else IncID = parseInt(base64ToString(IncID));
   if (!OffId) OffId = 0;
@@ -146,13 +228,30 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
     if (IncID) {
       setValue({
         ...value,
-        IncidentID: IncID, CreatedByUserFK: "", ChargeCodeID: "", NIBRSCodeId: null, OffenseCodeId: null, LawTitleId: null, OffenderLeftSceneId: null, CategoryId: null, PrimaryLocationId: null, SecondaryLocationId: null, FTADate: "", Fine: "", CourtCost: "", FTAAmt: "", LitigationTax: "", DamageProperty: "", OfRoomsInvolved: "", PremisesEntered: "", PropertyAbandoned: "", IsForceused: "",
+        IncidentID: IncID, CreatedByUserFK: "", ChargeCodeID: "", NIBRSCodeId: null, OffenseDateTime: '', OffenseCodeId: null, LawTitleId: null, OffenderLeftSceneId: null, CategoryId: null, PrimaryLocationId: null, SecondaryLocationId: null, FTADate: "", Fine: "", CourtCost: "", FTAAmt: "", LitigationTax: "", DamageProperty: "", OfRoomsInvolved: "", PremisesEntered: "", PropertyAbandoned: "", IsForceused: "",
         IsInciden: false, AttemptComplete: "", CrimeID: "", ModifiedByUserFK: "", Comments: "", IsCargoTheftInvolved: ''
       });
       get_Offence_Data(IncID); setMainIncidentID(IncID);
       if (!incReportedDate) { dispatch(get_Inc_ReportedDate(IncID)); }
     }
   }, [IncID]);
+
+  useEffect(() => {
+    if (ResetErrors) {
+      Reset()
+    }
+  }, [ResetErrors]);
+
+  useEffect(() => {
+    if (loginAgencyID) {
+      const defaultDate = incReportedDate ? getShowingDateText(incReportedDate) : null;
+      setValue({
+        ...value,
+        'OffenseDateTime': defaultDate
+      });
+      // dispatch(get_PropertyTypeData(loginAgencyID));
+    }
+  }, [loginAgencyID, incReportedDate]);
 
   useEffect(() => {
     if (IncID && IncNo && offenceFillterData?.length > 0) {
@@ -164,6 +263,16 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
     if (OffId && (OffSta === true || OffSta === "true")) {
       setCrimeId(parseInt(OffId)); setOffenceID(parseInt(OffId)); GetSingleData(parseInt(OffId));
       get_Offence_Count(OffId);
+      get_Criminal_Activity_Data(OffId);
+      get_Crime_Bias_Category_Data(OffId);
+      get_Crime_Tools_Use_Data(OffId);
+      get_Crime_OffenderUse_Data(OffId);
+      // get_Crime_Target_Data();
+      get_Crime_Suspect_Data(OffId);
+      get_Weapon_Data(OffId);
+      get_Offence_Count(OffId);
+      NibrsErrorReturn(OffId);
+
     }
   }, [OffId, OffSta]);
 
@@ -174,16 +283,26 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
       toastifyError("The primary location and secondary location cannot be the same.");
       return;
     }
-    const NibrsIdErrorr = RequiredFieldIncident(value.NIBRSCodeId);
-    const ChargeCodeIDErr = RequiredFieldIncident(value.ChargeCodeID);
+    const NibrsIdErrorr = RequiredFieldIncident(value?.NIBRSCodeId);
+    const ChargeCodeIDErr = RequiredFieldIncident(value?.ChargeCodeID);
     const PremisesEnteredErr = nibrsCode === "220" && (primaryLocationCode === "14" || primaryLocationCode === "19") && loginAgencyState === "TX" ? RequiredFieldIncident(value?.PremisesEntered) : "true";
     const PrimaryLocationErr = ((panelCode === "03" || panelCode === "07" || panelCode === "06") ? RequiredFieldIncident(value?.PrimaryLocationId) : check_Valid_Nibrs_Code(nibrsCode) ? "true" : RequiredFieldIncident(value?.PrimaryLocationId));
     const AttemptRequiredErr = RequiredFieldIncident(value?.AttemptComplete);
     const CommentsErr = nibrsCode === "11B" && loginAgencyState === "TX" ? RequiredFieldIncident(value?.Comments) : "true";
     const MethodEntryError = nibrsCode === '220' ? RequiredFieldIncident(value?.CrimeMethodOfEntryID) : 'true'
+    const OffenseDttmError = nibrsCode === '220' ? RequiredFieldIncident(value?.OffenseDateTime) : 'true'
     // const CargoTheftErrorErr = carboTheft ? RequiredFieldIncidentCarboTheft(value.IsCargoTheftInvolved) : "true";
     // const CargoTheftErrorErr = RequiredFieldIncident(value.);
     const CargoTheftErrorErr = !nibrsCode === "220" || nibrsCode === "210" || nibrsCode === "120" || nibrsCode === "23D" || nibrsCode === "23F" || nibrsCode === "23H" || nibrsCode === "240" || nibrsCode === "26A" || nibrsCode === "26A" || nibrsCode === "23D" || nibrsCode === "26C" || nibrsCode === "26E" || nibrsCode === "26F" || nibrsCode === "26G" || nibrsCode === "270" || nibrsCode === "510" ? RequiredFieldIncident(value?.IsCargoTheftInvolved) : "true";
+    const methodEntryArr = methodOfEntryCode ? [methodOfEntryCode] : [];
+    const isWeaponRequired = checkWeaponTypeIsRequire(nibrsCode, loginAgencyState) || PanelCode === '03' || PanelCode === '06' || PanelCode === '08';
+    // const offenderusingErr = (PanelCode === '03' || PanelCode === '06' || PanelCode === '08') ? RequiredFieldIncidentOffender(crimeOffenderUse) : 'true';
+    const MethodOfEnrtyErr = checkMethodOfEntryIsRequire(nibrsCode, loginAgencyState) ? validateFields(methodEntryArr) : 'true';
+    const WeaponTypeErr = isWeaponRequired ? validateFields(weaponID) : 'true';
+    const CriminalActivityErr = checkCriminalActivityIsRequire(nibrsCode, loginAgencyState) ? validateFields(crimeActivity) : 'true';
+
+    const offenderusingErr = nibrsCode != "999" ? RequiredFieldIncidentOffender(crimeOffenderUse) : 'true';
+    const CrimeBiasCategoryErr = nibrsCode != "999" ? validateFields(crimeBiasCategory) : 'true';
 
 
     setErrors((pre) => {
@@ -197,22 +316,30 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
         ["AttemptRequiredError"]: AttemptRequiredErr || pre["AttemptRequiredError"],
         ["CommentsError"]: CommentsErr || pre["CommentsError"],
         ["CargoTheftError"]: CargoTheftErrorErr || pre["CargoTheftError"],
+        ["OffenseDttmError"]: OffenseDttmError || pre["OffenseDttmError"],
+        ['MethodOfEnrtyError']: MethodOfEnrtyErr || pre['MethodOfEnrtyError'],
+        ['WeaponTypeError']: WeaponTypeErr || pre['WeaponTypeError'],
+        ['CriminalActivityError']: CriminalActivityErr || pre['CriminalActivityError'],
+        ['OffenderusingError']: offenderusingErr || pre['OffenderusingError'],
+        ['CrimeBiasCategoryError']: CrimeBiasCategoryErr || pre['CrimeBiasCategoryError'],
       };
     });
+
+
   };
 
   // Check All Field Format is True Then Submit
-  const { ChargeCodeIDError, NibrsIdError, PremisesEnteredError, AttemptRequiredError, PrimaryLocationError, CommentsError, MethodEntryError, CargoTheftError } = errors;
+  const { ChargeCodeIDError, NibrsIdError, PremisesEnteredError, MethodOfEnrtyError, WeaponTypeError, CriminalActivityError, OffenderusingError, CrimeBiasCategoryError, AttemptRequiredError, OffenseDttmError, PrimaryLocationError, CommentsError, MethodEntryError, CargoTheftError } = errors;
 
   useEffect(() => {
-    if (ChargeCodeIDError === "true" && NibrsIdError === "true" && PremisesEnteredError === "true" && AttemptRequiredError === "true" && PrimaryLocationError === "true" && CommentsError === "true" && MethodEntryError === 'true' && CargoTheftError === 'true') {
+    if (ChargeCodeIDError === "true" && NibrsIdError === "true" && MethodOfEnrtyError === 'true' && WeaponTypeError === 'true' && CriminalActivityError === 'true' && OffenderusingError === 'true' && CrimeBiasCategoryError === 'true' && PremisesEnteredError === "true" && OffenseDttmError === "true" && AttemptRequiredError === "true" && PrimaryLocationError === "true" && CommentsError === "true" && MethodEntryError === 'true' && CargoTheftError === 'true') {
       if (OffId && (OffSta === true || OffSta === "true")) {
         Update_Offence();
       } else {
         Add_Offense();
       }
     }
-  }, [ChargeCodeIDError, NibrsIdError, PremisesEnteredError, PrimaryLocationError, AttemptRequiredError, CommentsError, MethodEntryError, CargoTheftError]);
+  }, [ChargeCodeIDError, NibrsIdError, PremisesEnteredError, MethodOfEnrtyError, WeaponTypeError, CriminalActivityError, OffenderusingError, CrimeBiasCategoryError, PrimaryLocationError, OffenseDttmError, AttemptRequiredError, CommentsError, MethodEntryError, CargoTheftError]);
 
   const getScreenPermision = (LoginAgencyID, PinID) => {
     ScreenPermision("O036", LoginAgencyID, PinID).then((res) => {
@@ -228,8 +355,8 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
   // ---- DS 
   const handleInputChange = (inputValue) => {
     if (inputValue) {
-      const filtered = nibrsCodeDrp.filter((option) =>
-        option.label.toLowerCase().includes(inputValue.toLowerCase())
+      const filtered = nibrsCodeDrp?.filter((option) =>
+        option.label.toLowerCase()?.includes(inputValue?.toLowerCase())
       );
       setFilteredOptions(filtered);
     } else {
@@ -279,6 +406,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
           'IsCargoTheftInvolved': editval[0]?.IsCargoTheftInvolved || editval[0]?.IsCargoTheftInvolved === "Y" ? editval[0]?.IsCargoTheftInvolved === "N" ? "N" : "Y" : "",
           // other
           ModifiedByUserFK: loginPinID, CreatedByUserFK: loginPinID,
+          OffenseDateTime: editval[0]?.OffenseDateTime,
         });
 
         const filteredChargeData = Object.values(chargedata).filter((item) => item.ChargeCodeID === editval[0]?.ChargeCodeID);
@@ -381,15 +509,24 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
 
   const Reset = () => {
     setValue({
-      ...value, ChargeCodeID: "", LawTitleId: "", OffenseCodeId: "", NIBRSCodeId: "", OffenderLeftSceneId: "", CategoryId: "", PrimaryLocationId: "", SecondaryLocationId: "", Fine: "", CourtCost: "", FTAAmt: "", LitigationTax: "", DamageProperty: "", OfRoomsInvolved: "", PremisesEntered: "", PropertyAbandoned: "", IsForceused: "", AttemptComplete: "", FTADate: "", CrimeID: "", IsDomesticViolence: "", IsGangInfo: "", CrimeMethodOfEntryID: "", Comments: "", IsCargoTheftInvolved: '',
+      ...value, ChargeCodeID: "", LawTitleId: "", OffenseCodeId: "", NIBRSCodeId: "", 'OffenseDateTime': incReportedDate ? getShowingDateText(incReportedDate) : getShowingMonthDateYear(new Date()), OffenderLeftSceneId: "", CategoryId: "", PrimaryLocationId: "", SecondaryLocationId: "", Fine: "", CourtCost: "", FTAAmt: "", LitigationTax: "", DamageProperty: "", OfRoomsInvolved: "", PremisesEntered: "", PropertyAbandoned: "", IsForceused: "", AttemptComplete: "", FTADate: "", CrimeID: "", IsDomesticViolence: "", IsGangInfo: "", CrimeMethodOfEntryID: "", Comments: "", IsCargoTheftInvolved: '',
     });
     setErrors({
       ...errors, ChargeCodeIDError: "", NibrsIdError: "", PremisesEnteredError: "", PrimaryLocationError: "", AttemptRequiredError: "", CommentsError: "",
-      MethodEntryError: "", CargoTheftError: "",
+      MethodEntryError: "", CargoTheftError: "", 'MethodOfEnrtyError': '', 'CriminalActivityError': '', 'WeaponTypeError': '', 'OffenderusingError': '', 'CrimeBiasCategoryError': '',
     });
+
+    setCrimeOffenderUse(); setCrimeBiasCategory(); setWeaponID(); setCrimeActivity();
+    setlocationTypeComplteStatus(); setmethodOfEntryStatus(); setmethodOfEntryError(); setIsCrimeAgainstPerson(); setIsCrimeAgainstProperty(); setIsCrimeAgainstSociety(); setPretentedDrp();
+    setPointExitDrp(); setPointEntryDrp(); setCrimeActivityDrp(); setToolsUseIDDrp();
+    setCrimeTargetDrp(); setCrimeSuspectDrp(); setCrimeSecurityviolatedDrp(); setMethodOfOperationDrp(); setWeaponDrp(); setCrimeActivityNoneStatus();
+    // setCrimeBiasCategoryEditVal(); setCrimeToolsUseEditVal(); setCrimeTargeteEditVal(); setCriminalActivityEditVal(); setPointEntryEditVal();
+    // setCrimeSuspectEditVal(); setSecurityViolatedEditVal(); setmethodOfOperationEditVal(); setmethodOfEntryEditVal(); setweaponEditVal()
+
     setCrimeId(""); setpanelCode(''); setChargeCodeDrp([]); setChangesStatus(false); setStatesChangeStatus(false);
     setGangInfoVal([]); setPrimaryLocationCode(""); setNibrsCode(""); setnibrsSubmittedOffenseMain(0);
     setIsCrimeAgainstSociety(false); setIsCrimeAgainstProperty(false); setIsCrimeAgainstPerson(false);
+    setResetErrors(false);
     //law title
     LawTitleIdDrpDwnVal(loginAgencyID, null);
     // nibrs code
@@ -743,12 +880,12 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
       PrimaryLocationId, SecondaryLocationId, FTADate, Fine, CourtCost, FTAAmt, LitigationTax,
       DamageProperty, OfRoomsInvolved, PremisesEntered, PropertyAbandoned,
       IsForceused, IsIncidentCode, AttemptComplete, CrimeID, IncidentID, IsCargoTheftInvolved,
-      CreatedByUserFK, ModifiedByUserFK, IsDomesticViolence, IsGangInfo, CrimeMethodOfEntryID, Comments,
+      CreatedByUserFK, ModifiedByUserFK, IsDomesticViolence, OffenseDateTime, IsGangInfo, CrimeMethodOfEntryID, Comments,
     } = value;
     const val = {
       ChargeCodeID, NIBRSCodeId, OffenseCodeId, LawTitleId, OffenderLeftSceneId, CategoryId,
       PrimaryLocationId, SecondaryLocationId, FTADate, Fine, CourtCost, FTAAmt, LitigationTax,
-      DamageProperty, OfRoomsInvolved, PremisesEntered, PropertyAbandoned, IsCargoTheftInvolved,
+      DamageProperty, OfRoomsInvolved, PremisesEntered, OffenseDateTime, PropertyAbandoned, IsCargoTheftInvolved,
       IsForceused, IsIncidentCode, AttemptComplete, CrimeID,
       IncidentID: mainIncidentID,
       CreatedByUserFK: loginPinID,
@@ -758,6 +895,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
     try {
       const res = await AddDeleteUpadate("Crime/Insert_Offense", val);
       if (res.success) {
+       
         Reset();
         if (res.CrimeID) {
           navigate(`/Off-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${stringToBase64(res.CrimeID)}&OffSta=${true}`);
@@ -769,6 +907,9 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
       LawTitleIdDrpDwnVal(loginAgencyID, null);
       NIBRSCodeDrpDwnVal(loginAgencyID, null);
       toastifySuccess(res.Message);
+       console.log(res.success , res.CrimeID)
+      InSertBasicInfo(res?.CrimeID);
+
       // validateIncSideBar
       validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
     } catch (error) {
@@ -782,7 +923,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
   const Update_Offence = async () => {
     const {
       ChargeCodeID, NIBRSCodeId, OffenseCodeId, LawTitleId, OffenderLeftSceneId, CategoryId,
-      PrimaryLocationId, SecondaryLocationId, FTADate, Fine, CourtCost, FTAAmt, LitigationTax,
+      PrimaryLocationId, SecondaryLocationId, FTADate, Fine, OffenseDateTime, CourtCost, FTAAmt, LitigationTax,
       DamageProperty, OfRoomsInvolved, PremisesEntered, PropertyAbandoned,
       IsForceused, IsIncidentCode, AttemptComplete, CrimeID, IncidentID, IsCargoTheftInvolved,
       CreatedByUserFK, ModifiedByUserFK, IsDomesticViolence, IsGangInfo, CrimeMethodOfEntryID,
@@ -790,7 +931,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
     } = value;
 
     const val = {
-      ChargeCodeID, NIBRSCodeId, OffenseCodeId, LawTitleId, OffenderLeftSceneId, CategoryId,
+      ChargeCodeID, NIBRSCodeId, OffenseDateTime, OffenseCodeId, LawTitleId, OffenderLeftSceneId, CategoryId,
       PrimaryLocationId, SecondaryLocationId, FTADate, Fine, CourtCost, FTAAmt,
       LitigationTax, DamageProperty, OfRoomsInvolved, PremisesEntered, PropertyAbandoned,
       IsIncidentCode, AttemptComplete, CrimeID, IncidentID: mainIncidentID,
@@ -801,15 +942,17 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
     try {
       const res = await AddDeleteUpadate("Crime/Update_Offense", val);
       if (res.success) {
-        Reset();
+        // Reset();
         const parsedData = JSON.parse(res.data);
         const message = parsedData.Table[0].Message;
         toastifySuccess(message);
+        GetSingleData(CrimeID);
+        InSertBasicInfo(CrimeID);
         setChangesStatus(false);
         setStatesChangeStatus(false);
         get_Offence_Data(mainIncidentID);
         get_List(OffId);
-        setStatusFalse();
+        // setStatusFalse();
         setErrors({ ...errors, ["ChargeCodeIDError"]: "", CommentsError: "" });
       }
       LawTitleIdDrpDwnVal(loginAgencyID, null);
@@ -913,7 +1056,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
                   onClick={(e) => {
                     navigate(`/Off-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${stringToBase64(row?.CrimeID)}&OffSta=${true}&CrimeSta=${true}`);
                   }}
-                  className={`btn btn-sm text-white px-2 py-0 mr-1 `}
+                  className={`btn btn-sm text-white px-2 py-0 mr-1`}
                   style={{
                     backgroundColor: "#19aea3",
                   }}
@@ -980,7 +1123,11 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
               onClick={(e) => {
                 navigate(`/Vehicle-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${0}&MVehId=${0}&VehSta=${false}&FbiCode=${row.FBICode}&AttComp=${row?.AttemptComplete === "Completed" ? "C" : "A"}`);
               }}
-              className={`btn btn-sm bg-green text-white px-2 py-0 mr-1`}
+              // className={`btn btn-sm bg-green text-white px-2 py-0 mr-1`}
+              className={`btn btn-sm  text-white px-2 py-0 mr-1 `}
+              style={{
+                backgroundColor: (row?.FBICode === "240" && VehicleCount === 0) ? "red" : "#19aea3",
+              }}
             >
               Vehicle
             </span>
@@ -988,30 +1135,29 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
         </div>
       ),
     },
-    {
-      minWidth: "40px",
-      grow: 1,
-      name: "View",
-      cell: (row) => (
-        <div >
-          {getOffenseNibrsError(row.CrimeID, nibrsValidateOffenseData) ? (
-            <span
-              onClick={(e) =>
-                setOffenseErrString(row.CrimeID, nibrsValidateOffenseData)
-              }
-              className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
-              data-toggle="modal"
-              data-target="#NibrsErrorShowModal"
-            >
-              <i className="fa fa-eye"></i>
-            </span>
-          ) : (
-            <></>
-          )}
-        </div>
-      ),
-      // omit: row => getOffenseNibrsError(row.CrimeID, nibrsValidateOffenseData) ? false : true,
-    },
+    // {
+    //   minWidth: "40px",
+    //   grow: 1,
+    //   name: "View",
+    //   cell: (row) => (
+    //     <div >
+    //       {getOffenseNibrsError(row.CrimeID, nibrsValidateOffenseData) ? (
+    //         <span
+    //           onClick={(e) =>
+    //             setOffenseErrString(row.CrimeID, nibrsValidateOffenseData)
+    //           }
+    //           className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
+    //           data-toggle="modal"
+    //           data-target="#NibrsErrorShowModal"
+    //         >
+    //           <i className="fa fa-eye"></i>
+    //         </span>
+    //       ) : (
+    //         <></>
+    //       )}
+    //     </div>
+    //   ),
+    // },
     {
       minWidth: "40px",
       grow: 1,
@@ -1127,18 +1273,18 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
     }
   };
 
-  const DeleteOffence = () => {
-    const val = { CrimeID: delCrimeId, DeletedByUserFK: loginPinID };
-    AddDeleteUpadate("Crime/Delete_Offense", val).then((res) => {
-      const parsedData = JSON.parse(res.data);
-      const message = parsedData.Table[0].Message;
-      toastifySuccess(message);
-      get_Incident_Count(mainIncidentID, loginPinID);
-      get_Offence_Data(mainIncidentID);
-      setStatusFalse();
-      Reset();
-    });
-  };
+  // const DeleteOffence = () => {
+  //   const val = { CrimeID: delCrimeId, DeletedByUserFK: loginPinID };
+  //   AddDeleteUpadate("Crime/Delete_Offense", val).then((res) => {
+  //     const parsedData = JSON.parse(res.data);
+  //     const message = parsedData.Table[0].Message;
+  //     toastifySuccess(message);
+  //     get_Incident_Count(mainIncidentID, loginPinID);
+  //     get_Offence_Data(mainIncidentID);
+  //     setStatusFalse();
+  //     Reset();
+  //   });
+  // };
 
   // Custom Style
   const colourStyles = {
@@ -1190,6 +1336,22 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
       boxShadow: 0,
     }),
   };
+
+
+
+
+  const customStylesWithOutMiltiColor = {
+    control: base => ({
+      ...base,
+      minHeight: 58,
+      fontSize: 14,
+      margintop: 2,
+      boxShadow: 0,
+    }),
+  };
+
+
+
 
   const StatusOption = [
     { value: "A", label: "Attempted" },
@@ -1266,7 +1428,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
     };
     try {
       const data = await fetchPostDataNibrs("NIBRS/Nibrs_OffenseError", val);
-      console.log("🚀 ~ nibrsValidateOffense ~ data:", data);
+      // console.log("🚀 ~ nibrsValidateOffense ~ data:", data);
       if (data) {
         setnibrsValidateOffenseData(data?.Offense);
         setclickNibLoder(false);
@@ -1334,6 +1496,8 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
   const handleMouseLeave = () => setIsHovered(false);
 
 
+
+
   // DS
   useEffect(() => {
     const selectedItem = nibrsCodeDrp?.find((item) => item.value === value?.NIBRSCodeId);
@@ -1361,403 +1525,1093 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
     }
   };
 
+  function filterArray(arr, key) {
+    return [...new Map(arr?.map(item => [item[key], item])).values()]
+  }
+
+
+  const getCheckNotApplicable = () => {
+    if (loginAgencyState === 'TX') {
+      let offenderUsingValues = filterArray(crimeOffenderUse, 'label');
+
+      const status = offenderUsingValues?.filter((item) => { if (item.code === "N") return item });
+      return status?.length > 0 && offenderUsingValues?.length > 1 ? true : false
+    } else {
+      return false
+    }
+  }
+
+  const getOffenderUsingDrpData = (data) => {
+    if (loginAgencyState === 'TX') {
+      let offenderUsingValues = filterArray(crimeOffenderUse, 'label');
+
+      const status = offenderUsingValues?.filter((item) => { if (item.code === "N") return item });
+      return status?.length > 0 ? [] : data
+    } else {
+      return data
+    }
+  }
+
+  const getBiasDrpData = (data) => {
+    if (loginAgencyState === 'TX' && nibrsCode === '09A' && nibrsCode === '09B' && nibrsCode === '09C') {
+      const weaponData = data.filter((item) => { if (item.id == "88") return item });
+      return weaponData
+    } else {
+      return data
+    }
+  }
+
+  const OffenderUsechange = (multiSelected) => {
+    !addUpdatePermission && setChangesStatus(true);
+
+
+    setCrimeOffenderUse(multiSelected)
+    const len = multiSelected.length - 1
+    if (multiSelected?.length < crimeOffenderUseEditVal?.length) {
+      let missing = null;
+      let i = crimeOffenderUseEditVal.length;
+      while (i) {
+        missing = (~multiSelected.indexOf(crimeOffenderUseEditVal[--i])) ? missing : crimeOffenderUseEditVal[i];
+      }
+
+    } else {
+
+    }
+    checkOffenderCount();
+  }
+
+  useEffect(() => {
+    if (crimeId) {
+      // GetBasicInfoData(crimeId);
+      get_Crime_OffenderUse_Data(crimeId);
+      get_Criminal_Activity_Data(crimeId);
+      get_Crime_Bias_Category_Data(crimeId);
+
+    }
+  }, [])
+
+  useEffect(() => {
+    if (openPage || loginAgencyID) {
+      getCrimeOffenderUseDrpVal(loginAgencyID);
+      getCrimeActivityDrpVal(loginAgencyID);
+      getCrimeBiasCategoryDrpVal(loginAgencyID);
+      get_Weapon_DropDown(loginAgencyID);
+    }
+  }, [openPage, loginAgencyID])
+
+  const checkOffenderCount = () => {
+    if (pretendToBeID?.length > 0 || crimePointOfEntry?.length > 0 || weaponID?.length > 0 || securityViolated?.length > 0 || crimeTarget?.length > 0 || crimeBiasCategory?.length > 0 || crimeOffenderUse?.length > 0 || crimePointOfExitID?.length > 0 || methodOfOperation?.length > 0 || methodEntryDrp?.length > 0 || crimeSuspect?.length > 0 || crimeToolsUse?.length > 0 || crimeActivity?.length > 0) {
+      setcrimeTabValue(false);
+    } else {
+      setcrimeTabValue(true);
+    }
+  };
+
+  const get_Crime_OffenderUse_Data = (crimeId) => {
+    const val = { 'CrimeID': crimeId, }
+    fetchPostData('OffenseOffenderUse/GetData_OffenseOffenderUse', val)
+      .then((res) => {
+        if (res) {
+          console.log(res, 'hey')
+          setCrimeOffenderUseEditVal(Comman_changeArrayFormatBasicInfo(res, 'CrimeOffenderUseID', 'Description', 'PretendToBeID', 'OffenderUseID', 'OffenderUseCode'));
+        }
+        else {
+          setCrimeOffenderUseEditVal([]);
+        }
+      })
+  }
+
+  const filteredOptionsoffender = crimeOffenderUseDrp.filter((opt) => {
+    const selectedCodes = crimeOffenderUse?.map(item => item.code || item.id); // assuming 'code' or 'id' stores 'A', 'C', etc.
+    if (selectedCodes?.includes('N')) {
+      return opt.code === 'N'; // Only show N if it's selected
+    } else if (selectedCodes?.some(code => ['A', 'C', 'D'].includes(code))) {
+      return opt.code !== 'N'; // Hide N if any of A/C/D is selected
+    }
+    return true; // Default: show all options
+
+
+
+  });
+
+  const getWeaponDrpData = (data, nibrsCode, weaponID) => {
+
+    const weaponValues = weaponID?.map((item) => item?.code)
+
+    if (loginAgencyState === 'TX' && nibrsCode == "13B") {
+      const weaponData = data.filter((item) => { if (item?.id === '99' || item?.id === '40' || item?.id === '90' || item?.id === '95') return item });
+
+      const otherFilterArr = weaponData?.filter((item) => !weaponValues.includes(item?.id));
+      return otherFilterArr
+
+    }
+    //  else if (loginAgencyState === 'TX' && nibrsCode == "13A") {
+    //   const weaponData = data.filter((item) => { if (item?.id === '11' || item?.id === '12' || item?.id === '13' || item?.id === '14' || item?.id === '15') return item });
+
+    //   const otherFilterArr = weaponData?.filter((item) => !weaponValues.includes(item?.id));
+    //   return otherFilterArr
+
+    // }
+    else if (loginAgencyState === 'TX' && (nibrsCode === '09A' || nibrsCode === '09B' || nibrsCode === '09C')) {
+      const weaponData = data.filter((item) => { if (item?.id != '77' && item?.id != '99') return item });
+
+      const otherFilterArr = weaponData?.filter((item) => !weaponValues.includes(item?.id));
+      return otherFilterArr
+
+    }
+    else {
+      return data
+
+    }
+
+  }
+
+  const get_CriminalActivity_DrpData = (data) => {
+
+    const nibrsCodeArray = ["09A", "09B", "100", "120", "11A", "11B", "11C", "11D", "13A", "13B", "13C"]
+    const suitablecodes = ['250', '280', '30C', '35A', '35B', '39C', '370', '49A', '520', '521', '522', '526', '58A', '58B', '61A', '61B', '620',]
+    const AnimalCrueltyCode = ['720']
+
+    if (loginAgencyState === 'TX' && suitablecodes.includes(nibrsCode)) {
+      const crimeActiDrpData = data.filter((item) => { if (item?.id === "B" || item?.id === "C" || item?.id === "D" || item?.id === "E" || item?.id === "O" || item?.id === "P" || item?.id === "T" || item?.id === "U") return item });
+      return crimeActiDrpData
+
+    } else if (loginAgencyState === 'TX' && AnimalCrueltyCode.includes(nibrsCode)) {
+      const crimeActiDrpData = data.filter((item) => { if (item?.id === "A" || item?.id === "F" || item?.id === "I" || item?.id === "S") return item });
+      return crimeActiDrpData
+
+    } else {
+      return data
+    }
+  }
+
+  const getCrimeOffenderUseDrpVal = (loginAgencyID) => {
+    const val = { AgencyID: loginAgencyID, }
+    fetchPostData('CrimeOffenderUse/GetDataDropDown_CrimeOffenderUse', val).then((data) => {
+      if (data) {
+        setCrimeOffenderUseDrp(threeColArrayWithCode(data, 'OffenderUseID', 'Description', 'OffenderUseCode'))
+      } else {
+        setCrimeOffenderUseDrp([]);
+      }
+    })
+  }
+
+  const getCrimeBiasCategoryDrpVal = (loginAgencyID) => {
+    const val = { AgencyID: loginAgencyID, }
+    fetchPostData('CrimeBias/GetDataDropDown_CrimeBias', val).then((data) => {
+      if (data) {
+
+        setCrimeBiasCategoryDrp(threeColArrayWithCode(data, 'BiasID', 'Description', 'BiasCode'))
+      } else {
+        setCrimeBiasCategoryDrp([]);
+      }
+    })
+  }
+
+  const get_Weapon_DropDown = (loginAgencyID) => {
+    const val = { 'AgencyID': loginAgencyID, }
+    fetchPostData('OffenseWeapon/GetData_InsertOffenseWeapon', val).then((data) => {
+      if (data) {
+
+        setWeaponDrp(threeColArrayWithCode(data, 'WeaponID', 'Description', 'WeaponCode'));
+      } else {
+        setWeaponDrp([])
+      }
+    })
+  }
+
+  const CrimeActivitychange = (multiSelected) => {
+    !addUpdatePermission && setChangesStatus(true);
+    setCrimeActivity(multiSelected);
+    const len = multiSelected.length - 1
+    if (multiSelected?.length < criminalActivityEditVal?.length) {
+      let missing = null;
+      let i = criminalActivityEditVal.length;
+      while (i) {
+        missing = (~multiSelected.indexOf(criminalActivityEditVal[--i])) ? missing : criminalActivityEditVal[i];
+      }
+
+    } else {
+
+    }
+    checkOffenderCount();
+  }
+
+  const getCrimeActivityDrpVal = (loginAgencyID) => {
+    const val = { AgencyID: loginAgencyID, }
+    fetchPostData('CriminalActivity/GetDataDropDown_CriminalActivity', val).then((data) => {
+      if (data) {
+        setCrimeActivityDrp(threeColArrayWithCode(data, 'CriminalActivityID', 'Description', 'CriminalActivityCode'))
+      } else {
+        setCrimeActivityDrp([]);
+      }
+    })
+  }
+
+  const validateFields = (field) => {
+    if (field?.length == 0) {
+      return 'Required *';
+    } else {
+      return 'true'
+    }
+  };
+
+
+
+  const InSertBasicInfo = (crimeId) => {
+    console.log(crimeOffenderUse)
+    const val = {
+      'CrimeID': crimeId,
+      'CreatedByUserFK': loginPinID,
+      'PretendToBeID': pretendToBeID.map((item) => item?.value),
+      'CrimePointOfExitID': crimePointOfExitID.map((item) => item?.value),
+      'CrimePointOfEntryID': crimePointOfEntry.map((item) => item?.value),
+      'CrimeOffenderUseID': crimeOffenderUse?.map((item) => item?.value),
+      'CrimeActivityID': crimeActivity.map((item) => item?.value),
+      'CrimeBiasCategoryID': crimeBiasCategory.map((item) => item?.value),
+      'CrimeToolsUseID': crimeToolsUse.map((item) => item?.value),
+      'CrimeTargetID': crimeTarget.map((item) => item?.value),
+      'CrimeSuspectID': crimeSuspect.map((item) => item?.value),
+      'CrimeSecurityviolatedID': securityViolated.map((item) => item?.value),
+      'CrimeMethodOfOpeationID': methodOfOperation.map((item) => item?.value),
+      'CrimeMethodOfEntryID': [methodOfEntryCode],
+      'WeaponTypeID': weaponID.map((item) => item?.value),
+
+    }
+    AddDeleteUpadate('Crime/Insert_OffenseInformation', val).then((res) => {
+      if (res) {
+        console.log('hello')
+        const parsedData = JSON.parse(res.data);
+        const message = parsedData.Table[0].Message;
+        toastifySuccess(message);
+        // GetBasicInfoData();
+        get_Criminal_Activity_Data(crimeId);
+        get_Crime_Bias_Category_Data(crimeId);
+        get_Crime_OffenderUse_Data(crimeId);
+        get_Crime_Suspect_Data(crimeId);
+        get_Weapon_Data(crimeId);
+        get_Offence_Count(crimeId);
+        NibrsErrorReturn(crimeId);
+        setErrors({ ...errors, 'MethodOfEnrtyError': '', 'CriminalActivityError': '', 'WeaponTypeError': '', 'OffenderusingError': '', 'CrimeBiasCategoryError': '' })
+        setChangesStatus(false);
+      } else {
+        console.log("Somthing Wrong");
+        setErrors({ ...errors, 'MethodOfEnrtyError': '', 'CriminalActivityError': '', 'WeaponTypeError': '', 'OffenderusingError': '', 'CrimeBiasCategoryError': '' })
+      }
+    })
+
+  }
+
+  const GetBasicInfoData = (crimeId) => {
+    const val = { 'CrimeID': crimeId, }
+    fetchPostData('CrimePretendToBe/GetData_CrimePretendToBe', val)
+      .then((res) => {
+        if (res) {
+          setEditval(Comman_changeArrayFormatBasicInfo(res, 'PretendToBeID', 'Description', 'PretendToBeID', 'CrimePretendID', 'PretendToBeCode'));
+        }
+        else {
+          setEditval([]);
+        }
+      })
+  }
+
+  const get_Weapon_Data = (crimeId) => {
+    const val = { 'CrimeID': crimeId, }
+    fetchPostData('OffenseWeapon/GetData_OffenseWeapon', val).then((res) => {
+      if (res) {
+        setweaponEditVal(Comman_changeArrayFormatBasicInfo(res, 'WeaponTypeID', 'Weapon_Description', 'PretendToBeID', 'WeaponID', 'WeaponCode'))
+      } else {
+        setweaponEditVal([]);
+      }
+    })
+  }
+
+  const get_Criminal_Activity_Data = (crimeId) => {
+    const val = { 'CrimeID': crimeId, }
+    fetchPostData('OffenseCriminalActivity/GetData_OffenseCriminalActivity', val)
+      .then((res) => {
+        if (res) {
+          setCriminalActivityEditVal(Comman_changeArrayFormatBasicInfo(res, 'CrimeActivityID', 'Description', 'PretendToBeID', 'ActivityID', 'CriminalActivityCode'));
+        }
+        else {
+          setCriminalActivityEditVal([]);
+        }
+      })
+  }
+
+  const get_Crime_Bias_Category_Data = (crimeId) => {
+    const val = { 'CrimeID': crimeId, }
+    fetchPostData('OffenseBiasCategory/GetData_OffenseBiasCategory', val)
+      .then((res) => {
+        if (res) {
+          setCrimeBiasCategoryEditVal(Comman_changeArrayFormatBasicInfo(res, 'CrimeBiasCategoryID', 'Description', 'PretendToBeID', 'BiasCategoryID', 'BiasCode'));
+        }
+        else {
+          setCrimeBiasCategoryEditVal([]);
+        }
+      })
+  }
+
+  const get_Crime_Tools_Use_Data = (crimeId) => {
+    const val = { 'CrimeID': crimeId }
+    fetchPostData('OffenseToolsUse/GetData_OffenseToolsUse', val)
+      .then((res) => {
+        if (res) {
+          setCrimeToolsUseEditVal(Comman_changeArrayFormatBasicInfo(res, 'CrimeToolsUseID', 'Description', 'PretendToBeID', 'ToolsUseID', 'ToolsUseCode'));
+        }
+        else {
+          setCrimeToolsUseEditVal([]);
+        }
+      })
+  }
+
+
+
+  const get_Crime_Suspect_Data = (crimeId) => {
+    const val = { 'CrimeID': crimeId, }
+    fetchPostData('OffenseSuspect/GetData_OffenseSuspect', val)
+      .then((res) => {
+        if (res) {
+
+          setCrimeSuspectEditVal(Comman_changeArrayFormatBasicInfo(res, 'CrimeSuspectID', 'Description', 'PretendToBeID', 'SuspectID', 'SuspectCode'));
+        }
+        else {
+          setCrimeSuspectEditVal([]);
+        }
+      })
+  }
+
+  useEffect(() => {
+    if (crimeBiasCategoryEditVal) {
+      setCrimeBiasCategory(crimeBiasCategoryEditVal);
+      const BiasCodesArray = crimeBiasCategoryEditVal?.map((item) => { return item?.code });
+      const Bias09CCode = crimeBiasCategoryEditVal?.map((item) => { return item?.code === "88" });
+      setBias09CCodeStatus(Bias09CCode?.length > 0)
+      setBiasSelectCodeArray(BiasCodesArray);
+    }
+  }, [crimeBiasCategoryEditVal])
+
+  useEffect(() => {
+    if (weaponEditVal) {
+      setWeaponID(weaponEditVal);
+      const WeaponCodesArray = weaponEditVal?.map((item) => { return item?.code });
+      setWeaponSelectCodeArray(WeaponCodesArray);
+    }
+  }, [weaponEditVal])
+
+  useEffect(() => {
+    if (crimeToolsUseEditVal) { setCrimeToolsUse(crimeToolsUseEditVal) }
+  }, [crimeToolsUseEditVal])
+
+  useEffect(() => {
+    console.log(crimeOffenderUseEditVal, 'hellonew')
+    if (crimeOffenderUseEditVal) { setCrimeOffenderUse(crimeOffenderUseEditVal) }
+  }, [crimeOffenderUseEditVal])
+
+  useEffect(() => {
+    if (criminalActivityEditVal) {
+      setCrimeActivity(criminalActivityEditVal);
+      const noneStatus = criminalActivityEditVal?.filter((item) => { if (item?.code === "N") { return true } });
+      setCrimeActivityNoneStatus(noneStatus?.length > 0);
+
+      const crimeActivityCodesArray = criminalActivityEditVal?.map((item) => { return item?.code });
+      setCrimeActSelectedCodeArray(crimeActivityCodesArray);
+
+    }
+  }, [criminalActivityEditVal])
+
+
+  const CrimeBiasCategorychange = (multiSelected) => {
+
+    !addUpdatePermission && setChangesStatus(true);
+    setCrimeBiasCategory(multiSelected)
+    const len = multiSelected.length - 1
+    if (multiSelected?.length < crimeBiasCategoryEditVal?.length) {
+      let missing = null;
+      let i = crimeBiasCategoryEditVal.length;
+      while (i) {
+        missing = (~multiSelected.indexOf(crimeBiasCategoryEditVal[--i])) ? missing : crimeBiasCategoryEditVal[i];
+      }
+
+    } else {
+
+    }
+    checkOffenderCount();
+  }
+
+  const Weaponchange = (multiSelected) => {
+    !addUpdatePermission && setChangesStatus(true);
+    setWeaponID(multiSelected)
+
+    const len = multiSelected.length - 1
+
+    if (multiSelected?.length < weaponEditVal?.length) {
+      let missing = null;
+      let i = weaponEditVal.length;
+      while (i) {
+        missing = (~multiSelected.indexOf(weaponEditVal[--i])) ? missing : weaponEditVal[i];
+      }
+
+
+    } else {
+
+    }
+    checkOffenderCount();
+  }
+
+  useEffect(() => {
+    if (crimeOffenderUseEditVal) { setCrimeOffenderUse(crimeOffenderUseEditVal) }
+  }, [crimeOffenderUseEditVal])
+
+  useEffect(() => {
+    if (crimeSuspectEditVal) { setCrimeSuspect(crimeSuspectEditVal) }
+  }, [crimeSuspectEditVal])
+
+
+  console.log(filterArray(crimeOffenderUse, 'label'), crimeOffenderUse)
   return (
     <>
-      <div className="col-12 bb child">
-        <div className="row align-items-center mt-2" style={{ rowGap: "8px" }}>
-          <div className="col-4 col-md-4 custom-col-12 ">
-            <span data-toggle="modal" onClick={() => { setOpenPage("Law Title"); }} data-target="#ListModel" className="new-link px-0">Law Title</span>
-          </div>
-          <div className="col-7 col-md-7 col-lg-2">
-            <Select
-              name="LawTitleId"
-              // styles={customStylesWithOutColor}
-              styles={
-                nibrsSubmittedOffenseMain === 1 ? LockFildscolour : customStylesWithOutColor
-              }
-              isDisabled={nibrsSubmittedOffenseMain === 1}
-              // value={lawTitleIdDrp?.length === 1 ? lawTitleIdDrp?.filter((obj) => obj.value === lawTitleIdDrp[0]?.value) : lawTitleIdDrp?.filter((obj) => obj.value === value?.LawTitleId)}
-              value={lawTitleIdDrp?.filter(
-                (obj) => obj.value === value?.LawTitleId
-              )}
-              options={lawTitleIdDrp}
-              isClearable
-              onChange={(e) => onChangeDrpLawTitle(e, "LawTitleId")}
-              placeholder="Select..."
-            />
-          </div>
-          <div className="col-4 col-md-4 col-lg-1 " style={{ lineHeight: 1.1 }}>
-            <label htmlFor="" className="new-label m-0 text-nowrap" >
-              TIBRS Code
-            </label>
-            <br />
-            <span style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", width: "100%" }}>
-              {errors.NibrsIdError !== "true" ? (
-                <div style={{ color: "red", fontSize: "13px", display: "block", display: "flex", width: "100%", justifyContent: "flex-end" }}>{errors.NibrsIdError}</div>
-              ) : null}
-
-            </span>
-          </div>
-          <div className="col-7 col-md-7 col-lg-3 ">
-            <Select
-              name="NIBRSCodeId"
-              styles={
-                nibrsSubmittedOffenseMain === 1 ? LockFildscolour
-                  :
-                  Requiredcolour
-              }
-              isDisabled={nibrsSubmittedOffenseMain === 1}
-              value={nibrsCodeDrp?.filter((obj) => obj.value === value?.NIBRSCodeId)}
-              options={filteredOptions.length > 0 ? filteredOptions : nibrsCodeDrp}
-              onInputChange={handleInputChange}
-              isClearable
-              onChange={(e) => onChangeNIBRSCode(e, "NIBRSCodeId")}
-              placeholder="Select..."
-            />
-          </div>
-          <div className="col-4 col-md-4 col-lg-1 ">
-            <label htmlFor="" className="new-label m-0">Category</label>
-          </div>
-          <div className="col-7 col-md-7 custom-col-20 custom-col-29">
-            <Select
-              name="CategoryId"
-              styles={customStylesWithOutColor}
-              value={categoryIdDrp?.filter(
-                (obj) => obj.value === value?.CategoryId
-              )}
-              isClearable
-              options={categoryIdDrp}
-              onChange={(e) => changeDropDown(e, "CategoryId")}
-              placeholder="Select..."
-            />
-          </div>
-          <div className="col-4 col-md-4 custom-col-12 " style={{ lineHeight: 1.1 }}>
-            <Link to={"/ListManagement?page=Charge%20Code&call=/Off-Home"} className="new-link text-nowrap">Offense Code/Name</Link>
-            <br />
-            {errors.ChargeCodeIDError !== "true" ? (
-              <div style={{ color: "red", fontSize: "13px", display: "block", display: "flex", width: "100%", justifyContent: "flex-end" }}  >
-                {errors.ChargeCodeIDError}
+      {((incidentCount[0]?.OffenseCount === 0 || incidentCount[0]?.OffenseCount === "0") || (OffSta === true || OffSta === 'true') || isNew === "true" || isNew === true) && (
+        <>
+          <div className="col-12 bb child">
+            <div className="row align-items-center mt-2" style={{ rowGap: "8px" }}>
+              <div className="col-4 col-md-4 custom-col-12 ">
+                <span data-toggle="modal" onClick={() => { setOpenPage("Law Title"); }} data-target="#ListModel" className="new-link px-0">Law Title</span>
               </div>
-            ) : null}
-          </div>
-          <div className="col-7 col-md-7 col-lg-6 ">
-            <Select
-              name="ChargeCodeID"
-              // styles={colourStyles}
-              styles={
-                nibrsSubmittedOffenseMain === 1 ? LockFildscolour : Requiredcolour
-              }
-              isDisabled={nibrsSubmittedOffenseMain === 1}
-              // styles={value?.NIBRSCodeId ? colourStyles : customStylesWithOutColor}
-              // isDisabled={value?.NIBRSCodeId || value?.LawTitleId ? false : true}
-              value={chargeCodeDrp?.filter(
-                (obj) => obj.value === value?.ChargeCodeID
-              )}
-              isClearable
-              options={chargeCodeDrp}
-              onChange={(e) => onChangeDrpLawTitle(e, "ChargeCodeID")}
-              placeholder="Select..."
-            />
-          </div>
-          <div className="col-2" style={{ lineHeight: 1.1 }}>
-            <label className="new-label m-0 text-nowrap"  >
-              Attempted/Completed
-            </label>
-            <br />
-            {errors.AttemptRequiredError !== "true" ? (<div style={{ color: "red", fontSize: "13px", display: "block", display: "flex", width: "100%", justifyContent: "flex-end" }}  >
-              {errors.AttemptRequiredError}
-            </div>
-            ) : null}
-          </div>
-          <div className="custom-col-20">
-            <Select
-              onChange={(e) => changeDropDown(e, "AttemptComplete")}
-              options={StatusOption}
-              isClearable
-              styles={nibrsSubmittedOffenseMain === 1 ? LockFildscolour : !value?.AttemptComplete ? nibrscolourStyles : nibrsSuccessStyles}
-              isDisabled={nibrsSubmittedOffenseMain === 1}
-              placeholder="Select..."
-              value={StatusOption.filter((option) => option.value === value?.AttemptComplete)}
-            />
-          </div>
-          <div className="col-4 col-md-4 custom-col-12 " style={{ lineHeight: 1.1 }}>
-            <span style={{ lineHeight: 1.1 }} data-toggle="modal" onClick={() => setOpenPage("Location Type")} data-target="#ListModel" className="new-link d-block text-nowrap">
-              Primary Location Type
-              {locationTypeComplteStatus && (<ErrorTooltip ErrorStr={locationTypeComplteError} />)}
-              {chekLocationType(nibrsCode, primaryLocationCode) && (<ErrorTooltip ErrorStr={CyberspaceLocationError} />)}
-            </span>
-            <br />
-            {errors.PrimaryLocationError !== "true" ? (<div style={{ color: "red", fontSize: "13px", display: "block", display: "flex", width: "100%", justifyContent: "flex-end" }}>{errors.PrimaryLocationError}</div>) : null}
-          </div>
-          <div className="col-7 col-md-7 col-lg-4 ">
-            <Select
-              name="PrimaryLocationId"
-              styles={
-                nibrsSubmittedOffenseMain === 1 ? LockFildscolour
-                  :
-                  (panelCode === "03" || panelCode === "07" || panelCode === "06") ? Requiredcolour
-                    :
-                    loginAgencyState === "TX" ? chekLocationType(nibrsCode, primaryLocationCode) ? nibrscolourStyles
-                      :
-                      check_Valid_Nibrs_Code(nibrsCode) ? customStylesWithOutColor
-                        :
-                        Requiredcolour
+              <div className="col-7 col-md-7 col-lg-2">
+                <Select
+                  name="LawTitleId"
+                  // styles={customStylesWithOutColor}
+                  styles={
+                    nibrsSubmittedOffenseMain === 1 ? LockFildscolour : customStylesWithOutColor
+                  }
+                  isDisabled={nibrsSubmittedOffenseMain === 1}
+                  // value={lawTitleIdDrp?.length === 1 ? lawTitleIdDrp?.filter((obj) => obj.value === lawTitleIdDrp[0]?.value) : lawTitleIdDrp?.filter((obj) => obj.value === value?.LawTitleId)}
+                  value={lawTitleIdDrp?.filter(
+                    (obj) => obj.value === value?.LawTitleId
+                  )}
+                  options={lawTitleIdDrp}
+                  isClearable
+                  onChange={(e) => onChangeDrpLawTitle(e, "LawTitleId")}
+                  placeholder="Select..."
+                />
+              </div>
+              <div className="col-4 col-md-4 col-lg-1 " style={{ lineHeight: 1.1 }}>
+                <label htmlFor="" className="new-label m-0 text-nowrap" >
+                  TIBRS Code
+                </label>
+                <br />
+                <span style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", width: "100%" }}>
+                  {errors.NibrsIdError !== "true" ? (
+                    <div style={{ color: "red", fontSize: "13px", display: "block", display: "flex", width: "100%", justifyContent: "flex-end" }}>{errors.NibrsIdError}</div>
+                  ) : null}
+
+                </span>
+              </div>
+              <div className="col-7 col-md-7 col-lg-3 ">
+                <Select
+                  name="NIBRSCodeId"
+                  styles={
+                    nibrsSubmittedOffenseMain === 1 ? LockFildscolour
                       :
                       Requiredcolour
-              }
-              isDisabled={nibrsSubmittedOffenseMain === 1}
-              value={locationIdDrp?.filter((obj) => obj.value === value?.PrimaryLocationId)}
-              isClearable
-              options={locationIdDrp}
-              onChange={(e) => changeDropDown(e, "PrimaryLocationId")}
-              placeholder="Select..."
-            />
-          </div>
-          <div className="" style={{ flex: "0 0 21.3%", minWidth: "21.3%" }}>
-            <span data-toggle="modal" onClick={() => setOpenPage("Location Type")} data-target="#ListModel" className="new-link">Secondary Location Type </span>
-          </div>
-          <div className="col-7 col-md-7 col-lg-4  ">
-            <Select
-              name="SecondaryLocationId"
-              styles={customStylesWithOutColor}
-              value={locationIdDrp?.filter(
-                (obj) => obj.value === value?.SecondaryLocationId
-              )}
-              isClearable
-              options={locationIdDrp}
-              onChange={(e) => changeDropDown(e, "SecondaryLocationId")}
-              placeholder="Select..."
-              isDisabled={!value?.PrimaryLocationId}
-            />
-          </div>
-          <div className="custom-col-12">
-            <span data-toggle="modal" onClick={() => setOpenPage("Crime Left  Scene")} data-target="#ListModel" className="new-link px-0">Offender Left Scene </span>
-          </div>
-          <div className="col-7 col-md-7 col-lg-2  ">
-            <Select
-              name="OffenderLeftSceneId"
-              styles={customStylesWithOutColor}
-              value={offenderLeftSceneDrp?.filter((obj) => obj.value === value?.OffenderLeftSceneId)}
-              isClearable
-              options={offenderLeftSceneDrp}
-              onChange={(e) => changeDropDown(e, "OffenderLeftSceneId")}
-              placeholder="Select..."
-            />
-          </div>
-          <div className="col-4 col-md-4 col-lg-2 ">
-            <label htmlFor="" className="new-label">
-              Domestic violence
-            </label>
-          </div>
-          <div className="col-7 col-md-7 col-lg-2  ">
-            <Select
-              value={StatusOptions.filter(
-                (option) => option.value === value?.IsDomesticViolence
-              )}
-              // styles={customStylesWithOutColor}
-              onChange={(e) => changeDropDowns(e, "IsDomesticViolence")}
-              options={StatusOptions}
-              isClearable
-              placeholder="Select..."
-              styles={
-                nibrsSubmittedOffenseMain === 1
-                  ? LockFildscolour
-                  : customStylesWithOutColor
-              }
-              isDisabled={nibrsSubmittedOffenseMain === 1}
-            />
-          </div>
-          <div className="col-4 col-md-4 col-lg-2  ">
-            <label htmlFor="" className="new-label d-block m-0 text-nowrap">
-              Gang Information
-              {gangInformationStatus && (<ErrorTooltip ErrorStr={gangInformationError} />)}
-            </label>
-          </div>
-          <div className="custom-col-20">
-            <Select
-              isMulti
-              styles={
-                nibrsSubmittedOffenseMain === 1 ? LockFildscolour
-                  :
-                  loginAgencyState === "TX" ? getGangInfoStyleColor(nibrsCode) ? getGangInfoStyleColor(nibrsCode)
-                    :
-                    customStylesWithOutColor
-                    :
-                    customStylesWithOutColor
-              }
-              isDisabled={
-                nibrsSubmittedOffenseMain === 1
-                  ? true
-                  : loginAgencyState === "TX"
-                    ? isGangDisabled(nibrsCode)
-                      ? false
-                      : true
-                    : false
-              }
-              value={gangInfoVal}
-              onChange={(e) => onChangeGangInfo(e, "IsGangInfo")}
-              options={gangInfoDrpVal}
-              isClearable
-              placeholder="Select..."
-            />
-          </div>
-          {/* style={{ lineHeight: 1.1 }} */}
-          <div className="custom-col-12 " >
-            <label htmlFor="" className="new-label m-0 text-nowrap">
-              Premises Entered
-            </label>
-            <br />
-            {errors.PremisesEnteredError !== "true" ? (<div style={{ color: "red", fontSize: "13px", display: "block", display: "flex", width: "100%", justifyContent: "flex-end" }}  >{errors.PremisesEnteredError}</div>) : null}
-          </div>
-          <div className="col-7 col-md-7 col-lg-2 text-field mt-0">
-            <input
-              type="text"
-              style={{
-                backgroundColor: loginAgencyState === "TX" &&
-                  nibrsCode === "220" && (primaryLocationCode === "14" || primaryLocationCode === "19") ? value?.PremisesEntered ? "rgb(159 212 174)"
-                  :
-                  "rgb(255 202 194)"
-                  :
-                  ""
-              }}
-              name="PremisesEntered"
-              value={value?.PremisesEntered}
-              onChange={handleChange}
-              maxLength={2}
-              required
-              autoComplete="off"
-            />
-          </div>
-          <div className="col-2 " style={{ lineHeight: 1.1 }}>
-            <span data-toggle="modal" onClick={() => setOpenPage("Method Of Entry")} data-target="#ListModel"
-              className="new-link px-0"
+                  }
+                  isDisabled={nibrsSubmittedOffenseMain === 1}
+                  value={nibrsCodeDrp?.filter((obj) => obj.value === value?.NIBRSCodeId)}
+                  options={filteredOptions.length > 0 ? filteredOptions : nibrsCodeDrp}
+                  onInputChange={handleInputChange}
+                  isClearable
+                  onChange={(e) => onChangeNIBRSCode(e, "NIBRSCodeId")}
+                  placeholder="Select..."
+                />
+              </div>
+              <div className="col-4 col-md-4 col-lg-1 ">
+                <label htmlFor="" className="new-label m-0">Category</label>
+              </div>
+              <div className="col-7 col-md-7 custom-col-20 custom-col-29">
+                <Select
+                  name="CategoryId"
+                  styles={customStylesWithOutColor}
+                  value={categoryIdDrp?.filter(
+                    (obj) => obj.value === value?.CategoryId
+                  )}
+                  isClearable
+                  options={categoryIdDrp}
+                  onChange={(e) => changeDropDown(e, "CategoryId")}
+                  placeholder="Select..."
+                />
+              </div>
+              <div className="col-4 col-md-4 custom-col-12 " style={{ lineHeight: 1.1 }}>
+                <Link to={"/ListManagement?page=Charge%20Code&call=/Off-Home"} className="new-link text-nowrap">Offense Code/Name</Link>
+                <br />
+                {errors.ChargeCodeIDError !== "true" ? (
+                  <div style={{ color: "red", fontSize: "13px", display: "block", display: "flex", width: "100%", justifyContent: "flex-end" }}  >
+                    {errors.ChargeCodeIDError}
+                  </div>
+                ) : null}
+              </div>
+              <div className="col-7 col-md-7 col-lg-6 ">
+                <Select
+                  name="ChargeCodeID"
+                  // styles={colourStyles}
+                  styles={
+                    nibrsSubmittedOffenseMain === 1 ? LockFildscolour : Requiredcolour
+                  }
+                  isDisabled={nibrsSubmittedOffenseMain === 1}
+                  // styles={value?.NIBRSCodeId ? colourStyles : customStylesWithOutColor}
+                  // isDisabled={value?.NIBRSCodeId || value?.LawTitleId ? false : true}
+                  value={chargeCodeDrp?.filter(
+                    (obj) => obj.value === value?.ChargeCodeID
+                  )}
+                  isClearable
+                  options={chargeCodeDrp}
+                  onChange={(e) => onChangeDrpLawTitle(e, "ChargeCodeID")}
+                  placeholder="Select..."
+                />
+              </div>
+              <div className="col-2" style={{ lineHeight: 1.1 }}>
+                <label className="new-label m-0 text-nowrap"  >
+                  Attempted/Completed
+                </label>
+                <br />
+                {errors.AttemptRequiredError !== "true" ? (<div style={{ color: "red", fontSize: "13px", display: "block", display: "flex", width: "100%", justifyContent: "flex-end" }}  >
+                  {errors.AttemptRequiredError}
+                </div>
+                ) : null}
+              </div>
+              <div className="custom-col-20">
+                <Select
+                  onChange={(e) => changeDropDown(e, "AttemptComplete")}
+                  options={StatusOption}
+                  isClearable
+                  styles={nibrsSubmittedOffenseMain === 1 ? LockFildscolour : !value?.AttemptComplete ? nibrscolourStyles : nibrsSuccessStyles}
+                  isDisabled={nibrsSubmittedOffenseMain === 1}
+                  placeholder="Select..."
+                  value={StatusOption.filter((option) => option.value === value?.AttemptComplete)}
+                />
+              </div>
+              <div className="col-4 col-md-4 custom-col-12 " style={{ lineHeight: 1.1 }}>
+                <span style={{ lineHeight: 1.1 }} data-toggle="modal" onClick={() => setOpenPage("Location Type")} data-target="#ListModel" className="new-link d-block text-nowrap">
+                  Primary Location Type
+                  {locationTypeComplteStatus && (<ErrorTooltip ErrorStr={locationTypeComplteError} />)}
+                  {chekLocationType(nibrsCode, primaryLocationCode) && (<ErrorTooltip ErrorStr={CyberspaceLocationError} />)}
+                </span>
+                <br />
+                {errors.PrimaryLocationError !== "true" ? (<div style={{ color: "red", fontSize: "13px", display: "block", display: "flex", width: "100%", justifyContent: "flex-end" }}>{errors.PrimaryLocationError}</div>) : null}
+              </div>
+              <div className="col-7 col-md-7 col-lg-4 ">
+                <Select
+                  name="PrimaryLocationId"
+                  styles={
+                    nibrsSubmittedOffenseMain === 1 ? LockFildscolour
+                      :
+                      (panelCode === "03" || panelCode === "07" || panelCode === "06") ? Requiredcolour
+                        :
+                        loginAgencyState === "TX" ? chekLocationType(nibrsCode, primaryLocationCode) ? nibrscolourStyles
+                          :
+                          check_Valid_Nibrs_Code(nibrsCode) ? customStylesWithOutColor
+                            :
+                            Requiredcolour
+                          :
+                          Requiredcolour
+                  }
+                  isDisabled={nibrsSubmittedOffenseMain === 1}
+                  value={locationIdDrp?.filter((obj) => obj.value === value?.PrimaryLocationId)}
+                  isClearable
+                  options={locationIdDrp}
+                  onChange={(e) => changeDropDown(e, "PrimaryLocationId")}
+                  placeholder="Select..."
+                />
+              </div>
+              <div className="" style={{ flex: "0 0 21.3%", minWidth: "21.3%" }}>
+                <span data-toggle="modal" onClick={() => setOpenPage("Location Type")} data-target="#ListModel" className="new-link">Secondary Location Type </span>
+              </div>
+              <div className="col-7 col-md-7 col-lg-4  ">
+                <Select
+                  name="SecondaryLocationId"
+                  styles={customStylesWithOutColor}
+                  value={locationIdDrp?.filter(
+                    (obj) => obj.value === value?.SecondaryLocationId
+                  )}
+                  isClearable
+                  options={locationIdDrp}
+                  onChange={(e) => changeDropDown(e, "SecondaryLocationId")}
+                  placeholder="Select..."
+                  isDisabled={!value?.PrimaryLocationId}
+                />
+              </div>
+              <div className="custom-col-12">
+                <span data-toggle="modal" onClick={() => setOpenPage("Crime Left  Scene")} data-target="#ListModel" className="new-link px-0">Offender Left Scene </span>
+              </div>
+              <div className="col-7 col-md-7 col-lg-2  ">
+                <Select
+                  name="OffenderLeftSceneId"
+                  styles={customStylesWithOutColor}
+                  value={offenderLeftSceneDrp?.filter((obj) => obj.value === value?.OffenderLeftSceneId)}
+                  isClearable
+                  options={offenderLeftSceneDrp}
+                  onChange={(e) => changeDropDown(e, "OffenderLeftSceneId")}
+                  placeholder="Select..."
+                />
+              </div>
+              <div className="col-4 col-md-4 col-lg-2 ">
+                <label htmlFor="" className="new-label">
+                  Domestic violence
+                </label>
+              </div>
+              <div className="col-7 col-md-7 col-lg-2  ">
+                <Select
+                  value={StatusOptions.filter(
+                    (option) => option.value === value?.IsDomesticViolence
+                  )}
+                  // styles={customStylesWithOutColor}
+                  onChange={(e) => changeDropDowns(e, "IsDomesticViolence")}
+                  options={StatusOptions}
+                  isClearable
+                  placeholder="Select..."
+                  styles={
+                    nibrsSubmittedOffenseMain === 1
+                      ? LockFildscolour
+                      : customStylesWithOutColor
+                  }
+                  isDisabled={nibrsSubmittedOffenseMain === 1}
+                />
+              </div>
+              <div className="col-4 col-md-4 col-lg-2  ">
+                <label htmlFor="" className="new-label d-block m-0 text-nowrap">
+                  Gang Information
+                  {gangInformationStatus && (<ErrorTooltip ErrorStr={gangInformationError} />)}
+                </label>
+              </div>
+              <div className="custom-col-20">
+                <Select
+                  isMulti
+                  styles={
+                    nibrsSubmittedOffenseMain === 1 ? LockFildscolour
+                      :
+                      loginAgencyState === "TX" ? getGangInfoStyleColor(nibrsCode) ? getGangInfoStyleColor(nibrsCode)
+                        :
+                        customStylesWithOutColor
+                        :
+                        customStylesWithOutColor
+                  }
+                  isDisabled={
+                    nibrsSubmittedOffenseMain === 1
+                      ? true
+                      : loginAgencyState === "TX"
+                        ? isGangDisabled(nibrsCode)
+                          ? false
+                          : true
+                        : false
+                  }
+                  value={gangInfoVal}
+                  onChange={(e) => onChangeGangInfo(e, "IsGangInfo")}
+                  options={gangInfoDrpVal}
+                  isClearable
+                  placeholder="Select..."
+                />
+              </div>
+              {/* style={{ lineHeight: 1.1 }} */}
+              <div className="custom-col-12 " >
+                <label htmlFor="" className="new-label m-0 text-nowrap">
+                  Premises Entered
+                </label>
+                <br />
+                {errors.PremisesEnteredError !== "true" ? (<div style={{ color: "red", fontSize: "13px", display: "block", display: "flex", width: "100%", justifyContent: "flex-end" }}  >{errors.PremisesEnteredError}</div>) : null}
+              </div>
+              <div className="col-7 col-md-7 col-lg-2 text-field mt-0">
+                <input
+                  type="text"
+                  style={{
+                    backgroundColor: loginAgencyState === "TX" &&
+                      nibrsCode === "220" && (primaryLocationCode === "14" || primaryLocationCode === "19") ? value?.PremisesEntered ? "rgb(159 212 174)"
+                      :
+                      "rgb(255 202 194)"
+                      :
+                      ""
+                  }}
+                  name="PremisesEntered"
+                  value={value?.PremisesEntered}
+                  onChange={handleChange}
+                  maxLength={2}
+                  required
+                  autoComplete="off"
+                />
+              </div>
+              <div className="col-2 " style={{ lineHeight: 1.1 }}>
+                <span data-toggle="modal" onClick={() => setOpenPage("Method Of Entry")} data-target="#ListModel"
+                  className="new-link px-0"
 
-            >
-              Method Of Entry
-              {methodOfEntryStatus ? (<ErrorTooltip ErrorStr={methodOfEntryError} />) : (<></>)}
-            </span>
-            <br />
-            {errors.MethodEntryError !== "true" ? (<div style={{ color: "red", fontSize: "13px", display: "block", display: "flex", width: "100%", justifyContent: "flex-end" }}  >
-              {errors.MethodEntryError}
-            </div>
-            ) : null}
-          </div>
-          <div className="col-7 col-md-7 col-lg-2 ">
-            <Select
-              styles={
-                nibrsSubmittedOffenseMain === 1 ?
-                  LockFildscolour
-                  :
-                  loginAgencyState === "TX" ? getMethodOfEntryStyleColor(nibrsCode) ? getMethodOfEntryStyleColor(nibrsCode) : customStylesWithOutColor : customStylesWithOutColor
+                >
+                  Method Of Entry
+                  {methodOfEntryStatus ? (<ErrorTooltip ErrorStr={methodOfEntryError} />) : (<></>)}
+                </span>
+                <br />
+                {errors.MethodEntryError !== "true" ? (<div style={{ color: "red", fontSize: "13px", display: "block", display: "flex", width: "100%", justifyContent: "flex-end" }}  >
+                  {errors.MethodEntryError}
+                </div>
+                ) : null}
+              </div>
+              <div className="col-7 col-md-7 col-lg-2 ">
+                <Select
+                  styles={
+                    nibrsSubmittedOffenseMain === 1 ?
+                      LockFildscolour
+                      :
+                      loginAgencyState === "TX" ? getMethodOfEntryStyleColor(nibrsCode) ? getMethodOfEntryStyleColor(nibrsCode) : customStylesWithOutColor : customStylesWithOutColor
+                  }
+                  isDisabled={nibrsSubmittedOffenseMain === 1 ? true : loginAgencyState === "TX" ? nibrsCode === "220" ? false : true : false}
+                  name="CrimeMethodOfEntryID"
+                  menuPlacement="top"
+                  isClearable
+                  options={methodEntryDrp}
+                  value={methodEntryDrp?.filter((obj) => obj.value === value?.CrimeMethodOfEntryID)}
+                  onChange={(e) => changeDropDown(e, "CrimeMethodOfEntryID")}
+                  placeholder="Select..."
+                />
+
+
+
+
+              </div>
+
+
+              <div className="col-3 col-md-3 col-lg-2 ">
+                <label htmlFor="" className="new-label px-0 mb-0">
+                  Offense  Date/Time{errors.OffenseDttmError !== 'true' ? (
+                    <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.OffenseDttmError}</p>
+                  ) : null}
+                </label>
+              </div>
+              <div className="custom-col-20">
+                <DatePicker
+                  id='OffenseDateTime'
+                  name='OffenseDateTime'
+                  ref={startRef}
+
+
+                  onKeyDown={(e) => {
+                    if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                      e?.preventDefault();
+                    } else {
+                      onKeyDown(e);
+                    }
+                  }}
+                  dateFormat="MM/dd/yyyy HH:mm"
+
+                  isClearable={false}
+                  onChange={(date) => {
+                    !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
+                    // setIncidentReportedDate(date ? getShowingMonthDateYear(date) : null)
+                    if (date > new Date(datezone)) {
+                      date = new Date(datezone);
+                    }
+                    if (date >= new Date()) {
+                      setValue({ ...value, ['OffenseDateTime']: new Date() ? getShowingDateText(new Date(date)) : null })
+                    } else if (date <= new Date(incReportedDate)) {
+                      setValue({ ...value, ['OffenseDateTime']: new Date() ? getShowingDateText(new Date(date)) : null })
+                    } else {
+                      setValue({ ...value, ['OffenseDateTime']: date ? getShowingDateText(date) : null })
+                    }
+                  }}
+                  selected={value?.OffenseDateTime && new Date(value?.OffenseDateTime)}
+
+                  // disabled={nibrsSubmittedPropertyMain === 1}
+                  className={'requiredColor'}
+                  autoComplete="Off"
+                  placeholderText={'Select...'}
+                  timeInputLabel
+                  showTimeSelect
+                  timeIntervals={1}
+                  timeCaption="Time"
+                  showYearDropdown
+                  showMonthDropdown
+                  dropdownMode="select"
+                  minDate={new Date(incReportedDate)}
+                  maxDate={new Date(datezone)}
+                  // maxDate={new Date(datezone)}
+                  filterTime={(date) => filterPassedTimeZonesProperty(date, incReportedDate, datezone)}
+                  timeFormat="HH:mm "
+                  is24Hour
+
+                />
+              </div>
+
+
+              {nibrsCode === "220" || nibrsCode === "210" || nibrsCode === "120" || nibrsCode === "23D" || nibrsCode === "23F" || nibrsCode === "23H" || nibrsCode === "240" || nibrsCode === "26A" || nibrsCode === "26A" || nibrsCode === "23D" || nibrsCode === "26C" || nibrsCode === "26E" || nibrsCode === "26F" || nibrsCode === "26G" || nibrsCode === "270" || nibrsCode === "510" ?
+                <>
+                  <div className="custom-col-12 " style={{ display: "flex", flexDirection: "column" }}>
+                    <div>
+                      <span className="new-label">
+                        Cargo Theft
+                        {errors.CargoTheftError !== "true" ? (
+                          <p style={{ color: "red", fontSize: "11px", margin: "0px", padding: "0px" }}>
+                            {errors.CargoTheftError}
+                          </p>
+                        ) : null}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="col-7 col-md-7 col-lg-2">
+                    <Select
+                      name="IsCargoTheftInvolved"
+                      value={YesNoArr?.filter((obj) => obj.value === value?.IsCargoTheftInvolved)}
+                      options={YesNoArr}
+                      menuPlacement="bottom"
+                      onChange={(e) => OnChangeCargoTheft(e, "IsCargoTheftInvolved")}
+                      isClearable={value?.IsCargoTheftInvolved ? true : false}
+                      placeholder="Select..."
+                      styles={Requiredcolour}
+                    />
+                  </div>
+                </>
+                :
+                <></>
               }
-              isDisabled={nibrsSubmittedOffenseMain === 1 ? true : loginAgencyState === "TX" ? nibrsCode === "220" ? false : true : false}
-              name="CrimeMethodOfEntryID"
-              menuPlacement="top"
-              isClearable
-              options={methodEntryDrp}
-              value={methodEntryDrp?.filter((obj) => obj.value === value?.CrimeMethodOfEntryID)}
-              onChange={(e) => changeDropDown(e, "CrimeMethodOfEntryID")}
-              placeholder="Select..."
-            />
-          </div>
 
+              <div className="col-1"></div>
 
-          {nibrsCode === "220" || nibrsCode === "210" || nibrsCode === "120" || nibrsCode === "23D" || nibrsCode === "23F" || nibrsCode === "23H" || nibrsCode === "240" || nibrsCode === "26A" || nibrsCode === "26A" || nibrsCode === "23D" || nibrsCode === "26C" || nibrsCode === "26E" || nibrsCode === "26F" || nibrsCode === "26G" || nibrsCode === "270" || nibrsCode === "510" ?
-            <>
-              <div className="col-2 col-md-2 col-lg-2" style={{ display: "flex", flexDirection: "column" }}>
-                <div>
-                  <span className="new-label">
-                    Cargo Theft
-                    {errors.CargoTheftError !== "true" ? (
-                      <p style={{ color: "red", fontSize: "11px", margin: "0px", padding: "0px" }}>
-                        {errors.CargoTheftError}
-                      </p>
-                    ) : null}
-                  </span>
+              <div className="col-12">
+                <div className="row align-items-center" style={{ rowGap: "8px" }}>
+                  <div className="col-4 col-md-4 custom-col-12  text-right">
+                    <span data-toggle="modal" onClick={() => { setOpenPage('Offender Suspected of Using') }} data-target="#ListModel" className='new-link px-0 text-nowrap'>
+                      Offender suspected of using {offenderUsingStatus && (<ErrorTooltip ErrorStr={offenderUsingError} />)}
+                      {loginAgencyState === 'TX' ? getCheckNotApplicable() ? <ErrorTooltip ErrorStr={NotApplicableError} /> : <> </> : <></>}
+                    </span>
+
+                    {errors.OffenderusingError !== "true" && (
+                      <div className="text-end"> <span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block", }}>{errors.OffenderusingError}</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="col-9 col-md-9 col-lg-4">
+                    <SelectBox
+                      className="basic-multi-select"
+                      name='offenderusing'
+                      options={filteredOptionsoffender}
+                      isClearable={false}
+                      isMulti
+                      isDisabled={nibrsSubmittedOffenseMain === 1}
+                      styles={loginAgencyState == 'TX' ? nibrsCode === "999" ? customStylesWithOutColor : getCheckNotApplicable() ? Nibrs_ErrorStyle : MultiSelectRequredColor : MultiSelectRequredColor}
+                      // styles={
+                      //   (PanelCode === '03' || PanelCode === '06' || PanelCode === '08') ? customStylesWithColor :
+                      //     loginAgencyState == 'TX' ? getCheckNotApplicable() ? Nibrs_ErrorStyle : customStylesWithOutColor : customStylesWithOutColor
+                      // }
+                      closeMenuOnSelect={false}
+                      hideSelectedOptions={true}
+                      components={{ MultiValue, }}
+                      onChange={(e) => OffenderUsechange(e)}
+                      value={filterArray(crimeOffenderUse, 'label')}
+                      placeholder='Select Offender Using From List'
+                    />
+
+                  </div>
+                  <div className=" text-right" style={{ flex: "0 0 21.3%", minWidth: "21.3%" }}>
+                    <span data-toggle="modal" data-target="#ListModel" className='new-link px-0 text-right '>
+                      <span onClick={() => { setOpenPage('Bias Motivation') }}>Bias motivation (Select Upto 5)</span>
+                      {biasStatus && (<ErrorTooltip ErrorStr={biasStatusError} />)}
+                      {
+                        loginAgencyState === 'TX' ?
+                          nibrsCode === '09C' && !bias09CCodeStatus ? <ErrorTooltip ErrorStr={Bias_90C_Error} />
+                            :
+                            check_Valid_Bias_Code(BiasSelectCodeArray) ? <ErrorTooltip ErrorStr={ValidateBiasCodeError} />
+                              :
+                              <></>
+                          :
+                          <></>
+                      }
+                    </span>
+                    {errors.CrimeBiasCategoryError !== "true" ? (<div className="text-end"><span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block" }}>{errors.CrimeBiasCategoryError}</span></div>) : null}
+                  </div>
+                  <div className="col-9 col-md-9 col-lg-4 ">
+                    <SelectBox
+                      className="basic-multi-select"
+                      name='bias'
+                      options={crimeBiasCategoryDrp?.length > 0 ? getBiasDrpData(crimeBiasCategoryDrp) : []}
+                      isClearable={false}
+                      styles={
+                        loginAgencyState === 'TX' ? nibrsCode === "999" ? customStylesWithOutColor :
+                          nibrsCode === '09C' && !bias09CCodeStatus ? ErrorStyle_NIBRS_09C(nibrsCode)
+                            :
+                            check_Valid_Bias_Code(BiasSelectCodeArray) ? Nibrs_ErrorStyle : MultiSelectRequredColor
+                          :
+                          MultiSelectRequredColor
+                      }
+                      // styles={
+                      //   loginAgencyState === 'TX' ?
+                      //     nibrsCode === '09C' && !bias09CCodeStatus ? ErrorStyle_NIBRS_09C(nibrsCode)
+                      //       :
+                      //       check_Valid_Bias_Code(BiasSelectCodeArray) ? Nibrs_ErrorStyle : customStylesWithOutColor
+                      //     :
+                      //     customStylesWithOutColor
+                      // }
+                      isMulti
+                      closeMenuOnSelect={false}
+                      hideSelectedOptions={true}
+                      components={{ MultiValue, }}
+                      onChange={(e) => CrimeBiasCategorychange(e)}
+                      value={filterArray(crimeBiasCategory, 'label')}
+                      placeholder='Select Bias From List'
+                      isDisabled={nibrsSubmittedOffenseMain === 1}
+                    />
+
+                  </div>
+                  <div className="col-4 col-md-4 custom-col-12  text-right">
+                    <span data-toggle="modal" data-target="#ListModel" className='new-link px-0 text-nowrap'>
+                      <span onClick={() => { setOpenPage('Weapon Type') }}>Weapon Used (Select Upto 3)</span>
+                      <br />
+                      <span className='float-right '>
+                        {weaponTypeStatus && (<ErrorTooltip ErrorStr={weaponTypeError} />)}
+                        {
+                          loginAgencyState === 'TX' ?
+                            checkWeaponTypeValidate(nibrsCode, WeaponSelectCodeArray, 'ToolTip', loginAgencyState)
+                            :
+                            <></>
+                        }
+                      </span>
+                    </span>
+                    {errors.WeaponTypeError !== "true" ? (<div className="text-end"><span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block" }}>{errors.WeaponTypeError}</span></div>) : null}
+                  </div>
+                  <div className="col-9 col-md-9 col-lg-4 ">
+                    <SelectBox
+                      className="basic-multi-select"
+                      name='WeaponTypeID'
+                      styles={
+                        (PanelCode === '03' || PanelCode === '06' || PanelCode === '08') ? MultiSelectRequredColor :
+                          loginAgencyState === 'TX'
+                            ?
+                            checkWeaponTypeValidate(nibrsCode, WeaponSelectCodeArray, 'Color', loginAgencyState) ? checkWeaponTypeValidate(nibrsCode, WeaponSelectCodeArray, 'Color', loginAgencyState)
+                              :
+                              customStylesWithOutMiltiColor
+                            :
+                            customStylesWithOutMiltiColor
+                      }
+                      isClearable={false}
+                      options={weaponDrp?.length > 0 ? getWeaponDrpData(weaponDrp, nibrsCode, weaponID) : []}
+                      hideSelectedOptions={true}
+                      closeMenuOnSelect={false}
+                      components={{ MultiValue, }}
+                      onChange={(e) => Weaponchange(e)}
+                      value={filterArray(weaponID, 'label')}
+                      placeholder='Select Weapon Used From List'
+                      isMulti
+                      menuPlacement='top'
+                      isDisabled={nibrsSubmittedOffenseMain === 1}
+                    />
+                  </div>
+                  <div className="text-right mt-2" style={{ flex: "0 0 21.3%", minWidth: "21.3%" }}>
+                    <span data-toggle="modal" data-target="#ListModel" className='new-link px-0'>
+                      <span onClick={() => { setOpenPage('Criminal Activity') }}>Criminal Activity</span>
+                      <br />
+                      <span className='float-right '>
+                        {criminalActivityStatus && (<ErrorTooltip ErrorStr={criminalActivityError} />)}
+                        {
+                          loginAgencyState === 'TX' ?
+                            checkCrimeActiSuitableCode(nibrsCode, crimeActSelectedCodeArray, loginAgencyState, 'tooltip') ? checkCrimeActiSuitableCode(nibrsCode, crimeActSelectedCodeArray, loginAgencyState, 'tooltip') : <></>
+                            :
+                            <></>
+                        }
+                      </span>
+                      {errors.CriminalActivityError !== "true" ? (<div className="text-end"><span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block" }}>{errors.CriminalActivityError}</span></div>) : null}
+                    </span>
+                  </div>
+                  <div className="col-9 col-md-9 col-lg-4">
+                    <SelectBox
+                      className="basic-multi-select"
+
+                      // styles={customStylesWithOutMiltiColor}
+
+                      styles={
+                        loginAgencyState === 'TX'
+                          ?
+                          checkCrimeActiSuitableCode(nibrsCode, crimeActSelectedCodeArray, loginAgencyState, 'Color') ? checkCrimeActiSuitableCode(nibrsCode, crimeActSelectedCodeArray, loginAgencyState, 'Color')
+                            :
+                            checkCriminalActivityIsRequire(nibrsCode, loginAgencyState) ? ErrorStyle_CriminalActivity(false)
+                              :
+                              customStylesWithOutMiltiColor
+                          :
+                          customStylesWithOutMiltiColor
+                      }
+                      //  isDisabled={nibrsSubmittedOffenseMain === 1}
+                      name='CrimeActivity'
+                      options={crimeActivityDrp?.length > 0 ? get_CriminalActivity_DrpData(crimeActivityDrp) : []}
+
+                      isClearable={false}
+                      isMulti
+                      closeMenuOnSelect={false}
+                      hideSelectedOptions={true}
+                      components={{ MultiValue, }}
+                      onChange={(e) => CrimeActivitychange(e)}
+
+                      value={filterArray(crimeActivity, 'label')}
+                      placeholder='Select Criminal Activity From List'
+                    />
+                  </div>
+                  <div className="col-4 col-md-4 custom-col-12 text-right">
+                    <label htmlFor="" className="new-label m-0 mb-0 text-nowrap">
+                      Comments
+                      {errors.CommentsError !== "true" ? (<span style={{ color: "red", fontSize: "13px", margin: "0px", padding: "0px", }}  >{errors.CommentsError}</span>) : null}
+                    </label>
+                  </div>
+                  <div className="col-9 col-md-9 col-lg-4 text-field mt-0">
+                    <textarea
+                      name="Comments"
+                      className={`form-control ${loginAgencyState === "TX" && nibrsCode === "11B" ? "requiredColor" : ""} `}
+                      value={value.Comments}
+                      onChange={handleChange}
+                      id=""
+                      cols="30"
+                      rows="2"
+                      style={{ resize: "none" }}
+                    ></textarea>
+                  </div>
                 </div>
               </div>
 
-              <div className="custom-col-20">
-                <Select
-                  name="IsCargoTheftInvolved"
-                  value={YesNoArr?.filter((obj) => obj.value === value?.IsCargoTheftInvolved)}
-                  options={YesNoArr}
-                  menuPlacement="bottom"
-                  onChange={(e) => OnChangeCargoTheft(e, "IsCargoTheftInvolved")}
-                  isClearable={value?.IsCargoTheftInvolved ? true : false}
-                  placeholder="Select..."
-                  styles={Requiredcolour}
-                />
-              </div>
-            </>
-            :
-            <></>
-          }
-
-          <div className="col-1"></div>
-          <div className="col-12 ">
-            <div className="row align-items-center" style={{ rowGap: "8px" }}>
-              <div className="custom-col-12 ">
-                <label htmlFor="" className="new-label m-0 mb-0 text-nowrap">
-                  Comments
-                  {errors.CommentsError !== "true" ? (<span style={{ color: "red", fontSize: "13px", margin: "0px", padding: "0px", }}  >{errors.CommentsError}</span>) : null}
-                </label>
-              </div>
-              <div className="col-10 col-md-10 col-lg-6 text-field mt-0">
-                <textarea
-                  name="Comments"
-                  className={`form-control ${loginAgencyState === "TX" && nibrsCode === "11B" ? "requiredColor" : ""} `}
-                  value={value.Comments}
-                  onChange={handleChange}
-                  id=""
-                  cols="30"
-                  rows="2"
-                  style={{ resize: "none" }}
-                ></textarea>
+              <div className="col-12 mt-1 ">
+                <div className="row align-items-center" style={{ rowGap: "8px" }}>
+                  <div className="custom-col-12"></div>
+                  <div className="col-2 col-md-2 col-lg-3 ml-4">
+                    <input className="form-check-input mr-1" disabled={true} type="checkbox" name="IsCrimeAgainstPerson" checked={isCrimeAgainstPerson} value={isCrimeAgainstPerson} />
+                    <label htmlFor="">Is Crime Against Person</label>
+                  </div>
+                  <div className="col-2 col-md-2 col-lg-3 ">
+                    <input className="form-check-input mr-1" disabled={true} type="checkbox" name="IsCrimeAgainstProperty" checked={isCrimeAgainstProperty} value={isCrimeAgainstProperty} />
+                    <label htmlFor="">Is Crime Against Property</label>
+                  </div>
+                  <div className="col-2 col-md-2 col-lg-3 ">
+                    <input className="form-check-input mr-1" disabled={true} type="checkbox" name="IsCrimeAgainstSociety" checked={isCrimeAgainstSociety} value={isCrimeAgainstSociety} />
+                    <label htmlFor="">Is Crime Against Society</label>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          <div className="col-12 mt-1 ">
-            <div className="row align-items-center" style={{ rowGap: "8px" }}>
-              <div className="custom-col-12"></div>
-              <div className="col-2 col-md-2 col-lg-3 ml-4">
-                <input className="form-check-input mr-1" disabled={true} type="checkbox" name="IsCrimeAgainstPerson" checked={isCrimeAgainstPerson} value={isCrimeAgainstPerson} />
-                <label htmlFor="">Is Crime Against Person</label>
-              </div>
-              <div className="col-2 col-md-2 col-lg-3 ">
-                <input className="form-check-input mr-1" disabled={true} type="checkbox" name="IsCrimeAgainstProperty" checked={isCrimeAgainstProperty} value={isCrimeAgainstProperty} />
-                <label htmlFor="">Is Crime Against Property</label>
-              </div>
-              <div className="col-2 col-md-2 col-lg-3 ">
-                <input className="form-check-input mr-1" disabled={true} type="checkbox" name="IsCrimeAgainstSociety" checked={isCrimeAgainstSociety} value={isCrimeAgainstSociety} />
-                <label htmlFor="">Is Crime Against Society</label>
-              </div>
-            </div>
+
+
+
+          <div className="text-center p-1">
+            {
+              isNibrs999 || nibrsCode === "999" ? null : (
+                <div
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                  style={{
+                    border: '1px solid red', backgroundColor: '#ffe6e6', color: isHovered ? 'blue' : 'red',
+                    padding: '3px', borderRadius: '4px', display: 'inline-block',
+                    transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
+                  }}
+                >
+                  Each Offense must have at least one victim Connected
+                </div>
+              )
+            }
           </div>
-        </div>
-      </div>
 
-      <div className="text-center p-1">
-        {
-          isNibrs999 || nibrsCode === "999" ? null : (
-            <div
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-              style={{
-                border: '1px solid red', backgroundColor: '#ffe6e6', color: isHovered ? 'blue' : 'red',
-                padding: '3px', borderRadius: '4px', display: 'inline-block',
-                transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
-              }}
-            >
-              Each Offense must have at least one victim Connected
-            </div>
-          )
-        }
-      </div>
-
-      <div className="col-12 text-right mb-1 mt-1 field-button  d-flex justify-content-between">
-        <div>
-          {offenceFillterData?.length > 0 && (
+          <div className="col-12 text-right mb-1 mt-1 field-button  d-flex justify-content-between">
+            <div>
+              {/* {offenceFillterData?.length > 0 && (
             <button
               type="button"
               onClick={() => nibrsValidateOffense(mainIncidentID, IncNo)}
@@ -1766,41 +2620,41 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
             >
               Validate TIBRS Offense
             </button>
-          )}
-        </div>
-        <div>
-          {OffId ? (
-            <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => setshowOffPage("CrimeInformation")}>Crime Information</button>
-          ) : (
-            <></>
-          )}
-          <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => setStatusFalse()}>New</button>
-          {OffId && (OffSta === true || OffSta === "true") ? (
-            effectiveScreenPermission ? (
-              effectiveScreenPermission[0]?.Changeok ? (
-                <button type="button" disabled={!statesChangeStatus} onClick={() => check_Validation_Error()} className="btn btn-sm btn-success mr-4">Update</button>
+          )} */}
+            </div>
+            <div>
+              {OffId ? (
+                <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => setshowOffPage("CrimeInformation")}>Crime Information</button>
               ) : (
                 <></>
+              )}
+              {/* <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => setStatusFalse()}>New</button> */}
+              {OffId && (OffSta === true || OffSta === "true") ? (
+                effectiveScreenPermission ? (
+                  effectiveScreenPermission[0]?.Changeok ? (
+                    <button type="button" disabled={!statesChangeStatus} onClick={() => check_Validation_Error()} className="btn btn-sm btn-success mr-4">Update</button>
+                  ) : (
+                    <></>
+                  )
+                ) : (
+                  <button type="button" disabled={!statesChangeStatus} onClick={() => check_Validation_Error()} className="btn btn-sm btn-success mr-4">Update</button>
+                )
               )
-            ) : (
-              <button type="button" disabled={!statesChangeStatus} onClick={() => check_Validation_Error()} className="btn btn-sm btn-success mr-4">Update</button>
-            )
-          )
-            :
-            effectiveScreenPermission ? (
-              effectiveScreenPermission[0]?.AddOK ? (
-                <button type="button" onClick={() => check_Validation_Error()} className="btn btn-sm btn-success mr-4">Save</button>
-              ) : (
-                <></>
-              )
-            ) : (
-              <button type="button" onClick={() => check_Validation_Error()} className="btn btn-sm btn-success mr-4">Save</button>
-            )
-          }
-        </div>
-      </div>
-      <div className="px-0 mt-2">
-        <DataTable
+                :
+                effectiveScreenPermission ? (
+                  effectiveScreenPermission[0]?.AddOK ? (
+                    <button type="button" onClick={() => check_Validation_Error()} className="btn btn-sm btn-success mr-4">Save</button>
+                  ) : (
+                    <></>
+                  )
+                ) : (
+                  <button type="button" onClick={() => check_Validation_Error()} className="btn btn-sm btn-success mr-4">Save</button>
+                )
+              }
+            </div>
+          </div>
+          <div className="px-0 mt-2">
+            {/* <DataTable
           showHeader={true}
           persistTableHead={true}
           dense
@@ -1822,23 +2676,26 @@ const Home = ({ status, setStatus, setOffenceID, get_List, nibrsCode, setNibrsCo
           paginationPerPage={"100"}
           paginationRowsPerPageOptions={[100, 150, 200, 500]}
           showPaginationBottom={100}
-        />
-      </div>
-      {/* <IdentifyFieldColor /> */}
-      <ChangesModal func={check_Validation_Error} setToReset={resetEditVal} />
-      <DeletePopUpModal func={DeleteOffence} />
-      <ListModal {...{ openPage, setOpenPage }} />
-      <NirbsErrorShowModal
-        ErrorText={nibrsOffErrStr}
-        nibErrModalStatus={nibrsErrModalStatus}
-        setNibrsErrModalStatus={setNibrsErrModalStatus}
-        nibrsValidateloder={nibrsValidateloder}
-      />
-      {clickNibloder && (
-        <div className="loader-overlay">
-          <Loader />
-        </div>
+        /> */}
+          </div>
+          {/* <IdentifyFieldColor /> */}
+          <ChangesModal func={check_Validation_Error} setToReset={resetEditVal} />
+          {/* <DeletePopUpModal func={DeleteOffence} /> */}
+          <ListModal {...{ openPage, setOpenPage }} />
+          <NirbsErrorShowModal
+            ErrorText={nibrsOffErrStr}
+            nibErrModalStatus={nibrsErrModalStatus}
+            setNibrsErrModalStatus={setNibrsErrModalStatus}
+            nibrsValidateloder={nibrsValidateloder}
+          />
+          {clickNibloder && (
+            <div className="loader-overlay">
+              <Loader />
+            </div>
+          )}
+        </>
       )}
+
     </>
   );
 };

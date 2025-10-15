@@ -59,7 +59,10 @@ const Otp = ({ username, otp, loginResData, setOtp, timerOn, type, isMDT }) => {
         e.preventDefault()
         // old code ----------->  Don't Remove <-------------------------
         if (otp === userOtp && expireOtp && type === 'login') {
-            if (loginResData?.Leftdays <= loginResData?.PasswordMessageDays) {
+            console.log("🚀 ~ optVerfication ~ loginResData:", loginResData);
+            const leftdays = loginResData?.Leftdays ? parseInt(loginResData?.Leftdays) : 0;
+            const PasswordMessageDays = loginResData?.PasswordMessageDays ? parseInt(loginResData?.PasswordMessageDays) : 0;
+            if (leftdays <= PasswordMessageDays) {
                 setOpenModal(true);
             } else {
                 login_User()

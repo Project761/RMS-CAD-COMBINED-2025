@@ -502,7 +502,7 @@ const ChainOfCustodyReport = () => {
                 <div className="col-12 col-md-12 col-lg-12  " >
                   <fieldset>
                     <legend>Chain Of Custody Report</legend>
-                    <div className="form-check ml-2 col-9 col-md-9 col-lg-12 mt-1 pt-1 text-right">
+                    <div className="form-check   col-9 col-md-9 col-lg-11 mt-1 pt-1 mr-2 text-right">
                       <input
                         type="checkbox"
                         className="form-check-input"
@@ -514,42 +514,42 @@ const ChainOfCustodyReport = () => {
                         Print Confidential Report
                       </label>
                     </div>
-                    <div className="row mt-2">
-                      <div className="col-3 col-md-3 col-lg-2 mt-2 ">
-                        <label htmlFor="" className='new-label'>Property # From</label>
+                    <div className="row mt-2 align-items-center" style={{rowGap:"8px"}}>
+                      <div className="col-3 col-md-3 col-lg-2">
+                        <label htmlFor="" className='new-label mb-0'>Property # From</label>
                       </div>
-                      <div className="col-3 col-md-3 col-lg-3 mt-1 text-field">
+                      <div className="col-3 col-md-3 col-lg-3 mt-0 text-field">
                         <input type="text" name='PropertyNumber' id='PropertyNumber' style={{ textTransform: "uppercase" }} value={value?.PropertyNumber} maxLength={11} onChange={propertyhandle} className='' />
                       </div>
-                      <div className="col-3 col-md-3 col-lg-3 mt-2 ">
-                        <label htmlFor="" className='new-label'>Property # To</label>
+                      <div className="col-3 col-md-3 col-lg-3">
+                        <label htmlFor="" className='new-label mb-0'>Property # To</label>
                       </div>
-                      <div className="col-3 col-md-3 col-lg-3 mt-1 text-field">
+                      <div className="col-3 col-md-3 col-lg-3 mt-0 text-field">
                         <input type="text" name='PropertyNumberTo' style={{ textTransform: "uppercase" }} id='PropertyNumberTo' value={value?.PropertyNumberTo} maxLength={11} onChange={propertyhandle}
                           disabled={!value?.PropertyNumber?.trim()}
                           className={!value?.PropertyNumber?.trim() ? 'readonlyColor' : ''}
                         />
                       </div>
-                      <div className="col-3 col-md-3 col-lg-2 mt-2 ">
-                        <label htmlFor="" className='new-label'>Incident # From</label>
+                      <div className="col-3 col-md-3 col-lg-2">
+                        <label htmlFor="" className='new-label mb-0'>Incident # From</label>
                       </div>
-                      <div className="col-3 col-md-3 col-lg-3 mt-1 text-field">
+                      <div className="col-3 col-md-3 col-lg-3 mt-0 text-field">
                         <input type="text" name='IncidentNumber' id='IncidentNumber' value={value.IncidentNumber} onChange={handleChange} className='' />
                       </div>
-                      <div className="col-3 col-md-3 col-lg-3 mt-2 ">
-                        <label htmlFor="" className='new-label'>Incident # To</label>
+                      <div className="col-3 col-md-3 col-lg-3">
+                        <label htmlFor="" className='new-label mb-0'>Incident # To</label>
                       </div>
-                      <div className="col-3 col-md-3 col-lg-3 mt-1 text-field">
+                      <div className="col-3 col-md-3 col-lg-3 mt-0 text-field">
                         <input type="text" name='IncidentNumberTo'
                           // disabled={!value.IncidentNumber}
                           disabled={!value?.IncidentNumber?.trim()}
                           className={!value?.IncidentNumber?.trim() ? 'readonlyColor' : ''}
                           id='IncidentNumberTo' value={value.IncidentNumberTo} onChange={handleChange} />
                       </div>
-                      <div className="col-3 col-md-3 col-lg-2 mt-2 ">
-                        <label htmlFor="" className='new-label'>Reported From Date</label>
+                      <div className="col-3 col-md-3 col-lg-2">
+                        <label htmlFor="" className='new-label mb-0'>Reported From Date</label>
                       </div>
-                      <div className="col-3 col-md-3 col-lg-3 mb-1">
+                      <div className="col-3 col-md-3 col-lg-3 ">
                         <DatePicker
                           name='ReportedDate'
                           id='ReportedDate'
@@ -574,10 +574,10 @@ const ChainOfCustodyReport = () => {
                           placeholderText='Select...'
                         />
                       </div>
-                      <div className="col-3 col-md-3 col-lg-3 mt-2 ">
-                        <label htmlFor="" className='new-label'>Reported To Date</label>
+                      <div className="col-3 col-md-3 col-lg-3">
+                        <label htmlFor="" className='new-label mb-0'>Reported To Date</label>
                       </div>
-                      <div className="col-3 col-md-3 col-lg-3 mb-1">
+                      <div className="col-3 col-md-3 col-lg-3">
                         <DatePicker
                           name='ReportedDateTo'
                           id='ReportedDateTo'
@@ -605,8 +605,8 @@ const ChainOfCustodyReport = () => {
                           className={!value?.ReportedDate && 'readonlyColor'}
                         />
                       </div>
-                      <div className="col-3 col-md-3 col-lg-2 mt-2 ">
-                        <label htmlFor="" className='new-label'>Occurred From Date</label>
+                      <div className="col-3 col-md-3 col-lg-2">
+                        <label htmlFor="" className='new-label mb-0'>Occurred From Date</label>
                       </div>
                       <div className="col-3 col-md-3 col-lg-3">
                         <DatePicker
@@ -639,8 +639,8 @@ const ChainOfCustodyReport = () => {
                           placeholderText='Select...'
                         />
                       </div>
-                      <div className="col-3 col-md-3 col-lg-3 mt-2 ">
-                        <label htmlFor="" className='new-label'>Occurred To Date</label>
+                      <div className="col-3 col-md-3 col-lg-3">
+                        <label htmlFor="" className='new-label mb-0'>Occurred To Date</label>
                       </div>
                       <div className="col-3 col-md-3 col-lg-3">
                         <DatePicker
@@ -669,10 +669,10 @@ const ChainOfCustodyReport = () => {
                           className={!value?.OccurredFrom && 'readonlyColor'}
                         />
                       </div>
-                      <div className="col-3 col-md-3 col-lg-2 mt-2 ">
-                        <label htmlFor="" className='new-label'>Type</label>
+                      <div className="col-3 col-md-3 col-lg-2">
+                        <label htmlFor="" className='new-label mb-0'>Type</label>
                       </div>
-                      <div className="col-3 col-md-3 col-lg-3 mt-1" >
+                      <div className="col-3 col-md-3 col-lg-3" >
                         <Select
                           styles={customStylesWithOutColor}
                           name='PropertyTypeID'
@@ -683,10 +683,10 @@ const ChainOfCustodyReport = () => {
                           placeholder="Select..."
                         />
                       </div>
-                      <div className="col-3 col-md-3 col-lg-3 mt-2 ">
-                        <label htmlFor="" className='new-label'>Category</label>
+                      <div className="col-3 col-md-3 col-lg-3">
+                        <label htmlFor="" className='new-label mb-0'>Category</label>
                       </div>
-                      <div className="col-3 col-md-3 col-lg-3 mt-1" >
+                      <div className="col-3 col-md-3 col-lg-3" >
                         <Select
                           name='CategoryID'
                           id='CategoryID'

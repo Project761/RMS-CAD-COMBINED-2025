@@ -103,6 +103,7 @@ const ReportModule = (props) => {
     const [redactedComment, setRedactedComment] = useState("");
     const [checkWebWorkFlowStatus, setcheckWebWorkFlowStatus] = useState(false);
     const [IsSelfApproved, setIsSelfApproved] = useState(false);
+    const [skipApproverAuthor , setskipApproverAuthor] = useState(false);
     const detectedWordsRef = useRef([]);
 
     const [value, setValue] = useState({
@@ -187,6 +188,7 @@ const ReportModule = (props) => {
             }
         })
     }
+
     const Get_AgencyWiseRedactingReport = async (loginAgencyID, IncID) => {
         const val = { AgencyID: loginAgencyID, IncidentID: IncID }
         await fetchPostDataNew('CAD/RedactingofReports/GetAgencyWiseRedactingReport', val).then((data) => {
@@ -198,13 +200,11 @@ const ReportModule = (props) => {
         })
     }
 
-
     useEffect(() => {
         if (narrativeTypeCode.toLowerCase() === 'ni') {
             setValue({ ...value, 'WrittenForID': primaryOfficer, });
         }
     }, [WrittenForDataDrp])
-
 
     const GetSingleDataOfficers = (assignedReportID) => {
         const val = { 'NarrativeAssignedID': assignedReportID }
@@ -331,8 +331,6 @@ const ReportModule = (props) => {
         }
     }, [ReportedByPinError, AsOfDateError, NarrativeIDError, CommentsError, WrittenForIDError])
 
-
-
     const submit = () => {
         const result = narrativeData?.find(item =>
             item.Comments && value.Comments &&
@@ -433,6 +431,8 @@ const ReportModule = (props) => {
             'NarrativeID': '', 'AsOfDate': null, 'IsReject': '', 'status': '', 'ApprovingSupervisorID': '', 'Status': '', 'IncidentId': '', 'NarrativeID': '',
             'ApprovingSupervisorType': '', 'ApprovingSupervisorID': '', 'IsApprove': '', 'CreatedByUserFK': '',
             'CommentsDoc': '', 'Comments': '',
+            'ReportedByPINActivityID': checkId(loginPinID, agencyOfficerFullNameDrpData) ? loginPinID : loginPinID,
+            'WrittenForID': narrativeTypeCode?.toLowerCase() === 'ni' ? primaryOfficer : checkWrittenId(loginPinID, WrittenForDataDrp) ? loginPinID : loginPinID,
         });
         setRedactedComment("");
         setNormalReport(true);
@@ -444,8 +444,6 @@ const ReportModule = (props) => {
         });
         setStatesChangeStatus(false); setChangesStatus(false);
     }
-
-
 
     const startRef = React.useRef();
 
@@ -467,7 +465,6 @@ const ReportModule = (props) => {
         }),
     }
 
-
     const get_NarrativesData = (incidentID, loginPinID) => {
         const val = { IncidentId: incidentID, OfficerID: loginPinID }
         fetchPostData('Narrative/GetData_Narrative', val).then(res => {
@@ -487,10 +484,12 @@ const ReportModule = (props) => {
                 console.log(res);
 
                 const workflowData = res[0];
+                const approverAuthor = res[0];
                 const canShowApprovalButton = workflowData?.IsMultipleLevel || workflowData?.IsSingleLevel;
                 const canApproved = workflowData?.IsSelfApproved;
                 setcheckWebWorkFlowStatus(canShowApprovalButton);
                 setIsSelfApproved(canApproved);
+                setskipApproverAuthor(approverAuthor.IsSkipApproverAuthor);
                 // setLoder(true);
             } else {
                 // Handle case where no data is returned
@@ -530,16 +529,6 @@ const ReportModule = (props) => {
         });
     }
 
-    // const conditionalRowStyles = [
-    //   {
-    //     when: row => row?.NarrativeID === narrativeID,
-    //     style: {
-    //       backgroundColor: '#001f3fbd',
-    //       color: 'white',
-    //       cursor: 'pointer',
-    //     },
-    //   },
-    // ];
     const conditionalRowStyles = [
         {
             // when: row => String(row.NarrativeID) === String(narrativeID),
@@ -548,7 +537,6 @@ const ReportModule = (props) => {
             style: { backgroundColor: '#001f3fbd', color: 'white', cursor: 'pointer', },
         },
     ];
-
 
     const columns = [
         {
@@ -792,7 +780,6 @@ const ReportModule = (props) => {
         setErrors({ ...errors, ['ApprovingOfficerError']: '' })
     };
 
-
     const colourStylesUsers = {
         control: (styles, { isDisabled }) => ({
             ...styles,
@@ -918,8 +905,6 @@ const ReportModule = (props) => {
         },
     };
 
-
-
     // editor start
     const [ChargesData, setChargesData] = useState([]);
     const [locationData, setLocationData] = useState([]);
@@ -1020,7 +1005,6 @@ const ReportModule = (props) => {
             setMissingField([]);
         }
     }, [value.Comments]);
-
 
     const autoRedact = (quill, detectedWordsData) => {
         if (!quill || !Array.isArray(detectedWordsData) || detectedWordsData.length === 0) return;
@@ -1161,7 +1145,6 @@ const ReportModule = (props) => {
 
         }
     }, [redactedComment, VehicleData, CategoryData, ChargesData, locationData, isUpdated, isNormalReport]);
-
 
     useMemo(() => {
         // auto redact
@@ -1351,6 +1334,7 @@ const ReportModule = (props) => {
         }),
         [value.Status] // Add value.Status as dependency
     );
+
     const formats = [
         "header",
         "bold",
@@ -1391,7 +1375,6 @@ const ReportModule = (props) => {
         }
     }, [value?.Status]);
 
-    console.log(IsSelfApproved);
 
     const Add_Type_Comments = () => {
         const { IsApprove, IsReject, Comments, CommentsDoc, ApprovalComments, ApprovingSupervisorID, IsApprovedForward } = value
@@ -1415,8 +1398,6 @@ const ReportModule = (props) => {
             // resets();
         })
     }
-
-
 
     // editor end
     return (
@@ -1799,7 +1780,7 @@ const ReportModule = (props) => {
                                         {/* Approval  */}
                                         <div className="row ">
                                             {
-                                                narrativeID ?
+                                                narrativeID && value.Status !== null && !IsSelfApproved && !skipApproverAuthor ?
                                                     <>
                                                         <div className="col-12 col-md-12 col-lg-12">
                                                             <div className="row ">
@@ -1941,7 +1922,7 @@ const ReportModule = (props) => {
                                                 <></>
                                             } */}
                                                         {
-                                                            checkWebWorkFlowStatus ? (
+                                                            (checkWebWorkFlowStatus && (skipApproverAuthor === false || skipApproverAuthor === null)) ? (
                                                                 narrativeID && (
                                                                     (value.Status !== "Pending Review" &&
                                                                         value.Status !== "Rejected" &&
@@ -1972,7 +1953,7 @@ const ReportModule = (props) => {
                                                             ) : null
                                                         }
                                                         {
-                                                            IsSelfApproved ? (
+                                                            (IsSelfApproved || skipApproverAuthor) ? (
                                                                 narrativeID && (
                                                                     (value.Status !== "Pending Review" &&
                                                                         value.Status !== "Rejected" &&

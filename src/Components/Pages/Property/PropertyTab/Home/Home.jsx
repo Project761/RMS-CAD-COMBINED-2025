@@ -219,7 +219,6 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
       GetDataTimeZone(localStoreData?.AgencyID);
       setBaseDate(localStoreData?.BaseDate ? localStoreData?.BaseDate : null);
       setOriNumber(localStoreData?.ORI); get_Incident_Count(IncID);
-
     }
   }, [localStoreData]);
 
@@ -1247,6 +1246,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
           setChangesStatus(false); setStatesChangeStatus(false); setPossenSinglData([]); setDrugLocalArr([]);
           // validateIncSideBar
           validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
+          nibrsValidateProperty(mainIncidentID)
         } else {
           toastifyError('error');
           setErrors({ ...errors, ['PropertyTypeIDError']: '', })
@@ -1305,46 +1305,12 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
         }
         // validateIncSideBar
         validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
+        nibrsValidateProperty(mainIncidentID)
       } else {
         toastifyError('error');
         setErrors({ ...errors, ['PropertyTypeIDError']: '', })
       }
     })
-  }
-
-  useEffect(() => {
-    console.log("MstPage", MstPage);
-    console.log("MstPage", MstPage);
-    console.log("masterPropertyStatus", masterPropertyStatus);
-    if (MstPage === "MST-Property-Dash" && masterPropertyStatus == true) { newProperty() }
-  }, [MstPage, masterPropertyStatus]);
-
-  const newProperty = () => {
-    SetNavigateStatus(false);
-    if (MstPage === "MST-Property-Dash") {
-      if (isCad) {
-        navigate(`/cad/dispatcher?page=MST-Property-Dash&ProId=${0}&MProId=${0}&ModNo=${''}&ProSta=${false}&ProCategory=${''}`);
-      } else {
-        navigate(`/Prop-Home?page=MST-Property-Dash&ProId=${0}&MProId=${0}&ModNo=${''}&ProSta=${false}&ProCategory=${''}`);
-      }
-      Reset();
-      setMultiImage([]);
-
-      dispatch({ type: Master_Property_Status, payload: false })
-      get_Property_Count(''); setChangesStatus(false); setStatesChangeStatus(false);
-    } else {
-      if (isCad) {
-        navigate(`/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${0}&MProId=${0}&ProSta=${false}&ProCategory=${''}`)
-      } else {
-        navigate(`/Prop-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${0}&MProId=${0}&ProSta=${false}&ProCategory=${''}`)
-      }
-      Reset(); setMultiImage([]); setPossessionID(''); setPossenSinglData([]);
-
-      dispatch({ type: Master_Property_Status, payload: false })
-      get_Property_Count(''); setChangesStatus(false); setStatesChangeStatus(false);
-      setErrors({});
-    }
-    setPropertyStatus(false);
   }
 
   const columns1 = [
@@ -1397,27 +1363,27 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
       ),
       sortable: true
     },
-    {
-      grow: 0,
-      minWidth: "80px",
-      name: 'View',
-      cell: row =>
-        <div style={{ position: 'absolute', top: 4, right: 30 }}>
-          {
-            getNibrsError(row.PropertyID, nibrsValidateData) ?
-              <span
-                onClick={(e) => { setErrString(row.PropertyID, nibrsValidateData) }}
-                className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
-                data-toggle="modal"
-                data-target="#NibrsErrorShowModal"
-              >
-                <i className="fa fa-eye"></i>
-              </span>
-              :
-              <></>
-          }
-        </div>
-    },
+    // {
+    //   grow: 0,
+    //   minWidth: "80px",
+    //   name: 'View',
+    //   cell: row =>
+    //     <div style={{ position: 'absolute', top: 4, right: 30 }}>
+    //       {
+    //         getNibrsError(row.PropertyID, nibrsValidateData) ?
+    //           <span
+    //             onClick={(e) => { setErrString(row.PropertyID, nibrsValidateData) }}
+    //             className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
+    //             data-toggle="modal"
+    //             data-target="#NibrsErrorShowModal"
+    //           >
+    //             <i className="fa fa-eye"></i>
+    //           </span>
+    //           :
+    //           <></>
+    //       }
+    //     </div>
+    // },
     {
       grow: 0,
       minWidth: "100px",
@@ -2054,8 +2020,6 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
     },
   ];
 
-
-
   const stylesNoColorSourceDrug = {
     control: base => ({
       ...base,
@@ -2066,8 +2030,6 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
       boxShadow: 0,
     }),
   };
-
-
 
   const GetSingleDataPassion = (nameID, masterNameID) => {
     const val = { 'NameID': nameID, 'MasterNameID': masterNameID }
@@ -2120,18 +2082,31 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
     }
   }
 
+  useEffect(() => {
+    if (IncID) {
+      nibrsValidateProperty(IncID);
+    }
+  }, [IncID]);
+
   const nibrsValidateProperty = (incidentID) => {
     setclickNibLoder(true);
     try {
       fetchPostDataNibrs('NIBRS/GetPropertyNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'PropertyId': '', 'gIntAgencyID': loginAgencyID }).then((data) => {
         if (data) {
           if (data?.Properties?.length > 0) {
-            const propArr = data?.Properties?.filter((item) => item?.PropertyType !== 'V');
-            console.log("🚀 ~ fetchPostDataNibrs ~ propArr:", propArr)
+            const propArr = data?.Properties?.filter((item) => item?.PropertyType !== 'V' && item?.PropertyType);
+            // console.log("🚀 ~ fetchPostDataNibrs ~ propArr:", propArr)
 
             if (propArr?.length > 0) {
-              setnibrsValidateData(propArr || []); setclickNibLoder(false);
+              const propErrorArray = propArr || []
 
+              if (propErrorArray.every(item => item === null || item === undefined)) {
+                setnibrsValidateData([]); setclickNibLoder(false);
+
+              } else {
+                setnibrsValidateData(propArr || []); setclickNibLoder(false);
+
+              }
             } else {
               setnibrsValidateData([]); setclickNibLoder(false);
 
@@ -2169,6 +2144,42 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
   }, []);
+
+  // For Reset Property
+  useEffect(() => {
+    // console.log("MstPage", MstPage);
+    // console.log("MstPage", MstPage);
+    // console.log("masterPropertyStatus", masterPropertyStatus);
+    if (MstPage === "MST-Property-Dash" && masterPropertyStatus == true) { newProperty() }
+  }, [MstPage, masterPropertyStatus]);
+
+  const newProperty = () => {
+    SetNavigateStatus(false);
+    if (MstPage === "MST-Property-Dash") {
+      if (isCad) {
+        navigate(`/cad/dispatcher?page=MST-Property-Dash&ProId=${0}&MProId=${0}&ModNo=${''}&ProSta=${false}&ProCategory=${''}`);
+      } else {
+        navigate(`/Prop-Home?page=MST-Property-Dash&ProId=${0}&MProId=${0}&ModNo=${''}&ProSta=${false}&ProCategory=${''}`);
+      }
+      Reset();
+      setMultiImage([]);
+
+      dispatch({ type: Master_Property_Status, payload: false })
+      get_Property_Count(''); setChangesStatus(false); setStatesChangeStatus(false);
+    } else {
+      if (isCad) {
+        navigate(`/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${0}&MProId=${0}&ProSta=${false}&ProCategory=${''}`)
+      } else {
+        navigate(`/Prop-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${0}&MProId=${0}&ProSta=${false}&ProCategory=${''}`)
+      }
+      Reset(); setMultiImage([]); setPossessionID(''); setPossenSinglData([]);
+
+      dispatch({ type: Master_Property_Status, payload: false })
+      get_Property_Count(''); setChangesStatus(false); setStatesChangeStatus(false);
+      setErrors({});
+    }
+    setPropertyStatus(false);
+  }
 
   return (
     <>
@@ -3473,7 +3484,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
           {!isViewEventDetails &&
             <div className="col-12 text-right mb-1 mt-1 field-button  d-flex justify-content-between" style={{ marginTop: "1px" }}>
               <div>
-                {
+                {/* {
                   propertyMainModuleData?.length > 0 &&
                   <button
                     type="button"
@@ -3485,7 +3496,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                   >
                     Validate TIBRS Property
                   </button>
-                }
+                } */}
               </div>
               <div>
                 {

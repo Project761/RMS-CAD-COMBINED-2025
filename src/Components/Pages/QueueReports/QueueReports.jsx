@@ -628,6 +628,9 @@ const QueueReportsModal = (props) => {
   const [multiSelected, setMultiSelected] = useState({ optionSelected: null });
   const [checkWebWorkFlowStatus, setcheckWebWorkFlowStatus] = useState(false);
   const [reviewStatus, setreviewStatus] = useState(false);
+  const [approverRequiredCount, setapproverRequiredCount] = useState();
+  const [appRequiredCountCurrentStatus, setappRequiredCountCurrentStatus] = useState();
+
 
 
   const [editorState, setEditorState] = useState(
@@ -732,7 +735,7 @@ const QueueReportsModal = (props) => {
     return status?.length > 0
   }
 
-
+  console.log(editval)
   useEffect(() => {
     if (editval) {
       setIncidentNo(editval[0]?.IncidentNumber)
@@ -749,6 +752,7 @@ const QueueReportsModal = (props) => {
         'WrittenID': editval[0]?.WrittenForID,
         'IsReview': editval[0]?.IsReview,
       })
+      setappRequiredCountCurrentStatus(editval[0]?.IsApprovedForwardCount);
       setApprovalStatus(editval[0]?.IsReview ? 'ApproveAndReview' : 'Approve');
 
       setIsSaved(false);
@@ -1073,6 +1077,7 @@ const QueueReportsModal = (props) => {
         const workflowData = res[0];
         const canShowApprovalButton = workflowData?.IsMultipleLevel;
         setcheckWebWorkFlowStatus(canShowApprovalButton);
+        setapproverRequiredCount(workflowData?.ReportApproverRequired);
         // setIsSelfApproved(canApproved);
         // setLoder(true);
       } else {
@@ -1110,7 +1115,7 @@ const QueueReportsModal = (props) => {
     }
   }
 
-  console.log(reviewStatus)
+  console.log(checkWebWorkFlowStatus , Number(approverRequiredCount) , Number(appRequiredCountCurrentStatus))
 
   return (
     <div className="modal fade show d-block" style={{ background: "rgba(0,0,0,0.5)" }}>
@@ -1256,7 +1261,7 @@ const QueueReportsModal = (props) => {
                   /> */}
                   <ReactQuill
                     className={`editor-class ${reviewStatus === true ? 'readonly' : ''}`}
-                
+
                     value={value.CommentsDoc}
                     onChange={(value, delta, source, editor) => {
                       const text = editor?.getText();
@@ -1343,7 +1348,7 @@ const QueueReportsModal = (props) => {
                     <>
                       <div className='col-md-2'>
                         {
-                          setApproverStatus(checkapproveStatus, reportApprovalStatus) === true ?
+                          !(checkWebWorkFlowStatus && (Number(appRequiredCountCurrentStatus) < Number(approverRequiredCount))) ?
                             < div className="form-check">
                               <input
                                 className="form-check-input"
@@ -1363,11 +1368,9 @@ const QueueReportsModal = (props) => {
                             :
                             <></>
                         }
-                        {
+                       
 
-                          (setApproverStatus(checkapproveStatus, reportApprovalStatus) === false && checkapproveStatus === "0") &&
-
-                          < div className="form-check">
+                          {/* < div className="form-check">
                             <input
                               className="form-check-input"
                               type="radio"
@@ -1382,10 +1385,10 @@ const QueueReportsModal = (props) => {
                             <label className="form-check-label ">
                               Approve
                             </label>
-                          </div>
+                          </div> */}
 
 
-                        }
+                       
                       </div>
                       <div className='col-md-2'>
                         <div className="form-check">
@@ -1406,10 +1409,33 @@ const QueueReportsModal = (props) => {
                         </div>
                       </div>
 
-                      <div className='col-md-2'>
+                      {/* <div className='col-md-2'>
 
                         {
-                          (!setApproverStatus(checkapproveStatus, reportApprovalStatus) && checkapproveStatus === "1") || checkWebWorkFlowStatus &&
+                          ((!setApproverStatus(checkapproveStatus, reportApprovalStatus) && checkapproveStatus === "1") || checkWebWorkFlowStatus ||
+                            (appRequiredCountCurrentStatus <= approverRequiredCount)) &&
+                          < div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              value="ApproveAndForward"
+                              name="flexRadioDefault"
+                              // id="Group"
+                              checked={value.IsApprovedForward}
+                              onChange={handleRadioChange}
+                            />
+                            <label className="form-check-label ">
+                              Approve and Forward
+                            </label>
+                          </div>
+                        }
+
+                      </div> */}
+                       <div className='col-md-2'>
+
+                        {
+                          (checkWebWorkFlowStatus &&
+                            (Number(appRequiredCountCurrentStatus) < Number(approverRequiredCount))) &&
                           < div className="form-check">
                             <input
                               className="form-check-input"
@@ -1446,7 +1472,7 @@ const QueueReportsModal = (props) => {
                       onChange={handleRadioChange}
                     />
                     <label className="form-check-label ">
-                       Review
+                      Review
                     </label>
                   </div>
 
@@ -1494,7 +1520,7 @@ const QueueReportsModal = (props) => {
                     )}
 
 
-                    {(approvalStatus?.trim() === "ApproveAndForward" || approvalStatus?.trim() === "ApproveAndReview" &&  reviewStatus === false) && (
+                    {(approvalStatus?.trim() === "ApproveAndForward" || approvalStatus?.trim() === "ApproveAndReview" && reviewStatus === false) && (
                       <>
                         {selectedOption === "Individual" ? (
                           <>
@@ -1563,7 +1589,7 @@ const QueueReportsModal = (props) => {
               </div>
 
               {/* Approve Section */}
-              {(approvalStatus === 'Approve' || approvalStatus === 'ApproveAndForward' || approvalStatus === 'ApproveAndReview' &&  reviewStatus === false) && (
+              {(approvalStatus === 'Approve' || approvalStatus === 'ApproveAndForward' || approvalStatus === 'ApproveAndReview' && reviewStatus === false) && (
                 <>
                   {/* <div className="mb-3 mt-4">
                 <h6 className="fw-bold">Approve Report Comment</h6>

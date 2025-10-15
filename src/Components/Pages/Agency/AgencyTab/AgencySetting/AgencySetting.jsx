@@ -465,7 +465,7 @@ const AgencySetting = () => {
                                         <div className="col-12 col-md-12 col-lg-12 ml-lg-5 pl-lg-5 ml-md-0 pl-md-0 mt-1">
                                             <input type="checkbox" name='IsArrestMigrate' checked={value?.IsArrestMigrate} value={value?.IsArrestMigrate
                                             } onChange={HandleChanges} />
-                                            <label className='ml-2' >Arrest Report Migrate To Incident</label>
+                                            <label className='ml-2' >Use Initial Narrative as Arrest Narrative</label>
                                         </div>
                                         <div className="row align-items-center mt-2">
                                             {/* Report Due Day */}

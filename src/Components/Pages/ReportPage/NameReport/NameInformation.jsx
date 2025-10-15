@@ -378,7 +378,7 @@ const NameInformation = () => {
                                         <div className="col-3 col-md-3 col-lg-1 mt-2 ">
                                             <label htmlFor="" className='new-label'>DOB</label>
                                         </div>
-                                        <div className="col-3 col-md-3 col-lg-3  ">
+                                        <div className="col-3 col-md-3 col-lg-3 mt-1">
                                             <DatePicker
                                                 id='DateOfBirth'
                                                 name='DateOfBirth'

@@ -365,7 +365,8 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                 'PrimaryOfficerID': null, 'InProfessionOf': '', 'TagID': null, 'NICBID': null, 'DestroyDtTm': '', 'Description': '',
                 'IsEvidence': '', 'IsPropertyRecovered': '', 'IsImmobalizationDevice': '', 'IsEligibleForImmobalization': '', 'ModelName': '',
                 'PlateExpirationMonth': '', 'PlateExpirationYear': '',
-            })
+            });
+            setuploadImgFiles([]); setVehicleMultiImg([]);
         }
     }, [editval, changesStatusCount]);
 
@@ -579,7 +580,8 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                 }
                 reset();
                 if (uploadImgFiles?.length > 0) {
-                    upload_Image_File(res.PropertyID, res.MasterPropertyID); setuploadImgFiles('')
+                    upload_Image_File(res.PropertyID, res.MasterPropertyID);
+                    setuploadImgFiles([])
                 }
                 toastifySuccess(res.Message);
                 setErrors({ ...errors, ['LossCodeIDError']: '' }); get_Incident_Count(mainIncidentID, loginPinID); get_Data_Vehicle(mainIncidentID);
@@ -587,6 +589,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                 setChangesStatus(false); setStatesChangeStatus(false); setStatus(false); setMasterPropertyID(res?.MasterPropertyID);
                 // validateIncSideBar
                 validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
+                nibrsValidateProperty(mainIncidentID)
             } else {
                 toastifyError('Error'); setErrors({ ...errors, ['LossCodeIDError']: '' });
             }
@@ -594,6 +597,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
     }
 
     const Update_Vehicle = () => {
+
         const previousValue = value.Value;
         AddDeleteUpadate('PropertyVehicle/Update_PropertyVehicle', value).then((res) => {
             if (res.success) {
@@ -604,9 +608,10 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                 setUpdateCount(updateCount + 1); get_Data_Vehicle(mainIncidentID);
                 setErrors({ ...errors, ['LossCodeIDError']: '' });
                 setValue({ ...value, Value: previousValue, }); get_List(vehicleID);
-                if (uploadImgFiles?.length > 0) { upload_Image_File(); setuploadImgFiles(''); }
+                if (uploadImgFiles?.length > 0) { upload_Image_File(); setuploadImgFiles([]); }
                 // validateIncSideBar
                 validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
+                nibrsValidateProperty(mainIncidentID)
             } else {
                 toastifyError('Error');
                 setErrors({ ...errors, ['LossCodeIDError']: '' });
@@ -636,10 +641,13 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
         dispatch({ type: MasterVehicle_ID, payload: '' });
         dispatch({ type: Classification_Drp_Data, payload: [] });
         dispatch({ type: Vehicle_ID, payload: '' });
-        setVehicleID(''); setVehicleMultiImg(''); setLossCode(''); setAvailableAlert([]);
+        setVehicleID(''); setLossCode(''); setAvailableAlert([]);
         setPropertyStatus(false); setPossessionID(''); dispatch(get_Masters_Name_Drp_Data(''));
         dispatch(get_Masters_PossessionOwnerData('')); setPlateTypeCode(''); setCategoryCode(''); setVehMakeDrpData([]);
-        setStyleDrpData([]); setVehicleStatus(false);
+        setStyleDrpData([]);
+        setVehicleStatus(false);
+        setuploadImgFiles([]); setVehicleMultiImg([]);
+        console.log("Reset", uploadImgFiles);
     }
 
     const WidhoutColorStyles = {
@@ -688,12 +696,15 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
         const val1 = { 'PropertyID': 0, 'MasterPropertyID': masterPropertyID, 'IsMaster': true }
         fetchPostData('PropertyVehicle/GetData_PropertyVehiclePhoto', MstVehicle === "MST-Vehicle-Dash" ? val1 : val)
             .then((res) => {
-                if (res) {
-
+                // console.log("🚀 ~ get_Vehicle_MultiImage ~ res:", res)
+                if (res?.length > 0) {
                     setVehicleMultiImg(res);
                     SetImageModalOfficerID(res[0]?.OfficerID);
+
                 } else {
-                    setVehicleMultiImg();
+                    setVehicleMultiImg([]);
+                    // for clearing uploded img if it has on cancle button
+                    setuploadImgFiles([]);
                     SetImageModalOfficerID(null);
 
                 }
@@ -888,35 +899,25 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
             sortable: true
         },
         // {
-        //     name: 'Classification ',
-        //     selector: (row) => row.Classification_Description,
-        //     sortable: true
+        //     width: '100px',
+        //     name: 'View',
+        //     cell: row =>
+        //         <div style={{ position: 'absolute', top: 4, right: 30 }}>
+        //             {
+        //                 getNibrsError(row.PropertyID, nibrsValidateData) ?
+        //                     <span
+        //                         onClick={(e) => { setErrString(row.PropertyID, nibrsValidateData) }}
+        //                         className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
+        //                         data-toggle="modal"
+        //                         data-target="#NibrsErrorShowModal"
+        //                     >
+        //                         <i className="fa fa-eye"></i>
+        //                     </span>
+        //                     :
+        //                     <></>
+        //             }
+        //         </div>
         // },
-        // {
-        //     name: 'VIN ',
-        //     selector: (row) => row.VIN,
-        //     sortable: true
-        // },
-        {
-            width: '100px',
-            name: 'View',
-            cell: row =>
-                <div style={{ position: 'absolute', top: 4, right: 30 }}>
-                    {
-                        getNibrsError(row.PropertyID, nibrsValidateData) ?
-                            <span
-                                onClick={(e) => { setErrString(row.PropertyID, nibrsValidateData) }}
-                                className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
-                                data-toggle="modal"
-                                data-target="#NibrsErrorShowModal"
-                            >
-                                <i className="fa fa-eye"></i>
-                            </span>
-                            :
-                            <></>
-                    }
-                </div>
-        },
         {
             name: <p className='text-end' style={{ position: 'absolute', top: '7px', right: 10 }}>Delete</p>,
             cell: row =>
@@ -950,7 +951,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
     }
 
     const getStatusColors = (ID, nibrsValidateData) => {
-        return getNibrsError(ID, nibrsValidateData) ? { backgroundColor: "#001f3fbd" } : {};
+        return getNibrsError(ID, nibrsValidateData) ? { backgroundColor: "rgb(255 202 194)" } : {};
     };
 
     const conditionalRowStyles = [
@@ -972,8 +973,8 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
             const modal = new window.bootstrap.Modal(document?.getElementById('SaveModal'));
             modal?.show();
         } else {
-            setVehicleMultiImg(''); setStatesChangeStatus(false);
-            setuploadImgFiles('');
+            setVehicleMultiImg([]); setStatesChangeStatus(false);
+            setuploadImgFiles([]);
             if (row.VehicleID || row.MasterPropertyID) {
                 if (isCad) {
                     navigate(`/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${stringToBase64(row?.PropertyID)}&MVehId=${stringToBase64(row?.MasterPropertyID)}&VehSta=${true}`)
@@ -995,11 +996,6 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
         SetNewClciked((prev) => prev + 1);
         SetImageModalOfficerID(null);
         if (MstVehicle === 'MST-Vehicle-Dash') {
-            // if (isCad) {
-            //     navigate(`/cad/dispatcher?page=MST-Vehicle-Dash&?VehId=${0}&?MVehId=${0}&ModNo=${''}`)
-            // } else {
-            //     navigate(`/Vehicle-Home?page=MST-Vehicle-Dash&?VehId=${0}&?MVehId=${0}&ModNo=${''}`)
-            // }
             if (isCad) {
                 if (isCADSearch) {
                     navigate(`/cad/vehicle_search?page=MST-Vehicle-Dash&?VehId=${0}&?MVehId=${0}&ModNo=${''}`);
@@ -1012,7 +1008,8 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
             reset(); setPossessionID(''); setOwnerOfID(''); setPossenSinglData([]);
             setClickedRow(null); setVehicleStatus(false);
             setStatus(false); get_vehicle_Count(''); PropertyType(loginAgencyID);
-            setVehicleMultiImg(''); setuploadImgFiles('');
+            setVehicleMultiImg([]);
+            setuploadImgFiles([]);
 
             // dispatch({ type: Master_Vehicle_Status, payload: false });
 
@@ -1025,7 +1022,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
             reset(); setPossessionID(''); setOwnerOfID(''); setPossenSinglData([]);
             setClickedRow(null); setVehicleStatus(false);
             setStatus(false); get_vehicle_Count(''); PropertyType(loginAgencyID);
-            setVehicleMultiImg(''); setuploadImgFiles('');
+            setVehicleMultiImg([]); setuploadImgFiles([]);
 
             dispatch({ type: Master_Vehicle_Status, payload: false });
         }
@@ -1063,6 +1060,12 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
             } else { setPossenSinglData([]); }
         })
     }
+
+    useEffect(() => {
+        if (IncID) {
+            nibrsValidateProperty(IncID);
+        }
+    }, [IncID]);
 
     const nibrsValidateProperty = (incidentID) => {
         setclickNibLoder(true);
@@ -1124,25 +1127,23 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
         return !isNaN(d.getTime()) ? d : null;
     };
 
-
-
     return (
         <>
             <div className="col-12 col-md-12 col-lg-12 p-0">
                 <div className="col-12 ">
-                    <div className="row">
-                        <div className="col-2 col-md-2 col-lg-1 mt-2 ">
-                            <label htmlFor="" className='new-label'>Vehicle No.</label>
+                    <div className="row align-items-center mt-1" style={{ rowGap: "8px" }}>
+                        <div className="col-2 col-md-2 col-lg-1">
+                            <label htmlFor="" className='new-label mb-0'>Vehicle No.</label>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-2  text-field mt-1">
-                            <input type="text" name='VehicleNumber' id='VehicleNumber' placeholder='Auto Generated' value={value?.VehicleNumber} onChange={HandleChanges} className='readonlyColor' required autoComplete='off' readOnly />
+                        <div className="col-4 col-md-4 col-lg-2 text-field mt-0">
+                            <input style={{ padding: '5px 9px 7px 8px' }} type="text" name='VehicleNumber' id='VehicleNumber' placeholder='Auto Generated' value={value?.VehicleNumber} onChange={HandleChanges} className='readonlyColor h-100' required autoComplete='off' readOnly />
                         </div>
-                        <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1  ">
-                            <label htmlFor="" className='new-label'>Loss Code{errors.LossCodeIDError !== 'true' ? (
+                        <div className="col-2 col-md-2 col-lg-2 ">
+                            <label htmlFor="" className='new-label mb-0'>Loss Code{errors.LossCodeIDError !== 'true' ? (
                                 <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.LossCodeIDError}</p>
                             ) : null}</label>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-3 mt-1">
+                        <div className="col-4 col-md-4 col-lg-3">
                             <Select
                                 name='LossCodeID'
                                 value={propertyLossCodeData?.filter((obj) => obj.value === value?.LossCodeID)}
@@ -1154,12 +1155,12 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                 isDisabled={nibrsSubmittedvehicleMain === 1 ? true : false}
                             />
                         </div>
-                        <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1 ">
-                            <label htmlFor="" className='new-label'>Reported Date/Time{errors.ReportedDtTmError !== 'true' ? (
+                        <div className="col-2 col-md-2 col-lg-2">
+                            <label htmlFor="" className='new-label mb-0'>Reported Date/Time{errors.ReportedDtTmError !== 'true' ? (
                                 <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ReportedDtTmError}</p>
                             ) : null}</label>
                         </div>
-                        <div className="col-10 col-md-10 col-lg-2 mt-1 ">
+                        <div className="col-10 col-md-10 col-lg-2">
                             {
                                 MstVehicle === 'MST-Vehicle-Dash' ?
                                     <DatePicker
@@ -1256,12 +1257,12 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                     />
                             }
                         </div>
-                        <div className="col-2 col-md-2 col-lg-1 mt-2 ">
-                            <label htmlFor="" className='new-label'> Category {errors.CategoryIDError !== 'true' ? (
+                        <div className="col-2 col-md-2 col-lg-1">
+                            <label htmlFor="" className='new-label mb-0'> Category {errors.CategoryIDError !== 'true' ? (
                                 <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.CategoryIDError}</p>
                             ) : null}</label>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-2  mt-1">
+                        <div className="col-4 col-md-4 col-lg-2">
                             <Select
                                 name='CategoryID'
                                 value={categoryIdDrp?.filter((obj) => obj.value === value?.CategoryID)}
@@ -1288,14 +1289,14 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                 placeholder="Select..."
                             />
                         </div> */}
-                        <div className="col-2 col-md-2 col-lg-2 mt-2 ">
+                        <div className="col-2 col-md-2 col-lg-2">
                             <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Property Vehicle Plate Type') }}>
                                 Plate Type{errors.PlateTypeIDError !== 'true' ? (
                                     <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.PlateTypeIDError}</p>
                                 ) : null}
                             </span>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-3 mt-1 ">
+                        <div className="col-4 col-md-4 col-lg-3">
                             <Select
                                 name='PlateTypeID'
                                 value={plateTypeIdDrp?.filter((obj) => obj.value === value?.PlateTypeID)}
@@ -1307,16 +1308,16 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                 placeholder="Select..."
                             />
                         </div>
-                        <div className="col-12 col-md-12 col-lg-4 d-flex ">
-                            <div className="col-3 col-md-2 col-lg-5 mt-2 pt-1 ">
-                                <label htmlFor="" className='new-label '>
+                        <div className="col-12 col-md-12 col-lg-4 d-flex align-items-center">
+                            <div className="col-3 col-md-2 col-lg-5">
+                                <label htmlFor="" className='new-label mb-0 '>
                                     Plate&nbsp;State&nbsp;&&nbsp;No.
                                     {errors.PlateStateNoError !== 'true' ? (
                                         <p style={{ color: 'red', fontSize: '11px', margin: '0px', paddingLeft: '7px' }}>{errors.PlateStateNoError}</p>
                                     ) : null}
                                 </label>
                             </div>
-                            <div className="col-4 col-md-6 col-lg-4 mt-1" >
+                            <div className="col-4 col-md-6 col-lg-4" >
                                 <Select
                                     name='PlateID'
                                     value={stateList?.filter((obj) => obj.value === value?.PlateID)}
@@ -1336,8 +1337,8 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                 />
                             </div>
 
-                            <span className='' style={{ marginTop: '-8px' }}>
-                                <div className="text-field col-12 col-md-12 col-lg-12 ">
+                            <span className='' >
+                                <div className="text-field col-12 col-md-12 col-lg-12 mt-0 ">
                                     <input
                                         // className={`${value.PlateID ? "requiredColor" : ''} ${!value?.PlateID || nibrsSubmittedvehicleMain === 1 ? 'readonlyColor' : ''}`}
                                         className={
@@ -1354,10 +1355,10 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                 ) : null}
                             </span>
                         </div>
-                        <div className="col-2 col-md-2 col-lg-1 mt-2  ">
-                            <label htmlFor="" className='new-label'> Classification</label>
+                        <div className="col-2 col-md-2 col-lg-1">
+                            <label htmlFor="" className='new-label mb-0'> Classification</label>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-2 mt-1">
+                        <div className="col-4 col-md-4 col-lg-2">
                             <Select
                                 name='ClassificationID'
                                 value={classificationID?.filter((obj) => obj.value === value?.ClassificationID)}
@@ -1388,14 +1389,14 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                 placeholder="Select..."
                             />
                         </div> */}
-                        <div className="col-2 col-md-2 col-lg-2 mt-2 ">
-                            <label htmlFor="" className='new-label'>VIN {errors.vinLengthError !== 'true' ? (
+                        <div className="col-2 col-md-2 col-lg-2">
+                            <label htmlFor="" className='new-label mb-0'>VIN {errors.vinLengthError !== 'true' ? (
                                 <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.vinLengthError}</p>
                             ) : null}</label>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-3 mt-1 text-field d-flex">
-                            <input type="text" name='VIN' id='VIN' style={{ textTransform: "uppercase" }} maxLength={17} value={value?.VIN} onChange={HandleChanges} className='' required autoComplete='off' />
-                            <span className='mt-1 '>
+                        <div className="col-4 col-md-4 col-lg-3 mt-0 text-field d-flex align-items-center">
+                            <input type="text" name='VIN' id='VIN' style={{ textTransform: "uppercase", padding: '5px 9px 7px 8px' }} maxLength={17} value={value?.VIN} onChange={HandleChanges} className='' required autoComplete='off' />
+                            <span className=''>
                                 <span className='  col-1 col-md-1 col-lg-1'>
                                     {
                                         (!vehicleStatus || !masterPropertyID) && (VehSta != 'true' || VehSta != true) &&
@@ -1422,12 +1423,12 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                 </span>
                             </span>
                         </div>
-                        <div className="col-2 col-md-2 col-lg-1 mt-2 ">
+                        <div className="col-2 col-md-2 col-lg-1">
                             <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Vehicle VOD') }}>
                                 VOD
                             </span>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-3 pt-1">
+                        <div className="col-4 col-md-4 col-lg-3">
                             <Select
                                 name='VODID'
                                 value={vodIdData?.filter((obj) => obj.value === value?.VODID)}
@@ -1438,10 +1439,10 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                 placeholder="Select..."
                             />
                         </div>
-                        <div className="col-2 col-md-2 col-lg-1 mt-2 ">
-                            <label htmlFor="" className='new-label text-nowrap'>Plate Expiration</label>
+                        <div className="col-2 col-md-2 col-lg-1">
+                            <label htmlFor="" className='new-label text-nowrap mb-0'>Plate Expiration</label>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-2 d-flex align-items-center mt-1">
+                        <div className="col-4 col-md-4 col-lg-2 d-flex align-items-center">
                             <DatePicker
                                 selected={
                                     value?.PlateExpirationMonth
@@ -1490,18 +1491,18 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                             />
 
                         </div>
-                        <div className="col-2 col-md-2 col-lg-2 mt-2 ">
-                            <label htmlFor="" className='new-label'>OAN Id</label>
+                        <div className="col-2 col-md-2 col-lg-2">
+                            <label htmlFor="" className='new-label mb-0'>OAN Id</label>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-3 mt-1 text-field ">
-                            <input type="text" name='OANID' id='OANID' value={value?.OANID} onChange={HandleChanges} className='' required maxLength={20} autoComplete='off' />
+                        <div className="col-4 col-md-4 col-lg-3 mt-0 text-field ">
+                            <input style={{ padding: '5px 9px 7px 8px' }} type="text" name='OANID' id='OANID' value={value?.OANID} onChange={HandleChanges} className='h-100' required maxLength={20} autoComplete='off' />
                         </div>
-                        <div className="col-2 col-md-2 col-lg-1 mt-2 ">
+                        <div className="col-2 col-md-2 col-lg-1">
                             <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Property Vehicle Style') }}>
                                 Style
                             </span>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-3 mt-1 ">
+                        <div className="col-4 col-md-4 col-lg-3">
                             <Select
                                 name='StyleID'
                                 value={styleDrp?.filter((obj) => obj.value === value?.StyleID)}
@@ -1514,10 +1515,10 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                 placeholder="Select..."
                             />
                         </div>
-                        <div className="col-2 col-md-2 col-lg-1 mt-2 ">
-                            <label htmlFor="" className='new-label'>Owner</label>
+                        <div className="col-2 col-md-2 col-lg-1">
+                            <label htmlFor="" className='new-label mb-0'>Owner</label>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-2 mt-1 ">
+                        <div className="col-4 col-md-4 col-lg-2">
                             {
                                 MstVehicle === "MST-Vehicle-Dash" ?
                                     <>
@@ -1545,7 +1546,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                     </>
                             }
                         </div>
-                        <div className="col-6 col-md-6 col-lg-1   px-0" style={{ marginTop: '8px' }}>
+                        <div className="col-6 col-md-6 col-lg-1" >
                             <button
                                 onClick={() => {
                                     if (ownerOfID) {
@@ -1558,14 +1559,14 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                     get_Name_Count(ownerOfID);
                                     get_vehicle_Count(vehicleID);
                                 }}
-                                className="btn btn-sm bg-green text-white py-0" data-toggle="modal" data-target="#MasterModal">
+                                className="btn btn-sm bg-green text-white" data-toggle="modal" data-target="#MasterModal">
                                 <i className="fa fa-plus"></i>
                             </button>
                         </div>
-                        <div className="col-2 col-md-2 col-lg-1 mt-2 ">
-                            <label htmlFor="" data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Property Vehicle Make') }}>Make</label>
+                        <div className="col-2 col-md-2 col-lg-1">
+                            <label htmlFor="" data-toggle="modal" data-target="#ListModel" className='new-link mb-0 ' onClick={() => { setOpenPage('Property Vehicle Make') }}>Make</label>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-3 mt-1 ">
+                        <div className="col-4 col-md-4 col-lg-3">
                             <Select
                                 name='MakeID'
                                 value={vehMakeDrpData?.filter((obj) => obj.value === value?.MakeID)}
@@ -1578,10 +1579,10 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                 placeholder="Select..."
                             />
                         </div>
-                        <div className="col-2 col-md-2 col-lg-1 mt-2 ">
-                            <label htmlFor="" className='new-label'>Model</label>
+                        <div className="col-2 col-md-2 col-lg-1">
+                            <label htmlFor="" className='new-label mb-0'>Model</label>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-3 mt-1 ">
+                        <div className="col-4 col-md-4 col-lg-3">
                             <CreatableSelect
                                 name="ModelID"
                                 isClearable
@@ -1598,12 +1599,12 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                             />
 
                         </div>
-                        <div className="col-2 col-md-2 col-lg-1 mt-2 ">
-                            <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Color') }}>
+                        <div className="col-2 col-md-2 col-lg-1">
+                            <span data-toggle="modal" data-target="#ListModel" className='new-link mb-0 ' onClick={() => { setOpenPage('Color') }}>
                                 Primary&nbsp;Color
                             </span>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-2 mt-1 ">
+                        <div className="col-4 col-md-4 col-lg-2">
                             <Select
                                 name='PrimaryColorID'
                                 value={isPrimaryDrpData?.filter((obj) => obj.value === value?.PrimaryColorID)}
@@ -1614,12 +1615,12 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                 placeholder="Select..."
                             />
                         </div>
-                        <div className="col-2 col-md-2 col-lg-2 mt-2 px-0 ">
-                            <span data-toggle="modal" data-target="#ListModel" className='new-link px-0 ' onClick={() => { setOpenPage('Color') }}>
+                        <div className="col-2 col-md-2 col-lg-2">
+                            <span data-toggle="modal" data-target="#ListModel" className='new-link mb-0' onClick={() => { setOpenPage('Color') }}>
                                 Secondary&nbsp;Color
                             </span>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-3 mt-1 ">
+                        <div className="col-4 col-md-4 col-lg-3">
                             <Select
                                 name='SecondaryColorID'
                                 value={isSecondaryDrpData?.filter((obj) => obj.value === value?.SecondaryColorID)}
@@ -1630,30 +1631,29 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                 placeholder="Select..."
                             />
                         </div>
-                        <div className="col-2 col-md-2 col-lg-1 mt-2 ">
-                            <label htmlFor="" className='new-label'>Weight</label>
+                        <div className="col-2 col-md-2 col-lg-1">
+                            <label htmlFor="" className='new-label mb-0'>Weight</label>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-3 mt-1 text-field">
-                            <input type="text" name='Weight' id='Weight' maxLength={4} value={value?.Weight} onChange={HandleChanges} className='' required autoComplete='off' />
+                        <div className="col-4 col-md-4 col-lg-3 mt-0 text-field">
+                            <input style={{ padding: '5px 9px 7px 8px' }} type="text" name='Weight' id='Weight' maxLength={4} value={value?.Weight} onChange={HandleChanges} className='h-100' required autoComplete='off' />
                         </div>
-                        <div className="col-2 col-md-2 col-lg-1 mt-2 ">
-                            <label htmlFor="" className='new-label'>Value
+                        <div className="col-2 col-md-2 col-lg-1">
+                            <label htmlFor="" className='new-label mb-0'>Value
                                 {errors.ContactError !== 'true' ? (
                                     <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ContactError}</p>
                                 ) : null}
                             </label>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-2 mt-1 text-field">
+                        <div className="col-4 col-md-4 col-lg-2 mt-0 text-field">
                             <input
+                                style={{ padding: '5px 9px 7px 8px' }}
                                 type="text"
                                 name="Value"
                                 id="Value"
                                 // className={nibrsSubmittedvehicleMain === 1 ? 'readonlyColor' : lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD' ? 'requiredColor' : ''}
                                 // className={nibrsSubmittedvehicleMain === 1 || !value?.CategoryID ? 'readonlyColor' : lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD' ? 'requiredColor' : ''}
-                                className={
-                                    nibrsSubmittedvehicleMain === 1 ? 'LockFildscolour' : !value?.CategoryID ? 'readonlyColor' : lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD' ? 'requiredColor'
-                                        : ''
-                                }
+                                className={`h-100 ${nibrsSubmittedvehicleMain === 1 ? 'LockFildscolour' : !value?.CategoryID ? 'readonlyColor' : (lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD') ? 'requiredColor' : ''}`}
+
 
                                 disabled={nibrsSubmittedvehicleMain === 1 || !value?.CategoryID ? true : false}
                                 maxLength={9}
@@ -1663,16 +1663,16 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                 autoComplete="off"
                             />
                         </div>
-                        <div className="col-2 col-md-2 col-lg-2 mt-2 ">
-                            <label htmlFor="" className='new-label'>Inspection Sticker</label>
+                        <div className="col-2 col-md-2 col-lg-2">
+                            <label htmlFor="" className='new-label mb-0'>Inspection Sticker</label>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-1 mt-1 text-field ">
-                            <input type="text" name='Inspection_Sticker' id='Inspection_Sticker' value={value?.Inspection_Sticker} onChange={HandleChanges} className='' required autoComplete='off' />
+                        <div className="col-4 col-md-4 col-lg-1 mt-0 text-field ">
+                            <input style={{ padding: '5px 9px 7px 8px' }} type="text" name='Inspection_Sticker' id='Inspection_Sticker' value={value?.Inspection_Sticker} onChange={HandleChanges} className='h-100' required autoComplete='off' />
                         </div>
-                        <div className="col-2 col-md-2 col-lg-2 mt-2 ">
-                            <label htmlFor="" className='new-label'>Inspection Expires</label>
+                        <div className="col-2 col-md-2 col-lg-2">
+                            <label htmlFor="" className='new-label mb-0'>Inspection Expires</label>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-2 mt-1">
+                        <div className="col-4 col-md-4 col-lg-2">
                             <DatePicker
                                 id='InspectionExpiresDtTm'
                                 name='InspectionExpiresDtTm'
@@ -1719,10 +1719,10 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                 dropdownMode="select"
                             />
                         </div>
-                        <div className="col-2 col-md-2 col-lg-1 mt-2 ">
-                            <label htmlFor="" className='new-label'>Manu. Year</label>
+                        <div className="col-2 col-md-2 col-lg-1">
+                            <label htmlFor="" className='new-label mb-0'>Manu. Year</label>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-1 mt-1">
+                        <div className="col-4 col-md-4 col-lg-1">
                             <DatePicker
                                 name='ManufactureYear'
                                 id='ManufactureYear'
@@ -1744,10 +1744,10 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                 minDate={new Date(1900, 0, 1)}
                             />
                         </div>
-                        <div className="col-2 col-md-2 col-lg-1  mt-2 ">
-                            <label htmlFor="" className='new-label ' >Primary&nbsp;Officer</label>
+                        <div className="col-2 col-md-2 col-lg-1">
+                            <label htmlFor="" className='new-label mb-0 ' >Primary&nbsp;Officer</label>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-2  mt-1">
+                        <div className="col-4 col-md-4 col-lg-2">
                             <Select
                                 name='PrimaryOfficerID'
                                 value={primaryOfficerID?.filter((obj) => obj.value == value?.PrimaryOfficerID)}
@@ -1758,10 +1758,10 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                 placeholder="Select..."
                             />
                         </div>
-                        <div className="col-2 col-md-2 col-lg-2 mt-2 ">
-                            <label htmlFor="" className='new-label'>In Possession Of</label>
+                        <div className="col-2 col-md-2 col-lg-2">
+                            <label htmlFor="" className='new-label mb-0'>In Possession Of</label>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-2  mt-1">
+                        <div className="col-4 col-md-4 col-lg-2">
                             {
                                 MstVehicle ?
                                     <>
@@ -1789,7 +1789,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                     </>
                             }
                         </div>
-                        <div className="col-1 ">
+                        <div className="col-1">
                             <button
                                 onClick={() => {
                                     if (possessionID) {
@@ -1803,11 +1803,11 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                     setNameModalStatus(true);
                                     setType("VehicleName");
                                 }}
-                                className="btn btn-sm bg-green text-white py-0 mt-2 " data-toggle="modal" data-target="#MasterModal">
+                                className="btn btn-sm bg-green text-white" data-toggle="modal" data-target="#MasterModal">
                                 <i className="fa fa-plus"></i>
                             </button>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-1 mt-2">
+                        <div className="col-4 col-md-4 col-lg-1">
                             <div className="form-check ">
                                 <input className="form-check-input" name='IsEvidence' value={value?.IsEvidence} checked={value?.IsEvidence} onChange={HandleChanges} type="checkbox" id="flexCheckDefault" />
                                 <label className="form-check-label" htmlFor="flexCheckDefault">
@@ -1815,15 +1815,14 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                 </label>
                             </div>
                         </div>
-                        <div className="col-12 col-md-12 col-lg-2 mt-2 text-right" >
+                        <div className="col-12 col-md-12 col-lg-2 text-right" >
                         </div>
-                        <div className='col-11  mt-1 mb-md-5 mb-sm-5 mb-lg-0'>
-
+                        <div className='col-11 mb-md-5 mb-sm-5 mb-lg-0'>
                             <AlertTable availableAlert={availableAlert} masterPropertyID={masterPropertyID} ProSta={VehSta} />
 
-                            <div className='row  mt-1 justify-content-between align-items-center'>
+                            <div className='row mt-1 justify-content-between align-items-center'>
                                 <div>
-                                    {vehicleStatus && (VehSta === 'true' || VehSta === true) &&
+                                    {/* {vehicleStatus && (VehSta === 'true' || VehSta === true) &&
                                         <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => { setPrintStatus(true) }}>Print Barcode</button>
                                     }
                                     {
@@ -1839,7 +1838,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
                                         >
                                             Validate TIBRS Vehicle
                                         </button>
-                                    }
+                                    } */}
                                 </div>
 
 

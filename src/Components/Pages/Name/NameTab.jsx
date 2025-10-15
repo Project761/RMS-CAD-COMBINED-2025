@@ -62,6 +62,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
     var ModNo = query?.get('ModNo');
     var ProSta = query?.get('ProSta');
     var SideBarStatus = query?.get("SideBarStatus");
+    var isNew = query?.get("isNew");
 
     let DecNameID = 0, DecMasterNameID = 0, DecIncID = 0;
 
@@ -70,19 +71,21 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
     if (!MasterNameID) MasterNameID = 0;
     else DecMasterNameID = parseInt(base64ToString(MasterNameID));
 
-    // if (!IncID) IncID = 0;
-    // else DecIncID = parseInt(base64ToString(IncID));
+    if (!IncID) IncID = 0;
+    else DecIncID = parseInt(base64ToString(IncID));
 
     if (!IncID) IncID = 0;
     else IncID = parseInt(base64ToString(IncID));
 
-    const { nameShowPage, changesStatus, auditCount, offenderCount, nameFilterData, victimCount, tabCount, NameTabCount, setNameShowPage, countStatus, countAppear, localStoreArray, get_LocalStorage, setNameSingleData, get_Data_Name, } = useContext(AgencyContext);
-    const carouselRef = useRef(null);
+    const { nameShowPage, changesStatus, auditCount, offenderCount, nameFilterData, victimCount, tabCount, NameTabCount, setNameShowPage, countStatus, countAppear, localStoreArray, get_LocalStorage, setNameSingleData, get_Data_Name, nibrsNameValidateArray, incidentCount } = useContext(AgencyContext);
+    // console.log("🚀 ~ NameTab ~ nibrsNameValidateArray:", nibrsNameValidateArray)
 
+    const carouselRef = useRef(null);
     const navigate = useNavigate();
     const [status, setStatus] = useState();
     const iconHome = <i className="fa fa-home" style={{ fontSize: '20px' }}></i>
     const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
+    const NameCount = incidentCount[0]?.NameCount || 0;
 
     const [showOffender, setShowOffender] = useState(false);
     const [showVictim, setShowVictim] = useState(false);
@@ -91,7 +94,6 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
     const [NameId, setNameId] = useState(false);
     const [ListData, setListData] = useState([]);
     const [DocName, setDocName] = useState('NameDoc')
-
 
     const [showArrows, setShowArrows] = useState(false);
     const [viewType, setViewType] = useState('card'); // 'card' or 'list'
@@ -102,7 +104,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
     const [clickNibloder, setclickNibLoder] = useState(false);
     const [nibrsErrModalStatus, setNibrsErrModalStatus] = useState(false);
     const [nibrsErrStr, setNibrsErrStr] = useState('');
-    const [nibrsValidateNameData, setnibrsValidateNameData] = useState([]);
+    // const [nibrsValidateNameData, setnibrsValidateNameData] = useState([]);
     const [addName, setAddName] = useState(true); // 'card' or 'list'
     const [loginPinID, setLoginPinID] = useState(1);
     const [ResetErrors, setResetErrors] = useState(false); // 'card' or 'list'
@@ -131,8 +133,6 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
             get_Data_Name(IncID);
         }
     }, [IncID]);
-
-
 
     const get_List = (DecNameID, DecMasterNameID) => {
         const val = { NameID: DecNameID, MasterNameID: DecMasterNameID, }
@@ -176,11 +176,6 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
             });
         }
     };
-    // useEffect(() => {
-    //     if (DeNameID || DeMasterNameID) {
-    //         setNameID(DeNameID); GetSingleData(DeNameID, DeMasterNameID); setMasterNameID(DeMasterNameID)
-    //     }
-    // }, [DeNameID, DeMasterNameID]);
 
     const GetSingleData = (nameID, masterNameID) => {
         const val = { 'NameID': nameID, 'MasterNameID': masterNameID, 'IsMaster': MstPage === "MST-Name-Dash" ? true : false, }
@@ -191,35 +186,6 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
             } else { setEditval([]); setNameSingleData([]) }
         })
     }
-    const getNibrsError = (Id, nibrsValidateNameData) => {
-        const arr = nibrsValidateNameData?.filter((item) => item?.NameEventID == Id);
-        return arr?.[0]?.OnPageError;
-    }
-
-
-    const set_Edit_Value = (row) => {
-        if (row.NameID || row.MasterNameID) {
-            // Reset(); setVictimTypeDrp([]);
-            GetSingleData(row.NameID, row.MasterNameID);
-            if (isCad) {
-                navigate(`/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(row?.NameID)}&MasterNameID=${stringToBase64(row?.MasterNameID)}&NameStatus=${true}`)
-            } else {
-                navigate(`/Name-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(row?.NameID)}&MasterNameID=${stringToBase64(row?.MasterNameID)}&NameStatus=${true}`)
-            }
-            // get_Name_Count(row.NameID, row.MasterNameID, MstPage === "MST-Name-Dash" ? true : false);
-            setNameID(row.NameID); setMasterNameID(row?.MasterNameID);
-            //  setUpdateStatus(updateStatus + 1); setuploadImgFiles('');
-            // getNibrsErrorToolTip(row.NameID, uniqueId, mainIncidentID);
-            // setIsSocietyName(row.IsSociety === 'true' ? true : false);
-        }
-    }
-
-    const setErrString = (ID, nibrsValidateNameData) => {
-        const arr = nibrsValidateNameData?.filter((item) => item?.NameEventID == ID);
-        setNibrsErrStr(arr[0]?.OnPageError);
-        setNibrsErrModalStatus(true);
-    }
-
 
     const columns = [
         {
@@ -234,7 +200,6 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
         {
             name: 'DOB', selector: (row) => row.DateOfBirth ? getShowingWithOutTime(row.DateOfBirth) : " ", sortable: true
         },
-
         {
             name: 'SSN', selector: (row) => row.SSN, sortable: true
         },
@@ -247,25 +212,25 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
         {
             name: 'Alias Indicator', selector: (row) => row.AliasIndicator, sortable: true
         },
-        {
-            width: '100px', name: 'View',
-            cell: row =>
-                <div style={{ position: 'absolute', top: 4, right: 30 }}>
-                    {
-                        getNibrsError(row.NameID, nibrsValidateNameData) ?
-                            <span
-                                onClick={(e) => { setErrString(row.NameID, nibrsValidateNameData) }}
-                                className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
-                                data-toggle="modal"
-                                data-target="#NibrsErrorShowModal"
-                            >
-                                <i className="fa fa-eye"></i>
-                            </span>
-                            :
-                            <></>
-                    }
-                </div>
-        },
+        // {
+        //     width: '100px', name: 'View',
+        //     cell: row =>
+        //         <div style={{ position: 'absolute', top: 4, right: 30 }}>
+        //             {
+        //                 getNibrsError(row.NameID, nibrsNameValidateArray) ?
+        //                     <span
+        //                         onClick={(e) => { setErrString(row.NameID, nibrsNameValidateArray) }}
+        //                         className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
+        //                         data-toggle="modal"
+        //                         data-target="#NibrsErrorShowModal"
+        //                     >
+        //                         <i className="fa fa-eye"></i>
+        //                     </span>
+        //                     :
+        //                     <></>
+        //             }
+        //         </div>
+        // },
         {
             name: 'Reason Code', selector: (row) => row?.NameReasonCode || '',
             format: (row) => (<>{row?.NameReasonCode ? row?.NameReasonCode.substring(0, 50) : ''}{row?.NameReasonCode?.length > 40 ? '  . . .' : null} </>),
@@ -287,30 +252,58 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                             </span>
                     }
                 </div>
-
         }
     ]
+
+    const getNibrsError = (Id, nibrsNameValidateArray) => {
+        const arr = nibrsNameValidateArray?.filter((item) => item?.NameEventID == Id);
+        return arr?.[0]?.OnPageError;
+    }
+
+    const setErrString = (ID, nibrsNameValidateArray) => {
+        const arr = nibrsNameValidateArray?.filter((item) => item?.NameEventID == ID);
+        setNibrsErrStr(arr[0]?.OnPageError);
+        setNibrsErrModalStatus(true);
+    }
+
+    const getStatusColors = (ID, nibrsValidateData) => {
+        return getNibrsError(ID, nibrsValidateData) ? { backgroundColor: "rgb(255 202 194)" } : {};
+    };
+
+    const set_Edit_Value = (row) => {
+        if (row.NameID || row.MasterNameID) {
+            // Reset(); setVictimTypeDrp([]);
+            GetSingleData(row.NameID, row.MasterNameID);
+            if (isCad) {
+                navigate(`/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(row?.NameID)}&MasterNameID=${stringToBase64(row?.MasterNameID)}&NameStatus=${true}`)
+            } else {
+                navigate(`/Name-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(row?.NameID)}&MasterNameID=${stringToBase64(row?.MasterNameID)}&NameStatus=${true}`)
+            }
+            setNameID(row.NameID); setMasterNameID(row?.MasterNameID);
+        }
+    }
 
 
     const setStatusFalse = () => {
         if (MstPage === "MST-Name-Dash") {
             if (isCADSearch) {
-                navigate(`/cad/name-search?page=MST-Name-Dash&IncId=${stringToBase64(IncID)}&IncNo=${0}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}`)
+                navigate(`/cad/name-search?page=MST-Name-Dash&IncId=${stringToBase64(IncID)}&IncNo=${0}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}&isNew=${true}`)
             } else {
-                navigate(`/Name-Home?page=MST-Name-Dash&&IncId=${stringToBase64(IncID)}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}`)
+                navigate(`/Name-Home?page=MST-Name-Dash&&IncId=${stringToBase64(IncID)}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}&isNew=${true}`)
             }
         }
         else {
             if (isCad) {
-                navigate(`/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}`)
+                navigate(`/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}&isNew=${true}`)
             } else {
-                navigate(`/Name-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}`)
+                navigate(`/Name-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}&isNew=${true}`)
             }
             setMasterNameID(''); setNameID('');
         }
     }
-    const setToReset = () => {
-    }
+
+    const setToReset = () => { }
+
     const DeleteContactDetail = () => {
         const val = { 'NameID': nameID, 'DeletedByUserFK': loginPinID, }
         AddDeleteUpadate('MasterName/Delete_NameEvent', val).then((res) => {
@@ -325,11 +318,35 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
         })
     }
 
+    const tableCustomStyle = {
+        headRow: {
+            style: { color: '#fff', backgroundColor: '#001f3f', borderBottomColor: '#FFFFFF', outline: '1px solid #FFFFFF', },
+        },
+        rows: { style: { minHeight: '48px', borderBottom: '1px solid #ccc', }, },
+        cells: {
+            style: {
+                paddingTop: '10px', paddingBottom: '10px', paddingLeft: '8px', paddingRight: '8px',
+            },
+        },
+    };
+
+    const conditionalRowStyles = [
+        {
+            when: () => true,
+            style: (row) => ({
+                ...getStatusColors(row.NameID, nibrsNameValidateArray),
+                ...(row.NameID === nameID ? {
+                    backgroundColor: '#001f3fbd',
+                    color: 'white',
+                    cursor: 'pointer',
+                } : {})
+            }),
+        },
+    ];
 
     return (
         <div className=" section-body pt-1 p-1 bt" >
             <div className="div">
-
                 {!isCad && <div className="col-12  inc__tabs">
                     {
                         !MstPage && <Tab />
@@ -337,7 +354,6 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                 </div>}
                 <div className="dark-row" >
                     <div className="col-12 col-sm-12">
-
                         <div className={`card Agency ${isCad ? 'CAD-incident-card' : 'incident-card'}`}>
                             <div className="card-body" >
                                 {nameFilterData && nameFilterData.length > 0 && (
@@ -345,52 +361,111 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                         {/* Cards Wrapper */}
                                         {viewType === "card" ? (
                                             <div className="card-carousel" id="cardCarousel" ref={carouselRef}>
-                                                {nameFilterData.map((row, index) => (
+
+                                                {nameFilterData?.map((row, index) => (
                                                     <div
                                                         className="info-card position-relative d-flex align-items-center justify-content-between"
                                                         key={index}
-                                                        style={{ cursor: "pointer" }}
+                                                        style={{
+                                                            cursor: "pointer",
+                                                            borderLeft: nibrsNameValidateArray?.some(item => item?.NameEventID === row?.NameID) ? "5px solid #EB0101" : "5px solid #2DEB7A",
+                                                        }}
                                                     >
                                                         {/* Card Content */}
                                                         <div>
                                                             <div>
-                                                                <p className="mb-0 small" style={{ color: "black" }}>
-                                                                    <strong>{row.FullName}</strong>
-                                                                </p>
+                                                                <p className="mb-0 small" style={{ color: "black" }}><strong>{row.FullName}</strong></p>
                                                             </div>
                                                             <div>
-                                                                <p className="mb-0 small">
-                                                                    {row.DateOfBirth ? getShowingWithOutTime(row.DateOfBirth) : ""}
-                                                                </p>
+                                                                <p className="mb-0 small"> {row.DateOfBirth ? getShowingWithOutTime(row.DateOfBirth) : ""}</p>
                                                             </div>
                                                             <div>
-                                                                <p className="mb-0 small">{row.Gender}
-                                                                </p>
+                                                                <p className="mb-0 small">{row.Gender}</p>
                                                             </div>
                                                             <div>
                                                                 <p
                                                                     className="mb-0 small"
                                                                     style={{
                                                                         color:
-                                                                            row.RoleName === "Other"
-                                                                                ? "orange"
-                                                                                : row.RoleName === "Victim"
-                                                                                    ? "green"
-                                                                                    : row.RoleName === "Offender"
-                                                                                        ? "red"
-                                                                                        : "black",
+                                                                            row.RoleName === "Other" ? "orange"
+                                                                                :
+                                                                                row.RoleName === "Victim" ? "green"
+                                                                                    :
+                                                                                    row.RoleName === "Offender" ? "red"
+                                                                                        :
+                                                                                        "black",
                                                                     }}
                                                                 >
-                                                                    {row.NameReasonCode
-                                                                        ? row.NameReasonCode.length > 40
-                                                                            ? `${row.NameReasonCode.substring(0, 50)} . . .`
-                                                                            : row.NameReasonCode
-                                                                        : ""}
+                                                                    {row.NameReasonCode ? row.NameReasonCode.length > 40 ? `${row.NameReasonCode.substring(0, 50)} . . .` : row.NameReasonCode : ""}
                                                                 </p>
                                                             </div>
                                                         </div>
-                                                        <div className="d-fle flex-column gap-2 flex-shrink-0">
-                                                            {/* Edit Icon */}
+                                                        <div className="d-flex flex-column align-items-center gap-2 flex-shrink-0">
+                                                            {/* Edit Button */}
+                                                            <div
+                                                                style={{
+                                                                    backgroundColor: "#001f3f",
+                                                                    color: "white",
+                                                                    width: "36px",
+                                                                    height: "36px",
+                                                                    borderRadius: "50%",
+                                                                    display: "flex",
+                                                                    alignItems: "center",
+                                                                    justifyContent: "center",
+                                                                    cursor: "pointer",
+                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                    marginBottom: "10px"
+                                                                    // transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                                                                }}
+                                                                // onMouseEnter={(e) => {
+                                                                //     e.currentTarget.style.transform = "scale(1.1)";
+                                                                //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
+                                                                // }}
+                                                                // onMouseLeave={(e) => {
+                                                                //     e.currentTarget.style.transform = "scale(1)";
+                                                                //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
+                                                                // }}
+                                                                onClick={() => {
+                                                                    set_Edit_Value(row);
+                                                                    setResetErrors(true);
+                                                                }}
+                                                                title="Edit"
+                                                            >
+                                                                <i className="fa fa-edit"></i>
+                                                            </div>
+
+                                                            {/* Delete Button */}
+                                                            <div
+                                                                style={{
+                                                                    backgroundColor: "#001f3f",
+                                                                    color: "white",
+                                                                    width: "36px",
+                                                                    height: "36px",
+                                                                    borderRadius: "50%",
+                                                                    display: "flex",
+                                                                    alignItems: "center",
+                                                                    justifyContent: "center",
+                                                                    cursor: "pointer",
+                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                    // transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                                                                }}
+                                                                // onMouseEnter={(e) => {
+                                                                //     e.currentTarget.style.transform = "scale(1.1)";
+                                                                //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
+                                                                // }}
+                                                                // onMouseLeave={(e) => {
+                                                                //     e.currentTarget.style.transform = "scale(1)";
+                                                                //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
+                                                                // }}
+                                                                data-toggle="modal"
+                                                                data-target="#DeleteNameModal"
+                                                                onClick={() => setNameID(row.NameID)}
+                                                                title="Delete"
+                                                            >
+                                                                <i className="fa fa-trash"></i>
+                                                            </div>
+                                                        </div>
+                                                        {/* <div className="d-fle flex-column gap-2 flex-shrink-0">
                                                             <div
                                                                 style={{
                                                                     backgroundColor: "#001f3f",
@@ -407,8 +482,6 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                             >
                                                                 <i className="fa fa-edit"></i>
                                                             </div>
-
-                                                            {/* Trash Icon */}
                                                             <div
                                                                 style={{
                                                                     backgroundColor: "#001f3f",
@@ -425,362 +498,328 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                             >
                                                                 <i className="fa fa-trash"></i>
                                                             </div>
-                                                        </div>
-
-
+                                                        </div> */}
                                                     </div>
                                                 ))}
                                             </div>
-                                        ) : viewType === "list" ? (
-                                            <div className="modal-table" style={{ flex: "0 0 95%", maxWidth: "95%" }}>
-                                                {MstPage !== "MST-Name-Dash" && (
-                                                    <DataTable
-                                                        dense
-                                                        columns={columns}
-                                                        data={
-                                                            effectiveScreenPermission
-                                                                ? effectiveScreenPermission[0]?.DisplayOK
-                                                                    ? nameFilterData
-                                                                    : []
-                                                                : nameFilterData
-                                                        }
-                                                        selectableRowsHighlight
-                                                        highlightOnHover
-                                                        responsive
-                                                        fixedHeader
-                                                        fixedHeaderScrollHeight="150px"
-                                                        customStyles={tableCustomStyle}
-                                                        onRowClicked={(row) => {
-                                                            set_Edit_Value(row);
-                                                        }}
-                                                        persistTableHead
-                                                        noDataComponent={
-                                                            effectiveScreenPermission
-                                                                ? effectiveScreenPermission[0]?.DisplayOK
-                                                                    ? "There are no data to display"
-                                                                    : "You don’t have permission to view data"
-                                                                : "There are no data to display"
-                                                        }
-                                                    />
-                                                )}
-                                            </div>
-                                        ) : null}
-
+                                        )
+                                            :
+                                            viewType === "list" ? (
+                                                <div className="modal-table" style={{ flex: "0 0 95%", maxWidth: "95%" }}>
+                                                    {MstPage !== "MST-Name-Dash" && (
+                                                        <DataTable
+                                                            dense
+                                                            columns={columns}
+                                                            data={
+                                                                effectiveScreenPermission
+                                                                    ? effectiveScreenPermission[0]?.DisplayOK
+                                                                        ? nameFilterData
+                                                                        : []
+                                                                    : nameFilterData
+                                                            }
+                                                            selectableRowsHighlight
+                                                            highlightOnHover
+                                                            responsive
+                                                            fixedHeader
+                                                            fixedHeaderScrollHeight="150px"
+                                                            customStyles={tableCustomStyle}
+                                                            conditionalRowStyles={conditionalRowStyles}
+                                                            onRowClicked={(row) => { set_Edit_Value(row); }}
+                                                            persistTableHead
+                                                            noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : "There are no data to display"}
+                                                        />
+                                                    )}
+                                                </div>
+                                            )
+                                                :
+                                                null
+                                        }
                                         <div className="text-right ml-3">
                                             <div className="right-controls d-flex flex-column align-items-center gap-2">
                                                 <div className="view-toggle d-flex flex-column gap-2">
-                                                    <button
-                                                        className="btn btn-sm btn-success mb-2"
-                                                        onClick={() => { setStatusFalse(); setResetErrors(true) }}
-                                                    >
-                                                        New
-                                                    </button>
-                                                    {viewType === "card" && (
-
-                                                        <button
-                                                            className="btn btn-sm btn-success"
-                                                            onClick={() => setViewType("list")}
-                                                        >
-                                                            Grid
-                                                        </button>
-
-                                                    )}
-                                                    {viewType === "list" && (
-                                                        <button
-                                                            className="btn btn-sm btn-success"
-                                                            onClick={() => setViewType("card")}
-                                                        >
-                                                            Card
-                                                        </button>
-                                                    )}
+                                                    <button className="btn btn-sm btn-success mb-2" onClick={() => { setStatusFalse(); setResetErrors(true) }}> New </button>
+                                                    {viewType === "card" && (<button className="btn btn-sm btn-success" onClick={() => setViewType("list")}  > Grid </button>)}
+                                                    {viewType === "list" && (<button className="btn btn-sm btn-success" onClick={() => setViewType("card")} > Card  </button>)}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 )}
 
-                                <div className="row mt-2 " style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
-                                    <div className="col-12 name-tab">
-                                        <ul className='nav nav-tabs'>
-                                            {isCad ? <Link
-                                                className={`nav-item ${nameShowPage === 'home' ? 'active' : ''}`}
-                                                to={
-                                                    isCADSearch ? `/cad/name-search?page=MST-Name-Dash&MasterNameID=${MasterNameID}&NameID=${NameID}&NameStatus=${NameStatus}&ModNo=${ModNo}` :
-                                                        MstPage ?
-                                                            `/cad/dispatcher?page=MST-Name-Dash&MasterNameID=${MasterNameID}&NameID=${NameID}&NameStatus=${NameStatus}&ModNo=${ModNo}`
-                                                            :
-                                                            `/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${NameID}&MasterNameID=${MasterNameID}&NameStatus=${NameStatus}`
-                                                }
-
-                                                data-target={changesStatus ? "#SaveModal" : ''}
-                                                style={{ color: nameShowPage === 'home' ? 'Red' : '#000' }}
-                                                data-toggle={changesStatus ? "modal" : "pill"}
-                                                aria-current="page"
-
-                                                onClick={() => { if (!changesStatus) setNameShowPage('home') }}
-
-                                            >
-                                                {iconHome}
-                                            </Link> : <Link
-                                                className={`nav-item ${nameShowPage === 'home' ? 'active' : ''}`}
-                                                to={
-                                                    MstPage ?
-                                                        `/Name-Home?page=MST-Name-Dash&MasterNameID=${MasterNameID}&NameID=${NameID}&NameStatus=${NameStatus}&ModNo=${ModNo}`
-                                                        :
-                                                        `/Name-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${NameID}&MasterNameID=${MasterNameID}&NameStatus=${NameStatus}`
-                                                }
-                                                data-target={changesStatus ? "#SaveModal" : ''}
-                                                style={{ color: nameShowPage === 'home' ? 'Red' : '#000' }}
-                                                data-toggle={changesStatus ? "modal" : "pill"}
-                                                aria-current="page"
-
-                                                onClick={() => { if (!changesStatus) setNameShowPage('home') }}
-
-                                            >
-                                                {iconHome}
-                                            </Link>}
-
-                                            {isBusinessName && (
-                                                <>
-                                                    <span
-                                                        className={`nav-item ${nameShowPage === 'Contact_Details' ? 'active' : ''}${!status ? ' disabled' : ''}`}
-
-                                                        data-toggle={changesStatus ? "modal" : "pill"}
+                                {
+                                    (status || isNew === "true" || isNew === true || NameCount === 0 || NameCount === "0") && (
+                                        <div className="row mt-2 " style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
+                                            <div className="col-12 name-tab">
+                                                <ul className='nav nav-tabs'>
+                                                    {isCad ? <Link
+                                                        className={`nav-item ${nameShowPage === 'home' ? 'active' : ''}`}
+                                                        to={
+                                                            isCADSearch ? `/cad/name-search?page=MST-Name-Dash&MasterNameID=${MasterNameID}&NameID=${NameID}&NameStatus=${NameStatus}&ModNo=${ModNo}` :
+                                                                MstPage ?
+                                                                    `/cad/dispatcher?page=MST-Name-Dash&MasterNameID=${MasterNameID}&NameID=${NameID}&NameStatus=${NameStatus}&ModNo=${ModNo}`
+                                                                    :
+                                                                    `/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${NameID}&MasterNameID=${MasterNameID}&NameStatus=${NameStatus}`
+                                                        }
                                                         data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: nameShowPage === 'Contact_Details' ? 'Red' : NameTabCount?.ContactDetailsCount > 0 ? 'blue' : '#000' }}
-                                                        aria-current="page"
-
-                                                        onClick={() => { if (!changesStatus) setNameShowPage('Contact_Details') }}
-                                                    >
-                                                        Contact Details{`${NameTabCount?.ContactDetailsCount > 0 ? '(' + NameTabCount?.ContactDetailsCount + ')' : ''}`}
-                                                    </span>
-                                                    <span
-                                                        className={`nav-item ${nameShowPage === 'Address' ? 'active' : ''}${!status ? ' disabled' : ''}`}
-
+                                                        style={{ color: nameShowPage === 'home' ? 'Red' : '#000' }}
                                                         data-toggle={changesStatus ? "modal" : "pill"}
-                                                        data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: nameShowPage === 'Address' ? 'Red' : NameTabCount?.AddressCount > 0 ? 'blue' : '#000' }}
                                                         aria-current="page"
-
-                                                        onClick={() => { if (!changesStatus) setNameShowPage('Address') }}
+                                                        onClick={() => { if (!changesStatus) setNameShowPage('home') }}
                                                     >
-                                                        Address{`${NameTabCount?.AddressCount > 0 ? '(' + NameTabCount?.AddressCount + ')' : ''}`}
-                                                    </span>
-
-                                                    <span
-                                                        className={`nav-item ${nameShowPage === 'TransactionLog' ? 'active' : ''}${!status ? ' disabled' : ''}`}
-
+                                                        {iconHome}
+                                                    </Link> : <Link
+                                                        className={`nav-item ${nameShowPage === 'home' ? 'active' : ''}`}
+                                                        to={
+                                                            MstPage ?
+                                                                `/Name-Home?page=MST-Name-Dash&MasterNameID=${MasterNameID}&NameID=${NameID}&NameStatus=${NameStatus}&ModNo=${ModNo}`
+                                                                :
+                                                                `/Name-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${NameID}&MasterNameID=${MasterNameID}&NameStatus=${NameStatus}`
+                                                        }
+                                                        data-target={changesStatus ? "#SaveModal" : ''}
+                                                        style={{ color: nameShowPage === 'home' ? 'Red' : '#000' }}
                                                         data-toggle={changesStatus ? "modal" : "pill"}
-                                                        data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: nameShowPage === 'TransactionLog' ? 'Red' : NameTabCount?.TransactionLogCount > 0 ? 'blue' : '#000' }}
                                                         aria-current="page"
-
-                                                        onClick={() => { if (!changesStatus) setNameShowPage('TransactionLog') }}
+                                                        onClick={() => { if (!changesStatus) setNameShowPage('home') }}
                                                     >
-                                                        Involvement{`${NameTabCount?.TransactionLogCount > 0 ? '(' + NameTabCount?.TransactionLogCount + ')' : ''}`}
-                                                    </span>
-                                                </>
-                                            )}
-                                            {!isBusinessName && (
-                                                <>
-                                                    <span
-                                                        className={`nav-item ${nameShowPage === 'general' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+                                                        {iconHome}
+                                                    </Link>}
 
-                                                        data-toggle={changesStatus ? "modal" : "pill"}
-                                                        data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: nameShowPage === 'general' ? 'Red' : countStatus === true ? 'blue' : '#000' }}
-                                                        aria-current="page"
+                                                    {isBusinessName && (
+                                                        <>
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'Contact_Details' ? 'active' : ''}${!status ? ' disabled' : ''}`}
 
-                                                        onClick={() => { if (!changesStatus) setNameShowPage('general') }}
-                                                    >
-                                                        General{`${NameTabCount?.GeneralCount > 0 ? '(' + NameTabCount?.GeneralCount + ')' : ''}`}
-                                                    </span>
-                                                    <span
-                                                        className={`nav-item ${nameShowPage === 'Appearance' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'Contact_Details' ? 'Red' : NameTabCount?.ContactDetailsCount > 0 ? 'blue' : '#000' }}
+                                                                aria-current="page"
 
-                                                        data-toggle={changesStatus ? "modal" : "pill"}
-                                                        data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: nameShowPage === 'Appearance' ? 'Red' : countAppear === true ? 'blue' : '#000' }}
-                                                        aria-current="page"
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('Contact_Details') }}
+                                                            >
+                                                                Contact Details{`${NameTabCount?.ContactDetailsCount > 0 ? '(' + NameTabCount?.ContactDetailsCount + ')' : ''}`}
+                                                            </span>
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'Address' ? 'active' : ''}${!status ? ' disabled' : ''}`}
 
-                                                        onClick={() => { if (!changesStatus) setNameShowPage('Appearance') }}
-                                                    >
-                                                        Appearance{`${NameTabCount?.AppearanceCount > 0 ? '(' + NameTabCount?.AppearanceCount + ')' : ''}`}
-                                                    </span>
-                                                    <span
-                                                        className={`nav-item ${nameShowPage === 'aliases' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'Address' ? 'Red' : NameTabCount?.AddressCount > 0 ? 'blue' : '#000' }}
+                                                                aria-current="page"
 
-                                                        data-toggle={changesStatus ? "modal" : "pill"}
-                                                        data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: nameShowPage === 'aliases' ? 'Red' : NameTabCount?.AliasesCount > 0 ? 'blue' : '#000' }}
-                                                        aria-current="page"
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('Address') }}
+                                                            >
+                                                                Address{`${NameTabCount?.AddressCount > 0 ? '(' + NameTabCount?.AddressCount + ')' : ''}`}
+                                                            </span>
 
-                                                        onClick={() => { if (!changesStatus) setNameShowPage('aliases') }}
-                                                    >
-                                                        Aliases{`${NameTabCount?.AliasesCount > 0 ? '(' + NameTabCount?.AliasesCount + ')' : ''}`}
-                                                    </span>
-                                                    <span
-                                                        className={`nav-item ${nameShowPage === 'SMT' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'TransactionLog' ? 'active' : ''}${!status ? ' disabled' : ''}`}
 
-                                                        data-toggle={changesStatus ? "modal" : "pill"}
-                                                        data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: nameShowPage === 'SMT' ? 'Red' : NameTabCount?.NameSMTCount > 0 ? 'blue' : '#000' }}
-                                                        aria-current="page"
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'TransactionLog' ? 'Red' : NameTabCount?.TransactionLogCount > 0 ? 'blue' : '#000' }}
+                                                                aria-current="page"
 
-                                                        onClick={() => { if (!changesStatus) setNameShowPage('SMT') }}
-                                                    >
-                                                        SMT{`${NameTabCount?.NameSMTCount > 0 ? '(' + NameTabCount?.NameSMTCount + ')' : ''}`}
-                                                    </span>
-                                                    <span
-                                                        className={`nav-item ${nameShowPage === 'Identification_Number' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('TransactionLog') }}
+                                                            >
+                                                                Involvement{`${NameTabCount?.TransactionLogCount > 0 ? '(' + NameTabCount?.TransactionLogCount + ')' : ''}`}
+                                                            </span>
+                                                        </>
+                                                    )}
+                                                    {!isBusinessName && (
+                                                        <>
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'general' ? 'active' : ''}${!status ? 'disabled' : ''}`}
 
-                                                        data-toggle={changesStatus ? "modal" : "pill"}
-                                                        data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: nameShowPage === 'Identification_Number' ? 'Red' : NameTabCount?.IdentificationNumberCount > 0 ? 'blue' : '#000' }}
-                                                        aria-current="page"
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'general' ? 'Red' : countStatus === true ? 'blue' : '#000' }}
+                                                                aria-current="page"
 
-                                                        onClick={() => { if (!changesStatus) setNameShowPage('Identification_Number') }}
-                                                    >
-                                                        Identification Number{`${NameTabCount?.IdentificationNumberCount > 0 ? '(' + NameTabCount?.IdentificationNumberCount + ')' : ''}`}
-                                                    </span>
-                                                    <span
-                                                        className={`nav-item ${nameShowPage === 'Contact_Details' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('general') }}
+                                                            >
+                                                                General{`${NameTabCount?.GeneralCount > 0 ? '(' + NameTabCount?.GeneralCount + ')' : ''}`}
+                                                            </span>
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'Appearance' ? 'active' : ''}${!status ? ' disabled' : ''}`}
 
-                                                        data-toggle={changesStatus ? "modal" : "pill"}
-                                                        data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: nameShowPage === 'Contact_Details' ? 'Red' : NameTabCount?.ContactDetailsCount > 0 ? 'blue' : '#000' }}
-                                                        aria-current="page"
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'Appearance' ? 'Red' : countAppear === true ? 'blue' : '#000' }}
+                                                                aria-current="page"
 
-                                                        onClick={() => { if (!changesStatus) setNameShowPage('Contact_Details') }}
-                                                    >
-                                                        Contact Details{`${NameTabCount?.ContactDetailsCount > 0 ? '(' + NameTabCount?.ContactDetailsCount + ')' : ''}`}
-                                                    </span>
-                                                    <span
-                                                        className={`nav-item ${nameShowPage === 'Address' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('Appearance') }}
+                                                            >
+                                                                Appearance{`${NameTabCount?.AppearanceCount > 0 ? '(' + NameTabCount?.AppearanceCount + ')' : ''}`}
+                                                            </span>
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'aliases' ? 'active' : ''}${!status ? ' disabled' : ''}`}
 
-                                                        data-toggle={changesStatus ? "modal" : "pill"}
-                                                        data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: nameShowPage === 'Address' ? 'Red' : NameTabCount?.AddressCount > 0 ? 'blue' : '#000' }}
-                                                        aria-current="page"
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'aliases' ? 'Red' : NameTabCount?.AliasesCount > 0 ? 'blue' : '#000' }}
+                                                                aria-current="page"
 
-                                                        onClick={() => { if (!changesStatus) setNameShowPage('Address') }}
-                                                    >
-                                                        Address{`${NameTabCount?.AddressCount > 0 ? '(' + NameTabCount?.AddressCount + ')' : ''}`}
-                                                    </span>
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('aliases') }}
+                                                            >
+                                                                Aliases{`${NameTabCount?.AliasesCount > 0 ? '(' + NameTabCount?.AliasesCount + ')' : ''}`}
+                                                            </span>
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'SMT' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'SMT' ? 'Red' : NameTabCount?.NameSMTCount > 0 ? 'blue' : '#000' }}
+                                                                aria-current="page"
+
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('SMT') }}
+                                                            >
+                                                                SMT{`${NameTabCount?.NameSMTCount > 0 ? '(' + NameTabCount?.NameSMTCount + ')' : ''}`}
+                                                            </span>
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'Identification_Number' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'Identification_Number' ? 'Red' : NameTabCount?.IdentificationNumberCount > 0 ? 'blue' : '#000' }}
+                                                                aria-current="page"
+
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('Identification_Number') }}
+                                                            >
+                                                                Identification Number{`${NameTabCount?.IdentificationNumberCount > 0 ? '(' + NameTabCount?.IdentificationNumberCount + ')' : ''}`}
+                                                            </span>
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'Contact_Details' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'Contact_Details' ? 'Red' : NameTabCount?.ContactDetailsCount > 0 ? 'blue' : '#000' }}
+                                                                aria-current="page"
+
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('Contact_Details') }}
+                                                            >
+                                                                Contact Details{`${NameTabCount?.ContactDetailsCount > 0 ? '(' + NameTabCount?.ContactDetailsCount + ')' : ''}`}
+                                                            </span>
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'Address' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'Address' ? 'Red' : NameTabCount?.AddressCount > 0 ? 'blue' : '#000' }}
+                                                                aria-current="page"
+
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('Address') }}
+                                                            >
+                                                                Address{`${NameTabCount?.AddressCount > 0 ? '(' + NameTabCount?.AddressCount + ')' : ''}`}
+                                                            </span>
 
 
-                                                    <span
-                                                        className={`nav-item ${nameShowPage === 'Warrant' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'Warrant' ? 'active' : ''}${!status ? ' disabled' : ''}`}
 
-                                                        data-toggle={changesStatus ? "modal" : "pill"}
-                                                        data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: nameShowPage === 'Warrant' ? 'Red' : NameTabCount?.NameWarrantCount > 0 ? 'blue' : '#000' }}
-                                                        aria-current="page"
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'Warrant' ? 'Red' : NameTabCount?.NameWarrantCount > 0 ? 'blue' : '#000' }}
+                                                                aria-current="page"
 
-                                                        onClick={() => { if (!changesStatus) setNameShowPage('Warrant') }}
-                                                    >
-                                                        Warrant{`${NameTabCount?.NameWarrantCount > 0 ? '(' + NameTabCount?.NameWarrantCount + ')' : ''}`}
-                                                    </span>
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('Warrant') }}
+                                                            >
+                                                                Warrant{`${NameTabCount?.NameWarrantCount > 0 ? '(' + NameTabCount?.NameWarrantCount + ')' : ''}`}
+                                                            </span>
 
 
-                                                    <span
-                                                        className={`nav-item ${nameShowPage === 'TransactionLog' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'TransactionLog' ? 'active' : ''}${!status ? ' disabled' : ''}`}
 
-                                                        data-toggle={changesStatus ? "modal" : "pill"}
-                                                        data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: nameShowPage === 'TransactionLog' ? 'Red' : NameTabCount?.TransactionLogCount > 0 ? 'blue' : '#000' }}
-                                                        aria-current="page"
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'TransactionLog' ? 'Red' : NameTabCount?.TransactionLogCount > 0 ? 'blue' : '#000' }}
+                                                                aria-current="page"
 
-                                                        onClick={() => { if (!changesStatus) setNameShowPage('TransactionLog') }}
-                                                    >
-                                                        Involvement{`${NameTabCount?.TransactionLogCount > 0 ? '(' + NameTabCount?.TransactionLogCount + ')' : ''}`}
-                                                    </span>
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('TransactionLog') }}
+                                                            >
+                                                                Involvement{`${NameTabCount?.TransactionLogCount > 0 ? '(' + NameTabCount?.TransactionLogCount + ')' : ''}`}
+                                                            </span>
+                                                            {
+                                                                MstPage &&
+                                                                <span
+                                                                    className={`nav-item ${nameShowPage === 'History' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+
+                                                                    data-toggle={changesStatus ? "modal" : "pill"}
+                                                                    data-target={changesStatus ? "#SaveModal" : ''}
+                                                                    style={{ color: nameShowPage === 'History' ? 'Red' : '#000' }}
+                                                                    aria-current="page"
+
+                                                                    onClick={() => { if (!changesStatus) setNameShowPage('History') }}
+                                                                >
+                                                                    History
+                                                                </span>
+
+                                                            }
+                                                        </>
+                                                    )}
                                                     {
-                                                        MstPage &&
+                                                        showVictim && !isBusinessName && MstPage !== "MST-Name-Dash" &&
                                                         <span
-                                                            className={`nav-item ${nameShowPage === 'History' ? 'active' : ''}${!status ? 'disabled' : ''}`}
-
+                                                            className={`nav-item ${nameShowPage === 'Victim' ? 'active' : ''}${!status ? 'disabled' : ''}`}
                                                             data-toggle={changesStatus ? "modal" : "pill"}
                                                             data-target={changesStatus ? "#SaveModal" : ''}
-                                                            style={{ color: nameShowPage === 'History' ? 'Red' : '#000' }}
+                                                            style={{ color: nameShowPage === 'Victim' ? 'Red' : victimCount === true ? 'blue' : '#000' }}
                                                             aria-current="page"
-
-                                                            onClick={() => { if (!changesStatus) setNameShowPage('History') }}
+                                                            onClick={() => { if (!changesStatus) setNameShowPage('Victim') }}
                                                         >
-                                                            History
+                                                            Victim
                                                         </span>
-
                                                     }
-                                                </>
-                                            )}
-                                            {
-                                                showVictim && !isBusinessName && MstPage !== "MST-Name-Dash" &&
-                                                <span
-                                                    className={`nav-item ${nameShowPage === 'Victim' ? 'active' : ''}${!status ? 'disabled' : ''}`}
 
-                                                    data-toggle={changesStatus ? "modal" : "pill"}
-                                                    data-target={changesStatus ? "#SaveModal" : ''}
-                                                    style={{ color: nameShowPage === 'Victim' ? 'Red' : victimCount === true ? 'blue' : '#000' }}
-                                                    aria-current="page"
+                                                    {
+                                                        showOffender && MstPage !== "MST-Name-Dash" &&
+                                                        <span
+                                                            className={`nav-item ${nameShowPage === 'Offender' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+                                                            data-toggle={changesStatus ? "modal" : "pill"}
+                                                            data-target={changesStatus ? "#SaveModal" : ''}
+                                                            style={{ color: nameShowPage === 'Offender' ? 'Red' : offenderCount === true ? 'blue' : '#000' }}
+                                                            aria-current="page"
+                                                            onClick={() => { if (!changesStatus) setNameShowPage('Offender') }}
+                                                        >
+                                                            Offender{`${tabCount?.OffenderCount > 0 ? '(' + tabCount?.OffenderCount + ')' : ''}`}
+                                                        </span>
+                                                    }
+                                                    {MstPage !== "MST-Name-Dash" && (
+                                                        <span
+                                                            className={`nav-item ${nameShowPage === 'Offense' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+                                                            data-toggle={changesStatus ? "modal" : "pill"}
+                                                            data-target={changesStatus ? "#SaveModal" : ''}
+                                                            style={{ color: nameShowPage === 'Offense' ? 'Red' : NameTabCount?.NameOffenseCount > 0 ? 'blue' : '#000' }}
+                                                            aria-current="page"
+                                                            onClick={() => { if (!changesStatus) setNameShowPage('Offense') }}
+                                                        >
+                                                            Associated Offenses
+                                                        </span>
+                                                    )}
+                                                    <span
+                                                        className={`nav-item ${nameShowPage === 'AuditLog' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+                                                        data-toggle={changesStatus ? "modal" : "pill"}
+                                                        data-target={changesStatus ? "#SaveModal" : ''}
+                                                        style={{ color: nameShowPage === 'AuditLog' ? 'Red' : auditCount === true ? 'blue' : '#000' }}
+                                                        aria-current="page"
+                                                        onClick={() => { if (!changesStatus) setNameShowPage('AuditLog') }}
+                                                    >
+                                                        {isCad ? "Change Log" : " Audit Log"}
+                                                    </span>
 
-                                                    onClick={() => { if (!changesStatus) setNameShowPage('Victim') }}
-                                                >
-
-                                                    Victim
-                                                </span>
-                                            }
-
-                                            {
-                                                showOffender && MstPage !== "MST-Name-Dash" &&
-                                                <span
-                                                    className={`nav-item ${nameShowPage === 'Offender' ? 'active' : ''}${!status ? 'disabled' : ''}`}
-
-                                                    data-toggle={changesStatus ? "modal" : "pill"}
-                                                    data-target={changesStatus ? "#SaveModal" : ''}
-                                                    style={{ color: nameShowPage === 'Offender' ? 'Red' : offenderCount === true ? 'blue' : '#000' }}
-                                                    aria-current="page"
-
-                                                    onClick={() => { if (!changesStatus) setNameShowPage('Offender') }}
-                                                >
-                                                    Offender{`${tabCount?.OffenderCount > 0 ? '(' + tabCount?.OffenderCount + ')' : ''}`}
-                                                </span>
-                                            }
-                                            {MstPage !== "MST-Name-Dash" && (
-                                                <span
-                                                    className={`nav-item ${nameShowPage === 'Offense' ? 'active' : ''}${!status ? 'disabled' : ''}`}
-                                                    data-toggle={changesStatus ? "modal" : "pill"}
-                                                    data-target={changesStatus ? "#SaveModal" : ''}
-                                                    style={{ color: nameShowPage === 'Offense' ? 'Red' : NameTabCount?.NameOffenseCount > 0 ? 'blue' : '#000' }}
-                                                    aria-current="page"
-
-                                                    onClick={() => { if (!changesStatus) setNameShowPage('Offense') }}
-                                                >
-                                                    Associated Offenses
-                                                </span>
-                                            )}
-
-
-                                            <span
-                                                className={`nav-item ${nameShowPage === 'AuditLog' ? 'active' : ''}${!status ? 'disabled' : ''}`}
-
-                                                data-toggle={changesStatus ? "modal" : "pill"}
-                                                data-target={changesStatus ? "#SaveModal" : ''}
-
-                                                style={{ color: nameShowPage === 'AuditLog' ? 'Red' : auditCount === true ? 'blue' : '#000' }}
-                                                aria-current="page"
-
-                                                onClick={() => { if (!changesStatus) setNameShowPage('AuditLog') }}
-                                            >
-                                                {isCad ? "Change Log" : " Audit Log"}
-                                            </span>
-
-                                        </ul>
-                                    </div>
-                                </div>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    )
+                                }
 
                                 {
                                     nameShowPage === 'home' ?
-                                        <Home {...{ setStatus, status, showVictim, setShowVictim, setNameShowPage, setshowWarrant, setShowOffender, setIsBusinessName, get_List, isCad, isCADSearch, isViewEventDetails, editval, setEditval, setNameSingleData, masterNameID, setMasterNameID, nameID, setNameID, GetSingleData, get_Data_Name, nibrsErrModalStatus, setNibrsErrModalStatus, nibrsErrStr, setNibrsErrStr, nibrsValidateNameData, setnibrsValidateNameData, addName, setAddName, ResetErrors, setResetErrors }} />
+                                        <Home {...{
+                                            setStatus, status, showVictim, setShowVictim, setNameShowPage, setshowWarrant, setShowOffender, setIsBusinessName, get_List, isCad, isCADSearch, isViewEventDetails, editval, setEditval, setNameSingleData, masterNameID, setMasterNameID, nameID, setNameID, GetSingleData, get_Data_Name, nibrsErrModalStatus, setNibrsErrModalStatus, nibrsErrStr, setNibrsErrStr,
+                                            addName, setAddName, ResetErrors, setResetErrors,
+                                            // nibrsValidateNameData, setnibrsValidateNameData,
+                                        }} />
                                         :
                                         nameShowPage === 'general' ?
                                             <General {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
@@ -794,7 +833,6 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                     nameShowPage === 'aliases' ?
                                                         <Aliases {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
                                                         :
-
                                                         nameShowPage === 'SMT' ?
                                                             <Smt {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
                                                             :
