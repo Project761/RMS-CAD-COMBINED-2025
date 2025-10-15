@@ -281,7 +281,16 @@ export const fourColArrayAlert = (data, Id, Code, col3, col4) => {
     )
     return result
 }
+export const sixColArrayArrest = (data, Id, Code, col1, col2, col3, col4, col5, col6, col7, col8) => {
+    const result = data?.map((sponsor) =>
+        ({ value: sponsor[Id], label: sponsor[Code], LastName: sponsor[col1], DateOfBirth: sponsor[col2], SexID: sponsor[col3], RaceID: sponsor[col4], NameID: sponsor[col5], MasterNameID: sponsor[col6], AgeFrom: sponsor[col7], IsJuvenile: sponsor[col8] })
+    )
 
+    return result
+}
+
+
+///------------------------old function---------------------------//
 export const sixColArray = (data, Id, Code, col1, col2, col3, col4, col5, col6, col7) => {
     const result = data?.map((sponsor) =>
         ({ value: sponsor[Id], label: sponsor[Code], LastName: sponsor[col1], DateOfBirth: sponsor[col2], Gendre_Description: sponsor[col3], Race_Description: sponsor[col4], NameID: sponsor[col5], MasterNameID: sponsor[col6], AgeFrom: sponsor[col7] })
@@ -290,11 +299,13 @@ export const sixColArray = (data, Id, Code, col1, col2, col3, col4, col5, col6, 
     return result
 }
 
-export const sixColArrayArrest = (data, Id, Code, col1, col2, col3, col4, col5, col6, col7, col8) => {
+export const sixColArrayArrestee = (data, Id, Code, col1, col2, col3, col4, col5, col6, col7, col8, col9, col10, col11) => {
     const result = data?.map((sponsor) =>
-        ({ value: sponsor[Id], label: sponsor[Code], LastName: sponsor[col1], DateOfBirth: sponsor[col2], Gendre_Description: sponsor[col3], Race_Description: sponsor[col4], NameID: sponsor[col5], MasterNameID: sponsor[col6], AgeFrom: sponsor[col7], IsJuvenile: sponsor[col8] })
+    ({
+        value: sponsor[Id], label: sponsor[Code], LastName: sponsor[col1], DateOfBirth: sponsor[col2], Gendre_Description: sponsor[col3], Race_Description: sponsor[col4], NameID: sponsor[col5], MasterNameID: sponsor[col6], AgeFrom: sponsor[col7], IsJuvenile: sponsor[col8], SexID: sponsor[col9],
+        RaceID: sponsor[col10], AgeUnitID: sponsor[col11]
+    })
     )
-
     return result
 }
 

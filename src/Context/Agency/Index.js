@@ -102,6 +102,8 @@ const AgencyData = ({ children }) => {
     const [countaduitprsonel, setcountaduitprsonel] = useState(false)
     const [OfficerApprovCount, setOfficerApprovCount] = useState(false)
     const [PanelCode, setPanelCode] = useState()
+    const [NameId, setNameID] = useState('')
+
 
 
     // Name
@@ -895,7 +897,7 @@ const AgencyData = ({ children }) => {
             // arrest
             ArresteeID, get_OffenseName_Data, setArresteeID, arrestData, get_Data_Arrest, setArrestChargeData, arrestChargeData, get_Data_Arrest_Charge, policeForceDrpData, get_Police_Force, get_Arrestee_Drp_Data, arresteeDrpData, setArresteeDrpData, EditArrestStatus, setEditArrestStatus, ArresteName, setArrestName, ArrestChargeStatus, setArrestChargeStatus, activeArrest, setActiveArrest,
             //Offence
-            offenceStatus, setOffenceStatus, countoff, setcountoff, countoffaduit, setcountoffaduit, countoffaduitAgency, setcountoffaduitAgency, countaduitprsonel, setcountaduitprsonel, offenseCount, setOffenseCount, PanelCode, setPanelCode,
+            offenceStatus, setOffenceStatus, countoff, setcountoff, countoffaduit, setcountoffaduit, countoffaduitAgency, setcountoffaduitAgency, countaduitprsonel, setcountaduitprsonel, offenseCount, setOffenseCount, PanelCode, setPanelCode, NameId, setNameID,
 
             // Incident property
             propertyData, setPropertyData, get_Data_Property, propertyStolenValue, setPropertyStolenValue, personNotifyDrp, setpersonNotifyDrp, get_MissingPerson_NotifyDrp,

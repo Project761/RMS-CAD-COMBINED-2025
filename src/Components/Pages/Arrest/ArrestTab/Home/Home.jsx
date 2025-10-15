@@ -2,17 +2,14 @@ import React, { useEffect, useState, useContext } from 'react'
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Select from "react-select";
 import DatePicker from "react-datepicker";
-import { Aes256Encrypt, Decrypt_Id_Name, LockFildscolour, Requiredcolour, base64ToString, filterPassedTimeZoneArrest, getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime, nibrscolourStyles, stringToBase64, tableCustomStyles } from '../../../../Common/Utility';
+import { Aes256Encrypt, Decrypt_Id_Name, LockFildscolour, Requiredcolour, base64ToString, filterPassedTimeZoneArrest, getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime, stringToBase64, } from '../../../../Common/Utility';
 import { AddDeleteUpadate, AddDelete_Img, fetchPostData } from '../../../../hooks/Api';
 import { toastifyError, toastifySuccess } from '../../../../Common/AlertMsg';
 import { AgencyContext } from '../../../../../Context/Agency/Index';
 import { RequiredFieldIncident } from '../../../Utility/Personnel/Validation';
 import ConfirmModal from '../../ConfirmModal';
-import defualtImage from '../../../../../img/uploadImage.png'
-import { Carousel } from 'react-responsive-carousel';
 import DeletePopUpModal from '../../../../Common/DeleteModal';
 import ChangesModal from '../../../../Common/ChangesModal';
-import DataTable from 'react-data-table-component';
 import MasterNameModel from '../../../MasterNameModel/MasterNameModel';
 import { useDispatch, useSelector } from 'react-redux';
 import { get_Inc_ReportedDate, get_LocalStoreData } from '../../../../../redux/actions/Agency';
@@ -27,7 +24,7 @@ import CurrentArrestMasterReport from './CurrentArrestMasterReport';
 
 
 
-const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, setStatus }) => {
+const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, setStatus, isEnabled, setIsEnabled, Agencystatus, setAgencystatus, arrestID, setArrestID, matchedAgency, setmatchedAgency, delChargeID, ChargeLocalArr, setChargeLocalArr, setDelChargeID, isChargeDel, setIsChargeDel, possessionID, setPossessionID, offenseNameID, setoffenseNameID, RestStatus, Editval, setEditval, incExceDate, setincExceDate, GetSingleData }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -75,12 +72,12 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
     if (!NameID) { DecNameId = 0; }
     else { DecNameId = parseInt(base64ToString(NameID)); }
 
-    const { get_Arrest_Count, setArrestName, setIncidentNumber, get_OffenseName_Data, arrestChargeData, changesStatus, setArrestChargeData, updateCount, setUpdateCount, get_ArrestCharge_Count, get_Data_Arrest_Charge, nibrsSubmittedArrestMain, setnibrsSubmittedArrestMain, tabCountArrest, incidentNumber, ArresteName, arrestFilterData, get_Data_Arrest, policeForceDrpData, get_Police_Force, changesStatusCount, setChangesStatus, get_Incident_Count, setActiveArrest, datezone, GetDataTimeZone, incidentCount } = useContext(AgencyContext);
+    const { get_Arrest_Count, setArrestName, setIncidentNumber, get_OffenseName_Data, arrestChargeData, changesStatus, setArrestChargeData, updateCount, setUpdateCount, get_ArrestCharge_Count, get_Data_Arrest_Charge, nibrsSubmittedArrestMain, tabCountArrest, incidentNumber, ArresteName, arrestFilterData, get_Data_Arrest, policeForceDrpData, get_Police_Force, changesStatusCount, setChangesStatus, get_Incident_Count, setActiveArrest, datezone, GetDataTimeZone, incidentCount, setNameID, NameId, } = useContext(AgencyContext);
 
     const [arrestDate, setArrestDate] = useState();
     const [rightGivenCode, setRightGivenCode] = useState('N');
-    const [ArrestID, setArrestID] = useState('');
-    const [Editval, setEditval] = useState();
+    // const [ArrestID, setArrestID] = useState('');
+    // const [Editval, setEditval] = useState();
     const [showModal, setShowModal] = useState(false);
     const [arresteeChange, setArresteeChange] = useState();
     const [modalStatus, setModalStatus] = useState(false);
@@ -91,7 +88,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
     const [loginPinID, setloginPinID,] = useState('');
     const [JuvenileCleared, setIsJuvenileCleared] = useState();
     const [nameModalStatus, setNameModalStatus] = useState(false);
-    const [possessionID, setPossessionID] = useState('');
+    // const [possessionID, setPossessionID] = useState('');
     const [possenSinglData, setPossenSinglData] = useState([]);
     const [uploadImgFiles, setuploadImgFiles] = useState([]);
     const [imageModalStatus, setImageModalStatus] = useState(false);
@@ -100,14 +97,9 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
     const [openPage, setOpenPage] = useState('');
     const [statesChangeStatus, setStatesChangeStatus] = useState(false);
 
-    const [incExceDate, setincExceDate] = useState();
+    // const [incExceDate, setincExceDate] = useState();
 
     const [AgencyCode, setAgencyCode] = useState('');
-    const [Agencystatus, setAgencystatus] = useState('true');
-    const [matchedAgency, setmatchedAgency] = useState('')
-    const [isEnabled, setIsEnabled] = useState(false);
-
-
     const [printIncReport, setIncMasterReport] = useState(false);
     const [IncReportCount, setIncReportCount] = useState(1);
     const [showModalReport, setshowModalReport] = useState(false);
@@ -116,22 +108,28 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
     const [confirmInsertArrest, setConfirmInsertArrest] = useState(false);
     const [insertArrest, setInsertArrest] = useState([]);
     const [incidentReportedDate, setincidentReportedDate] = useState('');
-    const [offenseNameID, setoffenseNameID] = useState();
+    // const [offenseNameID, setoffenseNameID] = useState();
 
     const [addUpdatePermission, setaddUpdatePermission] = useState();
 
-    const [ChargeLocalArr, setChargeLocalArr] = useState(
-        JSON.parse(sessionStorage.getItem('ChargeLocalData')) || []
-    );
+    const [raceIdDrp, setRaceIdDrp] = useState([]);
+    const [sexIdDrp, setSexIdDrp] = useState([]);
+    const [dobDate, setDobDate] = useState('');
+    const [AgeFrom, setAgeFrom] = useState('');
+    const [Gender, setGender] = useState('');
+    const [ageUnitDrpData, setAgeUnitDrpData] = useState([]);
+    const [complainantfilterID, setcomplainantfilterID] = useState([]);
+    const [type, setType] = useState("ArrestMod");
+    const [ArrestparentID, setArrestParentID] = useState('');
+    const [isEditvalProcessed, setIsEditvalProcessed] = useState(false);
 
-    const type = "ArrestMod"
 
     const [value, setValue] = useState({
-        'ArrestID': '', 'AgencyID': '', 'ArrestNumber': '', 'IncidentID': '', 'CreatedByUserFK': '', 'IsJuvenileArrest': '', 'ArrestDtTm': '', 'ArrestingAgency': '', 'ArrestTypeID': '', 'SupervisorID': '', 'PoliceForceID': '', 'RightsGivenID': '', 'JuvenileDispositionID': '', 'PhoneNo': '', 'PrimaryOfficerID': '', 'GivenByID': '', 'ArresteeID': '', 'ArresteeLable': 0, 'ModifiedByUserFK': '', 'IsMultipleArrestees': '', 'ArrestingAgencyID': '',
+        'ArrestID': '', 'AgencyID': '', 'ArrestNumber': '', 'IncidentID': '', 'CreatedByUserFK': '', 'IsJuvenileArrest': '', 'ArrestDtTm': '', 'ArrestingAgency': '', 'ArrestTypeID': '', 'SupervisorID': '', 'PoliceForceID': '', 'RightsGivenID': '', 'JuvenileDispositionID': '', 'PhoneNo': '', 'PrimaryOfficerID': '', 'GivenByID': '', 'ArresteeID': '', 'ArresteeLable': 0, 'ModifiedByUserFK': '', 'IsMultipleArrestees': '', 'ArrestingAgencyID': '', 'IsSchoolNotified': '', 'Grade': '', 'LocationOfSchool': '', 'NameOfSchool': '', 'ParentPhone': '', 'ParentNameID': '', 'ResponseID': '',
     });
 
     const [errors, setErrors] = useState({
-        'ArresteeIDError': '', 'ArrestDtTmError': '', 'JuvenileDispoError': '', 'ArrestTypeIDError': '',
+        'ArresteeIDError': '', 'ArrestDtTmError': '', 'JuvenileDispoError': '', 'ArrestTypeIDError': '', 'CellPhoneError': ''
     })
 
     const [imgData, setImgData] = useState({
@@ -144,28 +142,33 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         }
     }, []);
 
+    console.log(DecArrestId)
+
     useEffect(() => {
         if (localStoreData) {
+            // dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
             setloginAgencyID(localStoreData?.AgencyID); setloginPinID(localStoreData?.PINID);
-            get_Arrest_Count(DecArrestId);
-            dispatch(get_ScreenPermissions_Data("A067", localStoreData?.AgencyID, localStoreData?.PINID));
-            get_Single_PersonnelList(localStoreData?.PINID); GetDataTimeZone(localStoreData?.AgencyID);
-            setAgencyCode(localStoreData?.ORI);
-            if (DecEIncID) {
-                dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
-                GetEditData(DecEIncID); get_Incident_Count(DecEIncID);
-            }
+            get_Arrest_Count(DecArrestId); dispatch(get_ScreenPermissions_Data("A067", localStoreData?.AgencyID, localStoreData?.PINID));
+            get_Single_PersonnelList(localStoreData?.PINID); GetDataTimeZone(localStoreData?.AgencyID); setAgencyCode(localStoreData?.ORI);
+
         }
     }, [localStoreData]);
 
     useEffect(() => {
+        if (localStoreData) {
+            // dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
+        }
+    }, [DecArrestId]);
+
+
+    useEffect(() => {
+
         if (effectiveScreenPermission?.length > 0) {
             setaddUpdatePermission(effectiveScreenPermission[0]?.AddOK != 1 || effectiveScreenPermission[0]?.Changeok != 1 ? true : false);
-        }
-        else {
-            setaddUpdatePermission(false);
-        }
+        } else { setaddUpdatePermission(false); }
     }, [effectiveScreenPermission]);
+
+    console.log(Editval)
 
 
     useEffect(() => {
@@ -191,40 +194,103 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
     }, [incidentDate]);
 
     useEffect(() => {
+        console.log('hello')
+        if (DecEIncID && DecArrestId) {
+            // dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
+
+        }
+
+    }, [DecEIncID, DecArrestId]);
+
+
+
+    useEffect(() => {
+        console.log('hello')
         if (DecEIncID) {
             setMainIncidentID(DecEIncID);
-            dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
+            // dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
             if (!incReportedDate) { dispatch(get_Inc_ReportedDate(DecEIncID)) }
         }
         if (MstPage === "MST-Arrest-Dash" && possessionID) {
             dispatch(get_Masters_Name_Drp_Data(possessionID, 0, 0));
         }
-
-    }, [DecEIncID, nameModalStatus, possessionID]);
+    }, [DecEIncID, nameModalStatus, possessionID, DecArrestId]);
 
     useEffect(() => {
         if (DecEIncID) {
             getIncidentData(DecEIncID);
-            getNarrativeApprovedStatus(DecEIncID);
         }
     }, [DecEIncID]);
 
+
+    useEffect(() => {
+        setValue({ ...value, ['RaceID']: '', ['SexID']: '', ['AgeFrom']: '', ['AgeUnitID']: '', ['DateOfBirth']: '' })
+    }, [RestStatus]);
+
     useEffect(() => {
         if (possessionID) {
-            checkSelectedName(parseInt(possessionID))
+            // checkSelectedName(parseInt(possessionID))
         }
     }, [possessionID, arresteeNameData]);
-
 
     //==================Dv-------------------------------
     useEffect(() => {
         if (DecNameId) {
             dispatch(get_Masters_Name_Drp_Data(DecNameId, 0, 0));
-            checkSelectedName1(parseInt(DecNameId));
-            setPossessionID(DecNameId);
-            setValue({ ...value, ['ArresteeID']: parseInt(DecNameId) })
+            // checkSelectedName1(parseInt(DecNameId)); setPossessionID(DecNameId);
+            const newvalue = arresteeNameData?.filter((val) => val?.NameID == value.ArresteeID);
+            // setValue({
+            //     ...value, ['ArresteeID']: parseInt(DecNameId), ['RaceID']: newvalue[0]?.RaceID, ['SexID']: newvalue[0]?.SexID, ['AgeFrom']: newvalue[0]?.AgeFrom, ['AgeUnitID']: newvalue[0]?.AgeUnitID,
+            //     ['DateOfBirth']: getShowingWithOutTime(newvalue[0]?.DateOfBirth)
+            // })
+
         }
     }, [DecNameId, arresteeNameData]);
+
+    useEffect(() => {
+        if (DecArrestId) {
+            dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
+        }
+    }, [DecArrestId,]);
+
+
+
+
+    useEffect(() => {
+        if (DecEIncID && DecArrestId) {
+            setMainIncidentID(DecEIncID); dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
+            if (!incReportedDate) { dispatch(get_Inc_ReportedDate(DecEIncID)) }
+        }
+        if (MstPage === "MST-Arrest-Dash" && possessionID) {
+            dispatch(get_Masters_Name_Drp_Data(possessionID, 0, 0));
+        }
+        else if (type === "ArrestParentMod") {
+            dispatch(get_ArresteeName_Data('', '', DecEIncID, true, value.ParentNameID));
+            // dispatch(get_Masters_Name_Drp_Data(value.ParentNameID, 0, 0));
+        }
+        else if (type === "ArrestMod") {
+            console.log('hello', value.ParentNameID)
+            dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
+            console.log(arresteeNameData, possessionID)
+
+
+        }
+    }, [DecEIncID, nameModalStatus, possessionID]);
+
+    useEffect(() => {
+        if (possessionID && (isEditvalProcessed === false) && type === "ArrestMod") {
+            console.log('hello1')
+            const newvalue = arresteeNameData?.filter((val) => val?.NameID == possessionID);
+            console.log(arresteeNameData, value.ArresteeID, newvalue[0]?.IsJuvenileArrest)
+            setValue({
+                ...value, ['ArresteeID']: parseInt(possessionID), ['RaceID']: newvalue[0]?.RaceID, ['SexID']: newvalue[0]?.SexID, ['AgeFrom']: newvalue[0]?.AgeFrom, ['AgeUnitID']: newvalue[0]?.AgeUnitID,
+                ['DateOfBirth']: getShowingWithOutTime(newvalue[0]?.DateOfBirth),
+                'IsJuvenileArrest': newvalue[0]?.IsJuvenile,
+            })
+        }
+
+    }, [arresteeNameData, nameModalStatus, isEditvalProcessed]);
+
 
     const checkSelectedName1 = (ArresteeID) => {
         if (ArresteeID) {
@@ -249,7 +315,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         if (loginAgencyID) {
             setValue({ ...value, 'IncidentID': DecEIncID, 'ArrestID': DecArrestId, 'CreatedByUserFK': loginPinID, 'AgencyID': loginAgencyID });
             get_Data_Arrest(DecEIncID, MstPage === "MST-Arrest-Dash" ? true : false, loginPinID);
-            if (arrestTypeDrpData?.length === 0) dispatch(get_ArrestType_Drp(loginAgencyID));
+            if (arrestTypeDrpData?.length === 0) dispatch(get_ArrestType_Drp(loginAgencyID)); get_Name_Drp_Data(loginAgencyID)
             if (arrestJuvenileDisDrpData?.length === 0) dispatch(get_ArrestJuvenileDis_DrpData(loginAgencyID));
             if (policeForceDrpData?.length === 0) { get_Police_Force(); } dispatch(get_AgencyOfficer_Data(localStoreData?.AgencyID, DecEIncID))
         }
@@ -257,14 +323,25 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
 
     useEffect(() => {
         if (DecArrestId) {
-            GetSingleData(DecArrestId, DecEIncID);
-            setArrestID(DecArrestId);
-            get_Data_Arrest_Charge(DecArrestId);
+            GetSingleData(DecArrestId, DecEIncID); setArrestID(DecArrestId); get_Data_Arrest_Charge(DecArrestId);
         } else {
             setMultiImage(''); setStatus(false); setArrestID('');
-            reset_Value()
+            //  reset_Value()
         }
     }, [DecArrestId, DecEIncID]);
+
+    const get_Name_Drp_Data = (loginAgencyID) => {
+        const val = { AgencyID: loginAgencyID, }
+        fetchPostData('MasterName/GetNameDropDown', val).then((data) => {
+            if (data) {
+                setRaceIdDrp(Comman_changeArrayFormat(data[0]?.Race, 'RaceTypeID', 'Description'));
+                setSexIdDrp(Comman_changeArrayFormat(data[0]?.Gender, 'SexCodeID', 'Description'));
+                setAgeUnitDrpData(threeColArray(data[0]?.AgeUnit, 'AgeUnitID', 'Description', 'AgeUnitCode'));
+            } else {
+                setRaceIdDrp([]); setSexIdDrp([]); setAgeUnitDrpData([]);
+            }
+        })
+    };
 
 
     const getIncidentData = async (incidentID) => {
@@ -278,18 +355,18 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         })
     }
 
-    const GetSingleData = (ArrestID, MainIncidentID) => {
-        const val = { 'ArrestID': ArrestID, 'PINID': '0', 'IncidentID': MainIncidentID }
-        fetchPostData('Arrest/GetSingleData_Arrest', val).then((res) => {
-            if (res.length > 0) {
-                if (res[0]?.NIBRSClearanceID) { setincExceDate(new Date(res[0]?.NIBRSclearancedate)); }
-                setStatus(true);
-                setEditval(res);
-            } else {
-                setEditval([]); setincExceDate('');
-            }
-        })
-    }
+    // const GetSingleData = (ArrestID, MainIncidentID) => {
+    //     const val = { 'ArrestID': ArrestID, 'PINID': '0', 'IncidentID': MainIncidentID }
+    //     fetchPostData('Arrest/GetSingleData_Arrest', val).then((res) => {
+    //         if (res.length > 0) {
+    //             if (res[0]?.NIBRSClearanceID) { setincExceDate(new Date(res[0]?.NIBRSclearancedate)); }
+    //             setStatus(true);
+    //             setEditval(res);
+    //         } else {
+    //             setEditval([]); setincExceDate('');
+    //         }
+    //     })
+    // }
 
     useEffect(() => {
         document.addEventListener('load', function () {
@@ -308,10 +385,10 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
             })
     }
 
-    const check_Validation_Error = (e) => {
+    const check_Validation_Error = () => {
+        console.log('object')
         //-------------------------dv--------------------------------
         const arresteeStatus = possessionID ? checkSelectedName(value?.ArresteeID) : checkSelectedName1(value?.ArresteeID)
-
         if (JuvenileCleared === false && value.IsJuvenileArrest) {
             toastifyError('You are not authorized to create a juvenile arrest.')
             return;
@@ -319,7 +396,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         if (arresteeStatus) {
             const ArresteeIDErr = RequiredFieldIncident(value.ArresteeID);
             const ArrestDtTmErr = RequiredFieldIncident(value.ArrestDtTm);
-            const CellPhoneErr = value.PhoneNo ? PhoneField(value.PhoneNo) : 'true'
+            const CellPhoneErr = value.ParentPhone ? PhoneField(value.ParentPhone) : 'true'
             const JuvenileDispoErr = value?.IsJuvenileArrest === true || value?.IsJuvenileArrest === 'true' ? RequiredFieldIncident(value?.JuvenileDispositionID) : 'true'
             const ArrestTypeIDErr = RequiredFieldIncident(value.ArrestTypeID);
             setErrors(pre => {
@@ -344,34 +421,47 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
     useEffect(() => {
         if (ArrestDtTmError === 'true' && ArresteeIDError === 'true' && CellPhoneError === 'true' && JuvenileDispoError === 'true' && ArrestTypeIDError === 'true') {
             if (MstPage === "MST-Arrest-Dash") {
-                if (ArrestID && (ArrestSta === true || ArrestSta === 'true')) { update_Arrest(); }
+                if (arrestID && (ArrestSta === true || ArrestSta === 'true')) { update_Arrest(); }
                 else { insert_Arrest_Data(); }
             } else {
-                if (ArrestID && (ArrestSta === true || ArrestSta === 'true')) { update_Arrest(); }
+                if (arrestID && (ArrestSta === true || ArrestSta === 'true')) { update_Arrest(); }
                 else { insert_Arrest_Data(); }
             }
         }
     }, [ArrestDtTmError, ArresteeIDError, CellPhoneError, JuvenileDispoError, ArrestTypeIDError])
 
     useEffect(() => {
-        if (Editval?.length > 0) {
-            get_Arrest_MultiImage(ArrestID);
+        if (arrestID && Editval?.length > 0) {
+            const newvalue = arresteeNameData?.filter((val) => val?.NameID == Editval[0]?.ArresteeID);
+            console.log(arresteeNameData, value.ArresteeID, newvalue[0]?.IsJuvenileArrest, newvalue, Editval[0]?.ArresteeID)
+
+            get_Arrest_MultiImage(arrestID);
+
             setValue({
                 ...value,
                 'ArrestID': Editval[0]?.ArrestID, 'ArrestNumber': Editval[0]?.ArrestNumber, 'IsJuvenileArrest': Editval[0]?.IsJuvenileArrest,
                 'ArrestDtTm': Editval[0]?.ArrestDtTm ? getShowingDateText(Editval[0]?.ArrestDtTm) : "", 'IsMultipleArrestees': Editval[0]?.IsMultipleArrestees,
-                'ArrestingAgencyID': Editval[0]?.ArrestingAgencyID,
-                'ArrestingAgency': Editval[0]?.ArrestingAgency ? Editval[0]?.ArrestingAgency : '',
-                'PhoneNo': Editval[0]?.PhoneNo ? Editval[0]?.PhoneNo : '',
-                'ArrestTypeID': Editval[0]?.ArrestTypeID, 'SupervisorID': Editval[0]?.SupervisorID, 'PoliceForceID': Editval[0]?.PoliceForceID ? Editval[0]?.PoliceForceID : '',
-                'ArresteeID': Editval[0]?.ArresteeID, 'RightsGivenID': Editval[0]?.RightsGivenID, 'JuvenileDispositionID': Editval[0]?.JuvenileDispositionID,
-                'GivenByID': Editval[0]?.GivenByID, 'PrimaryOfficerID': Editval[0]?.PrimaryOfficerID, 'ModifiedByUserFK': loginPinID,
+                'ArrestingAgencyID': Editval[0]?.ArrestingAgencyID, 'ArrestingAgency': Editval[0]?.ArrestingAgency ? Editval[0]?.ArrestingAgency : '',
+                'PhoneNo': Editval[0]?.PhoneNo ? Editval[0]?.PhoneNo : '', 'ArrestTypeID': Editval[0]?.ArrestTypeID, 'SupervisorID': Editval[0]?.SupervisorID, 'PoliceForceID': Editval[0]?.PoliceForceID ? Editval[0]?.PoliceForceID : '',
+                //  'ArresteeID': Editval[0]?.ArresteeID,
+                'RightsGivenID': Editval[0]?.RightsGivenID, 'JuvenileDispositionID': Editval[0]?.JuvenileDispositionID, 'GivenByID': Editval[0]?.GivenByID, 'PrimaryOfficerID': Editval[0]?.PrimaryOfficerID, 'ModifiedByUserFK': loginPinID,
+                // new add 
+                'IsSchoolNotified': Editval[0]?.IsSchoolNotified, 'Grade': Editval[0]?.Grade, 'LocationOfSchool': Editval[0]?.LocationOfSchool, 'LocationOfSchool': Editval[0]?.LocationOfSchool, 'NameOfSchool': Editval[0]?.NameOfSchool, 'ParentPhone': Editval[0]?.ParentPhone,
+                'ParentNameID': Editval[0]?.ParentNameID, 'ResponseID': Editval[0]?.ResponseID,
+                ['RaceID']: newvalue[0]?.RaceID, ['SexID']: newvalue[0]?.SexID, ['AgeFrom']: newvalue[0]?.AgeFrom, ['AgeUnitID']: newvalue[0]?.AgeUnitID,
+                ['DateOfBirth']: getShowingWithOutTime(newvalue[0]?.DateOfBirth),
+                ['ArresteeID']: Editval[0]?.ArresteeID, ['RaceID']: newvalue[0]?.RaceID, ['SexID']: newvalue[0]?.SexID, ['AgeFrom']: newvalue[0]?.AgeFrom, ['AgeUnitID']: newvalue[0]?.AgeUnitID,
+                ['DateOfBirth']: getShowingWithOutTime(newvalue[0]?.DateOfBirth),
+                'IsJuvenileArrest': newvalue[0]?.IsJuvenile,
             });
-            setPossessionID(Editval[0]?.ArresteeID);
+
+            setIsEditvalProcessed(true);
+
+
+            // setPossessionID(Editval[0]?.ArresteeID);
             setArrestName(Editval[0]?.Arrestee_Name ? Editval[0]?.Arrestee_Name : '');
-            setIncidentNumber(Editval[0]?.IncidentNumber ? Editval[0]?.IncidentNumber : '')
-            setArrestDate(Editval[0]?.ArrestDtTm ? new Date(Editval[0]?.ArrestDtTm) : ''); setRightGivenCode(Get_Given_Code(Editval, policeForceDrpData))
-            setnibrsSubmittedArrestMain(Editval[0]?.IsNIBRSSummited);
+            setIncidentNumber(Editval[0]?.IncidentNumber ? Editval[0]?.IncidentNumber : ''); setArrestDate(Editval[0]?.ArrestDtTm ? new Date(Editval[0]?.ArrestDtTm) : ''); setRightGivenCode(Get_Given_Code(Editval, policeForceDrpData));
+
             if (Editval[0]?.PoliceForceID === 1 || Editval[0]?.PoliceForceID === '1') {
                 setShowPoliceForce(true);
             } else if (Editval[0]?.PoliceForceID === 2 || Editval[0]?.PoliceForceID === '2') {
@@ -388,54 +478,36 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                 setIsEnabled(false);
             }
         } else {
+            setIsEditvalProcessed(false);
+            console.log('hello')
             setValue({
                 ...value,
-                'ArrestNumber': '', 'IsJuvenileArrest': '', 'ArrestDtTm': '', 'ArrestTypeID': '', 'SupervisorID': '',
-                'PoliceForceID': '', 'RightsGivenID': '', 'JuvenileDispositionID': '', 'PhoneNo': '', 'GivenByID': '', 'PrimaryOfficerID': '', 'ModifiedByUserFK': '', 'IsMultipleArrestees': '',
-
+                'ArrestNumber': '',
+                'ArrestID': "", 'IsJuvenileArrest': '', 'ArrestDtTm': '', 'ArrestTypeID': '', 'SupervisorID': '', 'PoliceForceID': '', 'RightsGivenID': '', 'JuvenileDispositionID': '', 'PhoneNo': '', 'GivenByID': '', 'PrimaryOfficerID': '', 'ModifiedByUserFK': '', 'IsMultipleArrestees': '',
+                'IsSchoolNotified': '', 'Grade': '', 'LocationOfSchool': '', 'NameOfSchool': '', 'ParentPhone': '', 'ParentNameID': '', 'ResponseID': '',
+                ['RaceID']: '', ['SexID']: '', ['AgeFrom']: '', ['AgeUnitID']: '',
+                ['DateOfBirth']: ''
             });
             setArrestDate();
         }
     }, [Editval, changesStatusCount])
 
-    // const [isHoveredUseForm, setIsHoveredUseForm] = useState(false);
-    // const handleMouseEnterUseForm = () => setIsHoveredUseForm(true);
-    // const handleMouseLeaveUseForm = () => setIsHoveredUseForm(false);
-
-    const [isHoveredUseForm, setIsHoveredUseForm] = useState(false);
-    const handleMouseEnterUseForm = () => setIsHoveredUseForm(true);
-    const handleMouseLeaveUseForm = () => setIsHoveredUseForm(false);
-
-    const handleClickCharges = () => {
-        setShowPage('Charges')// Update the path according to your routing setup
-    };
-
+    console.log(value)
     const reset_Value = () => {
         setAgencystatus(true);
-        Reset();
-        setShowJuvinile(false);
-        setShowPoliceForce(false);
+        setShowJuvinile(false); setShowPoliceForce(false);
         setValue(prevValue => ({
-            ...prevValue, ArrestNumber: '', IsJuvenileArrest: '', ArrestDtTm: '', ArrestingAgency: '', ArrestTypeID: '', SupervisorID: '', PoliceForceID: '', ArresteeID: '', RightsGivenID: '', JuvenileDispositionID: '', PhoneNo: '', GivenByID: '', PrimaryOfficerID: '', ModifiedByUserFK: '', IsMultipleArrestees: '',
-            ArrestingAgencyID: ''
+            ...prevValue, ArrestNumber: '', IsJuvenileArrest: '', ArrestDtTm: '', ArrestingAgency: '', ArrestTypeID: '', SupervisorID: '', PoliceForceID: '', ArresteeID: '', RightsGivenID: '', JuvenileDispositionID: '', PhoneNo: '', GivenByID: '', PrimaryOfficerID: '', ModifiedByUserFK: '', IsMultipleArrestees: '', ArrestingAgencyID: '', 'IsSchoolNotified': '', 'Grade': '', 'LocationOfSchool': '', 'NameOfSchool': '', 'ParentPhone': '', 'ParentNameID': '', 'ResponseID': '',
         }));
-        setValueCharge({ ...valueCharge, 'CreatedByUserFK': '', 'ChargeCodeID': '', 'NIBRSID': '', 'WarrantID': '', 'LawTitleId': '', });
         setErrors(prevErrors => ({
             ...prevErrors, ArresteeIDError: '', PrimaryOfficerIDError: '', ArrestDtTmError: '', JuvenileDispoError: '', ArrestTypeIDError: ''
         }));
         sessionStorage.removeItem('ChargeLocalData');
-        setnibrsSubmittedArrestMain(0);
-        setArrestDate(); setMultiImage(''); setuploadImgFiles('');
-        setStatesChangeStatus(false); setStatus(false); setArrestID('');
-        setChangesStatus(false);
-        setArrestChargeData([]);
-        setChargeID('');
-        get_Arresting_DropDown(loginAgencyID);
+        setArrestDate(); setMultiImage(''); setuploadImgFiles(''); setStatesChangeStatus(false); setStatus(false); setArrestID(''); setChangesStatus(false); setArrestChargeData([]); get_Arresting_DropDown(loginAgencyID);
     };
 
     const HandleChange = (e) => {
         if (e.target.name === "IsJuvenileArrest") {
-            // setChangesStatus(true); setStatesChangeStatus(true)
             !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
             setValue({ ...value, [e.target.name]: e.target.checked });
         } else if (e.target.name === 'PhoneNo') {
@@ -444,8 +516,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                 var cleaned = ('' + ele).replace(/\D/g, '');
                 var match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
                 if (match) {
-                    setChangesStatus(true)
-                    setValue({ ...value, [e.target.name]: match[1] + '-' + match[2] + '-' + match[3] });
+                    setChangesStatus(true); setValue({ ...value, [e.target.name]: match[1] + '-' + match[2] + '-' + match[3] });
                 }
             } else {
                 ele = e.target.value.split('-').join('').replace(/[^0-9\s]/g, "");
@@ -459,7 +530,6 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
 
     const handleChange = (event) => {
         !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-
         const { name, value } = event.target;
         let ele = value.replace(/\D/g, '');
         if (ele.length === 10) {
@@ -483,64 +553,52 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
     useEffect(() => {
         if (!value.IsJuvenileArrest || value.IsJuvenileArrest === 'false') {
             setShowJuvinile(false);
-            setValue({ ...value, ['JuvenileDispositionID']: '', ['PhoneNo']: '' });
+            setValue({ ...value, ['JuvenileDispositionID']: '', ['ParentPhone']: '' });
         } else { setShowJuvinile(true); }
     }, [value.IsJuvenileArrest])
 
     const insert_Arrest_Data = async () => {
-        const hasChargesInGrid = arrestChargeData && arrestChargeData.length > 0;
-        const hasChargesInLocalStorage = ChargeLocalArr && ChargeLocalArr.length > 0;
-        if (ChargeLocalArr?.length === 0 && tabCountArrest?.ChargeCount === 0 && arrestChargeData.length === 0) {
-            toastifyError('Please add at least one charge')
-            setErrors({
-                ...errors,
-                'ArrestNumberError': '', 'IsJuvenileArrestError': '', 'ArrestDtTmError': '', 'ArrestTypeIDError': '', 'SupervisorIDError': '', 'PoliceForceIDError': '', 'RightsGivenIDError': '', 'JuvenileDispositionIDError': '', 'PhoneNoError': '', 'PrimaryOfficerIDError': '', 'GivenByIDError': '', 'ArresteeIDError': '', 'ArresteeLableError': '', 'ModifiedByUserFKError': '', 'IsMultipleArresteesError': '', 'ArrestingAgencyIDError': '',
-            })
+        const { ArrestNumber, IsJuvenileArrest, ArrestDtTm, ArrestingAgency, ArrestTypeID, SupervisorID, PoliceForceID, RightsGivenID, JuvenileDispositionID, PhoneNo, PrimaryOfficerID, GivenByID, ArresteeID, IsMultipleArrestees, ArrestingAgencyID,
+            IsSchoolNotified, Grade, LocationOfSchool, NameOfSchool, ParentPhone, ParentNameID, ResponseID,
+        } = value;
+        const val = {
+            'ArrestID': DecArrestId, 'AgencyID': loginAgencyID, 'IncidentID': DecEIncID, 'ArrestNumber': ArrestNumber, 'CreatedByUserFK': loginPinID, 'IsJuvenileArrest': IsJuvenileArrest, 'ArrestDtTm': ArrestDtTm, 'ArrestingAgency': ArrestingAgency, 'ArrestTypeID': ArrestTypeID, 'SupervisorID': SupervisorID, 'PoliceForceID': PoliceForceID, 'RightsGivenID': RightsGivenID, 'JuvenileDispositionID': JuvenileDispositionID, 'PhoneNo': PhoneNo, 'PrimaryOfficerID': PrimaryOfficerID, 'GivenByID': GivenByID, 'ArresteeID': ArresteeID, 'ArresteeLable': 0, 'ModifiedByUserFK': '', 'IsMultipleArrestees': IsMultipleArrestees, 'ArrestingAgencyID': ArrestingAgencyID,
+            'IsSchoolNotified': IsSchoolNotified, 'Grade': Grade, 'LocationOfSchool': LocationOfSchool, 'NameOfSchool': NameOfSchool, 'ParentPhone': ParentPhone, 'ParentNameID': ParentNameID, 'ResponseID': ResponseID,
         }
-        else {
-            if (insertArrest) {
-                setConfirmInsertArrest(true);
-                setErrors({
-                    ...errors,
-                    'ArrestNumberError': '', 'IsJuvenileArrestError': '', 'ArrestDtTmError': '', 'ArrestTypeIDError': '', 'SupervisorIDError': '', 'PoliceForceIDError': '', 'RightsGivenIDError': '', 'JuvenileDispositionIDError': '', 'PhoneNoError': '', 'PrimaryOfficerIDError': '', 'GivenByIDError': '', 'ArresteeIDError': '', 'ArresteeLableError': '', 'ModifiedByUserFKError': '', 'IsMultipleArresteesError': '', 'ArrestingAgencyIDError': '',
-                })
-            } else {
-
-                const { ArrestNumber, IsJuvenileArrest, ArrestDtTm, ArrestingAgency, ArrestTypeID, SupervisorID, PoliceForceID, RightsGivenID, JuvenileDispositionID, PhoneNo, PrimaryOfficerID, GivenByID, ArresteeID, IsMultipleArrestees, ArrestingAgencyID, } = value;
-                const val = {
-                    'ArrestID': DecArrestId, 'AgencyID': loginAgencyID, 'IncidentID': DecEIncID, 'ArrestNumber': ArrestNumber, 'CreatedByUserFK': loginPinID, 'IsJuvenileArrest': IsJuvenileArrest, 'ArrestDtTm': ArrestDtTm, 'ArrestingAgency': ArrestingAgency, 'ArrestTypeID': ArrestTypeID, 'SupervisorID': SupervisorID, 'PoliceForceID': PoliceForceID, 'RightsGivenID': RightsGivenID, 'JuvenileDispositionID': JuvenileDispositionID, 'PhoneNo': PhoneNo, 'PrimaryOfficerID': PrimaryOfficerID, 'GivenByID': GivenByID, 'ArresteeID': ArresteeID, 'ArresteeLable': 0, 'ModifiedByUserFK': '', 'IsMultipleArrestees': IsMultipleArrestees, 'ArrestingAgencyID': ArrestingAgencyID,
-                }
-                AddDeleteUpadate('Arrest/Insert_Arrest', val).then(async (res) => {
-                    if (res.success) {
-                        const newArrestID = res.ArrestID;
-                        await SyncLocalChargesToServer(newArrestID, DecEIncID, loginPinID, loginAgencyID, ChargeLocalArr, setChargeLocalArr, get_Arrest_Count, get_Data_Arrest_Charge
-                        );
-                        if (MstPage === "MST-Arrest-Dash") {
-                            navigate(`/Arrest-Home?page=MST-Arrest-Dash&ArrNo=${res?.ArrestNumber}&IncNo=${incidentNumber}&Name=${ArresteName}&ArrestId=${stringToBase64(res?.ArrestID)}&ArrestSta=${true}&ChargeSta=${true}`);
-                        } else {
-                            navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(res?.ArrestID)}&ArrNo=${res?.ArrestNumber}&Name=${ArresteName}&ArrestSta=${true}&ChargeSta=${false}`)
-                        }
-                        // reset_Value();
-                        toastifySuccess(res.Message); get_Arrest_Count(DecArrestId); get_Data_Arrest(MainIncidentID, MstPage === "MST-Arrest-Dash" ? true : false, loginPinID);
-                        GetSingleData(res?.ArrestID, DecEIncID);
-                        setArrestID(res.ArrestID); setStatus(false); setChangesStatus(false); setStatesChangeStatus(false)
-                        if (uploadImgFiles?.length > 0) { upload_Image_File(res.ArrestID); setuploadImgFiles(''); }
-                        setErrors({ ...errors, ['ArresteeIDError']: '' }); get_Incident_Count(DecEIncID);
-                    }
-                });
-
-            }
-        }
-
+        localStorage.setItem('insertedArrestVal', JSON.stringify(val));
+        setShowPage('Charges'); setStatus(true)
+        // navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(res?.ArrestID)}&ArrNo=${res?.ArrestNumber}&Name=${ArresteName}&ArrestSta=${true}&ChargeSta=${false}`)
+        // AddDeleteUpadate('Arrest/Insert_Arrest', val).then(async (res) => {
+        //     if (res.success) {
+        //         const newArrestID = res.ArrestID;
+        //         await SyncLocalChargesToServer(newArrestID, DecEIncID, loginPinID, loginAgencyID, ChargeLocalArr, setChargeLocalArr, get_Arrest_Count, get_Data_Arrest_Charge
+        //         );
+        //         if (MstPage === "MST-Arrest-Dash") {
+        //             navigate(`/Arrest-Home?page=MST-Arrest-Dash&ArrNo=${res?.ArrestNumber}&IncNo=${incidentNumber}&Name=${ArresteName}&ArrestId=${stringToBase64(res?.ArrestID)}&ArrestSta=${true}&ChargeSta=${true}`);
+        //         } else {
+        //             navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(res?.ArrestID)}&ArrNo=${res?.ArrestNumber}&Name=${ArresteName}&ArrestSta=${true}&ChargeSta=${false}`)
+        //         }
+        //         // reset_Value();
+        //         toastifySuccess(res.Message); get_Arrest_Count(DecArrestId); get_Data_Arrest(MainIncidentID, MstPage === "MST-Arrest-Dash" ? true : false, loginPinID);
+        //         GetSingleData(res?.ArrestID, DecEIncID);
+        //         setArrestID(res.ArrestID); setStatus(false); setChangesStatus(false); setStatesChangeStatus(false)
+        //         if (uploadImgFiles?.length > 0) { upload_Image_File(res.ArrestID); setuploadImgFiles(''); }
+        //         setErrors({ ...errors, ['ArresteeIDError']: '' }); get_Incident_Count(DecEIncID);
+        //     }
+        // });
+        //     }
+        // }
     }
 
 
     const update_Arrest = () => {
-        const { ArrestNumber, IsJuvenileArrest, ArrestDtTm, ArrestingAgency, ArrestTypeID, SupervisorID, PoliceForceID, RightsGivenID, JuvenileDispositionID, PhoneNo, PrimaryOfficerID, GivenByID, ArresteeID, IsMultipleArrestees, ArrestingAgencyID, } = value;
+        const { ArrestNumber, IsJuvenileArrest, ArrestDtTm, ArrestingAgency, ArrestTypeID, SupervisorID, PoliceForceID, RightsGivenID, JuvenileDispositionID, PhoneNo, PrimaryOfficerID, GivenByID, ArresteeID, IsMultipleArrestees, ArrestingAgencyID,
+            IsSchoolNotified, Grade, LocationOfSchool, NameOfSchool, ParentPhone, ParentNameID, ResponseID,
+        } = value;
         const val = {
             'ArrestID': DecArrestId, 'AgencyID': loginAgencyID, 'IncidentID': DecEIncID, 'ArrestNumber': ArrestNumber, 'IsJuvenileArrest': IsJuvenileArrest, 'ArrestDtTm': ArrestDtTm, 'ArrestingAgency': ArrestingAgency, 'ArrestTypeID': ArrestTypeID, 'SupervisorID': SupervisorID, 'PoliceForceID': PoliceForceID, 'RightsGivenID': RightsGivenID, 'JuvenileDispositionID': JuvenileDispositionID, 'PhoneNo': PhoneNo, 'PrimaryOfficerID': PrimaryOfficerID, 'GivenByID': GivenByID, 'ArresteeID': ArresteeID, 'ArresteeLable': 0, 'ModifiedByUserFK': loginPinID, 'IsMultipleArrestees': IsMultipleArrestees, 'ArrestingAgencyID': ArrestingAgencyID,
+            'IsSchoolNotified': IsSchoolNotified, 'Grade': Grade, 'LocationOfSchool': LocationOfSchool, 'NameOfSchool': NameOfSchool, 'ParentPhone': ParentPhone, 'ParentNameID': ParentNameID, 'ResponseID': ResponseID,
         }
-
         if (ChargeLocalArr?.length === 0 && tabCountArrest?.ChargeCount === 0 && arrestChargeData.length === 0) {
             toastifyError('Please add at least one charge')
             setErrors({
@@ -557,37 +615,33 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                 })
             } else {
 
-                const { ArrestNumber, IsJuvenileArrest, ArrestDtTm, ArrestingAgency, ArrestTypeID, SupervisorID, PoliceForceID, RightsGivenID, JuvenileDispositionID, PhoneNo, PrimaryOfficerID, GivenByID, ArresteeID, IsMultipleArrestees, ArrestingAgencyID, } = value;
+                const { ArrestNumber, IsJuvenileArrest, ArrestDtTm, ArrestingAgency, ArrestTypeID, SupervisorID, PoliceForceID, RightsGivenID, JuvenileDispositionID, PhoneNo, PrimaryOfficerID, GivenByID, ArresteeID, IsMultipleArrestees, ArrestingAgencyID,
+                    IsSchoolNotified, Grade, LocationOfSchool, NameOfSchool, ParentPhone, ParentNameID, ResponseID,
+                } = value;
                 const val = {
                     'ArrestID': DecArrestId, 'AgencyID': loginAgencyID, 'IncidentID': DecEIncID, 'ArrestNumber': ArrestNumber, 'CreatedByUserFK': loginPinID, 'IsJuvenileArrest': IsJuvenileArrest, 'ArrestDtTm': ArrestDtTm, 'ArrestingAgency': ArrestingAgency, 'ArrestTypeID': ArrestTypeID, 'SupervisorID': SupervisorID, 'PoliceForceID': PoliceForceID, 'RightsGivenID': RightsGivenID, 'JuvenileDispositionID': JuvenileDispositionID, 'PhoneNo': PhoneNo, 'PrimaryOfficerID': PrimaryOfficerID, 'GivenByID': GivenByID, 'ArresteeID': ArresteeID, 'ArresteeLable': 0, 'ModifiedByUserFK': loginPinID, 'IsMultipleArrestees': IsMultipleArrestees, 'ArrestingAgencyID': ArrestingAgencyID,
+                    'IsSchoolNotified': IsSchoolNotified, 'Grade': Grade, 'LocationOfSchool': LocationOfSchool, 'NameOfSchool': NameOfSchool, 'ParentPhone': ParentPhone, 'ParentNameID': ParentNameID, 'ResponseID': ResponseID,
                 }
                 AddDeleteUpadate('Arrest/Update_Arrest', val).then((res) => {
                     const parsedData = JSON.parse(res.data);
                     const message = parsedData.Table[0].Message;
                     toastifySuccess(message); setChangesStatus(false); setStatesChangeStatus(false); get_Data_Arrest(MainIncidentID, MstPage === "MST-Arrest-Dash" ? true : false, loginPinID);
-                    setErrors({ ...errors, ['ArresteeIDError']: '' }); GetSingleData(ArrestID, DecEIncID); get_Arrest_Count(DecArrestId);
+                    setErrors({ ...errors, ['ArresteeIDError']: '' }); GetSingleData(arrestID, DecEIncID); get_Arrest_Count(DecArrestId);
                     if (uploadImgFiles?.length > 0) { upload_Image_File(); setuploadImgFiles(''); }
-
                 })
-
             }
         }
-
-
     }
 
     const DeleteArrest = () => {
-        const val = { 'ArrestID': ArrestID, 'DeletedByUserFK': loginPinID }
+        const val = { 'ArrestID': arrestID, 'DeletedByUserFK': loginPinID }
         AddDeleteUpadate('Arrest/Delete_Arrest', val).then((res) => {
             if (res) {
                 const parsedData = JSON.parse(res.data);
                 const message = parsedData.Table[0].Message;
                 toastifySuccess(message); get_Data_Arrest(MainIncidentID, MstPage === "MST-Arrest-Dash" ? true : false, loginPinID);
-                get_Incident_Count(DecEIncID); get_Arrest_Count(DecArrestId); setStatusFalse(); Reset()
-                navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${('')}&ArrestSta=${false}&ChargeSta=${false}&SideBarStatus=${false}`)
-                if (DecEIncID) {
-                    dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
-                }
+                get_Incident_Count(DecEIncID); get_Arrest_Count(DecArrestId); setStatusFalse();
+                navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${('')}&ArrestSta=${false}&ChargeSta=${false}&SideBarStatus=${false}`); if (DecEIncID) { dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId)); }
                 sessionStorage.removeItem('ChargeLocalData');
             } else console.log("Somthing Wrong");
         })
@@ -603,107 +657,21 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         }
     };
 
-
-    const columns = [
-        {
-            name: 'Arrest Number', selector: (row) => row.ArrestNumber, sortable: true
-        },
-        {
-            name: 'Arrestee Name', selector: (row) => row.Arrestee_Name, sortable: true
-        },
-        {
-            name: 'Arrest Type', selector: (row) => row.ArrestType_Description, sortable: true
-        },
-        {
-            name: 'Arresting Agency', selector: (row) => row.Agency_Name, sortable: true
-        },
-        {
-            name: 'Charges(Count)', selector: (row) => row.ChargeCount, sortable: true
-        },
-        // {
-        //     name: 'Juvenile Flag', selector: (row) => row.IsJuvenileArrest, sortable: true
-        // },
-        {
-            name: 'Juvenile Flag',
-            selector: row => (
-                <input type="checkbox" checked={row.IsJuvenileArrest === true} disabled />
-            ),
-            sortable: true
-        },
-
-        {
-            name: 'Use of Force Flag', selector: (row) => row.PoliceForce_Description, sortable: true
-        },
-        {
-            width: '200px', name: 'Supervisor Name',
-            selector: (row) => <>{row?.Supervisor_Name ? row?.Supervisor_Name.substring(0, 60) : ''}{row?.Supervisor_Name?.length > 40 ? '  . . .' : null} </>,
-            sortable: true
-        },
-        // {
-        //     name: 'Police Force Description', selector: (row) => row.PoliceForce_Description, sortable: true
-        // },
-        {
-            name: <p className='text-end' style={{ position: 'absolute', top: '7px', right: 10 }}>Delete</p>,
-            cell: row =>
-                <div style={{ position: 'absolute', top: 4, right: 10 }}>
-                    {
-                        effectiveScreenPermission ? effectiveScreenPermission[0]?.DeleteOK ?
-                            <span onClick={() => setArrestID(row.ArrestID)} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">                                    <i className="fa fa-trash"></i>
-                            </span>
-                            : <></> :
-                            <span onClick={() => setArrestID(row.ArrestID)} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">                                    <i className="fa fa-trash"></i>
-                                <i className="fa fa-trash"></i>
-                            </span>
-                    }
-                </div>
-        }
-    ]
-
     const onMasterPropClose = () => {
         navigate('/dashboard-page');
-    }
-
-    const set_Edit_Value = (row) => {
-        if (row?.PoliceForce_Description === "Yes") {
-            setIsEnabled(true);
-        } else {
-            setIsEnabled(false);
-        }
-        if (row?.Agency_Name == matchedAgency?.Agency_Name) {
-            setAgencystatus(true)
-        } else {
-            setAgencystatus(false);
-        }
-        if (changesStatus) {
-            const modal = new window.bootstrap.Modal(document.getElementById('SaveModal'));
-            modal.show();
-        } else {
-            if (row.ArrestID) {
-                Reset();
-                navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(row?.ArrestID)}&ArrNo=${row?.ArrestNumber}&Name=${row?.Arrestee_Name}&ArrestSta=${true}&ChargeSta=${false}&SideBarStatus=${!SideBarStatus}&ArrestStatus=${false} `)
-                setArrestID(row?.ArrestID); setActiveArrest(row?.ArrestID); setErrors(''); setStatesChangeStatus(false); setChangesStatus(false); setStatus(true);
-                GetSingleData(row.ArrestID, DecEIncID); get_Arrest_Count(row?.ArrestID);
-            }
-        }
     }
 
     const SyncLocalChargesToServer = async (ArrestID, DecEIncID, loginPinID, loginAgencyID, ChargeLocalArr, setChargeLocalArr, get_Arrest_Count, get_Data_Arrest_Charge) => {
         if (!ArrestID || !ChargeLocalArr?.length) return;
         for (let charge of ChargeLocalArr) {
-            const val = {
-                ...charge, ChargeID: null, ArrestID, IncidentID: DecEIncID, CreatedByUserFK: loginPinID, AgencyID: loginAgencyID,
-            };
+            const val = { ...charge, ChargeID: null, ArrestID, IncidentID: DecEIncID, CreatedByUserFK: loginPinID, AgencyID: loginAgencyID, };
             await AddDeleteUpadate('ArrestCharge/Insert_ArrestCharge', val).then((res) => {
                 if (res?.success) {
                     console.log(`✅ Synced local charge: ${charge.ChargeCodeID}`);
                 }
             });
         }
-        // Cleanup
-        setChargeLocalArr([]);
-        sessionStorage.removeItem('ChargeLocalData');
-        get_Arrest_Count(ArrestID);
-        get_Data_Arrest_Charge(ArrestID);
+        setChargeLocalArr([]); sessionStorage.removeItem('ChargeLocalData'); get_Arrest_Count(arrestID); get_Data_Arrest_Charge(arrestID);
     };
 
     const setStatusFalse = () => {
@@ -711,11 +679,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
             navigate(`/Arrest-Home?page=MST-Arrest-Dash&ArrestId=${('')}&ArrestSta=${false}&ChargeSta=${false}&SideBarStatus=${false}`);
             reset_Value(); setErrors(''); setPossessionID(''); setPossenSinglData([]); setArrestID('');
         } else {
-            navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${('')}&ArrestSta=${false}&ChargeSta=${false}&SideBarStatus=${false}`)
-
-            setErrors(''); setPossessionID(''); setPossenSinglData([]);
-            setActiveArrest(false); setRightGivenCode(false); setArrestID(''); reset_Value(); setIsEnabled(false);
-
+            navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${('')}&ArrestSta=${false}&ChargeSta=${false}&SideBarStatus=${false}`); setErrors(''); setPossessionID(''); setPossenSinglData([]); setActiveArrest(false); setRightGivenCode(false); setArrestID(''); reset_Value(); setIsEnabled(false);
         }
     }
 
@@ -758,7 +722,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         for (let i = 0; i < uploadImgFiles.length; i++) {
             const { file, imgData } = uploadImgFiles[i];
             const val = {
-                'ArrestID': ArrestID ? ArrestID : arrID, 'CreatedByUserFK': loginPinID, 'AgencyID': loginAgencyID,
+                'ArrestID': arrestID ? arrestID : arrID, 'CreatedByUserFK': loginPinID, 'AgencyID': loginAgencyID,
                 'PictureTypeID': imgData?.PictureTypeID, 'ImageViewID': imgData?.ImageViewID, 'ImgDtTm': imgData?.ImgDtTm,
                 'OfficerID': imgData?.OfficerID, 'Comments': imgData?.Comments
             }
@@ -777,7 +741,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         EncFormdata.append("Data", EncDocs);
         AddDelete_Img('Arrest/Insert_ArrestPhoto', formdata, EncFormdata).then((res) => {
             if (res.success) {
-                get_Arrest_MultiImage(ArrestID ? ArrestID : arrID); setuploadImgFiles([]);
+                get_Arrest_MultiImage(arrestID ? arrestID : arrID); setuploadImgFiles([]);
             }
         }).catch(err => console.log(err))
     }
@@ -786,7 +750,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         const value = { 'PhotoID': imageid, 'DeletedByUserFK': loginPinID }
         AddDeleteUpadate('Arrest/Delete_ArrestPhoto', value).then((data) => {
             if (data.success) {
-                get_Arrest_MultiImage(ArrestID); setModalStatus(false); setImageId('');
+                get_Arrest_MultiImage(arrestID); setModalStatus(false); setImageId('');
                 const parsedData = JSON.parse(data.data);
                 const message = parsedData.Table[0].Message;
                 toastifySuccess(message);
@@ -835,6 +799,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
     };
 
     const ChangeDropDown = (e, name) => {
+        console.log(e)
         !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
         let newValue = { ...value };
         if (e) {
@@ -842,16 +807,70 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
             if (name === 'RightsGivenID') {
                 setRightGivenCode(e.id);
             }
+            // else if (name === 'ParentNameID') {
+            //     if (get_OffenseName_Data) {
+            //         get_OffenseName_Data(e?.value);
+            //         setNameID(e?.value)
+            //         if (e.DateOfBirth) {
+            //             setDobDate(new Date(e.DateOfBirth));
+            //             newValue['DateOfBirth'] = getShowingWithOutTime(e.DateOfBirth);
+            //         } else {
+            //             setDobDate('');
+            //             newValue['DateOfBirth'] = '';
+            //         }
+            //         setAgeFrom(e.SexID);
+            //         newValue['SexID'] = e.SexID;
+            //         newValue['RaceID'] = e.RaceID;
+            //         newValue['AgeUnitID'] = e.AgeUnitID;
+            //         setValue({
+            //             ...value,
+            //             ['DateOfBirth']: getShowingWithOutTime(e.DateOfBirth),
+            //             ['AgeFrom']: e.AgeFrom,
+            //             ['SexID']: e.SexID,
+            //             ['RaceID']: e.RaceID,
+            //             ['AgeUnitID']: e.AgeUnitID
+            //         });
+            //     }
+            //     const age = handleDOBChange(e.DateOfBirth);
+            //     if (e.AgeFrom) {
+            //         if (e.AgeFrom === null) {
+            //             newValue['IsJuvenileArrest'] = '';
+            //         } else {
+            //             newValue['IsJuvenileArrest'] = e.IsJuvenile;
+            //         }
+            //         setArresteeChange(e); setArrestParentID(e.value);
+            //     } else
+            //         if (!e.Gendre_Description || !e.Race_Description || !e.AgeFrom || !e.LastName) {
+            //             setArresteeChange(e); setArrestParentID(e.value);
+            //         }
+            // }
             else if (name === 'ArresteeID') {
                 if (get_OffenseName_Data) {
                     get_OffenseName_Data(e?.value);
+                    setNameID(e?.value)
+                    if (e.DateOfBirth) {
+                        setDobDate(new Date(e.DateOfBirth));
+                        newValue['DateOfBirth'] = getShowingWithOutTime(e.DateOfBirth);
+                    } else {
+                        setDobDate('');
+                        newValue['DateOfBirth'] = '';
+                    }
+                    setAgeFrom(e.SexID);
+                    newValue['SexID'] = e.SexID;
+                    newValue['RaceID'] = e.RaceID;
+                    newValue['AgeUnitID'] = e.AgeUnitID;
+                    setValue({
+                        ...value,
+                        ['DateOfBirth']: getShowingWithOutTime(e.DateOfBirth),
+                        ['AgeFrom']: e.AgeFrom,
+                        ['SexID']: e.SexID,
+                        ['RaceID']: e.RaceID,
+                        ['AgeUnitID']: e.AgeUnitID
+                    });
                 }
-
                 const age = handleDOBChange(e.DateOfBirth);
                 if (e.AgeFrom) {
-
                     if (e.AgeFrom === null) {
-
                         newValue['IsJuvenileArrest'] = '';
                     } else {
                         newValue['IsJuvenileArrest'] = e.IsJuvenile;
@@ -863,14 +882,17 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                     }
             }
             setValue(newValue);
-        } else {
+        }
+
+
+        else {
             if (name === 'RightsGivenID') {
                 setRightGivenCode('N');
             } else if (name === 'ArresteeID') {
-                setPossessionID(''); setPossenSinglData([]); setArresteeChange('');
+                setPossessionID(''); setPossenSinglData([]); setArresteeChange(''); setDobDate(null); setAgeFrom(''); newValue['SexID'] = null; newValue['AgeUnitID'] = null;
+                newValue['RaceID'] = null; newValue['DateOfBirth'] = ''; newValue['IsJuvenileArrest'] = '';
             }
             !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-
             newValue[name] = null;
             setValue(newValue);
         }
@@ -898,7 +920,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
     //------------newChange----------------
     const clearID = () => {
         if (Editval?.length > 0) {
-            setArrestID(ArrestID)
+            setArrestID(arrestID)
         } else {
             setArrestID(null)
         }
@@ -918,14 +940,11 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
 
     const ChangeDropDownArresting = (e, name) => {
         !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-
         if (e) {
             if (AgencyCode == e.id) {
-                setValue({ ...value, ['ArrestingAgencyID']: e.value, ['ArrestingAgency']: e.label });
-                setAgencystatus(true)
+                setValue({ ...value, ['ArrestingAgencyID']: e.value, ['ArrestingAgency']: e.label }); setAgencystatus(true)
             } else {
-                setValue({ ...value, [name]: e.value, ['ArrestingAgency']: '' });
-                setAgencystatus(false);
+                setValue({ ...value, [name]: e.value, ['ArrestingAgency']: '' }); setAgencystatus(false);
             }
         } else {
             setValue({ ...value, [name]: null, ['ArrestingAgency']: '', ['ArrestingAgencyID']: '' });
@@ -945,22 +964,15 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                     })
                 );
                 setAgencyNameDrpData(threeColArray(data, 'AgencyID', 'Agency_Name', 'ORI'));
-
             } else {
                 setAgencyNameDrpData([]);
-
             }
         })
     }
 
-
     const [isHovered, setIsHovered] = useState(false);
     const handleMouseEnter = () => setIsHovered(true);
     const handleMouseLeave = () => setIsHovered(false);
-
-    const handleClick = () => {
-        setShowPage('PoliceForce')
-    };
 
     useEffect(() => {
         const handleEsc = (event) => {
@@ -972,917 +984,626 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         return () => window.removeEventListener('keydown', handleEsc);
     }, []);
 
-    const customStylesWithOutColorCharge = {
-        control: base => ({
-            ...base, height: 20, minHeight: 30, fontSize: 14, margintop: 2, boxShadow: 0,
-        }),
-    };
-
-
-
-    //----------------------------//----------------------------------Charge-------------------------------------------
-
-    const [chargeCodeDrp, setChargeCodeDrp] = useState([]);
-    const [EditvalCharge, setEditvalCharge] = useState([]);
-    const [ChargeID, setChargeID] = useState();
-    const [DecChargeId, setDecChargeId] = useState();
-    const [delChargeID, setDelChargeID] = useState();
-    const [lawTitleIdDrp, setLawTitleIdDrp] = useState([]);
-    const [NIBRSDrpData, setNIBRSDrpData] = useState([]);
-    const [statesChangeCharge, setstatesChangeCharge] = useState(false);
-    const [narrativeApprovedStatus, setNarrativeApprovedStatus] = useState(false);
-    const [isChargeDel, setIsChargeDel] = useState(false);
-
-    const [valueCharge, setValueCharge] = useState({
-        'ArrestID': '', 'IncidentID': '', 'CreatedByUserFK': '', 'ChargeCodeID': '', 'NIBRSID': '', 'ChargeID': '', 'ModifiedByUserFK': '', 'LawTitleId': '', 'AttemptComplete': '',
-    });
-
-    const [errorsCharge, setErrorsCharge] = useState({
-        'NIBRSIDError': '', 'ChargeCodeIDError': '', 'AttemptRequiredError': '',
-    })
-
     useEffect(() => {
-        if (loginAgencyID) {
-            setValueCharge({
-                ...valueCharge,
-                'IncidentID': DecEIncID, 'ArrestID': ArrestID, 'ChargeID': DecChargeId, 'CreatedByUserFK': loginPinID, 'AgencyID': loginAgencyID,
-                'LawTitleId': '', 'AttemptComplete': '',
-            });
-            get_Arrest_Count(ArrestID); get_Data_Arrest_Charge(ArrestID);
-            // lawTitle
-            LawTitleIdDrpDwnVal(loginAgencyID, null);
-            // nibrs code
-            get_NIBRS_Drp_Data(loginAgencyID, null);
-            // charge code
-            get_ChargeCode_Drp_Data(loginAgencyID, null, null);
+        console.log('object')
+        const filteredComplainantID = arresteeNameData.filter(
+            (item) => item.NameID !== value.ArresteeID
+        );
+        if (value.ParentNameID === value.ArresteeID) {
+            setValue({ ...value, ['ParentNameID']: null })
         }
-    }, [loginAgencyID]);
+        setcomplainantfilterID(filteredComplainantID)
+    }, [value.ParentNameID, value.ArresteeID, nameModalStatus])
 
-    const check_Validation_ErrorCharge = (e) => {
-        const NIBRSIDError = RequiredFieldIncident(valueCharge.NIBRSID);
-        const ChargeCodeIDError = RequiredFieldIncident(valueCharge.ChargeCodeID);
-        const AttemptRequiredError = RequiredFieldIncident(valueCharge.AttemptComplete);
-        setErrorsCharge(pre => {
-            return {
-                ...pre,
-                ['NIBRSIDError']: NIBRSIDError || pre['NIBRSIDError'],
-                ['ChargeCodeIDError']: ChargeCodeIDError || pre['ChargeCodeIDError'],
-                ['AttemptRequiredError']: AttemptRequiredError || pre['AttemptRequiredError'],
-            }
-        });
-    }
 
-    const { ChargeCodeIDError, NIBRSIDError, AttemptRequiredError } = errorsCharge
-
-    useEffect(() => {
-        if (ChargeCodeIDError === 'true' && NIBRSIDError === 'true' && AttemptRequiredError === 'true') {
-            if (ChargeID) { update_Arrest_Charge() }
-            else { Add_Charge_Data() }
-        }
-    }, [ChargeCodeIDError, NIBRSIDError, AttemptRequiredError])
-
-    useEffect(() => {
-        if (DecChargeId) {
-            GetSingleDataCharge(DecChargeId);
-        }
-    }, [DecChargeId]);
-
-    const GetSingleDataCharge = (ChargeID) => {
-        if (ArrestID) {
-            const val = { 'ChargeID': ChargeID };
-            fetchPostData('ArrestCharge/GetSingleData_ArrestCharge', val).then((res) => {
-                console.log("🚀 ~ GetSingleDataCharge ~ res:", res)
-                if (res) {
-                    setEditvalCharge(res);
-                } else {
-                    setEditvalCharge([]);
-                }
-            });
-        } else {
-            const localChargeData = JSON.parse(sessionStorage.getItem('ChargeLocalData')) || [];
-            const chargeData = localChargeData.find(charge => charge.ChargeID === ChargeID);
-
-            if (chargeData) {
-                setEditvalCharge([chargeData]);
-            } else {
-                setEditvalCharge([]);
-            }
-        }
+    const handleClick = () => {
+        setShowPage('PoliceForce')// Update the path according to your routing setup
     };
 
-    useEffect(() => {
-
-        if (EditvalCharge) {
-            setValueCharge({
-                ...valueCharge,
-                'ChargeCodeID': EditvalCharge[0]?.ChargeCodeID || EditvalCharge?.ChargeCodeID,
-                'NIBRSID': EditvalCharge[0]?.NIBRSID || EditvalCharge?.NIBRSCodeId,
-                'ChargeID': EditvalCharge[0]?.ChargeID,
-                'ModifiedByUserFK': loginPinID,
-                'LawTitleId': EditvalCharge[0]?.LawTitleId || EditvalCharge?.LawTitleId,
-                'AttemptComplete': EditvalCharge[0]?.AttemptComplete ? EditvalCharge[0]?.AttemptComplete : EditvalCharge?.AttemptComplete ? EditvalCharge?.AttemptComplete : '',
-            });
-            setArrestName(EditvalCharge[0]?.Name ? EditvalCharge[0]?.Name : '');
-            // lawTitle
-            LawTitleIdDrpDwnVal(loginAgencyID, null);
-            // nibrs code
-            get_NIBRS_Drp_Data(loginAgencyID, null);
-            // charge code
-            get_ChargeCode_Drp_Data(loginAgencyID, null, null);
-        } else {
-            setValueCharge({ ...valueCharge, 'Count': '', 'ChargeCodeID': '', 'NIBRSID': '', 'UCRClearID': '', 'AttemptComplete': '', 'ChargeID': '', 'Name': Name, 'IncidentNumber': IncNo, 'ArrestNumber': ArrNo, 'LawTitleId': '', });
-        }
-    }, [EditvalCharge, changesStatusCount])
-
-    // api/Narrative/GetData_AllIncidentNarrativeApprovedStatus
-    // IncidentId
-
-    const getNarrativeApprovedStatus = async (IncidentId) => {
-        try {
-            const res = await fetchPostData('Narrative/GetData_AllIncidentNarrativeApprovedStatus', { IncidentId: IncidentId });
-            if (res?.length > 0) {
-                // true when all narrative approved
-                setNarrativeApprovedStatus(res[0]?.AllReportApprove);
-            } else {
-                setNarrativeApprovedStatus(false);
-            }
-        } catch (error) {
-            setNarrativeApprovedStatus(false);
-        }
-    }
-
-
-    const LawTitleIdDrpDwnVal = async (loginAgencyID, ChargeCodeID) => {
-        const val = { AgencyID: loginAgencyID, ChargeCodeID: ChargeCodeID }
-        await fetchPostData('LawTitle/GetDataDropDown_LawTitle', val).then((data) => {
-            if (data) {
-                setLawTitleIdDrp(Comman_changeArrayFormat(data, 'LawTitleID', 'Description'));
-            } else {
-                setLawTitleIdDrp([]);
-            }
-        })
-    }
-
-    const get_NIBRS_Drp_Data = (loginAgencyID, LawTitleID,) => {
-        const val = { 'AgencyID': loginAgencyID, 'LawTitleID': LawTitleID ? LawTitleID : null, 'IncidentID': DecEIncID, }
-        fetchPostData('FBICodes/GetDataDropDown_FBICodes', val).then((res) => {
-            if (res) {
-                setNIBRSDrpData(threeColArrayWithCode(res, 'FBIID', 'Description', 'FederalSpecificFBICode'));
-
-            } else {
-                setNIBRSDrpData([]);
-
-            }
-        })
-    }
-
-    const get_ChargeCode_Drp_Data = (loginAgencyID, FBIID, LawTitleID) => {
-        const val = { 'AgencyID': loginAgencyID, 'FBIID': FBIID, 'LawTitleID': LawTitleID, }
-        fetchPostData('ChargeCodes/GetDataDropDown_ChargeCodes', val).then((data) => {
-            if (data) {
-                setChargeCodeDrp(Comman_changeArrayFormat(data, 'ChargeCodeID', 'Description'));
-            } else {
-                setChargeCodeDrp([]);
-            }
-        })
-    };
-
-    const getLawTitleNibrsByCharge = async (loginAgencyID, lawTitleID, chargeCodeId) => {
-        const lawTitleObj = { AgencyID: loginAgencyID, ChargeCodeID: chargeCodeId };
-        const nibrsCodeObj = { AgencyID: loginAgencyID, LawTitleID: null, IncidentID: DecEIncID, ChargeCodeID: chargeCodeId };
-        try {
-            const [lawTitleResponse, nibrsCodeResponse] = await Promise.all([
-                fetchPostData('LawTitle/GetDataDropDown_LawTitle', lawTitleObj),
-                fetchPostData('FBICodes/GetDataDropDown_FBICodes', nibrsCodeObj)
-            ]);
-            const lawTitleArr = Comman_changeArrayFormat(lawTitleResponse, 'LawTitleID', 'Description');
-            const nibrsArr = threeColArrayWithCode(nibrsCodeResponse, 'FBIID', 'Description', 'FederalSpecificFBICode');
-            setValueCharge({ ...valueCharge, LawTitleId: lawTitleArr[0]?.value, NIBRSID: nibrsArr[0]?.value, ChargeCodeID: chargeCodeId, });
-        } catch (error) {
-            console.error('Error during data fetching:', error);
-
-        }
-    };
-
-    const onChangeDrpLawTitle = async (e, name) => {
-        !addUpdatePermission && setstatesChangeCharge(true); !addUpdatePermission && setChangesStatus(true);
-
-        if (e) {
-            if (name === "LawTitleId") {
-                setValueCharge({ ...valueCharge, ['LawTitleId']: e.value, ['NIBRSID']: null, ['ChargeCodeID']: null, });
-                setChargeCodeDrp([]); setNIBRSDrpData([]);
-                // nibrs code 
-                get_NIBRS_Drp_Data(loginAgencyID, e.value);
-                // charge code
-                get_ChargeCode_Drp_Data(loginAgencyID, valueCharge?.NIBRSID, e.value);
-            } else if (name === 'ChargeCodeID') {
-                const res = await getLawTitleNibrsByCharge(loginAgencyID, valueCharge?.LawTitleId, e.value);
-            } else {
-                setValueCharge({ ...valueCharge, [name]: e.value });
-            }
-        } else {
-            if (name === "LawTitleId") {
-                setValueCharge({ ...valueCharge, ['LawTitleId']: null, ['NIBRSID']: '', ['ChargeCodeID']: null, });
-                setChargeCodeDrp([]); setNIBRSDrpData([]);
-                //law title
-                LawTitleIdDrpDwnVal(loginAgencyID, null);
-                // nibrs code
-                get_NIBRS_Drp_Data(loginAgencyID, null);
-                //offence code 
-                get_ChargeCode_Drp_Data(loginAgencyID, null, null);
-
-            } else if (name === 'ChargeCodeID') {
-                setValueCharge({ ...valueCharge, ['ChargeCodeID']: null });
-            } else {
-                setValueCharge({ ...valueCharge, [name]: null });
-            }
-        }
-    }
-
-    const onChangeNIBRSCode = (e, name) => {
-        !addUpdatePermission && setstatesChangeCharge(true); !addUpdatePermission && setChangesStatus(true);
-
-        if (e) {
-            if (name === 'NIBRSID') {
-                if ((e.id === "09C" || e.id === "360" || e.id === "09A" || e.id === "09B" || e.id === "13A" || e.id === "13B" || e.id === "13C") && loginAgencyState === "TX") {
-                    setValueCharge({ ...valueCharge, ["NIBRSID"]: e.value, ["ChargeCodeID"]: null, AttemptComplete: "C", });
-                    setChargeCodeDrp([]); get_ChargeCode_Drp_Data(loginAgencyID, e.value, valueCharge?.LawTitleId);
-
-                } else {
-                    setValueCharge({ ...valueCharge, ['NIBRSID']: e.value, ['ChargeCodeID']: null, });
-                    setChargeCodeDrp([]); get_ChargeCode_Drp_Data(loginAgencyID, e.value, valueCharge?.LawTitleId);
-
-                }
-            } else {
-                setValueCharge({ ...valueCharge, [name]: e.value });
-
-            }
-        } else {
-            if (name === "NIBRSID") {
-                setValueCharge({ ...valueCharge, [name]: null, ['ChargeCodeID']: null, });
-                get_ChargeCode_Drp_Data(loginAgencyID, null, null);
-            } else {
-                setValueCharge({ ...valueCharge, [name]: null });
-
-            }
-        }
-    }
-
-    const Add_Charge_Data = () => {
-        const { ChargeCodeID, NIBRSID, LawTitleId, AttemptComplete } = valueCharge;
-        const newCharge = {
-            ...valueCharge,
-            ChargeCodeID, NIBRSID, LawTitleId, IncidentID: DecEIncID, CreatedByUserFK: loginPinID, AgencyID: loginAgencyID, AttemptComplete: AttemptComplete,
-        };
-
-        if (ArrestID) {
-            const val = { ...newCharge, ChargeID: DecChargeId, ArrestID: ArrestID, };
-            AddDeleteUpadate('ArrestCharge/Insert_ArrestCharge', val).then((res) => {
-                if (res.success) {
-                    const parsedData = JSON.parse(res.data);
-                    const message = parsedData.Table[0].Message;
-                    toastifySuccess(message); get_Arrest_Count(ArrestID);
-                    get_Data_Arrest_Charge(ArrestID);
-                    get_ArrestCharge_Count(DecChargeId);
-                    Reset();
-                    setChangesStatus(false);
-                    setstatesChangeCharge(false);
-                    setUpdateCount(updateCount + 1);
-                    setErrorsCharge({ ...errorsCharge, ['ChargeCodeIDError']: '', });
-                    LawTitleIdDrpDwnVal(loginAgencyID, null);
-                    get_NIBRS_Drp_Data(loginAgencyID, null);
-                    get_ChargeCode_Drp_Data(loginAgencyID, null, null);
-                }
-            });
-
-        } else {
-            const localCharge = {
-                ...newCharge,
-                ChargeID: `local-${Date.now()}`,
-                ArrestID: null,
-                NIBRS_Description: NIBRSDrpData?.find(x => x.value === NIBRSID)?.label || '',
-                ChargeCode_Description: chargeCodeDrp?.find(x => x.value === ChargeCodeID)?.label || '',
-                LawTitle_Description: lawTitleIdDrp?.find(x => x.value === LawTitleId)?.label || '',
-            };
-            const isDuplicate = ChargeLocalArr?.some(item =>
-                item.ChargeCodeID === localCharge.ChargeCodeID &&
-                item.NIBRSID === localCharge.NIBRSID
-            );
-
-            if (isDuplicate) {
-                toastifyError('This charge already exists locally.');
-                return;
-            }
-
-            const updatedLocalCharges = [...ChargeLocalArr, localCharge];
-            setChargeLocalArr(updatedLocalCharges);
-            sessionStorage.setItem('ChargeLocalData', JSON.stringify(updatedLocalCharges));
-            Reset();
-            setChangesStatus(false);
-            setStatesChangeStatus(false);
-        }
-    };
-
-    const update_Arrest_Charge = () => {
-        const { ChargeCodeID, NIBRSID, LawTitleId, AttemptComplete } = valueCharge;
-        if (ArrestID) {
-            const val = { IncidentID: DecEIncID, ArrestID: ArrestID, ChargeID: DecChargeId, ModifiedByUserFK: loginPinID, AgencyID: loginAgencyID, ChargeCodeID: ChargeCodeID, NIBRSID: NIBRSID, LawTitleId: LawTitleId, AttemptComplete: AttemptComplete, };
-            AddDeleteUpadate('ArrestCharge/Update_ArrestCharge', val).then((res) => {
-                const parsedData = JSON.parse(res.data);
-                const message = parsedData.Table[0].Message;
-                toastifySuccess(message); setstatesChangeCharge(false); setChangesStatus(false); get_Data_Arrest_Charge(ArrestID);
-                setErrorsCharge({ ...errorsCharge, ['ChargeCodeIDError']: '', });
-                LawTitleIdDrpDwnVal(loginAgencyID, null); get_NIBRS_Drp_Data(loginAgencyID, null); get_ChargeCode_Drp_Data(loginAgencyID, null, null);
-            });
-        } else {
-            const updatedCharges = ChargeLocalArr.map(charge => {
-                if (charge.ChargeID === DecChargeId) {
-                    return {
-                        ...charge, ChargeCodeID, NIBRSID, LawTitleId, AttemptComplete: AttemptComplete, NIBRS_Description: NIBRSDrpData?.find(x => x.value === NIBRSID)?.label || '',
-                        ChargeCode_Description: chargeCodeDrp?.find(x => x.value === ChargeCodeID)?.label || '',
-                        LawTitle_Description: lawTitleIdDrp?.find(x => x.value === LawTitleId)?.label || '',
-                    };
-                }
-                return charge;
-            });
-            setChargeLocalArr(updatedCharges);
-            sessionStorage.setItem('ChargeLocalData', JSON.stringify(updatedCharges));
-            setStatesChangeStatus(false); setChangesStatus(false);
-            setErrorsCharge({ ...errorsCharge, ['ChargeCodeIDError']: '', });
-            LawTitleIdDrpDwnVal(loginAgencyID, null); get_NIBRS_Drp_Data(loginAgencyID, null); get_ChargeCode_Drp_Data(loginAgencyID, null, null);
-        }
-    };
-
-    const set_Edit_ValueCharge = (row) => {
-        console.log("🚀 ~ set_Edit_ValueCharge ~ row:", row)
-        // setDelChargeID(row.ChargeID);
-        if (!row.OffenseID) { setChargeID(row.ChargeID); setDecChargeId(row.ChargeID); }
-        get_ArrestCharge_Count(row.ChargeID); setErrorsCharge(''); setstatesChangeCharge(false);
-        if (row.OffenseID) {
-            setEditvalCharge(row);
-            setoffenseNameID(row.NameOffenseID);
-        }
-        else {
-            GetSingleDataCharge(row.ChargeID);
-        }
-        setChangesStatus(false);
-        //  get_Arrest_Count(ArrestID);
-    }
-
-    const setStatusFalseCharge = () => {
-        setErrorsCharge(''); setChargeID(''); Reset();
-    }
-
-    const Reset = () => {
-        setEditvalCharge([]); setValueCharge({ ...valueCharge, 'CreatedByUserFK': '', 'ChargeCodeID': '', 'NIBRSID': '', 'WarrantID': '', 'LawTitleId': '', 'AttemptComplete': '', });
-        setstatesChangeCharge(false); setChangesStatus(false); setErrorsCharge({}); setDelChargeID(''); setDecChargeId(''); setChargeID('')
-        // lawTitle
-        LawTitleIdDrpDwnVal(loginAgencyID, null);
-        // nibrs code
-        get_NIBRS_Drp_Data(loginAgencyID, null);
-        setoffenseNameID();
-        // charge code
-        get_ChargeCode_Drp_Data(loginAgencyID, null, null);
-    }
-
-    const conditionalRowStylesCharge = [
-        {
-            when: row => row.ChargeID === DecChargeId,
-            style: { backgroundColor: '#001f3fbd', color: 'white', cursor: 'pointer', },
-        },
-    ];
-
-    const columnsCharge = [
-        {
-            name: ' Offense Code/Name', selector: (row) => row.ChargeCode_Description || row.Offense_Description, sortable: true
-        },
-        {
-            name: 'TIBRS Code', selector: (row) => row.NIBRS_Description || row.FBICode_Desc, sortable: true
-        },
-        {
-            name: <p className='text-end' style={{ position: 'absolute', top: '7px', right: 10 }}>Delete</p>,
-            cell: row =>
-                <div style={{ position: 'absolute', top: 4, right: 10 }}>
-                    {
-                        !narrativeApprovedStatus && <span onClick={() => {
-                            if (row.NameOffenseID) {
-                                setoffenseNameID(row.NameOffenseID)
-                            }
-                            else {
-                                setDelChargeID(row.ChargeID); setIsChargeDel(true)
-                            }
-                        }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
-                            <i className="fa fa-trash"></i>
-                        </span>
-                    }
-                </div >
-        }
-    ]
-
-    // const DeleteCharge = () => {
-    //     const val = { 'ChargeID': delChargeID, 'DeletedByUserFK': loginPinID }
-    //     AddDeleteUpadate('ArrestCharge/Delete_ArrestCharge', val).then((res) => {
-    //         if (res) {
-    //             const parsedData = JSON.parse(res.data);
-    //             const message = parsedData.Table[0].Message;
-    //             toastifySuccess(message);
-    //             get_Data_Arrest_Charge(DecArrestId);
-    //             get_Arrest_Count(ArrestID);
-    //             Reset();
-    //             get_ArrestCharge_Count(DecChargeId);
-    //             setErrors('');
-    //             setStatusFalse()
-    //         } else { console.log("Somthing Wrong"); }
-    //     })
-    // }
-
-    const DeleteCharge = () => {
-        // if (!delChargeID) {
-        //     toastifyError('No charge selected for deletion.');
-        //     return;
-        // }
-        const chargeID = String(delChargeID);
-        if (chargeID.startsWith('local-')) {
-            const updatedLocalCharges = ChargeLocalArr.filter(charge => charge.ChargeID !== delChargeID);
-            setChargeLocalArr(updatedLocalCharges);
-            sessionStorage.setItem('ChargeLocalData', JSON.stringify(updatedLocalCharges));
-
-            toastifySuccess('Deleted successfully.');
-            setDelChargeID(null);
-            setIsChargeDel(false);
-            // Reset();
-            setChangesStatus(false); get_Data_Arrest(DecEIncID, MstPage === "MST-Arrest-Dash" ? true : false, loginPinID);
-            setStatesChangeStatus(false);
-        } else {
-            const val = { 'ChargeID': delChargeID, 'DeletedByUserFK': loginPinID };
-            AddDeleteUpadate('ArrestCharge/Delete_ArrestCharge', val).then((res) => {
-                if (res) {
-                    const parsedData = JSON.parse(res.data);
-                    const message = parsedData.Table[0].Message;
-                    toastifySuccess(message);
-                    get_Data_Arrest_Charge(DecArrestId); get_Data_Arrest(DecEIncID, MstPage === "MST-Arrest-Dash" ? true : false, loginPinID);
-                    get_Arrest_Count(ArrestID);
-                    setIsChargeDel(false);
-                    // Reset();
-                    get_ArrestCharge_Count(DecChargeId);
-                    setErrors('');
-                    // setStatusFalse();
-                } else {
-                    console.log("Something went wrong");
-                }
-            });
-        }
-    };
-
-    //  Attempted/Completed
-    const StatusOption = [
-        { value: "A", label: "Attempted" },
-        { value: "C", label: "Completed" },
-    ];
-
-    const nibrsSuccessStyles = {
-        control: (styles) => ({
-            ...styles,
-            backgroundColor: "#9fd4ae",
-            height: 20,
-            minHeight: 35,
-            fontSize: 14,
-            margintop: 2,
-            boxShadow: 0,
-        }),
-    };
-
-    const onChangeAttComp = (e, name) => {
-        !addUpdatePermission && setstatesChangeCharge(true); !addUpdatePermission && setChangesStatus(true);
-        if (e) {
-            setValueCharge({ ...valueCharge, [name]: e.value });
-        } else {
-            setValueCharge({ ...valueCharge, [name]: null });
-        }
-    };
-
-    const DeleteOffense = () => {
-        const val = {
-            'NameOffenseID': offenseNameID,
-            'DeletedByUserFK': loginPinID,
-        }
-        AddDeleteUpadate('NameOffense/Delete_NameOffense', val).then((res) => {
-            if (res) {
-                const parsedData = JSON.parse(res.data);
-                const message = parsedData.Table[0].Message;
-                toastifySuccess(message);
-
-                // get_Name_Count(DecNameID)
-                // get_Offense_DropDown(incidentID, DecNameID);
-
-                get_OffenseName_Data(possessionID)
-            } else {
-                console.log("res");
-            }
-        }).catch((err) => {
-            console.log("🚀 ~Delete AddDeleteUpadate ~ err:", err);
-        })
-    }
 
     return (
         <>
             <div className="col-12 child " id="display-not-form">
-                <div className="row align-items-center mt-1">
-                    <div className="col-12 col-md-12 col-lg-11">
-                        <div className="row px-2">
-                            <div className="col-2 col-md-2 col-lg-1  mt-2 ">
-                                <label htmlFor="" className='new-label '> Arrest No.</label>
-                            </div>
-                            <div className="col-4 col-md-4 col-lg-2  text-field  mt-1">
-                                <input type="text" name='ArrestNumber' value={value?.ArrestNumber} className="readonlyColor" onChange={''} id='ArrestNumber' required readOnly />
-                            </div>
-                            <div className="col-2 col-md-3 col-lg-2 mt-1 pt-2">
-                                <label htmlFor="" className='new-label text-nowrap'>Incident No.</label>
-                            </div>
-                            <div className="col-4 col-md-4 col-lg-3 mt-1 text-field">
-                                <input type="text" className='readonlyColor' name='IncidentNumber' value={IncNo ? IncNo : ''}
-                                    required readOnly />
-                            </div>
-                            <div className="col-2 col-md-2 col-lg-2 mt-2">
-                                <label htmlFor="" className='new-label'>
-                                    Arrest Date/Time
-                                    {
-                                        loginAgencyState === 'TX' ?
-                                            checkArrestDate(value?.ArrestDtTm, incExceDate) && <ErrorTooltip ErrorStr={'The arrest date must be after the exceptional clearance date if the incident is marked as "cleared exceptionally'} />
-                                            :
-                                            <></>
-                                    }
-                                    {errors.ArrestDtTmError !== 'true' ? (
-                                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ArrestDtTmError}</p>
-                                    ) : null}
-                                </label>
-                            </div>
-                            <div className="col-4 col-md-4 col-lg-2 ">
-                                <DatePicker
-                                    id='ArrestDtTm'
-                                    name='ArrestDtTm'
-                                    ref={startRef1}
-                                    onKeyDown={(e) => {
-                                        if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
-                                            e?.preventDefault();
-                                        } else {
-                                            onKeyDown(e);
-                                        }
-                                    }}
-                                    onChange={(date) => {
-                                        if (!date) {
-                                            !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-                                            setArrestDate(null);
-                                            setValue({ ...value, ['ArrestDtTm']: null });
-                                            return;
-                                        }
-
-                                        let currDate = new Date(date);
-                                        const minDate = extractIncidentDate ? new Date(extractIncidentDate) : new Date(incidentReportedDate);
-                                        const maxDate = new Date(datezone);
-
-                                        const isSameDate = (d1, d2) =>
-                                            d1.getFullYear() === d2.getFullYear() &&
-                                            d1.getMonth() === d2.getMonth() &&
-                                            d1.getDate() === d2.getDate();
-
-                                        if (minDate) {
-                                            const minDateTime = new Date(minDate);
-                                            minDateTime.setMinutes(minDateTime.getMinutes() + 1);
-                                            if (isSameDate(currDate, minDate)) {
-                                                if (currDate < minDateTime) {
-                                                    currDate = minDateTime;
-                                                }
-                                            }
-                                            if (currDate < minDateTime) {
-                                                currDate = minDateTime;
-                                            }
-                                        }
-                                        if (currDate > maxDate) {
-                                            currDate = maxDate;
-                                        }
-                                        !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-                                        setArrestDate(currDate);
-                                        setValue({ ...value, ['ArrestDtTm']: getShowingMonthDateYear(currDate) });
-                                    }}
-
-                                    // className='requiredColor'
-                                    dateFormat="MM/dd/yyyy HH:mm"
-                                    timeFormat="HH:mm"
-                                    is24Hour
-                                    timeInputLabel
-                                    showYearDropdown
-                                    showMonthDropdown
-                                    dropdownMode="select"
-                                    isClearable={value?.ArrestDtTm ? true : false}
-                                    selected={value?.ArrestDtTm ? new Date(value?.ArrestDtTm) : null}
-                                    placeholderText={value?.ArrestDtTm ? value.ArrestDtTm : 'Select...'}
-                                    showTimeSelect
-                                    timeIntervals={1}
-                                    timeCaption="Time"
-                                    autoComplete="Off"
-                                    maxDate={new Date(datezone)}
-                                    minDate={extractIncidentDate ? new Date(extractIncidentDate) : new Date(incidentReportedDate)}
-                                    filterTime={(time) =>
-                                        filterPassedTimeZoneArrest(time, extractIncidentDate, datezone, incidentReportedDate)
-                                    }
-
-                                    disabled={nibrsSubmittedArrestMain === 1}
-                                    className={nibrsSubmittedArrestMain === 1 ? 'LockFildsColor' : 'requiredColor'}
-                                />
-                            </div>
-
-                            <div className="col-2 col-md-2 col-lg-1 mt-1">
-                                <label className='new-label text-nowrap '> Agency Name </label>
-                            </div>
-                            <div className="col-4 col-md-5 col-lg-2 ">
-                                <Select
-                                    name="ArrestingAgencyID"
-                                    value={arrestingAgencyDrpData?.filter((obj) => obj.value === value?.ArrestingAgencyID)}
-                                    styles={customStylesWithOutColor}
-                                    isClearable
-                                    options={arrestingAgencyDrpData}
-                                    onChange={(e) => { ChangeDropDownArresting(e, 'ArrestingAgencyID') }}
-                                    placeholder="Select..."
-                                />
-                            </div>
-
-                            <div className="col-2 col-md-2 col-lg-2 mt-2 ">
-                                <label htmlFor="" className='new-label'>Arresting Agency</label>
-                            </div>
-                            <div className="col-4 col-md-4 col-lg-3 mt-1 text-field">
-                                <input
-                                    type="text"
-                                    name='ArrestingAgency'
-                                    id='ArrestingAgency'
-                                    value={value?.ArrestingAgency || ''}
-                                    onChange={HandleChange}
-                                    disabled={!value.ArrestingAgencyID || Agencystatus ? true : false}
-                                    className={!value.ArrestingAgencyID || Agencystatus ? 'readonlyColor' : ''}
-                                />
-                            </div>
-                            <div className="col-2 col-md-2 col-lg-2 mt-3">
-                                <label className='new-label  '>Use of Force Applied</label>
-                            </div>
-                            <div className="col-4 col-md-5 col-lg-2 mt-2 ">
-                                <Select
-                                    name='PoliceForceID'
-                                    styles={customStylesWithOutColor}
-                                    value={policeForceDrpData?.filter((obj) => obj.value === value?.PoliceForceID)}
-                                    isClearable
-                                    options={policeForceDrpData}
-                                    onChange={(e) => {
-                                        ChangeDropDown(e, 'PoliceForceID');
-                                        if (!e) { setShowPoliceForce(false); }
-                                    }}
-                                    placeholder="Select..."
-                                />
-                                {isEnabled && (
-                                    <div className='mt-2'
-                                        style={{
-                                            backgroundColor: '#fbecec',
-                                            border: '1px solid red',
-                                            borderRadius: '6px',
-                                            padding: '3px 6px',
-                                            textAlign: 'center',
-                                            color: isHovered ? 'blue' : 'red',
-                                            fontSize: '16px',
-                                            maxWidth: '100%',
-                                            width: '220px', // can be % if inside flex/grid
-                                            boxSizing: 'border-box',
-                                            wordWrap: 'break-word',
-                                            cursor: 'pointer',
-                                        }}
-                                        onClick={handleClick}
-                                        onMouseEnter={handleMouseEnter}
-                                        onMouseLeave={handleMouseLeave}
-                                    >
-                                        Enter Details in Police Force
-                                    </div>
-
-                                )}
-                            </div>
+                <div className="row align-items-center mt-1" style={{ rowGap: "8px" }}>
+                    <div className="col-2 col-md-2 col-lg-1 ">
+                        <label htmlFor="" className='new-label mb-0 '> Arrest No.</label>
+                    </div>
+                    <div className="col-4 col-md-4 col-lg-3 d-flex gap-2">
+                        <div>
+                            <input type="text" name="ArrestNumber" value={value?.ArrestNumber} className="readonlyColor form-control" id="ArrestNumber" readOnly />
+                        </div>
+                        <div className="form-check d-flex align-items-center gap-2 ml-1">
+                            <input className="form-check-input" type="checkbox" name="IsJuvenileArrest" checked={value?.IsJuvenileArrest} onChange={HandleChange} disabled />
+                            <label className="form-check-label mb-0 text-nowrap" htmlFor="flexCheckDefault">Juvenile Arrest</label>
                         </div>
                     </div>
-                    <div className=" col-4 col-md-4 col-lg-1 ">
-                        <div className="img-box" >
-                            <Carousel autoPlay={true} className="carousel-style" showArrows={true} showThumbs={false} showStatus={false} >
-                                {
-                                    multiImage.length > 0 ?
-                                        multiImage?.map((item) => (
-                                            <div key={item.index} data-toggle="modal" data-target="#ImageModel" onClick={() => { setImageModalStatus(true); }} className='model-img'>
-                                                <img src={`data:image/png;base64,${item.Photo}`} style={{ height: '100px' }} />
 
-                                            </div>
-                                        ))
-                                        :
-                                        <div data-toggle="modal" data-target="#ImageModel" onClick={() => { setImageModalStatus(true); }}>
-                                            <img src={defualtImage} />
-                                        </div>
+                    <div className="col-2 col-md-3 col-lg-2 ">
+                        <label htmlFor="" className='new-label text-nowrap mb-0'>Incident No.</label>
+                    </div>
+                    <div className="col-4 col-md-4 col-lg-2 mt-0 text-field">
+                        <input type="text" className='readonlyColor' name='IncidentNumber' value={IncNo ? IncNo : ''}
+                            required readOnly />
+                    </div>
+                    <div className="col-2 col-md-2 col-lg-2">
+                        <label htmlFor="" className='new-label mb-0'>
+                            Arrest Date/Time
+                            {
+                                loginAgencyState === 'TX' ?
+                                    checkArrestDate(value?.ArrestDtTm, incExceDate) && <ErrorTooltip ErrorStr={'The arrest date must be after the exceptional clearance date if the incident is marked as "cleared exceptionally'} />
+                                    :
+                                    <></>
+                            }
+                            {errors.ArrestDtTmError !== 'true' ? (
+                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ArrestDtTmError}</p>
+                            ) : null}
+                        </label>
+                    </div>
+
+                    <div className="col-4 col-md-4 col-lg-2 ">
+                        <DatePicker
+                            id='ArrestDtTm'
+                            name='ArrestDtTm'
+                            ref={startRef1}
+                            onKeyDown={(e) => {
+                                if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                                    e?.preventDefault();
+                                } else {
+                                    onKeyDown(e);
                                 }
-                            </Carousel>
-                        </div>
-                    </div>
-
-                </div>
-                {/* <fieldset className='mt-2'> */}
-                {/* <legend>Name Information </legend> */}
-                <div className="row ">
-                    <div className="col-12 col-md-12 col-lg-12">
-                        <div className="row ">
-                            <div className="col-2 col-md-2 col-lg-1 mt-2 ">
-                                <label htmlFor="" className='new-label'>Arrestee
-                                    {errors.ArresteeIDError !== 'true' ? (
-                                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ArresteeIDError}</p>
-                                    ) : null}
-                                </label>
-                            </div>
-                            <div className="col-4 col-md-4 col-lg-3">
-                                {
-                                    MstPage === "MST-Arrest-Dash" ?
-                                        <Select
-                                            name="ArresteeID"
-                                            styles={nibrsSubmittedArrestMain === 1 ? LockFildscolour : NameStatus ? 'readonlyColor' : Requiredcolour}
-                                            isDisabled={nibrsSubmittedArrestMain === 1 || NameStatus ? true : false}
-                                            options={mastersNameDrpData}
-                                            value={mastersNameDrpData?.filter((obj) => obj.value === value?.ArresteeID)}
-                                            isClearable
-                                            onChange={(e) => ChangeDropDown(e, 'ArresteeID')}
-                                            placeholder="Select..."
-                                        />
-                                        :
-                                        <Select
-                                            name="ArresteeID"
-                                            styles={nibrsSubmittedArrestMain === 1 ? LockFildscolour : NameStatus ? 'readonlyColor' : Requiredcolour}
-                                            isDisabled={ArrestID || nibrsSubmittedArrestMain === 1 || NameStatus ? true : false}
-                                            options={arresteeNameData}
-                                            value={arresteeNameData?.filter((obj) => obj.value === value?.ArresteeID)}
-                                            isClearable
-                                            onChange={(e) => ChangeDropDown(e, 'ArresteeID')}
-                                            placeholder="Select..."
-                                        />
+                            }}
+                            onChange={(date) => {
+                                if (!date) {
+                                    !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
+                                    setArrestDate(null);
+                                    setValue({ ...value, ['ArrestDtTm']: null });
+                                    return;
                                 }
-                            </div>
-                            {!ArrestID && (
-                                <div className="col-1" data-toggle="modal" data-target="#MasterModal">
-                                    <button
-                                        className="btn btn-sm bg-green text-white"
-                                        onClick={() => {
-                                            if (possessionID) {
-                                                GetSingleDataPassion(possessionID);
-                                            }
-                                            setNameModalStatus(true); setDatePickerRequiredColor(true);
-                                        }}
-                                    >
-                                        <i className="fa fa-plus"></i>
-                                    </button>
-                                </div>
-                            )}
 
-                            <div className="col-2 col-md-2 col-lg-1 mt-2">
-                                <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Arrest Type') }}>
-                                    Arrest Type{errors.ArrestTypeIDError !== 'true' ? (
-                                        <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ArrestTypeIDError}</p>
-                                    ) : null}
-                                </span>
-                            </div>
-                            <div className="col-4 col-md-4 col-lg-2 ">
-                                <Select
-                                    name="ArrestTypeID"
-                                    value={arrestTypeDrpData?.filter((obj) => obj.value === value?.ArrestTypeID)}
-                                    styles={nibrsSubmittedArrestMain === 1 ? LockFildscolour : Requiredcolour}
-                                    isDisabled={nibrsSubmittedArrestMain === 1 ? true : false}
-                                    isClearable
-                                    options={arrestTypeDrpData}
-                                    onChange={(e) => { ChangeDropDown(e, 'ArrestTypeID') }}
-                                    placeholder="Select..."
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {/* </fieldset> */}
-                {/* <fieldset> */}
-                {/* <legend>Rights Information </legend> */}
-                <div className="row">
-                    <div className="col-12 col-md-12 col-lg-12 pt-2 p-0 ">
-                        <div className="row align-items-center ">
-                            <div className="col mt-1">
-                                <label htmlFor="" className='new-label px-0 text-nowrap'>Rights Given</label>
-                            </div>
-                            <div className="col-4 col-md-4 col-lg-2 mt-1">
-                                <Select
-                                    name='RightsGivenID'
-                                    styles={customStylesWithOutColor}
-                                    value={policeForceDrpData?.filter((obj) => obj.value === value?.RightsGivenID)}
-                                    isClearable
-                                    options={policeForceDrpData}
-                                    onChange={(e) => ChangeDropDown(e, 'RightsGivenID')}
-                                    placeholder="Select..."
-                                />
-                            </div>
-                            <div className="col mt-2 ">
-                                <label htmlFor="" className='new-label'>Given By</label>
-                            </div>
-                            <div className="col-4 col-md-4 col-lg-2 mt-1">
-                                <Select
-                                    name='GivenByID'
-                                    styles={customStylesWithOutColor}
-                                    value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.GivenByID)}
-                                    isClearable
-                                    options={agencyOfficerDrpData}
-                                    onChange={(e) => ChangeDropDown(e, 'GivenByID')}
-                                    placeholder="Select..."
-                                    isDisabled={rightGivenCode === 'N' || !rightGivenCode}
-                                />
-                            </div>
-                            <div className="col mt-2 ">
-                                <label htmlFor="" className='new-label text-nowrap '>Primary Officer</label>
-                            </div>
-                            <div className="col-4 col-md-4 col-lg-2 mt-1">
-                                <Select
-                                    name='PrimaryOfficerID'
-                                    styles={customStylesWithOutColor}
-                                    value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.PrimaryOfficerID)}
-                                    isClearable
-                                    options={agencyOfficerDrpData}
-                                    onChange={(e) => ChangeDropDown(e, 'PrimaryOfficerID')}
-                                    placeholder="Select..."
-                                />
-                            </div>
-                            <div className="col mt-2 ">
-                                <label htmlFor="" className='new-label'>Supervisor</label>
-                            </div>
-                            <div className="col-4 col-md-4 col-lg-2 mt-1">
-                                <Select
-                                    name='SupervisorID'
-                                    styles={customStylesWithOutColor}
-                                    value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.SupervisorID)}
-                                    isClearable
-                                    options={agencyOfficerDrpData}
-                                    onChange={(e) => ChangeDropDown(e, 'SupervisorID')}
-                                    placeholder="Select..."
-                                />
-                            </div>
+                                let currDate = new Date(date);
+                                const minDate = extractIncidentDate ? new Date(extractIncidentDate) : new Date(incidentReportedDate);
+                                const maxDate = new Date(datezone);
 
-                        </div>
-                    </div>
-                </div>
-                {/* </fieldset> */}
-                {/* juvenile */}
-                {/* <fieldset> */}
-                {/* <legend>Juvenile Disposition</legend> */}
-                <div className="row">
-                    <div className="col-12 col-md-12 col-lg-11 pt-2 p-0 ">
-                        <div className="row">
-                            <div className='col-2 col-md-2 col-lg-1'></div>
-                            <div className='col-2 col-md-2 col-lg-2 mt-2 '>
-                                <div className="form-check ml-4">
-                                    <input className="form-check-input " type="checkbox" onChange={HandleChange} name='IsJuvenileArrest' value={value?.IsJuvenileArrest} checked={value?.IsJuvenileArrest} id="flexCheckDefault" disabled
-                                    />
-                                    <label className="form-check-label" htmlFor="flexCheckDefault">Juvenile Arrest  </label>
-                                </div>
-                            </div>
-                            <div className="col mt-2 p-0 ">
-                                <span data-toggle="modal" onClick={() => {
-                                    setOpenPage('Arrest Juvenile Disposition')
-                                }} data-target="#ListModel" className='new-link'>
-                                    Disposition {errors.JuvenileDispoError !== 'true' ? (
-                                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.JuvenileDispoError}</p>
-                                    ) : null}
-                                </span>
-                            </div>
-                            <div className="col-4 col-md-4 col-lg-4 mt-1">
-                                <Select
-                                    name='JuvenileDispositionID'
-                                    menuPlacement='top'
-                                    styles={nibrsSubmittedArrestMain === 1 ? LockFildscolour : value?.IsJuvenileArrest === 'true' || value?.IsJuvenileArrest === true ? Requiredcolour : customStylesWithOutColor}
-                                    value={arrestJuvenileDisDrpData?.filter((obj) => obj.value === value?.JuvenileDispositionID)}
-                                    isClearable
-                                    options={arrestJuvenileDisDrpData}
-                                    onChange={(e) => ChangeDropDown(e, 'JuvenileDispositionID')}
-                                    placeholder="Select..."
-                                    isDisabled={value?.IsJuvenileArrest || nibrsSubmittedArrestMain === 1 ? false : true}
-                                />
-                            </div>
-                            <div className="col-2 col-md-2 col-lg-2 mt-2 ">
-                                <label htmlFor="" className='new-label'>Phone No:{errors.CellPhoneError !== 'true' ? (
-                                    <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.CellPhoneError}</p>
-                                ) : null}</label>
-                            </div>
-                            <div className="col-4 col-md-4 col-lg-2 mt-1 text-field">
-                                <input type="text" maxLength={10} name='PhoneNo' id='PhoneNo'
-                                    // className={`${value.IsJuvenileArrest === false || nibrsSubmittedArrestMain === 1 ? "readonlyColor" : ''}`} 
-                                    className={nibrsSubmittedArrestMain === 1 ? "LockFildsColour" : value.IsJuvenileArrest === false ? "readonlyColor"
-                                        : ""
+                                const isSameDate = (d1, d2) =>
+                                    d1.getFullYear() === d2.getFullYear() &&
+                                    d1.getMonth() === d2.getMonth() &&
+                                    d1.getDate() === d2.getDate();
+
+                                if (minDate) {
+                                    const minDateTime = new Date(minDate);
+                                    minDateTime.setMinutes(minDateTime.getMinutes() + 1);
+                                    if (isSameDate(currDate, minDate)) {
+                                        if (currDate < minDateTime) {
+                                            currDate = minDateTime;
+                                        }
                                     }
+                                    if (currDate < minDateTime) {
+                                        currDate = minDateTime;
+                                    }
+                                }
+                                if (currDate > maxDate) {
+                                    currDate = maxDate;
+                                }
+                                !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
+                                setArrestDate(currDate);
+                                setValue({ ...value, ['ArrestDtTm']: getShowingMonthDateYear(currDate) });
+                            }}
 
-                                    value={value?.PhoneNo} onChange={handleChange} required disabled={value.IsJuvenileArrest === true ? false : true} />
+                            // className='requiredColor'
+                            dateFormat="MM/dd/yyyy HH:mm"
+                            timeFormat="HH:mm"
+                            is24Hour
+                            timeInputLabel
+                            showYearDropdown
+                            showMonthDropdown
+                            dropdownMode="select"
+                            isClearable={value?.ArrestDtTm ? true : false}
+                            selected={value?.ArrestDtTm ? new Date(value?.ArrestDtTm) : null}
+                            placeholderText={value?.ArrestDtTm ? value.ArrestDtTm : 'Select...'}
+                            showTimeSelect
+                            timeIntervals={1}
+                            timeCaption="Time"
+                            autoComplete="Off"
+                            maxDate={new Date(datezone)}
+                            minDate={extractIncidentDate ? new Date(extractIncidentDate) : new Date(incidentReportedDate)}
+                            filterTime={(time) =>
+                                filterPassedTimeZoneArrest(time, extractIncidentDate, datezone, incidentReportedDate)
+                            }
+
+                            disabled={nibrsSubmittedArrestMain === 1}
+                            className={nibrsSubmittedArrestMain === 1 ? 'LockFildsColor' : 'requiredColor'}
+                        />
+                    </div>
+
+                    <div className="col-2 col-md-2 col-lg-1">
+                        <label className='new-label text-nowrap mb-0'> Agency Name </label>
+                    </div>
+                    <div className="col-4 col-md-5 col-lg-3 ">
+                        <Select
+                            name="ArrestingAgencyID"
+                            value={arrestingAgencyDrpData?.filter((obj) => obj.value === value?.ArrestingAgencyID)}
+                            styles={customStylesWithOutColor}
+                            isClearable
+                            options={arrestingAgencyDrpData}
+                            onChange={(e) => { ChangeDropDownArresting(e, 'ArrestingAgencyID') }}
+                            placeholder="Select..."
+                        />
+                    </div>
+
+                    <div className="col-2 col-md-2 col-lg-2">
+                        <label htmlFor="" className='new-label mb-0'>Arresting Agency</label>
+                    </div>
+                    <div className="col-4 col-md-4 col-lg-2 mt-0 text-field">
+                        <input
+                            type="text"
+                            name='ArrestingAgency'
+                            id='ArrestingAgency'
+                            value={value?.ArrestingAgency || ''}
+                            onChange={HandleChange}
+                            disabled={!value.ArrestingAgencyID || Agencystatus ? true : false}
+                            className={!value.ArrestingAgencyID || Agencystatus ? 'readonlyColor' : ''}
+                        />
+                    </div>
+                    <div className="col-2 col-md-2 col-lg-2">
+                        <label className='new-label mb-0'>Use of Force?</label>
+                    </div>
+                    <div className="col-4 col-md-5 col-lg-2">
+                        <Select
+                            name='PoliceForceID'
+                            styles={customStylesWithOutColor}
+                            value={policeForceDrpData?.filter((obj) => obj.value === value?.PoliceForceID)}
+                            isClearable
+                            options={policeForceDrpData}
+                            onChange={(e) => {
+                                ChangeDropDown(e, 'PoliceForceID');
+                                if (!e) { setShowPoliceForce(false); }
+                            }}
+                            placeholder="Select..."
+                        />
+                        {/* {isEnabled && (
+                              <div className='mt-2'
+                                  style={{
+                                      backgroundColor: '#fbecec',
+                                      border: '1px solid red',
+                                      borderRadius: '6px',
+                                      padding: '3px 6px',
+                                      textAlign: 'center',
+                                      color: isHovered ? 'blue' : 'red',
+                                      fontSize: '16px',
+                                      maxWidth: '100%',
+                                      width: '220px', // can be % if inside flex/grid
+                                      boxSizing: 'border-box',
+                                      wordWrap: 'break-word',
+                                      cursor: 'pointer',
+                                  }}
+                                  onClick={handleClick}
+                                  onMouseEnter={handleMouseEnter}
+                                  onMouseLeave={handleMouseLeave}
+                              >
+                                  Enter Details in Police Force
+                              </div>
+  
+                          )} */}
+                    </div>
+
+                    <div className="col-2 col-md-2 col-lg-1">
+                        <label htmlFor="" className='new-label mb-0'>Arrest Type
+                            {errors.ArrestTypeIDError !== 'true' ? (
+                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ArrestTypeIDError}</p>
+                            ) : null}
+                        </label>
+                    </div>
+                    <div className="col-4 col-md-4 col-lg-3 ">
+                        <Select
+                            name="ArrestTypeID"
+                            value={arrestTypeDrpData?.filter((obj) => obj.value === value?.ArrestTypeID)}
+                            styles={nibrsSubmittedArrestMain === 1 ? LockFildscolour : Requiredcolour}
+                            isDisabled={nibrsSubmittedArrestMain === 1 ? true : false}
+                            isClearable
+                            options={arrestTypeDrpData}
+                            onChange={(e) => { ChangeDropDown(e, 'ArrestTypeID') }}
+                            placeholder="Select..."
+                        />
+                    </div>
+
+                    <div className="col-4 col-md-4 col-lg-2">
+                        <label htmlFor="" className='new-label px-0 text-nowrap mb-0'>Supervisor</label>
+                    </div>
+                    <div className="col-4 col-md-4 col-lg-2">
+                        <Select
+                            name='SupervisorID'
+                            styles={customStylesWithOutColor}
+                            value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.SupervisorID)}
+                            isClearable
+                            options={agencyOfficerDrpData}
+                            onChange={(e) => ChangeDropDown(e, 'SupervisorID')}
+                            placeholder="Select..."
+                        />
+                    </div>
+
+                    <div className="col-4 col-md-4 col-lg-1"></div>
+                    {isEnabled ? (
+                        <div className="col-4 col-md-4 col-lg-3">
+                            <div
+                                onClick={handleClick}
+                                onMouseEnter={handleMouseEnter}
+                                onMouseLeave={handleMouseLeave}
+                                style={{
+                                    border: '1px solid red',
+                                    backgroundColor: '#ffe6e6',
+                                    color: isHovered ? 'blue' : 'red',
+                                    padding: '3px',
+                                    borderRadius: '4px',
+                                    display: 'inline-block',
+                                    transition: 'color 0.3s ease',
+                                    fontWeight: 'bold',
+                                    fontSize: '14px',
+                                    width: '100%',
+                                    textAlign: 'center'
+                                }}
+                            >
+                                Enter Details in Police Force
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="col-4 col-md-4 col-lg-3">
+                            <div
+                                style={{
+                                    backgroundColor: '#f2f2f2',
+                                    color: 'gray',
+                                    padding: '3px',
+                                    borderRadius: '4px',
+                                    display: 'inline-block',
+                                    transition: 'color 0.3s ease',
+                                    fontWeight: 'bold',
+                                    fontSize: '14px',
+                                    width: '100%',
+                                    textAlign: 'center'
+                                }}
+                            >
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="col-2 col-md-2 col-lg-1">
+                        <label htmlFor="" className='new-label mb-0'>Arrestee
+                            {errors.ArresteeIDError !== 'true' ? (
+                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ArresteeIDError}</p>
+                            ) : null}
+                        </label>
+                    </div>
+                    <div className="col-4 col-md-4 col-lg-3 d-flex align-items-center gap-2">
+                        {
+                            MstPage === "MST-Arrest-Dash" ?
+                                <Select
+                                    className="w-100"
+                                    name="ArresteeID"
+                                    styles={nibrsSubmittedArrestMain === 1 ? LockFildscolour : NameStatus ? 'readonlyColor' : Requiredcolour}
+                                    isDisabled={nibrsSubmittedArrestMain === 1 || NameStatus ? true : false}
+                                    options={mastersNameDrpData}
+                                    value={mastersNameDrpData?.filter((obj) => obj.value === value?.ArresteeID)}
+                                    isClearable
+                                    onChange={(e) => ChangeDropDown(e, 'ArresteeID')}
+                                    placeholder="Select..."
+                                />
+                                :
+                                <Select
+                                    className="w-100"
+                                    name="ArresteeID"
+                                    styles={nibrsSubmittedArrestMain === 1 ? LockFildscolour : NameStatus ? 'readonlyColor' : Requiredcolour}
+                                    isDisabled={arrestID || nibrsSubmittedArrestMain === 1 || NameStatus ? true : false}
+                                    options={arresteeNameData}
+                                    value={arresteeNameData?.filter((obj) => obj.value === value?.ArresteeID)}
+                                    isClearable
+                                    onChange={(e) => ChangeDropDown(e, 'ArresteeID')}
+                                    placeholder="Select..."
+                                />
+                        }
+                        {!arrestID && (
+                            <div className="ml-1" data-toggle="modal" data-target="#MasterModal">
+                                <button
+                                    className="btn btn-sm bg-green text-white"
+                                    onClick={() => {
+                                        if (possessionID) {
+                                            GetSingleDataPassion(possessionID);
+                                        }
+                                        setNameModalStatus(true); setDatePickerRequiredColor(true);
+                                    }}
+                                >
+                                    <i className="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="col-4 col-md-4 col-lg-2 d-flex align-items-center gap-2">
+                        <label htmlFor="" className='new-label mr-1 mb-0'>
+                            DOB
+                        </label>
+                        <div>
+                            <DatePicker
+                                id='DateOfBirth'
+                                name='DateOfBirth'
+                                selected={dobDate}
+                                // onChange={handleDateChange}
+                                onKeyDown={(e) => {
+                                    if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                                        e.preventDefault();
+                                    } else {
+                                        onKeyDown(e);
+                                    }
+                                }}
+                                dateFormat={"MM/dd/yyyy"}
+                                // showTimeSelect={allowTimeSelect} // Always show time picker
+                                timeFormat="HH:mm"
+                                timeIntervals={1}
+                                className='readonlyColor'
+                                timeCaption="Time"
+                                disabled
+                                placeholderText={value.DateOfBirth ? value.DateOfBirth : 'Select...'}
+                                isClearable={value.DateOfBirth ? true : false}
+                                showMonthDropdown
+                                showYearDropdown
+                                dropdownMode="select"
+                                autoComplete="off"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="col-12 col-md-10 col-lg-4 d-flex align-items-center gap-2">
+                        <label htmlFor="AgeFrom" className="label-name mr-1 mb-0">
+                            Age
+                        </label>
+                        <div className="d-flex align-items-center gap-2">
+                            <input type="text" name="AgeFrom" className="form-control " maxLength={3} readOnly placeholder="From" autoComplete="off"
+                                style={{ width: "60px" }} value={value?.AgeFrom}
+                            />
+                            <span className="dash-name">_</span>
+                            <input type="text" name="AgeTo" className="form-control " readOnly maxLength={3} placeholder="To" autoComplete="off" style={{ width: "45px" }}
+                            />
+                            <div className='ml-2'>
+                                <Select
+                                    name='AgeUnitID'
+                                    value={ageUnitDrpData?.find((obj) => obj.value === value?.AgeUnitID)}
+                                    options={ageUnitDrpData}
+                                    onChange={(e) => ChangeDropDown(e, 'AgeUnitID')}
+                                    isClearable
+                                    isDisabled
+                                    placeholder="Age Unit..."
+                                    styles={value.AgeFrom ? Requiredcolour : customStylesWithOutColor}
+                                />
                             </div>
                         </div>
                     </div>
+
+                    <div className="col-6 col-md-3 col-lg-2 d-flex align-items-center gap-2 ">
+                        <div>
+                            <label htmlFor="SexID" className="new-label mb-0 mr-1">
+                                Gender
+                            </label>
+                        </div>
+                        <div style={{ width: "100%" }}>
+                            <Select
+                                styles={customStylesWithOutColor}
+                                name='SexID'
+                                value={sexIdDrp?.filter((obj) => obj.value === value?.SexID)}
+                                options={sexIdDrp}
+                                onChange={(e) => ChangeDropDown(e, 'SexID')}
+                                isClearable
+                                isDisabled
+                                placeholder="Select..."
+                            />
+                        </div>
+                    </div>
+                    <div className="col-2 col-md-2 col-lg-1">
+                        <label className='new-label text-nowrap mb-0'> Race</label>
+                    </div>
+                    <div className="col-4 col-md-5 col-lg-3 ">
+                        <Select
+                            name='RaceID'
+                            styles={customStylesWithOutColor}
+                            value={raceIdDrp?.filter((obj) => obj.value === value?.RaceID)}
+                            options={raceIdDrp}
+                            onChange={(e) => ChangeDropDown(e, 'RaceID')}
+                            isClearable
+                            isDisabled
+                            placeholder="Select..."
+                        />
+                    </div>
+
+                    <div className="col-6 col-md-3 col-lg-2">
+                        <label htmlFor="" className='new-label px-0 text-nowrap mb-0'>Rights Given</label>
+                    </div>
+                    <div className="col-4 col-md-4 col-lg-2">
+                        <Select
+                            name='RightsGivenID'
+                            styles={customStylesWithOutColor}
+                            value={policeForceDrpData?.filter((obj) => obj.value === value?.RightsGivenID)}
+                            isClearable
+                            options={policeForceDrpData}
+                            onChange={(e) => ChangeDropDown(e, 'RightsGivenID')}
+                            placeholder="Select..."
+                        />
+                    </div>
+
+                    <div className="col-6 col-md-3 col-lg-2">
+                        <label htmlFor="" className='new-label px-0 text-nowrap mb-0'>Response</label>
+                    </div>
+                    <div className="col-4 col-md-4 col-lg-2">
+                        <Select
+                            name='ResponseID'
+                            styles={customStylesWithOutColor}
+                            value={policeForceDrpData?.filter((obj) => obj.value === value?.ResponseID)}
+                            isClearable
+                            options={policeForceDrpData}
+                            onChange={(e) => ChangeDropDown(e, 'ResponseID')}
+                            placeholder="Select..."
+                        />
+                    </div>
+
+                    <div className="col-2 col-md-2 col-lg-1">
+                        <label htmlFor="" className='new-label mb-0'>Given By</label>
+                    </div>
+                    <div className="col-4 col-md-4 col-lg-3">
+                        <Select
+                            name='GivenByID'
+                            styles={customStylesWithOutColor}
+                            value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.GivenByID)}
+                            isClearable
+                            options={agencyOfficerDrpData}
+                            onChange={(e) => ChangeDropDown(e, 'GivenByID')}
+                            placeholder="Select..."
+                        // isDisabled={rightGivenCode === 'N' || !rightGivenCode}
+                        />
+                    </div>
+                    <div className="col-6 col-md-3 col-lg-2">
+                        <label htmlFor="" className='new-label text-nowrap mb-0'>Primary Officer</label>
+                    </div>
+                    <div className="col-4 col-md-4 col-lg-2">
+                        <Select
+                            name='PrimaryOfficerID'
+                            styles={customStylesWithOutColor}
+                            value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.PrimaryOfficerID)}
+                            isClearable
+                            options={agencyOfficerDrpData}
+                            onChange={(e) => ChangeDropDown(e, 'PrimaryOfficerID')}
+                            placeholder="Select..."
+                        />
+                    </div>
+                    <div className="col-4 col-md-4 col-lg-4"></div>
+
+                    {/* <div className="col-2 col-md-2 col-lg-1">
+                        <label htmlFor="" className='new-label mb-0'>Parent Name</label>
+                    </div>
+                    <div className="col-4 col-md-4 col-lg-3 d-flex align-items-center g-2 ">
+                        <input type="text" name="ParentNameID" value={value?.ParentNameID} className="readonlyColor form-control" id="ParentNameID" readOnly />
+                     
+                        <div className="ml-1" data-toggle="modal" data-target="#MasterModal">
+                            <button
+                                className="btn btn-sm bg-green text-white"
+                                onClick={() => {
+                                    if (possessionID) {
+                                        GetSingleDataPassion(possessionID);
+                                    }
+                                    setNameModalStatus(true); setDatePickerRequiredColor(true);
+                                }}
+                            >
+                                <i className="fa fa-plus"></i>
+                            </button>
+                        </div>
+                       
+                    </div> */}
+                    <div className="col-2 col-md-2 col-lg-1">
+                        <label htmlFor="" className='new-label mb-0'>Parent Name
+                        </label>
+                    </div>
+                    <div className="col-4 col-md-4 col-lg-3 d-flex align-items-center g-2">
+
+                        <Select
+                            // styles={customStylesWithOutColor}
+                            className="w-100"
+                            name="ParentNameID"
+                            value={arresteeNameData?.filter((obj) => obj.value === value?.ParentNameID)}
+                            options={value.ArresteeID ? complainantfilterID : arresteeNameData}
+                            onChange={(e) => { ChangeDropDown(e, 'ParentNameID') }}
+                            isClearable
+                            placeholder="Select..."
+                            isDisabled={value?.IsJuvenileArrest ? false : true}
+                            styles={value?.IsJuvenileArrest === 'true' ? Requiredcolour : customStylesWithOutColor}
+                        />
+
+                        {/* {!arrestID && ( */}
+                        <div className="ml-1" data-toggle="modal" data-target="#MasterModal">
+                            <button
+                                className="btn btn-sm bg-green text-white"
+                                disabled={value?.IsJuvenileArrest ? false : true}
+                                onClick={() => {
+                                    if (ArrestparentID) {
+                                        GetSingleDataPassion(ArrestparentID);
+                                    }
+                                    else {
+                                        setPossessionID('');
+                                        setPossenSinglData('');
+                                    }
+                                    setType('ArrestParentMod');
+
+                                    setNameModalStatus(true); setDatePickerRequiredColor(true);
+                                }}
+                            >
+                                <i className="fa fa-plus"></i>
+                            </button>
+                        </div>
+                        {/* )} */}
+                    </div>
+
+                    <div className="col-2 col-md-2 col-lg-2">
+                        <label htmlFor="" className='new-label mb-0'>Parent Phone  {errors.CellPhoneError !== 'true' ? (
+                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.CellPhoneError}</p>
+                        ) : null}</label>
+
+                    </div>
+                    <div className="col-4 col-md-4 col-lg-2">
+                        <input type="text" maxLength={10} name='ParentPhone' id='ParentPhone' className={`form-control ${value?.IsJuvenileArrest === false ? 'readonlyColor' : ''}`}
+                            value={value?.ParentPhone} onChange={handleChange} required disabled={value.IsJuvenileArrest === true ? false : true} />
+                    </div>
+
+                    <div className="col-2 col-md-2 col-lg-2">
+                        <label htmlFor="" className='new-label mb-0'>Name Of School</label>
+                    </div>
+
+                    <div className="col-4 col-md-4 col-lg-2">
+                        <input type="text" name="NameOfSchool"
+                            value={value?.NameOfSchool}
+                            disabled={value?.IsJuvenileArrest ? false : true} onChange={HandleChange}
+                            styles={value?.IsJuvenileArrest === 'true' ? Requiredcolour : customStylesWithOutColor}
+                            className=" form-control" id="NameOfSchool" />
+                    </div>
+
+                    <div className="col-2 col-md-2 col-lg-1">
+                        <label htmlFor="" className='new-label mb-0'>Location Of School</label>
+                    </div>
+
+                    <div className="col-4 col-md-4 col-lg-11">
+                        <input type="text" name="LocationOfSchool"
+                            value={value?.LocationOfSchool}
+                            disabled={value?.IsJuvenileArrest ? false : true} onChange={HandleChange}
+                            styles={value?.IsJuvenileArrest === 'true' ? Requiredcolour : customStylesWithOutColor}
+                            className=" form-control" id="LocationOfSchool" />
+                    </div>
+                    <div className="col-2 col-md-2 col-lg-1">
+                        <label htmlFor="" className='new-label mb-0'>Grade</label>
+                    </div>
+                    <div className="col-4 col-md-4 col-lg-3">
+                        <input type="text" name="Grade"
+                            disabled={value?.IsJuvenileArrest ? false : true} onChange={HandleChange}
+                            styles={value?.IsJuvenileArrest === 'true' ? Requiredcolour : customStylesWithOutColor}
+                            value={value?.Grade} className=" form-control" id="Grade" />
+                    </div>
+
+                    <div className="col-2 col-md-2 col-lg-2">
+                        <label htmlFor="" className='new-label mb-0'>Disposition {errors.JuvenileDispoError !== 'true' ? (
+                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.JuvenileDispoError}</p>
+                        ) : null}</label>
+                    </div>
+                    <div className="col-2 col-md-2 col-lg-2">
+                        <Select
+                            name='JuvenileDispositionID'
+                            menuPlacement='top'
+                            isDisabled={value?.IsJuvenileArrest || nibrsSubmittedArrestMain === 1 ? false : true}
+                            styles={nibrsSubmittedArrestMain === 1 ? LockFildscolour : value?.IsJuvenileArrest === 'true' || value?.IsJuvenileArrest === true ? Requiredcolour : customStylesWithOutColor}
+                            value={arrestJuvenileDisDrpData?.filter((obj) => obj.value === value?.JuvenileDispositionID)}
+                            isClearable
+                            options={arrestJuvenileDisDrpData}
+                            onChange={(e) => ChangeDropDown(e, 'JuvenileDispositionID')}
+                            placeholder="Select..."
+                        />
+                    </div>
+                    <div className='col-2 col-md-2 col-lg-3'>
+                        <label className="form-check-label mb-0 ml-3 text-nowrap" htmlFor="flexCheckDefault">School Notified</label>
+                        <input className="form-check-input ml-2" type="checkbox" name="IsSchoolNotified" checked={value?.IsSchoolNotified} onChange={HandleChange} />
+                        <label className="form-check-label mb-0 ml-4 text-nowrap" htmlFor="flexCheckDefault">Y or N</label>
+                    </div>
                 </div>
-                {/* </fieldset> */}
             </div >
             {
                 modalStatus &&
@@ -1913,150 +1634,14 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                     </div>
                 </div>
             </div>
-            <>
-                <fieldset className='px-0'>
-                    <legend>Charge</legend>
-                    <div className="col-12">
-                        <div className="row">
-                            {/* Law Title */}
-                            <div className="col-2 col-md-2 col-lg-1 mt-2 p-0">
-                                <span className="new-link">
-                                    Law Title
-                                </span>
-                            </div>
-                            <div className="col-10 col-md-4 col-lg-2 mt-2">
-                                <Select
-                                    name="LawTitleId"
-                                    styles={customStylesWithOutColorCharge}
-                                    value={lawTitleIdDrp?.filter((obj) => obj.value === valueCharge?.LawTitleId)}
-                                    options={lawTitleIdDrp}
-                                    isClearable
-                                    onChange={(e) => onChangeDrpLawTitle(e, 'LawTitleId')}
-                                    placeholder="Select..."
-                                />
-                            </div>
-                            {/* Offense Code/Name */}
-                            <div className="col-2 col-md-2 col-lg-1 mt-2 p-0">
-                                <label className="new-label">
-                                    <Link to="/ListManagement?page=Charge%20Code&call=/Arr-Charge-Home" className="new-link">
-                                        Offense Code/Name
-                                    </Link>
-                                    {errorsCharge.ChargeCodeIDError !== 'true' && (
-                                        <span style={{ color: 'red', fontSize: '13px', display: 'block' }}>
-                                            {errorsCharge.ChargeCodeIDError}
-                                        </span>
-                                    )}
-                                </label>
-                            </div>
-                            <div className="col-10 col-md-4 col-lg-4 mt-2">
-                                <Select
-                                    name="ChargeCodeID"
-                                    value={chargeCodeDrp?.filter((obj) => obj.value === valueCharge?.ChargeCodeID)}
-                                    styles={Requiredcolour}
-                                    isClearable
-                                    options={chargeCodeDrp}
-                                    onChange={(e) => onChangeDrpLawTitle(e, 'ChargeCodeID')}
-                                    placeholder="Select..."
-                                />
-                            </div>
-                            {/* NIBRS Code */}
-                            <div className="col-2 col-md-2 col-lg-1 mt-3 p-0">
-                                <label className="new-label">
-                                    TIBRS Code
-                                    {errorsCharge.NIBRSIDError !== 'true' && (
-                                        <span style={{ color: 'red', fontSize: '13px', display: 'block' }}>
-                                            {errorsCharge.NIBRSIDError}
-                                        </span>
-                                    )}
-                                </label>
-                            </div>
-                            <div className="col-10 col-md-4 col-lg-3 mt-2">
-                                <Select
-                                    name="NIBRSID"
-                                    styles={Requiredcolour}
-                                    value={NIBRSDrpData?.filter((obj) => obj.value === valueCharge?.NIBRSID)}
-                                    isClearable
-                                    options={NIBRSDrpData}
-                                    onChange={(e) => onChangeNIBRSCode(e, 'NIBRSID')}
-                                    placeholder="Select..."
-                                />
-                            </div>
-                            <div className="col-2 col-md-2 col-lg-1 mt-3 " >
-                                <label className="new-label text-wrap text-right" >
-                                    Attem/Comp
-                                    {errorsCharge.AttemptRequiredError !== 'true' && (
-                                        <span style={{ color: 'red', fontSize: '13px', display: 'block' }}>
-                                            {errorsCharge.AttemptRequiredError}
-                                        </span>
-                                    )}
-                                </label>
 
-                            </div>
-                            <div className="col-10 col-md-4 col-lg-2 mt-2">
-                                <Select
-                                    onChange={(e) => onChangeAttComp(e, "AttemptComplete")}
-                                    options={StatusOption}
-                                    isClearable
-                                    styles={!valueCharge?.AttemptComplete ? nibrscolourStyles : nibrsSuccessStyles}
-                                    placeholder="Select..."
-                                    value={StatusOption.filter((option) => option.value === valueCharge?.AttemptComplete)}
-                                />
-                            </div>
-                        </div>
-
-                        {/* Buttons */}
-                        <div className="row mt-2">
-                            <div className="col-12 text-right">
-                                <button type="button" className="btn btn-sm btn-success mx-1" onClick={() => setStatusFalseCharge()}>New</button>
-                                {
-                                    ChargeID ?
-                                        effectiveScreenPermission?.[0]?.Changeok ?
-                                            <button type="button" onClick={check_Validation_ErrorCharge} disabled={!statesChangeCharge} className="btn btn-sm btn-success mx-1">Update Charge</button>
-                                            : null
-                                        :
-                                        effectiveScreenPermission?.[0]?.AddOK ?
-                                            <button type="button" onClick={check_Validation_ErrorCharge} className="btn btn-sm btn-success mx-1">Add Charge</button>
-                                            : null
-                                }
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Table */}
-                    <div className="col-12 mt-2">
-                        <DataTable
-                            dense
-                            data={
-                                effectiveScreenPermission?.[0]?.DisplayOK ?
-                                    ((ArrestID || possessionID) && arrestChargeData.length > 0 ? arrestChargeData : ChargeLocalArr)
-                                    : []
-                            }
-                            columns={columnsCharge}
-                            selectableRowsHighlight
-                            highlightOnHover
-                            pagination
-                            onRowClicked={(row) => { set_Edit_ValueCharge(row); }}
-                            fixedHeaderScrollHeight='250px'
-                            conditionalRowStyles={conditionalRowStylesCharge}
-                            fixedHeader
-                            persistTableHead={true}
-                            customStyles={tableCustomStyles}
-                            noDataComponent={
-                                effectiveScreenPermission?.[0]?.DisplayOK
-                                    ? "There are no data to display"
-                                    : "You don’t have permission to view data"
-                            }
-                        />
-                    </div>
-
-                    <ListModal {...{ openPage, setOpenPage }} />
-                    <ChangesModal func={check_Validation_Error} />
-                </fieldset>
-            </>
             <div className="col-12  text-right p-0" style={{ marginTop: '10px' }}>
-                {MstPage !== "MST-Arrest-Dash" && (<button type="button" className="btn btn-sm btn-success mr-1" onClick={setStatusFalse}>New </button>)}
+                {/* {MstPage !== "MST-Arrest-Dash" && (<button type="button" className="btn btn-sm btn-success mr-1" onClick={setStatusFalse}>New </button>)} */}
+                {/* <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => { setShowPage('Charges'); check_Validation_Error(); }}>Next </button> */}
+
+
                 {
-                    ArrestID && (ArrestSta === true || ArrestSta === 'true') ?
+                    arrestID && (ArrestSta === true || ArrestSta === 'true') ?
                         effectiveScreenPermission ? effectiveScreenPermission[0]?.Changeok ?
                             <>
                                 <button type="button" className="btn btn-sm btn-success mr-1" data-toggle="modal" data-target="#myModal"
@@ -2082,54 +1667,28 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                             </>
                         :
                         effectiveScreenPermission ? effectiveScreenPermission[0]?.AddOK ?
-                            <button type="button" className="btn btn-sm btn-success mr-1" data-toggle="modal" data-target="#myModal" onClick={() => { if (!showModal) { check_Validation_Error(); } }}>Save</button>
+                            <button type="button" className="btn btn-sm btn-success mr-1" data-toggle="modal" data-target="#myModal" onClick={() => { if (!showModal) { check_Validation_Error(); } }}>Next</button>
                             : <></> :
-                            <button type="button" className="btn btn-sm btn-success mr-1" data-toggle="modal" data-target="#myModal" onClick={() => { if (!showModal) { check_Validation_Error(); } }}>Save</button>
+                            <button type="button" className="btn btn-sm btn-success mr-1" data-toggle="modal" data-target="#myModal" onClick={() => { if (!showModal) { check_Validation_Error(); } }}>Next</button>
                 }
                 {
                     MstPage === "MST-Arrest-Dash" &&
                     <button type="button" className="btn btn-sm btn-success mx-1" onClick={onMasterPropClose} data-dismiss="modal">Close</button>
                 }
-            </div>
+            </div >
             <div className={`modal-backdrop ${confirmInsertArrest ? 'show' : ''}`} style={{ display: confirmInsertArrest ? 'block' : 'none' }}></div>
-            <div className="col-12 pt-1">
-                {
-                    MstPage != "MST-Arrest-Dash" &&
-                    <DataTable
-                        dense
-                        data={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? arrestFilterData : [] : arrestFilterData}
-                        columns={columns}
-                        selectableRowsHighlight
-                        highlightOnHover
-                        responsive
-                        pagination
-                        onRowClicked={(row) => {
-                            set_Edit_Value(row);
-                        }}
-                        fixedHeaderScrollHeight='100px'
-                        conditionalRowStyles={conditionalRowStyles}
-                        fixedHeader
-                        persistTableHead={true}
-                        customStyles={tableCustomStyles}
-                        paginationPerPage={'100'}
-                        paginationRowsPerPageOptions={[100, 150, 200, 500]}
-                        noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : 'There are no data to display'}
-                    />
-                }
-            </div>
             <ListModal {...{ openPage, setOpenPage }} />
             <ConfirmModal {...{ showModal, setShowModal, arresteeChange, value, possessionID, setPossessionID, setValue, setErrors }} />
-            <DeletePopUpModal func={offenseNameID ? DeleteOffense : isChargeDel ? DeleteCharge : DeleteArrest} clearID={clearID} />
+            <DeletePopUpModal func={DeleteArrest} clearID={clearID} />
             <ChangesModal func={check_Validation_Error} setToReset={setToReset} />
             <CurrentArrestMasterReport ArrestNumber={value.ArrestNumber} {...{ printIncReport, setIncMasterReport, IncReportCount, setIncReportCount, showModalReport, setshowModalReport }} />
-            <MasterNameModel {...{ type, setArrestID, isDatePickerRequiredColor, value, setValue, nameModalStatus, setNameModalStatus, loginPinID, loginAgencyID, possessionID, setPossessionID, possenSinglData, setPossenSinglData, GetSingleDataPassion }} />
+            <MasterNameModel {...{ type, setArrestID, isDatePickerRequiredColor, value, setValue, setArrestParentID, ArrestparentID, nameModalStatus, setNameModalStatus, loginPinID, loginAgencyID, possessionID, setPossessionID, possenSinglData, setPossenSinglData, GetSingleDataPassion }} />
             <ImageModel multiImage={multiImage} setStatesChangeStatus={setStatesChangeStatus} pinID={loginPinID} primaryOfficerID={agencyOfficerDrpData} setMultiImage={setMultiImage} uploadImgFiles={uploadImgFiles} setuploadImgFiles={setuploadImgFiles} ChangeDropDown={ChangeDropDown} modalStatus={modalStatus} setModalStatus={setModalStatus} imageId={imageid} setImageId={setImageId} imageModalStatus={imageModalStatus} setImageModalStatus={setImageModalStatus} delete_Image_File={delete_Image_File} setImgData={setImgData} imgData={imgData} updateImage={update_Vehicle_MultiImage} agencyID={loginAgencyID} />
         </>
     )
 }
 
 export default Home
-
 
 const Get_Given_Code = (data, dropDownData) => {
     const result = data?.map((sponsor) =>
