@@ -484,7 +484,7 @@ const Charges = (props) => {
       if (res.success) {
         const parsedData = JSON.parse(res.data);
         const message = parsedData.Table[0].Message;
-        toastifySuccess(message); get_Arrest_Count(DecArrestId);
+        toastifySuccess(message); get_Arrest_Count(MainArrestID || DecArrestId);
         Reset(); get_Data_Arrest_Charge(MainArrestID || DecArrestId);
         setChargeID(res.ChargeID);
         setChangesStatus(false); get_ArrestCharge_Count(ChargeID); setStatesChangeStatus(false);
