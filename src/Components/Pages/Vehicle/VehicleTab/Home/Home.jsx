@@ -899,35 +899,25 @@ const Home = ({ setStatus, setShowVehicleRecovered, showVehicleRecovered, get_Li
             sortable: true
         },
         // {
-        //     name: 'Classification ',
-        //     selector: (row) => row.Classification_Description,
-        //     sortable: true
+        //     width: '100px',
+        //     name: 'View',
+        //     cell: row =>
+        //         <div style={{ position: 'absolute', top: 4, right: 30 }}>
+        //             {
+        //                 getNibrsError(row.PropertyID, nibrsValidateData) ?
+        //                     <span
+        //                         onClick={(e) => { setErrString(row.PropertyID, nibrsValidateData) }}
+        //                         className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
+        //                         data-toggle="modal"
+        //                         data-target="#NibrsErrorShowModal"
+        //                     >
+        //                         <i className="fa fa-eye"></i>
+        //                     </span>
+        //                     :
+        //                     <></>
+        //             }
+        //         </div>
         // },
-        // {
-        //     name: 'VIN ',
-        //     selector: (row) => row.VIN,
-        //     sortable: true
-        // },
-        {
-            width: '100px',
-            name: 'View',
-            cell: row =>
-                <div style={{ position: 'absolute', top: 4, right: 30 }}>
-                    {
-                        getNibrsError(row.PropertyID, nibrsValidateData) ?
-                            <span
-                                onClick={(e) => { setErrString(row.PropertyID, nibrsValidateData) }}
-                                className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
-                                data-toggle="modal"
-                                data-target="#NibrsErrorShowModal"
-                            >
-                                <i className="fa fa-eye"></i>
-                            </span>
-                            :
-                            <></>
-                    }
-                </div>
-        },
         {
             name: <p className='text-end' style={{ position: 'absolute', top: '7px', right: 10 }}>Delete</p>,
             cell: row =>

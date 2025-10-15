@@ -1363,27 +1363,27 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
       ),
       sortable: true
     },
-    {
-      grow: 0,
-      minWidth: "80px",
-      name: 'View',
-      cell: row =>
-        <div style={{ position: 'absolute', top: 4, right: 30 }}>
-          {
-            getNibrsError(row.PropertyID, nibrsValidateData) ?
-              <span
-                onClick={(e) => { setErrString(row.PropertyID, nibrsValidateData) }}
-                className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
-                data-toggle="modal"
-                data-target="#NibrsErrorShowModal"
-              >
-                <i className="fa fa-eye"></i>
-              </span>
-              :
-              <></>
-          }
-        </div>
-    },
+    // {
+    //   grow: 0,
+    //   minWidth: "80px",
+    //   name: 'View',
+    //   cell: row =>
+    //     <div style={{ position: 'absolute', top: 4, right: 30 }}>
+    //       {
+    //         getNibrsError(row.PropertyID, nibrsValidateData) ?
+    //           <span
+    //             onClick={(e) => { setErrString(row.PropertyID, nibrsValidateData) }}
+    //             className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
+    //             data-toggle="modal"
+    //             data-target="#NibrsErrorShowModal"
+    //           >
+    //             <i className="fa fa-eye"></i>
+    //           </span>
+    //           :
+    //           <></>
+    //       }
+    //     </div>
+    // },
     {
       grow: 0,
       minWidth: "100px",

@@ -212,25 +212,25 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
         {
             name: 'Alias Indicator', selector: (row) => row.AliasIndicator, sortable: true
         },
-        {
-            width: '100px', name: 'View',
-            cell: row =>
-                <div style={{ position: 'absolute', top: 4, right: 30 }}>
-                    {
-                        getNibrsError(row.NameID, nibrsNameValidateArray) ?
-                            <span
-                                onClick={(e) => { setErrString(row.NameID, nibrsNameValidateArray) }}
-                                className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
-                                data-toggle="modal"
-                                data-target="#NibrsErrorShowModal"
-                            >
-                                <i className="fa fa-eye"></i>
-                            </span>
-                            :
-                            <></>
-                    }
-                </div>
-        },
+        // {
+        //     width: '100px', name: 'View',
+        //     cell: row =>
+        //         <div style={{ position: 'absolute', top: 4, right: 30 }}>
+        //             {
+        //                 getNibrsError(row.NameID, nibrsNameValidateArray) ?
+        //                     <span
+        //                         onClick={(e) => { setErrString(row.NameID, nibrsNameValidateArray) }}
+        //                         className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
+        //                         data-toggle="modal"
+        //                         data-target="#NibrsErrorShowModal"
+        //                     >
+        //                         <i className="fa fa-eye"></i>
+        //                     </span>
+        //                     :
+        //                     <></>
+        //             }
+        //         </div>
+        // },
         {
             name: 'Reason Code', selector: (row) => row?.NameReasonCode || '',
             format: (row) => (<>{row?.NameReasonCode ? row?.NameReasonCode.substring(0, 50) : ''}{row?.NameReasonCode?.length > 40 ? '  . . .' : null} </>),
