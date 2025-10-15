@@ -290,7 +290,7 @@ const Juvenile = (props) => {
               <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ParentContactDtTmErrors}</p>
             ) : null}</label>
           </div>
-          <div className="col-4 col-md-4 col-lg-4 ">
+          <div className="col-4 col-md-4 col-lg-4 mt-2 ">
             <DatePicker
               ref={startRef}
               onKeyDown={(e) => {

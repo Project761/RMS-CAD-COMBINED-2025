@@ -375,6 +375,117 @@ const Narrative = (props) => {
 
   return (
     <>
+
+
+      <div className="row mb-3">
+        <div className="col-2 col-md-2 col-lg-1 mt-2 pt-2">
+          <span className='new-label'>
+            Reported By {errors.ReportedByIDError !== 'true' ? (
+              <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReportedByIDError}</p>
+            ) : null}
+          </span>
+        </div>
+        <div className="col-4 col-md-4 col-lg-3 mt-2 ">
+          <Select
+            name='ReportedByID'
+            isClearable
+            styles={Requiredcolour}
+            value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ReportedByID)}
+            options={agencyOfficerDrpData}
+            onChange={(e) => ChangeDropDown(e, 'ReportedByID')}
+            placeholder="Select.."
+            menuPlacement="bottom"
+          />
+
+
+        </div>
+
+        <div className="col-4 col-md-4 col-lg-1 mt-2 pt-2">
+          <label htmlFor="" className='new-label'>Report Type {errors.ArrestNarrativeIDError !== 'true' ? (
+            <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ArrestNarrativeIDError}</p>
+          ) : null}</label>
+        </div>
+        <div className="col-7 col-md-7 col-lg-3 mt-2 ">
+          <Select
+            name='NarrativeTypeID'
+            isClearable
+            styles={Requiredcolour}
+            value={narrativeTypeList?.filter((obj) => obj.value === value?.NarrativeTypeID)}
+            options={narrativeTypeList}
+            onChange={(e) => ChangeDropDown(e, 'NarrativeTypeID')}
+            placeholder="Select.."
+            menuPlacement="bottom"
+          />
+        </div>
+
+        <div className="col-2 col-md-2 col-lg-1 mt-2 pt-2">
+          <label htmlFor="" className='new-label'>Date/Time{errors.NarrativeDtTmError !== 'true' ? (
+            <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.NarrativeDtTmError}</p>
+          ) : null}</label>
+        </div>
+        <div className="col-4 col-md-4 col-lg-3 mt-2 ">
+          <DatePicker
+            ref={startRef}
+            onKeyDown={(e) => {
+              if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                e?.preventDefault();
+              } else { onKeyDown(e); }
+            }}
+            dateFormat="MM/dd/yyyy HH:mm"
+            timeFormat="HH:mm "
+            is24Hour
+            timeInputLabel
+            isClearable
+            className='requiredColor'
+            name='NarrativeDtTm'
+            id='NarrativeDtTm'
+            onChange={(date) => {
+              let currDate = new Date(date);
+              let prevDate = new Date(value?.NarrativeDtTm);
+              let maxDate = new Date()
+
+              if (date) {
+                if ((currDate.getDate() === maxDate.getDate() && currDate.getMonth() === maxDate.getMonth() && currDate.getFullYear() === maxDate.getFullYear()) && !(currDate.getDate() === prevDate.getDate() && currDate.getMonth() === prevDate.getMonth() && currDate.getFullYear() === prevDate.getFullYear())) {
+                  setNarrativeDtTm(maxDate); !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
+                  setValue({ ...value, ['NarrativeDtTm']: maxDate ? getShowingMonthDateYear(maxDate) : null })
+                }
+                else
+                  if (date >= new Date()) {
+                    setNarrativeDtTm(new Date()); !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
+                    setValue({ ...value, ['NarrativeDtTm']: new Date() ? getShowingMonthDateYear(new Date()) : null })
+                  } else if (date <= new Date(incReportedDate)) {
+                    setNarrativeDtTm(incReportedDate); !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
+                    setValue({ ...value, ['NarrativeDtTm']: incReportedDate ? getShowingMonthDateYear(incReportedDate) : null })
+                  } else {
+                    setNarrativeDtTm(date); !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
+                    setValue({ ...value, ['NarrativeDtTm']: date ? getShowingMonthDateYear(date) : null })
+                  }
+              } else {
+                setNarrativeDtTm(null); !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
+                setValue({ ...value, ['NarrativeDtTm']: null })
+              }
+            }}
+            selected={value.NarrativeDtTm ? new Date(value.NarrativeDtTm) : null}
+            placeholderText={'Select...'}
+            showTimeSelect
+            filterTime={(time) => filterPassedDateTime(time, narrativeDtTm, incReportedDate)}
+            timeIntervals={1}
+            dropdownMode="select"
+            timeCaption="Time"
+            popperPlacement="bottom"
+            maxDate={new Date()}
+            minDate={new Date(incReportedDate)}
+            autoComplete='off'
+            showMonthDropdown
+            showYearDropdown
+          />
+        </div>
+
+
+
+
+      </div>
+
       <div className="row mt-1">
         <div className="col-12 col-md-12 col-lg-12 px-0 pl-0">
 
@@ -435,118 +546,8 @@ const Narrative = (props) => {
           ) : null}
         </div>
       </div>
-      <div className="col-12">
-        <div className="row">
-          <div className="col-6">
-            <div className="row">
-              <div className="col-4 col-md-4 col-lg-4 mt-3">
-                <span className='new-label'>
-                  Reported By {errors.ReportedByIDError !== 'true' ? (
-                    <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReportedByIDError}</p>
-                  ) : null}
-                </span>
-              </div>
-              <div className="col-7 col-md-7 col-lg-7 mt-2 ">
-                <Select
-                  name='ReportedByID'
-                  isClearable
-                  styles={Requiredcolour}
-                  value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ReportedByID)}
-                  options={agencyOfficerDrpData}
-                  onChange={(e) => ChangeDropDown(e, 'ReportedByID')}
-                  placeholder="Select.."
-                  menuPlacement="bottom"
-                />
 
 
-              </div>
-              <div className="col-4 col-md-4 col-lg-4 mt-2 pt-2">
-                <label htmlFor="" className='new-label'>Date/Time{errors.NarrativeDtTmError !== 'true' ? (
-                  <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.NarrativeDtTmError}</p>
-                ) : null}</label>
-              </div>
-              <div className="col-7 col-md-7 col-lg-7 mt-2 ">
-                <DatePicker
-                  ref={startRef}
-                  onKeyDown={(e) => {
-                    if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
-                      e?.preventDefault();
-                    } else { onKeyDown(e); }
-                  }}
-                  dateFormat="MM/dd/yyyy HH:mm"
-                  timeFormat="HH:mm "
-                  is24Hour
-                  timeInputLabel
-                  isClearable
-                  className='requiredColor'
-                  name='NarrativeDtTm'
-                  id='NarrativeDtTm'
-                  onChange={(date) => {
-                    let currDate = new Date(date);
-                    let prevDate = new Date(value?.NarrativeDtTm);
-                    let maxDate = new Date()
-
-                    if (date) {
-                      if ((currDate.getDate() === maxDate.getDate() && currDate.getMonth() === maxDate.getMonth() && currDate.getFullYear() === maxDate.getFullYear()) && !(currDate.getDate() === prevDate.getDate() && currDate.getMonth() === prevDate.getMonth() && currDate.getFullYear() === prevDate.getFullYear())) {
-                        setNarrativeDtTm(maxDate); !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-                        setValue({ ...value, ['NarrativeDtTm']: maxDate ? getShowingMonthDateYear(maxDate) : null })
-                      }
-                      else
-                        if (date >= new Date()) {
-                          setNarrativeDtTm(new Date()); !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-                          setValue({ ...value, ['NarrativeDtTm']: new Date() ? getShowingMonthDateYear(new Date()) : null })
-                        } else if (date <= new Date(incReportedDate)) {
-                          setNarrativeDtTm(incReportedDate); !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-                          setValue({ ...value, ['NarrativeDtTm']: incReportedDate ? getShowingMonthDateYear(incReportedDate) : null })
-                        } else {
-                          setNarrativeDtTm(date); !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-                          setValue({ ...value, ['NarrativeDtTm']: date ? getShowingMonthDateYear(date) : null })
-                        }
-                    } else {
-                      setNarrativeDtTm(null); !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-                      setValue({ ...value, ['NarrativeDtTm']: null })
-                    }
-                  }}
-                  selected={value.NarrativeDtTm ? new Date(value.NarrativeDtTm) : null}
-                  placeholderText={'Select...'}
-                  showTimeSelect
-                  filterTime={(time) => filterPassedDateTime(time, narrativeDtTm, incReportedDate)}
-                  timeIntervals={1}
-                  dropdownMode="select"
-                  timeCaption="Time"
-                  popperPlacement="bottom"
-                  maxDate={new Date()}
-                  minDate={new Date(incReportedDate)}
-                  autoComplete='off'
-                  showMonthDropdown
-                  showYearDropdown
-                />
-              </div>
-            </div>
-          </div>
-          <div className="col-6">
-            <div className="row">
-              <div className="col-4 col-md-4 col-lg-4 mt-2 pt-2">
-                <label htmlFor="" className='new-label'>Report Type {errors.ArrestNarrativeIDError !== 'true' ? (
-                  <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ArrestNarrativeIDError}</p>
-                ) : null}</label>
-              </div>
-              <div className="col-7 col-md-7 col-lg-7 mt-2 ">
-                <Select
-                  name='NarrativeTypeID'
-                  isClearable
-                  styles={Requiredcolour}
-                  value={narrativeTypeList?.filter((obj) => obj.value === value?.NarrativeTypeID)}
-                  options={narrativeTypeList}
-                  onChange={(e) => ChangeDropDown(e, 'NarrativeTypeID')}
-                  placeholder="Select.."
-                  menuPlacement="bottom"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <div className="col-12 text-right mt-3 ">
         <button type="button" className="btn btn-sm btn-success mr-1 " onClick={() => { setStatusFalse(); }}>New</button>

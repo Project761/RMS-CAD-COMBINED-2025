@@ -55,8 +55,8 @@ const ChargeAddUp = () => {
 
     let DecChargeId = 0, DecArrestId = 0, DecIncID = 0;
 
-    if (!ArrestId) ArrestId = 0;
-    else DecArrestId = parseInt(base64ToString(ArrestId));
+    // if (!ArrestId) ArrestId = 0;
+    // else DecArrestId = parseInt(base64ToString(ArrestId));
 
     if (!IncID) IncID = 0;
     else DecIncID = parseInt(base64ToString(IncID));
@@ -81,7 +81,7 @@ const ChargeAddUp = () => {
             <div className="col-12 col-sm-12">
                 <div className="card-body">
                     <div className="row " style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
-                        <div className="col-12 incident-tab">
+                        <div className="col-12">
                             <ul className='nav nav-tabs'>
                                 <Link
                                     to={
@@ -99,9 +99,9 @@ const ChargeAddUp = () => {
                                     onClick={() => { if (!changesStatus) setShowPage('home') }}
                                 >
 
-                                    {iconHome}
+                                    {/* {iconHome} */}
                                 </Link>
-                                <span
+                                {/* <span
                                     className={`nav-item ${showPage === 'Penalties' ? 'active' : ''}${!status ? 'disabled' : ''}`}
                                     data-toggle={changesStatus ? "modal" : "pill"}
                                     data-target={changesStatus ? "#SaveModal" : ''}
@@ -138,7 +138,7 @@ const ChargeAddUp = () => {
                                     onClick={() => { if (!changesStatus) setShowPage('Weapon') }} >
 
                                     Weapon{`${tabCount?.ChargeWeaponTypeCount > 0 ? '(' + tabCount?.ChargeWeaponTypeCount + ')' : ''}`}
-                                </span>
+                                </span> */}
 
                             </ul>
                         </div>

@@ -51,7 +51,7 @@ const MultiValue = props => (
     </components.MultiValue>
 );
 
-const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData, value, possessionIDVictim, setValue, complainNameID, setcomplainNameID, nameModalStatus, setNameModalStatus, loginAgencyID, loginPinID, setPossessionIDVictim, type, setPossessionID, possessionID, setPossenSinglData, GetSingleDataPassion }) => {
+const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData, value, possessionIDVictim, setArrestParentID, ArrestparentID, setValue, complainNameID, setcomplainNameID, nameModalStatus, setNameModalStatus, loginAgencyID, loginPinID, setPossessionIDVictim, type, setPossessionID, possessionID, setPossenSinglData, GetSingleDataPassion }) => {
 
     const iconHome = <i className="fa fa-home" style={{ fontSize: '20px' }}></i>
 
@@ -188,7 +188,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
             setMainIncidentID(IncID);
 
             if (type === "ArrestMod") {
-                dispatch(get_ArresteeName_Data('', 0, IncID, true));
+                // dispatch(get_ArresteeName_Data('', 0, IncID, true));
                 // get_Arrestee_Drp_Data('', 0, IncID, true);
             }
             // else if (type === "Pro-Owner") {
@@ -196,7 +196,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
             // }
             else {
                 get_Arrestee_Drp_Data('', 0, IncID);
-                dispatch(get_ArresteeName_Data('', 0, IncID));
+                // dispatch(get_ArresteeName_Data('', 0, IncID));
             }
 
             // condition for unwanted api calling
@@ -442,6 +442,16 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                 });
             }
             else if (type === "ArrestMod") {
+                //  GetReasonIdDrp(loginAgencyID, possenSinglData[0]?.NameTypeID, type, JSON?.parse(possenSinglData[0]?.Role));
+                setMultiSelectedReason({
+                    optionSelected: possenSinglData[0]?.Role ? makeRoleArr(possenSinglData[0]?.Role) : [],
+                });
+                setMultiSelected({
+                    optionSelected: possenSinglData[0]?.ReasonCode ? fourColArrayReasonCode(possenSinglData[0]?.ReasonCode, 'NameReasonCodeID', 'ReasonCode_Description', 'IsVictimName', 'IsOffenderName'
+                    ) : '',
+                });
+            }
+            else if (type === "ArrestParentMod") {
                 //  GetReasonIdDrp(loginAgencyID, possenSinglData[0]?.NameTypeID, type, JSON?.parse(possenSinglData[0]?.Role));
                 setMultiSelectedReason({
                     optionSelected: possenSinglData[0]?.Role ? makeRoleArr(possenSinglData[0]?.Role) : [],
@@ -721,6 +731,29 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
             setMultiSelected({ optionSelected: [], });
         }
         else if ((!possessionID && !mstPossessionID) && type === "ArrestMod") {
+
+            setmasterNameValues({
+                ...masterNameValues,
+                'NameIDNumber': 'Auto Generated', 'Address': '', 'Contact': '', 'BusinessTypeID': '', 'SuffixID': '', 'DLStateID': '',
+                'VerifyID': '', 'SexID': '', 'RaceID': '', 'PhoneTypeID': '', 'CertifiedByID': '', 'EthnicityID': '',
+                'AgeUnitID': '', 'IsJuvenile': false, 'IsCurrentPh': true, 'IsVerify': true, 'IsUnListedPhNo': '', 'HeightFrom': '', 'HeightTo': '',
+                'LastName': '', 'FirstName': '', 'MiddleName': '', 'SSN': '', 'WeightFrom': '', 'WeightTo': '', 'DateOfBirth': '', 'CertifiedDtTm': '',
+                'AgeFrom': '', 'OwnerNameID': '', 'OwnerPhoneNumber': '', 'OwnerFaxNumber': '', 'NameID': '', 'ArrestID': "", 'WarrantID': "",
+                'AgeTo': '', 'Years': '', 'EventType': 'I', 'ModifiedByUserFK': '', 'MasterNameID': '', 'TicketID': "", 'checkVictem': 0, 'checkOffender': 0,
+                'checkArrest': 0, 'CreatedByUserFK': '', 'AgencyID': '', 'IncidentID': IncID, 'NameLocationID': '', 'DLNumber': '', 'VictimTypeID': '',
+
+                'Role': null, 'ResidentID': '',
+            });
+            setPhoneTypeCode('');
+            const id = nameTypeIdDrp?.filter((val) => { if (val.id === "I") return val })
+            if (id.length > 0) {
+                setmasterNameValues(prevValues => { return { ...prevValues, ['NameTypeID']: id[0].value } })
+                setNameTypeCode(id[0].NameTypeCode);
+                setIsBusinessName(false);
+            }
+            setMultiSelected({ optionSelected: [], });
+        }
+        else if ((!possessionID && !mstPossessionID) && type === "ArrestParentMod") {
 
             setmasterNameValues({
                 ...masterNameValues,
@@ -1060,6 +1093,13 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                             insertMasterName(); return;
                         }
                     }
+                    else if ((type === "ArrestParentMod")) {
+                        if (ArrestparentID && possenSinglData?.length > 0) {
+                            Update_Name(); return;
+                        } else {
+                            insertMasterName(); return;
+                        }
+                    }
                     else {
                         if (possessionID && possenSinglData?.length > 0) {
                             Update_Name(); return;
@@ -1088,6 +1128,13 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                 }
                 else if ((type === "Victim")) {
                     if (possessionIDVictim && possenSinglData?.length > 0) {
+                        Update_Name(); return;
+                    } else {
+                        insertMasterName(); return;
+                    }
+                }
+                else if ((type === "ArrestParentMod")) {
+                    if (ArrestparentID && possenSinglData?.length > 0) {
                         Update_Name(); return;
                     } else {
                         insertMasterName(); return;
@@ -1126,6 +1173,13 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                             insertMasterName(); return;
                         }
                     }
+                    else if ((type === "ArrestParentMod")) {
+                        if (ArrestparentID && possenSinglData?.length > 0) {
+                            Update_Name(); return;
+                        } else {
+                            insertMasterName(); return;
+                        }
+                    }
                     else {
                         if (possessionID && possenSinglData?.length > 0) {
                             Update_Name(); return;
@@ -1153,6 +1207,13 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                 }
                 else if ((type === "Victim")) {
                     if (possessionIDVictim && possenSinglData?.length > 0) {
+                        Update_Name(); return;
+                    } else {
+                        insertMasterName(); return;
+                    }
+                }
+                else if ((type === "ArrestParentMod")) {
+                    if (ArrestparentID && possenSinglData?.length > 0) {
                         Update_Name(); return;
                     } else {
                         insertMasterName(); return;
@@ -1263,6 +1324,14 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                                 else if (type === "ArrestMod") {
 
                                     setValue({ ...value, ['Name']: res.Name }); setPossessionID(res?.NameID); setMstPossessionID(res?.MasterNameID);
+                                    GetSingleDataPassion(res?.NameID, res?.MasterNameID)
+                                }
+                                else if (type === "ArrestParentMod") {
+
+                                    setValue({ ...value, ['ParentNameID']: parseInt(res?.NameID) });
+                                    // setPossessionID(res?.NameID); setMstPossessionID(res?.MasterNameID);
+                                    setArrestParentID(parseInt(res?.NameID));
+
                                     GetSingleDataPassion(res?.NameID, res?.MasterNameID)
                                 }
                                 else if (type === "PropertyManagement") {
@@ -2420,9 +2489,9 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
         { value: false, label: 'No' }
     ];
 
-    useEffect(()=>{
-     if(nameTypeCode) get_Victim_Type_Data(loginAgencyID, nameTypeCode);
-    } ,[nameTypeCode])
+    useEffect(() => {
+        if (nameTypeCode) get_Victim_Type_Data(loginAgencyID, nameTypeCode);
+    }, [nameTypeCode])
 
 
 
@@ -3671,7 +3740,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                                     }
 
                                     {
-                                        nameShowPage === 'home' && (type !== "ComplainantName") && (type !== "Victim") && (type !== "VehicleOwner") ? <>
+                                        nameShowPage === 'home' && (type !== "ComplainantName") && (type !== "Victim") && (type !== "VehicleOwner") && ((type !== "ArrestParentMod")) ? <>
                                             {
                                                 possessionID && mstPossessionID ?
                                                     <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }} disabled={!statesChangeStatus}>Update</button>
@@ -3691,6 +3760,20 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                                         nameShowPage === 'home' && (type === "ComplainantName") && <>
                                             {
                                                 complainNameID ?
+                                                    <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }} disabled={!statesChangeStatus}>Update</button>
+                                                    :
+                                                    <>
+                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }} ref={saveButtonRef}>Save</button>
+                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); setsaveContinueStatus(true) }} ref={saveAndContRef}>Save & Continue</button>
+                                                    </>
+                                            }
+                                            <button type="button" onClick={() => setStatusFalse()} data-dismiss="modal" className="btn btn-sm btn-success mr-1 mt-2" ref={closeButtonRef}>Close</button>
+                                        </>
+                                    }
+                                    {
+                                        (type === "ArrestParentMod") && <>
+                                            {
+                                                ArrestparentID && !possessionID ?
                                                     <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }} disabled={!statesChangeStatus}>Update</button>
                                                     :
                                                     <>
