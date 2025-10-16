@@ -45,7 +45,8 @@ const OffenceHomeTabs = () => {
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
 
-    const { changesStatus, localStoreArray, countoff, offenceFillterData, get_Incident_Count, incidentCount, get_Offence_Data, setEditval, countoffaduit, offenseCount, setOffenseCount, } = useContext(AgencyContext);
+    const { changesStatus, localStoreArray, countoff, offenceFillterData, get_Incident_Count, incidentCount, get_Offence_Data, setEditval, countoffaduit, offenseCount, setOffenseCount, offenseValidateNibrsData } = useContext(AgencyContext);
+
 
     const carouselRef = useRef(null);
     const crimeIdRef = useRef(null);
@@ -92,6 +93,13 @@ const OffenceHomeTabs = () => {
             getScreenPermision(localStoreData?.AgencyID, localStoreData?.PINID);
         }
     }, [localStoreData]);
+
+    // nibrs Validate Offense
+    useEffect(() => {
+        if (offenseValidateNibrsData?.Offense) {
+            setnibrsValidateOffenseData(offenseValidateNibrsData?.Offense);
+        }
+    }, [offenseValidateNibrsData]);
 
     useEffect(() => {
         if (IncID) {

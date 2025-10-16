@@ -171,9 +171,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   const [weaponEditVal, setweaponEditVal] = useState([]);
 
 
-
-
-
   const [value, setValue] = useState({
     ChargeCodeID: "", NIBRSCodeId: null, OffenseCodeId: null, LawTitleId: null, OffenseDateTime: '', OffenderLeftSceneId: null, CategoryId: null,
     PrimaryLocationId: null, SecondaryLocationId: null, FTADate: "", Fine: "", CourtCost: "", FTAAmt: "", LitigationTax: "", DamageProperty: "", OfRoomsInvolved: "", PremisesEntered: "", PropertyAbandoned: "", IsForceused: "", IsIncidentC: false, AttemptComplete: "", CrimeID: "", IncidentID: "", CreatedByUserFK: "", ModifiedByUserFK: "", IsDomesticViolence: "", IsGangInfo: "", CrimeMethodOfEntryID: "", Comments: "", IsCargoTheftInvolved: null,

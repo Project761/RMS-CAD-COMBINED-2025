@@ -34,7 +34,7 @@ import { get_ScreenPermissions_Data } from '../../../redux/actions/IncidentActio
 
 const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch = false }) => {
 
-    const { changesStatus, propertyCount, get_Property_Count, countoffaduit, get_Incident_Count, incidentCount } = useContext(AgencyContext);
+    const { changesStatus, propertyCount, get_Property_Count, countoffaduit, get_Incident_Count, incidentCount, propertyValidateNibrsData } = useContext(AgencyContext);
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
 
     const useQuery = () => {
@@ -147,6 +147,12 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
 
         }
     }, [localStoreData]);
+
+    useEffect(() => {
+        if (propertyValidateNibrsData?.Property) {
+            setnibrsValidateData(propertyValidateNibrsData?.Property);
+        }
+    }, [propertyValidateNibrsData]);
 
     useEffect(() => {
         if (DecIncID) {
@@ -267,7 +273,7 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
     ]
 
     const Delete_Property = () => {
-        console.log("🚀 ~ Delete_Property ~ delPropertyID:", delPropertyID)
+    
         const val = { 'PropertyID': delPropertyID, 'DeletedByUserFK': loginPinID, 'IsMaster': MstPage === "MST-Property-Dash" ? true : false, }
         AddDeleteUpadate('Property/Delete_Property', val).then((res) => {
             if (res) {
