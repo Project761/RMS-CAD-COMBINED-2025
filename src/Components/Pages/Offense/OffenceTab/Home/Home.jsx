@@ -515,7 +515,9 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
 
     setCrimeOffenderUse(); setCrimeBiasCategory(); setWeaponID(); setCrimeActivity();
     setlocationTypeComplteStatus(); setmethodOfEntryStatus(); setmethodOfEntryError(); setIsCrimeAgainstPerson(); setIsCrimeAgainstProperty(); setIsCrimeAgainstSociety(); setPretentedDrp();
-    setPointExitDrp(); setPointEntryDrp(); setCrimeActivityDrp(); setToolsUseIDDrp();
+    setPointExitDrp(); setPointEntryDrp();
+    //  setCrimeActivityDrp();
+    setToolsUseIDDrp();
     setCrimeTargetDrp(); setCrimeSuspectDrp(); setCrimeSecurityviolatedDrp(); setMethodOfOperationDrp();
     //  setWeaponDrp(); 
     setCrimeActivityNoneStatus();
@@ -893,21 +895,23 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     };
     try {
       const res = await AddDeleteUpadate("Crime/Insert_Offense", val);
-      if (res.success) {
+      if (res?.success) {
 
         Reset();
-        if (res.CrimeID) {
+        if (res?.CrimeID) {
+          toastifySuccess(res.Message);
           navigate(`/Off-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${stringToBase64(res.CrimeID)}&OffSta=${true}`);
           get_Incident_Count(mainIncidentID, loginPinID);
           get_Offence_Data(mainIncidentID);
+          InSertBasicInfo(res?.CrimeID);
         }
         setChangesStatus(false); setStatesChangeStatus(false);
       }
       LawTitleIdDrpDwnVal(loginAgencyID, null);
       NIBRSCodeDrpDwnVal(loginAgencyID, null);
-      toastifySuccess(res.Message);
-      console.log(res.success, res.CrimeID)
-      InSertBasicInfo(res?.CrimeID);
+
+
+      // InSertBasicInfo(res?.CrimeID);
 
       // validateIncSideBar
       validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
@@ -1552,7 +1556,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   }
 
   const OffenderUsechange = (multiSelected) => {
-    !addUpdatePermission && setChangesStatus(true);
+    !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
 
 
     setCrimeOffenderUse(multiSelected)
@@ -1708,7 +1712,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   }
 
   const CrimeActivitychange = (multiSelected) => {
-    !addUpdatePermission && setChangesStatus(true);
+    !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
     setCrimeActivity(multiSelected);
     const len = multiSelected.length - 1
     if (multiSelected?.length < criminalActivityEditVal?.length) {
@@ -1744,22 +1748,23 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   };
 
   const InSertBasicInfo = (crimeId) => {
+
     const val = {
       'CrimeID': crimeId,
       'CreatedByUserFK': loginPinID,
-      'PretendToBeID': pretendToBeID.map((item) => item?.value),
-      'CrimePointOfExitID': crimePointOfExitID.map((item) => item?.value),
-      'CrimePointOfEntryID': crimePointOfEntry.map((item) => item?.value),
+      'PretendToBeID': pretendToBeID?.map((item) => item?.value),
+      'CrimePointOfExitID': crimePointOfExitID?.map((item) => item?.value),
+      'CrimePointOfEntryID': crimePointOfEntry?.map((item) => item?.value),
       'CrimeOffenderUseID': crimeOffenderUse?.map((item) => item?.value),
-      'CrimeActivityID': crimeActivity.map((item) => item?.value),
-      'CrimeBiasCategoryID': crimeBiasCategory.map((item) => item?.value),
-      'CrimeToolsUseID': crimeToolsUse.map((item) => item?.value),
-      'CrimeTargetID': crimeTarget.map((item) => item?.value),
-      'CrimeSuspectID': crimeSuspect.map((item) => item?.value),
-      'CrimeSecurityviolatedID': securityViolated.map((item) => item?.value),
-      'CrimeMethodOfOpeationID': methodOfOperation.map((item) => item?.value),
+      'CrimeActivityID': crimeActivity?.map((item) => item?.value),
+      'CrimeBiasCategoryID': crimeBiasCategory?.map((item) => item?.value),
+      'CrimeToolsUseID': crimeToolsUse?.map((item) => item?.value),
+      'CrimeTargetID': crimeTarget?.map((item) => item?.value),
+      'CrimeSuspectID': crimeSuspect?.map((item) => item?.value),
+      'CrimeSecurityviolatedID': securityViolated?.map((item) => item?.value),
+      'CrimeMethodOfOpeationID': methodOfOperation?.map((item) => item?.value),
       'CrimeMethodOfEntryID': [methodOfEntryCode],
-      'WeaponTypeID': weaponID.map((item) => item?.value),
+      'WeaponTypeID': weaponID?.map((item) => item?.value),
 
     }
     AddDeleteUpadate('Crime/Insert_OffenseInformation', val).then((res) => {
@@ -1902,7 +1907,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
 
   const CrimeBiasCategorychange = (multiSelected) => {
 
-    !addUpdatePermission && setChangesStatus(true);
+    !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
     setCrimeBiasCategory(multiSelected)
     const len = multiSelected.length - 1
     if (multiSelected?.length < crimeBiasCategoryEditVal?.length) {
@@ -1919,7 +1924,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   }
 
   const Weaponchange = (multiSelected) => {
-    !addUpdatePermission && setChangesStatus(true);
+    !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
     setWeaponID(multiSelected)
 
     const len = multiSelected.length - 1
