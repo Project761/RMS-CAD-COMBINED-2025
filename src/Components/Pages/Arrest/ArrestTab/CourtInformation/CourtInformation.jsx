@@ -439,7 +439,6 @@ const CourtInformation = (props) => {
             <label htmlFor="" className='new-label'>Plea Date/Time</label>
           </div>
           <div className="col-4 col-md-4 col-lg-2 mt-1">
-
             <DatePicker
               ref={startRef}
               onKeyDown={(e) => {

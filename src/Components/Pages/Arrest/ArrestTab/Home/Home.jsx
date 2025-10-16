@@ -61,7 +61,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
     var ArrestSta = query?.get('ArrestSta');
     var NameID = query?.get("NameID");
     var NameStatus = query?.get("NameStatus");
-
+    let isNew = query?.get('isNew');
 
     var SideBarStatus = query?.get("SideBarStatus");
 
@@ -72,7 +72,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
     if (!NameID) { DecNameId = 0; }
     else { DecNameId = parseInt(base64ToString(NameID)); }
 
-    const { get_Arrest_Count, setArrestName, setIncidentNumber, get_OffenseName_Data, arrestChargeData, changesStatus, setArrestChargeData, updateCount, setUpdateCount, get_ArrestCharge_Count, get_Data_Arrest_Charge, nibrsSubmittedArrestMain, tabCountArrest, incidentNumber, ArresteName, arrestFilterData, get_Data_Arrest, policeForceDrpData, get_Police_Force, changesStatusCount, setChangesStatus, get_Incident_Count, setActiveArrest, datezone, GetDataTimeZone, incidentCount, setNameID, NameId, } = useContext(AgencyContext);
+    const { get_Arrest_Count, setArrestName, setIncidentNumber, get_OffenseName_Data, arrestChargeData, changesStatus, setArrestChargeData, updateCount, setUpdateCount, get_ArrestCharge_Count, get_Data_Arrest_Charge, nibrsSubmittedArrestMain, tabCountArrest, incidentNumber, ArresteName, arrestFilterData, get_Data_Arrest, policeForceDrpData, get_Police_Force, changesStatusCount, setChangesStatus, get_Incident_Count, setActiveArrest, datezone, GetDataTimeZone, setNameID, NameId, incidentCount } = useContext(AgencyContext);
 
     const [arrestDate, setArrestDate] = useState();
     const [rightGivenCode, setRightGivenCode] = useState('N');
@@ -150,25 +150,16 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
             setloginAgencyID(localStoreData?.AgencyID); setloginPinID(localStoreData?.PINID);
             get_Arrest_Count(DecArrestId); dispatch(get_ScreenPermissions_Data("A067", localStoreData?.AgencyID, localStoreData?.PINID));
             get_Single_PersonnelList(localStoreData?.PINID); GetDataTimeZone(localStoreData?.AgencyID); setAgencyCode(localStoreData?.ORI);
-
         }
     }, [localStoreData]);
 
-    useEffect(() => {
-        if (localStoreData) {
-            // dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
-        }
-    }, [DecArrestId]);
-
 
     useEffect(() => {
-
         if (effectiveScreenPermission?.length > 0) {
             setaddUpdatePermission(effectiveScreenPermission[0]?.AddOK != 1 || effectiveScreenPermission[0]?.Changeok != 1 ? true : false);
         } else { setaddUpdatePermission(false); }
     }, [effectiveScreenPermission]);
 
-    console.log(Editval)
 
 
     useEffect(() => {
@@ -193,16 +184,6 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         }
     }, [incidentDate]);
 
-    useEffect(() => {
-        console.log('hello')
-        if (DecEIncID && DecArrestId) {
-            // dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
-
-        }
-
-    }, [DecEIncID, DecArrestId]);
-
-
 
     useEffect(() => {
         console.log('hello')
@@ -224,26 +205,14 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
 
 
     useEffect(() => {
-        setValue({ ...value, ['RaceID']: '', ['SexID']: '', ['AgeFrom']: '', ['AgeUnitID']: '', ['DateOfBirth']: '' })
+        setValue({ ...value, ['RaceID']: '', ['SexID']: '', ['AgeFrom']: '', ['AgeUnitID']: '', ['DateOfBirth']: '', ArrestNumber: '', IsJuvenileArrest: '', ArrestDtTm: '', ArrestingAgency: '', ArrestTypeID: '', SupervisorID: '', PoliceForceID: '', ArresteeID: '', RightsGivenID: '', JuvenileDispositionID: '', PhoneNo: '', GivenByID: '', PrimaryOfficerID: '', ModifiedByUserFK: '', IsMultipleArrestees: '', ArrestingAgencyID: '', 'IsSchoolNotified': '', 'Grade': '', 'LocationOfSchool': '', 'NameOfSchool': '', 'ParentPhone': '', 'ParentNameID': '', 'ResponseID': '', })
     }, [RestStatus]);
 
-    useEffect(() => {
-        if (possessionID) {
-            // checkSelectedName(parseInt(possessionID))
-        }
-    }, [possessionID, arresteeNameData]);
-
+    console.log(RestStatus)
     //==================Dv-------------------------------
     useEffect(() => {
         if (DecNameId) {
             dispatch(get_Masters_Name_Drp_Data(DecNameId, 0, 0));
-            // checkSelectedName1(parseInt(DecNameId)); setPossessionID(DecNameId);
-            const newvalue = arresteeNameData?.filter((val) => val?.NameID == value.ArresteeID);
-            // setValue({
-            //     ...value, ['ArresteeID']: parseInt(DecNameId), ['RaceID']: newvalue[0]?.RaceID, ['SexID']: newvalue[0]?.SexID, ['AgeFrom']: newvalue[0]?.AgeFrom, ['AgeUnitID']: newvalue[0]?.AgeUnitID,
-            //     ['DateOfBirth']: getShowingWithOutTime(newvalue[0]?.DateOfBirth)
-            // })
-
         }
     }, [DecNameId, arresteeNameData]);
 
@@ -252,8 +221,6 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
             dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
         }
     }, [DecArrestId,]);
-
-
 
 
     useEffect(() => {
@@ -281,17 +248,17 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         if (possessionID && (isEditvalProcessed === false) && type === "ArrestMod") {
             console.log('hello1')
             const newvalue = arresteeNameData?.filter((val) => val?.NameID == possessionID);
-            console.log(arresteeNameData, value.ArresteeID, newvalue[0]?.IsJuvenileArrest)
+            console.log('erwrsfsdfsdf', arresteeNameData, value.ArresteeID, newvalue[0]?.IsJuvenileArrest, newvalue[0]?.NameID)
+            setNameID(newvalue[0]?.NameID)
             setValue({
                 ...value, ['ArresteeID']: parseInt(possessionID), ['RaceID']: newvalue[0]?.RaceID, ['SexID']: newvalue[0]?.SexID, ['AgeFrom']: newvalue[0]?.AgeFrom, ['AgeUnitID']: newvalue[0]?.AgeUnitID,
                 ['DateOfBirth']: getShowingWithOutTime(newvalue[0]?.DateOfBirth),
                 'IsJuvenileArrest': newvalue[0]?.IsJuvenile,
             })
         }
-
     }, [arresteeNameData, nameModalStatus, isEditvalProcessed]);
 
-
+    console.log(NameId)
     const checkSelectedName1 = (ArresteeID) => {
         if (ArresteeID) {
             const keysToCheck = ['AgeFrom', 'Gendre_Description', 'LastName', 'Race_Description'];
@@ -431,12 +398,11 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
     }, [ArrestDtTmError, ArresteeIDError, CellPhoneError, JuvenileDispoError, ArrestTypeIDError])
 
     useEffect(() => {
-        if (arrestID && Editval?.length > 0) {
+        if (Editval?.length > 0) {
             const newvalue = arresteeNameData?.filter((val) => val?.NameID == Editval[0]?.ArresteeID);
             console.log(arresteeNameData, value.ArresteeID, newvalue[0]?.IsJuvenileArrest, newvalue, Editval[0]?.ArresteeID)
-
+            setNameID(newvalue[0]?.NameID)
             get_Arrest_MultiImage(arrestID);
-
             setValue({
                 ...value,
                 'ArrestID': Editval[0]?.ArrestID, 'ArrestNumber': Editval[0]?.ArrestNumber, 'IsJuvenileArrest': Editval[0]?.IsJuvenileArrest,
@@ -450,14 +416,11 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                 'ParentNameID': Editval[0]?.ParentNameID, 'ResponseID': Editval[0]?.ResponseID,
                 ['RaceID']: newvalue[0]?.RaceID, ['SexID']: newvalue[0]?.SexID, ['AgeFrom']: newvalue[0]?.AgeFrom, ['AgeUnitID']: newvalue[0]?.AgeUnitID,
                 ['DateOfBirth']: getShowingWithOutTime(newvalue[0]?.DateOfBirth),
-                ['ArresteeID']: Editval[0]?.ArresteeID, ['RaceID']: newvalue[0]?.RaceID, ['SexID']: newvalue[0]?.SexID, ['AgeFrom']: newvalue[0]?.AgeFrom, ['AgeUnitID']: newvalue[0]?.AgeUnitID,
-                ['DateOfBirth']: getShowingWithOutTime(newvalue[0]?.DateOfBirth),
+                ['ArresteeID']: Editval[0]?.ArresteeID,
                 'IsJuvenileArrest': newvalue[0]?.IsJuvenile,
             });
 
             setIsEditvalProcessed(true);
-
-
             // setPossessionID(Editval[0]?.ArresteeID);
             setArrestName(Editval[0]?.Arrestee_Name ? Editval[0]?.Arrestee_Name : '');
             setIncidentNumber(Editval[0]?.IncidentNumber ? Editval[0]?.IncidentNumber : ''); setArrestDate(Editval[0]?.ArrestDtTm ? new Date(Editval[0]?.ArrestDtTm) : ''); setRightGivenCode(Get_Given_Code(Editval, policeForceDrpData));
@@ -492,19 +455,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         }
     }, [Editval, changesStatusCount])
 
-    console.log(value)
-    const reset_Value = () => {
-        setAgencystatus(true);
-        setShowJuvinile(false); setShowPoliceForce(false);
-        setValue(prevValue => ({
-            ...prevValue, ArrestNumber: '', IsJuvenileArrest: '', ArrestDtTm: '', ArrestingAgency: '', ArrestTypeID: '', SupervisorID: '', PoliceForceID: '', ArresteeID: '', RightsGivenID: '', JuvenileDispositionID: '', PhoneNo: '', GivenByID: '', PrimaryOfficerID: '', ModifiedByUserFK: '', IsMultipleArrestees: '', ArrestingAgencyID: '', 'IsSchoolNotified': '', 'Grade': '', 'LocationOfSchool': '', 'NameOfSchool': '', 'ParentPhone': '', 'ParentNameID': '', 'ResponseID': '',
-        }));
-        setErrors(prevErrors => ({
-            ...prevErrors, ArresteeIDError: '', PrimaryOfficerIDError: '', ArrestDtTmError: '', JuvenileDispoError: '', ArrestTypeIDError: ''
-        }));
-        sessionStorage.removeItem('ChargeLocalData');
-        setArrestDate(); setMultiImage(''); setuploadImgFiles(''); setStatesChangeStatus(false); setStatus(false); setArrestID(''); setChangesStatus(false); setArrestChargeData([]); get_Arresting_DropDown(loginAgencyID);
-    };
+
 
     const HandleChange = (e) => {
         if (e.target.name === "IsJuvenileArrest") {
@@ -683,6 +634,19 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         }
     }
 
+
+    const reset_Value = () => {
+        setAgencystatus(true);
+        setShowJuvinile(false); setShowPoliceForce(false);
+        setValue(prevValue => ({
+            ...prevValue, ArrestNumber: '', IsJuvenileArrest: '', ArrestDtTm: '', ArrestingAgency: '', ArrestTypeID: '', SupervisorID: '', PoliceForceID: '', ArresteeID: '', RightsGivenID: '', JuvenileDispositionID: '', PhoneNo: '', GivenByID: '', PrimaryOfficerID: '', ModifiedByUserFK: '', IsMultipleArrestees: '', ArrestingAgencyID: '', 'IsSchoolNotified': '', 'Grade': '', 'LocationOfSchool': '', 'NameOfSchool': '', 'ParentPhone': '', 'ParentNameID': '', 'ResponseID': '',
+        }));
+        setErrors(prevErrors => ({
+            ...prevErrors, ArresteeIDError: '', PrimaryOfficerIDError: '', ArrestDtTmError: '', JuvenileDispoError: '', ArrestTypeIDError: ''
+        }));
+        sessionStorage.removeItem('ChargeLocalData');
+        setArrestDate(); setMultiImage(''); setuploadImgFiles(''); setStatesChangeStatus(false); setStatus(false); setArrestID(''); setChangesStatus(false); setArrestChargeData([]); get_Arresting_DropDown(loginAgencyID);
+    };
     const conditionalRowStyles = [
         {
             when: row => row.ArrestID === DecArrestId,
@@ -1003,164 +967,166 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
 
     return (
         <>
-            <div className="col-12 child " id="display-not-form">
-                <div className="row align-items-center mt-1" style={{ rowGap: "8px" }}>
-                    <div className="col-2 col-md-2 col-lg-1 ">
-                        <label htmlFor="" className='new-label mb-0 '> Arrest No.</label>
-                    </div>
-                    <div className="col-4 col-md-4 col-lg-3 d-flex gap-2">
-                        <div>
-                            <input type="text" name="ArrestNumber" value={value?.ArrestNumber} className="readonlyColor form-control" id="ArrestNumber" readOnly />
-                        </div>
-                        <div className="form-check d-flex align-items-center gap-2 ml-1">
-                            <input className="form-check-input" type="checkbox" name="IsJuvenileArrest" checked={value?.IsJuvenileArrest} onChange={HandleChange} disabled />
-                            <label className="form-check-label mb-0 text-nowrap" htmlFor="flexCheckDefault">Juvenile Arrest</label>
-                        </div>
-                    </div>
+            {((incidentCount[0]?.ArrestCount === 0 || incidentCount[0]?.ArrestCount === "0") || (ArrestSta === true || ArrestSta === 'true') || isNew === "true" || isNew === true) && (
+                <>
+                    <div className="col-12 child " id="display-not-form">
+                        <div className="row align-items-center mt-1" style={{ rowGap: "8px" }}>
+                            <div className="col-2 col-md-2 col-lg-1 ">
+                                <label htmlFor="" className='new-label mb-0 '> Arrest No.</label>
+                            </div>
+                            <div className="col-4 col-md-4 col-lg-3 d-flex gap-2">
+                                <div>
+                                    <input type="text" name="ArrestNumber" value={value?.ArrestNumber} className="readonlyColor form-control" id="ArrestNumber" readOnly />
+                                </div>
+                                <div className="form-check d-flex align-items-center gap-2 ml-1">
+                                    <input className="form-check-input" type="checkbox" name="IsJuvenileArrest" checked={value?.IsJuvenileArrest} onChange={HandleChange} disabled />
+                                    <label className="form-check-label mb-0 text-nowrap" htmlFor="flexCheckDefault">Juvenile Arrest</label>
+                                </div>
+                            </div>
 
-                    <div className="col-2 col-md-3 col-lg-2 ">
-                        <label htmlFor="" className='new-label text-nowrap mb-0'>Incident No.</label>
-                    </div>
-                    <div className="col-4 col-md-4 col-lg-2 mt-0 text-field">
-                        <input type="text" className='readonlyColor' name='IncidentNumber' value={IncNo ? IncNo : ''}
-                            required readOnly />
-                    </div>
-                    <div className="col-2 col-md-2 col-lg-2">
-                        <label htmlFor="" className='new-label mb-0'>
-                            Arrest Date/Time
-                            {
-                                loginAgencyState === 'TX' ?
-                                    checkArrestDate(value?.ArrestDtTm, incExceDate) && <ErrorTooltip ErrorStr={'The arrest date must be after the exceptional clearance date if the incident is marked as "cleared exceptionally'} />
-                                    :
-                                    <></>
-                            }
-                            {errors.ArrestDtTmError !== 'true' ? (
-                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ArrestDtTmError}</p>
-                            ) : null}
-                        </label>
-                    </div>
+                            <div className="col-2 col-md-3 col-lg-2 ">
+                                <label htmlFor="" className='new-label text-nowrap mb-0'>Incident No.</label>
+                            </div>
+                            <div className="col-4 col-md-4 col-lg-2 mt-0 text-field">
+                                <input type="text" className='readonlyColor' name='IncidentNumber' value={IncNo ? IncNo : ''}
+                                    required readOnly />
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2">
+                                <label htmlFor="" className='new-label mb-0'>
+                                    Arrest Date/Time
+                                    {
+                                        loginAgencyState === 'TX' ?
+                                            checkArrestDate(value?.ArrestDtTm, incExceDate) && <ErrorTooltip ErrorStr={'The arrest date must be after the exceptional clearance date if the incident is marked as "cleared exceptionally'} />
+                                            :
+                                            <></>
+                                    }
+                                    {errors.ArrestDtTmError !== 'true' ? (
+                                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ArrestDtTmError}</p>
+                                    ) : null}
+                                </label>
+                            </div>
 
-                    <div className="col-4 col-md-4 col-lg-2 ">
-                        <DatePicker
-                            id='ArrestDtTm'
-                            name='ArrestDtTm'
-                            ref={startRef1}
-                            onKeyDown={(e) => {
-                                if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
-                                    e?.preventDefault();
-                                } else {
-                                    onKeyDown(e);
-                                }
-                            }}
-                            onChange={(date) => {
-                                if (!date) {
-                                    !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-                                    setArrestDate(null);
-                                    setValue({ ...value, ['ArrestDtTm']: null });
-                                    return;
-                                }
-
-                                let currDate = new Date(date);
-                                const minDate = extractIncidentDate ? new Date(extractIncidentDate) : new Date(incidentReportedDate);
-                                const maxDate = new Date(datezone);
-
-                                const isSameDate = (d1, d2) =>
-                                    d1.getFullYear() === d2.getFullYear() &&
-                                    d1.getMonth() === d2.getMonth() &&
-                                    d1.getDate() === d2.getDate();
-
-                                if (minDate) {
-                                    const minDateTime = new Date(minDate);
-                                    minDateTime.setMinutes(minDateTime.getMinutes() + 1);
-                                    if (isSameDate(currDate, minDate)) {
-                                        if (currDate < minDateTime) {
-                                            currDate = minDateTime;
+                            <div className="col-4 col-md-4 col-lg-2 ">
+                                <DatePicker
+                                    id='ArrestDtTm'
+                                    name='ArrestDtTm'
+                                    ref={startRef1}
+                                    onKeyDown={(e) => {
+                                        if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                                            e?.preventDefault();
+                                        } else {
+                                            onKeyDown(e);
                                         }
+                                    }}
+                                    onChange={(date) => {
+                                        if (!date) {
+                                            !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
+                                            setArrestDate(null);
+                                            setValue({ ...value, ['ArrestDtTm']: null });
+                                            return;
+                                        }
+
+                                        let currDate = new Date(date);
+                                        const minDate = extractIncidentDate ? new Date(extractIncidentDate) : new Date(incidentReportedDate);
+                                        const maxDate = new Date(datezone);
+
+                                        const isSameDate = (d1, d2) =>
+                                            d1.getFullYear() === d2.getFullYear() &&
+                                            d1.getMonth() === d2.getMonth() &&
+                                            d1.getDate() === d2.getDate();
+
+                                        if (minDate) {
+                                            const minDateTime = new Date(minDate);
+                                            minDateTime.setMinutes(minDateTime.getMinutes() + 1);
+                                            if (isSameDate(currDate, minDate)) {
+                                                if (currDate < minDateTime) {
+                                                    currDate = minDateTime;
+                                                }
+                                            }
+                                            if (currDate < minDateTime) {
+                                                currDate = minDateTime;
+                                            }
+                                        }
+                                        if (currDate > maxDate) {
+                                            currDate = maxDate;
+                                        }
+                                        !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
+                                        setArrestDate(currDate);
+                                        setValue({ ...value, ['ArrestDtTm']: getShowingMonthDateYear(currDate) });
+                                    }}
+
+                                    // className='requiredColor'
+                                    dateFormat="MM/dd/yyyy HH:mm"
+                                    timeFormat="HH:mm"
+                                    is24Hour
+                                    timeInputLabel
+                                    showYearDropdown
+                                    showMonthDropdown
+                                    dropdownMode="select"
+                                    isClearable={value?.ArrestDtTm ? true : false}
+                                    selected={value?.ArrestDtTm ? new Date(value?.ArrestDtTm) : null}
+                                    placeholderText={value?.ArrestDtTm ? value.ArrestDtTm : 'Select...'}
+                                    showTimeSelect
+                                    timeIntervals={1}
+                                    timeCaption="Time"
+                                    autoComplete="Off"
+                                    maxDate={new Date(datezone)}
+                                    minDate={extractIncidentDate ? new Date(extractIncidentDate) : new Date(incidentReportedDate)}
+                                    filterTime={(time) =>
+                                        filterPassedTimeZoneArrest(time, extractIncidentDate, datezone, incidentReportedDate)
                                     }
-                                    if (currDate < minDateTime) {
-                                        currDate = minDateTime;
-                                    }
-                                }
-                                if (currDate > maxDate) {
-                                    currDate = maxDate;
-                                }
-                                !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-                                setArrestDate(currDate);
-                                setValue({ ...value, ['ArrestDtTm']: getShowingMonthDateYear(currDate) });
-                            }}
 
-                            // className='requiredColor'
-                            dateFormat="MM/dd/yyyy HH:mm"
-                            timeFormat="HH:mm"
-                            is24Hour
-                            timeInputLabel
-                            showYearDropdown
-                            showMonthDropdown
-                            dropdownMode="select"
-                            isClearable={value?.ArrestDtTm ? true : false}
-                            selected={value?.ArrestDtTm ? new Date(value?.ArrestDtTm) : null}
-                            placeholderText={value?.ArrestDtTm ? value.ArrestDtTm : 'Select...'}
-                            showTimeSelect
-                            timeIntervals={1}
-                            timeCaption="Time"
-                            autoComplete="Off"
-                            maxDate={new Date(datezone)}
-                            minDate={extractIncidentDate ? new Date(extractIncidentDate) : new Date(incidentReportedDate)}
-                            filterTime={(time) =>
-                                filterPassedTimeZoneArrest(time, extractIncidentDate, datezone, incidentReportedDate)
-                            }
+                                    disabled={nibrsSubmittedArrestMain === 1}
+                                    className={nibrsSubmittedArrestMain === 1 ? 'LockFildsColor' : 'requiredColor'}
+                                />
+                            </div>
 
-                            disabled={nibrsSubmittedArrestMain === 1}
-                            className={nibrsSubmittedArrestMain === 1 ? 'LockFildsColor' : 'requiredColor'}
-                        />
-                    </div>
+                            <div className="col-2 col-md-2 col-lg-1">
+                                <label className='new-label text-nowrap mb-0'> Agency Name </label>
+                            </div>
+                            <div className="col-4 col-md-5 col-lg-3 ">
+                                <Select
+                                    name="ArrestingAgencyID"
+                                    value={arrestingAgencyDrpData?.filter((obj) => obj.value === value?.ArrestingAgencyID)}
+                                    styles={customStylesWithOutColor}
+                                    isClearable
+                                    options={arrestingAgencyDrpData}
+                                    onChange={(e) => { ChangeDropDownArresting(e, 'ArrestingAgencyID') }}
+                                    placeholder="Select..."
+                                />
+                            </div>
 
-                    <div className="col-2 col-md-2 col-lg-1">
-                        <label className='new-label text-nowrap mb-0'> Agency Name </label>
-                    </div>
-                    <div className="col-4 col-md-5 col-lg-3 ">
-                        <Select
-                            name="ArrestingAgencyID"
-                            value={arrestingAgencyDrpData?.filter((obj) => obj.value === value?.ArrestingAgencyID)}
-                            styles={customStylesWithOutColor}
-                            isClearable
-                            options={arrestingAgencyDrpData}
-                            onChange={(e) => { ChangeDropDownArresting(e, 'ArrestingAgencyID') }}
-                            placeholder="Select..."
-                        />
-                    </div>
-
-                    <div className="col-2 col-md-2 col-lg-2">
-                        <label htmlFor="" className='new-label mb-0'>Arresting Agency</label>
-                    </div>
-                    <div className="col-4 col-md-4 col-lg-2 mt-0 text-field">
-                        <input
-                            type="text"
-                            name='ArrestingAgency'
-                            id='ArrestingAgency'
-                            value={value?.ArrestingAgency || ''}
-                            onChange={HandleChange}
-                            disabled={!value.ArrestingAgencyID || Agencystatus ? true : false}
-                            className={!value.ArrestingAgencyID || Agencystatus ? 'readonlyColor' : ''}
-                        />
-                    </div>
-                    <div className="col-2 col-md-2 col-lg-2">
-                        <label className='new-label mb-0'>Use of Force?</label>
-                    </div>
-                    <div className="col-4 col-md-5 col-lg-2">
-                        <Select
-                            name='PoliceForceID'
-                            styles={customStylesWithOutColor}
-                            value={policeForceDrpData?.filter((obj) => obj.value === value?.PoliceForceID)}
-                            isClearable
-                            options={policeForceDrpData}
-                            onChange={(e) => {
-                                ChangeDropDown(e, 'PoliceForceID');
-                                if (!e) { setShowPoliceForce(false); }
-                            }}
-                            placeholder="Select..."
-                        />
-                        {/* {isEnabled && (
+                            <div className="col-2 col-md-2 col-lg-2">
+                                <label htmlFor="" className='new-label mb-0'>Arresting Agency</label>
+                            </div>
+                            <div className="col-4 col-md-4 col-lg-2 mt-0 text-field">
+                                <input
+                                    type="text"
+                                    name='ArrestingAgency'
+                                    id='ArrestingAgency'
+                                    value={value?.ArrestingAgency || ''}
+                                    onChange={HandleChange}
+                                    disabled={!value.ArrestingAgencyID || Agencystatus ? true : false}
+                                    className={!value.ArrestingAgencyID || Agencystatus ? 'readonlyColor' : ''}
+                                />
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2">
+                                <label className='new-label mb-0'>Use of Force?</label>
+                            </div>
+                            <div className="col-4 col-md-5 col-lg-2">
+                                <Select
+                                    name='PoliceForceID'
+                                    styles={customStylesWithOutColor}
+                                    value={policeForceDrpData?.filter((obj) => obj.value === value?.PoliceForceID)}
+                                    isClearable
+                                    options={policeForceDrpData}
+                                    onChange={(e) => {
+                                        ChangeDropDown(e, 'PoliceForceID');
+                                        if (!e) { setShowPoliceForce(false); }
+                                    }}
+                                    placeholder="Select..."
+                                />
+                                {/* {isEnabled && (
                               <div className='mt-2'
                                   style={{
                                       backgroundColor: '#fbecec',
@@ -1184,295 +1150,295 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                               </div>
   
                           )} */}
-                    </div>
-
-                    <div className="col-2 col-md-2 col-lg-1">
-                        <label htmlFor="" className='new-label mb-0'>Arrest Type
-                            {errors.ArrestTypeIDError !== 'true' ? (
-                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ArrestTypeIDError}</p>
-                            ) : null}
-                        </label>
-                    </div>
-                    <div className="col-4 col-md-4 col-lg-3 ">
-                        <Select
-                            name="ArrestTypeID"
-                            value={arrestTypeDrpData?.filter((obj) => obj.value === value?.ArrestTypeID)}
-                            styles={nibrsSubmittedArrestMain === 1 ? LockFildscolour : Requiredcolour}
-                            isDisabled={nibrsSubmittedArrestMain === 1 ? true : false}
-                            isClearable
-                            options={arrestTypeDrpData}
-                            onChange={(e) => { ChangeDropDown(e, 'ArrestTypeID') }}
-                            placeholder="Select..."
-                        />
-                    </div>
-
-                    <div className="col-4 col-md-4 col-lg-2">
-                        <label htmlFor="" className='new-label px-0 text-nowrap mb-0'>Supervisor</label>
-                    </div>
-                    <div className="col-4 col-md-4 col-lg-2">
-                        <Select
-                            name='SupervisorID'
-                            styles={customStylesWithOutColor}
-                            value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.SupervisorID)}
-                            isClearable
-                            options={agencyOfficerDrpData}
-                            onChange={(e) => ChangeDropDown(e, 'SupervisorID')}
-                            placeholder="Select..."
-                        />
-                    </div>
-
-                    <div className="col-4 col-md-4 col-lg-1"></div>
-                    {isEnabled ? (
-                        <div className="col-4 col-md-4 col-lg-3">
-                            <div
-                                onClick={handleClick}
-                                onMouseEnter={handleMouseEnter}
-                                onMouseLeave={handleMouseLeave}
-                                style={{
-                                    border: '1px solid red',
-                                    backgroundColor: '#ffe6e6',
-                                    color: isHovered ? 'blue' : 'red',
-                                    padding: '3px',
-                                    borderRadius: '4px',
-                                    display: 'inline-block',
-                                    transition: 'color 0.3s ease',
-                                    fontWeight: 'bold',
-                                    fontSize: '14px',
-                                    width: '100%',
-                                    textAlign: 'center'
-                                }}
-                            >
-                                Enter Details in Police Force
                             </div>
-                        </div>
-                    ) : (
-                        <div className="col-4 col-md-4 col-lg-3">
-                            <div
-                                style={{
-                                    backgroundColor: '#f2f2f2',
-                                    color: 'gray',
-                                    padding: '3px',
-                                    borderRadius: '4px',
-                                    display: 'inline-block',
-                                    transition: 'color 0.3s ease',
-                                    fontWeight: 'bold',
-                                    fontSize: '14px',
-                                    width: '100%',
-                                    textAlign: 'center'
-                                }}
-                            >
-                            </div>
-                        </div>
-                    )}
 
-                    <div className="col-2 col-md-2 col-lg-1">
-                        <label htmlFor="" className='new-label mb-0'>Arrestee
-                            {errors.ArresteeIDError !== 'true' ? (
-                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ArresteeIDError}</p>
-                            ) : null}
-                        </label>
-                    </div>
-                    <div className="col-4 col-md-4 col-lg-3 d-flex align-items-center gap-2">
-                        {
-                            MstPage === "MST-Arrest-Dash" ?
+                            <div className="col-2 col-md-2 col-lg-1">
+                                <label htmlFor="" className='new-label mb-0'>Arrest Type
+                                    {errors.ArrestTypeIDError !== 'true' ? (
+                                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ArrestTypeIDError}</p>
+                                    ) : null}
+                                </label>
+                            </div>
+                            <div className="col-4 col-md-4 col-lg-3 ">
                                 <Select
-                                    className="w-100"
-                                    name="ArresteeID"
-                                    styles={nibrsSubmittedArrestMain === 1 ? LockFildscolour : NameStatus ? 'readonlyColor' : Requiredcolour}
-                                    isDisabled={nibrsSubmittedArrestMain === 1 || NameStatus ? true : false}
-                                    options={mastersNameDrpData}
-                                    value={mastersNameDrpData?.filter((obj) => obj.value === value?.ArresteeID)}
+                                    name="ArrestTypeID"
+                                    value={arrestTypeDrpData?.filter((obj) => obj.value === value?.ArrestTypeID)}
+                                    styles={nibrsSubmittedArrestMain === 1 ? LockFildscolour : Requiredcolour}
+                                    isDisabled={nibrsSubmittedArrestMain === 1 ? true : false}
                                     isClearable
-                                    onChange={(e) => ChangeDropDown(e, 'ArresteeID')}
+                                    options={arrestTypeDrpData}
+                                    onChange={(e) => { ChangeDropDown(e, 'ArrestTypeID') }}
                                     placeholder="Select..."
                                 />
-                                :
+                            </div>
+
+                            <div className="col-4 col-md-4 col-lg-2">
+                                <label htmlFor="" className='new-label px-0 text-nowrap mb-0'>Supervisor</label>
+                            </div>
+                            <div className="col-4 col-md-4 col-lg-2">
                                 <Select
-                                    className="w-100"
-                                    name="ArresteeID"
-                                    styles={nibrsSubmittedArrestMain === 1 ? LockFildscolour : NameStatus ? 'readonlyColor' : Requiredcolour}
-                                    isDisabled={arrestID || nibrsSubmittedArrestMain === 1 || NameStatus ? true : false}
-                                    options={arresteeNameData}
-                                    value={arresteeNameData?.filter((obj) => obj.value === value?.ArresteeID)}
+                                    name='SupervisorID'
+                                    styles={customStylesWithOutColor}
+                                    value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.SupervisorID)}
                                     isClearable
-                                    onChange={(e) => ChangeDropDown(e, 'ArresteeID')}
+                                    options={agencyOfficerDrpData}
+                                    onChange={(e) => ChangeDropDown(e, 'SupervisorID')}
                                     placeholder="Select..."
                                 />
-                        }
-                        {!arrestID && (
-                            <div className="ml-1" data-toggle="modal" data-target="#MasterModal">
-                                <button
-                                    className="btn btn-sm bg-green text-white"
-                                    onClick={() => {
-                                        if (possessionID) {
-                                            GetSingleDataPassion(possessionID);
-                                        }
-                                        setNameModalStatus(true); setDatePickerRequiredColor(true);
-                                    }}
-                                >
-                                    <i className="fa fa-plus"></i>
-                                </button>
                             </div>
-                        )}
-                    </div>
 
-                    <div className="col-4 col-md-4 col-lg-2 d-flex align-items-center gap-2">
-                        <label htmlFor="" className='new-label mr-1 mb-0'>
-                            DOB
-                        </label>
-                        <div>
-                            <DatePicker
-                                id='DateOfBirth'
-                                name='DateOfBirth'
-                                selected={dobDate}
-                                // onChange={handleDateChange}
-                                onKeyDown={(e) => {
-                                    if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
-                                        e.preventDefault();
-                                    } else {
-                                        onKeyDown(e);
-                                    }
-                                }}
-                                dateFormat={"MM/dd/yyyy"}
-                                // showTimeSelect={allowTimeSelect} // Always show time picker
-                                timeFormat="HH:mm"
-                                timeIntervals={1}
-                                className='readonlyColor'
-                                timeCaption="Time"
-                                disabled
-                                placeholderText={value.DateOfBirth ? value.DateOfBirth : 'Select...'}
-                                isClearable={value.DateOfBirth ? true : false}
-                                showMonthDropdown
-                                showYearDropdown
-                                dropdownMode="select"
-                                autoComplete="off"
-                            />
-                        </div>
-                    </div>
+                            <div className="col-4 col-md-4 col-lg-1"></div>
+                            {isEnabled ? (
+                                <div className="col-4 col-md-4 col-lg-3">
+                                    <div
+                                        onClick={handleClick}
+                                        onMouseEnter={handleMouseEnter}
+                                        onMouseLeave={handleMouseLeave}
+                                        style={{
+                                            border: '1px solid red',
+                                            backgroundColor: '#ffe6e6',
+                                            color: isHovered ? 'blue' : 'red',
+                                            padding: '3px',
+                                            borderRadius: '4px',
+                                            display: 'inline-block',
+                                            transition: 'color 0.3s ease',
+                                            fontWeight: 'bold',
+                                            fontSize: '14px',
+                                            width: '100%',
+                                            textAlign: 'center'
+                                        }}
+                                    >
+                                        Enter Details in Police Force
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="col-4 col-md-4 col-lg-3">
+                                    <div
+                                        style={{
+                                            backgroundColor: '#f2f2f2',
+                                            color: 'gray',
+                                            padding: '3px',
+                                            borderRadius: '4px',
+                                            display: 'inline-block',
+                                            transition: 'color 0.3s ease',
+                                            fontWeight: 'bold',
+                                            fontSize: '14px',
+                                            width: '100%',
+                                            textAlign: 'center'
+                                        }}
+                                    >
+                                    </div>
+                                </div>
+                            )}
 
-                    <div className="col-12 col-md-10 col-lg-4 d-flex align-items-center gap-2">
-                        <label htmlFor="AgeFrom" className="label-name mr-1 mb-0">
-                            Age
-                        </label>
-                        <div className="d-flex align-items-center gap-2">
-                            <input type="text" name="AgeFrom" className="form-control " maxLength={3} readOnly placeholder="From" autoComplete="off"
-                                style={{ width: "60px" }} value={value?.AgeFrom}
-                            />
-                            <span className="dash-name">_</span>
-                            <input type="text" name="AgeTo" className="form-control " readOnly maxLength={3} placeholder="To" autoComplete="off" style={{ width: "45px" }}
-                            />
-                            <div className='ml-2'>
+                            <div className="col-2 col-md-2 col-lg-1">
+                                <label htmlFor="" className='new-label mb-0'>Arrestee
+                                    {errors.ArresteeIDError !== 'true' ? (
+                                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ArresteeIDError}</p>
+                                    ) : null}
+                                </label>
+                            </div>
+                            <div className="col-4 col-md-4 col-lg-3 d-flex align-items-center gap-2">
+                                {
+                                    MstPage === "MST-Arrest-Dash" ?
+                                        <Select
+                                            className="w-100"
+                                            name="ArresteeID"
+                                            styles={nibrsSubmittedArrestMain === 1 ? LockFildscolour : NameStatus ? 'readonlyColor' : Requiredcolour}
+                                            isDisabled={nibrsSubmittedArrestMain === 1 || NameStatus ? true : false}
+                                            options={mastersNameDrpData}
+                                            value={mastersNameDrpData?.filter((obj) => obj.value === value?.ArresteeID)}
+                                            isClearable
+                                            onChange={(e) => ChangeDropDown(e, 'ArresteeID')}
+                                            placeholder="Select..."
+                                        />
+                                        :
+                                        <Select
+                                            className="w-100"
+                                            name="ArresteeID"
+                                            styles={nibrsSubmittedArrestMain === 1 ? LockFildscolour : NameStatus ? 'readonlyColor' : Requiredcolour}
+                                            isDisabled={arrestID || nibrsSubmittedArrestMain === 1 || NameStatus ? true : false}
+                                            options={arresteeNameData}
+                                            value={arresteeNameData?.filter((obj) => obj.value === value?.ArresteeID)}
+                                            isClearable
+                                            onChange={(e) => ChangeDropDown(e, 'ArresteeID')}
+                                            placeholder="Select..."
+                                        />
+                                }
+                                {!arrestID && (
+                                    <div className="ml-1" data-toggle="modal" data-target="#MasterModal">
+                                        <button
+                                            className="btn btn-sm bg-green text-white"
+                                            onClick={() => {
+                                                if (possessionID) {
+                                                    GetSingleDataPassion(possessionID);
+                                                }
+                                                setNameModalStatus(true); setDatePickerRequiredColor(true);
+                                            }}
+                                        >
+                                            <i className="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="col-4 col-md-4 col-lg-2 d-flex align-items-center gap-2">
+                                <label htmlFor="" className='new-label mr-1 mb-0'>
+                                    DOB
+                                </label>
+                                <div>
+                                    <DatePicker
+                                        id='DateOfBirth'
+                                        name='DateOfBirth'
+                                        selected={dobDate}
+                                        // onChange={handleDateChange}
+                                        onKeyDown={(e) => {
+                                            if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                                                e.preventDefault();
+                                            } else {
+                                                onKeyDown(e);
+                                            }
+                                        }}
+                                        dateFormat={"MM/dd/yyyy"}
+                                        // showTimeSelect={allowTimeSelect} // Always show time picker
+                                        timeFormat="HH:mm"
+                                        timeIntervals={1}
+                                        className='readonlyColor'
+                                        timeCaption="Time"
+                                        disabled
+                                        placeholderText={value.DateOfBirth ? value.DateOfBirth : 'Select...'}
+                                        isClearable={value.DateOfBirth ? true : false}
+                                        showMonthDropdown
+                                        showYearDropdown
+                                        dropdownMode="select"
+                                        autoComplete="off"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="col-12 col-md-10 col-lg-4 d-flex align-items-center gap-2">
+                                <label htmlFor="AgeFrom" className="label-name mr-1 mb-0">
+                                    Age
+                                </label>
+                                <div className="d-flex align-items-center gap-2">
+                                    <input type="text" name="AgeFrom" className="form-control " maxLength={3} readOnly placeholder="From" autoComplete="off"
+                                        style={{ width: "60px" }} value={value?.AgeFrom}
+                                    />
+                                    <span className="dash-name">_</span>
+                                    <input type="text" name="AgeTo" className="form-control " readOnly maxLength={3} placeholder="To" autoComplete="off" style={{ width: "45px" }}
+                                    />
+                                    <div className='ml-2'>
+                                        <Select
+                                            name='AgeUnitID'
+                                            value={ageUnitDrpData?.find((obj) => obj.value === value?.AgeUnitID)}
+                                            options={ageUnitDrpData}
+                                            onChange={(e) => ChangeDropDown(e, 'AgeUnitID')}
+                                            isClearable
+                                            isDisabled
+                                            placeholder="Age Unit..."
+                                            styles={value.AgeFrom ? Requiredcolour : customStylesWithOutColor}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="col-6 col-md-3 col-lg-2 d-flex align-items-center gap-2 ">
+                                <div>
+                                    <label htmlFor="SexID" className="new-label mb-0 mr-1">
+                                        Gender
+                                    </label>
+                                </div>
+                                <div style={{ width: "100%" }}>
+                                    <Select
+                                        styles={customStylesWithOutColor}
+                                        name='SexID'
+                                        value={sexIdDrp?.filter((obj) => obj.value === value?.SexID)}
+                                        options={sexIdDrp}
+                                        onChange={(e) => ChangeDropDown(e, 'SexID')}
+                                        isClearable
+                                        isDisabled
+                                        placeholder="Select..."
+                                    />
+                                </div>
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-1">
+                                <label className='new-label text-nowrap mb-0'> Race</label>
+                            </div>
+                            <div className="col-4 col-md-5 col-lg-3 ">
                                 <Select
-                                    name='AgeUnitID'
-                                    value={ageUnitDrpData?.find((obj) => obj.value === value?.AgeUnitID)}
-                                    options={ageUnitDrpData}
-                                    onChange={(e) => ChangeDropDown(e, 'AgeUnitID')}
+                                    name='RaceID'
+                                    styles={customStylesWithOutColor}
+                                    value={raceIdDrp?.filter((obj) => obj.value === value?.RaceID)}
+                                    options={raceIdDrp}
+                                    onChange={(e) => ChangeDropDown(e, 'RaceID')}
                                     isClearable
                                     isDisabled
-                                    placeholder="Age Unit..."
-                                    styles={value.AgeFrom ? Requiredcolour : customStylesWithOutColor}
+                                    placeholder="Select..."
                                 />
                             </div>
-                        </div>
-                    </div>
 
-                    <div className="col-6 col-md-3 col-lg-2 d-flex align-items-center gap-2 ">
-                        <div>
-                            <label htmlFor="SexID" className="new-label mb-0 mr-1">
-                                Gender
-                            </label>
-                        </div>
-                        <div style={{ width: "100%" }}>
-                            <Select
-                                styles={customStylesWithOutColor}
-                                name='SexID'
-                                value={sexIdDrp?.filter((obj) => obj.value === value?.SexID)}
-                                options={sexIdDrp}
-                                onChange={(e) => ChangeDropDown(e, 'SexID')}
-                                isClearable
-                                isDisabled
-                                placeholder="Select..."
-                            />
-                        </div>
-                    </div>
-                    <div className="col-2 col-md-2 col-lg-1">
-                        <label className='new-label text-nowrap mb-0'> Race</label>
-                    </div>
-                    <div className="col-4 col-md-5 col-lg-3 ">
-                        <Select
-                            name='RaceID'
-                            styles={customStylesWithOutColor}
-                            value={raceIdDrp?.filter((obj) => obj.value === value?.RaceID)}
-                            options={raceIdDrp}
-                            onChange={(e) => ChangeDropDown(e, 'RaceID')}
-                            isClearable
-                            isDisabled
-                            placeholder="Select..."
-                        />
-                    </div>
+                            <div className="col-6 col-md-3 col-lg-2">
+                                <label htmlFor="" className='new-label px-0 text-nowrap mb-0'>Rights Given</label>
+                            </div>
+                            <div className="col-4 col-md-4 col-lg-2">
+                                <Select
+                                    name='RightsGivenID'
+                                    styles={customStylesWithOutColor}
+                                    value={policeForceDrpData?.filter((obj) => obj.value === value?.RightsGivenID)}
+                                    isClearable
+                                    options={policeForceDrpData}
+                                    onChange={(e) => ChangeDropDown(e, 'RightsGivenID')}
+                                    placeholder="Select..."
+                                />
+                            </div>
 
-                    <div className="col-6 col-md-3 col-lg-2">
-                        <label htmlFor="" className='new-label px-0 text-nowrap mb-0'>Rights Given</label>
-                    </div>
-                    <div className="col-4 col-md-4 col-lg-2">
-                        <Select
-                            name='RightsGivenID'
-                            styles={customStylesWithOutColor}
-                            value={policeForceDrpData?.filter((obj) => obj.value === value?.RightsGivenID)}
-                            isClearable
-                            options={policeForceDrpData}
-                            onChange={(e) => ChangeDropDown(e, 'RightsGivenID')}
-                            placeholder="Select..."
-                        />
-                    </div>
+                            <div className="col-6 col-md-3 col-lg-2">
+                                <label htmlFor="" className='new-label px-0 text-nowrap mb-0'>Response</label>
+                            </div>
+                            <div className="col-4 col-md-4 col-lg-2">
+                                <Select
+                                    name='ResponseID'
+                                    styles={customStylesWithOutColor}
+                                    value={policeForceDrpData?.filter((obj) => obj.value === value?.ResponseID)}
+                                    isClearable
+                                    options={policeForceDrpData}
+                                    onChange={(e) => ChangeDropDown(e, 'ResponseID')}
+                                    placeholder="Select..."
+                                />
+                            </div>
 
-                    <div className="col-6 col-md-3 col-lg-2">
-                        <label htmlFor="" className='new-label px-0 text-nowrap mb-0'>Response</label>
-                    </div>
-                    <div className="col-4 col-md-4 col-lg-2">
-                        <Select
-                            name='ResponseID'
-                            styles={customStylesWithOutColor}
-                            value={policeForceDrpData?.filter((obj) => obj.value === value?.ResponseID)}
-                            isClearable
-                            options={policeForceDrpData}
-                            onChange={(e) => ChangeDropDown(e, 'ResponseID')}
-                            placeholder="Select..."
-                        />
-                    </div>
+                            <div className="col-2 col-md-2 col-lg-1">
+                                <label htmlFor="" className='new-label mb-0'>Given By</label>
+                            </div>
+                            <div className="col-4 col-md-4 col-lg-3">
+                                <Select
+                                    name='GivenByID'
+                                    styles={customStylesWithOutColor}
+                                    value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.GivenByID)}
+                                    isClearable
+                                    options={agencyOfficerDrpData}
+                                    onChange={(e) => ChangeDropDown(e, 'GivenByID')}
+                                    placeholder="Select..."
+                                // isDisabled={rightGivenCode === 'N' || !rightGivenCode}
+                                />
+                            </div>
+                            <div className="col-6 col-md-3 col-lg-2">
+                                <label htmlFor="" className='new-label text-nowrap mb-0'>Primary Officer</label>
+                            </div>
+                            <div className="col-4 col-md-4 col-lg-2">
+                                <Select
+                                    name='PrimaryOfficerID'
+                                    styles={customStylesWithOutColor}
+                                    value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.PrimaryOfficerID)}
+                                    isClearable
+                                    options={agencyOfficerDrpData}
+                                    onChange={(e) => ChangeDropDown(e, 'PrimaryOfficerID')}
+                                    placeholder="Select..."
+                                />
+                            </div>
+                            <div className="col-4 col-md-4 col-lg-4"></div>
 
-                    <div className="col-2 col-md-2 col-lg-1">
-                        <label htmlFor="" className='new-label mb-0'>Given By</label>
-                    </div>
-                    <div className="col-4 col-md-4 col-lg-3">
-                        <Select
-                            name='GivenByID'
-                            styles={customStylesWithOutColor}
-                            value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.GivenByID)}
-                            isClearable
-                            options={agencyOfficerDrpData}
-                            onChange={(e) => ChangeDropDown(e, 'GivenByID')}
-                            placeholder="Select..."
-                        // isDisabled={rightGivenCode === 'N' || !rightGivenCode}
-                        />
-                    </div>
-                    <div className="col-6 col-md-3 col-lg-2">
-                        <label htmlFor="" className='new-label text-nowrap mb-0'>Primary Officer</label>
-                    </div>
-                    <div className="col-4 col-md-4 col-lg-2">
-                        <Select
-                            name='PrimaryOfficerID'
-                            styles={customStylesWithOutColor}
-                            value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.PrimaryOfficerID)}
-                            isClearable
-                            options={agencyOfficerDrpData}
-                            onChange={(e) => ChangeDropDown(e, 'PrimaryOfficerID')}
-                            placeholder="Select..."
-                        />
-                    </div>
-                    <div className="col-4 col-md-4 col-lg-4"></div>
-
-                    {/* <div className="col-2 col-md-2 col-lg-1">
+                            {/* <div className="col-2 col-md-2 col-lg-1">
                         <label htmlFor="" className='new-label mb-0'>Parent Name</label>
                     </div>
                     <div className="col-4 col-md-4 col-lg-3 d-flex align-items-center g-2 ">
@@ -1493,198 +1459,201 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                         </div>
                        
                     </div> */}
-                    <div className="col-2 col-md-2 col-lg-1">
-                        <label htmlFor="" className='new-label mb-0'>Parent Name
-                        </label>
-                    </div>
-                    <div className="col-4 col-md-4 col-lg-3 d-flex align-items-center g-2">
+                            <div className="col-2 col-md-2 col-lg-1">
+                                <label htmlFor="" className='new-label mb-0'>Parent Name
+                                </label>
+                            </div>
+                            <div className="col-4 col-md-4 col-lg-3 d-flex align-items-center g-2">
 
-                        <Select
-                            // styles={customStylesWithOutColor}
-                            className="w-100"
-                            name="ParentNameID"
-                            value={arresteeNameData?.filter((obj) => obj.value === value?.ParentNameID)}
-                            options={value.ArresteeID ? complainantfilterID : arresteeNameData}
-                            onChange={(e) => { ChangeDropDown(e, 'ParentNameID') }}
-                            isClearable
-                            placeholder="Select..."
-                            isDisabled={value?.IsJuvenileArrest ? false : true}
-                            styles={value?.IsJuvenileArrest === 'true' ? Requiredcolour : customStylesWithOutColor}
-                        />
+                                <Select
+                                    // styles={customStylesWithOutColor}
+                                    className="w-100"
+                                    name="ParentNameID"
+                                    value={arresteeNameData?.filter((obj) => obj.value === value?.ParentNameID)}
+                                    options={value.ArresteeID ? complainantfilterID : arresteeNameData}
+                                    onChange={(e) => { ChangeDropDown(e, 'ParentNameID') }}
+                                    isClearable
+                                    placeholder="Select..."
+                                    isDisabled={value?.IsJuvenileArrest ? false : true}
+                                    styles={value?.IsJuvenileArrest === 'true' ? Requiredcolour : customStylesWithOutColor}
+                                />
 
-                        {/* {!arrestID && ( */}
-                        <div className="ml-1" data-toggle="modal" data-target="#MasterModal">
-                            <button
-                                className="btn btn-sm bg-green text-white"
-                                disabled={value?.IsJuvenileArrest ? false : true}
-                                onClick={() => {
-                                    if (ArrestparentID) {
-                                        GetSingleDataPassion(ArrestparentID);
-                                    }
-                                    else {
-                                        setPossessionID('');
-                                        setPossenSinglData('');
-                                    }
-                                    setType('ArrestParentMod');
+                                {/* {!arrestID && ( */}
+                                <div className="ml-1" data-toggle="modal" data-target="#MasterModal">
+                                    <button
+                                        className="btn btn-sm bg-green text-white"
+                                        disabled={value?.IsJuvenileArrest ? false : true}
+                                        onClick={() => {
+                                            if (ArrestparentID) {
+                                                GetSingleDataPassion(ArrestparentID);
+                                            }
+                                            else {
+                                                setPossessionID('');
+                                                setPossenSinglData('');
+                                            }
+                                            setType('ArrestParentMod');
 
-                                    setNameModalStatus(true); setDatePickerRequiredColor(true);
-                                }}
-                            >
-                                <i className="fa fa-plus"></i>
-                            </button>
+                                            setNameModalStatus(true); setDatePickerRequiredColor(true);
+                                        }}
+                                    >
+                                        <i className="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                                {/* )} */}
+                            </div>
+
+                            <div className="col-2 col-md-2 col-lg-2">
+                                <label htmlFor="" className='new-label mb-0'>Parent Phone  {errors.CellPhoneError !== 'true' ? (
+                                    <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.CellPhoneError}</p>
+                                ) : null}</label>
+
+                            </div>
+                            <div className="col-4 col-md-4 col-lg-2">
+                                <input type="text" maxLength={10} name='ParentPhone' id='ParentPhone' className={`form-control ${value?.IsJuvenileArrest === false ? 'readonlyColor' : ''}`}
+                                    value={value?.ParentPhone} onChange={handleChange} required disabled={value.IsJuvenileArrest === true ? false : true} />
+                            </div>
+
+                            <div className="col-2 col-md-2 col-lg-2">
+                                <label htmlFor="" className='new-label mb-0'>Name Of School</label>
+                            </div>
+
+                            <div className="col-4 col-md-4 col-lg-2">
+                                <input type="text" name="NameOfSchool"
+                                    value={value?.NameOfSchool}
+                                    disabled={value?.IsJuvenileArrest ? false : true} onChange={HandleChange}
+                                    styles={value?.IsJuvenileArrest === 'true' ? Requiredcolour : customStylesWithOutColor}
+                                    className=" form-control" id="NameOfSchool" />
+                            </div>
+
+                            <div className="col-2 col-md-2 col-lg-1">
+                                <label htmlFor="" className='new-label mb-0'>Location Of School</label>
+                            </div>
+
+                            <div className="col-4 col-md-4 col-lg-11">
+                                <input type="text" name="LocationOfSchool"
+                                    value={value?.LocationOfSchool}
+                                    disabled={value?.IsJuvenileArrest ? false : true} onChange={HandleChange}
+                                    styles={value?.IsJuvenileArrest === 'true' ? Requiredcolour : customStylesWithOutColor}
+                                    className=" form-control" id="LocationOfSchool" />
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-1">
+                                <label htmlFor="" className='new-label mb-0'>Grade</label>
+                            </div>
+                            <div className="col-4 col-md-4 col-lg-3">
+                                <input type="text" name="Grade"
+                                    disabled={value?.IsJuvenileArrest ? false : true} onChange={HandleChange}
+                                    styles={value?.IsJuvenileArrest === 'true' ? Requiredcolour : customStylesWithOutColor}
+                                    value={value?.Grade} className=" form-control" id="Grade" />
+                            </div>
+
+                            <div className="col-2 col-md-2 col-lg-2">
+                                <label htmlFor="" className='new-label mb-0'>Disposition {errors.JuvenileDispoError !== 'true' ? (
+                                    <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.JuvenileDispoError}</p>
+                                ) : null}</label>
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2">
+                                <Select
+                                    name='JuvenileDispositionID'
+                                    menuPlacement='top'
+                                    isDisabled={value?.IsJuvenileArrest || nibrsSubmittedArrestMain === 1 ? false : true}
+                                    styles={nibrsSubmittedArrestMain === 1 ? LockFildscolour : value?.IsJuvenileArrest === 'true' || value?.IsJuvenileArrest === true ? Requiredcolour : customStylesWithOutColor}
+                                    value={arrestJuvenileDisDrpData?.filter((obj) => obj.value === value?.JuvenileDispositionID)}
+                                    isClearable
+                                    options={arrestJuvenileDisDrpData}
+                                    onChange={(e) => ChangeDropDown(e, 'JuvenileDispositionID')}
+                                    placeholder="Select..."
+                                />
+                            </div>
+                            <div className='col-2 col-md-2 col-lg-3'>
+                                <label className="form-check-label mb-0 ml-3 text-nowrap" htmlFor="flexCheckDefault">School Notified</label>
+                                <input className="form-check-input ml-2" type="checkbox" name="IsSchoolNotified" checked={value?.IsSchoolNotified} onChange={HandleChange} />
+                                <label className="form-check-label mb-0 ml-4 text-nowrap" htmlFor="flexCheckDefault">Y or N</label>
+                            </div>
                         </div>
-                        {/* )} */}
-                    </div>
-
-                    <div className="col-2 col-md-2 col-lg-2">
-                        <label htmlFor="" className='new-label mb-0'>Parent Phone  {errors.CellPhoneError !== 'true' ? (
-                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.CellPhoneError}</p>
-                        ) : null}</label>
-
-                    </div>
-                    <div className="col-4 col-md-4 col-lg-2">
-                        <input type="text" maxLength={10} name='ParentPhone' id='ParentPhone' className={`form-control ${value?.IsJuvenileArrest === false ? 'readonlyColor' : ''}`}
-                            value={value?.ParentPhone} onChange={handleChange} required disabled={value.IsJuvenileArrest === true ? false : true} />
-                    </div>
-
-                    <div className="col-2 col-md-2 col-lg-2">
-                        <label htmlFor="" className='new-label mb-0'>Name Of School</label>
-                    </div>
-
-                    <div className="col-4 col-md-4 col-lg-2">
-                        <input type="text" name="NameOfSchool"
-                            value={value?.NameOfSchool}
-                            disabled={value?.IsJuvenileArrest ? false : true} onChange={HandleChange}
-                            styles={value?.IsJuvenileArrest === 'true' ? Requiredcolour : customStylesWithOutColor}
-                            className=" form-control" id="NameOfSchool" />
-                    </div>
-
-                    <div className="col-2 col-md-2 col-lg-1">
-                        <label htmlFor="" className='new-label mb-0'>Location Of School</label>
-                    </div>
-
-                    <div className="col-4 col-md-4 col-lg-11">
-                        <input type="text" name="LocationOfSchool"
-                            value={value?.LocationOfSchool}
-                            disabled={value?.IsJuvenileArrest ? false : true} onChange={HandleChange}
-                            styles={value?.IsJuvenileArrest === 'true' ? Requiredcolour : customStylesWithOutColor}
-                            className=" form-control" id="LocationOfSchool" />
-                    </div>
-                    <div className="col-2 col-md-2 col-lg-1">
-                        <label htmlFor="" className='new-label mb-0'>Grade</label>
-                    </div>
-                    <div className="col-4 col-md-4 col-lg-3">
-                        <input type="text" name="Grade"
-                            disabled={value?.IsJuvenileArrest ? false : true} onChange={HandleChange}
-                            styles={value?.IsJuvenileArrest === 'true' ? Requiredcolour : customStylesWithOutColor}
-                            value={value?.Grade} className=" form-control" id="Grade" />
-                    </div>
-
-                    <div className="col-2 col-md-2 col-lg-2">
-                        <label htmlFor="" className='new-label mb-0'>Disposition {errors.JuvenileDispoError !== 'true' ? (
-                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.JuvenileDispoError}</p>
-                        ) : null}</label>
-                    </div>
-                    <div className="col-2 col-md-2 col-lg-2">
-                        <Select
-                            name='JuvenileDispositionID'
-                            menuPlacement='top'
-                            isDisabled={value?.IsJuvenileArrest || nibrsSubmittedArrestMain === 1 ? false : true}
-                            styles={nibrsSubmittedArrestMain === 1 ? LockFildscolour : value?.IsJuvenileArrest === 'true' || value?.IsJuvenileArrest === true ? Requiredcolour : customStylesWithOutColor}
-                            value={arrestJuvenileDisDrpData?.filter((obj) => obj.value === value?.JuvenileDispositionID)}
-                            isClearable
-                            options={arrestJuvenileDisDrpData}
-                            onChange={(e) => ChangeDropDown(e, 'JuvenileDispositionID')}
-                            placeholder="Select..."
-                        />
-                    </div>
-                    <div className='col-2 col-md-2 col-lg-3'>
-                        <label className="form-check-label mb-0 ml-3 text-nowrap" htmlFor="flexCheckDefault">School Notified</label>
-                        <input className="form-check-input ml-2" type="checkbox" name="IsSchoolNotified" checked={value?.IsSchoolNotified} onChange={HandleChange} />
-                        <label className="form-check-label mb-0 ml-4 text-nowrap" htmlFor="flexCheckDefault">Y or N</label>
-                    </div>
-                </div>
-            </div >
-            {
-                modalStatus &&
-                <div className="modal" id="myModal2" style={{ background: "rgba(0,0,0, 0.5)", transition: '0.5s' }} data-backdrop="false">
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="box text-center py-5">
-                                <h5 className="modal-title mt-2" id="exampleModalLabel">Do you want to Delete ?</h5>
-                                <div className="btn-box mt-3">
-                                    <button type="button" onClick={delete_Image_File} className="btn btn-sm text-white" style={{ background: "#ef233c" }} >Delete</button>
-                                    <button type="button" onClick={() => { setImageId(''); setModalStatus(false); }} className="btn btn-sm btn-secondary ml-2"> Cancel</button>
+                    </div >
+                    {
+                        modalStatus &&
+                        <div className="modal" id="myModal2" style={{ background: "rgba(0,0,0, 0.5)", transition: '0.5s' }} data-backdrop="false">
+                            <div className="modal-dialog">
+                                <div className="modal-content">
+                                    <div className="box text-center py-5">
+                                        <h5 className="modal-title mt-2" id="exampleModalLabel">Do you want to Delete ?</h5>
+                                        <div className="btn-box mt-3">
+                                            <button type="button" onClick={delete_Image_File} className="btn btn-sm text-white" style={{ background: "#ef233c" }} >Delete</button>
+                                            <button type="button" onClick={() => { setImageId(''); setModalStatus(false); }} className="btn btn-sm btn-secondary ml-2"> Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div className={`modal ${confirmInsertArrest ? 'show' : ''}`} style={{ display: confirmInsertArrest ? 'block' : 'none', background: "rgba(0,0,0, 0.5)", transition: '0.5s', position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+                        <div className="modal-dialog">
+                            <div className="modal-content">
+                                <div className="box text-center py-5">
+                                    <h5 className="modal-title mt-2" id="exampleModalLabel">Are you sure you want to save current record ?</h5>
+                                    <div className="btn-box mt-3">
+                                        <button type="button" onClick={() => { setInsertArrest(false); check_Validation_Error(); setConfirmInsertArrest(false); }} className="btn btn-sm text-white" style={{ background: "#ef233c" }}>OK</button>
+                                        <button type="button" onClick={() => { setConfirmInsertArrest(false); }} className="btn btn-sm btn-secondary ml-2">Close</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            }
-            <div className={`modal ${confirmInsertArrest ? 'show' : ''}`} style={{ display: confirmInsertArrest ? 'block' : 'none', background: "rgba(0,0,0, 0.5)", transition: '0.5s', position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-                <div className="modal-dialog">
-                    <div className="modal-content">
-                        <div className="box text-center py-5">
-                            <h5 className="modal-title mt-2" id="exampleModalLabel">Are you sure you want to save current record ?</h5>
-                            <div className="btn-box mt-3">
-                                <button type="button" onClick={() => { setInsertArrest(false); check_Validation_Error(); setConfirmInsertArrest(false); }} className="btn btn-sm text-white" style={{ background: "#ef233c" }}>OK</button>
-                                <button type="button" onClick={() => { setConfirmInsertArrest(false); }} className="btn btn-sm btn-secondary ml-2">Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <div className="col-12  text-right p-0" style={{ marginTop: '10px' }}>
-                {/* {MstPage !== "MST-Arrest-Dash" && (<button type="button" className="btn btn-sm btn-success mr-1" onClick={setStatusFalse}>New </button>)} */}
-                {/* <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => { setShowPage('Charges'); check_Validation_Error(); }}>Next </button> */}
+                    <div className="col-12  text-right p-0" style={{ marginTop: '10px' }}>
+                        {/* {MstPage !== "MST-Arrest-Dash" && (<button type="button" className="btn btn-sm btn-success mr-1" onClick={setStatusFalse}>New </button>)} */}
+                        {/* <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => { setShowPage('Charges'); check_Validation_Error(); }}>Next </button> */}
 
 
-                {
-                    arrestID && (ArrestSta === true || ArrestSta === 'true') ?
-                        effectiveScreenPermission ? effectiveScreenPermission[0]?.Changeok ?
-                            <>
-                                <button type="button" className="btn btn-sm btn-success mr-1" data-toggle="modal" data-target="#myModal"
-                                    disabled={!statesChangeStatus} onClick={() => { if (!showModal) { check_Validation_Error(); } }}>Update</button>
+                        {
+                            arrestID && (ArrestSta === true || ArrestSta === 'true') ?
+                                effectiveScreenPermission ? effectiveScreenPermission[0]?.Changeok ?
+                                    <>
+                                        <button type="button" className="btn btn-sm btn-success mr-1" data-toggle="modal" data-target="#myModal"
+                                            disabled={!statesChangeStatus} onClick={() => { if (!showModal) { check_Validation_Error(); } }}>Update</button>
 
-                                <button
-                                    type="button" className="btn btn-sm btn-success mr-4" data-toggle="modal" data-target="#QueueReportsModal"
-                                    onClick={() => { setshowModalReport(true); setIncMasterReport(true); setIncReportCount(IncReportCount + 1); }}
-                                >
-                                    Print <i className="fa fa-print"></i>
-                                </button>
-                            </>
-                            : <></> :
-                            <>
-                                <button type="button" className="btn btn-sm btn-success mr-1" data-toggle="modal" data-target="#myModal" disabled={!statesChangeStatus} onClick={() => { if (!showModal) { check_Validation_Error(); } }}>Update</button>
+                                        <button
+                                            type="button" className="btn btn-sm btn-success mr-4" data-toggle="modal" data-target="#QueueReportsModal"
+                                            onClick={() => { setshowModalReport(true); setIncMasterReport(true); setIncReportCount(IncReportCount + 1); }}
+                                        >
+                                            Print <i className="fa fa-print"></i>
+                                        </button>
+                                    </>
+                                    : <></> :
+                                    <>
+                                        <button type="button" className="btn btn-sm btn-success mr-1" data-toggle="modal" data-target="#myModal" disabled={!statesChangeStatus} onClick={() => { if (!showModal) { check_Validation_Error(); } }}>Update</button>
 
-                                <button
-                                    type="button" className="btn btn-sm btn-success mr-4" data-toggle="modal" data-target="#QueueReportsModal"
-                                    onClick={() => { setshowModalReport(true); setIncMasterReport(true); setIncReportCount(IncReportCount + 1); }}
-                                >
-                                    Print <i className="fa fa-print"></i>
-                                </button>
-                            </>
-                        :
-                        effectiveScreenPermission ? effectiveScreenPermission[0]?.AddOK ?
-                            <button type="button" className="btn btn-sm btn-success mr-1" data-toggle="modal" data-target="#myModal" onClick={() => { if (!showModal) { check_Validation_Error(); } }}>Next</button>
-                            : <></> :
-                            <button type="button" className="btn btn-sm btn-success mr-1" data-toggle="modal" data-target="#myModal" onClick={() => { if (!showModal) { check_Validation_Error(); } }}>Next</button>
-                }
-                {
-                    MstPage === "MST-Arrest-Dash" &&
-                    <button type="button" className="btn btn-sm btn-success mx-1" onClick={onMasterPropClose} data-dismiss="modal">Close</button>
-                }
-            </div >
-            <div className={`modal-backdrop ${confirmInsertArrest ? 'show' : ''}`} style={{ display: confirmInsertArrest ? 'block' : 'none' }}></div>
-            <ListModal {...{ openPage, setOpenPage }} />
-            <ConfirmModal {...{ showModal, setShowModal, arresteeChange, value, possessionID, setPossessionID, setValue, setErrors }} />
-            <DeletePopUpModal func={DeleteArrest} clearID={clearID} />
-            <ChangesModal func={check_Validation_Error} setToReset={setToReset} />
-            <CurrentArrestMasterReport ArrestNumber={value.ArrestNumber} {...{ printIncReport, setIncMasterReport, IncReportCount, setIncReportCount, showModalReport, setshowModalReport }} />
-            <MasterNameModel {...{ type, setArrestID, isDatePickerRequiredColor, value, setValue, setArrestParentID, ArrestparentID, nameModalStatus, setNameModalStatus, loginPinID, loginAgencyID, possessionID, setPossessionID, possenSinglData, setPossenSinglData, GetSingleDataPassion }} />
-            <ImageModel multiImage={multiImage} setStatesChangeStatus={setStatesChangeStatus} pinID={loginPinID} primaryOfficerID={agencyOfficerDrpData} setMultiImage={setMultiImage} uploadImgFiles={uploadImgFiles} setuploadImgFiles={setuploadImgFiles} ChangeDropDown={ChangeDropDown} modalStatus={modalStatus} setModalStatus={setModalStatus} imageId={imageid} setImageId={setImageId} imageModalStatus={imageModalStatus} setImageModalStatus={setImageModalStatus} delete_Image_File={delete_Image_File} setImgData={setImgData} imgData={imgData} updateImage={update_Vehicle_MultiImage} agencyID={loginAgencyID} />
+                                        <button
+                                            type="button" className="btn btn-sm btn-success mr-4" data-toggle="modal" data-target="#QueueReportsModal"
+                                            onClick={() => { setshowModalReport(true); setIncMasterReport(true); setIncReportCount(IncReportCount + 1); }}
+                                        >
+                                            Print <i className="fa fa-print"></i>
+                                        </button>
+                                    </>
+                                :
+                                effectiveScreenPermission ? effectiveScreenPermission[0]?.AddOK ?
+                                    <button type="button" className="btn btn-sm btn-success mr-1" data-toggle="modal" data-target="#myModal" onClick={() => { if (!showModal) { check_Validation_Error(); } }}>Next</button>
+                                    : <></> :
+                                    <button type="button" className="btn btn-sm btn-success mr-1" data-toggle="modal" data-target="#myModal" onClick={() => { if (!showModal) { check_Validation_Error(); } }}>Next</button>
+                        }
+                        {
+                            MstPage === "MST-Arrest-Dash" &&
+                            <button type="button" className="btn btn-sm btn-success mx-1" onClick={onMasterPropClose} data-dismiss="modal">Close</button>
+                        }
+                    </div >
+                    <div className={`modal-backdrop ${confirmInsertArrest ? 'show' : ''}`} style={{ display: confirmInsertArrest ? 'block' : 'none' }}></div>
+                    <ListModal {...{ openPage, setOpenPage }} />
+                    <ConfirmModal {...{ showModal, setShowModal, arresteeChange, value, possessionID, setPossessionID, setValue, setErrors }} />
+                    <DeletePopUpModal func={DeleteArrest} clearID={clearID} />
+                    <ChangesModal func={check_Validation_Error} setToReset={setToReset} />
+                    <CurrentArrestMasterReport ArrestNumber={value.ArrestNumber} {...{ printIncReport, setIncMasterReport, IncReportCount, setIncReportCount, showModalReport, setshowModalReport }} />
+                    <MasterNameModel {...{ type, setArrestID, isDatePickerRequiredColor, value, setValue, setArrestParentID, ArrestparentID, nameModalStatus, setNameModalStatus, loginPinID, loginAgencyID, possessionID, setPossessionID, possenSinglData, setPossenSinglData, GetSingleDataPassion }} />
+                    <ImageModel multiImage={multiImage} setStatesChangeStatus={setStatesChangeStatus} pinID={loginPinID} primaryOfficerID={agencyOfficerDrpData} setMultiImage={setMultiImage} uploadImgFiles={uploadImgFiles} setuploadImgFiles={setuploadImgFiles} ChangeDropDown={ChangeDropDown} modalStatus={modalStatus} setModalStatus={setModalStatus} imageId={imageid} setImageId={setImageId} imageModalStatus={imageModalStatus} setImageModalStatus={setImageModalStatus} delete_Image_File={delete_Image_File} setImgData={setImgData} imgData={imgData} updateImage={update_Vehicle_MultiImage} agencyID={loginAgencyID} />
+                </>
+            )}
         </>
+
     )
 }
 
