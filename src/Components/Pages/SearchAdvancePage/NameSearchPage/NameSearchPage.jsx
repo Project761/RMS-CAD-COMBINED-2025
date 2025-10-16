@@ -131,7 +131,8 @@ const NameSearchPage = ({ isCAD = false, setSelectSearchRecord = () => { } }) =>
             GetNameTypeIdDrp(loginAgencyID); GetSuffixIDDrp(loginAgencyID); GetSexIDDrp(loginAgencyID); GetRaceIdDrp(loginAgencyID); getEthinicityDrp(loginAgencyID); get_SMTTypeID(loginAgencyID);
             get_Name_Drp_Data(loginAgencyID)
             get_Appearance_Drp_Data(loginAgencyID);
-            get_Victim_Type_Data(loginAgencyID);
+            console.log(value.NameTypeID)
+            // get_Victim_Type_Data(loginAgencyID , value.NameTypeID);
         }
     }, [loginAgencyID]);
 
@@ -176,6 +177,7 @@ const NameSearchPage = ({ isCAD = false, setSelectSearchRecord = () => { } }) =>
                 const id = data?.filter((val) => { if (val.NameTypeCode === "I") return val })
                 if (id.length > 0) {
                     setValue(prevValues => { return { ...prevValues, ['NameTypeID']: id[0].NameTypeID } })
+                     get_Victim_Type_Data(loginAgencyID , id[0].NameTypeID);
                 }
                 setNameTypeIdDrp(threeColArray(data, 'NameTypeID', 'Description', 'NameTypeCode'))
             }
@@ -441,6 +443,7 @@ const NameSearchPage = ({ isCAD = false, setSelectSearchRecord = () => { } }) =>
                 setValue({ ...value, [name]: e.value, })
             }
             if (name === 'NameTypeID') {
+                get_Victim_Type_Data(loginAgencyID , e.value);
                 setValue({
                     ...value,
                     [name]: e.value, ['SMTLocationID']: null, ['NameReasonCodeID']: [], ['LastName']: null, ['RMSCFSCodeID']: '',
@@ -987,18 +990,18 @@ const NameSearchPage = ({ isCAD = false, setSelectSearchRecord = () => { } }) =>
         })
     }
 
-    const get_Victim_Type_Data = (loginAgencyID) => {
-        const val = {
-            AgencyID: loginAgencyID,
-        }
-        fetchPostData('VictimType/GetDataDropDown_VictimType', val).then((data) => {
-            if (data) {
-                setVictimTypeDrp(threeColArray(data, 'VictimTypeID', 'Description', 'VictimCode'))
-            } else {
-                setVictimTypeDrp([]);
-            }
-        })
-    }
+    // const get_Victim_Type_Data = (loginAgencyID) => {
+    //     const val = {
+    //         AgencyID: loginAgencyID,
+    //     }
+    //     fetchPostData('VictimType/GetDataDropDown_VictimType', val).then((data) => {
+    //         if (data) {
+    //             setVictimTypeDrp(threeColArray(data, 'VictimTypeID', 'Description', 'VictimCode'))
+    //         } else {
+    //             setVictimTypeDrp([]);
+    //         }
+    //     })
+    // }
     //harsh
     useEffect(() => {
         const handleKeyDown = async (event) => {
@@ -1185,6 +1188,31 @@ const NameSearchPage = ({ isCAD = false, setSelectSearchRecord = () => { } }) =>
 
         return value;
     }
+
+    const get_Victim_Type_Data = (loginAgencyID, nameTypeID) => {
+        const val = { AgencyID: loginAgencyID };
+
+        fetchPostData('VictimType/GetDataDropDown_VictimType', val).then((data) => {
+            if (data) {
+                const formattedData = threeColArray(data, 'VictimTypeID', 'Description', 'VictimCode');
+                let filteredVictimType = [];
+                if (nameTypeID === 1) {
+                    filteredVictimType = formattedData?.filter(item =>
+                        item.id === "I" || item.id === "L"
+                    );
+                } else if (nameTypeID === 2) {
+                    filteredVictimType = formattedData?.filter(item =>
+                        ["B", "F", "G", "R", "S", "O", "U"].includes(item.id)
+                    );
+                } else {
+                    filteredVictimType = formattedData; // fallback to all if not 1 or 2
+                }
+                setVictimTypeDrp(filteredVictimType);
+            } else {
+                setVictimTypeDrp([]);
+            }
+        });
+    };
 
 
     return (
