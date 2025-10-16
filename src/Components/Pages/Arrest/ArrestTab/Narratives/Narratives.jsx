@@ -18,10 +18,11 @@ import ChangesModal from '../../../../Common/ChangesModal';
 import { get_AgencyOfficer_Data } from '../../../../../redux/actions/DropDownsData';
 import htmlToDraft from 'html-to-draftjs';
 import ReactQuill from 'react-quill';
+import ArresList from '../../../ShowAllList/ArrestList';
 
 const Narrative = (props) => {
 
-  const { DecArrestId, DecIncID } = props
+  const { DecArrestId, DecIncID, ListData, get_List } = props
   const dispatch = useDispatch();
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
   const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
@@ -29,7 +30,7 @@ const Narrative = (props) => {
   const incReportedDate = useSelector((state) => state.Agency.incReportedDate);
   const agencyOfficerDrpData = useSelector((state) => state.DropDown.agencyOfficerDrpData);
 
-  const { get_Arrest_Count, setChangesStatus, changesStatusCount, changesStatus } = useContext(AgencyContext)
+  const { get_Arrest_Count, setChangesStatus, changesStatusCount, changesStatus, NameId } = useContext(AgencyContext)
   const [clickedRow, setClickedRow] = useState(null);
   const [narrativeData, setNarrativeData] = useState([])
   const [upDateCount, setUpDateCount] = useState(0)
@@ -94,6 +95,12 @@ const Narrative = (props) => {
       setArrestID(DecArrestId);
     }
   }, [DecArrestId]);
+
+  useEffect(() => {
+    if (NameId) {
+      get_List(NameId);
+    }
+  }, [NameId])
 
   useEffect(() => {
     if (DecIncID) {
@@ -376,6 +383,7 @@ const Narrative = (props) => {
   return (
     <>
 
+      <ArresList {...{ ListData }} />
 
       <div className="row mb-3">
         <div className="col-2 col-md-2 col-lg-1 mt-2 pt-2">

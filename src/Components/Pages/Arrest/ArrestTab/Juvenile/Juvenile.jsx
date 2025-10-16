@@ -13,9 +13,10 @@ import { get_LocalStoreData } from '../../../../../redux/actions/Agency';
 import { get_ScreenPermissions_Data } from '../../../../../redux/actions/IncidentAction';
 import ChangesModal from '../../../../Common/ChangesModal';
 import { get_AgencyOfficer_Data } from '../../../../../redux/actions/DropDownsData';
+import ArresList from '../../../ShowAllList/ArrestList';
 
 const Juvenile = (props) => {
-  const { DecArrestId } = props
+  const { DecArrestId, ListData, get_List } = props
   const incReportedDate = useSelector((state) => state.Agency.incReportedDate);
   const agencyOfficerDrpData = useSelector((state) => state.DropDown.agencyOfficerDrpData);
 
@@ -24,7 +25,7 @@ const Juvenile = (props) => {
   const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
   const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
 
-  const { get_Arrest_Count, setChangesStatus, changesStatusCount, changesStatus } = useContext(AgencyContext);
+  const { get_Arrest_Count, setChangesStatus, changesStatusCount, changesStatus, NameId, } = useContext(AgencyContext);
   const [clickedRow, setClickedRow] = useState(null);
 
   const [juvenileData, setJuvenileData] = useState();
@@ -82,6 +83,12 @@ const Juvenile = (props) => {
     if (DecArrestId) { setArrestID(DecArrestId); get_Data_Juvenile(DecArrestId); }
   }, [DecArrestId])
 
+
+  useEffect(() => {
+    if (NameId) {
+      get_List(NameId);
+    }
+  }, [NameId])
   const [errors, setErrors] = useState({
     'ParentContactDtTmErrors': '', 'ContactByIDErrors': '',
   })
@@ -277,6 +284,8 @@ const Juvenile = (props) => {
 
   return (
     <>
+      <ArresList {...{ ListData }} />
+
       <div className="col-12">
         <div className="row">
           <div className="col-2 col-md-2 col-lg-2 mt-3">

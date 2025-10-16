@@ -14,10 +14,11 @@ import { get_LocalStoreData } from '../../../../../redux/actions/Agency'
 import ListModal from '../../../Utility/ListManagementModel/ListModal'
 import ChangesModal from '../../../../Common/ChangesModal'
 import { get_ScreenPermissions_Data } from '../../../../../redux/actions/IncidentAction'
+import ArresList from '../../../ShowAllList/ArrestList'
 
 const CourtInformation = (props) => {
 
-  const { DecArrestId } = props
+  const { DecArrestId, ListData, get_List } = props
 
   const dispatch = useDispatch();
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -26,7 +27,7 @@ const CourtInformation = (props) => {
   const incReportedDate = useSelector((state) => state.Agency.incReportedDate);
 
 
-  const { get_Arrest_Count, ArresteName, setChangesStatus } = useContext(AgencyContext)
+  const { get_Arrest_Count, ArresteName, setChangesStatus, NameId, } = useContext(AgencyContext)
   const [courtInfoData, setCourtInfoData] = useState();
   const [status, setStatus] = useState(false);
   const [modal, setModal] = useState(false)
@@ -85,6 +86,11 @@ const CourtInformation = (props) => {
     }
   }, [DecArrestId]);
 
+  useEffect(() => {
+    if (NameId) {
+      get_List(NameId);
+    }
+  }, [NameId])
   const [errors, setErrors] = useState({
     'NameErrors': '',
   })
@@ -355,6 +361,8 @@ const CourtInformation = (props) => {
 
   return (
     <>
+      <ArresList {...{ ListData }} />
+
       <div className="col-12">
         <div className="row ">
           <div className="col-2 col-md-2 col-lg-1 mt-2 pt-2">

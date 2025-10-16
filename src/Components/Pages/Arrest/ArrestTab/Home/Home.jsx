@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react'
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Select from "react-select";
 import DatePicker from "react-datepicker";
-import { Aes256Encrypt, Decrypt_Id_Name, LockFildscolour, Requiredcolour, base64ToString, filterPassedTimeZoneArrest, getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime, stringToBase64, } from '../../../../Common/Utility';
+import { Aes256Encrypt, Decrypt_Id_Name, LockFildscolour, Requiredcolour, base64ToString, filterPassedTimeZoneArrest, filterPassedTimeZonesProperty, getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime, stringToBase64, } from '../../../../Common/Utility';
 import { AddDeleteUpadate, AddDelete_Img, fetchPostData } from '../../../../hooks/Api';
 import { toastifyError, toastifySuccess } from '../../../../Common/AlertMsg';
 import { AgencyContext } from '../../../../../Context/Agency/Index';
@@ -24,7 +24,7 @@ import CurrentArrestMasterReport from './CurrentArrestMasterReport';
 
 
 
-const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, setStatus, isEnabled, setIsEnabled, Agencystatus, setAgencystatus, arrestID, setArrestID, matchedAgency, setmatchedAgency, delChargeID, ChargeLocalArr, setChargeLocalArr, setDelChargeID, isChargeDel, setIsChargeDel, possessionID, setPossessionID, offenseNameID, setoffenseNameID, RestStatus, Editval, setEditval, incExceDate, setincExceDate, GetSingleData }) => {
+const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, setStatus, isEnabled, setIsEnabled, Agencystatus, setAgencystatus, arrestID, setArrestID, matchedAgency, setmatchedAgency, delChargeID, ChargeLocalArr, setChargeLocalArr, setDelChargeID, isChargeDel, setIsChargeDel, possessionID, setPossessionID, offenseNameID, setoffenseNameID, RestStatus, Editval, setEditval, incExceDate, setincExceDate, GetSingleData, get_List }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -168,6 +168,12 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         }
     }, [loginAgencyID])
 
+    useEffect(() => {
+        if (NameId) {
+            get_List(NameId);
+        }
+    }, [NameId])
+
     const GetEditData = (incidentID) => {
         const val = { IncidentID: incidentID };
         fetchPostData('Incident/GetSingleData_Incident', val).then((res) => {
@@ -252,7 +258,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
             setNameID(newvalue[0]?.NameID)
             setValue({
                 ...value, ['ArresteeID']: parseInt(possessionID), ['RaceID']: newvalue[0]?.RaceID, ['SexID']: newvalue[0]?.SexID, ['AgeFrom']: newvalue[0]?.AgeFrom, ['AgeUnitID']: newvalue[0]?.AgeUnitID,
-                ['DateOfBirth']: getShowingWithOutTime(newvalue[0]?.DateOfBirth),
+                ['DateOfBirth']: newvalue[0]?.DateOfBirth ? getShowingWithOutTime(newvalue[0].DateOfBirth) : null,
                 'IsJuvenileArrest': newvalue[0]?.IsJuvenile,
             })
         }
@@ -415,7 +421,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                 'IsSchoolNotified': Editval[0]?.IsSchoolNotified, 'Grade': Editval[0]?.Grade, 'LocationOfSchool': Editval[0]?.LocationOfSchool, 'LocationOfSchool': Editval[0]?.LocationOfSchool, 'NameOfSchool': Editval[0]?.NameOfSchool, 'ParentPhone': Editval[0]?.ParentPhone,
                 'ParentNameID': Editval[0]?.ParentNameID, 'ResponseID': Editval[0]?.ResponseID,
                 ['RaceID']: newvalue[0]?.RaceID, ['SexID']: newvalue[0]?.SexID, ['AgeFrom']: newvalue[0]?.AgeFrom, ['AgeUnitID']: newvalue[0]?.AgeUnitID,
-                ['DateOfBirth']: getShowingWithOutTime(newvalue[0]?.DateOfBirth),
+                ['DateOfBirth']: newvalue[0]?.DateOfBirth ? getShowingWithOutTime(newvalue[0].DateOfBirth) : null,
                 ['ArresteeID']: Editval[0]?.ArresteeID,
                 'IsJuvenileArrest': newvalue[0]?.IsJuvenile,
             });
@@ -814,7 +820,8 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                     setNameID(e?.value)
                     if (e.DateOfBirth) {
                         setDobDate(new Date(e.DateOfBirth));
-                        newValue['DateOfBirth'] = getShowingWithOutTime(e.DateOfBirth);
+                        newValue['DateOfBirth'] = e?.DateOfBirth ? getShowingWithOutTime(e.DateOfBirth) : null;
+
                     } else {
                         setDobDate('');
                         newValue['DateOfBirth'] = '';
@@ -963,6 +970,11 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
     const handleClick = () => {
         setShowPage('PoliceForce')// Update the path according to your routing setup
     };
+    const getValidDate = (date) => {
+        const d = new Date(date);
+        return !isNaN(d.getTime()) ? d : null;
+    };
+
 
 
     return (
@@ -1007,7 +1019,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                             </div>
 
                             <div className="col-4 col-md-4 col-lg-2 ">
-                                <DatePicker
+                                {/* <DatePicker
                                     id='ArrestDtTm'
                                     name='ArrestDtTm'
                                     ref={startRef1}
@@ -1076,6 +1088,52 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                                         filterPassedTimeZoneArrest(time, extractIncidentDate, datezone, incidentReportedDate)
                                     }
 
+                                    disabled={nibrsSubmittedArrestMain === 1}
+                                    className={nibrsSubmittedArrestMain === 1 ? 'LockFildsColor' : 'requiredColor'}
+                                /> */}
+                                <DatePicker
+                                    id='ArrestDtTm'
+                                    name='ArrestDtTm'
+                                    ref={startRef}
+                                    onKeyDown={(e) => {
+                                        if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                                            e.preventDefault();
+                                        } else {
+                                            onKeyDown(e);
+                                        }
+                                    }}
+                                    dateFormat="MM/dd/yyyy HH:mm"
+                                    timeFormat="HH:mm "
+                                    is24Hour
+                                    isClearable={false}
+                                    // selected={value?.ReportedDtTm && new Date(value?.ReportedDtTm)}
+                                    selected={getValidDate(value?.ArrestDtTm)}
+                                    autoComplete="Off"
+                                    onChange={(date) => {
+                                        setArrestDate(date ? getShowingMonthDateYear(date) : null);
+                                        !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
+                                        if (date > new Date(datezone)) {
+                                            date = new Date(datezone);
+                                        }
+                                        if (date >= new Date()) {
+                                            setValue({ ...value, ['ArrestDtTm']: new Date() ? getShowingDateText(new Date()) : null })
+                                        } else if (date <= new Date(incReportedDate)) {
+                                            setValue({ ...value, ['ArrestDtTm']: incReportedDate ? getShowingDateText(incReportedDate) : null })
+                                        } else {
+                                            setValue({ ...value, ['ArrestDtTm']: date ? getShowingDateText(date) : null })
+                                        }
+                                    }}
+                                    timeInputLabel
+                                    showTimeSelect
+                                    timeIntervals={1}
+                                    timeCaption="Time"
+                                    showMonthDropdown
+                                    showYearDropdown
+                                    dropdownMode="select"
+                                    minDate={new Date(incReportedDate)}
+                                    maxDate={new Date(datezone)}
+                                    showDisabledMonthNavigation
+                                    filterTime={(date) => filterPassedTimeZonesProperty(date, incReportedDate, datezone)}
                                     disabled={nibrsSubmittedArrestMain === 1}
                                     className={nibrsSubmittedArrestMain === 1 ? 'LockFildsColor' : 'requiredColor'}
                                 />
@@ -1343,7 +1401,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                             </div>
 
                             <div className="col-6 col-md-3 col-lg-2 d-flex align-items-center gap-2 ">
-                                <div>
+                                <div className="col-2 col-md-2 col-lg-1">
                                     <label htmlFor="SexID" className="new-label mb-0 mr-1">
                                         Gender
                                     </label>
@@ -1399,10 +1457,10 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                                 <Select
                                     name='ResponseID'
                                     styles={customStylesWithOutColor}
-                                    value={policeForceDrpData?.filter((obj) => obj.value === value?.ResponseID)}
+                                    // value={policeForceDrpData?.filter((obj) => obj.value === value?.ResponseID)}
                                     isClearable
-                                    options={policeForceDrpData}
-                                    onChange={(e) => ChangeDropDown(e, 'ResponseID')}
+                                    // options={policeForceDrpData}
+                                    // onChange={(e) => ChangeDropDown(e, 'ResponseID')}
                                     placeholder="Select..."
                                 />
                             </div>

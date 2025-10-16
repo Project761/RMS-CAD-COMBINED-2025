@@ -24,6 +24,7 @@ import { get_LocalStoreData } from '../../../redux/actions/Agency'
 import { useDispatch } from 'react-redux'
 import { get_ArresteeName_Data } from '../../../redux/actions/DropDownsData'
 import Charges from './ArrestTab/Charges/ChargeTab/Home/Home'
+import { get_ScreenPermissions_Data } from '../../../redux/actions/IncidentAction'
 
 
 const Arrest_Add_Up = () => {
@@ -32,6 +33,7 @@ const Arrest_Add_Up = () => {
     const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
     const loginAgencyState = useSelector((state) => state.Ip.loginAgencyState);
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
+    const arresteeNameData = useSelector((state) => state.DropDown.arresteeNameData);
 
     const { updateCount, EditArrestStatus, incidentCount, setEditArrestStatus, tabCountArrest, get_OffenseName_Data, get_Data_Arrest_Charge, get_Arrest_Count, changesStatus, arrestFilterData, get_Data_Arrest } = useContext(AgencyContext)
     const navigate = useNavigate();
@@ -62,6 +64,9 @@ const Arrest_Add_Up = () => {
     const [RestStatus, setRestStatus] = useState(false);
     const [Editval, setEditval] = useState();
     const [incExceDate, setincExceDate] = useState();
+    const [ArresteeID, setArresteeID] = useState('');
+
+    const [ListData, setListData] = useState([]);
 
     const [ChargeLocalArr, setChargeLocalArr] = useState(
         JSON.parse(sessionStorage.getItem('ChargeLocalData')) || []
@@ -110,9 +115,15 @@ const Arrest_Add_Up = () => {
     useEffect(() => {
         if (localStoreData) {
             setloginAgencyID(localStoreData?.AgencyID); setloginPinID(localStoreData?.PINID);
+            dispatch(get_ScreenPermissions_Data("A067", localStoreData?.AgencyID, localStoreData?.PINID));
         }
     }, [localStoreData]);
 
+    useEffect(() => {
+        if (ArresteeID) {
+            get_List(ArresteeID)
+        }
+    }, [ArresteeID]);
 
     useEffect(() => {
         if (ArrestSta === 'true' || ArrestSta === true) {
@@ -123,6 +134,7 @@ const Arrest_Add_Up = () => {
         }
     }, [ArrestSta, localStoreData, updateCount]);
 
+
     useEffect(() => {
         if (isFromDashboard === 'true' || isFromDashboard === true) {
             setShowPoliceForce(true);
@@ -131,7 +143,6 @@ const Arrest_Add_Up = () => {
     }, [isFromDashboard]);
 
     const [currentTab, setCurrentTab] = useState('Arrest');
-
     useEffect(() => {
         const pathname = window.location.pathname;
         if (pathname.includes('Arrest-Home')) setCurrentTab('Arrest');
@@ -227,8 +238,11 @@ const Arrest_Add_Up = () => {
         })
     }
 
+
+
     const set_Edit_Value = (row) => {
-        console.log(row)
+        get_List(row.ArresteeID)
+        setArresteeID(row.ArresteeID)
         get_Arrest_Count(row.ArrestID); setRestStatus(true); GetSingleData(row.ArrestID, DecIncID)
         if (row?.PoliceForce_Description === "Yes") {
             setIsEnabled(true);
@@ -343,6 +357,16 @@ const Arrest_Add_Up = () => {
         })
     }
 
+    const get_List = (NameID) => {
+        const val = { NameID: NameID, }
+        fetchPostData('TabBasicInformation/NameInformation', val).then((res) => {
+            if (res) {
+                setListData(res);
+            } else {
+                setListData([]);
+            }
+        })
+    }
     return (
         <div className=" section-body pt-1 p-1 bt" >
             <div className="div">
@@ -385,8 +409,7 @@ const Arrest_Add_Up = () => {
                                                             </div>
 
                                                         </div>
-                                                        <div className="d-flex flex-column align-items-center gap-2 flex-shrink-0">
-                                                            {/* Edit Icon */}
+                                                        {/* <div className="d-flex flex-column align-items-center gap-2 flex-shrink-0">
                                                             <div
                                                                 className="text-white"
                                                                 style={{
@@ -401,7 +424,6 @@ const Arrest_Add_Up = () => {
                                                                     cursor: "pointer",
                                                                     boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
                                                                     marginBottom: "10px"
-                                                                    // transition: "transform 0.2s ease, box-shadow 0.2s ease",
                                                                 }}
                                                                 title="Edit"
                                                                 onClick={() => {
@@ -425,7 +447,6 @@ const Arrest_Add_Up = () => {
                                                                     justifyContent: "center",
                                                                     cursor: "pointer",
                                                                     boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                                                    // transition: "transform 0.2s ease, box-shadow 0.2s ease",
                                                                 }}
                                                                 data-toggle="modal"
                                                                 data-target="#DeleteModal"
@@ -433,9 +454,181 @@ const Arrest_Add_Up = () => {
                                                             >
                                                                 <i className="fa fa-trash"></i>
                                                             </div>
+                                                        </div> */}
+
+                                                        <div className="d-flex flex-column align-items-center gap-2 flex-shrink-0">
+                                                            {/* Edit Button */}
+                                                            {
+                                                                effectiveScreenPermission ?
+                                                                    <>
+                                                                        {
+                                                                            effectiveScreenPermission[0]?.Changeok ?
+                                                                                <>
+                                                                                    <div
+                                                                                        style={{
+                                                                                            backgroundColor: "#001f3f",
+                                                                                            color: "white",
+                                                                                            width: "36px",
+                                                                                            height: "36px",
+                                                                                            borderRadius: "50%",
+                                                                                            display: "flex",
+                                                                                            alignItems: "center",
+                                                                                            justifyContent: "center",
+                                                                                            cursor: "pointer",
+                                                                                            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                                            marginBottom: "10px"
+                                                                                            // transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                                                                                        }}
+
+                                                                                        onClick={() => {
+                                                                                            set_Edit_Value(row);
+                                                                                            setResetErrors(true);
+                                                                                        }}
+
+                                                                                        title="Edit"
+                                                                                    >
+                                                                                        <i className="fa fa-edit"></i>
+                                                                                    </div>
+                                                                                </>
+                                                                                :
+                                                                                <>
+                                                                                </>
+                                                                        }
+                                                                    </>
+                                                                    :
+                                                                    <>
+                                                                        <div
+                                                                            style={{
+                                                                                backgroundColor: "#001f3f",
+                                                                                color: "white",
+                                                                                width: "36px",
+                                                                                height: "36px",
+                                                                                borderRadius: "50%",
+                                                                                display: "flex",
+                                                                                alignItems: "center",
+                                                                                justifyContent: "center",
+                                                                                cursor: "pointer",
+                                                                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                                marginBottom: "10px"
+                                                                                // transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                                                                            }}
+
+                                                                            onClick={() => {
+                                                                                set_Edit_Value(row);
+                                                                                setResetErrors(true);
+                                                                            }}
+
+                                                                            title="Edit"
+                                                                        >
+                                                                            <i className="fa fa-edit"></i>
+                                                                        </div>
+                                                                    </>
+                                                            }
+
+                                                            {/* <div
+                                                                style={{
+                                                                    backgroundColor: "#001f3f",
+                                                                    color: "white",
+                                                                    width: "36px",
+                                                                    height: "36px",
+                                                                    borderRadius: "50%",
+                                                                    display: "flex",
+                                                                    alignItems: "center",
+                                                                    justifyContent: "center",
+                                                                    cursor: "pointer",
+                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                    marginBottom: "10px"
+                                                                    // transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                                                                }}
+
+                                                                onClick={() => { set_EditRow(row); }}
+
+                                                                title="Edit"
+                                                            >
+                                                                <i className="fa fa-edit"></i>
+                                                            </div> */}
+
+                                                            {/* Delete Button */}
+                                                            {
+                                                                effectiveScreenPermission ?
+                                                                    <>
+                                                                        {
+                                                                            effectiveScreenPermission[0]?.DeleteOK ?
+                                                                                <>
+                                                                                    <div
+                                                                                        style={{
+                                                                                            backgroundColor: "#001f3f",
+                                                                                            color: "white",
+                                                                                            width: "36px",
+                                                                                            height: "36px",
+                                                                                            borderRadius: "50%",
+                                                                                            display: "flex",
+                                                                                            alignItems: "center",
+                                                                                            justifyContent: "center",
+                                                                                            cursor: "pointer",
+                                                                                            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                                        }}
+                                                                                        data-toggle="modal"
+                                                                                        data-target="#DeleteModal"
+                                                                                        onClick={() => { setArrestID(row.ArrestID); }}
+                                                                                        title="Delete"
+                                                                                    >
+                                                                                        <i className="fa fa-trash"></i>
+                                                                                    </div>
+                                                                                </>
+                                                                                :
+                                                                                <>
+                                                                                </>
+                                                                        }
+                                                                    </>
+                                                                    :
+                                                                    <>
+                                                                        <div
+                                                                            style={{
+                                                                                backgroundColor: "#001f3f",
+                                                                                color: "white",
+                                                                                width: "36px",
+                                                                                height: "36px",
+                                                                                borderRadius: "50%",
+                                                                                display: "flex",
+                                                                                alignItems: "center",
+                                                                                justifyContent: "center",
+                                                                                cursor: "pointer",
+                                                                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                            }}
+                                                                            data-toggle="modal"
+                                                                            data-target="#DeleteModal"
+                                                                            onClick={() => { setArrestID(row.ArrestID); }}
+                                                                            title="Delete"
+                                                                        >
+                                                                            <i className="fa fa-trash"></i>
+                                                                        </div>
+                                                                    </>
+                                                            }
+                                                            {/* <div
+                                                                style={{
+                                                                    backgroundColor: "#001f3f",
+                                                                    color: "white",
+                                                                    width: "36px",
+                                                                    height: "36px",
+                                                                    borderRadius: "50%",
+                                                                    display: "flex",
+                                                                    alignItems: "center",
+                                                                    justifyContent: "center",
+                                                                    cursor: "pointer",
+                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                }}
+                                                                data-toggle="modal"
+                                                                data-target="#DeleteModal"
+                                                                onClick={() => {
+                                                                    setMasterPropertyID(row?.MasterPropertyID); dispatch({ type: MasterProperty_ID, payload: row?.MasterPropertyID });
+                                                                    setPropertyID(row?.PropertyID); dispatch({ type: Property_ID, payload: row.PropertyID });
+                                                                }}
+                                                                title="Delete"
+                                                            >
+                                                                <i className="fa fa-trash"></i>
+                                                            </div> */}
                                                         </div>
-
-
                                                     </div>
                                                 ))}
                                             </div>
@@ -666,39 +859,39 @@ const Arrest_Add_Up = () => {
                                 }
                                 {
                                     showPage === 'home' ?
-                                        <Home {...{ isEnabled, Editval, incExceDate, setincExceDate, GetSingleData, setEditval, RestStatus, setIsEnabled, setStatus, arrestID, matchedAgency, setmatchedAgency, setArrestID, showPage, Agencystatus, setAgencystatus, setShowPage, offenseNameID, setoffenseNameID, status, setEditArrestStatus, showJuvinile, EditArrestStatus, setShowJuvinile, setShowPoliceForce, DecIncID, DecArrestId, delChargeID, isChargeDel, setIsChargeDel, setDelChargeID, ChargeLocalArr, setChargeLocalArr, possessionID, setPossessionID }} />
+                                        <Home {...{ isEnabled, Editval, incExceDate, setincExceDate, GetSingleData, setEditval, RestStatus, setIsEnabled, setStatus, arrestID, matchedAgency, setmatchedAgency, setArrestID, showPage, Agencystatus, setAgencystatus, setShowPage, offenseNameID, setoffenseNameID, status, setEditArrestStatus, showJuvinile, EditArrestStatus, setShowJuvinile, setShowPoliceForce, DecIncID, DecArrestId, delChargeID, isChargeDel, setIsChargeDel, setDelChargeID, ChargeLocalArr, setChargeLocalArr, possessionID, setPossessionID, get_List }} />
                                         :
                                         showPage === 'Property' ?
                                             <Property {...{ DecArrestId, DecIncID, }} />
                                             :
 
                                             showPage === 'Charges' ?
-                                                <Charges {...{ DecArrestId, DecIncID, }} />
+                                                <Charges {...{ DecArrestId, DecIncID, ListData, setListData, get_List }} />
                                                 :
                                                 showPage === 'Warrant' ?
-                                                    <Warrant {...{ DecArrestId, DecIncID, }} />
+                                                    <Warrant {...{ DecArrestId, DecIncID, ListData, get_List }} />
                                                     :
                                                     showPage === 'Narratives' ?
-                                                        <Narratives {...{ DecArrestId, DecIncID, }} />
+                                                        <Narratives {...{ DecArrestId, DecIncID, ListData, get_List }} />
                                                         :
                                                         showPage === 'MugShorts' ?
-                                                            <MugShorts {...{ DecArrestId, DecIncID, }} />
+                                                            <MugShorts {...{ DecArrestId, DecIncID, ListData, get_List }} />
                                                             :
                                                             showPage === 'Fingerprint' ?
-                                                                <FingerPrint {...{ DecArrestId, DecIncID, }} />
+                                                                <FingerPrint {...{ DecArrestId, DecIncID, ListData, get_List }} />
                                                                 :
                                                                 showPage === 'CriminalActivity' ?
-                                                                    <CriminalActivity {...{ DecArrestId, DecIncID, }} />
+                                                                    <CriminalActivity {...{ DecArrestId, DecIncID, ListData, get_List }} />
                                                                     :
                                                                     showPage === 'CourtInformation' ?
-                                                                        <CourtInformation {...{ DecArrestId, DecIncID, }} />
+                                                                        <CourtInformation {...{ DecArrestId, DecIncID, ListData, get_List }} />
                                                                         :
 
                                                                         showPage === 'PoliceForce' && showPoliceForce ?
-                                                                            <PoliceForce {...{ DecArrestId, DecIncID, }} />
+                                                                            <PoliceForce {...{ DecArrestId, DecIncID, ListData }} />
                                                                             :
                                                                             showPage === 'Juvenile' ?
-                                                                                <Juvenile {...{ DecArrestId, DecIncID, }} />
+                                                                                <Juvenile {...{ DecArrestId, DecIncID, ListData, get_List }} />
                                                                                 :
                                                                                 showPage === 'AuditLog' ?
                                                                                     <Log

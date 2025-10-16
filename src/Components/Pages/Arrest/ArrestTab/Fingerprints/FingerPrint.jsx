@@ -17,12 +17,13 @@ import ChangesModal from '../../../../Common/ChangesModal';
 import ListModal from '../../../Utility/ListManagementModel/ListModal';
 import { get_ScreenPermissions_Data } from '../../../../../redux/actions/IncidentAction';
 import { filterPassedDateTime1 } from '../CourtInformation/CourtInformation';
+import ArresList from '../../../ShowAllList/ArrestList';
 
 const FingerPrint = (props) => {
 
-    const { ListData, DecIncID, isViewEventDetails = false, DecArrestId } = props
+    const { ListData, DecIncID, isViewEventDetails = false, DecArrestId ,get_List} = props
 
-    const { get_Name_Count, setChangesStatus, GetDataTimeZone, datezone, get_Arrest_Count } = useContext(AgencyContext)
+    const { get_Name_Count, setChangesStatus, GetDataTimeZone, datezone, get_Arrest_Count, NameId } = useContext(AgencyContext)
 
     const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -87,6 +88,11 @@ const FingerPrint = (props) => {
         }
     }, []);
 
+    useEffect(() => {
+        if (NameId) {
+            get_List(NameId);
+        }
+    }, [NameId])
     useEffect(() => {
         if (localStoreData) {
             setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
@@ -263,7 +269,7 @@ const FingerPrint = (props) => {
     }
     const reset = () => {
         setValue({
-            ...value,  'ArrestID': '', 'TRN': '', 'FingerPrintDtTm': '', 'PrintedByID': '', 'CreatedByUserFK': '',
+            ...value, 'ArrestID': '', 'TRN': '', 'FingerPrintDtTm': '', 'PrintedByID': '', 'CreatedByUserFK': '',
         });
         //  setErrors({ ...errors, 'PrintedByIDErrors': '', });
         setFingerPrintDtTm(''); setFingerPrintDtTm('')
@@ -279,7 +285,8 @@ const FingerPrint = (props) => {
 
     return (
         <>
-            <NameListing  {...{ ListData }} />
+            <ArresList {...{ ListData }} />
+
             <div className="col-md-12 mt-1">
                 <div className="row">
                     <div className="col-3 col-md-3 col-lg-1 mt-2">
