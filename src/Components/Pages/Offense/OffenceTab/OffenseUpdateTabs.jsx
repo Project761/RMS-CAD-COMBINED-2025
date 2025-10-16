@@ -303,7 +303,7 @@ const OffenceHomeTabs = () => {
         //             )}
         //         </div>
         //     ),
-           
+
         // },
         {
             minWidth: "40px",
@@ -451,15 +451,15 @@ const OffenceHomeTabs = () => {
                                                         {/* Card Content */}
                                                         <div>
                                                             <div>
-                                                                <p className="mb-0 small" style={{ color: "black" }}><strong>{row.OffenseName_Description}</strong></p>
+                                                                <p className="mb-0 small" style={{ color: "black" }}><strong>{row.FBIID_Description}</strong></p>
                                                             </div>
                                                             <div>
-                                                                <p className="mb-0 small"> {row.DateOfBirth ? getShowingWithOutTime(row.DateOfBirth) : ""}</p>
+                                                                <p className="mb-0 small"> {row.OffenseName_Description}</p>
                                                             </div>
                                                             <div>
-                                                                <p className="mb-0 small">{row.Gender}</p>
+                                                                <p className="mb-0 small">{row.LawTitle_Description}</p>
                                                             </div>
-                                                            <div>
+                                                            {/* <div>
                                                                 <p
                                                                     className="mb-0 small"
                                                                     style={{
@@ -468,7 +468,7 @@ const OffenceHomeTabs = () => {
                                                                 >
                                                                     {row.FBIID_Description ? row.FBIID_Description.length > 40 ? `${row.FBIID_Description.substring(0, 50)} . . .` : row.FBIID_Description : ""}
                                                                 </p>
-                                                            </div>
+                                                            </div> */}
                                                         </div>
                                                         <div className="d-flex flex-column align-items-center gap-2 flex-shrink-0">
                                                             {/* Edit Button */}

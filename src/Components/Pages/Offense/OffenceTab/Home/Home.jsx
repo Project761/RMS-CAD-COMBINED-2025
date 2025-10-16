@@ -379,7 +379,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   useEffect(() => {
     if (crimeId) {
       if (editval?.length > 0) {
-        console.log(editval[0]?.IsCargoTheftInvolved)
+
         setcountoffaduit(true);
         setValue({
           ...value,
@@ -515,7 +515,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
       MethodEntryError: "", CargoTheftError: "", 'MethodOfEnrtyError': '', 'CriminalActivityError': '', 'WeaponTypeError': '', 'OffenderusingError': '', 'CrimeBiasCategoryError': '',
     });
 
-    setCrimeOffenderUse(); setCrimeBiasCategory(); setWeaponID(); setCrimeActivity();
+    setCrimeOffenderUse([]); setCrimeBiasCategory([]); setWeaponID([]); setCrimeActivity([]);
     setlocationTypeComplteStatus(); setmethodOfEntryStatus(); setmethodOfEntryError(); setIsCrimeAgainstPerson(); setIsCrimeAgainstProperty(); setIsCrimeAgainstSociety(); setPretentedDrp();
     setPointExitDrp(); setPointEntryDrp();
     //  setCrimeActivityDrp();
@@ -743,7 +743,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     };
     fetchPostData("FBICodes/GetDataDropDown_FBICodes", val).then((data) => {
       if (data) {
-        // console.log("🚀 ~ fetchPostData ~ data:", data)
+
         setNibrsCodeDrp(modifiedFbiCodeArray(data, "FBIID", "Description", "FederalSpecificFBICode", "IsCrimeAgains_Person", "IsCrimeAgainstProperty", "IsCrimeAgainstSociety"));
 
       } else {
@@ -1220,7 +1220,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     const arr = nibrsValidateOffenseData?.filter(
       (item) => item?.CrimeID === CrimeID
     );
-    // console.log("🚀 ~ getOffenseNibrsError ~ arr:", arr);
+
     setNibrsOffErrStr(arr[0]?.OnPageError);
     setNibrsErrModalStatus(true);
   };
@@ -1362,7 +1362,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     { value: false, label: "No" },
   ];
 
-
   const changeDropDowns = (e, name) => {
     !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
     if (e) {
@@ -1427,7 +1426,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     };
     try {
       const data = await fetchPostDataNibrs("NIBRS/Nibrs_OffenseError", val);
-      // console.log("🚀 ~ nibrsValidateOffense ~ data:", data);
+
       if (data) {
         setnibrsValidateOffenseData(data?.Offense);
         setclickNibLoder(false);
@@ -1456,6 +1455,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
       const res = await fetchPostDataNibrs("NIBRS/Nibrs_OffenseError", val);
       if (res) {
         const offenceError = res?.Offense && res?.Offense[0] ? res?.Offense[0] : [];
+        console.log("🚀 ~ NibrsErrorReturn ~ offenceError:", offenceError)
 
         if (offenceError.LocationType) {
           setlocationTypeComplteStatus(offenceError?.LocationType);
@@ -1534,7 +1534,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     { value: 'Y', label: "Yes" },
     { value: 'N', label: "No" },
   ];
-
 
   const OnChangeCargoTheft = (e, name) => {
     !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
@@ -1632,7 +1631,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     fetchPostData('OffenseOffenderUse/GetData_OffenseOffenderUse', val)
       .then((res) => {
         if (res) {
-          console.log(res, 'hey')
+
           setCrimeOffenderUseEditVal(Comman_changeArrayFormatBasicInfo(res, 'CrimeOffenderUseID', 'Description', 'PretendToBeID', 'OffenderUseID', 'OffenderUseCode'));
         }
         else {
@@ -1774,7 +1773,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   };
 
   const InSertBasicInfo = (crimeId) => {
-
     const val = {
       'CrimeID': crimeId,
       'CreatedByUserFK': loginPinID,
@@ -1973,10 +1971,10 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     if (crimeOffenderUseEditVal) { setCrimeOffenderUse(crimeOffenderUseEditVal) }
   }, [crimeOffenderUseEditVal])
 
+
   useEffect(() => {
     if (crimeSuspectEditVal) { setCrimeSuspect(crimeSuspectEditVal) }
   }, [crimeSuspectEditVal]);
-
 
 
   return (
@@ -2369,7 +2367,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
               }
 
               <div className="col-1"></div>
-
               <div className="col-12">
                 <div className="row align-items-center" style={{ rowGap: "8px" }}>
                   <div className="col-4 col-md-4 custom-col-12  text-right">
@@ -2573,8 +2570,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
               </div>
             </div>
           </div>
-
-
 
           <div className="text-center p-1">
             {
