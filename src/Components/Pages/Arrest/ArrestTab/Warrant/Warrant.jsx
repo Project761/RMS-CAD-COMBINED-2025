@@ -18,10 +18,11 @@ import DeletePopUpModal from '../../../../Common/DeleteModal';
 import ChangesModal from '../../../../Common/ChangesModal';
 import ListModal from '../../../Utility/ListManagementModel/ListModal';
 import { get_ScreenPermissions_Data } from '../../../../../redux/actions/IncidentAction';
+import ArresList from '../../../ShowAllList/ArrestList';
 
 const Warrant = (props) => {
 
-    const { ListData, DecNameID, DecArrestId, DecMasterNameID, DecIncID, isViewEventDetails = false } = props
+    const { ListData, DecNameID, DecArrestId, DecMasterNameID, DecIncID, isViewEventDetails = false, get_List } = props
 
     const { get_Name_Count, get_Arrest_Count, setChangesStatus, GetDataTimeZone, datezone, NameId } = useContext(AgencyContext)
 
@@ -86,6 +87,12 @@ const Warrant = (props) => {
             setaddUpdatePermission(false);
         }
     }, [effectiveScreenPermission]);
+
+    useEffect(() => {
+        if (NameId) {
+            get_List(NameId);
+        }
+    }, [NameId])
 
     const reset = () => {
         setValue({
@@ -471,7 +478,8 @@ const Warrant = (props) => {
 
     return (
         <>
-            <NameListing  {...{ ListData }} />
+            <ArresList {...{ ListData }} />
+
             <div className="col-md-12 mt-1">
                 <div className="row">
                     <div className="col-3 col-md-3 col-lg-1 mt-2">

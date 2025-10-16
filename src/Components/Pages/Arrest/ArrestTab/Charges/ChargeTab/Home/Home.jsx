@@ -20,6 +20,7 @@ import SelectBox from '../../../../../../Common/SelectBox';
 import { components } from "react-select";
 import DatePicker from "react-datepicker";
 import NameListing from '../../../../../ShowAllList/NameListing';
+import ArresList from '../../../../../ShowAllList/ArrestList';
 
 const StatusOption = [
   { value: "A", label: "Attempted" },
@@ -29,7 +30,7 @@ const StatusOption = [
 
 const Charges = (props) => {
 
-  const { setStatus, DecChargeId } = props
+  const { setStatus, DecChargeId, ListData, setListData, get_List } = props
 
   const useQuery = () => {
     const params = new URLSearchParams(useLocation().search);
@@ -72,7 +73,6 @@ const Charges = (props) => {
     return new TextDecoder().decode(bytes);
   }
 
-
   if (ArrestId && isBase64(ArrestId)) {
     try {
       DecArrestId = parseInt(base64ToString(ArrestId));
@@ -80,8 +80,6 @@ const Charges = (props) => {
       console.error("Error decoding ArrestId:", err);
     }
   }
-
-
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -91,7 +89,7 @@ const Charges = (props) => {
   const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
   const incReportedDate = useSelector((state) => state.Agency.incReportedDate);
 
-  const { get_Arrest_Count, arrestChargeData, datezone, setArrestName, changesStatusCount, changesStatus, get_Data_Arrest_Charge, get_ArrestCharge_Count, setChangesStatus, updateCount, setUpdateCount, ArresteName } = useContext(AgencyContext);
+  const { get_Arrest_Count, arrestChargeData, datezone, NameId, setArrestName, changesStatusCount, changesStatus, get_Data_Arrest_Charge, get_ArrestCharge_Count, setChangesStatus, updateCount, setUpdateCount, ArresteName } = useContext(AgencyContext);
   const SelectedValue = useRef();
 
   const [chargeCodeDrp, setChargeCodeDrp] = useState([]);
@@ -190,7 +188,7 @@ const Charges = (props) => {
     if (ChargeID) {
       // setArrestID(ArrestID);
       get_ArrestCharge_Count(ChargeID); get_Security_Data(ChargeID);
-      get_Security_Data(ChargeID); get_Security_DropDown(ChargeID);
+      get_Security_Data(ChargeID); get_Security_DropDown(ChargeID); get_Property_Data(ChargeID);
     }
   }, [ChargeID])
 
@@ -199,11 +197,16 @@ const Charges = (props) => {
       get_Property_DropDown(DecEIncID);
     }
   }, [DecEIncID])
+  useEffect(() => {
+    if (NameId) {
+      get_List(NameId);
+    }
+  }, [NameId])
 
   useEffect(() => {
     console.log('hello')
     if (DecArrestId) {
-      get_Data_Arrest_Charge(DecArrestId); get_Arrest_Count(DecArrestId); get_Property_Data(DecArrestId);
+      get_Data_Arrest_Charge(DecArrestId); get_Arrest_Count(DecArrestId);
     }
   }, [DecArrestId])
 
@@ -580,7 +583,7 @@ const Charges = (props) => {
         navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(row?.ArrestID)}&ChargeId=${stringToBase64(row.ChargeID)}&Name=${Name}&ArrNo=${ArrNo}&ArrestSta=${true}&ChargeSta=${true}&SideBarStatus=${false}`)
         get_ArrestCharge_Count(row.ChargeID); setErrors(''); setStatesChangeStatus(false);
         //  setStatus(true); 
-        setChargeID(row.ChargeID); setChangesStatus(false); GetSingleData(row.ChargeID); get_Arrest_Count(row?.ArrestID); get_Property_Data(row?.ArrestID);
+        setChargeID(row.ChargeID); setChangesStatus(false); GetSingleData(row.ChargeID); get_Arrest_Count(row?.ArrestID); get_Property_Data(row?.ChargeID);
       }
     }
   }
@@ -750,9 +753,9 @@ const Charges = (props) => {
     if (propertyEditVal) { setMultiSelected(prevValues => { return { ...prevValues, ['PropertyID']: propertyEditVal } }) }
   }, [propertyEditVal])
 
-  const get_Property_Data = (arrestID) => {
+  const get_Property_Data = (ChargeID) => {
     const val = {
-      'ArrestID': arrestID,
+      'ChargeID': ChargeID,
     }
     fetchPostData('ArrestProperty/GetData_ArrestProperty', val).then((res) => {
       if (res) {
@@ -796,6 +799,7 @@ const Charges = (props) => {
 
   const InSertBasicInfopro = (id, col1, url) => {
     const val = {
+      'ChargeID': ChargeID,
       'ArrestID': DecArrestId,
       [col1]: id,
       'CreatedByUserFK': LoginPinID,
@@ -805,7 +809,7 @@ const Charges = (props) => {
         const parsedData = JSON.parse(res.data);
         const message = parsedData.Table[0].Message;
         toastifySuccess(message);
-        col1 === 'PropertyID' && get_Property_Data(DecArrestId); get_Property_DropDown(DecEIncID); get_Arrest_Count(ArrestID)
+        col1 === 'PropertyID' && get_Property_Data(ChargeID); get_Property_DropDown(DecEIncID); get_Arrest_Count(ArrestID)
       } else {
         console.log("Somthing Wrong");
       }
@@ -822,7 +826,7 @@ const Charges = (props) => {
         const parsedData = JSON.parse(res.data);
         const message = parsedData.Table[0].Message;
         toastifySuccess(message);
-        col1 === 'ArrestPropertyID' && get_Property_Data(DecArrestId); get_Property_DropDown(DecEIncID); get_Arrest_Count(DecArrestId)
+        col1 === 'ArrestPropertyID' && get_Property_Data(ChargeID); get_Property_DropDown(DecEIncID); get_Arrest_Count(DecArrestId)
       } else {
         console.log("Somthing Wrong");
       }
@@ -837,9 +841,11 @@ const Charges = (props) => {
       boxShadow: 0,
     }),
   };
+
+  console.log(ListData)
   return (
     <>
-      {/* <NameListing {...{ ListData }} /> */}
+      <ArresList {...{ ListData }} />
       {/* <div className="mt-2">
         <fieldset>
           <legend>Name Information</legend>

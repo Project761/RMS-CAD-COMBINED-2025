@@ -74,8 +74,10 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   const [chargedata, setChargedata] = useState([]);
   const [panelCode, setpanelCode] = useState('');
   const [DeleteshowCounts, SetDeleteshowCounts] = useState('');
+
   const [offenderUsingStatus, setoffenderUsingStatus] = useState(false);
   const [offenderUsingError, setoffenderUsingError] = useState(false);
+
   const [crimeOffenderUseDrp, setCrimeOffenderUseDrp] = useState([]);
   const [crimeOffenderUse, setCrimeOffenderUse] = useState([]);
   const [crimeOffenderUseEditVal, setCrimeOffenderUseEditVal] = useState([]);
@@ -171,9 +173,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   const [weaponEditVal, setweaponEditVal] = useState([]);
 
 
-
-
-
   const [value, setValue] = useState({
     ChargeCodeID: "", NIBRSCodeId: null, OffenseCodeId: null, LawTitleId: null, OffenseDateTime: '', OffenderLeftSceneId: null, CategoryId: null,
     PrimaryLocationId: null, SecondaryLocationId: null, FTADate: "", Fine: "", CourtCost: "", FTAAmt: "", LitigationTax: "", DamageProperty: "", OfRoomsInvolved: "", PremisesEntered: "", PropertyAbandoned: "", IsForceused: "", IsIncidentC: false, AttemptComplete: "", CrimeID: "", IncidentID: "", CreatedByUserFK: "", ModifiedByUserFK: "", IsDomesticViolence: "", IsGangInfo: "", CrimeMethodOfEntryID: "", Comments: "", IsCargoTheftInvolved: null,
@@ -253,11 +252,11 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     }
   }, [loginAgencyID, incReportedDate]);
 
-  useEffect(() => {
-    if (IncID && IncNo && offenceFillterData?.length > 0) {
-      nibrsValidateOffense(IncID, IncNo);
-    }
-  }, [IncID, IncNo, offenceFillterData]);
+  // useEffect(() => {
+  //   if (IncID && IncNo && offenceFillterData?.length > 0) {
+  //     nibrsValidateOffense(IncID, IncNo);
+  //   }
+  // }, [IncID, IncNo, offenceFillterData]);
 
   useEffect(() => {
     if (OffId && (OffSta === true || OffSta === "true")) {
@@ -279,6 +278,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   const nibrsCodeValue = ["09A", "09B", "100", "120", "11A", "11B", "11C", "11D", "13A", "13B", "13C"]
 
   const check_Validation_Error = (e) => {
+    console.log("🚀 ~ check_Validation_Error ~ e:", value?.CrimeMethodOfEntryID)
     if (value?.SecondaryLocationId && value?.PrimaryLocationId === value?.SecondaryLocationId) {
       toastifyError("The primary location and secondary location cannot be the same.");
       return;
@@ -289,7 +289,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     const PrimaryLocationErr = ((panelCode === "03" || panelCode === "07" || panelCode === "06") ? RequiredFieldIncident(value?.PrimaryLocationId) : check_Valid_Nibrs_Code(nibrsCode) ? "true" : RequiredFieldIncident(value?.PrimaryLocationId));
     const AttemptRequiredErr = RequiredFieldIncident(value?.AttemptComplete);
     const CommentsErr = nibrsCode === "11B" && loginAgencyState === "TX" ? RequiredFieldIncident(value?.Comments) : "true";
-    const MethodEntryError = nibrsCode === '220' ? RequiredFieldIncident(value?.CrimeMethodOfEntryID) : 'true'
+    const MethodEntryErr = nibrsCode === '220' ? RequiredFieldIncident(value?.CrimeMethodOfEntryID) : 'true'
     const OffenseDttmError = nibrsCode === '220' ? RequiredFieldIncident(value?.OffenseDateTime) : 'true'
     // const CargoTheftErrorErr = carboTheft ? RequiredFieldIncidentCarboTheft(value.IsCargoTheftInvolved) : "true";
     // const CargoTheftErrorErr = RequiredFieldIncident(value.);
@@ -297,18 +297,17 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     const methodEntryArr = methodOfEntryCode ? [methodOfEntryCode] : [];
     const isWeaponRequired = checkWeaponTypeIsRequire(nibrsCode, loginAgencyState) || PanelCode === '03' || PanelCode === '06' || PanelCode === '08';
     // const offenderusingErr = (PanelCode === '03' || PanelCode === '06' || PanelCode === '08') ? RequiredFieldIncidentOffender(crimeOffenderUse) : 'true';
-    const MethodOfEnrtyErr = checkMethodOfEntryIsRequire(nibrsCode, loginAgencyState) ? validateFields(methodEntryArr) : 'true';
+    // const MethodOfEnrtyErr = checkMethodOfEntryIsRequire(nibrsCode, loginAgencyState) ? RequiredFieldIncident(methodEntryArr) : 'true';
     const WeaponTypeErr = isWeaponRequired ? validateFields(weaponID) : 'true';
     const CriminalActivityErr = checkCriminalActivityIsRequire(nibrsCode, loginAgencyState) ? validateFields(crimeActivity) : 'true';
 
     const offenderusingErr = nibrsCode != "999" ? RequiredFieldIncidentOffender(crimeOffenderUse) : 'true';
-    const CrimeBiasCategoryErr = nibrsCode != "999" ? validateFields(crimeBiasCategory) : 'true';
+    const CrimeBiasCategoryErr = nibrsCode != "999"  ? validateFields(crimeBiasCategory) : 'true';
 
 
     setErrors((pre) => {
       return {
         ...pre,
-        ["MethodEntryError"]: MethodEntryError || pre["MethodEntryError"],
         ["NibrsIdError"]: NibrsIdErrorr || pre["NibrsIdError"],
         ["ChargeCodeIDError"]: ChargeCodeIDErr || pre["ChargeCodeIDError"],
         ["PremisesEnteredError"]: PremisesEnteredErr || pre["PremisesEnteredError"],
@@ -317,7 +316,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
         ["CommentsError"]: CommentsErr || pre["CommentsError"],
         ["CargoTheftError"]: CargoTheftErrorErr || pre["CargoTheftError"],
         ["OffenseDttmError"]: OffenseDttmError || pre["OffenseDttmError"],
-        ['MethodOfEnrtyError']: MethodOfEnrtyErr || pre['MethodOfEnrtyError'],
+        ['MethodOfEnrtyError']: MethodEntryErr || pre['MethodOfEnrtyError'],
         ['WeaponTypeError']: WeaponTypeErr || pre['WeaponTypeError'],
         ['CriminalActivityError']: CriminalActivityErr || pre['CriminalActivityError'],
         ['OffenderusingError']: offenderusingErr || pre['OffenderusingError'],
@@ -329,17 +328,18 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   };
 
   // Check All Field Format is True Then Submit
-  const { ChargeCodeIDError, NibrsIdError, PremisesEnteredError, MethodOfEnrtyError, WeaponTypeError, CriminalActivityError, OffenderusingError, CrimeBiasCategoryError, AttemptRequiredError, OffenseDttmError, PrimaryLocationError, CommentsError, MethodEntryError, CargoTheftError } = errors;
+  const { ChargeCodeIDError, NibrsIdError, PremisesEnteredError, MethodOfEnrtyError, WeaponTypeError, CriminalActivityError, OffenderusingError, CrimeBiasCategoryError, AttemptRequiredError, OffenseDttmError, PrimaryLocationError, CommentsError, CargoTheftError } = errors;
+  console.log("🚀 ~ Home ~ errors:", errors)
 
   useEffect(() => {
-    if (ChargeCodeIDError === "true" && NibrsIdError === "true" && MethodOfEnrtyError === 'true' && WeaponTypeError === 'true' && CriminalActivityError === 'true' && OffenderusingError === 'true' && CrimeBiasCategoryError === 'true' && PremisesEnteredError === "true" && OffenseDttmError === "true" && AttemptRequiredError === "true" && PrimaryLocationError === "true" && CommentsError === "true" && MethodEntryError === 'true' && CargoTheftError === 'true') {
+    if (ChargeCodeIDError === "true" && NibrsIdError === "true" && MethodOfEnrtyError === 'true' && WeaponTypeError === 'true' && CriminalActivityError === 'true' && OffenderusingError === 'true' && CrimeBiasCategoryError === 'true' && PremisesEnteredError === "true" && OffenseDttmError === "true" && AttemptRequiredError === "true" && PrimaryLocationError === "true" && CommentsError === "true" && CargoTheftError === 'true') {
       if (OffId && (OffSta === true || OffSta === "true")) {
         Update_Offence();
       } else {
         Add_Offense();
       }
     }
-  }, [ChargeCodeIDError, NibrsIdError, PremisesEnteredError, MethodOfEnrtyError, WeaponTypeError, CriminalActivityError, OffenderusingError, CrimeBiasCategoryError, PrimaryLocationError, OffenseDttmError, AttemptRequiredError, CommentsError, MethodEntryError, CargoTheftError]);
+  }, [ChargeCodeIDError, NibrsIdError, PremisesEnteredError, MethodOfEnrtyError, WeaponTypeError, CriminalActivityError, OffenderusingError, CrimeBiasCategoryError, PrimaryLocationError, OffenseDttmError, AttemptRequiredError, CommentsError, CargoTheftError]);
 
   const getScreenPermision = (LoginAgencyID, PinID) => {
     ScreenPermision("O036", LoginAgencyID, PinID).then((res) => {
@@ -380,7 +380,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   useEffect(() => {
     if (crimeId) {
       if (editval?.length > 0) {
-        console.log(editval[0]?.IsCargoTheftInvolved)
+
         setcountoffaduit(true);
         setValue({
           ...value,
@@ -513,12 +513,14 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     });
     setErrors({
       ...errors, ChargeCodeIDError: "", NibrsIdError: "", PremisesEnteredError: "", PrimaryLocationError: "", AttemptRequiredError: "", CommentsError: "",
-      MethodEntryError: "", CargoTheftError: "", 'MethodOfEnrtyError': '', 'CriminalActivityError': '', 'WeaponTypeError': '', 'OffenderusingError': '', 'CrimeBiasCategoryError': '',
+       CargoTheftError: "", 'MethodOfEnrtyError': '', 'CriminalActivityError': '', 'WeaponTypeError': '', 'OffenderusingError': '', 'CrimeBiasCategoryError': '',
     });
 
-    setCrimeOffenderUse(); setCrimeBiasCategory(); setWeaponID(); setCrimeActivity();
+    setCrimeOffenderUse([]); setCrimeBiasCategory([]); setWeaponID([]); setCrimeActivity([]);
     setlocationTypeComplteStatus(); setmethodOfEntryStatus(); setmethodOfEntryError(); setIsCrimeAgainstPerson(); setIsCrimeAgainstProperty(); setIsCrimeAgainstSociety(); setPretentedDrp();
-    setPointExitDrp(); setPointEntryDrp(); setCrimeActivityDrp(); setToolsUseIDDrp();
+    setPointExitDrp(); setPointEntryDrp();
+    //  setCrimeActivityDrp();
+    setToolsUseIDDrp();
     setCrimeTargetDrp(); setCrimeSuspectDrp(); setCrimeSecurityviolatedDrp(); setMethodOfOperationDrp();
     //  setWeaponDrp(); 
     setCrimeActivityNoneStatus();
@@ -539,6 +541,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   };
 
   const changeDropDown = (e, name) => {
+    console.log("🚀 ~ changeDropDown ~ e:", e)
     !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
     if (e) {
       if (name === "PrimaryLocationId") {
@@ -742,7 +745,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     };
     fetchPostData("FBICodes/GetDataDropDown_FBICodes", val).then((data) => {
       if (data) {
-        // console.log("🚀 ~ fetchPostData ~ data:", data)
+
         setNibrsCodeDrp(modifiedFbiCodeArray(data, "FBIID", "Description", "FederalSpecificFBICode", "IsCrimeAgains_Person", "IsCrimeAgainstProperty", "IsCrimeAgainstSociety"));
 
       } else {
@@ -896,21 +899,23 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     };
     try {
       const res = await AddDeleteUpadate("Crime/Insert_Offense", val);
-      if (res.success) {
+      if (res?.success) {
 
         Reset();
-        if (res.CrimeID) {
+        if (res?.CrimeID) {
+          toastifySuccess(res.Message);
           navigate(`/Off-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${stringToBase64(res.CrimeID)}&OffSta=${true}`);
           get_Incident_Count(mainIncidentID, loginPinID);
           get_Offence_Data(mainIncidentID);
+          InSertBasicInfo(res?.CrimeID);
         }
         setChangesStatus(false); setStatesChangeStatus(false);
       }
       LawTitleIdDrpDwnVal(loginAgencyID, null);
       NIBRSCodeDrpDwnVal(loginAgencyID, null);
-      toastifySuccess(res.Message);
-      console.log(res.success, res.CrimeID)
-      InSertBasicInfo(res?.CrimeID);
+
+
+      // InSertBasicInfo(res?.CrimeID);
 
       // validateIncSideBar
       validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
@@ -1217,7 +1222,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     const arr = nibrsValidateOffenseData?.filter(
       (item) => item?.CrimeID === CrimeID
     );
-    // console.log("🚀 ~ getOffenseNibrsError ~ arr:", arr);
+
     setNibrsOffErrStr(arr[0]?.OnPageError);
     setNibrsErrModalStatus(true);
   };
@@ -1359,13 +1364,15 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     { value: false, label: "No" },
   ];
 
-
   const changeDropDowns = (e, name) => {
     !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
+    console.log("🚀 ~ changeDropDowns ~ e:", e)
     if (e) {
       setValue({ ...value, [name]: e.value });
+
     } else {
       setValue({ ...value, [name]: null });
+
     }
   };
 
@@ -1424,7 +1431,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     };
     try {
       const data = await fetchPostDataNibrs("NIBRS/Nibrs_OffenseError", val);
-      // console.log("🚀 ~ nibrsValidateOffense ~ data:", data);
+
       if (data) {
         setnibrsValidateOffenseData(data?.Offense);
         setclickNibLoder(false);
@@ -1453,6 +1460,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
       const res = await fetchPostDataNibrs("NIBRS/Nibrs_OffenseError", val);
       if (res) {
         const offenceError = res?.Offense && res?.Offense[0] ? res?.Offense[0] : [];
+        console.log("🚀 ~ NibrsErrorReturn ~ offenceError:", offenceError)
 
         if (offenceError.LocationType) {
           setlocationTypeComplteStatus(offenceError?.LocationType);
@@ -1466,6 +1474,22 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
           setgangInformationStatus(offenceError?.GangInformation);
           setgangInformationError(offenceError?.GangInformationError);
         }
+        if (offenceError.Weapon) {
+          setweaponTypeStatus(offenceError?.Weapon);
+          setweaponTypeError(offenceError?.WeaponError);
+        }
+        if (offenceError.OffenderUsing) {
+          setoffenderUsingStatus(offenceError?.OffenderUsing);
+          setoffenderUsingError(offenceError?.OffenderUsingError);
+        }
+        if (offenceError.CriminalActivity) {
+          setcriminalActivityStatus(offenceError?.CriminalActivity);
+          setcriminalActivityError(offenceError?.CriminalActivityError);
+        }
+        if (offenceError.Bias) {
+          setbiasStatus(offenceError?.Bias);
+          setbiasStatusError(offenceError?.BiasError);
+        }
         setnibrsError(res);
 
       } else {
@@ -1475,6 +1499,10 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
         setlocationTypeComplteStatus(false);
         setgangInformationStatus(false);
         setmethodOfEntryStatus(false);
+        setweaponTypeStatus(false);
+        setoffenderUsingStatus(false);
+        setcriminalActivityStatus(false);
+        setbiasStatus(false);
       }
     } catch (error) {
       console.error("Error in NibrsErrorReturn: ", error);
@@ -1483,6 +1511,10 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
       setlocationTypeComplteStatus(false);
       setgangInformationStatus(false);
       setmethodOfEntryStatus(false);
+      setweaponTypeStatus(false);
+      setoffenderUsingStatus(false);
+      setcriminalActivityStatus(false);
+      setbiasStatus(false);
     }
   };
 
@@ -1507,7 +1539,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     { value: 'Y', label: "Yes" },
     { value: 'N', label: "No" },
   ];
-
 
   const OnChangeCargoTheft = (e, name) => {
     !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
@@ -1555,7 +1586,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   }
 
   const OffenderUsechange = (multiSelected) => {
-    !addUpdatePermission && setChangesStatus(true);
+    !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
 
 
     setCrimeOffenderUse(multiSelected)
@@ -1605,7 +1636,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     fetchPostData('OffenseOffenderUse/GetData_OffenseOffenderUse', val)
       .then((res) => {
         if (res) {
-          console.log(res, 'hey')
+
           setCrimeOffenderUseEditVal(Comman_changeArrayFormatBasicInfo(res, 'CrimeOffenderUseID', 'Description', 'PretendToBeID', 'OffenderUseID', 'OffenderUseCode'));
         }
         else {
@@ -1631,7 +1662,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     if (loginAgencyState === 'TX' && nibrsCode == "13B") {
       const weaponData = data.filter((item) => { if (item?.id === '99' || item?.id === '40' || item?.id === '90' || item?.id === '95') return item });
 
-      const otherFilterArr = weaponData?.filter((item) => !weaponValues.includes(item?.id));
+      const otherFilterArr = weaponData?.filter((item) => !weaponValues?.includes(item?.id));
       return otherFilterArr
 
     }
@@ -1645,7 +1676,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     else if (loginAgencyState === 'TX' && (nibrsCode === '09A' || nibrsCode === '09B' || nibrsCode === '09C')) {
       const weaponData = data.filter((item) => { if (item?.id != '77' && item?.id != '99') return item });
 
-      const otherFilterArr = weaponData?.filter((item) => !weaponValues.includes(item?.id));
+      const otherFilterArr = weaponData?.filter((item) => !weaponValues?.includes(item?.id));
       return otherFilterArr
 
     }
@@ -1711,7 +1742,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   }
 
   const CrimeActivitychange = (multiSelected) => {
-    !addUpdatePermission && setChangesStatus(true);
+    !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
     setCrimeActivity(multiSelected);
     const len = multiSelected.length - 1
     if (multiSelected?.length < criminalActivityEditVal?.length) {
@@ -1750,26 +1781,26 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     const val = {
       'CrimeID': crimeId,
       'CreatedByUserFK': loginPinID,
-      'PretendToBeID': pretendToBeID.map((item) => item?.value),
-      'CrimePointOfExitID': crimePointOfExitID.map((item) => item?.value),
-      'CrimePointOfEntryID': crimePointOfEntry.map((item) => item?.value),
+      'PretendToBeID': pretendToBeID?.map((item) => item?.value),
+      'CrimePointOfExitID': crimePointOfExitID?.map((item) => item?.value),
+      'CrimePointOfEntryID': crimePointOfEntry?.map((item) => item?.value),
       'CrimeOffenderUseID': crimeOffenderUse?.map((item) => item?.value),
-      'CrimeActivityID': crimeActivity.map((item) => item?.value),
-      'CrimeBiasCategoryID': crimeBiasCategory.map((item) => item?.value),
-      'CrimeToolsUseID': crimeToolsUse.map((item) => item?.value),
-      'CrimeTargetID': crimeTarget.map((item) => item?.value),
-      'CrimeSuspectID': crimeSuspect.map((item) => item?.value),
-      'CrimeSecurityviolatedID': securityViolated.map((item) => item?.value),
-      'CrimeMethodOfOpeationID': methodOfOperation.map((item) => item?.value),
+      'CrimeActivityID': crimeActivity?.map((item) => item?.value),
+      'CrimeBiasCategoryID': crimeBiasCategory?.map((item) => item?.value),
+      'CrimeToolsUseID': crimeToolsUse?.map((item) => item?.value),
+      'CrimeTargetID': crimeTarget?.map((item) => item?.value),
+      'CrimeSuspectID': crimeSuspect?.map((item) => item?.value),
+      'CrimeSecurityviolatedID': securityViolated?.map((item) => item?.value),
+      'CrimeMethodOfOpeationID': methodOfOperation?.map((item) => item?.value),
       'CrimeMethodOfEntryID': [methodOfEntryCode],
-      'WeaponTypeID': weaponID.map((item) => item?.value),
+      'WeaponTypeID': weaponID?.map((item) => item?.value),
 
     }
     AddDeleteUpadate('Crime/Insert_OffenseInformation', val).then((res) => {
       if (res) {
         const parsedData = JSON.parse(res.data);
         const message = parsedData.Table[0].Message;
-        toastifySuccess(message);
+        // toastifySuccess(message);
         // GetBasicInfoData();
         get_Criminal_Activity_Data(crimeId);
         get_Crime_Bias_Category_Data(crimeId);
@@ -1905,7 +1936,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
 
   const CrimeBiasCategorychange = (multiSelected) => {
 
-    !addUpdatePermission && setChangesStatus(true);
+    !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
     setCrimeBiasCategory(multiSelected)
     const len = multiSelected.length - 1
     if (multiSelected?.length < crimeBiasCategoryEditVal?.length) {
@@ -1922,7 +1953,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   }
 
   const Weaponchange = (multiSelected) => {
-    !addUpdatePermission && setChangesStatus(true);
+    !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
     setWeaponID(multiSelected)
 
     const len = multiSelected.length - 1
@@ -1945,9 +1976,11 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     if (crimeOffenderUseEditVal) { setCrimeOffenderUse(crimeOffenderUseEditVal) }
   }, [crimeOffenderUseEditVal])
 
+
   useEffect(() => {
     if (crimeSuspectEditVal) { setCrimeSuspect(crimeSuspectEditVal) }
-  }, [crimeSuspectEditVal])
+  }, [crimeSuspectEditVal]);
+
 
   return (
     <>
@@ -2224,16 +2257,13 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                 />
               </div>
               <div className="custom-col-12" style={{ lineHeight: 1.1 }}>
-                <span data-toggle="modal" onClick={() => setOpenPage("Method Of Entry")} data-target="#ListModel"
-                  className="new-link px-0"
-
-                >
+                <span data-toggle="modal" onClick={() => setOpenPage("Method Of Entry")} data-target="#ListModel" className="new-link px-0" >
                   Method Of Entry
                   {methodOfEntryStatus ? (<ErrorTooltip ErrorStr={methodOfEntryError} />) : (<></>)}
                 </span>
                 <br />
-                {errors.MethodEntryError !== "true" ? (<div style={{ color: "red", fontSize: "13px", display: "block", display: "flex", width: "100%", justifyContent: "flex-end" }}  >
-                  {errors.MethodEntryError}
+                {errors.MethodOfEnrtyError !== "true" ? (<div style={{ color: "red", fontSize: "13px", display: "block", display: "flex", width: "100%", justifyContent: "flex-end" }}  >
+                  {errors.MethodOfEnrtyError}
                 </div>
                 ) : null}
               </div>
@@ -2254,10 +2284,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   onChange={(e) => changeDropDown(e, "CrimeMethodOfEntryID")}
                   placeholder="Select..."
                 />
-
-
-
-
               </div>
 
               <div className=" " style={{ flex: "0 0 21.3%", minWidth: "21.3%" }}>
@@ -2272,8 +2298,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   id='OffenseDateTime'
                   name='OffenseDateTime'
                   ref={startRef}
-
-
                   onKeyDown={(e) => {
                     if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
                       e?.preventDefault();
@@ -2321,7 +2345,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                 />
               </div>
 
-
               {nibrsCode === "220" || nibrsCode === "210" || nibrsCode === "120" || nibrsCode === "23D" || nibrsCode === "23F" || nibrsCode === "23H" || nibrsCode === "240" || nibrsCode === "26A" || nibrsCode === "26A" || nibrsCode === "23D" || nibrsCode === "26C" || nibrsCode === "26E" || nibrsCode === "26F" || nibrsCode === "26G" || nibrsCode === "270" || nibrsCode === "510" ?
                 <>
                   <div className="custom-col-12 " style={{ display: "flex", flexDirection: "column" }}>
@@ -2367,6 +2390,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                       <div className="text-end"> <span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block", }}>{errors.OffenderusingError}</span>
                       </div>
                     )}
+
                   </div>
                   <div className="col-9 col-md-9 col-lg-4">
                     <SelectBox
@@ -2377,10 +2401,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                       isMulti
                       isDisabled={nibrsSubmittedOffenseMain === 1}
                       styles={loginAgencyState == 'TX' ? nibrsCode === "999" ? customStylesWithOutColor : getCheckNotApplicable() ? Nibrs_ErrorStyle : MultiSelectRequredColor : MultiSelectRequredColor}
-                      // styles={
-                      //   (PanelCode === '03' || PanelCode === '06' || PanelCode === '08') ? customStylesWithColor :
-                      //     loginAgencyState == 'TX' ? getCheckNotApplicable() ? Nibrs_ErrorStyle : customStylesWithOutColor : customStylesWithOutColor
-                      // }
                       closeMenuOnSelect={false}
                       hideSelectedOptions={true}
                       components={{ MultiValue, }}
@@ -2421,14 +2441,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                           :
                           MultiSelectRequredColor
                       }
-                      // styles={
-                      //   loginAgencyState === 'TX' ?
-                      //     nibrsCode === '09C' && !bias09CCodeStatus ? ErrorStyle_NIBRS_09C(nibrsCode)
-                      //       :
-                      //       check_Valid_Bias_Code(BiasSelectCodeArray) ? Nibrs_ErrorStyle : customStylesWithOutColor
-                      //     :
-                      //     customStylesWithOutColor
-                      // }
                       isMulti
                       closeMenuOnSelect={false}
                       hideSelectedOptions={true}
@@ -2502,9 +2514,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   <div className="col-9 col-md-9 col-lg-4">
                     <SelectBox
                       className="basic-multi-select"
-
-                      // styles={customStylesWithOutMiltiColor}
-
                       styles={
                         loginAgencyState === 'TX'
                           ?
@@ -2531,52 +2540,17 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                       placeholder='Select Criminal Activity From List'
                     />
                   </div>
-                  <div className="col-4 col-md-4 custom-col-12 text-right">
-                    <label htmlFor="" className="new-label m-0 mb-0 text-nowrap">
-                      Comments
-                      {errors.CommentsError !== "true" ? (<span style={{ color: "red", fontSize: "13px", margin: "0px", padding: "0px", }}  >{errors.CommentsError}</span>) : null}
-                    </label>
-                  </div>
-                  <div className="col-9 col-md-9 col-lg-4 text-field mt-0">
-                    <textarea
-                      name="Comments"
-                      className={`form-control ${loginAgencyState === "TX" && nibrsCode === "11B" ? "requiredColor" : ""} `}
-                      value={value.Comments}
-                      onChange={handleChange}
-                      id=""
-                      cols="30"
-                      rows="2"
-                      style={{ resize: "none" }}
-                    ></textarea>
-                  </div>
-               
-
-              <div className="col-12 mt-1 ">
-                <div className="row align-items-center" style={{ rowGap: "8px" }}>
-                  <div className="custom-col-12"></div>
-                  <div className="col-2 col-md-2 col-lg-3 ml-4">
-                    <input className="form-check-input mr-1" disabled={true} type="checkbox" name="IsCrimeAgainstPerson" checked={isCrimeAgainstPerson} value={isCrimeAgainstPerson} />
-                    <label htmlFor="">Is Crime Against Person</label>
-                  </div>
-                  <div className="col-2 col-md-2 col-lg-3 ">
-                    <input className="form-check-input mr-1" disabled={true} type="checkbox" name="IsCrimeAgainstProperty" checked={isCrimeAgainstProperty} value={isCrimeAgainstProperty} />
-                    <label htmlFor="">Is Crime Against Property</label>
-                  </div>
-                  <div className="col-2 col-md-2 col-lg-3 ">
-                    <input className="form-check-input mr-1" disabled={true} type="checkbox" name="IsCrimeAgainstSociety" checked={isCrimeAgainstSociety} value={isCrimeAgainstSociety} />
-                    <label htmlFor="">Is Crime Against Society</label>
-                  </div>
+                 
                 </div>
               </div>
-            </div>
+
+        
 
 
 
 
 
-          </div>
-
-
+         
 
           <div className="text-center p-1">
             {

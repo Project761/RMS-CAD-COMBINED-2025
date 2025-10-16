@@ -832,7 +832,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
       }
     }
   }
-
+  
   const ChangeDropDown = (e, name) => {
     !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
     if (e) {
@@ -1249,11 +1249,14 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
           setChangesStatus(false); setStatesChangeStatus(false); setPossenSinglData([]); setDrugLocalArr([]);
           // validateIncSideBar
           validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
-          nibrsValidateProperty(mainIncidentID)
+          // nibrsValidateProperty(mainIncidentID)
         } else {
           toastifyError('error');
           setErrors({ ...errors, ['PropertyTypeIDError']: '', })
         }
+      }).catch((err) => {
+        toastifyError('error');
+        setErrors({ ...errors, ['PropertyTypeIDError']: '', })
       })
     }
   }
@@ -1308,7 +1311,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
         }
         // validateIncSideBar
         validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
-        nibrsValidateProperty(mainIncidentID)
+        // nibrsValidateProperty(mainIncidentID)
       } else {
         toastifyError('error');
         setErrors({ ...errors, ['PropertyTypeIDError']: '', })

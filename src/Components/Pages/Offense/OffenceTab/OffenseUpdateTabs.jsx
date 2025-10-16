@@ -45,7 +45,8 @@ const OffenceHomeTabs = () => {
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
 
-    const { changesStatus, localStoreArray, countoff, offenceFillterData, get_Incident_Count, incidentCount, get_Offence_Data, setEditval, countoffaduit, offenseCount, setOffenseCount, } = useContext(AgencyContext);
+    const { changesStatus, localStoreArray, countoff, offenceFillterData, get_Incident_Count, incidentCount, get_Offence_Data, setEditval, countoffaduit, offenseCount, setOffenseCount, offenseValidateNibrsData } = useContext(AgencyContext);
+
 
     const carouselRef = useRef(null);
     const crimeIdRef = useRef(null);
@@ -92,6 +93,13 @@ const OffenceHomeTabs = () => {
             getScreenPermision(localStoreData?.AgencyID, localStoreData?.PINID);
         }
     }, [localStoreData]);
+
+    // nibrs Validate Offense
+    useEffect(() => {
+        if (offenseValidateNibrsData?.Offense) {
+            setnibrsValidateOffenseData(offenseValidateNibrsData?.Offense);
+        }
+    }, [offenseValidateNibrsData]);
 
     useEffect(() => {
         if (IncID) {
@@ -273,30 +281,30 @@ const OffenceHomeTabs = () => {
                 </div>
             ),
         },
-        {
-            minWidth: "40px",
-            grow: 1,
-            name: "View",
-            cell: (row) => (
-                <div >
-                    {getOffenseNibrsError(row.CrimeID, nibrsValidateOffenseData) ? (
-                        <span
-                            onClick={(e) =>
-                                setOffenseErrString(row.CrimeID, nibrsValidateOffenseData)
-                            }
-                            className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
-                            data-toggle="modal"
-                            data-target="#NibrsErrorShowModal"
-                        >
-                            <i className="fa fa-eye"></i>
-                        </span>
-                    ) : (
-                        <></>
-                    )}
-                </div>
-            ),
-            // omit: row => getOffenseNibrsError(row.CrimeID, nibrsValidateOffenseData) ? false : true,
-        },
+        // {
+        //     minWidth: "40px",
+        //     grow: 1,
+        //     name: "View",
+        //     cell: (row) => (
+        //         <div >
+        //             {getOffenseNibrsError(row.CrimeID, nibrsValidateOffenseData) ? (
+        //                 <span
+        //                     onClick={(e) =>
+        //                         setOffenseErrString(row.CrimeID, nibrsValidateOffenseData)
+        //                     }
+        //                     className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
+        //                     data-toggle="modal"
+        //                     data-target="#NibrsErrorShowModal"
+        //                 >
+        //                     <i className="fa fa-eye"></i>
+        //                 </span>
+        //             ) : (
+        //                 <></>
+        //             )}
+        //         </div>
+        //     ),
+
+        // },
         {
             minWidth: "40px",
             grow: 1,
@@ -444,15 +452,15 @@ const OffenceHomeTabs = () => {
                                                         {/* Card Content */}
                                                         <div>
                                                             <div>
-                                                                <p className="mb-0 small" style={{ color: "black" }}><strong>{row.OffenseName_Description}</strong></p>
+                                                                <p className="mb-0 small" style={{ color: "black" }}><strong>{row.FBIID_Description}</strong></p>
                                                             </div>
                                                             <div>
-                                                                <p className="mb-0 small"> {row.DateOfBirth ? getShowingWithOutTime(row.DateOfBirth) : ""}</p>
+                                                                <p className="mb-0 small"> {row.OffenseName_Description}</p>
                                                             </div>
                                                             <div>
-                                                                <p className="mb-0 small">{row.Gender}</p>
+                                                                <p className="mb-0 small">{row.LawTitle_Description}</p>
                                                             </div>
-                                                            <div>
+                                                            {/* <div>
                                                                 <p
                                                                     className="mb-0 small"
                                                                     style={{
@@ -461,64 +469,153 @@ const OffenceHomeTabs = () => {
                                                                 >
                                                                     {row.FBIID_Description ? row.FBIID_Description.length > 40 ? `${row.FBIID_Description.substring(0, 50)} . . .` : row.FBIID_Description : ""}
                                                                 </p>
-                                                            </div>
+                                                            </div> */}
                                                         </div>
                                                         <div className="d-flex flex-column align-items-center gap-2 flex-shrink-0">
                                                             {/* Edit Button */}
-                                                            <div
-                                                                style={{
-                                                                    backgroundColor: "#001f3f",
-                                                                    color: "white",
-                                                                    width: "36px",
-                                                                    height: "36px",
-                                                                    borderRadius: "50%",
-                                                                    display: "flex",
-                                                                    alignItems: "center",
-                                                                    justifyContent: "center",
-                                                                    cursor: "pointer",
-                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                                                    marginBottom: "10px"
-                                                                    // transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                                                                }}
-                                                                // onMouseEnter={(e) => {
-                                                                //     e.currentTarget.style.transform = "scale(1.1)";
-                                                                //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
-                                                                // }}
-                                                                // onMouseLeave={(e) => {
-                                                                //     e.currentTarget.style.transform = "scale(1)";
-                                                                //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
-                                                                // }}
-                                                                onClick={() => {
-                                                                    setEditValOffense(row);
-                                                                    setResetErrors(true);
-                                                                }}
+                                                            {
+                                                                effectiveScreenPermission ?
+                                                                    <>
+                                                                        {
+                                                                            effectiveScreenPermission[0]?.Changeok ?
+                                                                                <>
+                                                                                    <div
+                                                                                        style={{
+                                                                                            backgroundColor: "#001f3f",
+                                                                                            color: "white",
+                                                                                            width: "36px",
+                                                                                            height: "36px",
+                                                                                            borderRadius: "50%",
+                                                                                            display: "flex",
+                                                                                            alignItems: "center",
+                                                                                            justifyContent: "center",
+                                                                                            cursor: "pointer",
+                                                                                            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                                            marginBottom: "10px"
+                                                                                            // transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                                                                                        }}
+                                                                                        // onMouseEnter={(e) => {
+                                                                                        //     e.currentTarget.style.transform = "scale(1.1)";
+                                                                                        //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
+                                                                                        // }}
+                                                                                        // onMouseLeave={(e) => {
+                                                                                        //     e.currentTarget.style.transform = "scale(1)";
+                                                                                        //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
+                                                                                        // }}
+                                                                                        onClick={() => {
+                                                                                            setEditValOffense(row);
+                                                                                            setResetErrors(true);
+                                                                                            setshowOffPage('home');
+                                                                                        }}
 
-                                                                title="Edit"
-                                                            >
-                                                                <i className="fa fa-edit"></i>
-                                                            </div>
+                                                                                        title="Edit"
+                                                                                    >
+                                                                                        <i className="fa fa-edit"></i>
+                                                                                    </div>
+
+                                                                                </>
+                                                                                :
+                                                                                <>
+                                                                                </>
+                                                                        }
+                                                                    </>
+                                                                    :
+                                                                    <>
+                                                                        <div
+                                                                            style={{
+                                                                                backgroundColor: "#001f3f",
+                                                                                color: "white",
+                                                                                width: "36px",
+                                                                                height: "36px",
+                                                                                borderRadius: "50%",
+                                                                                display: "flex",
+                                                                                alignItems: "center",
+                                                                                justifyContent: "center",
+                                                                                cursor: "pointer",
+                                                                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                                marginBottom: "10px"
+                                                                                // transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                                                                            }}
+                                                                            // onMouseEnter={(e) => {
+                                                                            //     e.currentTarget.style.transform = "scale(1.1)";
+                                                                            //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
+                                                                            // }}
+                                                                            // onMouseLeave={(e) => {
+                                                                            //     e.currentTarget.style.transform = "scale(1)";
+                                                                            //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
+                                                                            // }}
+                                                                            onClick={() => {
+                                                                                setEditValOffense(row);
+                                                                                setResetErrors(true);
+                                                                                setshowOffPage('home');
+                                                                            }}
+
+                                                                            title="Edit"
+                                                                        >
+                                                                            <i className="fa fa-edit"></i>
+                                                                        </div>
+
+                                                                    </>
+                                                            }
 
                                                             {/* Delete Button */}
-                                                            <div
-                                                                style={{
-                                                                    backgroundColor: "#001f3f",
-                                                                    color: "white",
-                                                                    width: "36px",
-                                                                    height: "36px",
-                                                                    borderRadius: "50%",
-                                                                    display: "flex",
-                                                                    alignItems: "center",
-                                                                    justifyContent: "center",
-                                                                    cursor: "pointer",
-                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                                                }}
-                                                                data-toggle="modal"
-                                                                data-target="#DeleteModal"
-                                                                onClick={() => setCrimeId(row.CrimeID)}
-                                                                title="Delete"
-                                                            >
-                                                                <i className="fa fa-trash"></i>
-                                                            </div>
+                                                            {
+                                                                effectiveScreenPermission ?
+                                                                    <>
+                                                                        {
+                                                                            effectiveScreenPermission[0]?.DeleteOK ?
+                                                                                <>
+                                                                                    <div
+                                                                                        style={{
+                                                                                            backgroundColor: "#001f3f",
+                                                                                            color: "white",
+                                                                                            width: "36px",
+                                                                                            height: "36px",
+                                                                                            borderRadius: "50%",
+                                                                                            display: "flex",
+                                                                                            alignItems: "center",
+                                                                                            justifyContent: "center",
+                                                                                            cursor: "pointer",
+                                                                                            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                                        }}
+                                                                                        data-toggle="modal"
+                                                                                        data-target="#DeleteModal"
+                                                                                        onClick={() => setCrimeId(row.CrimeID)}
+                                                                                        title="Delete"
+                                                                                    >
+                                                                                        <i className="fa fa-trash"></i>
+                                                                                    </div>
+                                                                                </>
+                                                                                :
+                                                                                <>
+                                                                                </>
+                                                                        }
+                                                                    </>
+                                                                    :
+                                                                    <>
+                                                                        <div
+                                                                            style={{
+                                                                                backgroundColor: "#001f3f",
+                                                                                color: "white",
+                                                                                width: "36px",
+                                                                                height: "36px",
+                                                                                borderRadius: "50%",
+                                                                                display: "flex",
+                                                                                alignItems: "center",
+                                                                                justifyContent: "center",
+                                                                                cursor: "pointer",
+                                                                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                            }}
+                                                                            data-toggle="modal"
+                                                                            data-target="#DeleteModal"
+                                                                            onClick={() => setCrimeId(row.CrimeID)}
+                                                                            title="Delete"
+                                                                        >
+                                                                            <i className="fa fa-trash"></i>
+                                                                        </div>
+                                                                    </>
+                                                            }
+
                                                         </div>
                                                     </div>
                                                 ))}
@@ -539,6 +636,7 @@ const OffenceHomeTabs = () => {
                                                         customStyles={tableCustomStyles}
                                                         onRowClicked={(row) => {
                                                             setEditValOffense(row);
+                                                            setshowOffPage('home');
                                                         }}
                                                         conditionalRowStyles={mergedConditionalRowStyles}
                                                         // conditionalRowStyles={conditionalRowStyles1}
