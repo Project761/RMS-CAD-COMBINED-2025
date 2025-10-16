@@ -301,7 +301,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     const CriminalActivityErr = checkCriminalActivityIsRequire(nibrsCode, loginAgencyState) ? validateFields(crimeActivity) : 'true';
 
     const offenderusingErr = nibrsCode != "999" ? RequiredFieldIncidentOffender(crimeOffenderUse) : 'true';
-    const CrimeBiasCategoryErr = nibrsCode != "999" ? validateFields(crimeBiasCategory) : 'true';
+    const CrimeBiasCategoryErr = nibrsCode != "999"  ? validateFields(crimeBiasCategory) : 'true';
 
 
     setErrors((pre) => {
@@ -1797,7 +1797,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
       if (res) {
         const parsedData = JSON.parse(res.data);
         const message = parsedData.Table[0].Message;
-        toastifySuccess(message);
+        // toastifySuccess(message);
         // GetBasicInfoData();
         get_Criminal_Activity_Data(crimeId);
         get_Crime_Bias_Category_Data(crimeId);
@@ -2533,44 +2533,11 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                       placeholder='Select Criminal Activity From List'
                     />
                   </div>
-                  <div className="col-4 col-md-4 custom-col-12 text-right">
-                    <label htmlFor="" className="new-label m-0 mb-0 text-nowrap">
-                      Comments
-                      {errors.CommentsError !== "true" ? (<span style={{ color: "red", fontSize: "13px", margin: "0px", padding: "0px", }}  >{errors.CommentsError}</span>) : null}
-                    </label>
-                  </div>
-                  <div className="col-9 col-md-9 col-lg-4 text-field mt-0">
-                    <textarea
-                      name="Comments"
-                      className={`form-control ${loginAgencyState === "TX" && nibrsCode === "11B" ? "requiredColor" : ""} `}
-                      value={value.Comments}
-                      onChange={handleChange}
-                      id=""
-                      cols="30"
-                      rows="2"
-                      style={{ resize: "none" }}
-                    ></textarea>
-                  </div>
+                 
                 </div>
               </div>
 
-              <div className="col-12 mt-1 ">
-                <div className="row align-items-center" style={{ rowGap: "8px" }}>
-                  <div className="custom-col-12"></div>
-                  <div className="col-2 col-md-2 col-lg-3 ml-4">
-                    <input className="form-check-input mr-1" disabled={true} type="checkbox" name="IsCrimeAgainstPerson" checked={isCrimeAgainstPerson} value={isCrimeAgainstPerson} />
-                    <label htmlFor="">Is Crime Against Person</label>
-                  </div>
-                  <div className="col-2 col-md-2 col-lg-3 ">
-                    <input className="form-check-input mr-1" disabled={true} type="checkbox" name="IsCrimeAgainstProperty" checked={isCrimeAgainstProperty} value={isCrimeAgainstProperty} />
-                    <label htmlFor="">Is Crime Against Property</label>
-                  </div>
-                  <div className="col-2 col-md-2 col-lg-3 ">
-                    <input className="form-check-input mr-1" disabled={true} type="checkbox" name="IsCrimeAgainstSociety" checked={isCrimeAgainstSociety} value={isCrimeAgainstSociety} />
-                    <label htmlFor="">Is Crime Against Society</label>
-                  </div>
-                </div>
-              </div>
+             
             </div>
           </div>
 

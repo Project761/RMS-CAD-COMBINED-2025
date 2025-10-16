@@ -17,7 +17,7 @@ export const RequiredFieldIncident = (field) => {
 };
 
 export const RequiredFieldIncidentOffender = (field) => {
-	if (field.length > 0) {
+	if (field?.length > 0) {
 		return 'true'
 	} else {
 		return 'Required *';

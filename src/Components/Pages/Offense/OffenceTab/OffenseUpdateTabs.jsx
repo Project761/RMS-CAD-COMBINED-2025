@@ -303,7 +303,7 @@ const OffenceHomeTabs = () => {
         //             )}
         //         </div>
         //     ),
-           
+
         // },
         {
             minWidth: "40px",
@@ -504,6 +504,7 @@ const OffenceHomeTabs = () => {
                                                                                         onClick={() => {
                                                                                             setEditValOffense(row);
                                                                                             setResetErrors(true);
+                                                                                            setshowOffPage('home');
                                                                                         }}
 
                                                                                         title="Edit"
@@ -545,6 +546,7 @@ const OffenceHomeTabs = () => {
                                                                             onClick={() => {
                                                                                 setEditValOffense(row);
                                                                                 setResetErrors(true);
+                                                                                setshowOffPage('home');
                                                                             }}
 
                                                                             title="Edit"
@@ -633,6 +635,7 @@ const OffenceHomeTabs = () => {
                                                         customStyles={tableCustomStyles}
                                                         onRowClicked={(row) => {
                                                             setEditValOffense(row);
+                                                            setshowOffPage('home');
                                                         }}
                                                         conditionalRowStyles={mergedConditionalRowStyles}
                                                         // conditionalRowStyles={conditionalRowStyles1}
