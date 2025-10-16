@@ -198,6 +198,7 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                     navigate(`/Prop-Home?IncId=${stringToBase64(DecIncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${stringToBase64(row?.PropertyID)}&MProId=${stringToBase64(row?.MasterPropertyID)}&ProSta=${true}&ProCategory=${row.PropertyType_Description}`);
 
                 }
+                setShowPage('home')
                 get_Property_Count(row?.PropertyID, row?.MasterPropertyID, MstPage === "MST-Property-Dash" ? true : false);
                 setMasterPropertyID(row?.MasterPropertyID); dispatch({ type: MasterProperty_ID, payload: row?.MasterPropertyID });
                 setPropertyID(row?.PropertyID); dispatch({ type: Property_ID, payload: row.PropertyID });
@@ -273,7 +274,7 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
     ]
 
     const Delete_Property = () => {
-    
+
         const val = { 'PropertyID': delPropertyID, 'DeletedByUserFK': loginPinID, 'IsMaster': MstPage === "MST-Property-Dash" ? true : false, }
         AddDeleteUpadate('Property/Delete_Property', val).then((res) => {
             if (res) {
@@ -324,21 +325,30 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                                                         style={{
                                                             cursor: "pointer",
                                                             borderLeft: nibrsValidateData?.some(item => item?.PropertyID === row?.PropertyID) ? "5px solid #EB0101" : "5px solid #2DEB7A",
+                                                            backgroundColor: row?.PropertyID === propertyID ? "#425971" : "#ffffff",
                                                         }}
+
                                                     >
                                                         {/* Card Content */}
                                                         <div>
                                                             <div>
-                                                                <p className="mb-0 small" style={{ color: "black" }}><strong>{row.PropertyNumber}</strong></p>
+                                                                <p className="mb-0 small" style={{ color: row?.PropertyID === propertyID ? "white" : "black" }}>
+                                                                    <strong>{row.PropertyNumber}</strong></p>
                                                             </div>
                                                             <div>
-                                                                <p className="mb-0 small">{row.PropertyType_Description}</p>
+                                                                <p className="mb-0 small" style={{ color: row?.PropertyID === propertyID ? "white" : "black" }}>
+                                                                    {/* {row.PropertyType_Description} */}
+                                                                    {row.PropertyType_Description ? row.PropertyType_Description.length > 40 ? `${row.PropertyType_Description.substring(0, 50)} . . .` : row.PropertyType_Description : ""}
+                                                                </p>
                                                             </div>
                                                             <div>
-                                                                <p className="mb-0 small"> {row.PropertyLossCode_Description}</p>
+                                                                <p className="mb-0 small" style={{ color: row?.PropertyID === propertyID ? "white" : "black" }}>
+                                                                    {/* {row.PropertyLossCode_Description} */}
+                                                                    {row.PropertyLossCode_Description ? row.PropertyLossCode_Description.length > 40 ? `${row.PropertyLossCode_Description.substring(0, 50)} . . .` : row.PropertyLossCode_Description : ""}
+                                                                </p>
                                                             </div>
                                                             <div>
-                                                                <p className="mb-0 small" style={{ color: "black", }} >
+                                                                <p className="mb-0 small" style={{ color: row?.PropertyID === propertyID ? "white" : "black" }} >
                                                                     {row.PropertyCategory_Description ? row.PropertyCategory_Description.length > 40 ? `${row.PropertyCategory_Description.substring(0, 50)} . . .` : row.PropertyCategory_Description : ""}
                                                                 </p>
                                                             </div>
