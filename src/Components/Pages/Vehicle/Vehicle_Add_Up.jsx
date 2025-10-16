@@ -34,7 +34,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
 
     const dispatch = useDispatch()
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
-    const { changesStatus, vehicleCount, get_vehicle_Count, countoffaduit, get_Incident_Count, get_Data_Vehicle, VehicleFilterData, incidentCount, incidentReportedDate, setIncidentReportedDate } = useContext(AgencyContext);
+    const { changesStatus, vehicleCount, get_vehicle_Count, countoffaduit, get_Incident_Count, get_Data_Vehicle, VehicleFilterData, incidentCount, incidentReportedDate, setIncidentReportedDate, propertyValidateNibrsData } = useContext(AgencyContext);
     const [propertystatus, setPropertyStatus] = useState('');
     const [IsNonPropertyRoomSelected, setIsNonPropertyRoomSelected] = useState(false);
 
@@ -91,8 +91,6 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
     const NameCount = incidentCount[0]?.VehicleCount || 0;
 
 
-  
-
     useEffect(() => {
         if (IncID) {
             // setMainIncidentID(IncID); 
@@ -106,6 +104,13 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
             setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
         }
     }, [localStoreData]);
+
+
+    useEffect(() => {
+        if (propertyValidateNibrsData?.Property) {
+            setnibrsValidateData(propertyValidateNibrsData?.Property);
+        }
+    }, [propertyValidateNibrsData]);
 
 
     useEffect(() => {
@@ -338,7 +343,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
         });
     }
 
- 
+
 
     return (
         <div className=" section-body pt-1 p-1 bt" >
@@ -364,7 +369,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                                         key={index}
                                                         style={{
                                                             cursor: "pointer",
-                                                            // borderLeft: nibrsNameValidateArray?.some(item => item?.NameEventID === row?.NameID) ? "5px solid #EB0101" : "5px solid #2DEB7A",
+                                                            borderLeft: nibrsValidateData?.some(item => item?.PropertyID === row?.PropertyID) ? "5px solid #EB0101" : "5px solid #2DEB7A",
                                                         }}
                                                     >
                                                         {/* Card Content */}
@@ -454,7 +459,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                                                 //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
                                                                 // }}
                                                                 data-toggle="modal"
-                                                                 data-target="#DeleteModal"
+                                                                data-target="#DeleteModal"
                                                                 onClick={() => setVehicleID(row.PropertyID)}
                                                                 title="Delete"
                                                             >
