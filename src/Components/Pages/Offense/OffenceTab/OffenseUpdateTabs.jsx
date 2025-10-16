@@ -464,60 +464,147 @@ const OffenceHomeTabs = () => {
                                                         </div>
                                                         <div className="d-flex flex-column align-items-center gap-2 flex-shrink-0">
                                                             {/* Edit Button */}
-                                                            <div
-                                                                style={{
-                                                                    backgroundColor: "#001f3f",
-                                                                    color: "white",
-                                                                    width: "36px",
-                                                                    height: "36px",
-                                                                    borderRadius: "50%",
-                                                                    display: "flex",
-                                                                    alignItems: "center",
-                                                                    justifyContent: "center",
-                                                                    cursor: "pointer",
-                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                                                    marginBottom: "10px"
-                                                                    // transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                                                                }}
-                                                                // onMouseEnter={(e) => {
-                                                                //     e.currentTarget.style.transform = "scale(1.1)";
-                                                                //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
-                                                                // }}
-                                                                // onMouseLeave={(e) => {
-                                                                //     e.currentTarget.style.transform = "scale(1)";
-                                                                //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
-                                                                // }}
-                                                                onClick={() => {
-                                                                    setEditValOffense(row);
-                                                                    setResetErrors(true);
-                                                                }}
+                                                            {
+                                                                effectiveScreenPermission ?
+                                                                    <>
+                                                                        {
+                                                                            effectiveScreenPermission[0]?.Changeok ?
+                                                                                <>
+                                                                                    <div
+                                                                                        style={{
+                                                                                            backgroundColor: "#001f3f",
+                                                                                            color: "white",
+                                                                                            width: "36px",
+                                                                                            height: "36px",
+                                                                                            borderRadius: "50%",
+                                                                                            display: "flex",
+                                                                                            alignItems: "center",
+                                                                                            justifyContent: "center",
+                                                                                            cursor: "pointer",
+                                                                                            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                                            marginBottom: "10px"
+                                                                                            // transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                                                                                        }}
+                                                                                        // onMouseEnter={(e) => {
+                                                                                        //     e.currentTarget.style.transform = "scale(1.1)";
+                                                                                        //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
+                                                                                        // }}
+                                                                                        // onMouseLeave={(e) => {
+                                                                                        //     e.currentTarget.style.transform = "scale(1)";
+                                                                                        //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
+                                                                                        // }}
+                                                                                        onClick={() => {
+                                                                                            setEditValOffense(row);
+                                                                                            setResetErrors(true);
+                                                                                        }}
 
-                                                                title="Edit"
-                                                            >
-                                                                <i className="fa fa-edit"></i>
-                                                            </div>
+                                                                                        title="Edit"
+                                                                                    >
+                                                                                        <i className="fa fa-edit"></i>
+                                                                                    </div>
+
+                                                                                </>
+                                                                                :
+                                                                                <>
+                                                                                </>
+                                                                        }
+                                                                    </>
+                                                                    :
+                                                                    <>
+                                                                        <div
+                                                                            style={{
+                                                                                backgroundColor: "#001f3f",
+                                                                                color: "white",
+                                                                                width: "36px",
+                                                                                height: "36px",
+                                                                                borderRadius: "50%",
+                                                                                display: "flex",
+                                                                                alignItems: "center",
+                                                                                justifyContent: "center",
+                                                                                cursor: "pointer",
+                                                                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                                marginBottom: "10px"
+                                                                                // transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                                                                            }}
+                                                                            // onMouseEnter={(e) => {
+                                                                            //     e.currentTarget.style.transform = "scale(1.1)";
+                                                                            //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
+                                                                            // }}
+                                                                            // onMouseLeave={(e) => {
+                                                                            //     e.currentTarget.style.transform = "scale(1)";
+                                                                            //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
+                                                                            // }}
+                                                                            onClick={() => {
+                                                                                setEditValOffense(row);
+                                                                                setResetErrors(true);
+                                                                            }}
+
+                                                                            title="Edit"
+                                                                        >
+                                                                            <i className="fa fa-edit"></i>
+                                                                        </div>
+
+                                                                    </>
+                                                            }
 
                                                             {/* Delete Button */}
-                                                            <div
-                                                                style={{
-                                                                    backgroundColor: "#001f3f",
-                                                                    color: "white",
-                                                                    width: "36px",
-                                                                    height: "36px",
-                                                                    borderRadius: "50%",
-                                                                    display: "flex",
-                                                                    alignItems: "center",
-                                                                    justifyContent: "center",
-                                                                    cursor: "pointer",
-                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                                                }}
-                                                                data-toggle="modal"
-                                                                data-target="#DeleteModal"
-                                                                onClick={() => setCrimeId(row.CrimeID)}
-                                                                title="Delete"
-                                                            >
-                                                                <i className="fa fa-trash"></i>
-                                                            </div>
+                                                            {
+                                                                effectiveScreenPermission ?
+                                                                    <>
+                                                                        {
+                                                                            effectiveScreenPermission[0]?.DeleteOK ?
+                                                                                <>
+                                                                                    <div
+                                                                                        style={{
+                                                                                            backgroundColor: "#001f3f",
+                                                                                            color: "white",
+                                                                                            width: "36px",
+                                                                                            height: "36px",
+                                                                                            borderRadius: "50%",
+                                                                                            display: "flex",
+                                                                                            alignItems: "center",
+                                                                                            justifyContent: "center",
+                                                                                            cursor: "pointer",
+                                                                                            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                                        }}
+                                                                                        data-toggle="modal"
+                                                                                        data-target="#DeleteModal"
+                                                                                        onClick={() => setCrimeId(row.CrimeID)}
+                                                                                        title="Delete"
+                                                                                    >
+                                                                                        <i className="fa fa-trash"></i>
+                                                                                    </div>
+                                                                                </>
+                                                                                :
+                                                                                <>
+                                                                                </>
+                                                                        }
+                                                                    </>
+                                                                    :
+                                                                    <>
+                                                                        <div
+                                                                            style={{
+                                                                                backgroundColor: "#001f3f",
+                                                                                color: "white",
+                                                                                width: "36px",
+                                                                                height: "36px",
+                                                                                borderRadius: "50%",
+                                                                                display: "flex",
+                                                                                alignItems: "center",
+                                                                                justifyContent: "center",
+                                                                                cursor: "pointer",
+                                                                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                            }}
+                                                                            data-toggle="modal"
+                                                                            data-target="#DeleteModal"
+                                                                            onClick={() => setCrimeId(row.CrimeID)}
+                                                                            title="Delete"
+                                                                        >
+                                                                            <i className="fa fa-trash"></i>
+                                                                        </div>
+                                                                    </>
+                                                            }
+
                                                         </div>
                                                     </div>
                                                 ))}
