@@ -51,8 +51,9 @@ const OffenceHomeTabs = () => {
     const crimeIdRef = useRef(null);
     const PropertyCount = incidentCount[0]?.PropertyCount || 0;
     const PropertyDrugCount = incidentCount[0]?.PropertyDrugCount || 0;
+    const VehicleCount = incidentCount[0]?.VehicleCount || 0;
     const [ListData, setListData] = useState([]);
-    const [status, setStatus] = useState()
+    const [status, setStatus] = useState();
     const [mainIncidentID, setMainIncidentID] = useState('');
     const [offenceID, setOffenceID] = useState('');
     const [loginAgencyID, setLoginAgencyID] = useState('');
@@ -74,7 +75,6 @@ const OffenceHomeTabs = () => {
     const [crimeId, setCrimeId] = useState("");
     const [ResetErrors, setResetErrors] = useState(false);
     const [delCrimeId, setDelCrimeId] = useState("");
-
     // const [nibrsCode, setNibrsCode] = useState('09C');
 
     const iconHome = <i className="fa fa-home" style={{ fontSize: '20px' }}></i>
@@ -137,7 +137,6 @@ const OffenceHomeTabs = () => {
             }
         })
     }
-
 
     const columns = [
         {
@@ -209,10 +208,8 @@ const OffenceHomeTabs = () => {
                     }
                 </div>
             ),
-
         },
         {
-
             minWidth: "120px",
             grow: 1,
             cell: (row) => (
@@ -232,7 +229,6 @@ const OffenceHomeTabs = () => {
                     )}
                 </div>
             ),
-
         },
         {
             minWidth: "110px",
@@ -265,7 +261,11 @@ const OffenceHomeTabs = () => {
                             onClick={(e) => {
                                 navigate(`/Vehicle-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${0}&MVehId=${0}&VehSta=${false}&FbiCode=${row.FBICode}&AttComp=${row?.AttemptComplete === "Completed" ? "C" : "A"}`);
                             }}
-                            className={`btn btn-sm bg-green text-white px-2 py-0 mr-1`}
+                            // className={`btn btn-sm bg-green text-white px-2 py-0 mr-1`}
+                            className={`btn btn-sm  text-white px-2 py-0 mr-1 `}
+                            style={{
+                                backgroundColor: (row?.FBICode === "240" && VehicleCount === 0) ? "red" : "#19aea3",
+                            }}
                         >
                             Vehicle
                         </span>
@@ -338,27 +338,19 @@ const OffenceHomeTabs = () => {
             ),
         },
     ];
+
+
     const setEditValOffense = (row) => {
-        console.log(row)
         setCrimeId(row.CrimeID);
         if (changesStatus) {
             const modal = new window.bootstrap.Modal(document?.getElementById('SaveModal'));
             modal?.show();
         } else {
             if (row.CrimeID) {
-                // setStatesChangeStatus(false);
                 navigate(`/Off-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${stringToBase64(row.CrimeID)}&OffSta=${true}`);
-                // setErrors({ ...errors, ChargeCodeIDError: "", NibrsIdError: "" });
-                // GetSingleData(row.CrimeID);
-                //    get_Offence_Count(row.CrimeID);
-                //    NibrsErrorReturn(row.CrimeID);
                 setCrimeId(row.CrimeID);
-                // setOffenceID(row?.CrimeID);
                 setStatus(true);
-                // Reset();
             }
-            // setUpdateCount(updateCount + 1);
-            //  setIncStatus(true);
         }
     };
 
@@ -378,7 +370,6 @@ const OffenceHomeTabs = () => {
         const arr = nibrsValidateOffenseData?.filter(
             (item) => item?.CrimeID === CrimeID
         );
-        // console.log("🚀 ~ getOffenseNibrsError ~ arr:", arr);
         setNibrsOffErrStr(arr[0]?.OnPageError);
         setNibrsErrModalStatus(true);
     };
@@ -405,27 +396,9 @@ const OffenceHomeTabs = () => {
 
     const setStatusFalse = (e) => {
         navigate(`/Off-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${0}&OffSta=${false}&isNew=${true}`);
-        // NIBRSCodeDrpDwnVal(loginAgencyID, 0);
         setCrimeId('');
         setStatus(false);
-        // Reset();
     };
-
-
-    // const GetSingleData = (crimeId) => {
-    //     const val = { CrimeID: crimeId };
-    //     fetchPostData("Crime/GetSingleData_Offense", val).then((res) => {
-    //         if (res) {
-    //             setEditval(res);
-    //             const PanelCode = res[0]?.PanelCode;
-    //             // setPanelCode(PanelCode)
-    //         } else {
-    //             setEditval();
-    //         }
-    //     });
-    // };
-
-
 
     const DeleteOffence = () => {
         const val = { CrimeID: crimeId, DeletedByUserFK: loginPinID };
@@ -437,15 +410,9 @@ const OffenceHomeTabs = () => {
             get_Offence_Data(mainIncidentID);
             setStatusFalse();
             setResetErrors(true);
-            //  Reset();
         });
     };
 
-    // const handleDeleteClick = (row) => {
-    //     setCrimeId(row.CrimeID);
-    // };
-
-    console.log(offenceFillterData, crimeId, loginPinID)
     return (
         <div className=" section-body pt-1 p-1 bt" >
             <div className="div">
@@ -470,7 +437,7 @@ const OffenceHomeTabs = () => {
                                                         key={index}
                                                         style={{
                                                             cursor: "pointer",
-                                                            // borderLeft: nibrsNameValidateArray?.some(item => item?.NameEventID === row?.NameID) ? "5px solid #EB0101" : "5px solid #2DEB7A",
+                                                            borderLeft: nibrsValidateOffenseData?.some(item => item?.CrimeID === row?.CrimeID) ? "5px solid #EB0101" : "5px solid #2DEB7A",
                                                         }}
                                                     >
                                                         {/* Card Content */}
@@ -488,14 +455,7 @@ const OffenceHomeTabs = () => {
                                                                 <p
                                                                     className="mb-0 small"
                                                                     style={{
-                                                                        color:
-                                                                            row.RoleName === "Other" ? "orange"
-                                                                                :
-                                                                                row.RoleName === "Victim" ? "green"
-                                                                                    :
-                                                                                    row.RoleName === "Offender" ? "red"
-                                                                                        :
-                                                                                        "black",
+                                                                        color: "black",
                                                                     }}
                                                                 >
                                                                     {row.FBIID_Description ? row.FBIID_Description.length > 40 ? `${row.FBIID_Description.substring(0, 50)} . . .` : row.FBIID_Description : ""}
@@ -550,59 +510,15 @@ const OffenceHomeTabs = () => {
                                                                     justifyContent: "center",
                                                                     cursor: "pointer",
                                                                     boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                                                    // transition: "transform 0.2s ease, box-shadow 0.2s ease",
                                                                 }}
-                                                                // onMouseEnter={(e) => {
-                                                                //     e.currentTarget.style.transform = "scale(1.1)";
-                                                                //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
-                                                                // }}
-                                                                // onMouseLeave={(e) => {
-                                                                //     e.currentTarget.style.transform = "scale(1)";
-                                                                //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
-                                                                // }}
                                                                 data-toggle="modal"
                                                                 data-target="#DeleteModal"
-                                                                // onClick={() => handleDeleteClick(row)}
                                                                 onClick={() => setCrimeId(row.CrimeID)}
                                                                 title="Delete"
                                                             >
                                                                 <i className="fa fa-trash"></i>
                                                             </div>
                                                         </div>
-                                                        {/* <div className="d-fle flex-column gap-2 flex-shrink-0">
-                                                                                            <div
-                                                                                                style={{
-                                                                                                    backgroundColor: "#001f3f",
-                                                                                                    padding: "8px",
-                                                                                                    borderRadius: "50%",
-                                                                                                    display: "flex",
-                                                                                                    alignItems: "center",
-                                                                                                    justifyContent: "center",
-                                                                                                    cursor: "pointer",
-                                                                                                    marginBottom: "10px"
-                                                                                                }}
-                                                                                                className="text-white "
-                                                                                                onClick={() => { set_Edit_Value(row); setResetErrors(true) }}
-                                                                                            >
-                                                                                                <i className="fa fa-edit"></i>
-                                                                                            </div>
-                                                                                            <div
-                                                                                                style={{
-                                                                                                    backgroundColor: "#001f3f",
-                                                                                                    padding: "8px",
-                                                                                                    borderRadius: "50%",
-                                                                                                    display: "flex",
-                                                                                                    alignItems: "center",
-                                                                                                    justifyContent: "center",
-                                                                                                    cursor: "pointer",
-                                                                                                    fontSize: '20px'
-                                                                                                }}
-                                                                                                className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteNameModal"
-                                                                                                onClick={() => { setNameID(row.NameID); }}
-                                                                                            >
-                                                                                                <i className="fa fa-trash"></i>
-                                                                                            </div>
-                                                                                        </div> */}
                                                     </div>
                                                 ))}
                                             </div>
@@ -610,7 +526,6 @@ const OffenceHomeTabs = () => {
                                             :
                                             viewType === "list" ? (
                                                 <div className="modal-table" style={{ flex: "0 0 95%", maxWidth: "95%" }}>
-
                                                     <DataTable
                                                         showHeader={true}
                                                         persistTableHead={true}
@@ -672,9 +587,9 @@ const OffenceHomeTabs = () => {
                                                         className={`nav-item ${showOffPage === 'CrimeInformation' ? 'active' : ''}${!status ? 'disabled' : ''}`}
                                                         data-toggle={changesStatus ? "modal" : "pill"}
                                                         data-target={changesStatus ? "#SaveModal" : ''}
-                                                        // to={`/Off-Home?IncId=${IncID}WVX?OffId=${OffId}`}
+
                                                         style={{ color: showOffPage === 'CrimeInformation' ? 'Red' : offenseCount?.CrimeInfoCount != "0" ? 'blue' : '#000' }}
-                                                        // style={{ color: showOffPage === 'CrimeInformation' ? 'Red' : countoff === true ? 'blue' : '#000' }}
+
                                                         aria-current="page"
                                                         onClick={() => { if (!changesStatus) setshowOffPage('CrimeInformation') }}
 
@@ -685,13 +600,9 @@ const OffenceHomeTabs = () => {
                                                         className={`nav-item ${showOffPage === 'AuditLog' ? 'active' : ''}${!status ? 'disabled' : ''}`}
                                                         data-toggle={changesStatus ? "modal" : "pill"}
                                                         data-target={changesStatus ? "#SaveModal" : ''}
-                                                        // to={`/Off-Home?IncId=${IncID}WVX?OffId=${OffId}`} 
-                                                        // style={{ color: showOffPage === 'AuditLog' ? 'Red' : '#000' }}
                                                         style={{ color: showOffPage === 'AuditLog' ? 'Red' : countoffaduit === true ? 'blue' : '#000' }}
-
                                                         aria-current="page"
                                                         onClick={() => { if (!changesStatus) setshowOffPage('AuditLog') }}
-
                                                     >
                                                         Audit Log
                                                     </span>
