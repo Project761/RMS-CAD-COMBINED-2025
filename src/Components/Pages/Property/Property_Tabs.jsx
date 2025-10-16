@@ -149,9 +149,16 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
     }, [localStoreData]);
 
     useEffect(() => {
-        if (propertyValidateNibrsData?.Property) {
-            setnibrsValidateData(propertyValidateNibrsData?.Property);
-        }
+        const arr = [
+            {
+                PropertyID: 7081,
+                OnPageError: "This is Testing Error ",
+            }
+        ]
+        setnibrsValidateData(arr);
+        // if (propertyValidateNibrsData?.Property) {
+        //     setnibrsValidateData(propertyValidateNibrsData?.Property);
+        // }
     }, [propertyValidateNibrsData]);
 
     useEffect(() => {
@@ -300,6 +307,17 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
         setShowPage('home')
     };
 
+    const getCardColor = (rowPropertyID, propertyID) => {
+        if (rowPropertyID == propertyID) {
+            return "#425971";
+        } else {
+            const arr = nibrsValidateData?.filter((item) => item?.PropertyID == rowPropertyID);
+            // console.log("🚀 ~ getCardColor ~ nibrsValidateData:", nibrsValidateData)
+            // console.log("🚀 ~ getCardColor ~ arr:", arr)
+            return arr.length > 0 ? "#EB0101" : "#2DEB7A";
+        }
+    }
+
     return (
         <div className="section-body  pt-1 p-1 bt" >
             <div className="div">
@@ -326,6 +344,7 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                                                             cursor: "pointer",
                                                             borderLeft: nibrsValidateData?.some(item => item?.PropertyID === row?.PropertyID) ? "5px solid #EB0101" : "5px solid #2DEB7A",
                                                             backgroundColor: row?.PropertyID === propertyID ? "#425971" : "#ffffff",
+                                                            // backgroundColor: getCardColor(row?.PropertyID, propertyID) ? getCardColor(row?.PropertyID, propertyID) : "#ffffff",
                                                         }}
 
                                                     >
