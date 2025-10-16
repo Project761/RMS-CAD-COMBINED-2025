@@ -278,6 +278,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   const nibrsCodeValue = ["09A", "09B", "100", "120", "11A", "11B", "11C", "11D", "13A", "13B", "13C"]
 
   const check_Validation_Error = (e) => {
+    console.log("🚀 ~ check_Validation_Error ~ e:", value?.CrimeMethodOfEntryID)
     if (value?.SecondaryLocationId && value?.PrimaryLocationId === value?.SecondaryLocationId) {
       toastifyError("The primary location and secondary location cannot be the same.");
       return;
@@ -288,7 +289,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     const PrimaryLocationErr = ((panelCode === "03" || panelCode === "07" || panelCode === "06") ? RequiredFieldIncident(value?.PrimaryLocationId) : check_Valid_Nibrs_Code(nibrsCode) ? "true" : RequiredFieldIncident(value?.PrimaryLocationId));
     const AttemptRequiredErr = RequiredFieldIncident(value?.AttemptComplete);
     const CommentsErr = nibrsCode === "11B" && loginAgencyState === "TX" ? RequiredFieldIncident(value?.Comments) : "true";
-    const MethodEntryError = nibrsCode === '220' ? RequiredFieldIncident(value?.CrimeMethodOfEntryID) : 'true'
+    const MethodEntryErr = nibrsCode === '220' ? RequiredFieldIncident(value?.CrimeMethodOfEntryID) : 'true'
     const OffenseDttmError = nibrsCode === '220' ? RequiredFieldIncident(value?.OffenseDateTime) : 'true'
     // const CargoTheftErrorErr = carboTheft ? RequiredFieldIncidentCarboTheft(value.IsCargoTheftInvolved) : "true";
     // const CargoTheftErrorErr = RequiredFieldIncident(value.);
@@ -296,7 +297,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     const methodEntryArr = methodOfEntryCode ? [methodOfEntryCode] : [];
     const isWeaponRequired = checkWeaponTypeIsRequire(nibrsCode, loginAgencyState) || PanelCode === '03' || PanelCode === '06' || PanelCode === '08';
     // const offenderusingErr = (PanelCode === '03' || PanelCode === '06' || PanelCode === '08') ? RequiredFieldIncidentOffender(crimeOffenderUse) : 'true';
-    const MethodOfEnrtyErr = checkMethodOfEntryIsRequire(nibrsCode, loginAgencyState) ? validateFields(methodEntryArr) : 'true';
+    // const MethodOfEnrtyErr = checkMethodOfEntryIsRequire(nibrsCode, loginAgencyState) ? RequiredFieldIncident(methodEntryArr) : 'true';
     const WeaponTypeErr = isWeaponRequired ? validateFields(weaponID) : 'true';
     const CriminalActivityErr = checkCriminalActivityIsRequire(nibrsCode, loginAgencyState) ? validateFields(crimeActivity) : 'true';
 
@@ -307,7 +308,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     setErrors((pre) => {
       return {
         ...pre,
-        ["MethodEntryError"]: MethodEntryError || pre["MethodEntryError"],
         ["NibrsIdError"]: NibrsIdErrorr || pre["NibrsIdError"],
         ["ChargeCodeIDError"]: ChargeCodeIDErr || pre["ChargeCodeIDError"],
         ["PremisesEnteredError"]: PremisesEnteredErr || pre["PremisesEnteredError"],
@@ -316,7 +316,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
         ["CommentsError"]: CommentsErr || pre["CommentsError"],
         ["CargoTheftError"]: CargoTheftErrorErr || pre["CargoTheftError"],
         ["OffenseDttmError"]: OffenseDttmError || pre["OffenseDttmError"],
-        ['MethodOfEnrtyError']: MethodOfEnrtyErr || pre['MethodOfEnrtyError'],
+        ['MethodOfEnrtyError']: MethodEntryErr || pre['MethodOfEnrtyError'],
         ['WeaponTypeError']: WeaponTypeErr || pre['WeaponTypeError'],
         ['CriminalActivityError']: CriminalActivityErr || pre['CriminalActivityError'],
         ['OffenderusingError']: offenderusingErr || pre['OffenderusingError'],
@@ -328,17 +328,18 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   };
 
   // Check All Field Format is True Then Submit
-  const { ChargeCodeIDError, NibrsIdError, PremisesEnteredError, MethodOfEnrtyError, WeaponTypeError, CriminalActivityError, OffenderusingError, CrimeBiasCategoryError, AttemptRequiredError, OffenseDttmError, PrimaryLocationError, CommentsError, MethodEntryError, CargoTheftError } = errors;
+  const { ChargeCodeIDError, NibrsIdError, PremisesEnteredError, MethodOfEnrtyError, WeaponTypeError, CriminalActivityError, OffenderusingError, CrimeBiasCategoryError, AttemptRequiredError, OffenseDttmError, PrimaryLocationError, CommentsError, CargoTheftError } = errors;
+  console.log("🚀 ~ Home ~ errors:", errors)
 
   useEffect(() => {
-    if (ChargeCodeIDError === "true" && NibrsIdError === "true" && MethodOfEnrtyError === 'true' && WeaponTypeError === 'true' && CriminalActivityError === 'true' && OffenderusingError === 'true' && CrimeBiasCategoryError === 'true' && PremisesEnteredError === "true" && OffenseDttmError === "true" && AttemptRequiredError === "true" && PrimaryLocationError === "true" && CommentsError === "true" && MethodEntryError === 'true' && CargoTheftError === 'true') {
+    if (ChargeCodeIDError === "true" && NibrsIdError === "true" && MethodOfEnrtyError === 'true' && WeaponTypeError === 'true' && CriminalActivityError === 'true' && OffenderusingError === 'true' && CrimeBiasCategoryError === 'true' && PremisesEnteredError === "true" && OffenseDttmError === "true" && AttemptRequiredError === "true" && PrimaryLocationError === "true" && CommentsError === "true" && CargoTheftError === 'true') {
       if (OffId && (OffSta === true || OffSta === "true")) {
         Update_Offence();
       } else {
         Add_Offense();
       }
     }
-  }, [ChargeCodeIDError, NibrsIdError, PremisesEnteredError, MethodOfEnrtyError, WeaponTypeError, CriminalActivityError, OffenderusingError, CrimeBiasCategoryError, PrimaryLocationError, OffenseDttmError, AttemptRequiredError, CommentsError, MethodEntryError, CargoTheftError]);
+  }, [ChargeCodeIDError, NibrsIdError, PremisesEnteredError, MethodOfEnrtyError, WeaponTypeError, CriminalActivityError, OffenderusingError, CrimeBiasCategoryError, PrimaryLocationError, OffenseDttmError, AttemptRequiredError, CommentsError, CargoTheftError]);
 
   const getScreenPermision = (LoginAgencyID, PinID) => {
     ScreenPermision("O036", LoginAgencyID, PinID).then((res) => {
@@ -512,7 +513,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     });
     setErrors({
       ...errors, ChargeCodeIDError: "", NibrsIdError: "", PremisesEnteredError: "", PrimaryLocationError: "", AttemptRequiredError: "", CommentsError: "",
-      MethodEntryError: "", CargoTheftError: "", 'MethodOfEnrtyError': '', 'CriminalActivityError': '', 'WeaponTypeError': '', 'OffenderusingError': '', 'CrimeBiasCategoryError': '',
+       CargoTheftError: "", 'MethodOfEnrtyError': '', 'CriminalActivityError': '', 'WeaponTypeError': '', 'OffenderusingError': '', 'CrimeBiasCategoryError': '',
     });
 
     setCrimeOffenderUse([]); setCrimeBiasCategory([]); setWeaponID([]); setCrimeActivity([]);
@@ -540,6 +541,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   };
 
   const changeDropDown = (e, name) => {
+    console.log("🚀 ~ changeDropDown ~ e:", e)
     !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
     if (e) {
       if (name === "PrimaryLocationId") {
@@ -1364,10 +1366,13 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
 
   const changeDropDowns = (e, name) => {
     !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
+    console.log("🚀 ~ changeDropDowns ~ e:", e)
     if (e) {
       setValue({ ...value, [name]: e.value });
+
     } else {
       setValue({ ...value, [name]: null });
+
     }
   };
 
@@ -2252,8 +2257,8 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   {methodOfEntryStatus ? (<ErrorTooltip ErrorStr={methodOfEntryError} />) : (<></>)}
                 </span>
                 <br />
-                {errors.MethodEntryError !== "true" ? (<div style={{ color: "red", fontSize: "13px", display: "block", display: "flex", width: "100%", justifyContent: "flex-end" }}  >
-                  {errors.MethodEntryError}
+                {errors.MethodOfEnrtyError !== "true" ? (<div style={{ color: "red", fontSize: "13px", display: "block", display: "flex", width: "100%", justifyContent: "flex-end" }}  >
+                  {errors.MethodOfEnrtyError}
                 </div>
                 ) : null}
               </div>
