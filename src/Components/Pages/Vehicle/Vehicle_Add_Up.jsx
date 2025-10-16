@@ -546,7 +546,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
 
                                 {
                                     (status || isNew === "true" || isNew === true || NameCount === 0 || NameCount === "0") && (
-                                        <div className="row " style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
+                                        <div className="row " style={{ marginLeft: '-18px', marginRight: '-18px' }}>
                                             <div className="col-12  name-tab">
                                                 <ul className='nav nav-tabs'>
                                                     <Link
