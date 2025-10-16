@@ -446,7 +446,7 @@ const NibrsHome = () => {
 
             const VehArr = proObj?.filter((item) => item?.PropertyType === 'V');
             // console.log("🚀 ~ validateNibrs ~ VehArr:", VehArr)
-            const PropArr = proObj?.filter((item) => item?.PropertyType !== 'V' && item?.PropertyType !== null);
+            const PropArr = proObj?.filter((item) => item?.PropertyType !== 'V' && item?.PropertyType );
             // console.log("🚀 ~ validateNibrs ~ PropArr:", PropArr)
 
             if (VehArr?.length > 0) {
