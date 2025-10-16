@@ -521,7 +521,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     setPointExitDrp(); setPointEntryDrp(); setCrimeActivityDrp(); setToolsUseIDDrp();
     setCrimeTargetDrp(); setCrimeSuspectDrp(); setCrimeSecurityviolatedDrp(); setMethodOfOperationDrp();
     //  setWeaponDrp(); 
-     setCrimeActivityNoneStatus();
+    setCrimeActivityNoneStatus();
     // setCrimeBiasCategoryEditVal(); setCrimeToolsUseEditVal(); setCrimeTargeteEditVal(); setCriminalActivityEditVal(); setPointEntryEditVal();
     // setCrimeSuspectEditVal(); setSecurityViolatedEditVal(); setmethodOfOperationEditVal(); setmethodOfEntryEditVal(); setweaponEditVal()
 
@@ -897,7 +897,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     try {
       const res = await AddDeleteUpadate("Crime/Insert_Offense", val);
       if (res.success) {
-       
+
         Reset();
         if (res.CrimeID) {
           navigate(`/Off-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${stringToBase64(res.CrimeID)}&OffSta=${true}`);
@@ -909,7 +909,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
       LawTitleIdDrpDwnVal(loginAgencyID, null);
       NIBRSCodeDrpDwnVal(loginAgencyID, null);
       toastifySuccess(res.Message);
-       console.log(res.success , res.CrimeID)
+      console.log(res.success, res.CrimeID)
       InSertBasicInfo(res?.CrimeID);
 
       // validateIncSideBar
@@ -1339,9 +1339,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     }),
   };
 
-
-
-
   const customStylesWithOutMiltiColor = {
     control: base => ({
       ...base,
@@ -1351,9 +1348,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
       boxShadow: 0,
     }),
   };
-
-
-
 
   const StatusOption = [
     { value: "A", label: "Attempted" },
@@ -1497,9 +1491,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => setIsHovered(false);
 
-
-
-
   // DS
   useEffect(() => {
     const selectedItem = nibrsCodeDrp?.find((item) => item.value === value?.NIBRSCodeId);
@@ -1631,9 +1622,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
       return opt.code !== 'N'; // Hide N if any of A/C/D is selected
     }
     return true; // Default: show all options
-
-
-
   });
 
   const getWeaponDrpData = (data, nibrsCode, weaponID) => {
@@ -1758,10 +1746,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     }
   };
 
-
-
   const InSertBasicInfo = (crimeId) => {
-    console.log(crimeOffenderUse)
     const val = {
       'CrimeID': crimeId,
       'CreatedByUserFK': loginPinID,
@@ -1782,7 +1767,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     }
     AddDeleteUpadate('Crime/Insert_OffenseInformation', val).then((res) => {
       if (res) {
-        console.log('hello')
         const parsedData = JSON.parse(res.data);
         const message = parsedData.Table[0].Message;
         toastifySuccess(message);
@@ -1867,8 +1851,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
       })
   }
 
-
-
   const get_Crime_Suspect_Data = (crimeId) => {
     const val = { 'CrimeID': crimeId, }
     fetchPostData('OffenseSuspect/GetData_OffenseSuspect', val)
@@ -1906,7 +1888,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   }, [crimeToolsUseEditVal])
 
   useEffect(() => {
-    console.log(crimeOffenderUseEditVal, 'hellonew')
     if (crimeOffenderUseEditVal) { setCrimeOffenderUse(crimeOffenderUseEditVal) }
   }, [crimeOffenderUseEditVal])
 
@@ -1921,7 +1902,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
 
     }
   }, [criminalActivityEditVal])
-
 
   const CrimeBiasCategorychange = (multiSelected) => {
 
@@ -1969,8 +1949,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     if (crimeSuspectEditVal) { setCrimeSuspect(crimeSuspectEditVal) }
   }, [crimeSuspectEditVal])
 
-
-  console.log(filterArray(crimeOffenderUse, 'label'), crimeOffenderUse)
   return (
     <>
       {((incidentCount[0]?.OffenseCount === 0 || incidentCount[0]?.OffenseCount === "0") || (OffSta === true || OffSta === 'true') || isNew === "true" || isNew === true) && (

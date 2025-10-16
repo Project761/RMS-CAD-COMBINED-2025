@@ -69,6 +69,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
 
   const measureTypeDrpData = useSelector((state) => state.DropDown.measureTypeDrpData);
 
+
   const useQuery = () => {
     const params = new URLSearchParams(useLocation().search);
     return {
@@ -81,6 +82,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
   var IncID = query?.get("IncId");
   var IncNo = query?.get("IncNo");
   var IncSta = query?.get("IncSta");
+  let isNew = query?.get('isNew');
   var ProId = query?.get("ProId");
   var MProId = query?.get('MProId');
   var ProSta = query?.get('ProSta');
@@ -97,7 +99,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
 
   const navigate = useNavigate();
 
-  const { get_Incident_Count, changesStatus, setChangesStatus, get_Property_Count, nibrsSubmittedStatus, setnibrsSubmittedStatus, nibrsSubmittedPropertyMain, setnibrsSubmittedPropertyMain, setcountoffaduit, datezone, GetDataTimeZone, validate_IncSideBar, incidentReportedDate, setIncidentReportedDate, } = useContext(AgencyContext);
+  const { get_Incident_Count, changesStatus, setChangesStatus, get_Property_Count, nibrsSubmittedStatus, setnibrsSubmittedStatus, nibrsSubmittedPropertyMain, setnibrsSubmittedPropertyMain, setcountoffaduit, datezone, GetDataTimeZone, validate_IncSideBar, incidentReportedDate, setIncidentReportedDate, incidentCount } = useContext(AgencyContext);
 
   const [loder, setLoder] = useState(false);
   const [drugLoder, setDrugLoder] = useState(false);
@@ -172,6 +174,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
   const [permissionForEdit, setPermissionForEdit] = useState(false);
   // Add Update Permission
   const [addUpdatePermission, setaddUpdatePermission] = useState();
+  const PropertyCount = incidentCount[0]?.PropertyCount || 0;
 
   const [value, setValue] = useState({
     'MasterPropertyID': '', 'PropertyID': '', 'AgencyID': '', 'IncidentID': '', 'CreatedByUserFK': '', 'ReportedDtTm': '', 'DestroyDtTm': '', 'Value': '',
@@ -332,7 +335,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
     const val2 = { 'MasterPropertyID': masterPropertyId, 'PropertyID': 0, 'PINID': loginPinID, 'IncidentID': 0, 'IsMaster': MstPage === "MST-Property-Dash" ? true : false, }
     fetchPostData('Property/GetSingleData_Property', MstPage === "MST-Property-Dash" ? val2 : val).then((res) => {
       if (res) {
-        console.log("GetSingleData Property", res);
+
         setEditval(res); setLoder(true);
       } else { setEditval([]); setLoder(true); }
     })
@@ -851,7 +854,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
       else if (name === 'ModelID') {
 
         if (e?.__isNew__) {
-          console.log("New model created:", e.label);
+
 
           setValue({
             ...value,
@@ -859,7 +862,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
             ModelName: e.label,
           });
         } else if (e) {
-          console.log("Existing model selected:", e.value);
+
           setValue({
             ...value,
             ModelID: e.value,
@@ -877,7 +880,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
       else if (name === 'WeaponModelID') {
 
         if (e?.__isNew__) {
-          console.log("New model created:", e.label);
+
 
           setValue({
             ...value,
@@ -885,7 +888,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
             ModelName: e.label,
           });
         } else if (e) {
-          console.log("Existing model selected:", e.value);
+
           setValue({
             ...value,
             WeaponModelID: e.value,
@@ -1363,7 +1366,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
       ),
       sortable: true
     },
-    // {
+    // {  
     //   grow: 0,
     //   minWidth: "80px",
     //   name: 'View',
@@ -1476,6 +1479,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
 
   const Delete_Property = () => {
     const val = { 'PropertyID': delPropertyID, 'DeletedByUserFK': loginPinID, 'IsMaster': MstPage === "MST-Property-Dash" ? true : false, }
+    // console.log("🚀 ~ Delete_Property ~ delPropertyID:", delPropertyID)
     AddDeleteUpadate('Property/Delete_Property', val).then((res) => {
       if (res) {
         const parsedData = JSON.parse(res.data);
@@ -1847,6 +1851,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
   }
 
   //-------------------------Image---------------------------
+
   // to update image data
   const update_Property_MultiImage = () => {
     const val = { "ModifiedByUserFK": loginPinID, "AgencyID": loginAgencyID, "PictureTypeID": imgData?.PictureTypeID, "ImageViewID": imgData?.ImageViewID, "ImgDtTm": imgData?.ImgDtTm, "OfficerID": imgData?.OfficerID, "Comments": imgData?.Comments, "DocumentID": imgData?.DocumentID }
@@ -2082,11 +2087,11 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
     }
   }
 
-  useEffect(() => {
-    if (IncID) {
-      nibrsValidateProperty(IncID);
-    }
-  }, [IncID]);
+  // useEffect(() => {
+  //   if (IncID) {
+  //     nibrsValidateProperty(IncID);
+  //   }
+  // }, [IncID]);
 
   const nibrsValidateProperty = (incidentID) => {
     setclickNibLoder(true);
@@ -2095,7 +2100,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
         if (data) {
           if (data?.Properties?.length > 0) {
             const propArr = data?.Properties?.filter((item) => item?.PropertyType !== 'V' && item?.PropertyType);
-            // console.log("🚀 ~ fetchPostDataNibrs ~ propArr:", propArr)
+
 
             if (propArr?.length > 0) {
               const propErrorArray = propArr || []
@@ -2145,21 +2150,21 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
     return () => window.removeEventListener('keydown', handleEsc);
   }, []);
 
-  // For Reset Property
   useEffect(() => {
-    // console.log("MstPage", MstPage);
-    // console.log("MstPage", MstPage);
-    // console.log("masterPropertyStatus", masterPropertyStatus);
-    if (MstPage === "MST-Property-Dash" && masterPropertyStatus == true) { newProperty() }
-  }, [MstPage, masterPropertyStatus]);
+    if (MstPage === "MST-Property-Dash" && masterPropertyStatus == true) {
+      newProperty()
+    } else if (isNew === "true" || isNew === true) {
+      newProperty()
+    }
+  }, [MstPage, masterPropertyStatus, isNew]);
 
   const newProperty = () => {
     SetNavigateStatus(false);
     if (MstPage === "MST-Property-Dash") {
       if (isCad) {
-        navigate(`/cad/dispatcher?page=MST-Property-Dash&ProId=${0}&MProId=${0}&ModNo=${''}&ProSta=${false}&ProCategory=${''}`);
+        navigate(`/cad/dispatcher?page=MST-Property-Dash&ProId=${0}&MProId=${0}&ModNo=${''}&ProSta=${false}&ProCategory=${''}&isNew=${true}`);
       } else {
-        navigate(`/Prop-Home?page=MST-Property-Dash&ProId=${0}&MProId=${0}&ModNo=${''}&ProSta=${false}&ProCategory=${''}`);
+        navigate(`/Prop-Home?page=MST-Property-Dash&ProId=${0}&MProId=${0}&ModNo=${''}&ProSta=${false}&ProCategory=${''}&isNew=${true}`);
       }
       Reset();
       setMultiImage([]);
@@ -2168,9 +2173,9 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
       get_Property_Count(''); setChangesStatus(false); setStatesChangeStatus(false);
     } else {
       if (isCad) {
-        navigate(`/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${0}&MProId=${0}&ProSta=${false}&ProCategory=${''}`)
+        navigate(`/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${0}&MProId=${0}&ProSta=${false}&ProCategory=${''}&isNew=${true}`)
       } else {
-        navigate(`/Prop-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${0}&MProId=${0}&ProSta=${false}&ProCategory=${''}`)
+        navigate(`/Prop-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${0}&MProId=${0}&ProSta=${false}&ProCategory=${''}&isNew=${true}`)
       }
       Reset(); setMultiImage([]); setPossessionID(''); setPossenSinglData([]);
 
@@ -2183,1211 +2188,1160 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
 
   return (
     <>
-      <div className="col-12">
-        <div className="row">
-          <div className="col-12 col-md-12 col-lg-11 pt-1 p-0" >
-            <div className="row ">
-              <div className="col-3 col-md-3 col-lg-1 mt-2 px-0">
-                <label htmlFor="" className='new-label px-0'>Property No.</label>
-              </div>
-              <div className="col-3 col-md-3 col-lg-3 mt-1 text-field">
-                <input type="text" className='readonlyColor' value={propertyNumber ? propertyNumber : 'Auto Generated'} required readOnly />
-              </div>
-              <div className="col-3 col-md-3 col-lg-1 mt-2 px-1">
-                <label htmlFor="" className='new-label'>
-                  Loss Code
-                  {errors.LossCodeIDError !== 'true' ? (
-                    <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.LossCodeIDError}</p>
-                  ) : null}
-                </label>
-              </div>
-              <div className="col-3 col-md-3 col-lg-3 mt-1">
-                <Select
-                  name='LossCodeID'
-                  value={propertyLossCodeDrpData?.filter((obj) => obj.value === value?.LossCodeID)}
+      {((PropertyCount === 0 || PropertyCount === "0") || (ProSta === true || ProSta === 'true') || isNew === "true" || isNew === true) && (
 
-                  options={propertyLossCodeDrpData}
-
-                  onChange={(e) => onChangeLossCode(e, 'LossCodeID')}
-                  isClearable
-                  placeholder="Select..."
-                  styles={nibrsSubmittedPropertyMain === 1 ? LockFildscolour : Requiredcolour}
-                  isDisabled={nibrsSubmittedPropertyMain === 1 ? true : false}
-                />
-              </div>
-
-              <div className="col-3 col-md-3 col-lg-2 mt-2">
-                <label htmlFor="" className='new-label'>Reported Date/Time</label>
-              </div>
-              <div className="col-3 col-md-3 col-lg-2">
-                {
-                  MstPage === "MST-Property-Dash" ?
-                    <DatePicker
-                      id='ReportedDtTm'
-                      name='ReportedDtTm'
-                      ref={startRef}
-
-
-                      onKeyDown={(e) => {
-                        if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
-                          e?.preventDefault();
-                        } else {
-                          onKeyDown(e);
-                        }
-                      }}
-                      dateFormat="MM/dd/yyyy HH:mm"
-
-                      isClearable={false}
-                      onChange={(date) => {
-                        !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
-                        setIncidentReportedDate(date ? getShowingMonthDateYear(date) : null)
-                        if (date > new Date(datezone)) {
-                          date = new Date(datezone);
-                        }
-                        if (date >= new Date()) {
-                          setValue({ ...value, ['ReportedDtTm']: new Date() ? getShowingDateText(new Date(date)) : null })
-                        } else if (date <= new Date(incReportedDate)) {
-                          setValue({ ...value, ['ReportedDtTm']: new Date() ? getShowingDateText(new Date(date)) : null })
-                        } else {
-                          setValue({ ...value, ['ReportedDtTm']: date ? getShowingDateText(date) : null })
-                        }
-                      }}
-                      selected={value?.ReportedDtTm && new Date(value?.ReportedDtTm)}
-
-                      disabled={nibrsSubmittedPropertyMain === 1}
-                      className={nibrsSubmittedPropertyMain === 1 ? 'LockFildsColour' : 'requiredColor'}
-                      autoComplete="Off"
-                      placeholderText={'Select...'}
-                      timeInputLabel
-                      showTimeSelect
-                      timeIntervals={1}
-                      timeCaption="Time"
-                      showYearDropdown
-                      showMonthDropdown
-                      dropdownMode="select"
-                      maxDate={new Date(datezone)}
-                      filterTime={(date) => filterPassedTimeZone(date, datezone)}
-                      timeFormat="HH:mm "
-                      is24Hour
-
-                    />
-                    :
-                    <DatePicker
-                      id='ReportedDtTm'
-                      name='ReportedDtTm'
-
-                      ref={startRef}
-
-                      onKeyDown={(e) => {
-                        if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
-                          e?.preventDefault();
-                        } else {
-                          onKeyDown(e);
-                        }
-                      }}
-                      dateFormat="MM/dd/yyyy HH:mm"
-                      isClearable={false}
-                      selected={value?.ReportedDtTm && new Date(value?.ReportedDtTm)}
-                      onChange={(date) => {
-                        !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
-                        if (date > new Date(datezone)) {
-                          date = new Date(datezone);
-                        }
-                        setIncidentReportedDate(date ? getShowingMonthDateYear(date) : null)
-                        if (date >= new Date()) {
-                          setValue({ ...value, ['ReportedDtTm']: new Date() ? getShowingDateText(new Date()) : null })
-                        } else if (date <= new Date(incReportedDate)) {
-                          setValue({ ...value, ['ReportedDtTm']: incReportedDate ? getShowingDateText(incReportedDate) : null })
-                        } else {
-                          setValue({ ...value, ['ReportedDtTm']: date ? getShowingDateText(date) : null })
-                        }
-                      }}
-                      autoComplete="Off"
-
-                      disabled={nibrsSubmittedPropertyMain === 1}
-                      className={nibrsSubmittedPropertyMain === 1 ? 'LockFildsColour' : 'requiredColor'}
-                      timeInputLabel
-                      showTimeSelect
-                      timeIntervals={1}
-                      timeCaption="Time"
-                      showMonthDropdown
-                      showYearDropdown
-                      dropdownMode="select"
-                      minDate={new Date(incReportedDate)}
-                      maxDate={new Date(datezone)}
-                      showDisabledMonthNavigation
-
-                      timeFormat="HH:mm "
-                      is24Hour
-
-                      filterTime={(date) => filterPassedTimeZonesProperty(date, incReportedDate, datezone)}
-                    />
-                }
-              </div>
-
-            </div>
+        <>
+          <div className="col-12">
             <div className="row">
-              <div className="col-3 col-md-3 col-lg-1 mt-2">
-                <span className='new-label '>
-                  Type{errors.PropertyTypeIDError !== 'true' ? (
-                    <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.PropertyTypeIDError}</p>
-                  ) : null}
-                </span>
-              </div>
-              <div className="col-3 col-md-3 col-lg-3 mt-1">
-                <Select
-                  styles={nibrsSubmittedPropertyMain === 1 ? LockFildscolour : propertyID || masterPropertyID ? customStylesWithOutColor : Requiredcolour}
-                  name='PropertyTypeID'
-                  value={propertyTypeData?.filter((obj) => obj.value === value?.PropertyTypeID)}
-                  options={propertyTypeData}
-                  onChange={(e) => ChangeDropDown(e, 'PropertyTypeID')}
-                  isClearable
-                  placeholder="Select..."
-                  isDisabled={propertyID || masterPropertyID || isDrugOffense || nibrsSubmittedPropertyMain === 1 ? true : false}
-                />
-              </div>
-              <div className="col-3 col-md-3 col-lg-1 mt-2">
-                <span data-toggle="modal" onClick={() => { setOpenPage('Property Description') }} data-target="#ListModel" className='new-link'>
-                  Category
-                  {
-                    loginAgencyState === 'TX' ?
-                      check_Category_Nibrs(nibrsCodeArr, propRecType, propCategoryCode, 'ToolTip')
-                        ?
-                        check_Category_Nibrs(nibrsCodeArr, propRecType, propCategoryCode, 'ToolTip')
+              <div className="col-12 col-md-12 col-lg-11 pt-1 p-0" >
+                <div className="row ">
+                  <div className="col-3 col-md-3 col-lg-1 mt-2 px-0">
+                    <label htmlFor="" className='new-label px-0'>Property No.</label>
+                  </div>
+                  <div className="col-3 col-md-3 col-lg-3 mt-1 text-field">
+                    <input type="text" className='readonlyColor' value={propertyNumber ? propertyNumber : 'Auto Generated'} required readOnly />
+                  </div>
+                  <div className="col-3 col-md-3 col-lg-1 mt-2 px-1">
+                    <label htmlFor="" className='new-label'>
+                      Loss Code
+                      {errors.LossCodeIDError !== 'true' ? (
+                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.LossCodeIDError}</p>
+                      ) : null}
+                    </label>
+                  </div>
+                  <div className="col-3 col-md-3 col-lg-3 mt-1">
+                    <Select
+                      name='LossCodeID'
+                      value={propertyLossCodeDrpData?.filter((obj) => obj.value === value?.LossCodeID)}
+
+                      options={propertyLossCodeDrpData}
+
+                      onChange={(e) => onChangeLossCode(e, 'LossCodeID')}
+                      isClearable
+                      placeholder="Select..."
+                      styles={nibrsSubmittedPropertyMain === 1 ? LockFildscolour : Requiredcolour}
+                      isDisabled={nibrsSubmittedPropertyMain === 1 ? true : false}
+                    />
+                  </div>
+
+                  <div className="col-3 col-md-3 col-lg-2 mt-2">
+                    <label htmlFor="" className='new-label'>Reported Date/Time</label>
+                  </div>
+                  <div className="col-3 col-md-3 col-lg-2">
+                    {
+                      MstPage === "MST-Property-Dash" ?
+                        <DatePicker
+                          id='ReportedDtTm'
+                          name='ReportedDtTm'
+                          ref={startRef}
+
+
+                          onKeyDown={(e) => {
+                            if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                              e?.preventDefault();
+                            } else {
+                              onKeyDown(e);
+                            }
+                          }}
+                          dateFormat="MM/dd/yyyy HH:mm"
+
+                          isClearable={false}
+                          onChange={(date) => {
+                            !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
+                            setIncidentReportedDate(date ? getShowingMonthDateYear(date) : null)
+                            if (date > new Date(datezone)) {
+                              date = new Date(datezone);
+                            }
+                            if (date >= new Date()) {
+                              setValue({ ...value, ['ReportedDtTm']: new Date() ? getShowingDateText(new Date(date)) : null })
+                            } else if (date <= new Date(incReportedDate)) {
+                              setValue({ ...value, ['ReportedDtTm']: new Date() ? getShowingDateText(new Date(date)) : null })
+                            } else {
+                              setValue({ ...value, ['ReportedDtTm']: date ? getShowingDateText(date) : null })
+                            }
+                          }}
+                          selected={value?.ReportedDtTm && new Date(value?.ReportedDtTm)}
+
+                          disabled={nibrsSubmittedPropertyMain === 1}
+                          className={nibrsSubmittedPropertyMain === 1 ? 'LockFildsColour' : 'requiredColor'}
+                          autoComplete="Off"
+                          placeholderText={'Select...'}
+                          timeInputLabel
+                          showTimeSelect
+                          timeIntervals={1}
+                          timeCaption="Time"
+                          showYearDropdown
+                          showMonthDropdown
+                          dropdownMode="select"
+                          maxDate={new Date(datezone)}
+                          filterTime={(date) => filterPassedTimeZone(date, datezone)}
+                          timeFormat="HH:mm "
+                          is24Hour
+
+                        />
                         :
-                        <></>
-                      :
-                      <></>
-                  }
-                  {errors.CategoryIDError !== 'true' ? (
-                    <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.CategoryIDError}</p>
-                  ) : null}
-                </span>
-              </div>
-              <div className="col-3 col-md-3 col-lg-3 mt-1">
-                <Select
-                  name='CategoryID'
-                  id='CategoryID'
-                  styles={
-                    nibrsSubmittedPropertyMain === 1 ? LockFildscolour :
-                      loginAgencyState === 'TX' ?
-                        check_Category_Nibrs(nibrsCodeArr, propRecType, propCategoryCode, 'Color')
-                          ?
-                          check_Category_Nibrs(nibrsCodeArr, propRecType, propCategoryCode, 'Color')
-                          :
-                          Requiredcolour
-                        :
-                        Requiredcolour
-                  }
+                        <DatePicker
+                          id='ReportedDtTm'
+                          name='ReportedDtTm'
 
-                  value={propertyCategoryData?.filter((obj) => obj.value === value?.CategoryID)}
-                  options={propertyCategoryData}
-                  onChange={(e) => ChangeDropDown(e, 'CategoryID')}
-                  isClearable
-                  placeholder="Select..."
-                  isDisabled={nibrsSubmittedPropertyMain === 1 ? true : false}
-                />
-              </div>
+                          ref={startRef}
 
-              <div className="col-3 col-md-3 col-lg-2 mt-2 ">
-                <label htmlFor="" className='new-label px-0' style={{ paddingLeft: '5px' }}>Classification</label>
-              </div>
-              <div className="col-9 col-md-9 col-lg-2 mt-1">
-                <Select
-                  styles={nibrsSubmittedPropertyMain === 1 ? LockFildscolour : customStylesWithOutColor}
-                  name='ClassificationID'
-                  value={propertyClassificationData?.filter((obj) => obj.value === value?.ClassificationID)}
-                  options={propertyClassificationData}
-                  onChange={(e) => ChangeDropDown(e, 'ClassificationID')}
-                  isClearable
-                  placeholder="Select..."
-                  isDisabled={nibrsSubmittedPropertyMain === 1 ? true : false}
-                />
-              </div>
+                          onKeyDown={(e) => {
+                            if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                              e?.preventDefault();
+                            } else {
+                              onKeyDown(e);
+                            }
+                          }}
+                          dateFormat="MM/dd/yyyy HH:mm"
+                          isClearable={false}
+                          selected={value?.ReportedDtTm && new Date(value?.ReportedDtTm)}
+                          onChange={(date) => {
+                            !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
+                            if (date > new Date(datezone)) {
+                              date = new Date(datezone);
+                            }
+                            setIncidentReportedDate(date ? getShowingMonthDateYear(date) : null)
+                            if (date >= new Date()) {
+                              setValue({ ...value, ['ReportedDtTm']: new Date() ? getShowingDateText(new Date()) : null })
+                            } else if (date <= new Date(incReportedDate)) {
+                              setValue({ ...value, ['ReportedDtTm']: incReportedDate ? getShowingDateText(incReportedDate) : null })
+                            } else {
+                              setValue({ ...value, ['ReportedDtTm']: date ? getShowingDateText(date) : null })
+                            }
+                          }}
+                          autoComplete="Off"
 
+                          disabled={nibrsSubmittedPropertyMain === 1}
+                          className={nibrsSubmittedPropertyMain === 1 ? 'LockFildsColour' : 'requiredColor'}
+                          timeInputLabel
+                          showTimeSelect
+                          timeIntervals={1}
+                          timeCaption="Time"
+                          showMonthDropdown
+                          showYearDropdown
+                          dropdownMode="select"
+                          minDate={new Date(incReportedDate)}
+                          maxDate={new Date(datezone)}
+                          showDisabledMonthNavigation
 
-              <div className="col-3 col-md-3 col-lg-1 mt-2 px-0">
-                <label htmlFor="" className='new-label px-0' style={{ paddingLeft: '5px' }}> Possession&nbsp;Of</label>
-              </div>
-              {/* <div className="col-8 col-md-8 col-lg-3 d-flex mt-1 "> */}
-              <div className="col-8 col-md-8 col-lg-2 mt-1">
-                {
-                  MstPage === "MST-Property-Dash" ?
-                    <Select
-                      name='PossessionOfID'
-                      styles={customStylesWithOutColor}
-                      value={mastersNameDrpData?.filter((obj) => obj.value === value?.PossessionOfID)}
-                      isClearable
-                      options={mastersNameDrpData}
-                      onChange={(e) => { ChangeDropDown(e, 'PossessionOfID') }}
-                      placeholder="Select..."
-                    />
-                    :
-                    <Select
-                      name='PossessionOfID'
-                      styles={customStylesWithOutColor}
-                      value={arresteeNameData?.filter((obj) => obj.value === value?.PossessionOfID)}
-                      isClearable
-                      options={arresteeNameData}
-                      onChange={(e) => { ChangeDropDown(e, 'PossessionOfID') }}
-                      placeholder="Select..."
-                    />
-                }
-              </div>
+                          timeFormat="HH:mm "
+                          is24Hour
 
-              <span
-                onClick={() => {
-                  if (possessionID) { GetSingleDataPassion(possessionID); } setNameModalStatus(true);
-                }}
-                data-toggle="modal" data-target="#MasterModal"
-                className=" btn btn-sm bg-green text-white py-1 mt-1"
-                style={{ marginRight: 'auto' }}
-              >
-                <i className="fa fa-plus" >
-                </i>
-              </span>
+                          filterTime={(date) => filterPassedTimeZonesProperty(date, incReportedDate, datezone)}
+                        />
+                    }
+                  </div>
 
-              {/* </div> */}
-
-              {/* <div className="col-3 col-md-3 col-lg-1 mt-2 px-0">
-                <label htmlFor="" className='new-label px-0' style={{ paddingLeft: '5px' }}>Possession&nbsp;Of</label>
-              </div>
-              <div className="col-8 col-md-8 col-lg-2 mt-1 ">
-                {
-                  MstPage === "MST-Property-Dash" ?
-                    <Select
-                      name='PossessionOfID'
-                      styles={customStylesWithOutColor}
-                      value={mastersNameDrpData?.filter((obj) => obj.value === value?.PossessionOfID)}
-                      isClearable
-                      options={mastersNameDrpData}
-                      onChange={(e) => { ChangeDropDown(e, 'PossessionOfID') }}
-                      placeholder="Select..."
-                    />
-                    :
-                    <Select
-                      name='PossessionOfID'
-                      styles={customStylesWithOutColor}
-                      value={arresteeNameData?.filter((obj) => obj.value === value?.PossessionOfID)}
-                      isClearable
-                      options={arresteeNameData}
-                      onChange={(e) => { ChangeDropDown(e, 'PossessionOfID') }}
-                      placeholder="Select..."
-                    />
-                }
-            
-              </div>
-                <span
-                  data-toggle="modal" data-target="#MasterModal"
-                  onClick={() => {
-                    if (possessionID) { GetSingleDataPassion(possessionID); } setNameModalStatus(true);
-                  }}
-                  className="col-1 col-md-1 col-lg-1 btn btn-sm bg-green text-white py-1 mt-1"
-                >
-                  <i className="fa fa-plus" >
-                  </i>
-                </span> */}
-
-
-
-              <div className="col-3 col-md-3 col-lg-1 mt-2 ">
-                <label htmlFor="" className='new-label '>Primary&nbsp;Officer{errors.OfficerIDError !== 'true' ? (
-                  <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.OfficerIDError}</p>
-                ) : null}</label>
-              </div>
-              <div className="col-3 col-md-3 col-lg-3 mt-1">
-                <Select
-                  name='OfficerID'
-                  styles={customStylesWithOutColor}
-                  value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.OfficerID)}
-                  isClearable
-                  options={agencyOfficerDrpData}
-                  onChange={(e) => ChangeDropDown(e, 'OfficerID')}
-                  placeholder="Select..."
-                />
-              </div>
-
-              <div className="col-3 col-md-3 col-lg-2 mt-2">
-                <label htmlFor="" className='new-label'>
-                  Value
-                  {errors.ContactError !== 'true' ? (
-                    <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ContactError}</p>
-                  ) : null}
-                </label>
-              </div>
-              <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
-                <input
-                  type="text"
-                  name="Value"
-                  id="Value"
-
-                  // className={nibrsSubmittedPropertyMain === 1 || !value?.CategoryID ? 'readonlyColor' : lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD' ? 'requiredColor' : ''}
-                  className={nibrsSubmittedPropertyMain === 1 ? 'LockFildsColour' : !value?.CategoryID ? 'readonlyColor' : lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD'
-                    ? 'requiredColor'
-                    : ''
-                  }
-                  maxLength={9}
-                  disabled={nibrsSubmittedPropertyMain === 1 || !value?.CategoryID ? true : propCategoryCode === '09' || propCategoryCode === '22' || propCategoryCode === '65' || propCategoryCode === '66' || propCategoryCode === '88' || propCategoryCode === '10' || propCategoryCode === '10' || propCategoryCode === '48'}
-                  value={`$${value?.Value}`}
-                  onChange={HandleChanges}
-                  required
-                  autoComplete='off'
-                />
-              </div>
-
-            </div>
-            <div className="row">
-              <div className="col-3 col-md-3 col-lg-1">
-              </div>
-              <div className="col-3 col-md-3 col-lg-4">
-                <div className="form-check">
-                  <input className="form-check-input" name='IsEvidence' value={value?.IsEvidence} onChange={HandleChanges} checked={value?.IsEvidence} type="checkbox" id="flexCheckDefault" disabled={editval[0]?.IsEvidence ? true : false} />
-                  <label className="form-check-label" for="flexCheckDefault">
-                    Evidence
-                  </label>
                 </div>
+                <div className="row">
+                  <div className="col-3 col-md-3 col-lg-1 mt-2">
+                    <span className='new-label '>
+                      Type{errors.PropertyTypeIDError !== 'true' ? (
+                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.PropertyTypeIDError}</p>
+                      ) : null}
+                    </span>
+                  </div>
+                  <div className="col-3 col-md-3 col-lg-3 mt-1">
+                    <Select
+                      styles={nibrsSubmittedPropertyMain === 1 ? LockFildscolour : propertyID || masterPropertyID ? customStylesWithOutColor : Requiredcolour}
+                      name='PropertyTypeID'
+                      value={propertyTypeData?.filter((obj) => obj.value === value?.PropertyTypeID)}
+                      options={propertyTypeData}
+                      onChange={(e) => ChangeDropDown(e, 'PropertyTypeID')}
+                      isClearable
+                      placeholder="Select..."
+                      isDisabled={propertyID || masterPropertyID || isDrugOffense || nibrsSubmittedPropertyMain === 1 ? true : false}
+                    />
+                  </div>
+                  <div className="col-3 col-md-3 col-lg-1 mt-2">
+                    <span data-toggle="modal" onClick={() => { setOpenPage('Property Description') }} data-target="#ListModel" className='new-link'>
+                      Category
+                      {
+                        loginAgencyState === 'TX' ?
+                          check_Category_Nibrs(nibrsCodeArr, propRecType, propCategoryCode, 'ToolTip')
+                            ?
+                            check_Category_Nibrs(nibrsCodeArr, propRecType, propCategoryCode, 'ToolTip')
+                            :
+                            <></>
+                          :
+                          <></>
+                      }
+                      {errors.CategoryIDError !== 'true' ? (
+                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.CategoryIDError}</p>
+                      ) : null}
+                    </span>
+                  </div>
+                  <div className="col-3 col-md-3 col-lg-3 mt-1">
+                    <Select
+                      name='CategoryID'
+                      id='CategoryID'
+                      styles={
+                        nibrsSubmittedPropertyMain === 1 ? LockFildscolour :
+                          loginAgencyState === 'TX' ?
+                            check_Category_Nibrs(nibrsCodeArr, propRecType, propCategoryCode, 'Color')
+                              ?
+                              check_Category_Nibrs(nibrsCodeArr, propRecType, propCategoryCode, 'Color')
+                              :
+                              Requiredcolour
+                            :
+                            Requiredcolour
+                      }
 
+                      value={propertyCategoryData?.filter((obj) => obj.value === value?.CategoryID)}
+                      options={propertyCategoryData}
+                      onChange={(e) => ChangeDropDown(e, 'CategoryID')}
+                      isClearable
+                      placeholder="Select..."
+                      isDisabled={nibrsSubmittedPropertyMain === 1 ? true : false}
+                    />
+                  </div>
 
-
-              </div>
-
-              <div className=" col-3 col-md-3 col-lg-3 px-1 mt-1">
-                {navigateStatus && (
+                  <div className="col-3 col-md-3 col-lg-2 mt-2 ">
+                    <label htmlFor="" className='new-label px-0' style={{ paddingLeft: '5px' }}>Classification</label>
+                  </div>
+                  <div className="col-9 col-md-9 col-lg-2 mt-1">
+                    <Select
+                      styles={nibrsSubmittedPropertyMain === 1 ? LockFildscolour : customStylesWithOutColor}
+                      name='ClassificationID'
+                      value={propertyClassificationData?.filter((obj) => obj.value === value?.ClassificationID)}
+                      options={propertyClassificationData}
+                      onChange={(e) => ChangeDropDown(e, 'ClassificationID')}
+                      isClearable
+                      placeholder="Select..."
+                      isDisabled={nibrsSubmittedPropertyMain === 1 ? true : false}
+                    />
+                  </div>
+                  <div className="col-3 col-md-3 col-lg-1 mt-2 px-0">
+                    <label htmlFor="" className='new-label px-0' style={{ paddingLeft: '5px' }}> Possession&nbsp;Of</label>
+                  </div>
+                  <div className="col-8 col-md-8 col-lg-2 mt-1">
+                    {
+                      MstPage === "MST-Property-Dash" ?
+                        <Select
+                          name='PossessionOfID'
+                          styles={customStylesWithOutColor}
+                          value={mastersNameDrpData?.filter((obj) => obj.value === value?.PossessionOfID)}
+                          isClearable
+                          options={mastersNameDrpData}
+                          onChange={(e) => { ChangeDropDown(e, 'PossessionOfID') }}
+                          placeholder="Select..."
+                        />
+                        :
+                        <Select
+                          name='PossessionOfID'
+                          styles={customStylesWithOutColor}
+                          value={arresteeNameData?.filter((obj) => obj.value === value?.PossessionOfID)}
+                          isClearable
+                          options={arresteeNameData}
+                          onChange={(e) => { ChangeDropDown(e, 'PossessionOfID') }}
+                          placeholder="Select..."
+                        />
+                    }
+                  </div>
                   <span
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                    onClick={handleClick}
-                    style={{
-                      border: '1px solid red', backgroundColor: '#ffe6e6', color: isHovered ? 'blue' : 'red',
-                      padding: '3px', borderRadius: '4px', display: 'inline-block',
-                      transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '15px', width: "100%", textAlign: "center"
+                    onClick={() => {
+                      if (possessionID) { GetSingleDataPassion(possessionID); } setNameModalStatus(true);
                     }}
+                    data-toggle="modal" data-target="#MasterModal"
+                    className=" btn btn-sm bg-green text-white py-1 mt-1"
+                    style={{ marginRight: 'auto' }}
                   >
-                    Navigate to Miscellaneous Information
+                    <i className="fa fa-plus" >
+                    </i>
                   </span>
-                )}
-              </div>
+                  <div className="col-3 col-md-3 col-lg-1 mt-2 ">
+                    <label htmlFor="" className='new-label '>Primary&nbsp;Officer{errors.OfficerIDError !== 'true' ? (
+                      <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.OfficerIDError}</p>
+                    ) : null}</label>
+                  </div>
+                  <div className="col-3 col-md-3 col-lg-3 mt-1">
+                    <Select
+                      name='OfficerID'
+                      styles={customStylesWithOutColor}
+                      value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.OfficerID)}
+                      isClearable
+                      options={agencyOfficerDrpData}
+                      onChange={(e) => ChangeDropDown(e, 'OfficerID')}
+                      placeholder="Select..."
+                    />
+                  </div>
 
-            </div>
+                  <div className="col-3 col-md-3 col-lg-2 mt-2">
+                    <label htmlFor="" className='new-label'>
+                      Value
+                      {errors.ContactError !== 'true' ? (
+                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ContactError}</p>
+                      ) : null}
+                    </label>
+                  </div>
+                  <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
+                    <input
+                      type="text"
+                      name="Value"
+                      id="Value"
 
-          </div>
-          <div className="col-3 col-md-3 col-lg-1 pt-3 " >
-            <div className="img-box" >
-              <Carousel autoPlay={true} className="carousel-style" showArrows={true} showThumbs={false} showStatus={false} >
-                {
-                  multiImage.length > 0 ?
-                    multiImage?.map((item) => (
-                      <div key={item.PropertyTypeID} className='model-img' onClick={() => { setImageModalStatus(true) }} data-toggle="modal" data-target="#ImageModel">
-                        <img src={`data:image/png;base64,${item.Photo}`} style={{ height: '100px' }} />
-                      </div>
-                    ))
-                    :
-                    <div onClick={() => { setImageModalStatus(true) }} data-toggle="modal" data-target="#ImageModel">
-                      <img src={defualtImage} />
-                    </div>
-                }
-              </Carousel>
-            </div>
-          </div>
-          {/* Alert Master */}
-          <div className='col-lg-12'>
-            <AlertTable availableAlert={availableAlert} masterPropertyID={masterPropertyID} ProSta={ProSta} labelCol="col-lg-1" />
-          </div>
-          {/* ARTICLE   */}
-          {
-            value.PropertyCategoryCode === 'A' ?
-              <div className="col-12 col-md-12 col-lg-12 mt-1 p-0" >
-                <fieldset>
-                  <legend>Article</legend>
-                  <div className="row">
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-                      <label htmlFor="" className='new-label'>Serial Id</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
-                      <input type="text" name='SerialID' id='SerialID' autoComplete='off' value={value?.SerialID} onChange={HandleChanges} className='' required />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-                      <label htmlFor="" className='new-label'>Model Id</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
-                      <input type="text" name='ModelID' id='ModelID' value={value?.ModelID} onChange={HandleChanges} className='' required autoComplete='off' />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-
-                      <span data-toggle="modal" onClick={() => {
-                        setOpenPage('Color')
-                      }} data-target="#ListModel" className='new-link'>
-                        Top Color
-                      </span>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2 mt-1">
-                      <Select
-                        name='TopColorID'
-                        value={topColorDrpData?.filter((obj) => obj.value === value?.TopColorID)}
-                        options={topColorDrpData}
-                        styles={customStylesWithOutColor}
-                        onChange={(e) => ChangeDropDown(e, 'TopColorID')}
-                        isClearable
-                        placeholder="Select..."
-                      />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  px-0 mt-2 ">
-                      <span data-toggle="modal" onClick={() => {
-                        setOpenPage('Color')
-                      }} data-target="#ListModel" className='new-link'>
-                        Bottom Color
-                      </span>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2 mt-1">
-                      <Select
-                        name='BottomColorID'
-                        value={bottomColorDrpData?.filter((obj) => obj.value === value?.BottomColorID)}
-                        options={bottomColorDrpData}
-                        styles={customStylesWithOutColor}
-                        onChange={(e) => ChangeDropDown(e, 'BottomColorID')}
-                        isClearable
-                        placeholder="Select..."
-                      />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2 ">
-                      <label htmlFor="" className='new-label'>OAN</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2  mt-1 text-field">
-                      <input type="text" name='OAN' id='OAN' maxLength={20} value={value?.OAN} onChange={HandleChanges} className='' required autoComplete='off' />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2 ">
-                      <label htmlFor="" className='new-label'>Quantity</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2  mt-1 text-field">
-                      <input type="text" name='Quantity' id='Quantity' maxLength={20} value={value?.Quantity} onChange={HandleChanges} className='' required autoComplete='off' />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2 ">
-                      <label htmlFor="" className='new-label'>Brand</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2  mt-1 text-field">
-                      <input type="text" name='Brand' id='Brand' maxLength={20} value={value?.Brand} onChange={HandleChanges} className='' required autoComplete='off' />
-                    </div>
-                    <div className="col-12  col-md-12 col-lg-3 mt-md-1 " >
-                      {
-                        (!propertyID && !masterPropertyID) && (ProSta != 'true' || ProSta != true) &&
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-success"
-                          data-toggle="modal"
-                          data-target="#PropertyModal"
-                          onClick={() => {
-                            dispatch(get_Property_Article_Search_Data(possessionID, value?.SerialID, value?.ModelID, value?.Brand, value?.LossCodeID, value?.TopColorID, value?.CategoryID, value?.PropertyTypeID, value?.PropertyCategoryCode,
-
-                              value?.OfficerID, value?.OAN, value?.Quantity, value?.Value, value?.BottomColorID, value?.ClassificationID, setSearchModalState, loginAgencyID))
-                            setSearchModalState(true)
-                          }}
-                        >
-                          Search
-                        </button>
+                      // className={nibrsSubmittedPropertyMain === 1 || !value?.CategoryID ? 'readonlyColor' : lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD' ? 'requiredColor' : ''}
+                      className={nibrsSubmittedPropertyMain === 1 ? 'LockFildsColour' : !value?.CategoryID ? 'readonlyColor' : lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD'
+                        ? 'requiredColor'
+                        : ''
                       }
+                      maxLength={9}
+                      disabled={nibrsSubmittedPropertyMain === 1 || !value?.CategoryID ? true : propCategoryCode === '09' || propCategoryCode === '22' || propCategoryCode === '65' || propCategoryCode === '66' || propCategoryCode === '88' || propCategoryCode === '10' || propCategoryCode === '10' || propCategoryCode === '48'}
+                      value={`$${value?.Value}`}
+                      onChange={HandleChanges}
+                      required
+                      autoComplete='off'
+                    />
+                  </div>
+
+                </div>
+                <div className="row">
+                  <div className="col-3 col-md-3 col-lg-1">
+                  </div>
+                  <div className="col-3 col-md-3 col-lg-4">
+                    <div className="form-check">
+                      <input className="form-check-input" name='IsEvidence' value={value?.IsEvidence} onChange={HandleChanges} checked={value?.IsEvidence} type="checkbox" id="flexCheckDefault" disabled={editval[0]?.IsEvidence ? true : false} />
+                      <label className="form-check-label" for="flexCheckDefault">
+                        Evidence
+                      </label>
                     </div>
                   </div>
-                </fieldset>
-              </div>
-              :
-              <></>
-          }
-          {/* Others */}
-          {
-            value.PropertyCategoryCode === 'O' ?
-              <div className="col-12 col-md-12 col-lg-12 pt-2 p-0" >
-                <fieldset>
-                  <legend>Other</legend>
-                  <div className="row">
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-                      <label htmlFor="" className='new-label'>Brand</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
-                      <input type="text" name='Brand' id='Brand' value={value?.Brand} onChange={HandleChanges} className='' required autoComplete='off' />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-                      <label htmlFor="" className='new-label'>Serial Id</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
-                      <input type="text" name='SerialID' id='SerialID' value={value?.SerialID} onChange={HandleChanges} className='' required autoComplete='off' />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-                      <span data-toggle="modal" onClick={() => {
-                        setOpenPage('Color')
-                      }} data-target="#ListModel" className='new-link'>
-                        Top Color
-                      </span>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2  mt-1">
-                      <Select
-                        name='TopColorID'
-                        value={topColorDrpData?.filter((obj) => obj.value === value?.TopColorID)}
-                        options={topColorDrpData}
-                        styles={customStylesWithOutColor}
-                        onChange={(e) => ChangeDropDown(e, 'TopColorID')}
-                        isClearable
-                        placeholder="Select..."
-                      />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1 px-0  mt-2">
-                      <span data-toggle="modal" onClick={() => {
-                        setOpenPage('Color')
-                      }} data-target="#ListModel" className='new-link'>
-                        Bottom Color
-                      </span>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2  mt-1">
-                      <Select
-                        name='BottomColorID'
-                        value={bottomColorDrpData?.filter((obj) => obj.value === value?.BottomColorID)}
-                        options={bottomColorDrpData}
-                        styles={customStylesWithOutColor}
-                        onChange={(e) => ChangeDropDown(e, 'BottomColorID')}
-                        isClearable
-                        placeholder="Select..."
-                      />
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-                      <label htmlFor="" className='new-label'>Model Id</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2 text-field  mt-1">
-                      <input type="text" name='ModelID' id='ModelID' value={value?.ModelID} onChange={HandleChanges} className='' required autoComplete='off' />
-                    </div>
-
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-                      <label htmlFor="" className='new-label'>Quantity</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
-                      <input type="text" name='Quantity' id='Quantity' value={value?.Quantity} onChange={HandleChanges} className='' required autoComplete='off' />
-                    </div>
-
-                    <div className="col-3 col-md-3 col-lg-1 px-0 mt-2">
-                      <label htmlFor="" className='new-label '>Quantity Unit</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2  mt-1">
-                      <Select
-                        styles={customStylesWithOutColor}
-                        name='QuantityUnitID'
-                        value={measureTypeDrpData?.filter((obj) => obj.value === value?.QuantityUnitID)}
-                        options={measureTypeDrpData}
-                        onChange={(e) => ChangeDropDown(e, 'QuantityUnitID')}
-                        isClearable
-                        placeholder="Select..."
-                      />
-                    </div>
-                    <div className="col-12  col-md-12 col-lg-3   mt-md-1" >
-                      {
-                        (!propertyID && !masterPropertyID) && (ProSta != 'true' || ProSta != true) &&
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-success"
-                          data-toggle="modal"
-                          data-target="#PropertyModal"
-                          onClick={() => {
-                            dispatch(get_Property_Other_Search_Data(value?.SerialID, value?.TopColorID, value?.ModelID, value?.Brand, value?.LossCodeID, value?.CategoryID, value?.PropertyTypeID, value?.PropertyCategoryCode, value?.OfficerID, value?.OAN, value?.Quantity, value?.Value, value?.BottomColorID, value?.ClassificationID, value?.QuantityUnitID, setSearchModalState, loginAgencyID));
-                            setSearchModalState(true)
-                          }}
-                        >
-                          Search
-                        </button>
-                      }
-                    </div>
-                  </div>
-                </fieldset>
-              </div>
-              :
-              <></>
-          }
-          {/* Security */}
-          {
-            value.PropertyCategoryCode === 'S' ?
-              <div className="col-12 col-md-12 col-lg-12 pt-2 p-0" >
-                <fieldset>
-                  <legend>Security</legend>
-                  <div className="row">
-                    <div className="col-3 col-md-3 col-lg-2  mt-2">
-                      <label htmlFor="" className='new-label'>Denomination</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
-                      <input type="text" name='Denomination' maxLength={16} id='Denomination' value={value?.Denomination} onChange={HandleChanges} className='' required autoComplete='off' />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2  mt-2">
-                      <label htmlFor="" className='new-label'>Issuing Agency</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
-                      <input type="text" name='IssuingAgency' id='IssuingAgency' value={value?.IssuingAgency} onChange={HandleChanges} className='' required autoComplete='off' />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2  mt-2">
-                      <label htmlFor="" className='new-label'>Measure Type</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2  mt-1">
-                      <Select
-                        name='MeasureTypeID'
-
-                        value={measureTypeDrpData?.filter((obj) => obj.value === value?.MeasureTypeID)}
-                        styles={value?.Denomination ? customStylesWithOutColor : 'readonlyColor'}
-                        options={measureTypeDrpData}
-                        onChange={(e) => ChangeDropDown(e, 'MeasureTypeID')}
-                        isClearable
-                        placeholder="Select..."
-                        isDisabled={value?.Denomination ? false : true}
-                      />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2  mt-2">
-                      <label htmlFor="" className='new-label'>Security Date</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2 ">
-                      <DatePicker
-                        id='SecurityDtTm'
-                        name='SecurityDtTm'
-                        ref={startRef1}
-
-                        onKeyDown={(e) => {
-                          if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
-                            e?.preventDefault();
-                          } else {
-                            onKeyDown(e);
-                          }
+                  <div className=" col-3 col-md-3 col-lg-3 px-1 mt-1">
+                    {navigateStatus && (
+                      <span
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                        onClick={handleClick}
+                        style={{
+                          border: '1px solid red', backgroundColor: '#ffe6e6', color: isHovered ? 'blue' : 'red',
+                          padding: '3px', borderRadius: '4px', display: 'inline-block',
+                          transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '15px', width: "100%", textAlign: "center"
                         }}
-                        onChange={(date) => { setStatesChangeStatus(true); setSecurityDate(date); setValue({ ...value, ['SecurityDtTm']: date ? getShowingWithOutTime(date) : null }) }}
-                        className=''
-                        dateFormat="MM/dd/yyyy"
-                        isClearable={value?.SecurityDtTm ? true : false}
-                        selected={securityDate}
-                        placeholderText={value?.SecurityDtTm ? value.SecurityDtTm : 'Select...'}
-                        timeIntervals={1}
-                        autoComplete="Off"
-                        showYearDropdown
-                        showMonthDropdown
-                        dropdownMode="select"
-                        filterTime={filterPassedTime}
-                      />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2  mt-2">
-                      <label htmlFor="" className='new-label'>Serial Id</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2 text-field  mt-1">
-                      <input type="text" name='SerialID' id='SerialID' value={value?.SerialID} onChange={HandleChanges} className='' required autoComplete='off' />
-                    </div>
-                    <div className="col-12  col-md-12 col-lg-4   mt-md-1" >
-                      {
-                        (!propertyID && !masterPropertyID) && (ProSta != 'true' || ProSta != true) &&
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-success"
-                          data-toggle="modal"
-                          data-target="#PropertyModal"
-                          onClick={() => {
-                            dispatch(get_Property_Security_Search_Data(value?.SerialID, value?.IssuingAgency, value?.MeasureTypeID, value?.SecurityDtTm, value?.CategoryID, value?.Denomination, value?.PropertyTypeID, value?.PropertyCategoryCode,
-                              value?.OfficerID, value?.OAN, value?.Quantity, value?.Value, value?.BottomColorID, value?.ClassificationID, value?.LossCodeID,
-                              setSearchModalState, loginAgencyID));
-                            setSearchModalState(true)
-                          }}
-                        >
-                          Search
-                        </button>
-                      }
-                    </div>
+                      >
+                        Navigate to Miscellaneous Information
+                      </span>
+                    )}
                   </div>
-                </fieldset>
+                </div>
               </div>
-              :
-              <></>
-          }
-          {/* Weapon */}
-          {
-            value.PropertyCategoryCode === 'G' ?
-              <div className="col-12 col-md-12 col-lg-12 pt-2 p-0" >
-                <fieldset>
-                  <legend>Weapon</legend>
-                  <div className="row">
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-                      <label htmlFor="" className='new-label'>Style</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2 text-field  mt-1">
-                      <input type="text" name='Style' id='Style' value={value?.Style} onChange={HandleChanges} className='' required autoComplete='off' />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-                      <label htmlFor="" className='new-label'>Finish</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2 text-field  mt-1">
-                      <input type="text" name='Finish' id='Finish' value={value?.Finish} onChange={HandleChanges} className='' required autoComplete='off' />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-                      <label htmlFor="" className='new-label'>Caliber</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2 text-field  mt-1">
-                      <input type="text" name='Caliber' maxLength={10} id='Caliber' value={value?.Caliber} onChange={HandleChanges} className='' required autoComplete='off' />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-                      <label htmlFor="" className='new-label'>Handle</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2 text-field  mt-1">
-                      <input type="text" name='Handle' id='Handle' value={value?.Handle} onChange={HandleChanges} className='' required autoComplete='off' />
-                    </div>
-
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-                      <label htmlFor="" className='new-label'>Serial Id</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2 text-field  mt-1">
-                      <input type="text" name='SerialID' id='SerialID' value={value?.SerialID} onChange={HandleChanges} className='' required autoComplete='off' />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-                      <label htmlFor="" className='new-label'>Make</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2   mt-1">
-                      <Select
-                        name='MakeID'
-                        value={weaponMakeDrpData?.filter((obj) => obj.value === value?.MakeID)}
-                        styles={customStylesWithOutColor}
-                        options={weaponMakeDrpData}
-                        onChange={(e) => ChangeDropDown(e, 'MakeID')}
-                        isClearable
-                        placeholder="Select..."
-                      />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-                      <label htmlFor="" className='new-label'>Model</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2   mt-1">
-
-                      <CreatableSelect
-                        name="WeaponModelID"
-                        isClearable
-                        options={weaponModelDrpData}
-                        styles={customStylesWithOutColor}
-                        placeholder="Select or type..."
-                        value={
-                          // First, try to match existing dropdown option
-                          weaponModelDrpData?.find((obj) => obj.value?.toString() === value?.WeaponModelID?.toString())
-                          // If not matched, fallback to custom typed value
-                          || (value?.ModelName ? { label: value.ModelName, value: value.ModelName } : null)
-                        }
-                        onChange={(e) => ChangeDropDown(e, "WeaponModelID")}
-                      />
-                    </div>
-                    <div className="col-3 col-md-4 col-lg-3 mt-2">
-                      <div className="form-check ">
-                        <input className="form-check-input" type="checkbox" name='auto' id="flexCheckDefault" checked={value?.IsAuto} />
-                        <label className="form-check-label" name='IsAuto' id='IsAuto' value={value?.IsAuto} onChange={HandleChanges} htmlFor="flexCheckDefault">
-                          Auto
-                        </label>
-                      </div>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-                      <label htmlFor="" className='new-label'>Manu.&nbsp;Year</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2 ">
-                      <DatePicker
-                        name='ManufactureYear'
-                        id='ManufactureYear'
-                        selected={weaponfactureDate}
-                        onChange={(date) => { setStatesChangeStatus(true); setWeaponfactureDate(date); setValue({ ...value, ['ManufactureYear']: date ? getYearWithOutDateTime(date) : null }) }}
-                        showYearPicker
-                        dateFormat="yyyy"
-                        yearItemNumber={8}
-                        ref={startRef4}
-                        onKeyDown={onKeyDown}
-                        autoComplete="off"
-                        showYearDropdown
-                        showMonthDropdown
-                        dropdownMode="select"
-                        maxDate={new Date()}
-                      />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2 px-0">
-                      <label htmlFor="" className='new-label px-0'>Barrel&nbsp;Length</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2 text-field  mt-1">
-                      <input type="text" name='BarrelLength' value={value?.BarrelLength} id='BarrelLength' maxLength={10} onChange={HandleChanges} className='' required autoComplete='off' />
-                    </div>
-                    <div className="col-12  col-md-12 col-lg-6   mt-md-1" >
-                      {
-                        (!propertyID && !masterPropertyID) && (ProSta != 'true' || ProSta != true) &&
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-success"
-                          data-toggle="modal"
-                          data-target="#PropertyModal"
-                          onClick={() => {
-                            dispatch(get_Property_Weapon_Search_Data(value?.Style, value?.Finish, value?.SerialID, value?.MakeID,
-                              value?.ManufactureYear, value?.BarrelLength, value?.LossCodeID, value?.CategoryID, value?.Caliber, value?.Handle, value?.PropertyTypeID, value?.PropertyCategoryCode,
-                              value?.OfficerID, value?.OAN, value?.Quantity, value?.Value, value?.BottomColorID, value?.ClassificationID, setSearchModalState, loginAgencyID));
-                            setSearchModalState(true);
-                          }}
-                        >
-                          Search
-                        </button>
-                      }
-                    </div>
-                  </div>
-                </fieldset>
+              <div className="col-3 col-md-3 col-lg-1 pt-3 " >
+                <div className="img-box" >
+                  <Carousel autoPlay={true} className="carousel-style" showArrows={true} showThumbs={false} showStatus={false} >
+                    {
+                      multiImage.length > 0 ?
+                        multiImage?.map((item) => (
+                          <div key={item.PropertyTypeID} className='model-img' onClick={() => { setImageModalStatus(true) }} data-toggle="modal" data-target="#ImageModel">
+                            <img src={`data:image/png;base64,${item.Photo}`} style={{ height: '100px' }} />
+                          </div>
+                        ))
+                        :
+                        <div onClick={() => { setImageModalStatus(true) }} data-toggle="modal" data-target="#ImageModel">
+                          <img src={defualtImage} />
+                        </div>
+                    }
+                  </Carousel>
+                </div>
               </div>
-              :
-              <>
-              </>
-          }
-          {/* Boat */}
-          {
-            value.PropertyCategoryCode === 'B' ?
-              <div className="col-12 col-md-12 col-lg-12 p-0" >
-                <fieldset>
-                  <legend>Boat</legend>
-                  <div className="row">
-                    <div className="col-3 col-md-3 col-lg-1   mt-2">
-                      <label htmlFor="" className='new-label'>Manu. Year</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1 ">
-                      <DatePicker
-                        name='ManufactureYear'
-                        id='ManufactureYear'
-                        selected={manufactureDate}
-                        onChange={(date) => { setStatesChangeStatus(true); setManufactureDate(date); setValue({ ...value, ['ManufactureYear']: date ? getYearWithOutDateTime(date) : null }) }}
-                        showYearPicker
-                        dateFormat="yyyy"
-                        yearItemNumber={8}
-                        ref={startRef2}
-                        onKeyDown={onKeyDown}
-                        autoComplete="off"
-                        showYearDropdown
-                        showMonthDropdown
-                        dropdownMode="select"
-                        maxDate={new Date()}
-                      />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-                      <label htmlFor="" className='new-label'>Length</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1 text-field mt-1 ">
-                      <input type="text" name='Length' id='Length' maxLength={9} value={value?.Length} onChange={HandleChanges} className='' required autoComplete='off' />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-                      <label htmlFor="" className='new-label'>HIN  {errors.HINError !== 'true' ? (
-                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.HINError}</p>
-                      ) : null}</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1 text-field  mt-1">
-                      <input type="text" name='HIN' value={value?.HIN} maxLength={21} onChange={HandleChanges} className='requiredColor' required autoComplete='off' />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-                      <label htmlFor="" className='new-label'>Reg. Expiry</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2">
-                      <DatePicker
-                        id='RegistrationExpiryDtTm'
-                        name='RegistrationExpiryDtTm'
-                        ref={startRef}
-
-                        isClearable
-                        onKeyDown={onKeyDown}
-                        dateFormat="MM/yyyy"
-                        selected={value?.RegistrationExpiryDtTm && new Date(value?.RegistrationExpiryDtTm)}
-
-                        onChange={(date) => { setStatesChangeStatus(true); setValue({ ...value, ['RegistrationExpiryDtTm']: date ? getShowingMonthDateYear(date) : null }) }}
-                        showMonthYearPicker
-                        autoComplete="Off"
-                        className=''
-                        placeholderText={'Select...'}
-                      />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-
-                      <span data-toggle="modal" onClick={() => {
-                        setOpenPage('Boat VOD')
-                      }} data-target="#ListModel" className='new-link'>
-                        VOD
-                      </span>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2  mt-1">
-                      <Select
-                        name='VODID'
-                        value={vodDrpData?.filter((obj) => obj.value === value?.VODID)}
-                        styles={customStylesWithOutColor}
-                        options={vodDrpData}
-                        onChange={(e) => ChangeDropDown(e, 'VODID')}
-                        isClearable
-                        placeholder="Select..."
-                      />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2 ">
-                      <label htmlFor="" className='new-label'>Reg. State  {errors.RegStateError !== 'true' ? (
-                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.RegStateError}</p>
-                      ) : null}</label>
-
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2  mt-1 ">
-                      <Select
-                        name='RegistrationStateID'
-                        styles={Requiredcolour}
-                        value={stateDrpData?.filter((obj) => obj.value === value?.RegistrationStateID)}
-                        options={stateDrpData}
-                        onChange={(e) => ChangeDropDown(e, 'RegistrationStateID')}
-                        isClearable
-                        placeholder="Select..."
-                      />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-                      <label htmlFor="" className='new-label'>Reg. No  {errors.RegNumError !== 'true' ? (
-                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.RegNumError}</p>
-                      ) : null}</label>
-
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
-                      <input type="text" name='RegistrationNumber' id='RegistrationNumber' value={value?.RegistrationNumber} maxLength={10} onChange={HandleChanges} className='requiredColor' required autoComplete='off' />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1 mt-2">
-
-                      <span data-toggle="modal" onClick={() => {
-                        setOpenPage('Property Boat OH Material')
-                      }} data-target="#ListModel" className='new-link'>
-                        Material
-                      </span>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2  mt-1">
-                      <Select
-                        name='MaterialID'
-                        value={materialDrpData?.filter((obj) => obj.value === value?.MaterialID)}
-                        options={materialDrpData}
-                        styles={customStylesWithOutColor}
-                        onChange={(e) => ChangeDropDown(e, 'MaterialID')}
-                        isClearable
-                        placeholder="Select..."
-                      />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-
-                      <span data-toggle="modal" onClick={() => {
-                        setOpenPage('Property Boat Make')
-                      }} data-target="#ListModel" className='new-link'>
-                        Make
-                      </span>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2  mt-1">
-                      <Select
-                        name='MakeID'
-                        value={makeDrpData?.filter((obj) => obj.value === value?.MakeID)}
-                        styles={customStylesWithOutColor}
-                        options={makeDrpData}
-                        onChange={(e) => ChangeDropDown(e, 'MakeID')}
-                        isClearable
-                        placeholder="Select..."
-                      />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-
-                      <span data-toggle="modal" onClick={() => {
-                        setOpenPage('Property Boat Model')
-                      }} data-target="#ListModel" className='new-link'>
-                        Model
-                      </span>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2  mt-1">
-                      <CreatableSelect
-                        name="ModelID"
-                        isClearable
-                        options={boatModelDrpData}
-                        styles={customStylesWithOutColor}
-                        placeholder="Select or type..."
-                        value={
-                          // First, try to match existing dropdown option
-                          boatModelDrpData?.find((obj) => obj.value?.toString() === value?.ModelID?.toString())
-                          // If not matched, fallback to custom typed value
-                          || (value?.ModelName ? { label: value.ModelName, value: value.ModelName } : null)
-                        }
-                        onChange={(e) => ChangeDropDown(e, "ModelID")}
-                      />
-
-
-
-
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-                      <label htmlFor="" className='new-label'>Top Color</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2  mt-1">
-                      <Select
-                        name='TopColorID'
-                        value={topColorDrpData?.filter((obj) => obj.value === value?.TopColorID)}
-                        options={topColorDrpData}
-                        styles={customStylesWithOutColor}
-                        onChange={(e) => ChangeDropDown(e, 'TopColorID')}
-                        isClearable
-                        placeholder="Select..."
-                        menuPlacement='top'
-                      />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1 px-0 mt-2">
-                      <label htmlFor="" className='new-label'>Bottom Color</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2  mt-1">
-                      <Select
-                        name='BottomColorID'
-                        value={bottomColorDrpData?.filter((obj) => obj.value === value?.BottomColorID)}
-                        options={bottomColorDrpData}
-                        styles={customStylesWithOutColor}
-                        onChange={(e) => ChangeDropDown(e, 'BottomColorID')}
-                        isClearable
-                        placeholder="Select..."
-                        menuPlacement='top'
-                      />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-                      <span data-toggle="modal" onClick={() => {
-                        setOpenPage('Property Boat Propulsion')
-                      }} data-target="#ListModel" className='new-link'>
-                        Propulsion
-                      </span>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-2  mt-1">
-                      <Select
-                        name='PropulusionID'
-                        value={propulusionDrpData?.filter((obj) => obj.value === value?.PropulusionID)}
-                        styles={customStylesWithOutColor}
-                        options={propulusionDrpData}
-                        onChange={(e) => ChangeDropDown(e, 'PropulusionID')}
-                        isClearable
-                        placeholder="Select..."
-                        menuPlacement='top'
-                      />
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-1  mt-2">
-                      <label htmlFor="" className='new-label'>Comments</label>
-                    </div>
-                    <div className="col-3 col-md-3 col-lg-6  mt-1">
-                      <textarea name='Comments' id="Comments" value={value?.Comments} onChange={HandleChanges} cols="30" rows='1' className="form-control" style={{ resize: 'none' }}>
-                      </textarea>
-                    </div>
-                    <div className="col-12  col-md-12 col-lg-1 text-right mt-md-1 " >
-                      {
-                        (!propertyID && !masterPropertyID) && (ProSta != 'true' || ProSta != true) &&
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-success "
-                          data-toggle="modal"
-                          data-target="#PropertyModal"
-                          onClick={() => {
-                            dispatch(get_Property_Boat_Search_Data(value?.RegistrationStateID, value?.RegistrationNumber, value?.MaterialID, value?.HIN, value?.RegistrationExpiryDtTm, value?.VODID, value?.LossCodeID, value?.ManufactureYear, value?.Length, value?.CategoryID, value?.TopColorID, value?.MakeID, value?.ModelID, value?.PropulusionID, value?.Comments, value?.PropertyTypeID, value?.PropertyCategoryCode, value?.OfficerID, value?.OAN, value?.Quantity, value?.Value, value?.BottomColorID, value?.ClassificationID, setSearchModalState, loginAgencyID));
-                            setSearchModalState(true)
-                          }}
-                        >
-                          Search
-                        </button>
-                      }
-                    </div>
-                  </div>
-                </fieldset>
+              {/* Alert Master */}
+              <div className='col-lg-12'>
+                <AlertTable availableAlert={availableAlert} masterPropertyID={masterPropertyID} ProSta={ProSta} labelCol="col-lg-1" />
               </div>
-              :
-              <>
-              </>
-          }
-          {/* drug */}
-          {
-            value.PropertyCategoryCode === 'D' ?
-              <div className="col-12 col-md-12 pt-2 p-0" >
-                <div className=" ">
-                  <fieldset className='p-0'>
-                    <legend> Drug  </legend>
-                    <div className="col-12">
-                      <div className="row mt-1">
-                        <div className="col-12 col-md-2 col-lg-3 mt-2 ">
-                          <label htmlFor="SuspectedDrugTypeID" className="form-label" style={{ fontSize: '13px', color: '#283041', fontWeight: '500' }}>
-                            Drug Type
-                          </label>
-                          <div>
-                            <Select
-                              inputId="SuspectedDrugTypeID"
-                              name="SuspectedDrugTypeID"
-                              styles={Requiredcolour}
-                              value={suspectedDrugDrpData?.filter(obj => obj.value === value?.SuspectedDrugTypeID)}
-                              isClearable
-                              options={suspectedDrugDrpData}
-                              onChange={(e) => onChangeDrugType(e, 'SuspectedDrugTypeID')}
-                              placeholder="Select..."
-                            />
-                            {drugErrors.SuspectedDrugTypeIDError !== 'true' ? (
-                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{drugErrors.SuspectedDrugTypeIDError}</p>
-                            ) : null}
-                          </div>
+              {/* ARTICLE   */}
+              {
+                value.PropertyCategoryCode === 'A' ?
+                  <div className="col-12 col-md-12 col-lg-12 mt-1 p-0" >
+                    <fieldset>
+                      <legend>Article</legend>
+                      <div className="row">
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+                          <label htmlFor="" className='new-label'>Serial Id</label>
                         </div>
-
-                        <div className="col-12 col-md-2 col-lg-2 mt-2 ">
-                          <label className='form-label' style={{ fontSize: '13px', color: '#283041', fontWeight: '500' }}>
-                            Measurement Unit
-                          </label>
-                          <div>
-                            <Select
-                              name='MeasurementUnitID'
-                              styles={Requiredcolour}
-                              value={drugMeasureUnitData?.filter((obj) => obj.value === value?.MeasurementUnitID)}
-                              options={drugMeasureUnitData}
-                              onChange={(e) => onChangeDrugType(e, 'MeasurementUnitID')}
-                              placeholder="Select..."
-                              isClearable
-                            />
-                            {drugErrors.MeasurementUnitIDError !== 'true' ? (
-                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{drugErrors.MeasurementUnitIDError}</p>
-                            ) : null}
-                          </div>
+                        <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
+                          <input type="text" name='SerialID' id='SerialID' autoComplete='off' value={value?.SerialID} onChange={HandleChanges} className='' required />
                         </div>
-
-                        <div className="col-12 col-md-2 col-lg-2 mt-2 ">
-                          <label className='form-label' htmlFor="MeasurementTypeID" style={{ fontSize: '13px', color: '#283041', fontWeight: '500' }}>
-                            Measurement Type
-                          </label>
-                          <div >
-                            <Select
-                              name='MeasurementTypeID'
-                              styles={Requiredcolour}
-                              options={drugMeasureTypeData}
-                              value={drugMeasureTypeData?.filter((obj) => obj.value === value?.MeasurementTypeID)}
-                              onChange={(e) => onChangeDrugType(e, 'MeasurementTypeID')}
-                              isClearable
-                              placeholder="Select..."
-                            />
-                            {drugErrors.MeasurementTypeIDError !== 'true' ? (
-                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{drugErrors.MeasurementTypeIDError}</p>
-                            ) : null}
-                          </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+                          <label htmlFor="" className='new-label'>Model Id</label>
                         </div>
+                        <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
+                          <input type="text" name='ModelID' id='ModelID' value={value?.ModelID} onChange={HandleChanges} className='' required autoComplete='off' />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
 
-                        <div className="col-12 col-md-2 col-lg-2 mt-2">
-                          <label className='form-label' htmlFor="EstimatedDrugQty" style={{ fontSize: '13px', color: '#283041', fontWeight: '500' }}>
-                            Estimated Drug Qty
-                          </label>
-                          <div className="text-field mt-0">
-                            <input
-                              type="number"
-                              name='EstimatedDrugQty'
-                              id='EstimatedDrugQty'
-                              className={'requiredColor'}
-                              autoComplete='off'
-                              maxLength={12}
-                              step="0.001"
-                              value={value?.EstimatedDrugQty}
-                              onChange={(e) => {
-                                !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true)
-                                if (e.target.value?.length > 12) {
-                                  return;
-                                }
-                                const val = e.target.value;
-                                if (val.includes('.')) {
-                                  const [whole, decimal] = val.split('.');
-                                  if (decimal.length > 3) {
-                                    return;
-                                  }
-                                }
-                                setValue({ ...value, EstimatedDrugQty: val });
+                          <span data-toggle="modal" onClick={() => {
+                            setOpenPage('Color')
+                          }} data-target="#ListModel" className='new-link'>
+                            Top Color
+                          </span>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2 mt-1">
+                          <Select
+                            name='TopColorID'
+                            value={topColorDrpData?.filter((obj) => obj.value === value?.TopColorID)}
+                            options={topColorDrpData}
+                            styles={customStylesWithOutColor}
+                            onChange={(e) => ChangeDropDown(e, 'TopColorID')}
+                            isClearable
+                            placeholder="Select..."
+                          />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  px-0 mt-2 ">
+                          <span data-toggle="modal" onClick={() => {
+                            setOpenPage('Color')
+                          }} data-target="#ListModel" className='new-link'>
+                            Bottom Color
+                          </span>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2 mt-1">
+                          <Select
+                            name='BottomColorID'
+                            value={bottomColorDrpData?.filter((obj) => obj.value === value?.BottomColorID)}
+                            options={bottomColorDrpData}
+                            styles={customStylesWithOutColor}
+                            onChange={(e) => ChangeDropDown(e, 'BottomColorID')}
+                            isClearable
+                            placeholder="Select..."
+                          />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2 ">
+                          <label htmlFor="" className='new-label'>OAN</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2  mt-1 text-field">
+                          <input type="text" name='OAN' id='OAN' maxLength={20} value={value?.OAN} onChange={HandleChanges} className='' required autoComplete='off' />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2 ">
+                          <label htmlFor="" className='new-label'>Quantity</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2  mt-1 text-field">
+                          <input type="text" name='Quantity' id='Quantity' maxLength={20} value={value?.Quantity} onChange={HandleChanges} className='' required autoComplete='off' />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2 ">
+                          <label htmlFor="" className='new-label'>Brand</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2  mt-1 text-field">
+                          <input type="text" name='Brand' id='Brand' maxLength={20} value={value?.Brand} onChange={HandleChanges} className='' required autoComplete='off' />
+                        </div>
+                        <div className="col-12  col-md-12 col-lg-3 mt-md-1 " >
+                          {
+                            (!propertyID && !masterPropertyID) && (ProSta != 'true' || ProSta != true) &&
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-success"
+                              data-toggle="modal"
+                              data-target="#PropertyModal"
+                              onClick={() => {
+                                dispatch(get_Property_Article_Search_Data(possessionID, value?.SerialID, value?.ModelID, value?.Brand, value?.LossCodeID, value?.TopColorID, value?.CategoryID, value?.PropertyTypeID, value?.PropertyCategoryCode,
+
+                                  value?.OfficerID, value?.OAN, value?.Quantity, value?.Value, value?.BottomColorID, value?.ClassificationID, setSearchModalState, loginAgencyID))
+                                setSearchModalState(true)
                               }}
-                            />
-                          </div>
-                          {drugErrors.EstimatedDrugQtyError !== 'true' ? (
-                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{drugErrors.EstimatedDrugQtyError}</p>
-                          ) : null}
+                            >
+                              Search
+                            </button>
+                          }
                         </div>
-                        {/* <div className="col-5 col-md-5 col-lg-6 text-right " >
+                      </div>
+                    </fieldset>
+                  </div>
+                  :
+                  <></>
+              }
+              {/* Others */}
+              {
+                value.PropertyCategoryCode === 'O' ?
+                  <div className="col-12 col-md-12 col-lg-12 pt-2 p-0" >
+                    <fieldset>
+                      <legend>Other</legend>
+                      <div className="row">
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+                          <label htmlFor="" className='new-label'>Brand</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
+                          <input type="text" name='Brand' id='Brand' value={value?.Brand} onChange={HandleChanges} className='' required autoComplete='off' />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+                          <label htmlFor="" className='new-label'>Serial Id</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
+                          <input type="text" name='SerialID' id='SerialID' value={value?.SerialID} onChange={HandleChanges} className='' required autoComplete='off' />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+                          <span data-toggle="modal" onClick={() => {
+                            setOpenPage('Color')
+                          }} data-target="#ListModel" className='new-link'>
+                            Top Color
+                          </span>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2  mt-1">
+                          <Select
+                            name='TopColorID'
+                            value={topColorDrpData?.filter((obj) => obj.value === value?.TopColorID)}
+                            options={topColorDrpData}
+                            styles={customStylesWithOutColor}
+                            onChange={(e) => ChangeDropDown(e, 'TopColorID')}
+                            isClearable
+                            placeholder="Select..."
+                          />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1 px-0  mt-2">
+                          <span data-toggle="modal" onClick={() => {
+                            setOpenPage('Color')
+                          }} data-target="#ListModel" className='new-link'>
+                            Bottom Color
+                          </span>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2  mt-1">
+                          <Select
+                            name='BottomColorID'
+                            value={bottomColorDrpData?.filter((obj) => obj.value === value?.BottomColorID)}
+                            options={bottomColorDrpData}
+                            styles={customStylesWithOutColor}
+                            onChange={(e) => ChangeDropDown(e, 'BottomColorID')}
+                            isClearable
+                            placeholder="Select..."
+                          />
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+                          <label htmlFor="" className='new-label'>Model Id</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2 text-field  mt-1">
+                          <input type="text" name='ModelID' id='ModelID' value={value?.ModelID} onChange={HandleChanges} className='' required autoComplete='off' />
+                        </div>
+
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+                          <label htmlFor="" className='new-label'>Quantity</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
+                          <input type="text" name='Quantity' id='Quantity' value={value?.Quantity} onChange={HandleChanges} className='' required autoComplete='off' />
+                        </div>
+
+                        <div className="col-3 col-md-3 col-lg-1 px-0 mt-2">
+                          <label htmlFor="" className='new-label '>Quantity Unit</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2  mt-1">
+                          <Select
+                            styles={customStylesWithOutColor}
+                            name='QuantityUnitID'
+                            value={measureTypeDrpData?.filter((obj) => obj.value === value?.QuantityUnitID)}
+                            options={measureTypeDrpData}
+                            onChange={(e) => ChangeDropDown(e, 'QuantityUnitID')}
+                            isClearable
+                            placeholder="Select..."
+                          />
+                        </div>
+                        <div className="col-12  col-md-12 col-lg-3   mt-md-1" >
+                          {
+                            (!propertyID && !masterPropertyID) && (ProSta != 'true' || ProSta != true) &&
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-success"
+                              data-toggle="modal"
+                              data-target="#PropertyModal"
+                              onClick={() => {
+                                dispatch(get_Property_Other_Search_Data(value?.SerialID, value?.TopColorID, value?.ModelID, value?.Brand, value?.LossCodeID, value?.CategoryID, value?.PropertyTypeID, value?.PropertyCategoryCode, value?.OfficerID, value?.OAN, value?.Quantity, value?.Value, value?.BottomColorID, value?.ClassificationID, value?.QuantityUnitID, setSearchModalState, loginAgencyID));
+                                setSearchModalState(true)
+                              }}
+                            >
+                              Search
+                            </button>
+                          }
+                        </div>
+                      </div>
+                    </fieldset>
+                  </div>
+                  :
+                  <></>
+              }
+              {/* Security */}
+              {
+                value.PropertyCategoryCode === 'S' ?
+                  <div className="col-12 col-md-12 col-lg-12 pt-2 p-0" >
+                    <fieldset>
+                      <legend>Security</legend>
+                      <div className="row">
+                        <div className="col-3 col-md-3 col-lg-2  mt-2">
+                          <label htmlFor="" className='new-label'>Denomination</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
+                          <input type="text" name='Denomination' maxLength={16} id='Denomination' value={value?.Denomination} onChange={HandleChanges} className='' required autoComplete='off' />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2  mt-2">
+                          <label htmlFor="" className='new-label'>Issuing Agency</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
+                          <input type="text" name='IssuingAgency' id='IssuingAgency' value={value?.IssuingAgency} onChange={HandleChanges} className='' required autoComplete='off' />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2  mt-2">
+                          <label htmlFor="" className='new-label'>Measure Type</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2  mt-1">
+                          <Select
+                            name='MeasureTypeID'
+
+                            value={measureTypeDrpData?.filter((obj) => obj.value === value?.MeasureTypeID)}
+                            styles={value?.Denomination ? customStylesWithOutColor : 'readonlyColor'}
+                            options={measureTypeDrpData}
+                            onChange={(e) => ChangeDropDown(e, 'MeasureTypeID')}
+                            isClearable
+                            placeholder="Select..."
+                            isDisabled={value?.Denomination ? false : true}
+                          />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2  mt-2">
+                          <label htmlFor="" className='new-label'>Security Date</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2 ">
+                          <DatePicker
+                            id='SecurityDtTm'
+                            name='SecurityDtTm'
+                            ref={startRef1}
+
+                            onKeyDown={(e) => {
+                              if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                                e?.preventDefault();
+                              } else {
+                                onKeyDown(e);
+                              }
+                            }}
+                            onChange={(date) => { setStatesChangeStatus(true); setSecurityDate(date); setValue({ ...value, ['SecurityDtTm']: date ? getShowingWithOutTime(date) : null }) }}
+                            className=''
+                            dateFormat="MM/dd/yyyy"
+                            isClearable={value?.SecurityDtTm ? true : false}
+                            selected={securityDate}
+                            placeholderText={value?.SecurityDtTm ? value.SecurityDtTm : 'Select...'}
+                            timeIntervals={1}
+                            autoComplete="Off"
+                            showYearDropdown
+                            showMonthDropdown
+                            dropdownMode="select"
+                            filterTime={filterPassedTime}
+                          />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2  mt-2">
+                          <label htmlFor="" className='new-label'>Serial Id</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2 text-field  mt-1">
+                          <input type="text" name='SerialID' id='SerialID' value={value?.SerialID} onChange={HandleChanges} className='' required autoComplete='off' />
+                        </div>
+                        <div className="col-12  col-md-12 col-lg-4   mt-md-1" >
+                          {
+                            (!propertyID && !masterPropertyID) && (ProSta != 'true' || ProSta != true) &&
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-success"
+                              data-toggle="modal"
+                              data-target="#PropertyModal"
+                              onClick={() => {
+                                dispatch(get_Property_Security_Search_Data(value?.SerialID, value?.IssuingAgency, value?.MeasureTypeID, value?.SecurityDtTm, value?.CategoryID, value?.Denomination, value?.PropertyTypeID, value?.PropertyCategoryCode,
+                                  value?.OfficerID, value?.OAN, value?.Quantity, value?.Value, value?.BottomColorID, value?.ClassificationID, value?.LossCodeID,
+                                  setSearchModalState, loginAgencyID));
+                                setSearchModalState(true)
+                              }}
+                            >
+                              Search
+                            </button>
+                          }
+                        </div>
+                      </div>
+                    </fieldset>
+                  </div>
+                  :
+                  <></>
+              }
+              {/* Weapon */}
+              {
+                value.PropertyCategoryCode === 'G' ?
+                  <div className="col-12 col-md-12 col-lg-12 pt-2 p-0" >
+                    <fieldset>
+                      <legend>Weapon</legend>
+                      <div className="row">
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+                          <label htmlFor="" className='new-label'>Style</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2 text-field  mt-1">
+                          <input type="text" name='Style' id='Style' value={value?.Style} onChange={HandleChanges} className='' required autoComplete='off' />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+                          <label htmlFor="" className='new-label'>Finish</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2 text-field  mt-1">
+                          <input type="text" name='Finish' id='Finish' value={value?.Finish} onChange={HandleChanges} className='' required autoComplete='off' />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+                          <label htmlFor="" className='new-label'>Caliber</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2 text-field  mt-1">
+                          <input type="text" name='Caliber' maxLength={10} id='Caliber' value={value?.Caliber} onChange={HandleChanges} className='' required autoComplete='off' />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+                          <label htmlFor="" className='new-label'>Handle</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2 text-field  mt-1">
+                          <input type="text" name='Handle' id='Handle' value={value?.Handle} onChange={HandleChanges} className='' required autoComplete='off' />
+                        </div>
+
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+                          <label htmlFor="" className='new-label'>Serial Id</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2 text-field  mt-1">
+                          <input type="text" name='SerialID' id='SerialID' value={value?.SerialID} onChange={HandleChanges} className='' required autoComplete='off' />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+                          <label htmlFor="" className='new-label'>Make</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2   mt-1">
+                          <Select
+                            name='MakeID'
+                            value={weaponMakeDrpData?.filter((obj) => obj.value === value?.MakeID)}
+                            styles={customStylesWithOutColor}
+                            options={weaponMakeDrpData}
+                            onChange={(e) => ChangeDropDown(e, 'MakeID')}
+                            isClearable
+                            placeholder="Select..."
+                          />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+                          <label htmlFor="" className='new-label'>Model</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2   mt-1">
+
+                          <CreatableSelect
+                            name="WeaponModelID"
+                            isClearable
+                            options={weaponModelDrpData}
+                            styles={customStylesWithOutColor}
+                            placeholder="Select or type..."
+                            value={
+                              // First, try to match existing dropdown option
+                              weaponModelDrpData?.find((obj) => obj.value?.toString() === value?.WeaponModelID?.toString())
+                              // If not matched, fallback to custom typed value
+                              || (value?.ModelName ? { label: value.ModelName, value: value.ModelName } : null)
+                            }
+                            onChange={(e) => ChangeDropDown(e, "WeaponModelID")}
+                          />
+                        </div>
+                        <div className="col-3 col-md-4 col-lg-3 mt-2">
+                          <div className="form-check ">
+                            <input className="form-check-input" type="checkbox" name='auto' id="flexCheckDefault" checked={value?.IsAuto} />
+                            <label className="form-check-label" name='IsAuto' id='IsAuto' value={value?.IsAuto} onChange={HandleChanges} htmlFor="flexCheckDefault">
+                              Auto
+                            </label>
+                          </div>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+                          <label htmlFor="" className='new-label'>Manu.&nbsp;Year</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2 ">
+                          <DatePicker
+                            name='ManufactureYear'
+                            id='ManufactureYear'
+                            selected={weaponfactureDate}
+                            onChange={(date) => { setStatesChangeStatus(true); setWeaponfactureDate(date); setValue({ ...value, ['ManufactureYear']: date ? getYearWithOutDateTime(date) : null }) }}
+                            showYearPicker
+                            dateFormat="yyyy"
+                            yearItemNumber={8}
+                            ref={startRef4}
+                            onKeyDown={onKeyDown}
+                            autoComplete="off"
+                            showYearDropdown
+                            showMonthDropdown
+                            dropdownMode="select"
+                            maxDate={new Date()}
+                          />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2 px-0">
+                          <label htmlFor="" className='new-label px-0'>Barrel&nbsp;Length</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2 text-field  mt-1">
+                          <input type="text" name='BarrelLength' value={value?.BarrelLength} id='BarrelLength' maxLength={10} onChange={HandleChanges} className='' required autoComplete='off' />
+                        </div>
+                        <div className="col-12  col-md-12 col-lg-6   mt-md-1" >
+                          {
+                            (!propertyID && !masterPropertyID) && (ProSta != 'true' || ProSta != true) &&
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-success"
+                              data-toggle="modal"
+                              data-target="#PropertyModal"
+                              onClick={() => {
+                                dispatch(get_Property_Weapon_Search_Data(value?.Style, value?.Finish, value?.SerialID, value?.MakeID,
+                                  value?.ManufactureYear, value?.BarrelLength, value?.LossCodeID, value?.CategoryID, value?.Caliber, value?.Handle, value?.PropertyTypeID, value?.PropertyCategoryCode,
+                                  value?.OfficerID, value?.OAN, value?.Quantity, value?.Value, value?.BottomColorID, value?.ClassificationID, setSearchModalState, loginAgencyID));
+                                setSearchModalState(true);
+                              }}
+                            >
+                              Search
+                            </button>
+                          }
+                        </div>
+                      </div>
+                    </fieldset>
+                  </div>
+                  :
+                  <>
+                  </>
+              }
+              {/* Boat */}
+              {
+                value.PropertyCategoryCode === 'B' ?
+                  <div className="col-12 col-md-12 col-lg-12 p-0" >
+                    <fieldset>
+                      <legend>Boat</legend>
+                      <div className="row">
+                        <div className="col-3 col-md-3 col-lg-1   mt-2">
+                          <label htmlFor="" className='new-label'>Manu. Year</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1 ">
+                          <DatePicker
+                            name='ManufactureYear'
+                            id='ManufactureYear'
+                            selected={manufactureDate}
+                            onChange={(date) => { setStatesChangeStatus(true); setManufactureDate(date); setValue({ ...value, ['ManufactureYear']: date ? getYearWithOutDateTime(date) : null }) }}
+                            showYearPicker
+                            dateFormat="yyyy"
+                            yearItemNumber={8}
+                            ref={startRef2}
+                            onKeyDown={onKeyDown}
+                            autoComplete="off"
+                            showYearDropdown
+                            showMonthDropdown
+                            dropdownMode="select"
+                            maxDate={new Date()}
+                          />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+                          <label htmlFor="" className='new-label'>Length</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1 text-field mt-1 ">
+                          <input type="text" name='Length' id='Length' maxLength={9} value={value?.Length} onChange={HandleChanges} className='' required autoComplete='off' />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+                          <label htmlFor="" className='new-label'>HIN  {errors.HINError !== 'true' ? (
+                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.HINError}</p>
+                          ) : null}</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1 text-field  mt-1">
+                          <input type="text" name='HIN' value={value?.HIN} maxLength={21} onChange={HandleChanges} className='requiredColor' required autoComplete='off' />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+                          <label htmlFor="" className='new-label'>Reg. Expiry</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2">
+                          <DatePicker
+                            id='RegistrationExpiryDtTm'
+                            name='RegistrationExpiryDtTm'
+                            ref={startRef}
+
+                            isClearable
+                            onKeyDown={onKeyDown}
+                            dateFormat="MM/yyyy"
+                            selected={value?.RegistrationExpiryDtTm && new Date(value?.RegistrationExpiryDtTm)}
+
+                            onChange={(date) => { setStatesChangeStatus(true); setValue({ ...value, ['RegistrationExpiryDtTm']: date ? getShowingMonthDateYear(date) : null }) }}
+                            showMonthYearPicker
+                            autoComplete="Off"
+                            className=''
+                            placeholderText={'Select...'}
+                          />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+
+                          <span data-toggle="modal" onClick={() => {
+                            setOpenPage('Boat VOD')
+                          }} data-target="#ListModel" className='new-link'>
+                            VOD
+                          </span>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2  mt-1">
+                          <Select
+                            name='VODID'
+                            value={vodDrpData?.filter((obj) => obj.value === value?.VODID)}
+                            styles={customStylesWithOutColor}
+                            options={vodDrpData}
+                            onChange={(e) => ChangeDropDown(e, 'VODID')}
+                            isClearable
+                            placeholder="Select..."
+                          />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2 ">
+                          <label htmlFor="" className='new-label'>Reg. State  {errors.RegStateError !== 'true' ? (
+                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.RegStateError}</p>
+                          ) : null}</label>
+
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2  mt-1 ">
+                          <Select
+                            name='RegistrationStateID'
+                            styles={Requiredcolour}
+                            value={stateDrpData?.filter((obj) => obj.value === value?.RegistrationStateID)}
+                            options={stateDrpData}
+                            onChange={(e) => ChangeDropDown(e, 'RegistrationStateID')}
+                            isClearable
+                            placeholder="Select..."
+                          />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+                          <label htmlFor="" className='new-label'>Reg. No  {errors.RegNumError !== 'true' ? (
+                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.RegNumError}</p>
+                          ) : null}</label>
+
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
+                          <input type="text" name='RegistrationNumber' id='RegistrationNumber' value={value?.RegistrationNumber} maxLength={10} onChange={HandleChanges} className='requiredColor' required autoComplete='off' />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1 mt-2">
+
+                          <span data-toggle="modal" onClick={() => {
+                            setOpenPage('Property Boat OH Material')
+                          }} data-target="#ListModel" className='new-link'>
+                            Material
+                          </span>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2  mt-1">
+                          <Select
+                            name='MaterialID'
+                            value={materialDrpData?.filter((obj) => obj.value === value?.MaterialID)}
+                            options={materialDrpData}
+                            styles={customStylesWithOutColor}
+                            onChange={(e) => ChangeDropDown(e, 'MaterialID')}
+                            isClearable
+                            placeholder="Select..."
+                          />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+
+                          <span data-toggle="modal" onClick={() => {
+                            setOpenPage('Property Boat Make')
+                          }} data-target="#ListModel" className='new-link'>
+                            Make
+                          </span>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2  mt-1">
+                          <Select
+                            name='MakeID'
+                            value={makeDrpData?.filter((obj) => obj.value === value?.MakeID)}
+                            styles={customStylesWithOutColor}
+                            options={makeDrpData}
+                            onChange={(e) => ChangeDropDown(e, 'MakeID')}
+                            isClearable
+                            placeholder="Select..."
+                          />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+
+                          <span data-toggle="modal" onClick={() => {
+                            setOpenPage('Property Boat Model')
+                          }} data-target="#ListModel" className='new-link'>
+                            Model
+                          </span>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2  mt-1">
+                          <CreatableSelect
+                            name="ModelID"
+                            isClearable
+                            options={boatModelDrpData}
+                            styles={customStylesWithOutColor}
+                            placeholder="Select or type..."
+                            value={
+                              // First, try to match existing dropdown option
+                              boatModelDrpData?.find((obj) => obj.value?.toString() === value?.ModelID?.toString())
+                              // If not matched, fallback to custom typed value
+                              || (value?.ModelName ? { label: value.ModelName, value: value.ModelName } : null)
+                            }
+                            onChange={(e) => ChangeDropDown(e, "ModelID")}
+                          />
+
+
+
+
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+                          <label htmlFor="" className='new-label'>Top Color</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2  mt-1">
+                          <Select
+                            name='TopColorID'
+                            value={topColorDrpData?.filter((obj) => obj.value === value?.TopColorID)}
+                            options={topColorDrpData}
+                            styles={customStylesWithOutColor}
+                            onChange={(e) => ChangeDropDown(e, 'TopColorID')}
+                            isClearable
+                            placeholder="Select..."
+                            menuPlacement='top'
+                          />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1 px-0 mt-2">
+                          <label htmlFor="" className='new-label'>Bottom Color</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2  mt-1">
+                          <Select
+                            name='BottomColorID'
+                            value={bottomColorDrpData?.filter((obj) => obj.value === value?.BottomColorID)}
+                            options={bottomColorDrpData}
+                            styles={customStylesWithOutColor}
+                            onChange={(e) => ChangeDropDown(e, 'BottomColorID')}
+                            isClearable
+                            placeholder="Select..."
+                            menuPlacement='top'
+                          />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+                          <span data-toggle="modal" onClick={() => {
+                            setOpenPage('Property Boat Propulsion')
+                          }} data-target="#ListModel" className='new-link'>
+                            Propulsion
+                          </span>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2  mt-1">
+                          <Select
+                            name='PropulusionID'
+                            value={propulusionDrpData?.filter((obj) => obj.value === value?.PropulusionID)}
+                            styles={customStylesWithOutColor}
+                            options={propulusionDrpData}
+                            onChange={(e) => ChangeDropDown(e, 'PropulusionID')}
+                            isClearable
+                            placeholder="Select..."
+                            menuPlacement='top'
+                          />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-1  mt-2">
+                          <label htmlFor="" className='new-label'>Comments</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-6  mt-1">
+                          <textarea name='Comments' id="Comments" value={value?.Comments} onChange={HandleChanges} cols="30" rows='1' className="form-control" style={{ resize: 'none' }}>
+                          </textarea>
+                        </div>
+                        <div className="col-12  col-md-12 col-lg-1 text-right mt-md-1 " >
+                          {
+                            (!propertyID && !masterPropertyID) && (ProSta != 'true' || ProSta != true) &&
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-success "
+                              data-toggle="modal"
+                              data-target="#PropertyModal"
+                              onClick={() => {
+                                dispatch(get_Property_Boat_Search_Data(value?.RegistrationStateID, value?.RegistrationNumber, value?.MaterialID, value?.HIN, value?.RegistrationExpiryDtTm, value?.VODID, value?.LossCodeID, value?.ManufactureYear, value?.Length, value?.CategoryID, value?.TopColorID, value?.MakeID, value?.ModelID, value?.PropulusionID, value?.Comments, value?.PropertyTypeID, value?.PropertyCategoryCode, value?.OfficerID, value?.OAN, value?.Quantity, value?.Value, value?.BottomColorID, value?.ClassificationID, setSearchModalState, loginAgencyID));
+                                setSearchModalState(true)
+                              }}
+                            >
+                              Search
+                            </button>
+                          }
+                        </div>
+                      </div>
+                    </fieldset>
+                  </div>
+                  :
+                  <>
+                  </>
+              }
+              {/* drug */}
+              {
+                value.PropertyCategoryCode === 'D' ?
+                  <div className="col-12 col-md-12 pt-2 p-0" >
+                    <div className=" ">
+                      <fieldset className='p-0'>
+                        <legend> Drug  </legend>
+                        <div className="col-12">
+                          <div className="row mt-1">
+                            <div className="col-12 col-md-2 col-lg-3 mt-2 ">
+                              <label htmlFor="SuspectedDrugTypeID" className="form-label" style={{ fontSize: '13px', color: '#283041', fontWeight: '500' }}>
+                                Drug Type
+                              </label>
+                              <div>
+                                <Select
+                                  inputId="SuspectedDrugTypeID"
+                                  name="SuspectedDrugTypeID"
+                                  styles={Requiredcolour}
+                                  value={suspectedDrugDrpData?.filter(obj => obj.value === value?.SuspectedDrugTypeID)}
+                                  isClearable
+                                  options={suspectedDrugDrpData}
+                                  onChange={(e) => onChangeDrugType(e, 'SuspectedDrugTypeID')}
+                                  placeholder="Select..."
+                                />
+                                {drugErrors.SuspectedDrugTypeIDError !== 'true' ? (
+                                  <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{drugErrors.SuspectedDrugTypeIDError}</p>
+                                ) : null}
+                              </div>
+                            </div>
+
+                            <div className="col-12 col-md-2 col-lg-2 mt-2 ">
+                              <label className='form-label' style={{ fontSize: '13px', color: '#283041', fontWeight: '500' }}>
+                                Measurement Unit
+                              </label>
+                              <div>
+                                <Select
+                                  name='MeasurementUnitID'
+                                  styles={Requiredcolour}
+                                  value={drugMeasureUnitData?.filter((obj) => obj.value === value?.MeasurementUnitID)}
+                                  options={drugMeasureUnitData}
+                                  onChange={(e) => onChangeDrugType(e, 'MeasurementUnitID')}
+                                  placeholder="Select..."
+                                  isClearable
+                                />
+                                {drugErrors.MeasurementUnitIDError !== 'true' ? (
+                                  <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{drugErrors.MeasurementUnitIDError}</p>
+                                ) : null}
+                              </div>
+                            </div>
+
+                            <div className="col-12 col-md-2 col-lg-2 mt-2 ">
+                              <label className='form-label' htmlFor="MeasurementTypeID" style={{ fontSize: '13px', color: '#283041', fontWeight: '500' }}>
+                                Measurement Type
+                              </label>
+                              <div >
+                                <Select
+                                  name='MeasurementTypeID'
+                                  styles={Requiredcolour}
+                                  options={drugMeasureTypeData}
+                                  value={drugMeasureTypeData?.filter((obj) => obj.value === value?.MeasurementTypeID)}
+                                  onChange={(e) => onChangeDrugType(e, 'MeasurementTypeID')}
+                                  isClearable
+                                  placeholder="Select..."
+                                />
+                                {drugErrors.MeasurementTypeIDError !== 'true' ? (
+                                  <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{drugErrors.MeasurementTypeIDError}</p>
+                                ) : null}
+                              </div>
+                            </div>
+
+                            <div className="col-12 col-md-2 col-lg-2 mt-2">
+                              <label className='form-label' htmlFor="EstimatedDrugQty" style={{ fontSize: '13px', color: '#283041', fontWeight: '500' }}>
+                                Estimated Drug Qty
+                              </label>
+                              <div className="text-field mt-0">
+                                <input
+                                  type="number"
+                                  name='EstimatedDrugQty'
+                                  id='EstimatedDrugQty'
+                                  className={'requiredColor'}
+                                  autoComplete='off'
+                                  maxLength={12}
+                                  step="0.001"
+                                  value={value?.EstimatedDrugQty}
+                                  onChange={(e) => {
+                                    !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true)
+                                    if (e.target.value?.length > 12) {
+                                      return;
+                                    }
+                                    const val = e.target.value;
+                                    if (val.includes('.')) {
+                                      const [whole, decimal] = val.split('.');
+                                      if (decimal.length > 3) {
+                                        return;
+                                      }
+                                    }
+                                    setValue({ ...value, EstimatedDrugQty: val });
+                                  }}
+                                />
+                              </div>
+                              {drugErrors.EstimatedDrugQtyError !== 'true' ? (
+                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{drugErrors.EstimatedDrugQtyError}</p>
+                              ) : null}
+                            </div>
+                            {/* <div className="col-5 col-md-5 col-lg-6 text-right " >
                           {
                             (!propertyID || !masterPropertyID) && (ProSta != 'true' || ProSta != true) && (value.PropertyCategoryCode === 'D') &&
                             <button
@@ -3413,78 +3367,75 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                             </button>
                           }
                         </div> */}
-                        <div className="btn-box text-right col-3 col-md-3 mt-4  pt-2" >
-                          {
-                            (!propertyID || !masterPropertyID) && (ProSta != 'true' || ProSta != true) && (value.PropertyCategoryCode === 'D') &&
-                            <button
-                              type="button"
-                              id='Drugbtn'
-                              className="btn btn-sm btn-success mr-1"
-                              data-toggle="modal"
-                              data-target="#PropertyModal"
-                              onClick={() => {
-                                dispatch(get_Property_Drug_Search_Data(value?.LossCodeID,
-                                  value?.Value,
-                                  value?.PropertyTypeID,
-                                  value?.PropertyCategoryCode,
-                                  value?.CategoryID,
-                                  value?.ClassificationID,
-                                  value?.OfficerID,
-                                  loginAgencyID,
-                                  setSearchModalState,))
-                                setSearchModalState(true);
-                              }}
-                            >
-                              Search
-                            </button>
-                          }
-                          <button type="button" data-dismiss="modal" className="btn btn-sm btn-success mr-1" onClick={onDrugClose}>New</button>
-                          {
-                            propertyDrugID ?
-                              <>
-                                <button type="button" className="btn btn-sm btn-success mr-1" disabled={!statesChangeStatus} onClick={() => { check_Drug_Validation_Error() }}>Update </button>
-                              </>
-                              :
-                              <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => { check_Drug_Validation_Error() }}>Add Drug</button>
-                          }
+                            <div className="btn-box text-right col-3 col-md-3 mt-4  pt-2" >
+                              {
+                                (!propertyID || !masterPropertyID) && (ProSta != 'true' || ProSta != true) && (value.PropertyCategoryCode === 'D') &&
+                                <button
+                                  type="button"
+                                  id='Drugbtn'
+                                  className="btn btn-sm btn-success mr-1"
+                                  data-toggle="modal"
+                                  data-target="#PropertyModal"
+                                  onClick={() => {
+                                    dispatch(get_Property_Drug_Search_Data(value?.LossCodeID,
+                                      value?.Value,
+                                      value?.PropertyTypeID,
+                                      value?.PropertyCategoryCode,
+                                      value?.CategoryID,
+                                      value?.ClassificationID,
+                                      value?.OfficerID,
+                                      loginAgencyID,
+                                      setSearchModalState,))
+                                    setSearchModalState(true);
+                                  }}
+                                >
+                                  Search
+                                </button>
+                              }
+                              <button type="button" data-dismiss="modal" className="btn btn-sm btn-success mr-1" onClick={onDrugClose}>New</button>
+                              {
+                                propertyDrugID ?
+                                  <>
+                                    <button type="button" className="btn btn-sm btn-success mr-1" disabled={!statesChangeStatus} onClick={() => { check_Drug_Validation_Error() }}>Update </button>
+                                  </>
+                                  :
+                                  <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => { check_Drug_Validation_Error() }}>Add Drug</button>
+                              }
+                            </div>
+                          </div>
                         </div>
+                      </fieldset>
+
+                    </div>
+                    <div className="row ">
+                      <div className="col-12 modal-table mt-1">
+                        <DataTable
+                          fixedHeader
+                          persistTableHead={true}
+                          customStyles={tableCustomStyle}
+                          dense
+                          conditionalRowStyles={conditionalRowStylesDrug}
+                          columns={columns}
+                          data={drugData?.length > 0 ? drugData : drugLocalArr}
+                          onRowClicked={(row) => set_Edit_Value(row)}
+                          pagination
+                          paginationPerPage={5}
+                          fixedHeaderScrollHeight='150px'
+                          paginationRowsPerPageOptions={[5, 10, 15, 20]}
+                          highlightOnHover
+                          noDataComponent={"There are no data to display"}
+                        />
                       </div>
                     </div>
-                  </fieldset>
-
-
-
-
-                </div>
-                <div className="row ">
-                  <div className="col-12 modal-table mt-1">
-                    <DataTable
-                      fixedHeader
-                      persistTableHead={true}
-                      customStyles={tableCustomStyle}
-                      dense
-                      conditionalRowStyles={conditionalRowStylesDrug}
-                      columns={columns}
-                      data={drugData?.length > 0 ? drugData : drugLocalArr}
-                      onRowClicked={(row) => set_Edit_Value(row)}
-                      pagination
-                      paginationPerPage={5}
-                      fixedHeaderScrollHeight='150px'
-                      paginationRowsPerPageOptions={[5, 10, 15, 20]}
-                      highlightOnHover
-                      noDataComponent={"There are no data to display"}
-                    />
                   </div>
-                </div>
-              </div>
-              :
-              <>
-              </>
-          }
-          {!isViewEventDetails &&
-            <div className="col-12 text-right mb-1 mt-1 field-button  d-flex justify-content-between" style={{ marginTop: "1px" }}>
-              <div>
-                {/* {
+                  :
+                  <>
+                  </>
+              }
+              {!isViewEventDetails &&
+                <div className="col-12 text-right mb-1 mt-1 field-button  d-flex justify-content-between" style={{ marginTop: "1px" }}>
+                  <div>
+                    {/* {
                   propertyMainModuleData?.length > 0 &&
                   <button
                     type="button"
@@ -3497,226 +3448,225 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                     Validate TIBRS Property
                   </button>
                 } */}
-              </div>
-              <div>
-                {
-                  (propertyID || masterPropertyID) && (ProSta === 'true' || ProSta === true) &&
-                  <button type="button" className="btn btn-sm btn-success mx-1" onClick={() => { setPrintStatus(true) }}>Print Barcode</button>
-                }
-                <button type="button" className="btn btn-sm btn-success mr-1" data-toggle="modal" data-target="#NCICModal" onClick={() => { setOpenNCICModal(true) }}>TLETS</button>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-success mx-1"
-                  onClick={newProperty}
-                  {...(!isCad && { "data-dismiss": "modal" })}
-                >
-                  New
-                </button>
+                  </div>
+                  <div>
+                    {
+                      (propertyID || masterPropertyID) && (ProSta === 'true' || ProSta === true) &&
+                      <button type="button" className="btn btn-sm btn-success mx-1" onClick={() => { setPrintStatus(true) }}>Print Barcode</button>
+                    }
+                    <button type="button" className="btn btn-sm btn-success mr-1" data-toggle="modal" data-target="#NCICModal" onClick={() => { setOpenNCICModal(true) }}>TLETS</button>
+                    {/* <button
+                      type="button"
+                      className="btn btn-sm btn-success mx-1"
+                      onClick={newProperty}
+                      {...(!isCad && { "data-dismiss": "modal" })}
+                    >
+                      New
+                    </button> */}
 
-                {
-                  (propertyID || masterPropertyID) && (ProSta === 'true' || ProSta === true) ?
-                    effectiveScreenPermission ?
-                      effectiveScreenPermission[0]?.Changeok ?
+                    {
+                      (propertyID || masterPropertyID) && (ProSta === 'true' || ProSta === true) ?
+                        effectiveScreenPermission ?
+                          effectiveScreenPermission[0]?.Changeok ?
+                            <>
+                              <button type="button" disabled={!statesChangeStatus} className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); }}>Update</button>
+
+                              <button
+                                type="button" className="btn btn-sm btn-success mr-4" data-toggle="modal" data-target="#QueueReportsModal"
+                                onClick={() => { setShowModal(true); setIncMasterReport(true); setIncReportCount(IncReportCount + 1); }}
+                              >
+                                Print <i className="fa fa-print"></i>
+                              </button>
+                            </>
+                            :
+                            <>
+                            </>
+                          :
+                          <>
+                            <button type="button" disabled={!statesChangeStatus} className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); }}>Update</button>
+
+                            <button
+                              type="button" className="btn btn-sm btn-success mr-4" data-toggle="modal" data-target="#QueueReportsModal"
+                              onClick={() => { setShowModal(true); setIncMasterReport(true); setIncReportCount(IncReportCount + 1); }}
+                            >
+                              Print <i className="fa fa-print"></i>
+                            </button>
+                          </>
+                        :
+                        effectiveScreenPermission ?
+                          effectiveScreenPermission[0]?.AddOK ?
+                            <button type="button" className="btn btn-sm btn-success mr-1" onDoubleClick={''} onClick={(e) => { check_Validation_Error(); }}>Save</button>
+                            :
+                            <>
+                            </>
+                          :
+                          <button type="button" className="btn btn-sm btn-success mr-1" onDoubleClick={''} onClick={(e) => { check_Validation_Error(); }}>Save</button>
+                    }
+                    {
+                      MstPage === "MST-Property-Dash" &&
+                      <button type="button" className="btn btn-sm btn-success mx-1" onClick={onMasterPropClose} data-dismiss="modal">Close</button>
+                    }
+
+                  </div>
+                </div>
+              }
+            </div >
+          </div >
+          {
+            drugModal &&
+            <div className="modal fade" style={{ background: 'rgba(0,0,0, 0.5)' }} id='DrugModal' tabIndex='-1' aria-hidden='true' data-backdrop='false'>
+              <div className="modal-dialog modal-dialog-centered modal-xl">
+                <div className="modal-content">
+                  <button type="button" className="border-0" aria-label="Close" data-dismiss="modal" onClick={onDrugClose} style={{ alignSelf: "end" }}><b>X</b>
+                  </button>
+                  <div className="modal-body">
+                    <div className="m-1 mt-3 bb">
+                      <fieldset >
+                        <legend >Drugs</legend>
+                        <div className="col-12">
+                          <div className="row mt-1">
+                            <div className="col-3 col-md-3  col-lg-2 mt-2">
+                              <label className='new-label'>Suspected&nbsp;Drug&nbsp;Type{drugErrors.SuspectedDrugTypeIDError !== 'true' ? (
+                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{drugErrors.SuspectedDrugTypeIDError}</p>
+                              ) : null}</label>
+                            </div>
+                            <div className="col-3 col-md-3  col-lg-3 mt-1">
+                              <Select
+                                name='SuspectedDrugTypeID'
+                                styles={Requiredcolour}
+                                value={suspectedDrugDrpData?.filter((obj) => obj.value === value?.SuspectedDrugTypeID)}
+                                isClearable
+                                options={suspectedDrugDrpData}
+                                onChange={(e) => ChangeDropDown(e, 'SuspectedDrugTypeID')}
+                                placeholder="Select..."
+                              />
+                            </div>
+                            <div className="col-3 col-md-3  col-lg-3 mt-2">
+                              <label className='new-label'>Property Source Drug Type</label>
+                            </div>
+                            <div className="col-3 col-md-3  col-lg-4 mt-1">
+                              <Select
+                                name='PropertySourceDrugTypeID'
+                                styles={customStylesWithOutColor}
+                                value={propSourceDrugDrpData?.filter((obj) => obj.value === value?.PropertySourceDrugTypeID)}
+                                options={propSourceDrugDrpData}
+                                onChange={(e) => ChangeDropDown(e, 'PropertySourceDrugTypeID')}
+                                placeholder="Select..."
+                                isClearable
+                                isDisabled={drugTypecode !== 'E' ? false : true}
+                              />
+                            </div>
+                            <div className="col-3 col-md-3  col-lg-2 mt-2">
+                              <label className='new-label'>Estimated&nbsp;Drug&nbsp;Qty  {drugErrors.EstimatedDrugQtyError !== 'true' ? (
+                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{drugErrors.EstimatedDrugQtyError}</p>
+                              ) : null}</label>
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-2 mt-1 text-field">
+                              <input type="text" maxLength={9} name='EstimatedDrugQty' id='EstimatedDrugQty' disabled={value?.MeasurementTypeID === 11} value={value?.EstimatedDrugQty} onChange={HandleChanges} className={value?.MeasurementTypeID !== 11 ? 'requiredColor' : ''} required={value?.MeasurementTypeID !== 11} autoComplete='off' />
+                            </div>
+                            <div className="col-3 col-md-3  col-lg-2 mt-2">
+                              <label className='new-label'>Fraction Drug Qty {drugErrors.FractionDrugQtyError !== 'true' ? (
+                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{drugErrors.FractionDrugQtyError}</p>
+                              ) : null}</label>
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-2 mt-1 text-field">
+                              <input type="text" maxLength={9} name='FractionDrugQty' id='FractionDrugQty' value={value?.FractionDrugQty} onChange={HandleChanges} className='requiredColor' required autoComplete='off' />
+                            </div>
+                            <div className="col-3 col-md-3  col-lg-2 mt-2 pt-1">
+                              <label className='new-label'>
+                                Measurement Type
+                                {drugErrors.MeasurementTypeIDError !== 'true' ? (
+                                  <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{drugErrors.MeasurementTypeIDError}</p>
+                                ) : null}
+                              </label>
+                            </div>
+                            <div className="col-9 col-md-9 col-lg-2 mt-2 ">
+                              <Select
+                                name='MeasurementTypeID'
+                                value={measureTypeDrpData?.filter((obj) => obj.value === value?.MeasurementTypeID)}
+                                styles={Requiredcolour}
+                                options={measureTypeDrpData}
+
+                                onChange={(e) => ChangeDropDown(e, 'MeasurementTypeID')}
+                                isClearable
+                                placeholder="Select..."
+                              />
+                            </div>
+                            <div className="col-3 col-md-3  col-lg-2 mt-2">
+
+                              <label className='new-label'>Solid Pounds</label>
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-2 mt-1 text-field">
+                              <input type="text" maxLength={9} name='SolidPounds' id='SolidPounds' value={value?.SolidPounds} onChange={HandleChanges} required autoComplete='off' />
+                            </div>
+                            <div className="col-3 col-md-3  col-lg-2 mt-2">
+                              <label className='new-label'>Solid Ounces</label>
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-2 mt-1 text-field">
+                              <input type="text" maxLength={9} name='SolidOunces' id='SolidOunces' value={value?.SolidOunces} onChange={HandleChanges} required autoComplete='off' />
+                            </div>
+                            <div className="col-3 col-md-3  col-lg-2 mt-2">
+                              <label className='new-label'>Solid Grams</label>
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-2 mt-2 text-field">
+                              <input type="text" maxLength={9} name='SolidGrams' id='SolidGrams' value={value?.SolidGrams} onChange={HandleChanges} required autoComplete='off' />
+                            </div>
+                            <div className="col-3 col-md-3  col-lg-2 mt-2">
+                              <label className='new-label'>Liquid Ounces</label>
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-2 mt-2 text-field">
+                              <input type="text" maxLength={9} name='LiquidOunces' id='LiquidOunces' value={value?.LiquidOunces} onChange={HandleChanges} required autoComplete='off' />
+                            </div>
+                            <div className="col-3 col-md-3  col-lg-2 mt-2">
+                              <label className='new-label'>Dose Units</label>
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-2 mt-2 text-field">
+                              <input type="text" maxLength={9} name='DoseUnits' id='DoseUnits' value={value?.DoseUnits} onChange={HandleChanges} required autoComplete='off' />
+                            </div>
+                            <div className="col-3 col-md-3  col-lg-2 mt-2">
+                              <label className='new-label'>Items</label>
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-2 mt-2 text-field">
+                              <input type="text" maxLength={9} name='Items' id='Items' value={value?.Items} onChange={HandleChanges} required autoComplete='off' />
+                            </div>
+                          </div>
+                        </div>
+                      </fieldset>
+                    </div>
+                  </div>
+                  <div className="btn-box text-right mr-1 mb-2">
+                    {
+                      propertyDrugID ?
                         <>
-                          <button type="button" disabled={!statesChangeStatus} className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); }}>Update</button>
-
-                          <button
-                            type="button" className="btn btn-sm btn-success mr-4" data-toggle="modal" data-target="#QueueReportsModal"
-                            onClick={() => { setShowModal(true); setIncMasterReport(true); setIncReportCount(IncReportCount + 1); }}
-                          >
-                            Print <i className="fa fa-print"></i>
-                          </button>
+                          <button type="button" className="btn btn-sm btn-success mr-1" disabled={!statesChangeStatus} onClick={() => { check_Drug_Validation_Error() }}>Update </button>
                         </>
                         :
-                        <>
-                        </>
-                      :
-                      <>
-                        <button type="button" disabled={!statesChangeStatus} className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); }}>Update</button>
-
-                        <button
-                          type="button" className="btn btn-sm btn-success mr-4" data-toggle="modal" data-target="#QueueReportsModal"
-                          onClick={() => { setShowModal(true); setIncMasterReport(true); setIncReportCount(IncReportCount + 1); }}
-                        >
-                          Print <i className="fa fa-print"></i>
-                        </button>
-                      </>
-                    :
-                    effectiveScreenPermission ?
-                      effectiveScreenPermission[0]?.AddOK ?
-                        <button type="button" className="btn btn-sm btn-success mr-1" onDoubleClick={''} onClick={(e) => { check_Validation_Error(); }}>Save</button>
-                        :
-                        <>
-                        </>
-                      :
-                      <button type="button" className="btn btn-sm btn-success mr-1" onDoubleClick={''} onClick={(e) => { check_Validation_Error(); }}>Save</button>
-                }
-                {
-                  MstPage === "MST-Property-Dash" &&
-                  <button type="button" className="btn btn-sm btn-success mx-1" onClick={onMasterPropClose} data-dismiss="modal">Close</button>
-                }
-
+                        <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => { check_Drug_Validation_Error() }}>Save</button>
+                    }
+                    <button type="button" data-dismiss="modal" className="btn btn-sm btn-success mr-1" onClick={onDrugClose}>Close</button>
+                  </div>
+                </div>
+              </div >
+            </div >
+          }
+          {
+            modalStatus &&
+            <div className="modal" id="myModal2" style={{ background: "rgba(0,0,0, 0.5)", transition: '0.5s' }} data-backdrop="false">
+              <div className="modal-dialog">
+                <div className="modal-content">
+                  <div className="box text-center py-5">
+                    <h5 className="modal-title mt-2" id="exampleModalLabel">Do you want to Delete ?</h5>
+                    <div className="btn-box mt-3">
+                      <button type="button" onClick={delete_Image_File} className="btn btn-sm text-white" style={{ background: "#ef233c" }} >Delete</button>
+                      <button type="button" onClick={() => { setImageId(''); setModalStatus(false); }} className="btn btn-sm btn-secondary ml-2"> Cancel</button>
+                    </div>
+                  </div>
+                </div>
               </div>
-
             </div>
           }
-        </div >
-      </div >
-      {
-        drugModal &&
-        <div className="modal fade" style={{ background: 'rgba(0,0,0, 0.5)' }} id='DrugModal' tabIndex='-1' aria-hidden='true' data-backdrop='false'>
-          <div className="modal-dialog modal-dialog-centered modal-xl">
-            <div className="modal-content">
-              <button type="button" className="border-0" aria-label="Close" data-dismiss="modal" onClick={onDrugClose} style={{ alignSelf: "end" }}><b>X</b>
-              </button>
-              <div className="modal-body">
-                <div className="m-1 mt-3 bb">
-                  <fieldset >
-                    <legend >Drugs</legend>
-                    <div className="col-12">
-                      <div className="row mt-1">
-                        <div className="col-3 col-md-3  col-lg-2 mt-2">
-                          <label className='new-label'>Suspected&nbsp;Drug&nbsp;Type{drugErrors.SuspectedDrugTypeIDError !== 'true' ? (
-                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{drugErrors.SuspectedDrugTypeIDError}</p>
-                          ) : null}</label>
-                        </div>
-                        <div className="col-3 col-md-3  col-lg-3 mt-1">
-                          <Select
-                            name='SuspectedDrugTypeID'
-                            styles={Requiredcolour}
-                            value={suspectedDrugDrpData?.filter((obj) => obj.value === value?.SuspectedDrugTypeID)}
-                            isClearable
-                            options={suspectedDrugDrpData}
-                            onChange={(e) => ChangeDropDown(e, 'SuspectedDrugTypeID')}
-                            placeholder="Select..."
-                          />
-                        </div>
-                        <div className="col-3 col-md-3  col-lg-3 mt-2">
-                          <label className='new-label'>Property Source Drug Type</label>
-                        </div>
-                        <div className="col-3 col-md-3  col-lg-4 mt-1">
-                          <Select
-                            name='PropertySourceDrugTypeID'
-                            styles={customStylesWithOutColor}
-                            value={propSourceDrugDrpData?.filter((obj) => obj.value === value?.PropertySourceDrugTypeID)}
-                            options={propSourceDrugDrpData}
-                            onChange={(e) => ChangeDropDown(e, 'PropertySourceDrugTypeID')}
-                            placeholder="Select..."
-                            isClearable
-                            isDisabled={drugTypecode !== 'E' ? false : true}
-                          />
-                        </div>
-                        <div className="col-3 col-md-3  col-lg-2 mt-2">
-                          <label className='new-label'>Estimated&nbsp;Drug&nbsp;Qty  {drugErrors.EstimatedDrugQtyError !== 'true' ? (
-                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{drugErrors.EstimatedDrugQtyError}</p>
-                          ) : null}</label>
-                        </div>
-                        <div className="col-3 col-md-3 col-lg-2 mt-1 text-field">
-                          <input type="text" maxLength={9} name='EstimatedDrugQty' id='EstimatedDrugQty' disabled={value?.MeasurementTypeID === 11} value={value?.EstimatedDrugQty} onChange={HandleChanges} className={value?.MeasurementTypeID !== 11 ? 'requiredColor' : ''} required={value?.MeasurementTypeID !== 11} autoComplete='off' />
-                        </div>
-                        <div className="col-3 col-md-3  col-lg-2 mt-2">
-                          <label className='new-label'>Fraction Drug Qty {drugErrors.FractionDrugQtyError !== 'true' ? (
-                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{drugErrors.FractionDrugQtyError}</p>
-                          ) : null}</label>
-                        </div>
-                        <div className="col-3 col-md-3 col-lg-2 mt-1 text-field">
-                          <input type="text" maxLength={9} name='FractionDrugQty' id='FractionDrugQty' value={value?.FractionDrugQty} onChange={HandleChanges} className='requiredColor' required autoComplete='off' />
-                        </div>
-                        <div className="col-3 col-md-3  col-lg-2 mt-2 pt-1">
-                          <label className='new-label'>
-                            Measurement Type
-                            {drugErrors.MeasurementTypeIDError !== 'true' ? (
-                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{drugErrors.MeasurementTypeIDError}</p>
-                            ) : null}
-                          </label>
-                        </div>
-                        <div className="col-9 col-md-9 col-lg-2 mt-2 ">
-                          <Select
-                            name='MeasurementTypeID'
-                            value={measureTypeDrpData?.filter((obj) => obj.value === value?.MeasurementTypeID)}
-                            styles={Requiredcolour}
-                            options={measureTypeDrpData}
-
-                            onChange={(e) => ChangeDropDown(e, 'MeasurementTypeID')}
-                            isClearable
-                            placeholder="Select..."
-                          />
-                        </div>
-                        <div className="col-3 col-md-3  col-lg-2 mt-2">
-
-                          <label className='new-label'>Solid Pounds</label>
-                        </div>
-                        <div className="col-3 col-md-3 col-lg-2 mt-1 text-field">
-                          <input type="text" maxLength={9} name='SolidPounds' id='SolidPounds' value={value?.SolidPounds} onChange={HandleChanges} required autoComplete='off' />
-                        </div>
-                        <div className="col-3 col-md-3  col-lg-2 mt-2">
-                          <label className='new-label'>Solid Ounces</label>
-                        </div>
-                        <div className="col-3 col-md-3 col-lg-2 mt-1 text-field">
-                          <input type="text" maxLength={9} name='SolidOunces' id='SolidOunces' value={value?.SolidOunces} onChange={HandleChanges} required autoComplete='off' />
-                        </div>
-                        <div className="col-3 col-md-3  col-lg-2 mt-2">
-                          <label className='new-label'>Solid Grams</label>
-                        </div>
-                        <div className="col-3 col-md-3 col-lg-2 mt-2 text-field">
-                          <input type="text" maxLength={9} name='SolidGrams' id='SolidGrams' value={value?.SolidGrams} onChange={HandleChanges} required autoComplete='off' />
-                        </div>
-                        <div className="col-3 col-md-3  col-lg-2 mt-2">
-                          <label className='new-label'>Liquid Ounces</label>
-                        </div>
-                        <div className="col-3 col-md-3 col-lg-2 mt-2 text-field">
-                          <input type="text" maxLength={9} name='LiquidOunces' id='LiquidOunces' value={value?.LiquidOunces} onChange={HandleChanges} required autoComplete='off' />
-                        </div>
-                        <div className="col-3 col-md-3  col-lg-2 mt-2">
-                          <label className='new-label'>Dose Units</label>
-                        </div>
-                        <div className="col-3 col-md-3 col-lg-2 mt-2 text-field">
-                          <input type="text" maxLength={9} name='DoseUnits' id='DoseUnits' value={value?.DoseUnits} onChange={HandleChanges} required autoComplete='off' />
-                        </div>
-                        <div className="col-3 col-md-3  col-lg-2 mt-2">
-                          <label className='new-label'>Items</label>
-                        </div>
-                        <div className="col-3 col-md-3 col-lg-2 mt-2 text-field">
-                          <input type="text" maxLength={9} name='Items' id='Items' value={value?.Items} onChange={HandleChanges} required autoComplete='off' />
-                        </div>
-                      </div>
-                    </div>
-                  </fieldset>
-                </div>
-              </div>
-              <div className="btn-box text-right mr-1 mb-2">
-                {
-                  propertyDrugID ?
-                    <>
-                      <button type="button" className="btn btn-sm btn-success mr-1" disabled={!statesChangeStatus} onClick={() => { check_Drug_Validation_Error() }}>Update </button>
-                    </>
-                    :
-                    <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => { check_Drug_Validation_Error() }}>Save</button>
-                }
-                <button type="button" data-dismiss="modal" className="btn btn-sm btn-success mr-1" onClick={onDrugClose}>Close</button>
-              </div>
-            </div>
-          </div >
-        </div >
-      }
-      {
-        modalStatus &&
-        <div className="modal" id="myModal2" style={{ background: "rgba(0,0,0, 0.5)", transition: '0.5s' }} data-backdrop="false">
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="box text-center py-5">
-                <h5 className="modal-title mt-2" id="exampleModalLabel">Do you want to Delete ?</h5>
-                <div className="btn-box mt-3">
-                  <button type="button" onClick={delete_Image_File} className="btn btn-sm text-white" style={{ background: "#ef233c" }} >Delete</button>
-                  <button type="button" onClick={() => { setImageId(''); setModalStatus(false); }} className="btn btn-sm btn-secondary ml-2"> Cancel</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      }
-      <div className="col-12 modal-table pt-1">
-        {
+          <div className="col-12 modal-table pt-1">
+            {/* {
           MstPage != "MST-Property-Dash" &&
           <DataTable
             dense
@@ -3725,57 +3675,53 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
             customStyles={tableCustomStyle}
             conditionalRowStyles={conditionalRowStyles}
             columns={columns1}
-
             data={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? propertyMainModuleData : [] : propertyMainModuleData}
-
             selectableRowsHighlight
             highlightOnHover
             responsive
-
             onRowClicked={(row) => {
               set_EditRow(row);
             }}
-
             fixedHeaderScrollHeight='150px'
             pagination
             paginationPerPage={'100'}
             paginationRowsPerPageOptions={[100, 150, 200, 500]}
             noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : 'There are no data to display'}
           />
-        }
-      </div>
-      <DeletePopUpModal func={!isProperty ? Delete_Prpperty_Drug : Delete_Property} />
-
-      <ChangesModal func={check_Validation_Error} />
-
-      {/* <IdentifyFieldColor /> */}
-      <PropertySearchTab {...{ get_PropertyArticle_Single_Data, get_PropertyBoat_Single_Data, get_PropertOther_Single_Data, get_PropertySecurity_Single_Data, get_PropertyWeapon_Single_Data, get_Data_Drug_Modal, searchModalState, setSearchModalState, mainIncidentID, value, setValue, loginPinID, loginAgencyID, MstPage, setPropertOther, setPropertyBoat, setPropertyWeapon, setPropertySecurity, setPropertyArticle, setLossCode, PropertyCategory, PropertyClassification, setPropertyNumber, setDrugData, setChangesStatus, setStatesChangeStatus, setPossessionID, isCad, get_Name_MultiImage }} />
-      <MasterNameModel {...{ value, setValue, nameModalStatus, setNameModalStatus, loginPinID, loginAgencyID, type, possenSinglData, setPossessionID, possessionID, setPossenSinglData, GetSingleDataPassion }} />
-      <ListModal {...{ openPage, setOpenPage }} />
-      <ImageModel multiImage={multiImage} pinID={loginPinID} setStatesChangeStatus={setStatesChangeStatus} primaryOfficerID={agencyOfficerDrpData} setMultiImage={setMultiImage} uploadImgFiles={uploadImgFiles} setuploadImgFiles={setuploadImgFiles} ChangeDropDown={ChangeDropDown} modalStatus={modalStatus} setModalStatus={setModalStatus} imageId={imageId} setImageId={setImageId} imageModalStatus={imageModalStatus} setImageModalStatus={setImageModalStatus} delete_Image_File={delete_Image_File} setImgData={setImgData} imgData={imgData} updateImage={update_Property_MultiImage} agencyID={loginAgencyID} />
-      <AlertMasterModel masterID={masterPropertyID} setStatesChangeVich={setStatesChangeStatus} AlertType={"Property"} modelName={"Property"} loginPinID={loginPinID} agencyID={loginAgencyID} getAlertData={setAvailableAlert} />
-      <BarCode agencyID={loginAgencyID} propID={DecPropID} masPropID={DecMPropID} codeNo={propertyNumber} printStatus={printStatus} setPrintStatus={setPrintStatus} />
-      <NirbsErrorShowModal
-        ErrorText={nibrsErrStr}
-        nibErrModalStatus={nibrsErrModalStatus}
-        setNibrsErrModalStatus={setNibrsErrModalStatus}
-
-      />
-      <CurrentProMasterReport printIncReport={printIncReport}
-        setIncMasterReport={setIncMasterReport} IncReportCount={IncReportCount}
-        setIncReportCount={setIncReportCount}
-        PropertyNumber={value.PropertyNumber}
-      />
-
-      <CurrentProMasterReport PropertyNumber={value.PropertyNumber} {...{ printIncReport, setIncMasterReport, IncReportCount, setIncReportCount, showModal, setShowModal }} />
-      {openNCICModal && <NCICModal {...{ openNCICModal, setOpenNCICModal, }} />}
-      {
-        clickNibloder && (
-          <div className="loader-overlay">
-            <Loader />
+        } */}
           </div>
-        )
-      }
+          <DeletePopUpModal func={!isProperty ? Delete_Prpperty_Drug : Delete_Property} />
+          <ChangesModal func={check_Validation_Error} />
+          {/* <IdentifyFieldColor /> */}
+          <PropertySearchTab {...{ get_PropertyArticle_Single_Data, get_PropertyBoat_Single_Data, get_PropertOther_Single_Data, get_PropertySecurity_Single_Data, get_PropertyWeapon_Single_Data, get_Data_Drug_Modal, searchModalState, setSearchModalState, mainIncidentID, value, setValue, loginPinID, loginAgencyID, MstPage, setPropertOther, setPropertyBoat, setPropertyWeapon, setPropertySecurity, setPropertyArticle, setLossCode, PropertyCategory, PropertyClassification, setPropertyNumber, setDrugData, setChangesStatus, setStatesChangeStatus, setPossessionID, isCad, get_Name_MultiImage }} />
+          <MasterNameModel {...{ value, setValue, nameModalStatus, setNameModalStatus, loginPinID, loginAgencyID, type, possenSinglData, setPossessionID, possessionID, setPossenSinglData, GetSingleDataPassion }} />
+          <ListModal {...{ openPage, setOpenPage }} />
+          <ImageModel multiImage={multiImage} pinID={loginPinID} setStatesChangeStatus={setStatesChangeStatus} primaryOfficerID={agencyOfficerDrpData} setMultiImage={setMultiImage} uploadImgFiles={uploadImgFiles} setuploadImgFiles={setuploadImgFiles} ChangeDropDown={ChangeDropDown} modalStatus={modalStatus} setModalStatus={setModalStatus} imageId={imageId} setImageId={setImageId} imageModalStatus={imageModalStatus} setImageModalStatus={setImageModalStatus} delete_Image_File={delete_Image_File} setImgData={setImgData} imgData={imgData} updateImage={update_Property_MultiImage} agencyID={loginAgencyID} />
+          <AlertMasterModel masterID={masterPropertyID} setStatesChangeVich={setStatesChangeStatus} AlertType={"Property"} modelName={"Property"} loginPinID={loginPinID} agencyID={loginAgencyID} getAlertData={setAvailableAlert} />
+          <BarCode agencyID={loginAgencyID} propID={DecPropID} masPropID={DecMPropID} codeNo={propertyNumber} printStatus={printStatus} setPrintStatus={setPrintStatus} />
+          <NirbsErrorShowModal
+            ErrorText={nibrsErrStr}
+            nibErrModalStatus={nibrsErrModalStatus}
+            setNibrsErrModalStatus={setNibrsErrModalStatus}
+          />
+          <CurrentProMasterReport printIncReport={printIncReport}
+            setIncMasterReport={setIncMasterReport} IncReportCount={IncReportCount}
+            setIncReportCount={setIncReportCount}
+            PropertyNumber={value.PropertyNumber}
+          />
+          <CurrentProMasterReport PropertyNumber={value.PropertyNumber} {...{ printIncReport, setIncMasterReport, IncReportCount, setIncReportCount, showModal, setShowModal }} />
+          {openNCICModal && <NCICModal {...{ openNCICModal, setOpenNCICModal, }} />}
+          {
+            clickNibloder && (
+              <div className="loader-overlay">
+                <Loader />
+              </div>
+            )
+          }
+        </>
+
+      )}
+
     </>
   )
 }
