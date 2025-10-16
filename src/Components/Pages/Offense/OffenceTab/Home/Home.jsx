@@ -250,11 +250,11 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     }
   }, [loginAgencyID, incReportedDate]);
 
-  useEffect(() => {
-    if (IncID && IncNo && offenceFillterData?.length > 0) {
-      nibrsValidateOffense(IncID, IncNo);
-    }
-  }, [IncID, IncNo, offenceFillterData]);
+  // useEffect(() => {
+  //   if (IncID && IncNo && offenceFillterData?.length > 0) {
+  //     nibrsValidateOffense(IncID, IncNo);
+  //   }
+  // }, [IncID, IncNo, offenceFillterData]);
 
   useEffect(() => {
     if (OffId && (OffSta === true || OffSta === "true")) {

@@ -387,14 +387,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                                                 <p
                                                                     className="mb-0 small"
                                                                     style={{
-                                                                        color:
-                                                                            row.RoleName === "Other" ? "orange"
-                                                                                :
-                                                                                row.RoleName === "Victim" ? "green"
-                                                                                    :
-                                                                                    row.RoleName === "Offender" ? "red"
-                                                                                        :
-                                                                                        "black",
+                                                                        color: "black",
                                                                     }}
                                                                 >
                                                                     {row.LossCode_Description}
@@ -403,68 +396,163 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                                         </div>
                                                         <div className="d-flex flex-column align-items-center gap-2 flex-shrink-0">
                                                             {/* Edit Button */}
-                                                            <div
-                                                                style={{
-                                                                    backgroundColor: "#001f3f",
-                                                                    color: "white",
-                                                                    width: "36px",
-                                                                    height: "36px",
-                                                                    borderRadius: "50%",
-                                                                    display: "flex",
-                                                                    alignItems: "center",
-                                                                    justifyContent: "center",
-                                                                    cursor: "pointer",
-                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                                                    marginBottom: "10px"
-                                                                    // transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                                                                }}
-                                                                // onMouseEnter={(e) => {
-                                                                //     e.currentTarget.style.transform = "scale(1.1)";
-                                                                //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
-                                                                // }}
-                                                                // onMouseLeave={(e) => {
-                                                                //     e.currentTarget.style.transform = "scale(1)";
-                                                                //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
-                                                                // }}
-                                                                onClick={() => {
-                                                                    setEditVal(row);
-                                                                    // setResetErrors(true);
-                                                                }}
-                                                                title="Edit"
-                                                            >
-                                                                <i className="fa fa-edit"></i>
-                                                            </div>
+                                                            {
+                                                                effectiveScreenPermission ?
+                                                                    <>
+                                                                        {
+                                                                            effectiveScreenPermission[0]?.Changeok ?
+                                                                                <>
+                                                                                    <div
+                                                                                        style={{
+                                                                                            backgroundColor: "#001f3f",
+                                                                                            color: "white",
+                                                                                            width: "36px",
+                                                                                            height: "36px",
+                                                                                            borderRadius: "50%",
+                                                                                            display: "flex",
+                                                                                            alignItems: "center",
+                                                                                            justifyContent: "center",
+                                                                                            cursor: "pointer",
+                                                                                            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                                            marginBottom: "10px"
+                                                                                            // transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                                                                                        }}
+                                                                                        // onMouseEnter={(e) => {
+                                                                                        //     e.currentTarget.style.transform = "scale(1.1)";
+                                                                                        //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
+                                                                                        // }}
+                                                                                        // onMouseLeave={(e) => {
+                                                                                        //     e.currentTarget.style.transform = "scale(1)";
+                                                                                        //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
+                                                                                        // }}
+                                                                                        onClick={() => {
+                                                                                            setEditVal(row);
+                                                                                            // setResetErrors(true);
+                                                                                        }}
+                                                                                        title="Edit"
+                                                                                    >
+                                                                                        <i className="fa fa-edit"></i>
+                                                                                    </div>
+
+                                                                                </>
+                                                                                :
+                                                                                <>
+                                                                                </>
+                                                                        }
+                                                                    </>
+                                                                    :
+                                                                    <>
+                                                                        <div
+                                                                            style={{
+                                                                                backgroundColor: "#001f3f",
+                                                                                color: "white",
+                                                                                width: "36px",
+                                                                                height: "36px",
+                                                                                borderRadius: "50%",
+                                                                                display: "flex",
+                                                                                alignItems: "center",
+                                                                                justifyContent: "center",
+                                                                                cursor: "pointer",
+                                                                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                                marginBottom: "10px"
+                                                                                // transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                                                                            }}
+                                                                            // onMouseEnter={(e) => {
+                                                                            //     e.currentTarget.style.transform = "scale(1.1)";
+                                                                            //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
+                                                                            // }}
+                                                                            // onMouseLeave={(e) => {
+                                                                            //     e.currentTarget.style.transform = "scale(1)";
+                                                                            //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
+                                                                            // }}
+                                                                            onClick={() => {
+                                                                                setEditVal(row);
+                                                                                // setResetErrors(true);
+                                                                            }}
+                                                                            title="Edit"
+                                                                        >
+                                                                            <i className="fa fa-edit"></i>
+                                                                        </div>
+
+                                                                    </>
+                                                            }
 
                                                             {/* Delete Button */}
-                                                            <div
-                                                                style={{
-                                                                    backgroundColor: "#001f3f",
-                                                                    color: "white",
-                                                                    width: "36px",
-                                                                    height: "36px",
-                                                                    borderRadius: "50%",
-                                                                    display: "flex",
-                                                                    alignItems: "center",
-                                                                    justifyContent: "center",
-                                                                    cursor: "pointer",
-                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                                                    // transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                                                                }}
-                                                                // onMouseEnter={(e) => {
-                                                                //     e.currentTarget.style.transform = "scale(1.1)";
-                                                                //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
-                                                                // }}
-                                                                // onMouseLeave={(e) => {
-                                                                //     e.currentTarget.style.transform = "scale(1)";
-                                                                //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
-                                                                // }}
-                                                                data-toggle="modal"
-                                                                data-target="#DeleteModal"
-                                                                onClick={() => setVehicleID(row.PropertyID)}
-                                                                title="Delete"
-                                                            >
-                                                                <i className="fa fa-trash"></i>
-                                                            </div>
+                                                            {
+                                                                effectiveScreenPermission ?
+                                                                    <>
+                                                                        {
+                                                                            effectiveScreenPermission[0]?.DeleteOK ?
+                                                                                <>
+                                                                                    <div
+                                                                                        style={{
+                                                                                            backgroundColor: "#001f3f",
+                                                                                            color: "white",
+                                                                                            width: "36px",
+                                                                                            height: "36px",
+                                                                                            borderRadius: "50%",
+                                                                                            display: "flex",
+                                                                                            alignItems: "center",
+                                                                                            justifyContent: "center",
+                                                                                            cursor: "pointer",
+                                                                                            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                                            // transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                                                                                        }}
+                                                                                        // onMouseEnter={(e) => {
+                                                                                        //     e.currentTarget.style.transform = "scale(1.1)";
+                                                                                        //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
+                                                                                        // }}
+                                                                                        // onMouseLeave={(e) => {
+                                                                                        //     e.currentTarget.style.transform = "scale(1)";
+                                                                                        //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
+                                                                                        // }}
+                                                                                        data-toggle="modal"
+                                                                                        data-target="#DeleteModal"
+                                                                                        onClick={() => setVehicleID(row.PropertyID)}
+                                                                                        title="Delete"
+                                                                                    >
+                                                                                        <i className="fa fa-trash"></i>
+                                                                                    </div>
+                                                                                </>
+                                                                                :
+                                                                                <>
+                                                                                </>
+                                                                        }
+                                                                    </>
+                                                                    :
+                                                                    <>
+                                                                        <div
+                                                                            style={{
+                                                                                backgroundColor: "#001f3f",
+                                                                                color: "white",
+                                                                                width: "36px",
+                                                                                height: "36px",
+                                                                                borderRadius: "50%",
+                                                                                display: "flex",
+                                                                                alignItems: "center",
+                                                                                justifyContent: "center",
+                                                                                cursor: "pointer",
+                                                                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                                // transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                                                                            }}
+                                                                            // onMouseEnter={(e) => {
+                                                                            //     e.currentTarget.style.transform = "scale(1.1)";
+                                                                            //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
+                                                                            // }}
+                                                                            // onMouseLeave={(e) => {
+                                                                            //     e.currentTarget.style.transform = "scale(1)";
+                                                                            //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
+                                                                            // }}
+                                                                            data-toggle="modal"
+                                                                            data-target="#DeleteModal"
+                                                                            onClick={() => setVehicleID(row.PropertyID)}
+                                                                            title="Delete"
+                                                                        >
+                                                                            <i className="fa fa-trash"></i>
+                                                                        </div>
+                                                                    </>
+                                                            }
+
                                                         </div>
                                                         {/* <div className="d-fle flex-column gap-2 flex-shrink-0">
                                                                                         <div
