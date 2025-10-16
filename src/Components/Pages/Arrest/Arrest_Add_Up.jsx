@@ -33,11 +33,12 @@ const Arrest_Add_Up = () => {
     const loginAgencyState = useSelector((state) => state.Ip.loginAgencyState);
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
 
-    const { updateCount, EditArrestStatus, setEditArrestStatus, tabCountArrest, get_OffenseName_Data, get_Data_Arrest_Charge, get_Arrest_Count, changesStatus, arrestFilterData, get_Data_Arrest } = useContext(AgencyContext)
+    const { updateCount, EditArrestStatus, incidentCount, setEditArrestStatus, tabCountArrest, get_OffenseName_Data, get_Data_Arrest_Charge, get_Arrest_Count, changesStatus, arrestFilterData, get_Data_Arrest } = useContext(AgencyContext)
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const carouselRef = useRef(null);
+    const ArrestCount = incidentCount[0]?.ArrestCount || 0;
 
     const iconHome = <i className="fa fa-home" style={{ fontSize: '20px' }}></i>
     const [showPage, setShowPage] = useState('home');
@@ -85,6 +86,7 @@ const Arrest_Add_Up = () => {
     var Name = query?.get("Name");
     var ChargeSta = query?.get('ChargeSta');
     var isFromDashboard = query?.get('isFromDashboard');
+    var isNew = query?.get("isNew");
 
     var SideBarStatus = query?.get("SideBarStatus");
     var ArrestStatus = query?.get("ArrestStatus");
@@ -98,8 +100,6 @@ const Arrest_Add_Up = () => {
 
     if (!IncID) IncID = 0;
     else DecIncID = parseInt(base64ToString(IncID));
-
-
 
     useEffect(() => {
         if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
@@ -137,8 +137,6 @@ const Arrest_Add_Up = () => {
         if (pathname.includes('Arrest-Home')) setCurrentTab('Arrest');
         if (pathname.includes('Arr-Charge-Home')) setCurrentTab('Charge');
     }, [window.location.pathname]);
-
-
 
     function isValidBase64(str) {
         const base64Pattern = /^[A-Za-z0-9+/=]+$/;
@@ -230,6 +228,7 @@ const Arrest_Add_Up = () => {
     }
 
     const set_Edit_Value = (row) => {
+        console.log(row)
         get_Arrest_Count(row.ArrestID); setRestStatus(true); GetSingleData(row.ArrestID, DecIncID)
         if (row?.PoliceForce_Description === "Yes") {
             setIsEnabled(true);
@@ -247,7 +246,7 @@ const Arrest_Add_Up = () => {
         } else {
             if (row.ArrestID) {
                 // Reset();
-                navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(row?.ArrestID)}&ArrNo=${row?.ArrestNumber}&Name=${row?.Arrestee_Name}&ArrestSta=${true}&ChargeSta=${false}&SideBarStatus=${!SideBarStatus}&ArrestStatus=${false} `)
+                navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(row?.ArrestID)}&ArrNo=${row?.ArrestNumber}&Name=${row?.Arrestee_Name}&ArrestSta=${true}&ChargeSta=${false}&SideBarStatus=${!SideBarStatus}&ArrestStatus=${false}&isNew=${true} `)
 
                 // setArrestID(row?.ArrestID); setActiveArrest(row?.ArrestID); setErrors(''); setStatesChangeStatus(false); setChangesStatus(false); setStatus(true);
                 // GetSingleData(row.ArrestID, DecEIncID); get_Arrest_Count(row?.ArrestID);
@@ -257,7 +256,7 @@ const Arrest_Add_Up = () => {
 
     const setStatusFalse = () => {
         if (MstPage === "MST-Arrest-Dash") {
-            navigate(`/Arrest-Home?page=MST-Arrest-Dash&ArrestId=${('')}&ArrestSta=${false}&ChargeSta=${false}&SideBarStatus=${false}`);
+            navigate(`/Arrest-Home?page=MST-Arrest-Dash&ArrestId=${('')}&ArrestSta=${false}&ChargeSta=${false}&SideBarStatus=${false}&isNew=${true}`);
             // reset_Value(); setErrors(''); setPossessionID(''); setPossenSinglData([]); setArrestID('');
             if (ArrestSta === 'true' || ArrestSta === true) {
                 setStatus(true);
@@ -266,7 +265,7 @@ const Arrest_Add_Up = () => {
                 get_Arrest_Count();
             }
         } else {
-            navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${('')}&ArrestSta=${false}&ChargeSta=${false}&SideBarStatus=${false}&SideBarStatus=${false}`)
+            navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${('')}&ArrestSta=${false}&ChargeSta=${false}&SideBarStatus=${false}&SideBarStatus=${false}&isNew=${true}`)
             // setErrors(''); setPossessionID(''); setPossenSinglData([]);
             // setActiveArrest(false); setRightGivenCode(false); setArrestID(''); reset_Value(); setIsEnabled(false);
             setRestStatus(false); setIsEnabled(false);
@@ -293,9 +292,9 @@ const Arrest_Add_Up = () => {
                 toastifySuccess(message); get_Data_Arrest(DecIncID, MstPage === "MST-Arrest-Dash" ? true : false, loginPinID);
                 // get_Incident_Count(DecIncID); 
                 get_Arrest_Count(DecArrestId);
-                setStatusFalse();
+                setStatusFalse(); setRestStatus(false);
                 //   Reset()
-                navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${('')}&ArrestSta=${false}&ChargeSta=${false}&SideBarStatus=${false}`)
+                navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${('')}&ArrestSta=${false}&ChargeSta=${false}&SideBarStatus=${false}&isNew=${true}`)
                 // if (DecIncID) {
                 //     dispatch(get_ArresteeName_Data('', '', DecIncID, true, DecArrestId));
                 // }
@@ -310,10 +309,7 @@ const Arrest_Add_Up = () => {
             const updatedLocalCharges = ChargeLocalArr.filter(charge => charge.ChargeID !== delChargeID);
             setChargeLocalArr(updatedLocalCharges);
             sessionStorage.setItem('ChargeLocalData', JSON.stringify(updatedLocalCharges));
-            toastifySuccess('Deleted successfully.');
-            setDelChargeID(null);
-            setIsChargeDel(false);
-            get_Data_Arrest(DecIncID, MstPage === "MST-Arrest-Dash" ? true : false, loginPinID);
+            toastifySuccess('Deleted successfully.'); setDelChargeID(null); setIsChargeDel(false); get_Data_Arrest(DecIncID, MstPage === "MST-Arrest-Dash" ? true : false, loginPinID);
         } else {
             const val = { 'ChargeID': delChargeID, 'DeletedByUserFK': loginPinID };
             AddDeleteUpadate('ArrestCharge/Delete_ArrestCharge', val).then((res) => {
@@ -321,10 +317,8 @@ const Arrest_Add_Up = () => {
                     const parsedData = JSON.parse(res.data);
                     const message = parsedData.Table[0].Message;
                     toastifySuccess(message);
-                    get_Data_Arrest_Charge(DecArrestId);
-                    get_Data_Arrest(DecIncID, MstPage === "MST-Arrest-Dash" ? true : false, loginPinID);
-                    get_Arrest_Count(arrestID);
-                    setIsChargeDel(false);
+                    get_Data_Arrest_Charge(DecArrestId); get_Data_Arrest(DecIncID, MstPage === "MST-Arrest-Dash" ? true : false, loginPinID);
+                    get_Arrest_Count(arrestID); setIsChargeDel(false);
                 } else {
                     console.log("Something went wrong");
                 }
@@ -333,8 +327,7 @@ const Arrest_Add_Up = () => {
     };
     const DeleteOffense = () => {
         const val = {
-            'NameOffenseID': offenseNameID,
-            'DeletedByUserFK': loginPinID,
+            'NameOffenseID': offenseNameID, 'DeletedByUserFK': loginPinID,
         }
         AddDeleteUpadate('NameOffense/Delete_NameOffense', val).then((res) => {
             if (res) {
@@ -349,6 +342,7 @@ const Arrest_Add_Up = () => {
             console.log("🚀 ~Delete AddDeleteUpadate ~ err:", err);
         })
     }
+
     return (
         <div className=" section-body pt-1 p-1 bt" >
             <div className="div">
@@ -391,38 +385,50 @@ const Arrest_Add_Up = () => {
                                                             </div>
 
                                                         </div>
-                                                        <div className="d-fle flex-column gap-2 flex-shrink-0">
+                                                        <div className="d-flex flex-column align-items-center gap-2 flex-shrink-0">
                                                             {/* Edit Icon */}
                                                             <div
+                                                                className="text-white"
                                                                 style={{
                                                                     backgroundColor: "#001f3f",
-                                                                    padding: "8px",
+                                                                    color: "white",
+                                                                    width: "36px",
+                                                                    height: "36px",
                                                                     borderRadius: "50%",
                                                                     display: "flex",
                                                                     alignItems: "center",
                                                                     justifyContent: "center",
                                                                     cursor: "pointer",
+                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
                                                                     marginBottom: "10px"
+                                                                    // transition: "transform 0.2s ease, box-shadow 0.2s ease",
                                                                 }}
-                                                                className="text-white "
-                                                                onClick={() => { set_Edit_Value(row); setResetErrors(true) }}
+                                                                title="Edit"
+                                                                onClick={() => {
+                                                                    set_Edit_Value(row);
+                                                                    setResetErrors(true);
+                                                                }}
                                                             >
                                                                 <i className="fa fa-edit"></i>
                                                             </div>
 
-                                                            {/* Trash Icon */}
+
                                                             <div
                                                                 style={{
                                                                     backgroundColor: "#001f3f",
-                                                                    padding: "8px",
+                                                                    color: "white",
+                                                                    width: "36px",
+                                                                    height: "36px",
                                                                     borderRadius: "50%",
                                                                     display: "flex",
                                                                     alignItems: "center",
                                                                     justifyContent: "center",
                                                                     cursor: "pointer",
-                                                                    fontSize: '20px'
+                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                    // transition: "transform 0.2s ease, box-shadow 0.2s ease",
                                                                 }}
-                                                                className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal"
+                                                                data-toggle="modal"
+                                                                data-target="#DeleteModal"
                                                                 onClick={() => { setArrestID(row.ArrestID); }}
                                                             >
                                                                 <i className="fa fa-trash"></i>
@@ -495,88 +501,89 @@ const Arrest_Add_Up = () => {
                                     </div>
                                 )}
 
+                                {
+                                    (status || isNew === "true" || isNew === true || ArrestCount === 0 || ArrestCount === "0") && (
+                                        <div className="row mt-2" style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
+                                            <div className="col-12 name-tab">
+                                                <ul className='nav nav-tabs'>
+                                                    <Link
+                                                        className={`nav-item ${showPage === 'home' ? 'active' : ''}`}
+                                                        to={
+                                                            MstPage ?
+                                                                `/Arrest-Home?page=MST-Arrest-Dash&ArrestId=${ArrestID}&Name=${Name}&IncId=${IncID}&ArrNo=${ArrNo}&ArrestSta=${ArrestSta}&ChargeSta=${true}&SideBarStatus=${false}&ArrestStatus=${false}`
 
-                                <div className="row mt-2" style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
-                                    <div className="col-12 name-tab">
-                                        <ul className='nav nav-tabs'>
-                                            <Link
-                                                className={`nav-item ${showPage === 'home' ? 'active' : ''}`}
-                                                to={
-                                                    MstPage ?
-                                                        `/Arrest-Home?page=MST-Arrest-Dash&ArrestId=${ArrestID}&Name=${Name}&IncId=${IncID}&ArrNo=${ArrNo}&ArrestSta=${ArrestSta}&ChargeSta=${true}&SideBarStatus=${false}&ArrestStatus=${false}`
+                                                                :
+                                                                `/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&Name=${Name}&ArrestId=${ArrestID}&ArrestSta=${ArrestSta}&ArrNo=${ArrNo}&ChargeSta=${ChargeSta}&SideBarStatus=${false}&ArrestStatus=${false}`
+                                                        }
+                                                        style={{ color: showPage === 'home' ? 'Red' : '#000' }}
+                                                        data-toggle={changesStatus ? "modal" : "pill"}
+                                                        data-target={changesStatus ? "#SaveModal" : ''}
+                                                        aria-current="page"
+                                                        onClick={() => { if (!changesStatus) { setShowPage('home') } }}>
 
-                                                        :
-                                                        `/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&Name=${Name}&ArrestId=${ArrestID}&ArrestSta=${ArrestSta}&ArrNo=${ArrNo}&ChargeSta=${ChargeSta}&SideBarStatus=${false}&ArrestStatus=${false}`
-                                                }
-                                                style={{ color: showPage === 'home' ? 'Red' : '#000' }}
-                                                data-toggle={changesStatus ? "modal" : "pill"}
-                                                data-target={changesStatus ? "#SaveModal" : ''}
-                                                aria-current="page"
-                                                onClick={() => { if (!changesStatus) { setShowPage('home') } }}>
+                                                        {iconHome}
+                                                    </Link>
 
-                                                {iconHome}
-                                            </Link>
+                                                    <span
+                                                        className={`nav-item ${showPage === 'Charges' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+                                                        data-toggle={changesStatus ? "modal" : "pill"}
+                                                        data-target={changesStatus ? "#SaveModal" : ''}
+                                                        style={{ color: showPage === 'Charges' ? 'Red' : tabCountArrest?.ChargeCount > 0 ? 'blue' : '#000' }} aria-current="page"
+                                                        onClick={() => {
+                                                            if (!changesStatus) { setShowPage('Charges') }
+                                                        }}>
 
-                                            <span
-                                                className={`nav-item ${showPage === 'Charges' ? 'active' : ''}${!status ? 'disabled' : ''}`}
-                                                data-toggle={changesStatus ? "modal" : "pill"}
-                                                data-target={changesStatus ? "#SaveModal" : ''}
-                                                style={{ color: showPage === 'Charges' ? 'Red' : tabCountArrest?.ChargeCount > 0 ? 'blue' : '#000' }} aria-current="page"
-                                                onClick={() => {
-                                                    if (!changesStatus) { setShowPage('Charges') }
-                                                }}>
+                                                        Charge{`${tabCountArrest?.ChargeCount > 0 ? '(' + tabCountArrest?.ChargeCount + ')' : ''}`}
+                                                    </span>
 
-                                                Charge{`${tabCountArrest?.ChargeCount > 0 ? '(' + tabCountArrest?.ChargeCount + ')' : ''}`}
-                                            </span>
+                                                    <span
+                                                        className={`nav-item ${showPage === 'Warrant' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+                                                        data-toggle={changesStatus ? "modal" : "pill"}
+                                                        data-target={changesStatus ? "#SaveModal" : ''}
+                                                        style={{ color: showPage === 'Warrant' ? 'Red' : tabCountArrest?.NameWarrantCount > 0 ? 'blue' : '#000' }} aria-current="page"
+                                                        onClick={() => {
+                                                            if (!changesStatus) { setShowPage('Warrant') }
+                                                        }}>
 
-                                            <span
-                                                className={`nav-item ${showPage === 'Warrant' ? 'active' : ''}${!status ? 'disabled' : ''}`}
-                                                data-toggle={changesStatus ? "modal" : "pill"}
-                                                data-target={changesStatus ? "#SaveModal" : ''}
-                                                style={{ color: showPage === 'Warrant' ? 'Red' : tabCountArrest?.NameWarrantCount > 0 ? 'blue' : '#000' }} aria-current="page"
-                                                onClick={() => {
-                                                    if (!changesStatus) { setShowPage('Warrant') }
-                                                }}>
+                                                        Warrant{`${tabCountArrest?.NameWarrantCount > 0 ? '(' + tabCountArrest?.NameWarrantCount + ')' : ''}`}
+                                                    </span>
+                                                    <span
+                                                        className={`nav-item ${showPage === 'Narratives' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+                                                        data-toggle={changesStatus ? "modal" : "pill"}
+                                                        data-target={changesStatus ? "#SaveModal" : ''}
+                                                        style={{ color: showPage === 'Narratives' ? 'Red' : tabCountArrest?.NarrativeCount > 0 ? 'blue' : '#000' }}
+                                                        aria-current="page"
+                                                        onClick={() => {
+                                                            if (!changesStatus) { setShowPage('Narratives') }
+                                                        }}>
 
-                                                Warrant{`${tabCountArrest?.NameWarrantCount > 0 ? '(' + tabCountArrest?.NameWarrantCount + ')' : ''}`}
-                                            </span>
-                                            <span
-                                                className={`nav-item ${showPage === 'Narratives' ? 'active' : ''}${!status ? 'disabled' : ''}`}
-                                                data-toggle={changesStatus ? "modal" : "pill"}
-                                                data-target={changesStatus ? "#SaveModal" : ''}
-                                                style={{ color: showPage === 'Narratives' ? 'Red' : tabCountArrest?.NarrativeCount > 0 ? 'blue' : '#000' }}
-                                                aria-current="page"
-                                                onClick={() => {
-                                                    if (!changesStatus) { setShowPage('Narratives') }
-                                                }}>
+                                                        Narrative{`${tabCountArrest?.NarrativeCount > 0 ? '(' + tabCountArrest?.NarrativeCount + ')' : ''}`}
+                                                    </span>
+                                                    <span
+                                                        className={`nav-item ${showPage === 'MugShorts' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+                                                        data-toggle={changesStatus ? "modal" : "pill"}
+                                                        data-target={changesStatus ? "#SaveModal" : ''}
+                                                        style={{ color: showPage === 'MugShorts' ? 'Red' : tabCountArrest?.ArrestMugshots > 0 ? 'blue' : '#000' }}
+                                                        aria-current="page"
+                                                        onClick={() => {
+                                                            if (!changesStatus) { setShowPage('MugShorts') }
+                                                        }}>
 
-                                                Narrative{`${tabCountArrest?.NarrativeCount > 0 ? '(' + tabCountArrest?.NarrativeCount + ')' : ''}`}
-                                            </span>
-                                            <span
-                                                className={`nav-item ${showPage === 'MugShorts' ? 'active' : ''}${!status ? 'disabled' : ''}`}
-                                                data-toggle={changesStatus ? "modal" : "pill"}
-                                                data-target={changesStatus ? "#SaveModal" : ''}
-                                                style={{ color: showPage === 'MugShorts' ? 'Red' : tabCountArrest?.ArrestMugshots > 0 ? 'blue' : '#000' }}
-                                                aria-current="page"
-                                                onClick={() => {
-                                                    if (!changesStatus) { setShowPage('MugShorts') }
-                                                }}>
+                                                        Mugshorts{`${tabCountArrest?.ArrestMugshots > 0 ? '(' + tabCountArrest?.ArrestMugshots + ')' : ''}`}
+                                                    </span>
+                                                    <span
+                                                        className={`nav-item ${showPage === 'Fingerprint' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+                                                        data-toggle={changesStatus ? "modal" : "pill"}
+                                                        data-target={changesStatus ? "#SaveModal" : ''}
+                                                        style={{ color: showPage === 'Fingerprint' ? 'Red' : tabCountArrest?.ArrestFingerPrints > 0 ? 'blue' : '#000' }}
+                                                        aria-current="page"
+                                                        onClick={() => {
+                                                            if (!changesStatus) { setShowPage('Fingerprint') }
+                                                        }}>
 
-                                                Mugshorts{`${tabCountArrest?.ArrestMugshots > 0 ? '(' + tabCountArrest?.ArrestMugshots + ')' : ''}`}
-                                            </span>
-                                            <span
-                                                className={`nav-item ${showPage === 'Fingerprint' ? 'active' : ''}${!status ? 'disabled' : ''}`}
-                                                data-toggle={changesStatus ? "modal" : "pill"}
-                                                data-target={changesStatus ? "#SaveModal" : ''}
-                                                style={{ color: showPage === 'Fingerprint' ? 'Red' : tabCountArrest?.ArrestFingerPrints > 0 ? 'blue' : '#000' }}
-                                                aria-current="page"
-                                                onClick={() => {
-                                                    if (!changesStatus) { setShowPage('Fingerprint') }
-                                                }}>
-
-                                                Fingerprint{`${tabCountArrest?.ArrestFingerPrints > 0 ? '(' + tabCountArrest?.ArrestFingerPrints + ')' : ''}`}
-                                            </span>
-                                            {/* <span
+                                                        Fingerprint{`${tabCountArrest?.ArrestFingerPrints > 0 ? '(' + tabCountArrest?.ArrestFingerPrints + ')' : ''}`}
+                                                    </span>
+                                                    {/* <span
                                                 className={`nav-item ${showPage === 'Property' ? 'active' : ''}${!status ? 'disabled' : ''}`}
                                                 data-toggle={changesStatus ? "modal" : "pill"}
                                                 data-target={changesStatus ? "#SaveModal" : ''}
@@ -587,7 +594,7 @@ const Arrest_Add_Up = () => {
 
                                                 Property{`${tabCountArrest?.PropertyCount > 0 ? '(' + tabCountArrest?.PropertyCount + ')' : ''}`}
                                             </span> */}
-                                            {/* <span
+                                                    {/* <span
                                                 className={`nav-item ${showPage === 'CriminalActivity' ? 'active' : ''}${!status ? 'disabled' : ''}`}
                                                 data-toggle={changesStatus ? "modal" : "pill"}
                                                 data-target={changesStatus ? "#SaveModal" : ''}
@@ -598,63 +605,65 @@ const Arrest_Add_Up = () => {
 
                                                 Criminal Activity{`${tabCountArrest?.CriminalActivityCount > 0 ? '(' + tabCountArrest?.CriminalActivityCount + ')' : ''}`}
                                             </span> */}
-                                            <span
-                                                className={`nav-item ${showPage === 'CourtInformation' ? 'active' : ''}${!status ? 'disabled' : ''}`}
-                                                data-toggle={changesStatus ? "modal" : "pill"}
-                                                data-target={changesStatus ? "#SaveModal" : ''}
-                                                style={{ color: showPage === 'CourtInformation' ? 'Red' : tabCountArrest?.CourtInformationCount > 0 ? 'blue' : '#000' }} aria-current="page"
-                                                onClick={() => {
-                                                    if (!changesStatus) { setShowPage('CourtInformation') }
-                                                }}>
+                                                    <span
+                                                        className={`nav-item ${showPage === 'CourtInformation' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+                                                        data-toggle={changesStatus ? "modal" : "pill"}
+                                                        data-target={changesStatus ? "#SaveModal" : ''}
+                                                        style={{ color: showPage === 'CourtInformation' ? 'Red' : tabCountArrest?.CourtInformationCount > 0 ? 'blue' : '#000' }} aria-current="page"
+                                                        onClick={() => {
+                                                            if (!changesStatus) { setShowPage('CourtInformation') }
+                                                        }}>
 
-                                                Court{`${tabCountArrest?.CourtInformationCount > 0 ? '(' + tabCountArrest?.CourtInformationCount + ')' : ''}`}
-                                            </span>
+                                                        Court{`${tabCountArrest?.CourtInformationCount > 0 ? '(' + tabCountArrest?.CourtInformationCount + ')' : ''}`}
+                                                    </span>
 
-                                            {
-                                                showPoliceForce &&
-                                                <span
-                                                    className={`nav-item ${showPage === 'PoliceForce' ? 'active' : ''}${!status ? 'disabled' : ''}`}
-                                                    data-toggle={changesStatus ? "modal" : "pill"}
-                                                    data-target={changesStatus ? "#SaveModal" : ''}
-                                                    style={{ color: showPage === 'PoliceForce' ? 'Red' : tabCountArrest?.ArrsetPoliceForce > 0 ? 'blue' : '#000' }}
-                                                    aria-current="page"
-                                                    onClick={() => {
-                                                        if (!changesStatus) { setShowPage('PoliceForce') }
-                                                    }}>
+                                                    {
+                                                        showPoliceForce &&
+                                                        <span
+                                                            className={`nav-item ${showPage === 'PoliceForce' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+                                                            data-toggle={changesStatus ? "modal" : "pill"}
+                                                            data-target={changesStatus ? "#SaveModal" : ''}
+                                                            style={{ color: showPage === 'PoliceForce' ? 'Red' : tabCountArrest?.ArrsetPoliceForce > 0 ? 'blue' : '#000' }}
+                                                            aria-current="page"
+                                                            onClick={() => {
+                                                                if (!changesStatus) { setShowPage('PoliceForce') }
+                                                            }}>
 
-                                                    Use Of Force {`${tabCountArrest?.ArrsetPoliceForce > 0 ? '(' + tabCountArrest?.ArrsetPoliceForce + ')' : ''}`}
-                                                </span>
-                                            }
-                                            {
-                                                showJuvinile &&
-                                                <span
-                                                    className={`nav-item ${showPage === 'Juvenile' ? 'active' : ''}${!status ? 'disabled' : ''}`}
-                                                    data-toggle={changesStatus ? "modal" : "pill"}
-                                                    data-target={changesStatus ? "#SaveModal" : ''}
-                                                    style={{ color: showPage === 'Juvenile' ? 'Red' : tabCountArrest?.ArrestJuvenile > 0 ? 'blue' : '#000' }}
-                                                    aria-current="page"
-                                                    onClick={() => {
-                                                        if (!changesStatus) { setShowPage('Juvenile') }
-                                                    }}>
+                                                            Use Of Force {`${tabCountArrest?.ArrsetPoliceForce > 0 ? '(' + tabCountArrest?.ArrsetPoliceForce + ')' : ''}`}
+                                                        </span>
+                                                    }
+                                                    {
+                                                        showJuvinile &&
+                                                        <span
+                                                            className={`nav-item ${showPage === 'Juvenile' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+                                                            data-toggle={changesStatus ? "modal" : "pill"}
+                                                            data-target={changesStatus ? "#SaveModal" : ''}
+                                                            style={{ color: showPage === 'Juvenile' ? 'Red' : tabCountArrest?.ArrestJuvenile > 0 ? 'blue' : '#000' }}
+                                                            aria-current="page"
+                                                            onClick={() => {
+                                                                if (!changesStatus) { setShowPage('Juvenile') }
+                                                            }}>
 
-                                                    Juvenile {`${tabCountArrest?.ArrestJuvenile > 0 ? '(' + tabCountArrest?.ArrestJuvenile + ')' : ''}`}
-                                                </span>
-                                            }
-                                            <span
-                                                className={`nav-item ${showPage === 'AuditLog' ? 'active' : ''}${!status ? 'disabled' : ''}`}
-                                                data-toggle={changesStatus ? "modal" : "pill"}
-                                                data-target={changesStatus ? "#SaveModal" : ''}
-                                                style={{ color: showPage === 'AuditLog' ? 'Red' : '#000' }}
-                                                aria-current="page"
-                                                onClick={() => {
-                                                    if (!changesStatus) { setShowPage('AuditLog') }
-                                                }}>
+                                                            Juvenile {`${tabCountArrest?.ArrestJuvenile > 0 ? '(' + tabCountArrest?.ArrestJuvenile + ')' : ''}`}
+                                                        </span>
+                                                    }
+                                                    <span
+                                                        className={`nav-item ${showPage === 'AuditLog' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+                                                        data-toggle={changesStatus ? "modal" : "pill"}
+                                                        data-target={changesStatus ? "#SaveModal" : ''}
+                                                        style={{ color: showPage === 'AuditLog' ? 'Red' : '#000' }}
+                                                        aria-current="page"
+                                                        onClick={() => {
+                                                            if (!changesStatus) { setShowPage('AuditLog') }
+                                                        }}>
 
-                                                Audit Log
-                                            </span>
-                                        </ul>
-                                    </div>
-                                </div>
+                                                        Audit Log
+                                                    </span>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    )
+                                }
                                 {
                                     showPage === 'home' ?
                                         <Home {...{ isEnabled, Editval, incExceDate, setincExceDate, GetSingleData, setEditval, RestStatus, setIsEnabled, setStatus, arrestID, matchedAgency, setmatchedAgency, setArrestID, showPage, Agencystatus, setAgencystatus, setShowPage, offenseNameID, setoffenseNameID, status, setEditArrestStatus, showJuvinile, EditArrestStatus, setShowJuvinile, setShowPoliceForce, DecIncID, DecArrestId, delChargeID, isChargeDel, setIsChargeDel, setDelChargeID, ChargeLocalArr, setChargeLocalArr, possessionID, setPossessionID }} />

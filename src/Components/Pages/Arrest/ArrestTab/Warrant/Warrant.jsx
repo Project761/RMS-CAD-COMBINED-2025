@@ -4,7 +4,7 @@ import Select from "react-select";
 import DatePicker from "react-datepicker";
 import { useLocation } from 'react-router-dom';
 import CreatableSelect from 'react-select/creatable';
-import { Decrypt_Id_Name, getShowingDateText, getShowingMonthDateYear, Requiredcolour, tableCustomStyles } from '../../../../Common/Utility';
+import { Decrypt_Id_Name, filterPassedDateTime, getShowingDateText, getShowingMonthDateYear, Requiredcolour, tableCustomStyles } from '../../../../Common/Utility';
 import NameListing from '../../../ShowAllList/NameListing';
 import { useDispatch, useSelector } from 'react-redux';
 import { get_LocalStoreData } from '../../../../../redux/actions/Agency';
@@ -30,6 +30,7 @@ const Warrant = (props) => {
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
     const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
     const agencyOfficerDrpData = useSelector((state) => state.DropDown.agencyOfficerDrpData);
+    const incReportedDate = useSelector((state) => state.Agency.incReportedDate);
 
     const [status, setStatus] = useState(false);
     const [statesChangeStatus, setStatesChangeStatus] = useState(false);
@@ -444,9 +445,13 @@ const Warrant = (props) => {
         }),
     }
 
-    const startRef = React.useRef();
     const startRef1 = React.useRef();
-
+    const startRef = React.useRef();
+    const onKeyDown = (e) => {
+        if (e.keyCode === 9 || e.which === 9) {
+            startRef.current.setOpen(false);
+        }
+    };
 
     const filterTimeForDateZone = (time, datezone) => {
         const zoneDate = new Date(datezone);
@@ -539,58 +544,57 @@ const Warrant = (props) => {
                     </div>
                     <div className="col-3 col-md-3 col-lg-3 mt-2">
                         <DatePicker
-                            id='DateTimeIssued'
-                            name='DateTimeIssued'
-                            ref={startRef1}
-                            className='requiredColor'
-                            dateFormat="MM/dd/yyyy HH:mm"
-                            selected={value?.DateTimeIssued ? new Date(value?.DateTimeIssued) : null}
-                            isClearable={Boolean(value?.DateTimeIssued)}
-                            placeholderText={value?.DateTimeIssued || 'Select...'}
-                            showTimeSelect
-                            timeInputLabel="Time"
-                            timeIntervals={1}
-                            timeCaption="Time"
-                            showMonthDropdown
-                            showYearDropdown
-                            dropdownMode="select"
-                            // minDate={new Date(NameDateExpired)}
-                            // maxDate={new Date(datezone)}
-                            autoComplete='off'
-                            timeFormat="HH:mm"
-                            is24Hour
+                            ref={startRef}
                             onKeyDown={(e) => {
                                 if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
-                                    e.preventDefault();
-                                }
+                                    e?.preventDefault();
+                                } else { onKeyDown(e); }
                             }}
+                            dateFormat="MM/dd/yyyy HH:mm"
+                            timeFormat="HH:mm "
+                            className='requiredColor'
+                            is24Hour
+                            timeInputLabel
+                            isClearable
+                            name='DateTimeIssued'
+                            id='DateTimeIssued'
                             onChange={(date) => {
-                                !addUpdatePermission && setStatesChangeStatus(true);
-                                !addUpdatePermission && setChangesStatus(true);
                                 if (date) {
-                                    const currentTime = new Date();
-                                    const updatedDate = new Date(date);
-
-                                    if (updatedDate.getHours() === 0 && updatedDate.getMinutes() === 0) {
-                                        updatedDate.setHours(currentTime.getHours());
-                                        updatedDate.setMinutes(currentTime.getMinutes());
+                                    let currDate = new Date(date);
+                                    let prevDate = new Date(value?.DateTimeIssued);
+                                    let maxDate = new Date();
+                                    if ((currDate.getDate() === maxDate.getDate() && currDate.getMonth() === maxDate.getMonth() && currDate.getFullYear() === maxDate.getFullYear()) && !(currDate.getDate() === prevDate.getDate() && currDate.getMonth() === prevDate.getMonth() && currDate.getFullYear() === prevDate.getFullYear())) {
+                                        setDateTimeIssued(new Date()); !addUpdatePermission && setStatesChangeStatus(true);
+                                        setValue({ ...value, ['DateTimeIssued']: new Date() ? getShowingMonthDateYear(new Date()) : null })
                                     }
-
-                                    setDateTimeIssued(updatedDate);
-                                    setValue({
-                                        ...value,
-                                        ['DateTimeIssued']: getShowingMonthDateYear(updatedDate),
-                                        ['DateExpired']: ''
-                                    });
-                                    setDateExpired(); // optionally you can also pass null here: setDateExpired(null);
+                                    else if (date >= new Date()) {
+                                        setDateTimeIssued(new Date()); !addUpdatePermission && setStatesChangeStatus(true); setValue({ ...value, ['DateTimeIssued']: new Date() ? getShowingMonthDateYear(new Date()) : null })
+                                    } else if (date <= new Date(incReportedDate)) {
+                                        setDateTimeIssued(incReportedDate); !addUpdatePermission && setStatesChangeStatus(true); setValue({ ...value, ['DateTimeIssued']: incReportedDate ? getShowingMonthDateYear(incReportedDate) : null })
+                                    } else {
+                                        setDateTimeIssued(date); !addUpdatePermission && setStatesChangeStatus(true); setValue({ ...value, ['DateTimeIssued']: date ? getShowingMonthDateYear(date) : null })
+                                    }
                                 } else {
                                     setDateTimeIssued(null);
-                                    setDateExpired(null); // <-- Clear Expired date
-                                    setValue({ ...value, ['DateTimeIssued']: null, ['DateExpired']: null }); // <-- Clear both fields in value
+                                    setDateExpired(null);
+                                    setValue({
+                                        ...value, ['DateTimeIssued']: null, ['DateExpired']: null,
+                                    });
                                 }
                             }}
-
-                        // filterTime={(time) => filterTimeForDateZone(time, datezone)}
+                            selected={value.DateTimeIssued ? new Date(value.DateTimeIssued) : null}
+                            placeholderText={'Select...'}
+                            showTimeSelect
+                            filterTime={(time) => filterPassedDateTime(time, DateTimeIssued, incReportedDate)}
+                            timeIntervals={1}
+                            dropdownMode="select"
+                            timeCaption="Time"
+                            popperPlacement="bottom"
+                            maxDate={new Date()}
+                            minDate={new Date(incReportedDate)}
+                            autoComplete='off'
+                            showMonthDropdown
+                            showYearDropdown
                         />
 
                     </div>
@@ -639,12 +643,13 @@ const Warrant = (props) => {
                             timeFormat="HH:mm "
                             is24Hour
                             showTimeSelect
-                            className='requiredColor'
                             timeCaption="Time"
                             // isDisabled={!value?.DateTimeIssued}
                             timeIntervals={1}
                             minDate={new Date(DateTimeIssued)}
-                            disabled={value?.DateTimeIssued ? false : true}
+                            disabled={!value?.DateTimeIssued} // 👈 disable when DateTimeIssued is null
+                            className={`requiredColor ${!value?.DateTimeIssued ? 'readonlyColor' : ''}`}
+                        // disabled={value?.DateTimeIssued ? false : true}
                         // className={!value?.DateOfBirthFrom && 'readonlyColor'}
 
                         />
