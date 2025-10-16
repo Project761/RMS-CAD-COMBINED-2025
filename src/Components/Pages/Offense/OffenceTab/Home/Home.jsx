@@ -74,8 +74,10 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   const [chargedata, setChargedata] = useState([]);
   const [panelCode, setpanelCode] = useState('');
   const [DeleteshowCounts, SetDeleteshowCounts] = useState('');
+
   const [offenderUsingStatus, setoffenderUsingStatus] = useState(false);
   const [offenderUsingError, setoffenderUsingError] = useState(false);
+
   const [crimeOffenderUseDrp, setCrimeOffenderUseDrp] = useState([]);
   const [crimeOffenderUse, setCrimeOffenderUse] = useState([]);
   const [crimeOffenderUseEditVal, setCrimeOffenderUseEditVal] = useState([]);
@@ -1467,6 +1469,22 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
           setgangInformationStatus(offenceError?.GangInformation);
           setgangInformationError(offenceError?.GangInformationError);
         }
+        if (offenceError.Weapon) {
+          setweaponTypeStatus(offenceError?.Weapon);
+          setweaponTypeError(offenceError?.WeaponError);
+        }
+        if (offenceError.OffenderUsing) {
+          setoffenderUsingStatus(offenceError?.OffenderUsing);
+          setoffenderUsingError(offenceError?.OffenderUsingError);
+        }
+        if (offenceError.CriminalActivity) {
+          setcriminalActivityStatus(offenceError?.CriminalActivity);
+          setcriminalActivityError(offenceError?.CriminalActivityError);
+        }
+        if (offenceError.Bias) {
+          setbiasStatus(offenceError?.Bias);
+          setbiasStatusError(offenceError?.BiasError);
+        }
         setnibrsError(res);
 
       } else {
@@ -1476,6 +1494,10 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
         setlocationTypeComplteStatus(false);
         setgangInformationStatus(false);
         setmethodOfEntryStatus(false);
+        setweaponTypeStatus(false);
+        setoffenderUsingStatus(false);
+        setcriminalActivityStatus(false);
+        setbiasStatus(false);
       }
     } catch (error) {
       console.error("Error in NibrsErrorReturn: ", error);
@@ -1484,6 +1506,10 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
       setlocationTypeComplteStatus(false);
       setgangInformationStatus(false);
       setmethodOfEntryStatus(false);
+      setweaponTypeStatus(false);
+      setoffenderUsingStatus(false);
+      setcriminalActivityStatus(false);
+      setbiasStatus(false);
     }
   };
 
@@ -1632,7 +1658,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     if (loginAgencyState === 'TX' && nibrsCode == "13B") {
       const weaponData = data.filter((item) => { if (item?.id === '99' || item?.id === '40' || item?.id === '90' || item?.id === '95') return item });
 
-      const otherFilterArr = weaponData?.filter((item) => !weaponValues.includes(item?.id));
+      const otherFilterArr = weaponData?.filter((item) => !weaponValues?.includes(item?.id));
       return otherFilterArr
 
     }
@@ -1646,7 +1672,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     else if (loginAgencyState === 'TX' && (nibrsCode === '09A' || nibrsCode === '09B' || nibrsCode === '09C')) {
       const weaponData = data.filter((item) => { if (item?.id != '77' && item?.id != '99') return item });
 
-      const otherFilterArr = weaponData?.filter((item) => !weaponValues.includes(item?.id));
+      const otherFilterArr = weaponData?.filter((item) => !weaponValues?.includes(item?.id));
       return otherFilterArr
 
     }
@@ -1949,7 +1975,9 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
 
   useEffect(() => {
     if (crimeSuspectEditVal) { setCrimeSuspect(crimeSuspectEditVal) }
-  }, [crimeSuspectEditVal])
+  }, [crimeSuspectEditVal]);
+
+
 
   return (
     <>
@@ -2221,10 +2249,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                 />
               </div>
               <div className="col-2 " style={{ lineHeight: 1.1 }}>
-                <span data-toggle="modal" onClick={() => setOpenPage("Method Of Entry")} data-target="#ListModel"
-                  className="new-link px-0"
-
-                >
+                <span data-toggle="modal" onClick={() => setOpenPage("Method Of Entry")} data-target="#ListModel" className="new-link px-0" >
                   Method Of Entry
                   {methodOfEntryStatus ? (<ErrorTooltip ErrorStr={methodOfEntryError} />) : (<></>)}
                 </span>
@@ -2251,13 +2276,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   onChange={(e) => changeDropDown(e, "CrimeMethodOfEntryID")}
                   placeholder="Select..."
                 />
-
-
-
-
               </div>
-
-
               <div className="col-3 col-md-3 col-lg-2 ">
                 <label htmlFor="" className="new-label px-0 mb-0">
                   Offense  Date/Time{errors.OffenseDttmError !== 'true' ? (
@@ -2270,8 +2289,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   id='OffenseDateTime'
                   name='OffenseDateTime'
                   ref={startRef}
-
-
                   onKeyDown={(e) => {
                     if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
                       e?.preventDefault();
@@ -2319,7 +2336,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                 />
               </div>
 
-
               {nibrsCode === "220" || nibrsCode === "210" || nibrsCode === "120" || nibrsCode === "23D" || nibrsCode === "23F" || nibrsCode === "23H" || nibrsCode === "240" || nibrsCode === "26A" || nibrsCode === "26A" || nibrsCode === "23D" || nibrsCode === "26C" || nibrsCode === "26E" || nibrsCode === "26F" || nibrsCode === "26G" || nibrsCode === "270" || nibrsCode === "510" ?
                 <>
                   <div className="custom-col-12 " style={{ display: "flex", flexDirection: "column" }}>
@@ -2358,7 +2374,8 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                 <div className="row align-items-center" style={{ rowGap: "8px" }}>
                   <div className="col-4 col-md-4 custom-col-12  text-right">
                     <span data-toggle="modal" onClick={() => { setOpenPage('Offender Suspected of Using') }} data-target="#ListModel" className='new-link px-0 text-nowrap'>
-                      Offender suspected of using {offenderUsingStatus && (<ErrorTooltip ErrorStr={offenderUsingError} />)}
+                      Offender suspected of using
+                      {offenderUsingStatus && (<ErrorTooltip ErrorStr={offenderUsingError} />)}
                       {loginAgencyState === 'TX' ? getCheckNotApplicable() ? <ErrorTooltip ErrorStr={NotApplicableError} /> : <> </> : <></>}
                     </span>
 
@@ -2366,6 +2383,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                       <div className="text-end"> <span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block", }}>{errors.OffenderusingError}</span>
                       </div>
                     )}
+
                   </div>
                   <div className="col-9 col-md-9 col-lg-4">
                     <SelectBox
@@ -2376,10 +2394,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                       isMulti
                       isDisabled={nibrsSubmittedOffenseMain === 1}
                       styles={loginAgencyState == 'TX' ? nibrsCode === "999" ? customStylesWithOutColor : getCheckNotApplicable() ? Nibrs_ErrorStyle : MultiSelectRequredColor : MultiSelectRequredColor}
-                      // styles={
-                      //   (PanelCode === '03' || PanelCode === '06' || PanelCode === '08') ? customStylesWithColor :
-                      //     loginAgencyState == 'TX' ? getCheckNotApplicable() ? Nibrs_ErrorStyle : customStylesWithOutColor : customStylesWithOutColor
-                      // }
                       closeMenuOnSelect={false}
                       hideSelectedOptions={true}
                       components={{ MultiValue, }}
@@ -2420,14 +2434,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                           :
                           MultiSelectRequredColor
                       }
-                      // styles={
-                      //   loginAgencyState === 'TX' ?
-                      //     nibrsCode === '09C' && !bias09CCodeStatus ? ErrorStyle_NIBRS_09C(nibrsCode)
-                      //       :
-                      //       check_Valid_Bias_Code(BiasSelectCodeArray) ? Nibrs_ErrorStyle : customStylesWithOutColor
-                      //     :
-                      //     customStylesWithOutColor
-                      // }
                       isMulti
                       closeMenuOnSelect={false}
                       hideSelectedOptions={true}
@@ -2501,9 +2507,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   <div className="col-9 col-md-9 col-lg-4">
                     <SelectBox
                       className="basic-multi-select"
-
-                      // styles={customStylesWithOutMiltiColor}
-
                       styles={
                         loginAgencyState === 'TX'
                           ?
