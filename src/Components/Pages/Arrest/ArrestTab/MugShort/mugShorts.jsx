@@ -15,12 +15,13 @@ import DeletePopUpModal from '../../../../Common/DeleteModal';
 import ChangesModal from '../../../../Common/ChangesModal';
 import ListModal from '../../../Utility/ListManagementModel/ListModal';
 import { get_ScreenPermissions_Data } from '../../../../../redux/actions/IncidentAction';
+import ArresList from '../../../ShowAllList/ArrestList';
 
 const MugShorts = (props) => {
 
-    const { DecArrestId, DecMasterNameID, DecIncID, isViewEventDetails = false } = props
+    const { DecArrestId, DecMasterNameID, DecIncID, isViewEventDetails = false, get_List, ListData } = props
 
-    const { setChangesStatus, get_Arrest_Count } = useContext(AgencyContext)
+    const { setChangesStatus, get_Arrest_Count, NameId } = useContext(AgencyContext)
 
     const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -71,6 +72,11 @@ const MugShorts = (props) => {
         }
     }, [localStoreData]);
 
+    useEffect(() => {
+        if (NameId) {
+            get_List(NameId);
+        }
+    }, [NameId])
     useEffect(() => {
         if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
             if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
@@ -363,8 +369,8 @@ const MugShorts = (props) => {
 
     return (
         <>
-            {/* <NameListing  {...{ ListData }} /> */}
-            <div className="col-md-12 mt-1">
+            <ArresList  {...{ ListData }} />
+            <div className="col-md-12 mt-1 child">
                 <div className="row align-items-center" style={{ rowGap: "8px" }}>
                     <div className="col-3 col-md-3 col-lg-1 ">
                         <span data-toggle="modal" onClick={() => {
@@ -544,8 +550,8 @@ const MugShorts = (props) => {
                                         </div>
                                         <div className="d-flex justify-content-center gap-2">
                                             <button type="button" className="btn btn-primary btn-sm mr-2" onClick={() => handleUpload(item.name)} > Upload  </button>
-                                            <button type="button" className="btn btn-outline-danger btn-sm" onClick={() => handleRemove(item.name)}
-                                            > Remove </button>
+                                            {/* <button type="button" className="btn btn-outline-danger btn-sm" onClick={() => handleRemove(item.name)}
+                                            > Remove </button> */}
                                         </div>
                                     </div>
                                 </div>
