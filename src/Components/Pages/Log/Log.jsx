@@ -140,7 +140,7 @@ const Log = ({ url, ParentId, para, scrCode, MstParentId, masterPara, IsMaster }
     return (
         <>
             {/* Filters UI */}
-            <div className="row g-2 mb-2 mt-2">
+            <div className="row g-2 mb-2 mt-2 child">
                 <div className="col-12 col-sm-6 col-md">
                     <input
                         type="text"
