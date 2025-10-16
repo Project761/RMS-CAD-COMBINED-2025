@@ -432,6 +432,7 @@ const OffenceHomeTabs = () => {
                                             <div className="card-carousel" id="cardCarousel" ref={carouselRef}>
 
                                                 {offenceFillterData?.map((row, index) => (
+                                                    
                                                     <div
                                                         className="info-card position-relative d-flex align-items-center justify-content-between"
                                                         key={index}

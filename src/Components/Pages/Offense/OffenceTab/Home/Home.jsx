@@ -2103,6 +2103,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   placeholder="Select..."
                 />
               </div>
+
               <div className="" style={{ flex: "0 0 21.3%", minWidth: "21.3%" }}>
                 <span data-toggle="modal" onClick={() => setOpenPage("Location Type")} data-target="#ListModel" className="new-link">Secondary Location Type </span>
               </div>
@@ -2123,7 +2124,9 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
               <div className="custom-col-12">
                 <span data-toggle="modal" onClick={() => setOpenPage("Crime Left  Scene")} data-target="#ListModel" className="new-link px-0">Offender Left Scene </span>
               </div>
-              <div className="col-7 col-md-7 col-lg-2  ">
+
+
+              <div className="col-7 col-md-7 col-lg-4">
                 <Select
                   name="OffenderLeftSceneId"
                   styles={customStylesWithOutColor}
@@ -2134,12 +2137,14 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   placeholder="Select..."
                 />
               </div>
-              <div className="col-4 col-md-4 col-lg-2 ">
+
+
+              <div className="" style={{ flex: "0 0 21.3%", minWidth: "21.3%" }}>
                 <label htmlFor="" className="new-label">
                   Domestic violence
                 </label>
               </div>
-              <div className="col-7 col-md-7 col-lg-2  ">
+              <div className="col-7 col-md-7 col-lg-4 ">
                 <Select
                   value={StatusOptions.filter(
                     (option) => option.value === value?.IsDomesticViolence
@@ -2157,13 +2162,13 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   isDisabled={nibrsSubmittedOffenseMain === 1}
                 />
               </div>
-              <div className="col-4 col-md-4 col-lg-2  ">
+              <div className="custom-col-12">
                 <label htmlFor="" className="new-label d-block m-0 text-nowrap">
                   Gang Information
                   {gangInformationStatus && (<ErrorTooltip ErrorStr={gangInformationError} />)}
                 </label>
               </div>
-              <div className="custom-col-20">
+              <div className="col-7 col-md-7 col-lg-4">
                 <Select
                   isMulti
                   styles={
@@ -2192,14 +2197,14 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                 />
               </div>
               {/* style={{ lineHeight: 1.1 }} */}
-              <div className="custom-col-12 " >
+              <div className="" style={{ flex: "0 0 21.3%", minWidth: "21.3%" }} >
                 <label htmlFor="" className="new-label m-0 text-nowrap">
                   Premises Entered
                 </label>
                 <br />
                 {errors.PremisesEnteredError !== "true" ? (<div style={{ color: "red", fontSize: "13px", display: "block", display: "flex", width: "100%", justifyContent: "flex-end" }}  >{errors.PremisesEnteredError}</div>) : null}
               </div>
-              <div className="col-7 col-md-7 col-lg-2 text-field mt-0">
+              <div className="col-7 col-md-7 col-lg-4  text-field mt-0">
                 <input
                   type="text"
                   style={{
@@ -2218,7 +2223,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   autoComplete="off"
                 />
               </div>
-              <div className="col-2 " style={{ lineHeight: 1.1 }}>
+              <div className="custom-col-12" style={{ lineHeight: 1.1 }}>
                 <span data-toggle="modal" onClick={() => setOpenPage("Method Of Entry")} data-target="#ListModel"
                   className="new-link px-0"
 
@@ -2232,7 +2237,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                 </div>
                 ) : null}
               </div>
-              <div className="col-7 col-md-7 col-lg-2 ">
+              <div className="col-7 col-md-7 col-lg-4 ">
                 <Select
                   styles={
                     nibrsSubmittedOffenseMain === 1 ?
@@ -2255,15 +2260,14 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
 
               </div>
 
-
-              <div className="col-3 col-md-3 col-lg-2 ">
+              <div className=" " style={{ flex: "0 0 21.3%", minWidth: "21.3%" }}>
                 <label htmlFor="" className="new-label px-0 mb-0">
                   Offense  Date/Time{errors.OffenseDttmError !== 'true' ? (
                     <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.OffenseDttmError}</p>
                   ) : null}
                 </label>
               </div>
-              <div className="custom-col-20">
+              <div className="col-7 col-md-7 col-lg-4">
                 <DatePicker
                   id='OffenseDateTime'
                   name='OffenseDateTime'
@@ -2350,12 +2354,11 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                 <></>
               }
 
-              <div className="col-1"></div>
+              {/* <div className="col-1"></div> */}
 
-              <div className="col-12">
-                <div className="row align-items-center" style={{ rowGap: "8px" }}>
-                  <div className="col-4 col-md-4 custom-col-12  text-right">
-                    <span data-toggle="modal" onClick={() => { setOpenPage('Offender Suspected of Using') }} data-target="#ListModel" className='new-link px-0 text-nowrap'>
+              
+                  <div className="col-4 col-md-4 custom-col-12 text-right">
+                    <span data-toggle="modal" onClick={() => { setOpenPage('Offender Suspected of Using') }} data-target="#ListModel" className='new-link px-0 '>
                       Offender suspected of using {offenderUsingStatus && (<ErrorTooltip ErrorStr={offenderUsingError} />)}
                       {loginAgencyState === 'TX' ? getCheckNotApplicable() ? <ErrorTooltip ErrorStr={NotApplicableError} /> : <> </> : <></>}
                     </span>
@@ -2438,7 +2441,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
 
                   </div>
                   <div className="col-4 col-md-4 custom-col-12  text-right">
-                    <span data-toggle="modal" data-target="#ListModel" className='new-link px-0 text-nowrap'>
+                    <span data-toggle="modal" data-target="#ListModel" className='new-link px-0 '>
                       <span onClick={() => { setOpenPage('Weapon Type') }}>Weapon Used (Select Upto 3)</span>
                       <br />
                       <span className='float-right '>
@@ -2546,8 +2549,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                       style={{ resize: "none" }}
                     ></textarea>
                   </div>
-                </div>
-              </div>
+               
 
               <div className="col-12 mt-1 ">
                 <div className="row align-items-center" style={{ rowGap: "8px" }}>
@@ -2567,6 +2569,11 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                 </div>
               </div>
             </div>
+
+
+
+
+
           </div>
 
 
