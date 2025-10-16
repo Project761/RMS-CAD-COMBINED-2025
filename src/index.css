@@ -1289,7 +1289,8 @@ input[type="file"] {
   background-color: #001f3f !important;
   color: #fff;
   position: sticky;
-  z-index: 99999;
+  /* z-index: 99999; */
+  z-index: 999;
   top: 0px;
 }
 
@@ -2102,8 +2103,8 @@ input[type="file"] {
   padding: 3px 0px !important;
 }
 
-/* 
-#page_top {
+
+/* #page_top {
   z-index: 1 !important;
 } */
 

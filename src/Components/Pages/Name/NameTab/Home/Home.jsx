@@ -2074,10 +2074,15 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                           required />
                       </div>
                       {
-                        !nameID &&
-                        <div className="col-12 col-md-3 col-lg-1 name-box mt-0 text-center " >
-                          <button type="button" data-toggle="modal" data-target="#SearchModal" className="btn btn-sm btn-success" onClick={() => getNameSearch(loginAgencyID, value?.NameTypeID, value.LastName, value.FirstName, value.MiddleName, value.DateOfBirth, value.SSN, value.HeightFrom, value.HeightTo, value.WeightFrom, value.WeightTo, value.EthnicityID, value.RaceID, value.SexID, value.PhoneTypeID, value.Contact, true)}>Search</button>
-                        </div>
+                        !nameID ?
+                          (
+                            <>
+                              <div className="col-12 col-md-3 col-lg-1 name-box mt-0 text-center " >
+                                <button type="button" data-toggle="modal" data-target="#SearchModal" className="btn btn-sm btn-success" onClick={() => getNameSearch(loginAgencyID, value?.NameTypeID, value.LastName, value.FirstName, value.MiddleName, value.DateOfBirth, value.SSN, value.HeightFrom, value.HeightTo, value.WeightFrom, value.WeightTo, value.EthnicityID, value.RaceID, value.SexID, value.PhoneTypeID, value.Contact, true)}>Search</button>
+                              </div>
+                            </>
+                          ) : <><div className="col-12 col-md-3 col-lg-1 name-box mt-0 text-center " ></div></>
+
                       }
                       <div className="col-1 col-md-1 col-lg-1">
                         <label htmlFor="" className='label-name mb-0'>Business Type</label>
