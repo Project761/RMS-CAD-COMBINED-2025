@@ -3292,14 +3292,14 @@ div[data-testid="table-header"],
   display: flex;
   align-items: center;
   position: relative;
-} 
+}
 
- .card-carousel {
+.card-carousel {
   display: flex;
   overflow-x: auto;
   scroll-behavior: smooth;
   flex-grow: 1;
-} 
+}
 
 .card-carousel.list-view {
   flex-direction: column;
@@ -3312,10 +3312,12 @@ div[data-testid="table-header"],
   border-radius: 8px;
   padding: 10px;
   margin-right: 10px;
-  min-width: 250px;
+  min-width: 210px;
+  max-width: 220px;
   flex-shrink: 0;
-    position: relative;
+  position: relative;
 }
+
 
 .info-card.list-item {
   min-width: 100%;
@@ -3337,6 +3339,7 @@ div[data-testid="table-header"],
   display: flex;
   align-items: center;
 }
+
 icon-buttons {
   position: absolute;
   top: 8px;
@@ -3353,4 +3356,3 @@ icon-buttons {
   justify-content: center;
   cursor: pointer;
 }
-

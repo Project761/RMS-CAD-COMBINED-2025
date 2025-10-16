@@ -1208,7 +1208,7 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
                   placeholder='Select Point Of Entry From List'
                 />
               </div>
-             
+
               <div className="col-3 col-md-3 col-lg-3">
 
                 <span data-toggle="modal" onClick={() => { setOpenPage('Tools Use') }} data-target="#ListModel" className='new-link px-0'>
@@ -1259,34 +1259,10 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
                   placeholder='Select Suspect Action From List'
                 />
               </div>
-              <div className="col-3 col-md-3 col-lg-3">
-
-                <span data-toggle="modal" onClick={() => { setOpenPage('Method Of Operation') }} data-target="#ListModel" className='new-link px-0'>
-                  Method&nbsp;Of&nbsp;Operation   {methodOfOperationStatus && (
-                    <ErrorTooltip ErrorStr={methodOfOperationError} />
-                  )}
-                </span>
-              </div>
-              <div className="col-9 col-md-9 col-lg-9 ">
-                <SelectBox
-                  className="basic-multi-select"
-                  styles={customStylesWithOutColor}
-                  isMulti
-                  isClearable={false}
-                  hideSelectedOptions={true}
-                  closeMenuOnSelect={false}
-                  menuPlacement='top'
-                  options={methodOfOperationDrp}
-                  components={{ MultiValue, }}
-                  onChange={(e) => CrimeMethodOfOpeationchange(e)}
-
-                  value={filterArray(methodOfOperation, 'label')}
-                  placeholder='Select Method Of Operation From List'
-
-                />
-              </div>
             </div>
           </div>
+
+
           <div className="col-12 col-md-12 col-lg-6">
             <div className="row align-items-center" style={{ rowGap: "8px" }}>
               <div className="col-3 col-md-3 col-lg-4">
@@ -1317,11 +1293,11 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
              
         
               <div className="col-3 col-md-3 col-lg-4">
-
                 <span data-toggle="modal" onClick={() => { setOpenPage('Crime Target') }} data-target="#ListModel" className='new-link px-0'>
                   Target
                 </span>
               </div>
+
               <div className="col-9 col-md-9 col-lg-8 " >
                 <SelectBox
                   className="basic-multi-select"
@@ -1341,8 +1317,8 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
                   placeholder='Select Target From List'
                 />
               </div>
-              <div className="col-3 col-md-3 col-lg-4">
 
+              <div className="col-3 col-md-3 col-lg-4">
                 <span data-toggle="modal" onClick={() => { setOpenPage('Crime Security Violated') }} data-target="#ListModel" className='new-link px-0'>
                   Security Violated
                   {securityViolatedStatus && (
@@ -1367,23 +1343,52 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
                   placeholder='Select Security Violated From List'
                 />
               </div>
-             
-              <div className="col-12   text-right">
-                {
-                  effectiveScreenPermission ? (
-                    effectiveScreenPermission[0]?.Changeok ? (
-                      <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => { check_Validation_Error() }}>Update</button>
-                    ) : (
-                      <></>
-                    )
-                  ) : (
-                    <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => { check_Validation_Error() }}>Update</button>
-                  )
-                }
-                {/* <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => { check_Validation_Error() }}>Update</button> */}
+
+
+              <div className="col-3 col-md-3 col-lg-4">
+                <span data-toggle="modal" onClick={() => { setOpenPage('Method Of Operation') }} data-target="#ListModel" className='new-link px-0'>
+                  Method&nbsp;Of&nbsp;Operation   {methodOfOperationStatus && (
+                    <ErrorTooltip ErrorStr={methodOfOperationError} />
+                  )}
+                </span>
+              </div>
+              <div className="col-9 col-md-9 col-lg-8 ">
+                <SelectBox
+                  className="basic-multi-select"
+                  styles={customStylesWithOutColor}
+                  isMulti
+                  isClearable={false}
+                  hideSelectedOptions={true}
+                  closeMenuOnSelect={false}
+                  menuPlacement='top'
+                  options={methodOfOperationDrp}
+                  components={{ MultiValue, }}
+                  onChange={(e) => CrimeMethodOfOpeationchange(e)}
+
+                  value={filterArray(methodOfOperation, 'label')}
+                  placeholder='Select Method Of Operation From List'
+
+                />
               </div>
             </div>
           </div>
+
+
+          <div className="col-12 text-right mt-3">
+            {
+              effectiveScreenPermission ? (
+                effectiveScreenPermission[0]?.Changeok ? (
+                  <button type="button" className="btn btn-sm btn-success" onClick={() => { check_Validation_Error() }}>Update</button>
+                ) : (
+                  <></>
+                )
+              ) : (
+                <button type="button" className="btn btn-sm btn-success" onClick={() => { check_Validation_Error() }}>Update</button>
+              )
+            }
+            {/* <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => { check_Validation_Error() }}>Update</button> */}
+          </div>
+
         </div>
       </div>
       <ListModal {...{ openPage, setOpenPage }} />

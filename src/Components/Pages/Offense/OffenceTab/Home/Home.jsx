@@ -2496,12 +2496,12 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                       <br />
                       <span className='float-right '>
                         {criminalActivityStatus && (<ErrorTooltip ErrorStr={criminalActivityError} />)}
-                        {/* {
+                        {
                           loginAgencyState === 'TX' ?
                             checkCrimeActiSuitableCode(nibrsCode, crimeActSelectedCodeArray, loginAgencyState, 'tooltip') ? checkCrimeActiSuitableCode(nibrsCode, crimeActSelectedCodeArray, loginAgencyState, 'tooltip') : <></>
                             :
                             <></>
-                        } */}
+                        }
                       </span>
                       {errors.CriminalActivityError !== "true" ? (<div className="text-end"><span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block" }}>{errors.CriminalActivityError}</span></div>) : null}
                     </span>
