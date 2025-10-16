@@ -2378,7 +2378,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                     <span data-toggle="modal" onClick={() => { setOpenPage('Offender Suspected of Using') }} data-target="#ListModel" className='new-link px-0 text-nowrap'>
                       Offender suspected of using
                       {offenderUsingStatus && (<ErrorTooltip ErrorStr={offenderUsingError} />)}
-                      {loginAgencyState === 'TX' ? getCheckNotApplicable() ? <ErrorTooltip ErrorStr={NotApplicableError} /> : <> </> : <></>}
+                      {/* {loginAgencyState === 'TX' ? getCheckNotApplicable() ? <ErrorTooltip ErrorStr={NotApplicableError} /> : <> </> : <></>} */}
                     </span>
 
                     {errors.OffenderusingError !== "true" && (
@@ -2409,7 +2409,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                     <span data-toggle="modal" data-target="#ListModel" className='new-link px-0 text-right '>
                       <span onClick={() => { setOpenPage('Bias Motivation') }}>Bias motivation (Select Upto 5)</span>
                       {biasStatus && (<ErrorTooltip ErrorStr={biasStatusError} />)}
-                      {
+                      {/* {
                         loginAgencyState === 'TX' ?
                           nibrsCode === '09C' && !bias09CCodeStatus ? <ErrorTooltip ErrorStr={Bias_90C_Error} />
                             :
@@ -2418,7 +2418,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                               <></>
                           :
                           <></>
-                      }
+                      } */}
                     </span>
                     {errors.CrimeBiasCategoryError !== "true" ? (<div className="text-end"><span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block" }}>{errors.CrimeBiasCategoryError}</span></div>) : null}
                   </div>
@@ -2453,12 +2453,12 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                       <br />
                       <span className='float-right '>
                         {weaponTypeStatus && (<ErrorTooltip ErrorStr={weaponTypeError} />)}
-                        {
+                        {/* {
                           loginAgencyState === 'TX' ?
                             checkWeaponTypeValidate(nibrsCode, WeaponSelectCodeArray, 'ToolTip', loginAgencyState)
                             :
                             <></>
-                        }
+                        } */}
                       </span>
                     </span>
                     {errors.WeaponTypeError !== "true" ? (<div className="text-end"><span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block" }}>{errors.WeaponTypeError}</span></div>) : null}
@@ -2496,12 +2496,12 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                       <br />
                       <span className='float-right '>
                         {criminalActivityStatus && (<ErrorTooltip ErrorStr={criminalActivityError} />)}
-                        {
+                        {/* {
                           loginAgencyState === 'TX' ?
                             checkCrimeActiSuitableCode(nibrsCode, crimeActSelectedCodeArray, loginAgencyState, 'tooltip') ? checkCrimeActiSuitableCode(nibrsCode, crimeActSelectedCodeArray, loginAgencyState, 'tooltip') : <></>
                             :
                             <></>
-                        }
+                        } */}
                       </span>
                       {errors.CriminalActivityError !== "true" ? (<div className="text-end"><span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block" }}>{errors.CriminalActivityError}</span></div>) : null}
                     </span>
