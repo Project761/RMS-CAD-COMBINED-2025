@@ -281,30 +281,30 @@ const OffenceHomeTabs = () => {
                 </div>
             ),
         },
-        {
-            minWidth: "40px",
-            grow: 1,
-            name: "View",
-            cell: (row) => (
-                <div >
-                    {getOffenseNibrsError(row.CrimeID, nibrsValidateOffenseData) ? (
-                        <span
-                            onClick={(e) =>
-                                setOffenseErrString(row.CrimeID, nibrsValidateOffenseData)
-                            }
-                            className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
-                            data-toggle="modal"
-                            data-target="#NibrsErrorShowModal"
-                        >
-                            <i className="fa fa-eye"></i>
-                        </span>
-                    ) : (
-                        <></>
-                    )}
-                </div>
-            ),
-            // omit: row => getOffenseNibrsError(row.CrimeID, nibrsValidateOffenseData) ? false : true,
-        },
+        // {
+        //     minWidth: "40px",
+        //     grow: 1,
+        //     name: "View",
+        //     cell: (row) => (
+        //         <div >
+        //             {getOffenseNibrsError(row.CrimeID, nibrsValidateOffenseData) ? (
+        //                 <span
+        //                     onClick={(e) =>
+        //                         setOffenseErrString(row.CrimeID, nibrsValidateOffenseData)
+        //                     }
+        //                     className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
+        //                     data-toggle="modal"
+        //                     data-target="#NibrsErrorShowModal"
+        //                 >
+        //                     <i className="fa fa-eye"></i>
+        //                 </span>
+        //             ) : (
+        //                 <></>
+        //             )}
+        //         </div>
+        //     ),
+           
+        // },
         {
             minWidth: "40px",
             grow: 1,

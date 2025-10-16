@@ -45,7 +45,6 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
     'IsDomesticViolence': '', 'IsGangInfo': '',
   })
 
-
   const SelectedValue = useRef();
   const dispatch = useDispatch();
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -157,8 +156,6 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
       setaddUpdatePermission(false);
     }
   }, [effectiveScreenPermission]);
-
-
 
   const [multiSelected, setMultiSelected] = useState({
     PretendToBeID: null, CrimePointOfExitID: null, CrimeOffenderUse: null, CrimeActivity: null, CrimeBiasCategory: null, CrimeToolsUse: null, CrimeTarget: null, CrimeSuspect: null, SecurityViolated: null, methodOfOperation: null, methodOfEntry: null, weaponID: null,
@@ -751,7 +748,6 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
     checkOffenderCount();
   }
 
-
   const check_Validation_Error = (e) => {
     const methodEntryArr = methodOfEntryCode ? [methodOfEntryCode] : [];
     const isWeaponRequired = checkWeaponTypeIsRequire(nibrsCode, loginAgencyState) || PanelCode === '03' || PanelCode === '06' || PanelCode === '08';
@@ -1068,7 +1064,6 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
     }),
   };
 
-
   const StatusOption = [
     { value: true, label: 'Yes' },
     { value: false, label: 'No' }
@@ -1157,19 +1152,6 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
     }
     return true; // Default: show all options
   });
-
-
-  // const customStylesWithColor = {
-  //   control: base => ({
-  //     ...base,
-  //     backgroundColor: "#fce9bf",
-  //     minHeight: 58,
-  //     fontSize: 14,
-  //     margintop: 2,
-  //     boxShadow: 0,
-  //   }),
-  // };
-
 
   return (
     <>
@@ -1333,7 +1315,7 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
               </div>
 
              
-             
+        
               <div className="col-3 col-md-3 col-lg-4">
 
                 <span data-toggle="modal" onClick={() => { setOpenPage('Crime Target') }} data-target="#ListModel" className='new-link px-0'>
