@@ -87,6 +87,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
     const [loginPinID, setLoginPinID] = useState('');
     const [loginAgencyID, setLoginAgencyID] = useState('');
     const [mainIncidentID, setMainIncidentID] = useState('');
+    const [ResetErrors, setResetErrors] = useState(false);
     // const [incidentReportedDate, setIncidentReportedDate] = useState(null);
     const NameCount = incidentCount[0]?.VehicleCount || 0;
 
@@ -148,7 +149,9 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                     navigate(`/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${stringToBase64(row?.PropertyID)}&MVehId=${stringToBase64(row?.MasterPropertyID)}&VehSta=${true}&isNew=${true}`)
                 } else {
                     navigate(`/Vehicle-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${stringToBase64(row?.PropertyID)}&MVehId=${stringToBase64(row?.MasterPropertyID)}&VehSta=${true}&isNew=${true}`)
+                    setResetErrors(true);
                 }
+                
                 // setMasterPropertyID(row.MasterPropertyID); dispatch({ type: MasterVehicle_ID, payload: row?.MasterPropertyID });
                 // setVehicleID(row?.PropertyID); dispatch({ type: Vehicle_ID, payload: row.PropertyID });
                 // setVehicleStatus(true); dispatch({ type: Master_Property_Status, payload: true });
@@ -335,6 +338,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                 get_Data_Vehicle(mainIncidentID);
                 setStatusFalse();
                 // newVehicle();
+                setResetErrors(true);
             } else {
                 const parsedData = JSON.parse(res.data);
                 const message = parsedData.Table[0].Message;
@@ -630,7 +634,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                         <div className="text-right ml-3">
                                             <div className="right-controls d-flex flex-column align-items-center gap-2">
                                                 <div className="view-toggle d-flex flex-column gap-2">
-                                                    <button className="btn btn-sm btn-success mb-2" onClick={() => { setStatusFalse(); }}> New </button>
+                                                    <button className="btn btn-sm btn-success mb-2" onClick={() => { setStatusFalse(); setResetErrors(true); }}> New </button>
                                                     {viewType === "card" && (<button className="btn btn-sm btn-success" onClick={() => setViewType("list")}  > Grid </button>)}
                                                     {viewType === "list" && (<button className="btn btn-sm btn-success" onClick={() => setViewType("card")} > Card  </button>)}
                                                 </div>
@@ -767,7 +771,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
 
                                 {
                                     showPage === 'home' ?
-                                        <Home {...{ setStatus, setaddUpdatePermission, newStatus, status, setShowVehicleRecovered, showVehicleRecovered, get_List, setPropertyStatus, isCad, isViewEventDetails, isCADSearch }} />
+                                        <Home {...{ setStatus, setaddUpdatePermission, ResetErrors, setResetErrors, newStatus, status, setShowVehicleRecovered, showVehicleRecovered, get_List, setPropertyStatus, isCad, isViewEventDetails, isCADSearch }} />
                                         :
                                         // showPage === 'VehicleNotes' ?
                                         //     <VehicleNotes  {...{ ListData, DecVehId, DecMVehId, DecIncID, isViewEventDetails }} />

@@ -358,6 +358,7 @@ const OffenceHomeTabs = () => {
                 navigate(`/Off-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${stringToBase64(row.CrimeID)}&OffSta=${true}`);
                 setCrimeId(row.CrimeID);
                 setStatus(true);
+                setResetErrors(true);
             }
         }
     };
@@ -505,7 +506,7 @@ const OffenceHomeTabs = () => {
                                                                                         // }}
                                                                                         onClick={() => {
                                                                                             setEditValOffense(row);
-                                                                                            setResetErrors(true);
+
                                                                                             setshowOffPage('home');
                                                                                         }}
 
@@ -547,7 +548,7 @@ const OffenceHomeTabs = () => {
                                                                             // }}
                                                                             onClick={() => {
                                                                                 setEditValOffense(row);
-                                                                                setResetErrors(true);
+
                                                                                 setshowOffPage('home');
                                                                             }}
 

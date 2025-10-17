@@ -34,7 +34,7 @@ import CreatableSelect from 'react-select/creatable';
 import NCICModal from '../../../../../CADComponents/NCICModal';
 
 
-const Home = ({ setStatus, setShowVehicleRecovered, newStatus, showVehicleRecovered, get_List, setPropertyStatus, isCad = false, isViewEventDetails = false, isCADSearch = false }) => {
+const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors , setResetErrors , showVehicleRecovered, get_List, setPropertyStatus, isCad = false, isViewEventDetails = false, isCADSearch = false }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -85,7 +85,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, showVehicleRecove
     else DecMVehId = parseInt(base64ToString(MVehId));
 
 
-    const { get_vehicle_Count, get_Incident_Count, updateCount, setUpdateCount, incidentCount, nibrsSubmittedStatus, nibrsSubmittedvehicleMain, setnibrsSubmittedvehicleMain, setnibrsSubmittedStatus, changesStatus, changesStatusCount, setChangesStatus, setVehicleStatus, vehicleStatus, VehicleFilterData, get_Data_Vehicle, get_Name_Count, datezone, GetDataTimeZone, setcountoffaduit, validate_IncSideBar, incidentReportedDate, setIncidentReportedDate } = useContext(AgencyContext)
+    const { get_vehicle_Count, get_Incident_Count, updateCount, setUpdateCount,  incidentCount, nibrsSubmittedStatus, nibrsSubmittedvehicleMain, setnibrsSubmittedvehicleMain, setnibrsSubmittedStatus, changesStatus, changesStatusCount, setChangesStatus, setVehicleStatus, vehicleStatus, VehicleFilterData, get_Data_Vehicle, get_Name_Count, datezone, GetDataTimeZone, setcountoffaduit, validate_IncSideBar, incidentReportedDate, setIncidentReportedDate } = useContext(AgencyContext)
 
     const [clickedRow, setClickedRow] = useState(null);
     const [destoryDate, setDestoryDate] = useState();
@@ -132,6 +132,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, showVehicleRecove
     const [newClicked, SetNewClciked] = useState(0);
     const [vehErrorStatus, setVehErrorStatus] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    
 
     // permissions
     const [permissionForAdd, setPermissionForAdd] = useState(false);
@@ -168,9 +169,15 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, showVehicleRecove
         }
     }, []);
 
-    useEffect(() => {
-       if(isNew === true) {newVehicle();}
-    }, [isNew]);
+      useEffect(() => {
+        if (ResetErrors) {
+        reset();
+        }
+      }, [ResetErrors]);
+
+    // useEffect(() => {
+    //     if (isNew === true) { newVehicle(); }
+    // }, [isNew]);
 
 
 
@@ -653,7 +660,8 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, showVehicleRecove
         setStyleDrpData([]);
         setVehicleStatus(false);
         setuploadImgFiles([]); setVehicleMultiImg([]);
-       
+        setResetErrors(false);
+
     }
 
     const WidhoutColorStyles = {
@@ -1133,7 +1141,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, showVehicleRecove
         return !isNaN(d.getTime()) ? d : null;
     };
 
-    
+
 
     return (
         <>
