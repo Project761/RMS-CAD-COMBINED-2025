@@ -34,7 +34,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
 
     const dispatch = useDispatch()
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
-    const { changesStatus, vehicleCount, get_vehicle_Count, countoffaduit, get_Incident_Count, get_Data_Vehicle, VehicleFilterData, incidentCount, incidentReportedDate, setIncidentReportedDate, propertyValidateNibrsData } = useContext(AgencyContext);
+    const { changesStatus, vehicleCount, get_vehicle_Count, countoffaduit, get_Incident_Count, setshowOffPage, get_Data_Vehicle, VehicleFilterData, incidentCount, incidentReportedDate, setIncidentReportedDate, propertyValidateNibrsData } = useContext(AgencyContext);
     const [propertystatus, setPropertyStatus] = useState('');
     const [IsNonPropertyRoomSelected, setIsNonPropertyRoomSelected] = useState(false);
 
@@ -370,27 +370,27 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                                         style={{
                                                             cursor: "pointer",
                                                             borderLeft: nibrsValidateData?.some(item => item?.PropertyID === row?.PropertyID) ? "5px solid #EB0101" : "5px solid #2DEB7A",
+                                                            backgroundColor: row?.PropertyID === DecVehId ? "#425971" : "#ffffff",
                                                         }}
                                                     >
                                                         {/* Card Content */}
                                                         <div>
                                                             <div>
-                                                                <p className="mb-0 small" style={{ color: "black" }}><strong>Vehicle No . {row.VehicleNo}</strong></p>
+                                                                <p className="mb-0 small" style={{ color: row?.PropertyID === DecVehId ? "white" : "black" }}><strong>{row.VehicleNumber}</strong></p>
                                                             </div>
-                                                            <div>
-                                                                <p className="mb-0 small"> {row.DateOfBirth ? getShowingWithOutTime(row.DateOfBirth) : ""}</p>
-                                                            </div>
-                                                            <div>
-                                                                <p className="mb-0 small">{row.Gender}</p>
-                                                            </div>
+
+
                                                             <div>
                                                                 <p
                                                                     className="mb-0 small"
-                                                                    style={{
-                                                                        color: "black",
-                                                                    }}
+                                                                    style={{ color: row?.PropertyID === DecVehId ? "white" : "black" }}
                                                                 >
-                                                                    {row.LossCode_Description}
+                                                                    {row.LossCode_Description ? row.LossCode_Description.length > 40 ? `${row.LossCode_Description.substring(0, 40)} . . .` : row.LossCode_Description : ""}
+                                                                </p>
+                                                            </div>
+                                                            <div>
+                                                                <p className="mb-0 small" style={{ color: row?.PropertyID === DecVehId ? "white" : "black" }} >
+                                                                    {row.Category_Description ? row.Category_Description.length > 40 ? `${row.Category_Description.substring(0, 30)} . . .` : row.Category_Description : ""}
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -428,6 +428,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                                                                         onClick={() => {
                                                                                             setEditVal(row);
                                                                                             // setResetErrors(true);
+                                                                                            setShowPage('home');
                                                                                         }}
                                                                                         title="Edit"
                                                                                     >
@@ -468,6 +469,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                                                             onClick={() => {
                                                                                 setEditVal(row);
                                                                                 // setResetErrors(true);
+                                                                                setShowPage('home')
                                                                             }}
                                                                             title="Edit"
                                                                         >

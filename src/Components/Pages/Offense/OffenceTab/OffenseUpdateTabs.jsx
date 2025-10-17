@@ -440,25 +440,26 @@ const OffenceHomeTabs = () => {
                                             <div className="card-carousel" id="cardCarousel" ref={carouselRef}>
 
                                                 {offenceFillterData?.map((row, index) => (
-                                                    
+
                                                     <div
                                                         className="info-card position-relative d-flex align-items-center justify-content-between"
                                                         key={index}
                                                         style={{
                                                             cursor: "pointer",
                                                             borderLeft: nibrsValidateOffenseData?.some(item => item?.CrimeID === row?.CrimeID) ? "5px solid #EB0101" : "5px solid #2DEB7A",
+                                                            backgroundColor: row?.CrimeID === crimeId ? "#425971" : "#ffffff",
                                                         }}
                                                     >
                                                         {/* Card Content */}
                                                         <div>
                                                             <div>
-                                                                <p className="mb-0 small" style={{ color: "black" }}><strong>{row.FBIID_Description}</strong></p>
+                                                                <p className="mb-0 small" style={{ color: row?.CrimeID === crimeId ? "white" : "black" }}><strong>{row.FBIID_Description}</strong></p>
                                                             </div>
                                                             <div>
-                                                                <p className="mb-0 small"> {row.OffenseName_Description}</p>
+                                                                <p className="mb-0 small" style={{ color: row?.CrimeID === crimeId ? "white" : "black" }}> {row.OffenseName_Description ? row.OffenseName_Description.length > 40 ? `${row.OffenseName_Description.substring(0, 50)} . . .` : row.OffenseName_Description : ""}</p>
                                                             </div>
                                                             <div>
-                                                                <p className="mb-0 small">{row.LawTitle_Description}</p>
+                                                                <p className="mb-0 small" style={{ color: row?.CrimeID === crimeId ? "white" : "black" }}> {row.LawTitle_Description ? row.LawTitle_Description.length > 40 ? `${row.LawTitle_Description.substring(0, 50)} . . .` : row.LawTitle_Description : ""}</p>
                                                             </div>
                                                             {/* <div>
                                                                 <p
