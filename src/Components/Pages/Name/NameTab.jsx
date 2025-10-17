@@ -374,33 +374,35 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                     >
                                                         {/* Card Content */}
                                                         <div>
-                                                            <div>
-                                                                <p className="mb-0 small" style={{ color: row?.NameID === nameID ? "white" : "black" }}><strong>{row.FullName}</strong></p>
-                                                            </div>
-                                                            <div>
-                                                                <p className="mb-0 small" style={{ color: row?.NameID === nameID ? "white" : "black" }}> {row.DateOfBirth ? getShowingWithOutTime(row.DateOfBirth) : ""}</p>
-                                                            </div>
-                                                            <div>
-                                                                <p className="mb-0 small" style={{ color: row?.NameID === nameID ? "white" : "black" }}>{row.Gender}</p>
-                                                            </div>
-                                                            <div>
-                                                                <p
-                                                                    className="mb-0 small"
-                                                                    style={{ color: row?.NameID === nameID ? "white" : "black" }}
-                                                                    // style={{
-                                                                    //     color:
-                                                                    //         row.RoleName === "Other" ? "orange"
-                                                                    //             :
-                                                                    //             row.RoleName === "Victim" ? "green"
-                                                                    //                 :
-                                                                    //                 row.RoleName === "Offender" ? "red"
-                                                                    //                     :
-                                                                    //                     "black",
-                                                                    // }}
-                                                                >
-                                                                    {row.NameReasonCode ? row.NameReasonCode.length > 40 ? `${row.NameReasonCode.substring(0, 50)} . . .` : row.NameReasonCode : ""}
-                                                                </p>
-                                                            </div>
+
+                                                            <p className=" small truncate-multiline mb-1" style={{ color: row?.NameID === nameID ? "white" : "black", fontWeight: "bold" }}>{row.FullName}</p>
+
+
+                                                            <p className=" small truncate-multiline  mb-1" style={{ color: row?.NameID === nameID ? "white" : "black" }}> {row.DateOfBirth ? getShowingWithOutTime(row.DateOfBirth) : ""}</p>
+
+
+                                                            <p className=" small truncate-multiline  mb-1" style={{ color: row?.NameID === nameID ? "white" : "black" }}>{row.Gender}</p>
+
+
+                                                            <p
+                                                                className="mb-0 small truncate-multiline"
+                                                            // style={{
+                                                            //     color:
+                                                            //         row?.NameID === nameID
+                                                            //             ? "white"
+                                                            //             : row.RoleName === "Other"
+                                                            //                 ? "orange"
+                                                            //                 : row.RoleName === "Victim"
+                                                            //                     ? "green"
+                                                            //                     : row.RoleName === "Offender"
+                                                            //                         ? "red"
+                                                            //                         : "black",
+                                                            // }}
+                                                            >
+                                                                {row.NameReasonCode || ""}
+                                                            </p>
+
+
                                                         </div>
                                                         <div className="d-flex flex-column align-items-center gap-2 flex-shrink-0">
                                                             {/* Edit Button */}

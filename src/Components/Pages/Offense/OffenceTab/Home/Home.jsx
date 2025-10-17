@@ -302,7 +302,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     const CriminalActivityErr = checkCriminalActivityIsRequire(nibrsCode, loginAgencyState) ? validateFields(crimeActivity) : 'true';
 
     const offenderusingErr = nibrsCode != "999" ? RequiredFieldIncidentOffender(crimeOffenderUse) : 'true';
-    const CrimeBiasCategoryErr = nibrsCode != "999"  ? validateFields(crimeBiasCategory) : 'true';
+    const CrimeBiasCategoryErr = nibrsCode != "999" ? validateFields(crimeBiasCategory) : 'true';
 
 
     setErrors((pre) => {
@@ -513,7 +513,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     });
     setErrors({
       ...errors, ChargeCodeIDError: "", NibrsIdError: "", PremisesEnteredError: "", PrimaryLocationError: "", AttemptRequiredError: "", CommentsError: "",
-       CargoTheftError: "", 'MethodOfEnrtyError': '', 'CriminalActivityError': '', 'WeaponTypeError': '', 'OffenderusingError': '', 'CrimeBiasCategoryError': '',
+      CargoTheftError: "", 'MethodOfEnrtyError': '', 'CriminalActivityError': '', 'WeaponTypeError': '', 'OffenderusingError': '', 'CrimeBiasCategoryError': '',
     });
 
     setCrimeOffenderUse([]); setCrimeBiasCategory([]); setWeaponID([]); setCrimeActivity([]);
@@ -1986,7 +1986,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     <>
       {((incidentCount[0]?.OffenseCount === 0 || incidentCount[0]?.OffenseCount === "0") || (OffSta === true || OffSta === 'true') || isNew === "true" || isNew === true) && (
         <>
-          <div className="col-12 bb child">
+          <div className="col-12 child">
             <div className="row align-items-center mt-2" style={{ rowGap: "8px" }}>
               <div className="col-4 col-md-4 custom-col-12 ">
                 <span data-toggle="modal" onClick={() => { setOpenPage("Law Title"); }} data-target="#ListModel" className="new-link px-0">Law Title</span>
@@ -2156,7 +2156,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
               <div className="custom-col-12">
                 <span data-toggle="modal" onClick={() => setOpenPage("Crime Left  Scene")} data-target="#ListModel" className="new-link px-0">Offender Left Scene </span>
               </div>
-              <div className="col-7 col-md-7 col-lg-2  ">
+              <div className="col-7 col-md-7 col-lg-4">
                 <Select
                   name="OffenderLeftSceneId"
                   styles={customStylesWithOutColor}
@@ -2167,12 +2167,12 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   placeholder="Select..."
                 />
               </div>
-              <div className="col-4 col-md-4 col-lg-2 ">
+              <div className="" style={{ flex: "0 0 21.3%", minWidth: "21.3%" }}>
                 <label htmlFor="" className="new-label">
                   Domestic violence
                 </label>
               </div>
-              <div className="col-7 col-md-7 col-lg-2  ">
+              <div className="col-7 col-md-7 col-lg-4 ">
                 <Select
                   value={StatusOptions.filter(
                     (option) => option.value === value?.IsDomesticViolence
@@ -2190,13 +2190,13 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   isDisabled={nibrsSubmittedOffenseMain === 1}
                 />
               </div>
-              <div className="col-4 col-md-4 col-lg-2  ">
+              <div className="custom-col-12">
                 <label htmlFor="" className="new-label d-block m-0 text-nowrap">
                   Gang Information
                   {gangInformationStatus && (<ErrorTooltip ErrorStr={gangInformationError} />)}
                 </label>
               </div>
-              <div className="custom-col-20">
+              <div className="col-7 col-md-7 col-lg-4">
                 <Select
                   isMulti
                   styles={
@@ -2225,14 +2225,14 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                 />
               </div>
               {/* style={{ lineHeight: 1.1 }} */}
-              <div className="custom-col-12 " >
+              <div className="" style={{ flex: "0 0 21.3%", minWidth: "21.3%" }} >
                 <label htmlFor="" className="new-label m-0 text-nowrap">
                   Premises Entered
                 </label>
                 <br />
                 {errors.PremisesEnteredError !== "true" ? (<div style={{ color: "red", fontSize: "13px", display: "block", display: "flex", width: "100%", justifyContent: "flex-end" }}  >{errors.PremisesEnteredError}</div>) : null}
               </div>
-              <div className="col-7 col-md-7 col-lg-2 text-field mt-0">
+              <div className="col-7 col-md-7 col-lg-4 text-field mt-0">
                 <input
                   type="text"
                   style={{
@@ -2251,7 +2251,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   autoComplete="off"
                 />
               </div>
-              <div className="col-2 " style={{ lineHeight: 1.1 }}>
+              <div className="custom-col-12" style={{ lineHeight: 1.1 }}>
                 <span data-toggle="modal" onClick={() => setOpenPage("Method Of Entry")} data-target="#ListModel" className="new-link px-0" >
                   Method Of Entry
                   {methodOfEntryStatus ? (<ErrorTooltip ErrorStr={methodOfEntryError} />) : (<></>)}
@@ -2262,7 +2262,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                 </div>
                 ) : null}
               </div>
-              <div className="col-7 col-md-7 col-lg-2 ">
+              <div className="col-7 col-md-7 col-lg-4 ">
                 <Select
                   styles={
                     nibrsSubmittedOffenseMain === 1 ?
@@ -2280,14 +2280,14 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   placeholder="Select..."
                 />
               </div>
-              <div className="col-3 col-md-3 col-lg-2 ">
+              <div className="" style={{ flex: "0 0 21.3%", minWidth: "21.3%" }} >
                 <label htmlFor="" className="new-label px-0 mb-0">
                   Offense  Date/Time{errors.OffenseDttmError !== 'true' ? (
                     <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.OffenseDttmError}</p>
                   ) : null}
                 </label>
               </div>
-              <div className="custom-col-20">
+              <div className="col-7 col-md-7 col-lg-4 ">
                 <DatePicker
                   id='OffenseDateTime'
                   name='OffenseDateTime'
@@ -2354,7 +2354,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                     </div>
                   </div>
 
-                  <div className="col-7 col-md-7 col-lg-2">
+                  <div className="col-7 col-md-7 col-lg-4">
                     <Select
                       name="IsCargoTheftInvolved"
                       value={YesNoArr?.filter((obj) => obj.value === value?.IsCargoTheftInvolved)}
@@ -2371,179 +2371,171 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                 <></>
               }
 
-              <div className="col-1"></div>
-              <div className="col-12">
-                <div className="row align-items-center" style={{ rowGap: "8px" }}>
-                  <div className="col-4 col-md-4 custom-col-12  text-right">
-                    <span data-toggle="modal" onClick={() => { setOpenPage('Offender Suspected of Using') }} data-target="#ListModel" className='new-link px-0 text-nowrap'>
-                      Offender suspected of using
-                      {offenderUsingStatus && (<ErrorTooltip ErrorStr={offenderUsingError} />)}
-                      {/* {loginAgencyState === 'TX' ? getCheckNotApplicable() ? <ErrorTooltip ErrorStr={NotApplicableError} /> : <> </> : <></>} */}
-                    </span>
+              {/* <div className="col-1"></div> */}
+
+              <div className="col-4 col-md-4 custom-col-12  text-right">
+                <div className="d-flex flex-column align-items-end">
+                  <span data-toggle="modal" onClick={() => { setOpenPage('Offender Suspected of Using') }} data-target="#ListModel" className='new-link px-0 '>
+                    Offender suspected of using
+                  </span>
+                  <div className="d-flex flex-column align-items-end ">
+                    {offenderUsingStatus && (<ErrorTooltip ErrorStr={offenderUsingError} />)}
+                    {loginAgencyState === 'TX' ? getCheckNotApplicable() ? <ErrorTooltip ErrorStr={NotApplicableError} /> : <> </> : <></>}
 
                     {errors.OffenderusingError !== "true" && (
-                      <div className="text-end"> <span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block", }}>{errors.OffenderusingError}</span>
-                      </div>
+                      <span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block", }}>{errors.OffenderusingError}</span>
+
                     )}
+                  </div>
+                </div>
 
-                  </div>
-                  <div className="col-9 col-md-9 col-lg-4">
-                    <SelectBox
-                      className="basic-multi-select"
-                      name='offenderusing'
-                      options={filteredOptionsoffender}
-                      isClearable={false}
-                      isMulti
-                      isDisabled={nibrsSubmittedOffenseMain === 1}
-                      styles={loginAgencyState == 'TX' ? nibrsCode === "999" ? customStylesWithOutColor : getCheckNotApplicable() ? Nibrs_ErrorStyle : MultiSelectRequredColor : MultiSelectRequredColor}
-                      closeMenuOnSelect={false}
-                      hideSelectedOptions={true}
-                      components={{ MultiValue, }}
-                      onChange={(e) => OffenderUsechange(e)}
-                      value={filterArray(crimeOffenderUse, 'label')}
-                      placeholder='Select Offender Using From List'
-                    />
+              </div>
+              <div className="col-9 col-md-9 col-lg-4">
+                <SelectBox
+                  className="basic-multi-select"
+                  name='offenderusing'
+                  options={filteredOptionsoffender}
+                  isClearable={false}
+                  isMulti
+                  isDisabled={nibrsSubmittedOffenseMain === 1}
+                  styles={loginAgencyState == 'TX' ? nibrsCode === "999" ? customStylesWithOutColor : getCheckNotApplicable() ? Nibrs_ErrorStyle : MultiSelectRequredColor : MultiSelectRequredColor}
+                  closeMenuOnSelect={false}
+                  hideSelectedOptions={true}
+                  components={{ MultiValue, }}
+                  onChange={(e) => OffenderUsechange(e)}
+                  value={filterArray(crimeOffenderUse, 'label')}
+                  placeholder='Select Offender Using From List'
+                />
 
-                  </div>
-                  <div className=" text-right" style={{ flex: "0 0 21.3%", minWidth: "21.3%" }}>
-                    <span data-toggle="modal" data-target="#ListModel" className='new-link px-0 text-right '>
-                      <span onClick={() => { setOpenPage('Bias Motivation') }}>Bias motivation (Select Upto 5)</span>
-                      {biasStatus && (<ErrorTooltip ErrorStr={biasStatusError} />)}
-                      {/* {
-                        loginAgencyState === 'TX' ?
-                          nibrsCode === '09C' && !bias09CCodeStatus ? <ErrorTooltip ErrorStr={Bias_90C_Error} />
-                            :
-                            check_Valid_Bias_Code(BiasSelectCodeArray) ? <ErrorTooltip ErrorStr={ValidateBiasCodeError} />
-                              :
-                              <></>
-                          :
-                          <></>
-                      } */}
-                    </span>
-                    {errors.CrimeBiasCategoryError !== "true" ? (<div className="text-end"><span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block" }}>{errors.CrimeBiasCategoryError}</span></div>) : null}
-                  </div>
-                  <div className="col-9 col-md-9 col-lg-4 ">
-                    <SelectBox
-                      className="basic-multi-select"
-                      name='bias'
-                      options={crimeBiasCategoryDrp?.length > 0 ? getBiasDrpData(crimeBiasCategoryDrp) : []}
-                      isClearable={false}
-                      styles={
-                        loginAgencyState === 'TX' ? nibrsCode === "999" ? customStylesWithOutColor :
-                          nibrsCode === '09C' && !bias09CCodeStatus ? ErrorStyle_NIBRS_09C(nibrsCode)
-                            :
-                            check_Valid_Bias_Code(BiasSelectCodeArray) ? Nibrs_ErrorStyle : MultiSelectRequredColor
-                          :
-                          MultiSelectRequredColor
-                      }
-                      isMulti
-                      closeMenuOnSelect={false}
-                      hideSelectedOptions={true}
-                      components={{ MultiValue, }}
-                      onChange={(e) => CrimeBiasCategorychange(e)}
-                      value={filterArray(crimeBiasCategory, 'label')}
-                      placeholder='Select Bias From List'
-                      isDisabled={nibrsSubmittedOffenseMain === 1}
-                    />
+              </div>
+              <div className=" text-right" style={{ flex: "0 0 21.3%", minWidth: "21.3%" }}>
+                <div className="d-flex flex-column align-items-end">
+                  {/* Main clickable label */}
+                  <span data-toggle="modal" data-target="#ListModel" className="new-link px-0 text-right" onClick={() => setOpenPage("Bias Motivation")} style={{ display: "inline-block" }}>
+                    Bias motivation (Select Upto 5)
+                  </span>
+                  {/* Tooltip or errors always below label */}
+                  <div className="d-flex flex-column align-items-end ">
+                    {biasStatus && <ErrorTooltip ErrorStr={biasStatusError} />}
+                    {loginAgencyState === "TX" ? (nibrsCode === "09C" && !bias09CCodeStatus ? (<ErrorTooltip ErrorStr={Bias_90C_Error} />) : check_Valid_Bias_Code(BiasSelectCodeArray) ? (<ErrorTooltip ErrorStr={ValidateBiasCodeError} />) : null) : null}
 
+                    {errors.CrimeBiasCategoryError !== "true" && (<span style={{
+                      color: "red", fontSize: "13px", marginTop: "4px", display: "inline-block", textAlign: "right",
+                    }}> {errors.CrimeBiasCategoryError}</span>
+                    )}
                   </div>
-                  <div className="col-4 col-md-4 custom-col-12  text-right">
-                    <span data-toggle="modal" data-target="#ListModel" className='new-link px-0 text-nowrap'>
-                      <span onClick={() => { setOpenPage('Weapon Type') }}>Weapon Used (Select Upto 3)</span>
-                      <br />
-                      <span className='float-right '>
-                        {weaponTypeStatus && (<ErrorTooltip ErrorStr={weaponTypeError} />)}
-                        {/* {
-                          loginAgencyState === 'TX' ?
-                            checkWeaponTypeValidate(nibrsCode, WeaponSelectCodeArray, 'ToolTip', loginAgencyState)
-                            :
-                            <></>
-                        } */}
-                      </span>
-                    </span>
-                    {errors.WeaponTypeError !== "true" ? (<div className="text-end"><span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block" }}>{errors.WeaponTypeError}</span></div>) : null}
-                  </div>
-                  <div className="col-9 col-md-9 col-lg-4 ">
-                    <SelectBox
-                      className="basic-multi-select"
-                      name='WeaponTypeID'
-                      styles={
-                        (PanelCode === '03' || PanelCode === '06' || PanelCode === '08') ? MultiSelectRequredColor :
-                          loginAgencyState === 'TX'
-                            ?
-                            checkWeaponTypeValidate(nibrsCode, WeaponSelectCodeArray, 'Color', loginAgencyState) ? checkWeaponTypeValidate(nibrsCode, WeaponSelectCodeArray, 'Color', loginAgencyState)
-                              :
-                              customStylesWithOutMiltiColor
-                            :
-                            customStylesWithOutMiltiColor
-                      }
-                      isClearable={false}
-                      options={weaponDrp?.length > 0 ? getWeaponDrpData(weaponDrp, nibrsCode, weaponID) : []}
-                      hideSelectedOptions={true}
-                      closeMenuOnSelect={false}
-                      components={{ MultiValue, }}
-                      onChange={(e) => Weaponchange(e)}
-                      value={filterArray(weaponID, 'label')}
-                      placeholder='Select Weapon Used From List'
-                      isMulti
-                      menuPlacement='top'
-                      isDisabled={nibrsSubmittedOffenseMain === 1}
-                    />
-                  </div>
-                  <div className="text-right mt-2" style={{ flex: "0 0 21.3%", minWidth: "21.3%" }}>
-                    <span data-toggle="modal" data-target="#ListModel" className='new-link px-0'>
-                      <span onClick={() => { setOpenPage('Criminal Activity') }}>Criminal Activity</span>
-                      <br />
-                      <span className='float-right '>
-                        {criminalActivityStatus && (<ErrorTooltip ErrorStr={criminalActivityError} />)}
-                        {
-                          loginAgencyState === 'TX' ?
-                            checkCrimeActiSuitableCode(nibrsCode, crimeActSelectedCodeArray, loginAgencyState, 'tooltip') ? checkCrimeActiSuitableCode(nibrsCode, crimeActSelectedCodeArray, loginAgencyState, 'tooltip') : <></>
-                            :
-                            <></>
-                        }
-                      </span>
-                      {errors.CriminalActivityError !== "true" ? (<div className="text-end"><span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block" }}>{errors.CriminalActivityError}</span></div>) : null}
-                    </span>
-                  </div>
-                  <div className="col-9 col-md-9 col-lg-4">
-                    <SelectBox
-                      className="basic-multi-select"
-                      styles={
-                        loginAgencyState === 'TX'
-                          ?
-                          checkCrimeActiSuitableCode(nibrsCode, crimeActSelectedCodeArray, loginAgencyState, 'Color') ? checkCrimeActiSuitableCode(nibrsCode, crimeActSelectedCodeArray, loginAgencyState, 'Color')
-                            :
-                            checkCriminalActivityIsRequire(nibrsCode, loginAgencyState) ? ErrorStyle_CriminalActivity(false)
-                              :
-                              customStylesWithOutMiltiColor
-                          :
-                          customStylesWithOutMiltiColor
-                      }
-                      //  isDisabled={nibrsSubmittedOffenseMain === 1}
-                      name='CrimeActivity'
-                      options={crimeActivityDrp?.length > 0 ? get_CriminalActivity_DrpData(crimeActivityDrp) : []}
-
-                      isClearable={false}
-                      isMulti
-                      closeMenuOnSelect={false}
-                      hideSelectedOptions={true}
-                      components={{ MultiValue, }}
-                      onChange={(e) => CrimeActivitychange(e)}
-
-                      value={filterArray(crimeActivity, 'label')}
-                      placeholder='Select Criminal Activity From List'
-                    />
-                  </div>
-                 
                 </div>
               </div>
+              <div className="col-9 col-md-9 col-lg-4 ">
+                <SelectBox
+                  className="basic-multi-select"
+                  name='bias'
+                  options={crimeBiasCategoryDrp?.length > 0 ? getBiasDrpData(crimeBiasCategoryDrp) : []}
+                  isClearable={false}
+                  styles={
+                    loginAgencyState === 'TX' ? nibrsCode === "999" ? customStylesWithOutColor :
+                      nibrsCode === '09C' && !bias09CCodeStatus ? ErrorStyle_NIBRS_09C(nibrsCode)
+                        :
+                        check_Valid_Bias_Code(BiasSelectCodeArray) ? Nibrs_ErrorStyle : MultiSelectRequredColor
+                      :
+                      MultiSelectRequredColor
+                  }
+                  isMulti
+                  closeMenuOnSelect={false}
+                  hideSelectedOptions={true}
+                  components={{ MultiValue, }}
+                  onChange={(e) => CrimeBiasCategorychange(e)}
+                  value={filterArray(crimeBiasCategory, 'label')}
+                  placeholder='Select Bias From List'
+                  isDisabled={nibrsSubmittedOffenseMain === 1}
+                />
 
-             
+              </div>
+              <div className="col-4 col-md-4 custom-col-12 text-right">
+                <div className="d-flex flex-column align-items-end">
+                  <span data-toggle="modal" data-target="#ListModel" className='new-link px-0 ' onClick={() => { setOpenPage('Weapon Type') }}>Weapon Used (Select Upto 3)</span>
+                  <div className="d-flex flex-column align-items-end ">
+                    {weaponTypeStatus && (<ErrorTooltip ErrorStr={weaponTypeError} />)}
+                    {loginAgencyState === 'TX' ? checkWeaponTypeValidate(nibrsCode, WeaponSelectCodeArray, 'ToolTip', loginAgencyState) : <></>}
+                    {errors.WeaponTypeError !== "true" ? (<span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block" }}>{errors.WeaponTypeError}</span>) : null}
+                  </div>
+                </div>
+              </div>
+              <div className="col-9 col-md-9 col-lg-4 ">
+                <SelectBox
+                  className="basic-multi-select"
+                  name='WeaponTypeID'
+                  styles={
+                    (PanelCode === '03' || PanelCode === '06' || PanelCode === '08') ? MultiSelectRequredColor :
+                      loginAgencyState === 'TX'
+                        ?
+                        checkWeaponTypeValidate(nibrsCode, WeaponSelectCodeArray, 'Color', loginAgencyState) ? checkWeaponTypeValidate(nibrsCode, WeaponSelectCodeArray, 'Color', loginAgencyState)
+                          :
+                          customStylesWithOutMiltiColor
+                        :
+                        customStylesWithOutMiltiColor
+                  }
+                  isClearable={false}
+                  options={weaponDrp?.length > 0 ? getWeaponDrpData(weaponDrp, nibrsCode, weaponID) : []}
+                  hideSelectedOptions={true}
+                  closeMenuOnSelect={false}
+                  components={{ MultiValue, }}
+                  onChange={(e) => Weaponchange(e)}
+                  value={filterArray(weaponID, 'label')}
+                  placeholder='Select Weapon Used From List'
+                  isMulti
+                  menuPlacement='top'
+                  isDisabled={nibrsSubmittedOffenseMain === 1}
+                />
+              </div>
+              <div className="text-right mt-2" style={{ flex: "0 0 21.3%", minWidth: "21.3%" }}>
+                <div className="d-flex flex-column align-items-end">
+                  <span data-toggle="modal" data-target="#ListModel" className='new-link px-0' onClick={() => { setOpenPage('Criminal Activity') }}>Criminal Activity</span>
+                  <div className="d-flex flex-column align-items-end ">
+                    {criminalActivityStatus && (<ErrorTooltip ErrorStr={criminalActivityError} />)}
+                    {loginAgencyState === 'TX' ? checkCrimeActiSuitableCode(nibrsCode, crimeActSelectedCodeArray, loginAgencyState, 'tooltip') ? checkCrimeActiSuitableCode(nibrsCode, crimeActSelectedCodeArray, loginAgencyState, 'tooltip') : <></> : <></>}
+
+                    {errors.CriminalActivityError !== "true" ? (<span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block" }}>{errors.CriminalActivityError}</span>) : null}
+                  </div>
+                </div>
+              </div>
+              <div className="col-9 col-md-9 col-lg-4">
+                <SelectBox
+                  className="basic-multi-select"
+                  styles={
+                    loginAgencyState === 'TX'
+                      ?
+                      checkCrimeActiSuitableCode(nibrsCode, crimeActSelectedCodeArray, loginAgencyState, 'Color') ? checkCrimeActiSuitableCode(nibrsCode, crimeActSelectedCodeArray, loginAgencyState, 'Color')
+                        :
+                        checkCriminalActivityIsRequire(nibrsCode, loginAgencyState) ? ErrorStyle_CriminalActivity(false)
+                          :
+                          customStylesWithOutMiltiColor
+                      :
+                      customStylesWithOutMiltiColor
+                  }
+                  //  isDisabled={nibrsSubmittedOffenseMain === 1}
+                  name='CrimeActivity'
+                  options={crimeActivityDrp?.length > 0 ? get_CriminalActivity_DrpData(crimeActivityDrp) : []}
+
+                  isClearable={false}
+                  isMulti
+                  closeMenuOnSelect={false}
+                  hideSelectedOptions={true}
+                  components={{ MultiValue, }}
+                  onChange={(e) => CrimeActivitychange(e)}
+
+                  value={filterArray(crimeActivity, 'label')}
+                  placeholder='Select Criminal Activity From List'
+                />
+              </div>
+
+
+
+
             </div>
           </div>
 
-          <div className="text-center p-1">
+          <div className="text-center p-1 mt-2">
             {
               isNibrs999 || nibrsCode === "999" ? null : (
                 <div
@@ -2584,23 +2576,23 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
               {OffId && (OffSta === true || OffSta === "true") ? (
                 effectiveScreenPermission ? (
                   effectiveScreenPermission[0]?.Changeok ? (
-                    <button type="button" disabled={!statesChangeStatus} onClick={() => check_Validation_Error()} className="btn btn-sm btn-success mr-4">Update</button>
+                    <button type="button" disabled={!statesChangeStatus} onClick={() => check_Validation_Error()} className="btn btn-sm btn-success ">Update</button>
                   ) : (
                     <></>
                   )
                 ) : (
-                  <button type="button" disabled={!statesChangeStatus} onClick={() => check_Validation_Error()} className="btn btn-sm btn-success mr-4">Update</button>
+                  <button type="button" disabled={!statesChangeStatus} onClick={() => check_Validation_Error()} className="btn btn-sm btn-success ">Update</button>
                 )
               )
                 :
                 effectiveScreenPermission ? (
                   effectiveScreenPermission[0]?.AddOK ? (
-                    <button type="button" onClick={() => check_Validation_Error()} className="btn btn-sm btn-success mr-4">Save</button>
+                    <button type="button" onClick={() => check_Validation_Error()} className="btn btn-sm btn-success">Save</button>
                   ) : (
                     <></>
                   )
                 ) : (
-                  <button type="button" onClick={() => check_Validation_Error()} className="btn btn-sm btn-success mr-4">Save</button>
+                  <button type="button" onClick={() => check_Validation_Error()} className="btn btn-sm btn-success ">Save</button>
                 )
               }
             </div>
