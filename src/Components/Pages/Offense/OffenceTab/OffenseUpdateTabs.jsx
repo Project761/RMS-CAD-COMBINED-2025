@@ -50,6 +50,8 @@ const OffenceHomeTabs = () => {
 
     const carouselRef = useRef(null);
     const crimeIdRef = useRef(null);
+     const offenseCountnew = incidentCount[0]?.OffenseCount || 0;
+
     const PropertyCount = incidentCount[0]?.PropertyCount || 0;
     const PropertyDrugCount = incidentCount[0]?.PropertyDrugCount || 0;
     const VehicleCount = incidentCount[0]?.VehicleCount || 0;
@@ -422,6 +424,8 @@ const OffenceHomeTabs = () => {
         });
     };
 
+    console.log(status , isNew , offenseCount)
+
     return (
         <div className=" section-body pt-1 p-1 bt" >
             <div className="div">
@@ -671,7 +675,7 @@ const OffenceHomeTabs = () => {
                                     </div>
                                 )}
                                 {
-                                    (status || isNew === "true" || isNew === true || offenseCount === 0 || offenseCount === "0") && (
+                                    (status || isNew === "true" || isNew === true || offenseCountnew === 0 || offenseCountnew === "0") && (
                                         <div className="row mt-1 " style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
                                             <div className="col-12  incident-tab">
                                                 <ul className='nav nav-tabs'>
