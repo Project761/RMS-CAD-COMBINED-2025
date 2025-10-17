@@ -452,26 +452,29 @@ const OffenceHomeTabs = () => {
                                                     >
                                                         {/* Card Content */}
                                                         <div>
-                                                            <div>
-                                                                <p className="mb-0 small" style={{ color: row?.CrimeID === crimeId ? "white" : "black" }}><strong>{row.FBIID_Description}</strong></p>
-                                                            </div>
-                                                            <div>
-                                                                <p className="mb-0 small" style={{ color: row?.CrimeID === crimeId ? "white" : "black" }}> {row.OffenseName_Description ? row.OffenseName_Description.length > 40 ? `${row.OffenseName_Description.substring(0, 50)} . . .` : row.OffenseName_Description : ""}</p>
-                                                            </div>
-                                                            <div>
-                                                                <p className="mb-0 small" style={{ color: row?.CrimeID === crimeId ? "white" : "black" }}> {row.LawTitle_Description ? row.LawTitle_Description.length > 40 ? `${row.LawTitle_Description.substring(0, 50)} . . .` : row.LawTitle_Description : ""}</p>
-                                                            </div>
-                                                            {/* <div>
-                                                                <p
-                                                                    className="mb-0 small"
-                                                                    style={{
-                                                                        color: "black",
-                                                                    }}
-                                                                >
-                                                                    {row.FBIID_Description ? row.FBIID_Description.length > 40 ? `${row.FBIID_Description.substring(0, 50)} . . .` : row.FBIID_Description : ""}
-                                                                </p>
-                                                            </div> */}
+                                                            <p
+                                                                className="mb-1 small truncate-multiline"
+                                                                style={{ color: row?.CrimeID === crimeId ? "white" : "black", fontWeight: "bold" }}
+                                                            >
+                                                                {row.FBIID_Description}
+                                                            </p>
+
+                                                            <p
+                                                                className="mb-1 small truncate-multiline"
+                                                                style={{ color: row?.CrimeID === crimeId ? "white" : "black" }}
+                                                            >
+                                                                {row.OffenseName_Description || ""}
+                                                            </p>
+
+                                                            <p
+                                                                className="mb-0 small truncate-multiline"
+                                                                style={{ color: row?.CrimeID === crimeId ? "white" : "black" }}
+                                                            >
+                                                                {row.LawTitle_Description || ""}
+                                                            </p>
                                                         </div>
+
+
                                                         <div className="d-flex flex-column align-items-center gap-2 flex-shrink-0">
                                                             {/* Edit Button */}
                                                             {

@@ -350,28 +350,38 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                                                     >
                                                         {/* Card Content */}
                                                         <div>
-                                                            <div>
-                                                                <p className="mb-0 small" style={{ color: row?.PropertyID === propertyID ? "white" : "black" }}>
-                                                                    <strong>{row.PropertyNumber}</strong></p>
-                                                            </div>
-                                                            <div>
-                                                                <p className="mb-0 small" style={{ color: row?.PropertyID === propertyID ? "white" : "black" }}>
-                                                                    {/* {row.PropertyType_Description} */}
-                                                                    {row.PropertyType_Description ? row.PropertyType_Description.length > 40 ? `${row.PropertyType_Description.substring(0, 50)} . . .` : row.PropertyType_Description : ""}
-                                                                </p>
-                                                            </div>
-                                                            <div>
-                                                                <p className="mb-0 small" style={{ color: row?.PropertyID === propertyID ? "white" : "black" }}>
-                                                                    {/* {row.PropertyLossCode_Description} */}
-                                                                    {row.PropertyLossCode_Description ? row.PropertyLossCode_Description.length > 40 ? `${row.PropertyLossCode_Description.substring(0, 50)} . . .` : row.PropertyLossCode_Description : ""}
-                                                                </p>
-                                                            </div>
-                                                            <div>
-                                                                <p className="mb-0 small" style={{ color: row?.PropertyID === propertyID ? "white" : "black" }} >
-                                                                    {row.PropertyCategory_Description ? row.PropertyCategory_Description.length > 40 ? `${row.PropertyCategory_Description.substring(0, 50)} . . .` : row.PropertyCategory_Description : ""}
-                                                                </p>
-                                                            </div>
+                                                            <p
+                                                                className="mb-1 small truncate-multiline"
+                                                                style={{
+                                                                    color: row?.PropertyID === propertyID ? "white" : "black",
+                                                                    fontWeight: "bold",
+                                                                }}
+                                                            >
+                                                                {row.PropertyNumber}
+                                                            </p>
+
+                                                            <p
+                                                                className="mb-1 small truncate-multiline"
+                                                                style={{ color: row?.PropertyID === propertyID ? "white" : "black" }}
+                                                            >
+                                                                {row.PropertyType_Description || ""}
+                                                            </p>
+
+                                                            <p
+                                                                className="mb-1 small truncate-multiline"
+                                                                style={{ color: row?.PropertyID === propertyID ? "white" : "black" }}
+                                                            >
+                                                                {row.PropertyLossCode_Description || ""}
+                                                            </p>
+
+                                                            <p
+                                                                className="mb-0 small truncate-multiline"
+                                                                style={{ color: row?.PropertyID === propertyID ? "white" : "black" }}
+                                                            >
+                                                                {row.PropertyCategory_Description || ""}
+                                                            </p>
                                                         </div>
+
                                                         <div className="d-flex flex-column align-items-center gap-2 flex-shrink-0">
                                                             {/* Edit Button */}
                                                             {

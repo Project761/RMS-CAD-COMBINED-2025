@@ -376,24 +376,42 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                                         {/* Card Content */}
                                                         <div>
                                                             <div>
-                                                                <p className="mb-0 small" style={{ color: row?.PropertyID === DecVehId ? "white" : "black" }}><strong>{row.VehicleNumber}</strong></p>
+                                                                <p
+                                                                    className="mb-1 small truncate-multiline"
+                                                                    style={{
+                                                                        color: row?.PropertyID === DecVehId ? "white" : "black",
+                                                                        fontWeight: "bold",
+                                                                    }}
+                                                                >
+                                                                    {row.VehicleNumber}
+                                                                </p>
                                                             </div>
-
 
                                                             <div>
                                                                 <p
-                                                                    className="mb-0 small"
-                                                                    style={{ color: row?.PropertyID === DecVehId ? "white" : "black" }}
+                                                                    className="mb-1 small truncate-multiline"
+                                                                    style={{
+                                                                        color: row?.PropertyID === DecVehId ? "white" : "black",
+                                                                    }}
+                                                                    title={row.LossCode_Description} // hover pe full text
                                                                 >
-                                                                    {row.LossCode_Description ? row.LossCode_Description.length > 40 ? `${row.LossCode_Description.substring(0, 40)} . . .` : row.LossCode_Description : ""}
+                                                                    {row.LossCode_Description || ""}
                                                                 </p>
                                                             </div>
+
                                                             <div>
-                                                                <p className="mb-0 small" style={{ color: row?.PropertyID === DecVehId ? "white" : "black" }} >
-                                                                    {row.Category_Description ? row.Category_Description.length > 40 ? `${row.Category_Description.substring(0, 30)} . . .` : row.Category_Description : ""}
+                                                                <p
+                                                                    className="mb-0 small truncate-multiline"
+                                                                    style={{
+                                                                        color: row?.PropertyID === DecVehId ? "white" : "black",
+                                                                    }}
+                                                                    title={row.Category_Description}
+                                                                >
+                                                                    {row.Category_Description || ""}
                                                                 </p>
                                                             </div>
                                                         </div>
+
                                                         <div className="d-flex flex-column align-items-center gap-2 flex-shrink-0">
                                                             {/* Edit Button */}
                                                             {

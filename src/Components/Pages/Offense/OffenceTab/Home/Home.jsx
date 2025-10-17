@@ -2354,7 +2354,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                     </div>
                   </div>
 
-                  <div className="col-7 col-md-7 col-lg-2">
+                  <div className="col-7 col-md-7 col-lg-4">
                     <Select
                       name="IsCargoTheftInvolved"
                       value={YesNoArr?.filter((obj) => obj.value === value?.IsCargoTheftInvolved)}
