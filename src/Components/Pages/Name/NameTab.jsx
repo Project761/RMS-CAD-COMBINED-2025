@@ -369,32 +369,34 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                         style={{
                                                             cursor: "pointer",
                                                             borderLeft: nibrsNameValidateArray?.some(item => item?.NameEventID === row?.NameID) ? "5px solid #EB0101" : "5px solid #2DEB7A",
+                                                            backgroundColor: row?.NameID === nameID ? "#425971" : "#ffffff",
                                                         }}
                                                     >
                                                         {/* Card Content */}
                                                         <div>
                                                             <div>
-                                                                <p className="mb-0 small" style={{ color: "black" }}><strong>{row.FullName}</strong></p>
+                                                                <p className="mb-0 small" style={{ color: row?.NameID === nameID ? "white" : "black" }}><strong>{row.FullName}</strong></p>
                                                             </div>
                                                             <div>
-                                                                <p className="mb-0 small"> {row.DateOfBirth ? getShowingWithOutTime(row.DateOfBirth) : ""}</p>
+                                                                <p className="mb-0 small" style={{ color: row?.NameID === nameID ? "white" : "black" }}> {row.DateOfBirth ? getShowingWithOutTime(row.DateOfBirth) : ""}</p>
                                                             </div>
                                                             <div>
-                                                                <p className="mb-0 small">{row.Gender}</p>
+                                                                <p className="mb-0 small" style={{ color: row?.NameID === nameID ? "white" : "black" }}>{row.Gender}</p>
                                                             </div>
                                                             <div>
                                                                 <p
                                                                     className="mb-0 small"
-                                                                    style={{
-                                                                        color:
-                                                                            row.RoleName === "Other" ? "orange"
-                                                                                :
-                                                                                row.RoleName === "Victim" ? "green"
-                                                                                    :
-                                                                                    row.RoleName === "Offender" ? "red"
-                                                                                        :
-                                                                                        "black",
-                                                                    }}
+                                                                    style={{ color: row?.NameID === nameID ? "white" : "black" }}
+                                                                    // style={{
+                                                                    //     color:
+                                                                    //         row.RoleName === "Other" ? "orange"
+                                                                    //             :
+                                                                    //             row.RoleName === "Victim" ? "green"
+                                                                    //                 :
+                                                                    //                 row.RoleName === "Offender" ? "red"
+                                                                    //                     :
+                                                                    //                     "black",
+                                                                    // }}
                                                                 >
                                                                     {row.NameReasonCode ? row.NameReasonCode.length > 40 ? `${row.NameReasonCode.substring(0, 50)} . . .` : row.NameReasonCode : ""}
                                                                 </p>
