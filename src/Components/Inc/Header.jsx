@@ -10,7 +10,7 @@ import { Decrypt_Id_Name, base64ToString, } from '../Common/Utility';
 import { useDispatch, useSelector } from 'react-redux';
 import { get_LocalStoreData } from '../../redux/actions/Agency';
 import TreeComponent from '../Pages/PropertyRoom/PropertyRoomTab/TreeComponent/TreeComponent';
-import { Master_Property_Status, Master_Vehicle_Status, } from '../../redux/actionTypes';
+import { Master_Property_Status, Master_Vehicle_Status, PropertyMainModule_Data, } from '../../redux/actionTypes';
 import GoogleAuthServices from '../../CADServices/APIs/googleAuth'
 import Nibrs_Report_Model from '../Pages/NIBRS_Report_Model/Nibrs_Report_Model';
 import Nibrs_File_Model from '../Pages/NIBRS_File_Model/Home/Nibrs_File_Model';
@@ -184,6 +184,7 @@ const Header = (props) => {
                       className="dropdown-item" data-toggle={changesStatus ? "modal" : ""} data-target={changesStatus ? "#SaveModal" : ''}
                       onClick={() => {
                         dispatch({ type: Master_Property_Status, payload: true });
+                        dispatch({ type: PropertyMainModule_Data, payload: [] });
                       }}
                     >
                       Master Property

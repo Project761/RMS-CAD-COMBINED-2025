@@ -832,7 +832,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
       }
     }
   }
-  
+
   const ChangeDropDown = (e, name) => {
     !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
     if (e) {
@@ -3458,14 +3458,17 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                       <button type="button" className="btn btn-sm btn-success mx-1" onClick={() => { setPrintStatus(true) }}>Print Barcode</button>
                     }
                     <button type="button" className="btn btn-sm btn-success mr-1" data-toggle="modal" data-target="#NCICModal" onClick={() => { setOpenNCICModal(true) }}>TLETS</button>
-                    {/* <button
-                      type="button"
-                      className="btn btn-sm btn-success mx-1"
-                      onClick={newProperty}
-                      {...(!isCad && { "data-dismiss": "modal" })}
-                    >
-                      New
-                    </button> */}
+                    {
+                      MstPage === "MST-Property-Dash" &&
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-success mx-1"
+                        onClick={newProperty}
+                        {...(!isCad && { "data-dismiss": "modal" })}
+                      >
+                        New
+                      </button>
+                    }
 
                     {
                       (propertyID || masterPropertyID) && (ProSta === 'true' || ProSta === true) ?
