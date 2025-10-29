@@ -59,25 +59,30 @@ const Otp = ({ username, otp, loginResData, setOtp, timerOn, type, isMDT }) => {
         e.preventDefault()
         // old code ----------->  Don't Remove <-------------------------
         if (otp === userOtp && expireOtp && type === 'login') {
-            console.log("🚀 ~ optVerfication ~ loginResData:", loginResData);
-            const leftdays = loginResData?.Leftdays ? parseInt(loginResData?.Leftdays) : 0;
-            const PasswordMessageDays = loginResData?.PasswordMessageDays ? parseInt(loginResData?.PasswordMessageDays) : 0;
-            if (leftdays <= PasswordMessageDays) {
-                setOpenModal(true);
-            } else {
-                login_User()
-            }
+            login_User();
+            // console.log("🚀 ~ optVerfication ~ loginResData:", loginResData);
+            // const leftdays = loginResData?.Leftdays ? parseInt(loginResData?.Leftdays) : 0;
+            // const PasswordMessageDays = loginResData?.PasswordMessageDays ? parseInt(loginResData?.PasswordMessageDays) : 0;
+            // if (leftdays <= PasswordMessageDays) {
+            //     setOpenModal(true);
+            // } else {
+            //     login_User();
+            // }
         } else if (otp === userOtp && expireOtp && type === 'forget_password') {
-            navigate('/change-Password')
+            navigate('/change-Password');
+
         }
         else if (userOtp?.length === 0) {
-            toastifyError('Please Enter Otp')
+            toastifyError('Please Enter Otp');
+
         }
         else if (otp !== userOtp) {
             setWrongOtpCount(wrongOtpCount + 1)
-            toastifyError('Wrong Otp')
+            toastifyError('Wrong Otp');
+
         } else if (!expireOtp) {
-            toastifyError('Otp Expired')
+            toastifyError('Otp Expired');
+
         }
     }
 
