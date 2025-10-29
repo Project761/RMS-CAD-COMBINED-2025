@@ -355,7 +355,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                 <div className="dark-row" >
                     <div className="col-12 col-sm-12">
                         <div className={`card Agency ${isCad ? 'CAD-incident-card' : 'incident-card'}`}>
-                            <div className="card-body" >
+                            <div className="card-body " style={{ paddingTop: "2px" }} >
                                 {nameFilterData && nameFilterData.length > 0 && (
                                     <div className="card-carousel-container position-relative mb-3">
                                         {/* Cards Wrapper */}
@@ -383,9 +383,9 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
 
                                                             <p className=" small truncate-multiline  mb-1" style={{ color: row?.NameID === nameID ? "white" : "black" }}>{row.Gender}</p>
 
-
                                                             <p
                                                                 className="mb-0 small truncate-multiline"
+                                                                style={{ color: row?.NameID === nameID ? "white" : "black" }}
                                                             // style={{
                                                             //     color:
                                                             //         row?.NameID === nameID
@@ -401,8 +401,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                             >
                                                                 {row.NameReasonCode || ""}
                                                             </p>
-
-
+                                                            
                                                         </div>
                                                         <div className="d-flex flex-column align-items-center gap-2 flex-shrink-0">
                                                             {/* Edit Button */}
@@ -552,7 +551,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
 
                                 {
                                     (status || isNew === "true" || isNew === true || NameCount === 0 || NameCount === "0") && (
-                                        <div className="row mt-2 " style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
+                                        <div className="row" style={{ marginLeft: '-18px', marginRight: '-18px' }}>
                                             <div className="col-12 name-tab">
                                                 <ul className='nav nav-tabs'>
                                                     {isCad ? <Link
