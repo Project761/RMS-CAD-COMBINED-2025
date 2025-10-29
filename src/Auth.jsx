@@ -132,7 +132,8 @@ const Auth = (props) => {
 
   // to sign out if user is not active from a long time
   const timerRef = useRef(null);
-  const timeout = 1800000;
+  // const timeout = 1800000;
+  const timeout = 14400000;
   const sessionTimeOut = sessionStorage.getItem("SessionTimeOut");
   const resetTimer = () => {
     if (timerRef.current) {
