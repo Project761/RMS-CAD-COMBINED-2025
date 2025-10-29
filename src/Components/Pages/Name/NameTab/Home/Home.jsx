@@ -2276,7 +2276,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                         />
                       </div>
                       <div className="col-12 col-md-7 col-lg-3">
-                        <div className="row align-items-center">
+                        <div className="row align-items-center ">
                           <div className="col-12 col-md-1">
                             <label htmlFor="" className='label-name mb-0'>Age {errors.AgeFromError !== 'true' ? (
                               <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.AgeFromError}</p>
@@ -2307,7 +2307,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                               disabled={(value.DateOfBirth ? true : false) || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
                               readOnly={(value.DateOfBirth ? true : false) || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1} placeholder='From' autoComplete='off' />
                           </div>
-                          <div className="col-1 text-center px-0">
+                          <div className="col-1 text-center px-0" style={{marginTop:"-14px"}}>
                             <span className="dash-name">_</span>
                           </div>
                           <div className="col-5 col-md-2 mt-0 text-field px-0 " >
@@ -2346,6 +2346,8 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                             />
                           </div>
                         </div>
+
+                        
                       </div>
                       <div className="col-2 col-md-2 col-lg-1">
                         <span data-toggle="modal" onClick={() => { setOpenPage('Gender') }} data-target="#ListModel" className='new-link px-0'>
@@ -2425,7 +2427,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                               }
                             }} value={value?.WeightFrom} maxLength={3} onKeyDown={handleKeyDown} onChange={HandleChange} required disabled={nameTypeCode === "B" ? true : false} readOnly={nameTypeCode === "B" ? true : false} className={nameTypeCode === "B" ? 'readonlyColor' : ''} placeholder='From' autoComplete='off' />
                           </div>
-                          <div className="col-2 col-md-1 text-center">
+                          <div className="col-2 col-md-1 text-center" style={{marginTop:"-14px"}}>
                             <span className="dash-name">_</span>
                           </div>
                           <div className="col-5 col-md-4 ">
@@ -2444,8 +2446,8 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                       </div>
 
                       <div className='col-lg-3'>
-                        <div className='row align-items-center'>
-                          <div className="col-12 col-md-3  ">
+                        <div className='row align-items-center flex-nowrap'>
+                          <div className="col-12 col-md-4  ">
                             <label htmlFor="" className='label-name mb-0 text-nowrap'>Height
                               <p className='text-center mb-0' style={{ fontWeight: 'bold', fontSize: '10px' }}>(FT)</p>
                               {errors.HeightError !== 'true' ? (
@@ -2466,10 +2468,10 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                               required
                               onKeyDown={handleKeyDown} disabled={nameTypeCode === "B" ? true : false} readOnly={nameTypeCode === "B" ? true : false} className={nameTypeCode === "B" ? 'readonlyColor' : ''} placeholder='From' autoComplete='off' />
                           </div>
-                          <div className="col-2 col-md-1 text-center">
+                          <div className="col-2 col-md-1 text-center" style={{marginTop:"-14px"}}>
                             <span className="dash-name">_</span>
                           </div>
-                          <div className="col-5 col-md-4 ">
+                          <div className="col-5 col-md-3 ">
                             <div className="text-field mt-0">
                               <input type="text" name='HeightTo' maxLength={3} value={value?.HeightTo} onBlur={(e) => {
                                 if (e.target.name === 'HeightTo' && e.relatedTarget !== crossButtonRef.current &&
