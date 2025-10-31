@@ -50,11 +50,11 @@ const OffenceHomeTabs = () => {
 
     const carouselRef = useRef(null);
     const crimeIdRef = useRef(null);
-     const offenseCountnew = incidentCount[0]?.OffenseCount || 0;
-
+    const offenseCountnew = incidentCount[0]?.OffenseCount || 0;
     const PropertyCount = incidentCount[0]?.PropertyCount || 0;
     const PropertyDrugCount = incidentCount[0]?.PropertyDrugCount || 0;
     const VehicleCount = incidentCount[0]?.VehicleCount || 0;
+
     const [ListData, setListData] = useState([]);
     const [status, setStatus] = useState();
     const [mainIncidentID, setMainIncidentID] = useState('');
@@ -77,8 +77,8 @@ const OffenceHomeTabs = () => {
     const [addUpdatePermission, setaddUpdatePermission] = useState();
     const [crimeId, setCrimeId] = useState("");
     const [ResetErrors, setResetErrors] = useState(false);
-    const [delCrimeId, setDelCrimeId] = useState("");
-    // const [nibrsCode, setNibrsCode] = useState('09C');
+    const [clickCount, setClickCount] = useState(0);
+
 
     const iconHome = <i className="fa fa-home" style={{ fontSize: '20px' }}></i>
     const navigate = useNavigate()
@@ -358,6 +358,7 @@ const OffenceHomeTabs = () => {
         } else {
             if (row.CrimeID) {
                 navigate(`/Off-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${stringToBase64(row.CrimeID)}&OffSta=${true}`);
+                setClickCount(clickCount + 1);
                 setCrimeId(row.CrimeID);
                 setStatus(true);
                 setResetErrors(true);
@@ -423,8 +424,6 @@ const OffenceHomeTabs = () => {
             setResetErrors(true);
         });
     };
-
-    console.log(status , isNew , offenseCount)
 
     return (
         <div className=" section-body pt-1 p-1 bt" >
@@ -657,7 +656,6 @@ const OffenceHomeTabs = () => {
                                                         paginationRowsPerPageOptions={[100, 150, 200, 500]}
                                                         showPaginationBottom={100}
                                                     />
-
                                                 </div>
                                             )
                                                 :
@@ -721,7 +719,7 @@ const OffenceHomeTabs = () => {
                                 }
                                 {
                                     showOffPage === 'home' ?
-                                        <Home {...{ status, setStatus, offenceID, ResetErrors, setResetErrors, setOffenceID, get_List, nibrsCode, setNibrsCode, setshowOffPage, }} />
+                                        <Home {...{ status, setStatus, offenceID, ResetErrors, setResetErrors, setOffenceID, get_List, nibrsCode, setNibrsCode, setshowOffPage, clickCount }} />
                                         :
                                         showOffPage === 'CrimeInformation' ?
                                             <BasicInformation {...{ ListData, loginPinID, loginAgencyID, offenceID, mainIncidentID, nibrsCode, setNibrsCode, }} />
