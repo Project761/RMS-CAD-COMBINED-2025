@@ -2,7 +2,7 @@ import Loader from "./Loader";
 
 const NirbsAllModuleErrorShowModal = (props) => {
 
-    const { nibErrModalStatus, setNibrsErrModalStatus, nibrsValidateloder, administrativeErrorString, offenseErrorString, victimErrorString, offenderErrorString, propertyErrorString, vehicleErrorString, incidentErrorStatus, incidentErrorString } = props
+    const { nibErrModalStatus, setNibrsErrModalStatus, nibrsValidateloder, administrativeErrorString, offenseErrorString, victimErrorString, offenderErrorString, propertyErrorString, vehicleErrorString, incidentErrorStatus, incidentErrorString, arrestErrorString } = props
 
     return (
         <>
@@ -59,7 +59,13 @@ const NirbsAllModuleErrorShowModal = (props) => {
                                                         </>
                                                     }
                                                     {
-                                                        !administrativeErrorString && !offenseErrorString && !victimErrorString && !offenderErrorString && !propertyErrorString && !vehicleErrorString && <>
+                                                        arrestErrorString && <>
+                                                            <h5>Arrest Error</h5>
+                                                            <pre style={{ maxWidth: '100%', whiteSpace: 'pre-wrap' }}>{arrestErrorString || 'No Errors'}</pre>
+                                                        </>
+                                                    }
+                                                    {
+                                                        !administrativeErrorString && !offenseErrorString && !victimErrorString && !offenderErrorString && !propertyErrorString && !vehicleErrorString && !arrestErrorString && <>
                                                             <pre>No Errors</pre>
                                                         </>
                                                     }

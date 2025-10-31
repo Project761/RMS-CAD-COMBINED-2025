@@ -28,7 +28,7 @@ const MultiValue = props => (
     </components.MultiValue>
 );
 
-const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = () => { } }) => {
+const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
 
 
     const SelectedValue = useRef();
@@ -1521,7 +1521,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
                                 setErrors({ ...errors, ['AddressError']: 'true', ['WeightError']: 'true', ['AgeError']: 'true', ['ContactError']: 'true', ['NameTypeIDError']: '', });
 
                                 // Validate Name
-                                ValidateProperty(mainIncidentID);
+                       
                                 ValidateIncNames(mainIncidentID, IncNo);
                                 getNibrsErrorToolTip(res?.NameID, mainIncidentID, IncNo);
                                 // validateIncSideBar
@@ -1635,7 +1635,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, ValidateProperty = 
                                 setErrors({ ...errors, ['ContactError']: 'true', ['NameTypeIDError']: '', });
 
                                 // Validate Name
-                                ValidateProperty(mainIncidentID);
+                         
                                 ValidateIncNames(mainIncidentID, IncNo);
                                 getNibrsErrorToolTip(nameID, mainIncidentID, IncNo);
                                 // validateIncSideBar

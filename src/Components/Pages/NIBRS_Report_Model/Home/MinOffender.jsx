@@ -27,7 +27,7 @@ const MultiValue = props => (
     </components.MultiValue>
 );
 
-const MinOffender = ({ offenderClick = false, isNibrsSummited = false, ValidateProperty = () => { } }) => {
+const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
 
     const SelectedValue = useRef();
     const navigate = useNavigate();
@@ -1222,7 +1222,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, ValidateP
                                 get_Incident_Count(mainIncidentID, loginPinID);
                                 setErrors({ ...errors, ['AddressError']: 'true', ['WeightError']: 'true', ['AgeError']: 'true', ['ContactError']: 'true', ['NameTypeIDError']: '', });
                                 // Validate Offender
-                                ValidateProperty(IncID);
+                
                                 getNibrs_Names_Error(IncID, IncNo);
                                 getNibrsErrorToolTip(res?.NameID, IncNo, IncID);
                                 // validateIncSideBar
@@ -1314,7 +1314,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, ValidateP
                                 setErrors({ ...errors, ['ContactError']: 'true', ['NameTypeIDError']: '', });
 
                                 // Validate Offender
-                                ValidateProperty(IncID);
+                         
                                 getNibrs_Names_Error(IncID, IncNo);
                                 getNibrsErrorToolTip(nameID, IncNo, IncID);
                                 // validateIncSideBar
