@@ -33,7 +33,7 @@ import { check_Valid_Bias_Code, CrimeActivitySelectSuitableCodesError, checkCrim
 
 
 
-const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setResetErrors, nibrsCode, setNibrsCode, setshowOffPage }) => {
+const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setResetErrors, nibrsCode, setNibrsCode, setshowOffPage, clickCount }) => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -268,11 +268,10 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
       // get_Crime_Target_Data();
       get_Crime_Suspect_Data(OffId);
       get_Weapon_Data(OffId);
-      get_Offence_Count(OffId);
       NibrsErrorReturn(OffId);
 
     }
-  }, [OffId, OffSta]);
+  }, [OffId, OffSta, clickCount]);
 
   const nibrsCodeValue = ["09A", "09B", "100", "120", "11A", "11B", "11C", "11D", "13A", "13B", "13C"]
 
