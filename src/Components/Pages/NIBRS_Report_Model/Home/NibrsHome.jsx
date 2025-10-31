@@ -476,7 +476,7 @@ const NibrsHome = () => {
 
             } else {
               if (isCrimeAgainstPropertyError || isSuspectedDrugTypeErrorStatus || isPropertyIdZeroError) {
-                console.log("🚀 ~ validateNibrs ~ isCrimeAgainstPropertyError:", isCrimeAgainstPropertyError);
+             
                 setPropErrorStatus(true);
               } else {
                 setPropErrorStatus(false); setPropertyErrorString('');
@@ -510,7 +510,7 @@ const NibrsHome = () => {
         // set victim error string
         if (victimValidateNibrsData) {
           const victimObj = victimValidateNibrsData?.Victim ? victimValidateNibrsData?.Victim : [];
-          // console.log("🚀 ~ validateNibrs ~ victimObj:", victimObj)
+          console.log("🚀 ~ validateNibrs ~ victimObj:", victimObj)
           if (victimObj?.length > 0) {
             const isVictimConnectedError = victimObj[0]?.OnPageError?.includes("At least one victim must be present and must be connected with offence.");
             if (isVictimConnectedError) {
@@ -527,15 +527,11 @@ const NibrsHome = () => {
 
         }
 
-        // set loader false
-        // setnibrsValidateLoder(false);
-
       } catch (error) {
         console.log("🚀 ~ ValidateProperty ~ error:", error);
-        // setnibrsValidateLoder(false);
+       
       }
 
-      // setnibrsValidateLoder(false);
     }
     validateNibrs(incidentValidateNibrsData, offenseValidateNibrsData, victimValidateNibrsData, offenderValidateNibrsData, propertyValidateNibrsData);
   }, [incidentValidateNibrsData, offenseValidateNibrsData, victimValidateNibrsData, offenderValidateNibrsData, propertyValidateNibrsData]);
@@ -623,7 +619,7 @@ const NibrsHome = () => {
         transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
       }}>
         Victim --- Connection of Victim and Offense is needed
-        {/* Victim --- At least one victim must be present and must be connected with offense */}
+
       </span> : `Victim (${VictimCount})`,
       status: !victimErrorStatus && !isVictimConnectedError ? "completed" : "attention highlighted",
       sectionKey: "Victims",

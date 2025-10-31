@@ -116,13 +116,13 @@ const Otp = ({ username, otp, loginResData, setOtp, timerOn, type, isMDT }) => {
 
     // Resend Otp and Verifiy Otp And Again Call timer function
     const Resend_Verification_Code = (e) => {
-        e.preventDefault()
-        const otp = get_OTP()
-        setExpireOtp(true)
-        setOtp(otp)
+        e.preventDefault();
+        const otp = get_OTP();
+        setExpireOtp(true);
+        setOtp(otp);
         // setOtp('123456')
         timer(60);
-        setOtpCount(otpCount + 1)
+        setOtpCount(otpCount + 1);
     }
 
     return (

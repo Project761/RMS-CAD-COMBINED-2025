@@ -154,8 +154,6 @@ const ArrestSearchPage = () => {
         } else { toastifyError("Please Enter Details"); }
     };
 
-
-
     const get_ChargeCode_Drp_Data = (loginAgencyID, FBIID) => {
         // const val = { 'AgencyID': loginAgencyID, 'FBIID': FBIID }
         // fetchPostData('ChargeCodes/GetDataDropDown_ChargeCodes', val).then((data) => {
@@ -286,9 +284,7 @@ const ArrestSearchPage = () => {
         return () => document.removeEventListener('keydown', handleKeyDown);
     }, []);
 
-
     useEffect(() => {
-
         if (isPermissionsLoaded) {
             get_Data_Arrest()
         }
@@ -296,12 +292,9 @@ const ArrestSearchPage = () => {
 
     const myStateRef = React.useRef(value);
 
-
     useEffect(() => {
         myStateRef.current = value;
     }, [value])
-
-
 
     //-----------------------------------------------------//--------------------------------------
     const onChangeNIBRSCode = (e, name) => {
@@ -337,7 +330,6 @@ const ArrestSearchPage = () => {
             setFilteredOptions([]);
         }
     };
-
 
     const getLawTitleNibrsByCharge = async (loginAgencyID, lawTitleID, ChargeCodeID, mainIncidentID) => {
         const lawTitleObj = { AgencyID: loginAgencyID, ChargeCodeID: ChargeCodeID };
@@ -390,7 +382,6 @@ const ArrestSearchPage = () => {
             }
         );
     };
-
 
     const NIBRSCodeDrpDwnVal = (loginAgencyID, LawTitleId, mainIncidentID) => {
         const val = {
@@ -505,33 +496,33 @@ const ArrestSearchPage = () => {
                                     <div className="col-12 ">
                                         <fieldset >
                                             <legend>Arrest Information</legend>
-                                            <div className="row">
-                                                <div className="col-2 col-md-2 col-lg-2  mt-2 ">
-                                                    <label htmlFor="" className='new-label'>Incident #</label>
+                                            <div className="row align-items-center mt-1" style={{ rowGap: "8px" }}>
+                                                <div className="col-2 col-md-2 col-lg-2 ">
+                                                    <label htmlFor="" className='new-label mb-0'>Incident #</label>
                                                 </div>
-                                                <div className="col-4 col-md-4 col-lg-3 text-field mt-1">
+                                                <div className="col-4 col-md-4 col-lg-3 text-field mt-0">
                                                     <input type="text" id='IncidentNumber' name='IncidentNumber' value={value?.IncidentNumber} onChange={HandleChange} />
                                                 </div>
-                                            </div>
-                                            <div className="row">
-                                                <div className="col-2 col-md-2 col-lg-2  mt-2 ">
-                                                    <label htmlFor="" className='new-label'>Arrest Number From</label>
+                                                <div className="col-2 col-md-2 col-lg-6"></div>
+
+                                                <div className="col-2 col-md-2 col-lg-2 ">
+                                                    <label htmlFor="" className='new-label mb-0'>Arrest Number From</label>
                                                 </div>
-                                                <div className="col-4 col-md-4 col-lg-3 text-field mt-1">
+                                                <div className="col-4 col-md-4 col-lg-3 text-field mt-0">
                                                     <input type="text" id='ArrestNumber' name='ArrestNumber' maxLength={16} value={value?.ArrestNumber} onChange={HandleChange} />
                                                 </div>
-                                                <div className="col-2 col-md-2 col-lg-3  mt-2 ">
-                                                    <label htmlFor="" className='new-label'>Arrest Number To</label>
+                                                <div className="col-2 col-md-2 col-lg-3">
+                                                    <label htmlFor="" className='new-label mb-0'>Arrest Number To</label>
                                                 </div>
-                                                <div className="col-4 col-md-4 col-lg-3 text-field mt-1">
+                                                <div className="col-4 col-md-4 col-lg-3 text-field mt-0">
                                                     <input type="text" id='ArrestNumberTo' disabled={!value?.ArrestNumber?.trim()}
                                                         className={!value?.ArrestNumber?.trim() ? 'readonlyColor' : ''} name='ArrestNumberTo' value={value?.ArrestNumberTo} onChange={HandleChange} />
 
                                                 </div>
-                                                <div className="col-2 col-md-2 col-lg-2  mt-2 pt-2">
-                                                    <label htmlFor="" className='new-label'>Arrest From Date</label>
+                                                <div className="col-2 col-md-2 col-lg-2">
+                                                    <label htmlFor="" className='new-label mb-0'>Arrest From Date</label>
                                                 </div>
-                                                <div className="col-4 col-md-4 col-lg-3  ">
+                                                <div className="col-4 col-md-4 col-lg-3 mt-0 ">
                                                     <DatePicker
                                                         id='ArrestDtTm'
                                                         name='ArrestDtTm'
@@ -555,10 +546,10 @@ const ArrestSearchPage = () => {
                                                         placeholderText={value?.ArrestDtTm ? value.ArrestDtTm : 'Select...'}
                                                     />
                                                 </div>
-                                                <div className="col-2 col-md-2 col-lg-3  mt-2 pt-2">
-                                                    <label htmlFor="" className='new-label'>Arrest To Date</label>
+                                                <div className="col-2 col-md-2 col-lg-3">
+                                                    <label htmlFor="" className='new-label mb-0'>Arrest To Date</label>
                                                 </div>
-                                                <div className="col-4 col-md-4 col-lg-3 ">
+                                                <div className="col-4 col-md-4 col-lg-3 mt-0">
                                                     <DatePicker
                                                         id='ArrestDtTmTo'
                                                         name='ArrestDtTmTo'
@@ -584,10 +575,10 @@ const ArrestSearchPage = () => {
                                                         className={!value?.ArrestDtTm ? 'readonlyColor' : ''}
                                                     />
                                                 </div>
-                                                <div className="col-2 col-md-2 col-lg-2  mt-2 ">
-                                                    <label htmlFor="" className='new-label'>Arrest Type</label>
+                                                <div className="col-2 col-md-2 col-lg-2">
+                                                    <label htmlFor="" className='new-label mb-0'>Arrest Type</label>
                                                 </div>
-                                                <div className="col-4 col-md-4 col-lg-3  ">
+                                                <div className="col-4 col-md-4 col-lg-3 mt-0">
                                                     <Select
                                                         name='ArrestTypeID'
                                                         styles={colourStyles}
@@ -598,10 +589,10 @@ const ArrestSearchPage = () => {
                                                         placeholder="Select..."
                                                     />
                                                 </div>
-                                                <div className="col-2 col-md-2 col-lg-3  mt-2 ">
-                                                    <label htmlFor="" className='new-label'>Arresting Officer</label>
+                                                <div className="col-2 col-md-2 col-lg-3">
+                                                    <label htmlFor="" className='new-label mb-0'>Arresting Officer</label>
                                                 </div>
-                                                <div className="col-4 col-md-4 col-lg-3 ">
+                                                <div className="col-4 col-md-4 col-lg-3 mt-0">
                                                     <Select
                                                         name='PrimaryOfficerID'
                                                         styles={colourStyles}
@@ -615,10 +606,10 @@ const ArrestSearchPage = () => {
                                                 </div>
 
 
-                                                <div className="col-4 col-md-4 col-lg-2 mt-2 pt-1">
-                                                    <label htmlFor="" className='new-label'> Law Title</label>
+                                                <div className="col-4 col-md-4 col-lg-2 mt-0 ">
+                                                    <label htmlFor="" className='new-label mb-0'> Law Title</label>
                                                 </div>
-                                                <div className="col-7 col-md-7 col-lg-3  mt-1">
+                                                <div className="col-7 col-md-7 col-lg-3">
                                                     <Select
                                                         name="LawTitleId"
                                                         value={lawTitleIdDrp?.filter((obj) => obj.value === value?.LawTitleId)}
@@ -629,13 +620,13 @@ const ArrestSearchPage = () => {
                                                         placeholder="Select..."
                                                     />
                                                 </div>
-                                                <div className="col-4 col-md-4 col-lg-3 mt-2 pt-1">
-                                                    <label htmlFor="" className="new-label text-nowrap" >   TIBRS Code
+                                                <div className="col-4 col-md-4 col-lg-3 ">
+                                                    <label htmlFor="" className="new-label text-nowrap mb-0" >   TIBRS Code
                                                         <br />
                                                     </label>
                                                 </div>
 
-                                                <div className="col-7 col-md-7 col-lg-3 mt-1">
+                                                <div className="col-7 col-md-7 col-lg-3">
                                                     <Select
                                                         name="FBIID"
                                                         styles={customStylesWithOutColor}
@@ -649,11 +640,11 @@ const ArrestSearchPage = () => {
                                                     />
                                                 </div>
 
-                                                <div className="col-4 col-md-4 col-lg-2 mt-2 pt-1">
-                                                    <label htmlFor="" className='new-label'>Offense Code/Name</label>
+                                                <div className="col-4 col-md-4 col-lg-2">
+                                                    <label htmlFor="" className='new-label mb-0'>Offense Code/Name</label>
                                                     <br />
                                                 </div>
-                                                <div className="col-7 col-md-7 col-lg-9 mt-1">
+                                                <div className="col-7 col-md-7 col-lg-9">
                                                     <Select
                                                         name="ChargeCodeID"
                                                         styles={customStylesWithOutColor}
@@ -702,16 +693,16 @@ const ArrestSearchPage = () => {
 
 
 
-                                                <div className="col-2 col-md-2 col-lg-2 mt-2 ">
-                                                    <label htmlFor="" className='new-label'>Arresting Agency</label>
+                                                <div className="col-2 col-md-2 col-lg-2">
+                                                    <label htmlFor="" className='new-label mb-0'>Arresting Agency</label>
                                                 </div>
-                                                <div className="col-4 col-md-4 col-lg-3 mt-1 text-field">
+                                                <div className="col-4 col-md-4 col-lg-3 mt-0 text-field">
                                                     <input type="text" name='ArrestingAgency' id='ArrestingAgency' value={value?.ArrestingAgency} onChange={HandleChange} />
                                                 </div>
-                                                <div className="col-2 col-md-2 col-lg-3 mt-2 ">
-                                                    <label htmlFor="" className='new-label'>Juvenile Disposition</label>
+                                                <div className="col-2 col-md-2 col-lg-3 mt-0 ">
+                                                    <label htmlFor="" className='new-label mb-0'>Juvenile Disposition</label>
                                                 </div>
-                                                <div className="col-4 col-md-4 col-lg-3 mt-1 text-field ">
+                                                <div className="col-4 col-md-4 col-lg-3 mt-0 text-field ">
                                                     <Select
                                                         name='JuvenileDispositionID'
                                                         menuPlacement='bottom'
@@ -723,10 +714,10 @@ const ArrestSearchPage = () => {
                                                         placeholder="Select..."
                                                     />
                                                 </div>
-                                                <div className="col-3 col-md-3 col-lg-2 mt-2 ">
-                                                    <label htmlFor="" className='new-label'>Location</label>
+                                                <div className="col-3 col-md-3 col-lg-2">
+                                                    <label htmlFor="" className='new-label mb-0'>Location</label>
                                                 </div>
-                                                <div className="col-9 col-md-9 col-lg-9 mt-1 text-field">
+                                                <div className="col-9 col-md-9 col-lg-9 mt-0 text-field">
                                                     <Location
                                                         {...{ value, setValue, locationStatus, setLocationStatus, updateStatus, setOnSelectLocation, setChangesStatus, setStatesChangeStatus }}
                                                         col='Location'
@@ -737,7 +728,9 @@ const ArrestSearchPage = () => {
                                                     />
                                                     {/* <input type="text" name='Location' value={value?.Location} onChange={HandleChange} id='Location' className='' /> */}
                                                 </div>
+
                                             </div>
+
                                         </fieldset>
                                         <fieldset>
                                             <legend>Arrestee Information</legend>

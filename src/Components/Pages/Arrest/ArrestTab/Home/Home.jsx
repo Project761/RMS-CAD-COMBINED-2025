@@ -65,7 +65,6 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
 
     var SideBarStatus = query?.get("SideBarStatus");
 
-
     if (!IncID) { DecEIncID = 0; }
     else { DecEIncID = parseInt(base64ToString(IncID)); }
 
@@ -142,8 +141,6 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         }
     }, []);
 
-    console.log(DecArrestId)
-
     useEffect(() => {
         if (localStoreData) {
             // dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
@@ -153,13 +150,11 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         }
     }, [localStoreData]);
 
-
     useEffect(() => {
         if (effectiveScreenPermission?.length > 0) {
             setaddUpdatePermission(effectiveScreenPermission[0]?.AddOK != 1 || effectiveScreenPermission[0]?.Changeok != 1 ? true : false);
         } else { setaddUpdatePermission(false); }
     }, [effectiveScreenPermission]);
-
 
 
     useEffect(() => {
@@ -192,7 +187,6 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
 
 
     useEffect(() => {
-        console.log('hello')
         if (DecEIncID) {
             setMainIncidentID(DecEIncID);
             // dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
@@ -209,12 +203,10 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         }
     }, [DecEIncID]);
 
-
     useEffect(() => {
         setValue({ ...value, ['RaceID']: '', ['SexID']: '', ['AgeFrom']: '', ['AgeUnitID']: '', ['DateOfBirth']: '', ArrestNumber: '', IsJuvenileArrest: '', ArrestDtTm: '', ArrestingAgency: '', ArrestTypeID: '', SupervisorID: '', PoliceForceID: '', ArresteeID: '', RightsGivenID: '', JuvenileDispositionID: '', PhoneNo: '', GivenByID: '', PrimaryOfficerID: '', ModifiedByUserFK: '', IsMultipleArrestees: '', ArrestingAgencyID: '', 'IsSchoolNotified': '', 'Grade': '', 'LocationOfSchool': '', 'NameOfSchool': '', 'ParentPhone': '', 'ParentNameID': '', 'ResponseID': '', })
     }, [RestStatus]);
 
-    console.log(RestStatus)
     //==================Dv-------------------------------
     useEffect(() => {
         if (DecNameId) {
@@ -227,7 +219,6 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
             dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
         }
     }, [DecArrestId,]);
-
 
     useEffect(() => {
         if (DecEIncID && DecArrestId) {
@@ -252,9 +243,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
 
     useEffect(() => {
         if (possessionID && (isEditvalProcessed === false) && type === "ArrestMod") {
-            console.log('hello1')
             const newvalue = arresteeNameData?.filter((val) => val?.NameID == possessionID);
-            console.log('erwrsfsdfsdf', arresteeNameData, value.ArresteeID, newvalue[0]?.IsJuvenileArrest, newvalue[0]?.NameID)
             setNameID(newvalue[0]?.NameID)
             setValue({
                 ...value, ['ArresteeID']: parseInt(possessionID), ['RaceID']: newvalue[0]?.RaceID, ['SexID']: newvalue[0]?.SexID, ['AgeFrom']: newvalue[0]?.AgeFrom, ['AgeUnitID']: newvalue[0]?.AgeUnitID,
@@ -264,7 +253,6 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         }
     }, [arresteeNameData, nameModalStatus, isEditvalProcessed]);
 
-    console.log(NameId)
     const checkSelectedName1 = (ArresteeID) => {
         if (ArresteeID) {
             const keysToCheck = ['AgeFrom', 'Gendre_Description', 'LastName', 'Race_Description'];
@@ -316,7 +304,6 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         })
     };
 
-
     const getIncidentData = async (incidentID) => {
         const val = { IncidentID: incidentID }
         await fetchPostData('Incident/GetSingleData_Incident', val).then((res) => {
@@ -359,7 +346,6 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
     }
 
     const check_Validation_Error = () => {
-        console.log('object')
         //-------------------------dv--------------------------------
         const arresteeStatus = possessionID ? checkSelectedName(value?.ArresteeID) : checkSelectedName1(value?.ArresteeID)
         if (JuvenileCleared === false && value.IsJuvenileArrest) {
@@ -404,9 +390,10 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
     }, [ArrestDtTmError, ArresteeIDError, CellPhoneError, JuvenileDispoError, ArrestTypeIDError])
 
     useEffect(() => {
+        console.log("🚀 ~ Home ~ Editval:", Editval)
         if (Editval?.length > 0) {
             const newvalue = arresteeNameData?.filter((val) => val?.NameID == Editval[0]?.ArresteeID);
-            console.log(arresteeNameData, value.ArresteeID, newvalue[0]?.IsJuvenileArrest, newvalue, Editval[0]?.ArresteeID)
+
             setNameID(newvalue[0]?.NameID)
             get_Arrest_MultiImage(arrestID);
             setValue({
@@ -448,7 +435,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
             }
         } else {
             setIsEditvalProcessed(false);
-            console.log('hello')
+
             setValue({
                 ...value,
                 'ArrestNumber': '',
@@ -460,8 +447,6 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
             setArrestDate();
         }
     }, [Editval, changesStatusCount])
-
-
 
     const HandleChange = (e) => {
         if (e.target.name === "IsJuvenileArrest") {
@@ -546,7 +531,6 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         //     }
         // }
     }
-
 
     const update_Arrest = () => {
         const { ArrestNumber, IsJuvenileArrest, ArrestDtTm, ArrestingAgency, ArrestTypeID, SupervisorID, PoliceForceID, RightsGivenID, JuvenileDispositionID, PhoneNo, PrimaryOfficerID, GivenByID, ArresteeID, IsMultipleArrestees, ArrestingAgencyID,
@@ -640,7 +624,6 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         }
     }
 
-
     const reset_Value = () => {
         setAgencystatus(true);
         setShowJuvinile(false); setShowPoliceForce(false);
@@ -653,6 +636,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         sessionStorage.removeItem('ChargeLocalData');
         setArrestDate(); setMultiImage(''); setuploadImgFiles(''); setStatesChangeStatus(false); setStatus(false); setArrestID(''); setChangesStatus(false); setArrestChargeData([]); get_Arresting_DropDown(loginAgencyID);
     };
+
     const conditionalRowStyles = [
         {
             when: row => row.ArrestID === DecArrestId,
@@ -769,7 +753,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
     };
 
     const ChangeDropDown = (e, name) => {
-        console.log(e)
+
         !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
         let newValue = { ...value };
         if (e) {
@@ -854,8 +838,6 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
             }
             setValue(newValue);
         }
-
-
         else {
             if (name === 'RightsGivenID') {
                 setRightGivenCode('N');
@@ -956,7 +938,6 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
     }, []);
 
     useEffect(() => {
-        console.log('object')
         const filteredComplainantID = arresteeNameData.filter(
             (item) => item.NameID !== value.ArresteeID
         );
@@ -966,16 +947,14 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         setcomplainantfilterID(filteredComplainantID)
     }, [value.ParentNameID, value.ArresteeID, nameModalStatus])
 
-
     const handleClick = () => {
         setShowPage('PoliceForce')// Update the path according to your routing setup
     };
+
     const getValidDate = (date) => {
         const d = new Date(date);
         return !isNaN(d.getTime()) ? d : null;
     };
-
-
 
     return (
         <>
@@ -1073,7 +1052,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                                     is24Hour
                                     timeInputLabel
                                     showYearDropdown
-                                    showMonthDropdown
+                                    showMonthDropdown  
                                     dropdownMode="select"
                                     isClearable={value?.ArrestDtTm ? true : false}
                                     selected={value?.ArrestDtTm ? new Date(value?.ArrestDtTm) : null}
@@ -1457,10 +1436,10 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                                 <Select
                                     name='ResponseID'
                                     styles={customStylesWithOutColor}
-                                    // value={policeForceDrpData?.filter((obj) => obj.value === value?.ResponseID)}
+                                    value={policeForceDrpData?.filter((obj) => obj.value === value?.ResponseID)}
                                     isClearable
-                                    // options={policeForceDrpData}
-                                    // onChange={(e) => ChangeDropDown(e, 'ResponseID')}
+                                    options={policeForceDrpData}
+                                    onChange={(e) => ChangeDropDown(e, 'ResponseID')}
                                     placeholder="Select..."
                                 />
                             </div>
