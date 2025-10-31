@@ -5,7 +5,7 @@ import "primereact/resources/themes/lara-light-cyan/theme.css";
 import 'react-quill/dist/quill.snow.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
-import DashboardPage from './Pages/DashboardPage';
+import DashboardPage from './Pages/DashboardPage';  
 import Auth from './Auth';
 import Login from './Components/Auth/Login';
 import Otp from './Components/Auth/Otp2FA';

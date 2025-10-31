@@ -736,6 +736,7 @@ const AgencyData = ({ children }) => {
 
             } else {
                 setIncidentErrorStatus(false);
+
             }
 
 
@@ -828,7 +829,6 @@ const AgencyData = ({ children }) => {
         }
 
         setNibrsSideBarLoading(false);
-
         sent_NibrsErrorStatus(incidentID, loginAgencyID, incidentErrorStatus || offenseErrorStatus || nameErrorStatus || PropErrorStatus);
 
     };
@@ -839,7 +839,6 @@ const AgencyData = ({ children }) => {
             'ModifiedByUserFK': loginAgencyID,
             'IncidentID': incidentID
         }
-        console.log("🚀 ~ sent_NibrsErrorStatus ~ payload:", payload)
         fetchPostData('Incident/Update_IsNIBRSError', payload).then((res) => {
             // console.log("🚀 ~ UpdateIsNIBRSError ~ res:", res)
 

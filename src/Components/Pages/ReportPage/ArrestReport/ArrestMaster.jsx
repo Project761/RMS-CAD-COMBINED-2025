@@ -54,6 +54,7 @@ const ArrestMaster = () => {
         CountryID: '', Country: '', State: '', City: '', CityID: '', ZipCodeID: '', ZipCode: '', SSN: '',
         IPAddress: '', UserID: LoginPinID, SearchCriteria: '', SearchCriteriaJson: '', FormatedReportName: effectiveScreenPermission[0]?.ScreenCode1, Status: '', ModuleName: effectiveScreenPermission[0]?.ScreenCode1, ModuleID: effectiveScreenPermission[0]?.ModuleFK,
     });
+
     const [searchValue, setSearchValue] = useState({
         ArrestNumber: '', ArrestDtTmTo: '', ArrestDtTm: '', IncidentNumber: '', NameIDNumber: '', LastName: '', FirstName: '', MiddleName: '', DateOfBirthFrom: '', DateOfBirthTo: '', Location: '', SSN: '',
 
@@ -62,11 +63,13 @@ const ArrestMaster = () => {
     const [showFields, setShowFields] = useState({
         showArrestNumber: false, showArrestDtTm: false, showArrestDtTmTo: false, showIncidentNumber: false, showNameIDNumber: false, showLastName: false, showFirstName: false, showMiddleName: false, showDateOfBirthFrom: false, showDateOfBirthTo: false, showLocation: false, showSSN: false,
     });
+
     useEffect(() => {
         if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
             if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
         }
     }, []);
+
     useEffect(() => {
         setShowFields({
             showArrestNumber: searchValue.ArrestNumber, showArrestDtTm: searchValue.ArrestDtTm, showArrestDtTmTo: searchValue.ArrestDtTmTo, showIncidentNumber: searchValue.IncidentNumber, showNameIDNumber: searchValue.NameIDNumber, showLastName: searchValue.LastName, showFirstName: searchValue.FirstName, showMiddleName: searchValue.MiddleName, showDateOfBirthFrom: searchValue.DateOfBirthFrom, showDateOfBirthTo: searchValue.DateOfBirthTo, showLocation: searchValue.Location, showSSN: searchValue.SSN,
@@ -190,41 +193,7 @@ const ArrestMaster = () => {
         }
         return false;
     }
-    // -------------------old------------------------
-    // const get_ArrestSearchData1 = async (isPrintReport = false) => {
-    //     const {
-    //         Location, SSN, ArrestNumber, ArrestDtTmTo, ArrestDtTm, IncidentNumber, NameIDNumber, LastName, FirstName, MiddleName, DateOfBirthFrom, DirectionPrefix, Street, DirectionSufix, TypeSufix, City, State, ZipCode, ApartmentNo, CommonPlace, ApartmentType, Street_Parse, PremiseNo_Parse, DirectionPrefix_Parse, TypeSuffix_Parse, DirectionSuffix_Parse, ZipCodeID, CityID, IsUsLocation, CountryID, Country, point_of_interest, neighborhood, premise, Statefullname, DateOfBirthTo, Address, PremiseNo, subpremise,
-    //         IPAddress, SearchCriteria, SearchCriteriaJson, Status,
-    //     } = myStateRef.current;
-    //     const val = {
-    //         'AgencyID': LoginAgencyID, 'Location': Location?.trim(), 'SSN': SSN?.trim(), 'ArrestNumber': ArrestNumber?.trim(), 'ArrestDtTmTo': ArrestDtTmTo, 'ArrestDtTm': ArrestDtTm, 'IncidentNumber': IncidentNumber?.trim(), 'NameIDNumber': NameIDNumber, 'LastName': LastName?.trim(), 'FirstName': FirstName?.trim(), 'MiddleName': MiddleName?.trim(), 'DateOfBirthFrom': DateOfBirthFrom, 'DirectionPrefix': DirectionPrefix, 'Street': Street, 'DirectionSufix': DirectionSufix, 'TypeSufix': TypeSufix, 'City': City, 'State': State, 'ZipCode': ZipCode, 'ApartmentNo': ApartmentNo, 'CommonPlace': CommonPlace, 'ApartmentType': ApartmentType, 'Street_Parse': Street_Parse, 'PremiseNo_Parse': PremiseNo_Parse, 'DirectionPrefix_Parse': DirectionPrefix_Parse, 'TypeSuffix_Parse': TypeSuffix_Parse, 'DirectionSuffix_Parse': DirectionSuffix_Parse, 'ZipCodeID': ZipCodeID, 'CityID': CityID, 'IsUsLocation': IsUsLocation, 'CountryID': CountryID, 'Country': Country, 'point_of_interest': point_of_interest, 'neighborhood': neighborhood, 'premise': premise, 'Statefullname': Statefullname, 'DateOfBirthTo': DateOfBirthTo, 'Address': Address, 'PremiseNo': PremiseNo, 'subpremise': subpremise,
-    //         'IPAddress': IPAddress, 'UserID': LoginPinID, 'SearchCriteria': SearchCriteria, 'SearchCriteriaJson': SearchCriteriaJson,
-    //         'FormatedReportName': effectiveScreenPermission[0]?.ScreenCode1, 'Status': Status, 'ModuleName': effectiveScreenPermission[0]?.ScreenCode1, 'ModuleID': effectiveScreenPermission[0]?.ModuleFK
-    //     }
-    //     if (hasValues(val)) {
-    //         const apiUrl = isPrintReport ? 'ArrestReport/PrintArrestReport' : 'ArrestReport/GetData_ArrestReport';
-    //         fetchPostData(apiUrl, val).then((res) => {
-    //             console.log(res)
-    //             if (res.length > 0) {
-    //                 setReportData(res); setMasterReportData(res[0]); setverifyArrestMaster(true)
-    //                 getAgencyImg(LoginAgencyID); setSearchValue(value); setLoder(false);
-    //                 setIsPermissionsLoaded(false);
-    //             } else {
-    //                 setIsPermissionsLoaded(false);
 
-    //                 if (!isPrintReport) {
-    //                     toastifyError("Data Not Available"); setReportData([])
-    //                     setMasterReportData([]); setverifyArrestMaster(false); setLoder(false);
-    //                 }
-
-    //             }
-    //         });
-    //     }
-    //     else { toastifyError("Please Enter Details"); }
-    // }
-
-
-    // ---------------update Function -30-04-2025-----
     const get_ArrestSearchData = async (isPrintReport = false) => {
         setLoder(true);
 
@@ -244,8 +213,11 @@ const ArrestMaster = () => {
             try {
                 const apiUrl = isPrintReport ? 'ArrestReport/PrintArrestReport' : 'ArrestReport/GetData_ArrestReport';
                 const res = await fetchPostData(apiUrl, val);
+                console.log("🚀 ~ get_ArrestSearchData ~ res:", res)
                 if (res.length > 0) {
-                    setReportData(res); setMasterReportData(res[0]); setverifyArrestMaster(true)
+                    setReportData(res);
+                    setMasterReportData(res[0]);
+                    setverifyArrestMaster(true)
                     getAgencyImg(LoginAgencyID); setSearchValue(value); setLoder(false);
                     setIsPermissionsLoaded(false);
                 } else {
@@ -268,7 +240,6 @@ const ArrestMaster = () => {
         }
 
     }
-
 
     const getAgencyImg = (LoginAgencyID) => {
         const val = { 'AgencyID': LoginAgencyID }
@@ -316,8 +287,6 @@ const ArrestMaster = () => {
         }
     });
 
-
-
     const [showFooter, setShowFooter] = useState(false);
 
     const handlePrintClick = () => {
@@ -326,8 +295,6 @@ const ArrestMaster = () => {
             printForm(); get_ArrestSearchData(true); setShowFooter(false);
         }, 100);
     };
-
-
 
     useEffect(() => {
         const handleKeyDown = async (event) => {
@@ -340,16 +307,13 @@ const ArrestMaster = () => {
         return () => document.removeEventListener('keydown', handleKeyDown);
     }, []);
 
-
     useEffect(() => {
-
         if (isPermissionsLoaded) {
             get_ArrestSearchData();
         }
     }, [isPermissionsLoaded]);
 
     const myStateRef = React.useRef(value);
-
 
     useEffect(() => {
         myStateRef.current = value;
@@ -463,7 +427,6 @@ const ArrestMaster = () => {
                                         <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
                                             <input type="text" name='IncidentNumber' id='IncidentNumber' className='' value={value?.IncidentNumber} onChange={Handlechange} />
                                         </div>
-
                                     </div>
                                     <div className="row">
                                         <div className="col-3 col-md-3 col-lg-2 mt-2 ">
@@ -591,13 +554,6 @@ const ArrestMaster = () => {
                                         <button className="btn btn-sm bg-green text-white px-2 py-1 ml-2" >Close</button>
                                     </Link>
                                 </div>
-                                {/* <div className="col-12 col-md-12 col-lg-12 mt-2 pt-1 text-right">
-                                    <button className="btn btn-sm bg-green text-white px-2 py-1" onClick={() => { get_ArrestSearchData(); }} >Show Report</button>
-                                    <button className="btn btn-sm bg-green text-white px-2 py-1 ml-2" onClick={() => { setverifyArrestMaster(false); resetFields(); }}>Clear</button>
-                                    <Link to={'/Reports'}>
-                                        <button className="btn btn-sm bg-green text-white px-2 py-1 ml-2" >Close</button>
-                                    </Link>
-                                </div> */}
                             </div>
                         </div>
                     </div>
@@ -613,7 +569,6 @@ const ArrestMaster = () => {
                                 <Link to={''} className="btn btn-sm bg-green  mr-2 text-white px-2 py-0"  >
                                     {/* <i className="fa fa-print" onClick={printForm}></i> */}
                                     <i className="fa fa-print" onClick={handlePrintClick}></i>
-
                                 </Link>
                             </div>
                         </div>
@@ -630,7 +585,6 @@ const ArrestMaster = () => {
                                 <hr style={{ border: '1px solid rgb(3, 105, 184)' }} />
                                 <h5 className="text-center text-white text-bold bg-green  py-1" >Arrest Master Report</h5>
                             </div>
-
 
                             <div className="col-12 bb">
                                 <fieldset>
@@ -895,10 +849,8 @@ const ArrestMaster = () => {
 
                                                                                         value={obj?.Arrestee_Name
                                                                                         }
-
                                                                                     />
                                                                                     <label htmlFor="" className='new-summary'>Name:</label>
-
                                                                                 </div>
                                                                             </div>
                                                                             <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1 ">
@@ -1029,9 +981,6 @@ const ArrestMaster = () => {
                                                                                     <label htmlFor="" className='new-summary'>Ethnicity</label>
                                                                                 </div>
                                                                             </div>
-
-
-
                                                                             <div className="col-3 col-md-3 col-lg-3 mt-4 ">
                                                                                 <div className="text-field">
                                                                                     <input type="text" className='readonlyColor' name='' required readOnly
@@ -1093,17 +1042,11 @@ const ArrestMaster = () => {
                                                                                     <label htmlFor="" className='new-summary'>Maritial Status</label>
                                                                                 </div>
                                                                             </div>
-
-
                                                                         </div>
-
-
                                                                     </div>
-
                                                                 </div>
-
-
                                                             </div >
+
                                                             {/* arrest */}
                                                             <div className="col-12  ">
                                                                 <div className="container " style={{ border: '1px solid #80808085', }}>
@@ -1177,12 +1120,76 @@ const ArrestMaster = () => {
                                                                                 </div>
                                                                             </div>
 
+                                                                            {/* new Add column */}
+                                                                            <div className="col-3 col-md-3 col-lg-4 mt-4">
+                                                                                <div className='text-field'>
+                                                                                    <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                        value={obj?.ParentName}
+                                                                                    />
+                                                                                    <label htmlFor="" className='new-summary'>Parent Name</label>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className="col-3 col-md-3 col-lg-4 mt-4">
+                                                                                <div className='text-field'>
+                                                                                    <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                        value={obj?.ParentPhone}
+                                                                                    />
+                                                                                    <label htmlFor="" className='new-summary'>Parent Phone</label>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className="col-3 col-md-3 col-lg-4 mt-4">
+                                                                                <div className='text-field'>
+                                                                                    <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                        value={obj?.ResponseDescription}
+                                                                                    />
+                                                                                    <label htmlFor="" className='new-summary'>Response </label>
+                                                                                </div>
+                                                                            </div>
 
 
+                                                                            {/* school */}
+                                                                            <div className="col-3 col-md-3 col-lg-3 mt-4">
+                                                                                <div className='text-field'>
+                                                                                    <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                        value={obj?.NameOfSchool}
+                                                                                    />
+                                                                                    <label htmlFor="" className='new-summary'>Name of School</label>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className="col-9 col-md-9 col-lg-9 mt-4">
+                                                                                <div className='text-field'>
+                                                                                    <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                        value={obj?.LocationOfSchool}
+                                                                                    />
+                                                                                    <label htmlFor="" className='new-summary'>Location of School</label>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className="col-3 col-md-3 col-lg-4 mt-4">
+                                                                                <div className='text-field'>
+                                                                                    <input type="text" className='readonlyColor' name='DocFileName' required readOnly
+                                                                                        value={obj?.PoliceForce_Description}
+                                                                                    />
+                                                                                    <label htmlFor="" className='new-summary'>Use Of Force </label>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className="col-3 col-md-3 col-lg-3">
+                                                                                <div className='' style={{ marginTop: '40px' }}>
+                                                                                    <input
+                                                                                        type="checkbox"
+                                                                                        name=""
+                                                                                        id=""
+                                                                                        checked={obj && obj.IsSchoolNotified ? obj.IsSchoolNotified : false}
+                                                                                        disabled={!obj || obj.IsSchoolNotified === null}
+                                                                                    />
+                                                                                    <label htmlFor="" className='new-summary pl-2'>School Notified</label>
+
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
+
                                                             {/* Rights-info */}
                                                             <div className="col-12  ">
                                                                 <div className="container " style={{ border: '1px solid #80808085', }}>
@@ -1213,11 +1220,11 @@ const ArrestMaster = () => {
                                                                                     <label htmlFor="" className='new-summary'>Primary Officer</label>
                                                                                 </div>
                                                                             </div>
-
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
+
                                                             {/* Juvenile Disposition-info */}
                                                             <div className="col-12  ">
                                                                 <div className="container " style={{ border: '1px solid #80808085', }}>
@@ -1247,10 +1254,10 @@ const ArrestMaster = () => {
                                                                 </div>
                                                             </div>
 
-
+                                                            {/* Alias Name Information */}
                                                             <div className="col-12" >
                                                                 {
-                                                                    JSON.parse(obj?.Charge)?.length > 0 && JSON.parse(obj?.NameAliases)?.length > 0 ? (
+                                                                    JSON.parse(obj?.NameAliases)?.length > 0 ? (
                                                                         <div className="container bb" style={{ border: '1px solid #80808085', }}>
                                                                             <h6 className='text-dark mt-2'>Alias Name Information:</h6>
                                                                             <div className="col-12">
@@ -1279,6 +1286,168 @@ const ArrestMaster = () => {
                                                                     ) : null
                                                                 }
                                                             </div>
+                                                            {/* Warrant Information */}
+                                                            <div className="col-12" >
+                                                                {
+                                                                    JSON.parse(obj?.NameWarrant)?.length > 0 ? (
+                                                                        <div className="container bb" style={{ border: '1px solid #80808085', }}>
+                                                                            <h6 className='text-dark mt-2'>Warrant Information:</h6>
+                                                                            <div className="col-12">
+                                                                                <table className="table table-bordered">
+                                                                                    <thead className='text-dark master-table'>
+                                                                                        <tr>
+                                                                                            <th className=''>Warrant Number</th>
+                                                                                            <th className=''>DateTimeIssued</th>
+                                                                                            <th className=''>Assigned Officer</th>
+                                                                                            <th className=''>WarrantStatus</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody className='master-tbody'>
+                                                                                        {
+                                                                                            JSON.parse(obj?.NameWarrant)?.map((item, key) => (
+                                                                                                <tr key={key} style={{ borderBottom: '0.2px solid gray' }}>
+                                                                                                    <td>{item.WarrantNumber}</td>
+                                                                                                    <td>{item.DateTimeIssued ? getShowingDateText(item.DateTimeIssued) : ''}</td>
+                                                                                                    <td>{item.AssignedOfficer}</td>
+                                                                                                    <td>{item.WarrantStatus}</td>
+                                                                                                </tr>
+                                                                                            ))
+                                                                                        }
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </div>
+                                                                    ) : null
+                                                                }
+                                                            </div>
+                                                            <div className="col-12" >
+                                                                {
+                                                                    JSON.parse(obj?.FingerPrints)?.length > 0 ? (
+                                                                        <div className="container bb" style={{ border: '1px solid #80808085', }}>
+                                                                            <h6 className='text-dark mt-2'>FingerPrint Information:</h6>
+                                                                            <div className="col-12">
+                                                                                <table className="table table-bordered">
+                                                                                    <thead className='text-dark master-table'>
+                                                                                        <tr>
+                                                                                            <th className=''>TRN</th>
+                                                                                            <th className=''>FingerPrintDtTm</th>
+                                                                                            <th className=''>PrintedBy</th>
+
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody className='master-tbody'>
+                                                                                        {
+                                                                                            JSON.parse(obj?.FingerPrints)?.map((item, key) => (
+                                                                                                <tr key={key} style={{ borderBottom: '0.2px solid gray' }}>
+                                                                                                    <td>{item.TRN}</td>
+                                                                                                    <td>{item.FingerPrintDtTm ? getShowingDateText(item.DateTimeIssued) : ''}</td>
+                                                                                                    <td>{item.PrintedBy}</td>
+
+                                                                                                </tr>
+                                                                                            ))
+                                                                                        }
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </div>
+                                                                    ) : null
+                                                                }
+                                                            </div>
+                                                            <div className="col-12" >
+                                                                {
+                                                                    JSON.parse(obj?.Mugshot)?.length > 0 ? (
+                                                                        <div className="container bb" style={{ border: '1px solid #80808085', }}>
+                                                                            <h6 className='text-dark mt-2'>MugShot Information:</h6>
+                                                                            <div className="col-12">
+                                                                                <table className="table table-bordered">
+                                                                                    <thead className="text-dark master-table">
+                                                                                        <tr>
+                                                                                            <th>EyeColor</th>
+                                                                                            <th>HairColor</th>
+                                                                                            <th>Height</th>
+                                                                                            <th>Weight</th>
+                                                                                            <th>BodyBuildType</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody className="master-tbody">
+                                                                                        {JSON.parse(obj?.Mugshot)?.map((item, key) => (
+                                                                                            <React.Fragment key={key}>
+                                                                                                {/* Data Row */}
+                                                                                                <tr style={{ borderBottom: '0.2px solid gray' }}>
+                                                                                                    <td>{item.EyeColor}</td>
+                                                                                                    <td>{item.HairColor}</td>
+                                                                                                    <td>{item.Height}</td>
+                                                                                                    <td>{item.Weight}</td>
+                                                                                                    <td>{item.BodyBuildType}</td>
+                                                                                                </tr>
+
+                                                                                                {/* Image Row */}
+                                                                                                <tr>
+                                                                                                    <td colSpan="5">
+                                                                                                        <div
+                                                                                                            className="d-flex align-items-center flex-wrap"
+                                                                                                            style={{
+                                                                                                                width: '100%',
+                                                                                                                gap: '20px',
+                                                                                                                flexDirection: 'row',
+                                                                                                            }}
+                                                                                                        >
+                                                                                                            {item.FrontImage && (
+                                                                                                                <img
+                                                                                                                    src={item.FrontImage}
+                                                                                                                    alt="Front Mugshot"
+                                                                                                                    className="img-fluid"
+                                                                                                                    style={{
+                                                                                                                        width: '200px',
+                                                                                                                        height: 'auto',
+                                                                                                                        objectFit: 'contain',
+                                                                                                                        borderRadius: '5px',
+                                                                                                                    }}
+                                                                                                                />
+                                                                                                            )}
+                                                                                                            {item.LeftImage && (
+                                                                                                                <img
+                                                                                                                    src={item.LeftImage}
+                                                                                                                    alt="Left Mugshot"
+                                                                                                                    className="img-fluid"
+                                                                                                                    style={{
+                                                                                                                        width: '200px',
+                                                                                                                        height: 'auto',
+                                                                                                                        objectFit: 'contain',
+                                                                                                                        borderRadius: '5px',
+                                                                                                                    }}
+                                                                                                                />
+                                                                                                            )}
+                                                                                                            {item.RightImage && (
+                                                                                                                <img
+                                                                                                                    src={item.RightImage}
+                                                                                                                    alt="Right Mugshot"
+                                                                                                                    className="img-fluid"
+                                                                                                                    style={{
+                                                                                                                        width: '200px',
+                                                                                                                        height: 'auto',
+                                                                                                                        objectFit: 'contain',
+                                                                                                                        borderRadius: '5px',
+                                                                                                                    }}
+                                                                                                                />
+                                                                                                            )}
+                                                                                                        </div>
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                            </React.Fragment>
+                                                                                        ))}
+                                                                                    </tbody>
+                                                                                </table>
+
+                                                                               
+                                                                            </div>
+                                                                        </div>
+                                                                    )
+                                                                        :
+                                                                        null
+                                                                }
+                                                            </div>
+
                                                             {/* court */}
                                                             < div className="col-12  " >
                                                                 {
@@ -1454,10 +1623,12 @@ const ArrestMaster = () => {
                                                                         <></>
                                                                 }
                                                             </div>
+
+                                                            {/* Property Information */}
                                                             <div className="col-12" >
                                                                 <div className="table-responsive">
                                                                     {
-                                                                        JSON.parse(obj?.Charge)?.length > 0 && JSON.parse(obj?.ArrestProperty)?.length > 0 ? (
+                                                                        JSON.parse(obj?.ArrestProperty)?.length > 0 ? (
                                                                             <>
                                                                                 <div className="container bb" style={{ border: '1px solid #ddd' }}>
                                                                                     <h5 className='text-dark mt-2'>Property Information:</h5>
@@ -1494,13 +1665,13 @@ const ArrestMaster = () => {
                                                                     }
                                                                 </div>
                                                             </div>
+
                                                             {/* ------------------------VEHICLE --------------------*/}
                                                             <div className="col-12" >
 
                                                                 < div className="table-responsive" >
-
                                                                     {
-                                                                        JSON.parse(obj?.Charge)?.length > 0 && JSON.parse(obj?.ArrestVehicle)?.length > 0 ? (
+                                                                        JSON.parse(obj?.ArrestVehicle)?.length > 0 ? (
                                                                             <>
                                                                                 <div className="container bb" style={{ border: '1px solid #ddd' }}>
                                                                                     <h5 className=' text-dark mt-2' >Vehicle Information:</h5>
@@ -1524,7 +1695,6 @@ const ArrestMaster = () => {
                                                                                                             <td>{item.Classification_Description}</td>
                                                                                                             <td>{item.Value}</td>
                                                                                                             <td>{item.PropertyLossCode_Description}</td>
-
                                                                                                         </tr>
                                                                                                     </>
                                                                                                 ))
@@ -1539,10 +1709,10 @@ const ArrestMaster = () => {
                                                                     }
                                                                 </div>
                                                             </div>
-                                                            {/* ArrestCriminalActivity */}
-                                                            < div className="col-12  " >
-                                                                {
 
+                                                            {/* ArrestCriminalActivity */}
+                                                            {/* < div className="col-12  " >
+                                                                {
                                                                     JSON.parse(obj?.ArrestCriminalActivity)?.length > 0 ?
                                                                         <>
                                                                             <div className="container bb" style={{ border: '1px solid #80808085', }}>
@@ -1569,8 +1739,7 @@ const ArrestMaster = () => {
                                                                         :
                                                                         <></>
                                                                 }
-                                                            </div>
-
+                                                            </div> */}
 
                                                             {/* naartive */}
                                                             <div className="col-12  " >
@@ -1633,8 +1802,6 @@ const ArrestMaster = () => {
                                                                         :
                                                                         <></>
                                                                 }
-
-
                                                                 {
                                                                     JSON.parse(obj?.Smt)?.length > 0 ?
                                                                         <>
@@ -1683,8 +1850,6 @@ const ArrestMaster = () => {
                                                                                                         <label htmlFor="" className='new-summary'>Description</label>
                                                                                                     </div>
                                                                                                 </div>
-
-
                                                                                                 <div className="col-12">
                                                                                                     <div className="row mt-1">
                                                                                                         {
@@ -1700,7 +1865,6 @@ const ArrestMaster = () => {
                                                                                                         }
                                                                                                     </div>
                                                                                                 </div>
-
                                                                                             </div>
                                                                                         ))
                                                                                     }
@@ -1710,34 +1874,6 @@ const ArrestMaster = () => {
                                                                         :
                                                                         <></>
                                                                 }
-                                                                {/* //---------------old-------------------- */}
-                                                                {/* {
-                                                                    JSON.parse(obj?.ArrestPhoto)?.length > 0 ?
-                                                                        <>
-                                                                            <div className="container bb" style={{ border: '1px solid #ddd' }}>
-                                                                                <h6 className=' text-dark mt-2'>Mug Shot Images:</h6>
-                                                                                <div className="col-12 mb-2">
-                                                                                    <div className="row">
-
-                                                                                        {obj.ArrestPhoto ? (
-                                                                                            JSON.parse(obj.ArrestPhoto).map((Photo, index) => (
-                                                                                                <div key={index} className="col-3 mb-3">
-                                                                                                    <img
-                                                                                                        src={Photo.Photo} className=''
-                                                                                                        alt={`Mug shot ${index + 1}`}
-                                                                                                    />
-                                                                                                </div>
-                                                                                            ))
-                                                                                        ) : null}
-                                                                                    </div>
-                                                                                </div>
-
-                                                                            </div>
-                                                                        </>
-                                                                        :
-                                                                        <></>
-                                                                } */}
-
                                                                 {
                                                                     JSON.parse(obj?.ArrestPhoto)?.length > 0 ? (
                                                                         <div className="container bb" style={{ border: '1px solid #ddd' }}>
@@ -1765,8 +1901,8 @@ const ArrestMaster = () => {
                                                                         </div>
                                                                     ) : null
                                                                 }
-
                                                             </div>
+
                                                             {/* juvenile  */}
                                                             <div className="col-12  " >
                                                                 {
@@ -1821,7 +1957,6 @@ const ArrestMaster = () => {
                                                                         <></>
                                                                 }
                                                             </div>
-
 
                                                             {/* police */}
                                                             <div className="col-12  " >
@@ -1943,7 +2078,7 @@ const ArrestMaster = () => {
                                                             </div>
 
                                                             {/* Penalties-info */}
-                                                            <div className="col-12  ">
+                                                            {/* <div className="col-12  ">
                                                                 {
                                                                     JSON.parse(obj?.Charge)?.length > 0 ?
                                                                         <>
@@ -2059,8 +2194,7 @@ const ArrestMaster = () => {
                                                                         :
                                                                         <></>
                                                                 }
-                                                            </div>
-
+                                                            </div> */}
 
                                                             {/* ChargeCourtDisposition  */}
                                                             <div className="col-12  " >
@@ -2126,6 +2260,7 @@ const ArrestMaster = () => {
                                                                         <></>
                                                                 }
                                                             </div>
+
                                                             {/* ChargeComment  */}
                                                             < div className="col-12  " >
                                                                 {
@@ -2174,6 +2309,7 @@ const ArrestMaster = () => {
                                                                         <></>
                                                                 }
                                                             </div>
+
                                                             {/* ChargeWeapon  */}
                                                             < div className="col-12  " >
                                                                 {
@@ -2205,6 +2341,7 @@ const ArrestMaster = () => {
                                                                         <></>
                                                                 }
                                                             </div>
+
                                                             {/* ChargeOffense  */}
                                                             < div className="col-12  " >
                                                                 {

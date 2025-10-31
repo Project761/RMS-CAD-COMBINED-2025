@@ -189,7 +189,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     </components.MultiValue>
   );
 
-
   const useQuery = () => {
     const params = new URLSearchParams(useLocation().search);
     return {
@@ -278,7 +277,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   const nibrsCodeValue = ["09A", "09B", "100", "120", "11A", "11B", "11C", "11D", "13A", "13B", "13C"]
 
   const check_Validation_Error = (e) => {
-    console.log("🚀 ~ check_Validation_Error ~ e:", value?.CrimeMethodOfEntryID)
+
     if (value?.SecondaryLocationId && value?.PrimaryLocationId === value?.SecondaryLocationId) {
       toastifyError("The primary location and secondary location cannot be the same.");
       return;
@@ -329,7 +328,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
 
   // Check All Field Format is True Then Submit
   const { ChargeCodeIDError, NibrsIdError, PremisesEnteredError, MethodOfEnrtyError, WeaponTypeError, CriminalActivityError, OffenderusingError, CrimeBiasCategoryError, AttemptRequiredError, OffenseDttmError, PrimaryLocationError, CommentsError, CargoTheftError } = errors;
-  console.log("🚀 ~ Home ~ errors:", errors)
 
   useEffect(() => {
     if (ChargeCodeIDError === "true" && NibrsIdError === "true" && MethodOfEnrtyError === 'true' && WeaponTypeError === 'true' && CriminalActivityError === 'true' && OffenderusingError === 'true' && CrimeBiasCategoryError === 'true' && PremisesEnteredError === "true" && OffenseDttmError === "true" && AttemptRequiredError === "true" && PrimaryLocationError === "true" && CommentsError === "true" && CargoTheftError === 'true') {
@@ -551,7 +549,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
           setValue((pre) => ({ ...pre, ["SecondaryLocationId"]: null }));
         }
       } else {
-        setValue({ ...value, [name]: e.value });  
+        setValue({ ...value, [name]: e.value });
       }
     } else if (e === null) {
       if (name === "PrimaryLocationId") {
@@ -697,7 +695,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
       selectedIdArray.includes(option.value.toString())
     );
   };
-  
 
   const LocationIdDrpDwnVal = (loginAgencyID) => {
     const val = { AgencyID: loginAgencyID };
@@ -1004,7 +1001,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     }
   }, [offenceFillterData]);
 
-
   const columns = [
     {
       minWidth: "200px",
@@ -1307,20 +1303,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     }),
   };
 
-  // Custom Style
-  // const nibrscolourStyles = {
-  //   control: (styles) => ({
-  //     ...styles,
-  //     backgroundColor: "rgb(255 202 194)",
-  //     height: 20,
-  //     minHeight: 35,
-  //     fontSize: 14,
-  //     margintop: 2,
-  //     boxShadow: 0,
-  //   }),
-  // };
-
-
   const nibrsSuccessStyles = {
     control: (styles) => ({
       ...styles,
@@ -1554,7 +1536,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     return [...new Map(arr?.map(item => [item[key], item])).values()]
   }
 
-
   const getCheckNotApplicable = () => {
     if (loginAgencyState === 'TX') {
       let offenderUsingValues = filterArray(crimeOffenderUse, 'label');
@@ -1569,7 +1550,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   const getOffenderUsingDrpData = (data) => {
     if (loginAgencyState === 'TX') {
       let offenderUsingValues = filterArray(crimeOffenderUse, 'label');
-
       const status = offenderUsingValues?.filter((item) => { if (item.code === "N") return item });
       return status?.length > 0 ? [] : data
     } else {
@@ -1588,8 +1568,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
 
   const OffenderUsechange = (multiSelected) => {
     !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-
-
     setCrimeOffenderUse(multiSelected)
     const len = multiSelected.length - 1
     if (multiSelected?.length < crimeOffenderUseEditVal?.length) {
@@ -1598,7 +1576,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
       while (i) {
         missing = (~multiSelected.indexOf(crimeOffenderUseEditVal[--i])) ? missing : crimeOffenderUseEditVal[i];
       }
-
     } else {
 
     }
@@ -1977,11 +1954,9 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     if (crimeOffenderUseEditVal) { setCrimeOffenderUse(crimeOffenderUseEditVal) }
   }, [crimeOffenderUseEditVal])
 
-
   useEffect(() => {
     if (crimeSuspectEditVal) { setCrimeSuspect(crimeSuspectEditVal) }
   }, [crimeSuspectEditVal]);
-
 
   return (
     <>
