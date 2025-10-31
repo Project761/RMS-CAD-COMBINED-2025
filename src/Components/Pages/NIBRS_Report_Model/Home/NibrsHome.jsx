@@ -61,6 +61,7 @@ const NibrsHome = () => {
   const [isPropertyIdZeroError, setIsPropertyIdZeroError] = useState(false);
   const [isCrimeAgainstPropertyError, setIsCrimeAgainstPropertyError] = useState(false)
   const [isVictimConnectedError, setIsVictimConnectedError] = useState(false);
+  const [isOffense240VehError, setIsOffense240VehError] = useState(false);
 
   /// Error String
   const [administrativeErrorString, setAdministrativeErrorString] = useState('');
@@ -190,7 +191,7 @@ const NibrsHome = () => {
       // property
       setSuspectedDrugTypeErrorStatus(false); setIsCrimeAgainstPropertyError(false); setIsPropertyIdZeroError(false); setPropErrorStatus(false); setPropertyErrorString('');
       // vehicle
-      setVehErrorStatus(false); setVehicleErrorString('');
+      setVehErrorStatus(false); setVehicleErrorString(''); setIsOffense240VehError(false);
       // offense
       setOffenseErrorStatus(false); setOffenseErrorString('');
       // offender
@@ -203,7 +204,10 @@ const NibrsHome = () => {
 
       try {
         const groupBOffenseArrestError = await getGroupBOffenseData(IncID)
- 
+        const vehicle240Error = await getVehicle240Error(IncID)
+        // const vehicle240Error = true
+
+
         if (incidentValidateNibrsData?.Incident || groupBOffenseArrestError) {
           const incObj = incidentValidateNibrsData?.Incident ? incidentValidateNibrsData?.Incident : [];
 
@@ -331,6 +335,13 @@ const NibrsHome = () => {
 
         }
 
+        if (vehicle240Error) {
+          setIsOffense240VehError(true);
+          setVehErrorStatus(true);
+          setVehicleErrorString('For crimes against property, a property record is required.');
+
+        }
+
         // set offender error string
         if (offenderValidateNibrsData) {
           const offenderObj = offenderValidateNibrsData?.Offender ? offenderValidateNibrsData?.Offender : [];
@@ -414,6 +425,11 @@ const NibrsHome = () => {
     return `Property (${PropertyCount})`;
   };
 
+  const TitleErrorStyle = {
+    border: '1px solid red', backgroundColor: '#ffe6e6', color: 'red', padding: '3px', borderRadius: '4px', display: 'inline-block',
+    transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
+  }
+
   const sectionData = [
     {
       title: "Administrative Details",
@@ -422,18 +438,7 @@ const NibrsHome = () => {
       list: <Administrative_Details incidentClick={incidentClick} isNibrsSummited={isNibrsSummited} />
     },
     {
-      title: !isOffenseInc ? `Offense (${offenseCount})` : (
-        <span
-          className="text-center"
-          style={{
-            border: '1px solid red', backgroundColor: '#ffe6e6', color: 'red',
-            padding: '3px', borderRadius: '4px', display: 'inline-block',
-            transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
-          }}
-        >
-          {`Offense (${offenseCount}) --- This Incident does not have any TIBRS reportable Crime(s)`}
-        </span>
-      ),
+      title: !isOffenseInc ? `Offense (${offenseCount})` : <span className="text-center" style={TitleErrorStyle} > {`Offense (${offenseCount}) --- This Incident does not have any TIBRS reportable Crime(s)`} </span>,
       status: !offenseErrorStatus && !isOffenseInc ? "completed" : "attention highlighted",
       sectionKey: "offenses",
       list: (<Offense offenseClick={offenseClick} isNibrsSummited={isNibrsSummited} />)
@@ -445,62 +450,41 @@ const NibrsHome = () => {
       list: <MainOffender offenderClick={offenderClick} isNibrsSummited={isNibrsSummited} />
     },
     {
-      title: isVictimConnectedError ? <span className="text-center" style={{
-        border: '1px solid red', backgroundColor: '#ffe6e6', color: 'red', padding: '3px', borderRadius: '4px', display: 'inline-block',
-        transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
-      }}>
-        {`Victim (${VictimCount}) --- Connection of victim and offense is needed`}
-
-      </span> : `Victim (${VictimCount})`,
+      title: isVictimConnectedError ? <span className="text-center" style={TitleErrorStyle}> {`Victim (${VictimCount}) --- Connection of victim and offense is needed`} </span> : `Victim (${VictimCount})`,
       status: !victimErrorStatus && !isVictimConnectedError ? "completed" : "attention highlighted",
       sectionKey: "Victims",
       list: <MainVictims victimClick={victimClick} isNibrsSummited={isNibrsSummited} />
     },
     {
       title: getPropertyTitle(),
-      // title: !isSuspectedDrugTypeErrorStatus && !isPropertyIdZeroError && !isCrimeAgainstPropertyError ? `Property (${PropertyCount})`
-      //   :
-      //   isCrimeAgainstPropertyError ? <span className="text-center" style={{
-      //     border: '1px solid red', backgroundColor: '#ffe6e6', color: 'red', padding: '3px', borderRadius: '4px', display: 'inline-block', transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
-      //   }}>Property --- For crimes against property, a property record is required.</span>
-      //     :
-      //     isSuspectedDrugTypeErrorStatus ? <span className="text-center" style={{
-      //       border: '1px solid red', backgroundColor: '#ffe6e6', color: 'red', padding: '3px', borderRadius: '4px', display: 'inline-block',
-      //       transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
-      //     }}>Property --- Add at least one suspected drug type(create a Property with type 'Drug')</span>
-      //       :
-      //       isPropertyIdZeroError ? <span className="text-center" style={{
-      //         border: '1px solid red', backgroundColor: '#ffe6e6', color: 'red', padding: '3px', borderRadius: '4px', display: 'inline-block',
-      //         transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
-      //       }}>Property --- Need a property loss code of 5,7 for offense  23B</span> : `Property (${PropertyCount})`,
-
       status: !propErrorStatus && !isCrimeAgainstPropertyError && !isSuspectedDrugTypeErrorStatus && !isPropertyIdZeroError ? "completed" : "attention highlighted",
       sectionKey: "Properties",
       list: <Properties propertyClick={propertyClick} isNibrsSummited={isNibrsSummited} />
     },
     {
-      title: `Vehicle (${VehicleCount})`,
+      title: isOffense240VehError ? <span className="text-center" style={TitleErrorStyle}> {`Vehicle (${VehicleCount}) --- For crimes against property, a property record is required.`} </span> : `Vehicle (${VehicleCount})`,
       status: !vehErrorStatus ? "completed" : "attention highlighted",
       sectionKey: "VehicleTab",
       list: <VehicleTab vehicleClick={vehicleClick} isNibrsSummited={isNibrsSummited} />
     },
     {
-      title: !isGroup_B_Offense_ArrestInc ? `Arrestee (${ArrestCount})` : <span className="text-center" style={{
-        border: '1px solid red', backgroundColor: '#ffe6e6', color: 'red',
-        padding: '3px', borderRadius: '4px', display: 'inline-block',
-        transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
-      }}>Arrestee --- There is no arrest attached to this Group B offense Incident</span>,
+      title: !isGroup_B_Offense_ArrestInc ? `Arrestee (${ArrestCount})` : <span className="text-center" style={TitleErrorStyle}>Arrestee --- There is no arrest attached to this Group B offense Incident</span>,
       status: !nibrsValidateIncidentData?.Arrestees && !isGroup_B_Offense_ArrestInc ? "completed" : "attention highlighted",
       sectionKey: "Arrestees",
       list: <Arrestees arrestClick={arrestClick} isNibrsSummited={isNibrsSummited} />
-    },  
+    },
   ];
 
 
   const getGroupBOffenseData = async (IncID) => {
     try {
+      // const [groupBOffenseArrestError, vehicle240Error] = await Promise.all([
+      //   fetchPostData(`NIBRSError/GetData_OffenceGroupBArrestError`, { IncID: IncID }),
+      //   //  fetchPostData(`NIBRSError/GetData_OffenceGroupBArrestError`, { IncID: IncID }),
+      // ])
+
       const groupBOffenseArrestError = await fetchPostData(`NIBRSError/GetData_OffenceGroupBArrestError`, { IncID: IncID })
-      // console.log("🚀 ~ getGroupBOffenseData ~ groupBOffenseArrestError:", groupBOffenseArrestError)
+
       if (groupBOffenseArrestError && groupBOffenseArrestError[0]?.OffenceGroupBArrest) {
         return true
       }
@@ -512,6 +496,21 @@ const NibrsHome = () => {
     }
   }
 
+  const getVehicle240Error = async (IncID) => {
+    try {
+      const vehicle240Error = await fetchPostData(`NIBRSError/GetData_OffenceVehcileError`, { IncID: IncID })
+      console.log("🚀 ~ getVehicle240Error ~ vehicle240Error:", vehicle240Error)
+
+      if (vehicle240Error && vehicle240Error[0]?.OffenceVehcileError) {
+        return true
+      }
+      return false
+
+    } catch (error) {
+      console.error("🚀 ~ getVehicle240Error ~ error:", error)
+      return false
+    }
+  }
 
   return (
     <>
