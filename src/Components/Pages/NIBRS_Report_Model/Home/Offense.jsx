@@ -35,7 +35,7 @@ const MultiValue = (props) => (
   </components.MultiValue>
 );
 
-const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () => { } }) => {
+const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -1091,7 +1091,6 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
           get_Weapon_Data(res?.CrimeID);
 
           // Validate Offense
-          ValidateProperty(IncID);
           ValidateOffense(IncID);
           NibrsErrorReturn(res?.CrimeID);
           // validateIncSideBar
@@ -1135,7 +1134,7 @@ const Offense = ({ offenseClick, isNibrsSummited = false, ValidateProperty = () 
         get_Offence_Count(offenceID);
 
         // Validate Offense
-        ValidateProperty(IncID);
+
         ValidateOffense(IncID);
         NibrsErrorReturn(CrimeID);
         // validateIncSideBar

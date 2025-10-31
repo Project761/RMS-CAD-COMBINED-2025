@@ -28,7 +28,7 @@ import { threeColArray } from '../../../Common/ChangeArrayFormat';
 import { AddDeleteUpadate, fetchPostData, fetchPostDataNibrs, } from '../../../hooks/Api';
 import { Decrypt_Id_Name, Encrypted_Id_Name, Requiredcolour, base64ToString, filterPassedTimeZone, filterPassedTimeZonesProperty, getShowingDateText, getShowingMonthDateYear, getYearWithOutDateTime, stringToBase64, tableCustomStyles } from '../../../Common/Utility';
 
-const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsSummited = false, ValidateProperty = () => { } }) => {
+const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsSummited = false, }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -418,7 +418,7 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                 setMasterPropertyID(res?.MasterPropertyID);
 
                 // Validate Vehicle 
-                ValidateProperty(mainIncidentID);
+             
                 ValidateVehicle(mainIncidentID);
                 NibrsErrorReturn(res?.PropertyID);
                 // validateIncSideBar
@@ -445,7 +445,7 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                 setValue({ ...value, Value: previousValue, });
 
                 // Validate Vehicle 
-                ValidateProperty(mainIncidentID);
+          
                 ValidateVehicle(mainIncidentID);
                 NibrsErrorReturn(vehicleID);
                 // validateIncSideBar

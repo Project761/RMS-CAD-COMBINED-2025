@@ -24,7 +24,7 @@ import DeletePopUpModal from '../../../Common/DeleteModal';
 import SelectBox from '../../../Common/SelectBox';
 
 
-const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty = () => { }, getIncident_NibrsErrors = () => { } }) => {
+const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsErrors = () => { } }) => {
 
     const dispatch = useDispatch();
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
@@ -798,7 +798,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
                     setChangesStatus(false); setStatesChangeStatus(true); setDrugLocalArr([]);
 
                     // Validate Property
-                    ValidateProperty(mainIncidentID);
+            
                     ValidateIncidentProperty(mainIncidentID);
                     NibrsErrorReturn(res?.PropertyID);
                     // validateIncSideBar
@@ -829,7 +829,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
                 GetSingleData(DecPropID, DecMPropID);
 
                 // Validate Property
-                ValidateProperty(mainIncidentID);
+           
                 ValidateIncidentProperty(mainIncidentID);
                 NibrsErrorReturn(DecPropID);
                 // validateIncSideBar
@@ -1473,7 +1473,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, ValidateProperty =
                                 setclickNibLoder(false);
 
 
-                                // ValidateProperty(mainIncidentID);
+                       
 
                             }
 

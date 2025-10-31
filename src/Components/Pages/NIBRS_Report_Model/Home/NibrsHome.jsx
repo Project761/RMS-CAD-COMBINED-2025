@@ -70,6 +70,7 @@ const NibrsHome = () => {
   const [offenderErrorString, setOffenderErrorString] = useState('');
   const [propertyErrorString, setPropertyErrorString] = useState('');
   const [vehicleErrorString, setVehicleErrorString] = useState('');
+  const [arrestErrorString, setArrestErrorString] = useState('');
 
   const offenseCount = incidentCount[0]?.OffenseCount || 0;
   const NameCount = incidentCount[0]?.NameCount || 0;
@@ -153,177 +154,6 @@ const NibrsHome = () => {
     }
   }
 
-  // validate property/vehicle
-  const ValidateProperty = async (incidentID) => {
-    // // loader
-    // setnibrsValidateLoder(true);
-    // // Administrative
-    // setAdministrativeErrorString(''); setIsGroup_B_Offense_ArrestInc(false); setIsOffenseInc(false);
-    // // incident
-    // setIncidentErrorStatus(false); setIncidentErrorString('');
-    // // property
-    // setSuspectedDrugTypeErrorStatus(false); setIsCrimeAgainstPropertyError(false); setIsPropertyIdZeroError(false); setPropErrorStatus(false); setPropertyErrorString('');
-    // // vehicle
-    // setVehErrorStatus(false); setVehicleErrorString('');
-    // // offense
-    // setOffenseErrorStatus(false); setOffenseErrorString('');
-    // // offender
-    // setOffenderErrorStatus(false); setOffenderErrorString('');
-
-    // // victim
-    // setVictimErrorStatus(false); setVictimErrorString(''); setIsVictimConnectedError(false);
-    // const res = await TXIBRSValidateCall(incidentID, incReportedDate, baseDate, oriNumber);
-
-
-    // if (res) {
-
-    //   try {
-    //     const [incidentError, victimError, offenseError, propertyError, offenderError] = await Promise.all([
-    //       fetchPostDataNibrs('NIBRS/GetIncidentNIBRSError', { 'StrIncidentID': incidentID, 'StrIncidentNumber': IncNo, 'StrAgencyID': loginAgencyID }),
-    //       fetchPostDataNibrs('NIBRS/GetVictimNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'NameID': "", 'gIntAgencyID': loginAgencyID }),
-    //       fetchPostDataNibrs("NIBRS/Nibrs_OffenseError", { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'CrimeId': "", 'gIntAgencyID': loginAgencyID }),
-    //       fetchPostDataNibrs('NIBRS/GetPropertyNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'PropertyId': "", 'gIntAgencyID': loginAgencyID }),
-    //       fetchPostDataNibrs('NIBRS/GetOffenderNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'NameID': "", 'gIntAgencyID': loginAgencyID }),
-    //     ])
-
-    //     if (incidentError?.Incident) {
-    //       const incObj = incidentError?.Incident ? incidentError?.Incident : [];
-
-    //       if (incObj?.IsGroupBArrest) {
-    //         setAdministrativeErrorString(incObj?.IsGroupBArrestError ? incObj?.IsGroupBArrestError : '');
-    //         setIsGroup_B_Offense_ArrestInc(true);
-
-    //       } else {
-    //         setIsGroup_B_Offense_ArrestInc(false);
-
-    //       }
-
-    //     }
-
-    //     // set offense error string
-    //     if (offenseError) {
-    //       const incObj = incidentError?.Incident ? incidentError?.Incident : [];
-    //       const offenseObj = offenseError?.Offense ? offenseError?.Offense : [];
-
-    //       if (offenseObj?.length > 0) {
-
-    //         setOffenseErrorString(offenseObj[0]?.OnPageError ? offenseObj[0]?.OnPageError : '');
-    //         setOffenseErrorStatus(true);
-
-    //       } else {
-
-    //         if (incObj?.IsOffence) {
-    //           setOffenseErrorString(incObj?.IsOffenceError ? incObj?.IsOffenceError : '');
-    //           setIsOffenseInc(true); setOffenseErrorStatus(true);
-
-    //         } else {
-    //           setIsOffenseInc(false); setOffenseErrorStatus(false); setOffenseErrorString('');
-
-    //         }
-    //       }
-
-    //     } else {
-    //       setOffenseErrorStatus(false); setOffenseErrorString('');
-
-    //     }
-
-    //     if (propertyError) {
-    //       const proObj = propertyError?.Properties ? propertyError?.Properties : [];
-    //       // console.log("🚀 ~ ValidateProperty ~ proObj:", proObj)
-
-    //       // set property error string
-    //       if (proObj?.length > 0) {
-
-    //         const isCrimeAgainstError = proObj[0]?.OnPageError?.includes("Property must be present.");
-    //         // const isCrimeAgainstError = proObj[0]?.OnPageError?.includes("For Crime Against Property Property must be present.");
-    //         const isSuspectedDrugType = proObj[0]?.OnPageError?.includes("{352} Add at least one suspected drug type(create a property with type 'Drug')");
-    //         // const isSuspectedDrugType = proObj[0]?.OnPageError?.includes("{352} There should be atleast 1 Suspected Drug Type entry.");
-    //         const isPropertyIdZeroError = proObj[0]?.OnPageError?.includes("{074} Need a property loss code of 5,7 for offense  23B");
-
-    //         if (isCrimeAgainstError) {
-    //           setIsCrimeAgainstPropertyError(true); setSuspectedDrugTypeErrorStatus(false); setIsPropertyIdZeroError(false);
-
-    //         } else if (isSuspectedDrugType) {
-    //           setSuspectedDrugTypeErrorStatus(true); setIsPropertyIdZeroError(false); setIsCrimeAgainstPropertyError(false);
-
-    //         } else if (isPropertyIdZeroError) {
-    //           setIsPropertyIdZeroError(true); setSuspectedDrugTypeErrorStatus(false); setIsCrimeAgainstPropertyError(false);
-
-    //         } else {
-    //           setSuspectedDrugTypeErrorStatus(false); setIsPropertyIdZeroError(false); setIsCrimeAgainstPropertyError(false);
-
-    //         }
-
-    //         const VehArr = proObj?.filter((item) => item?.PropertyType === 'V');
-    //         const PropArr = proObj?.filter((item) => item?.PropertyType !== 'V');
-
-    //         if (VehArr?.length > 0) {
-    //           setVehicleErrorString(VehArr[0]?.OnPageError ? VehArr[0]?.OnPageError : ''); setVehErrorStatus(true);
-    //         } else {
-    //           setVehErrorStatus(false); setVehicleErrorString('');
-    //         }
-
-    //         // set property error string
-    //         if (PropArr?.length > 0) {
-    //           setPropertyErrorString(PropArr[0]?.OnPageError ? PropArr[0]?.OnPageError : ''); setPropErrorStatus(true);
-    //         } else {
-    //           setPropErrorStatus(false); setPropertyErrorString('');
-    //         }
-
-    //       } else {
-
-    //       }
-    //     } else {
-    //       setPropErrorStatus(false); setPropertyErrorString(''); setVehErrorStatus(false); setVehicleErrorString('');
-    //     }
-
-    //     // set offender error string
-    //     if (offenderError) {
-    //       const offenderObj = offenderError?.Offender ? offenderError?.Offender : [];
-    //       if (offenderObj?.length > 0) {
-    //         setOffenderErrorString(offenderObj[0]?.OnPageError ? offenderObj[0]?.OnPageError : ''); setOffenderErrorStatus(true);
-    //       } else {
-    //         setOffenderErrorStatus(false); setOffenderErrorString('');
-    //       }
-    //     } else {
-    //       setOffenderErrorStatus(false); setOffenderErrorString('');
-    //     }
-
-    //     // set victim error string
-    //     if (victimError) {
-    //       const victimObj = victimError?.Victim ? victimError?.Victim : [];
-    //       if (victimObj?.length > 0) {
-    //         const isVictimConnectedError = victimObj[0]?.OnPageError?.includes("At least one victim must be present and must be connected with offence.");
-    //         if (isVictimConnectedError) {
-    //           setIsVictimConnectedError(true);
-    //         } else {
-    //           setIsVictimConnectedError(false);
-    //         }
-    //         setVictimErrorString(victimObj[0]?.OnPageError ? victimObj[0]?.OnPageError : ''); setVictimErrorStatus(true);
-    //       } else {
-    //         setVictimErrorStatus(false); setVictimErrorString(''); setIsVictimConnectedError(false);
-    //       }
-    //     } else {
-    //       setVictimErrorStatus(false); setVictimErrorString('');
-    //     }
-
-    //     // validateIncSideBar
-    //     validate_IncSideBar(incidentID, IncNo, loginAgencyID);
-    //     // set loader false
-    //     setnibrsValidateLoder(false);
-
-    //   } catch (error) {
-    //     console.log("🚀 ~ ValidateProperty ~ error:", error);
-    //     setnibrsValidateLoder(false);
-    //   }
-
-    // } else {
-    //   setnibrsValidateLoder(false);
-
-    // }
-
-  }
-
   // validate Incident
   const TXIBRSValidateCall = async (incidentID, reportDate, baseDate, oriNumber) => {
     try {
@@ -354,7 +184,7 @@ const NibrsHome = () => {
       // // loader
       // setnibrsValidateLoder(true);
       // Administrative
-      setAdministrativeErrorString(''); setIsGroup_B_Offense_ArrestInc(false); setIsOffenseInc(false);
+      setAdministrativeErrorString(''); setIsOffenseInc(false);
       // incident
       setIncidentErrorStatus(false); setIncidentErrorString('');
       // property
@@ -367,15 +197,22 @@ const NibrsHome = () => {
       setOffenderErrorStatus(false); setOffenderErrorString('');
       // victim
       setVictimErrorStatus(false); setVictimErrorString(''); setIsVictimConnectedError(false);
+      // arrest
+      setArrestErrorString(''); setIsGroup_B_Offense_ArrestInc(false);
 
 
       try {
-
-        if (incidentValidateNibrsData?.Incident) {
+        const groupBOffenseArrestError = await getGroupBOffenseData(IncID)
+ 
+        if (incidentValidateNibrsData?.Incident || groupBOffenseArrestError) {
           const incObj = incidentValidateNibrsData?.Incident ? incidentValidateNibrsData?.Incident : [];
 
           if (incObj?.IsGroupBArrest) {
             setAdministrativeErrorString(incObj?.IsGroupBArrestError ? incObj?.IsGroupBArrestError : '');
+            setIsGroup_B_Offense_ArrestInc(true);
+
+          } else if (groupBOffenseArrestError) {
+            setArrestErrorString('There is no arrest attached to this Group B offense Incident');
             setIsGroup_B_Offense_ArrestInc(true);
 
           } else {
@@ -446,7 +283,7 @@ const NibrsHome = () => {
 
             const VehArr = proObj?.filter((item) => item?.PropertyType === 'V');
             // console.log("🚀 ~ validateNibrs ~ VehArr:", VehArr)
-            const PropArr = proObj?.filter((item) => item?.PropertyType !== 'V' && item?.PropertyType );
+            const PropArr = proObj?.filter((item) => item?.PropertyType !== 'V' && item?.PropertyType);
             // console.log("🚀 ~ validateNibrs ~ PropArr:", PropArr)
 
             if (VehArr?.length > 0) {
@@ -476,7 +313,7 @@ const NibrsHome = () => {
 
             } else {
               if (isCrimeAgainstPropertyError || isSuspectedDrugTypeErrorStatus || isPropertyIdZeroError) {
-             
+
                 setPropErrorStatus(true);
               } else {
                 setPropErrorStatus(false); setPropertyErrorString('');
@@ -510,7 +347,7 @@ const NibrsHome = () => {
         // set victim error string
         if (victimValidateNibrsData) {
           const victimObj = victimValidateNibrsData?.Victim ? victimValidateNibrsData?.Victim : [];
-          console.log("🚀 ~ validateNibrs ~ victimObj:", victimObj)
+          // console.log("🚀 ~ validateNibrs ~ victimObj:", victimObj)
           if (victimObj?.length > 0) {
             const isVictimConnectedError = victimObj[0]?.OnPageError?.includes("At least one victim must be present and must be connected with offence.");
             if (isVictimConnectedError) {
@@ -529,7 +366,7 @@ const NibrsHome = () => {
 
       } catch (error) {
         console.log("🚀 ~ ValidateProperty ~ error:", error);
-       
+
       }
 
     }
@@ -553,7 +390,7 @@ const NibrsHome = () => {
     if (isCrimeAgainstPropertyError) {
       return (
         <span style={baseStyle}>
-          Property — For crimes against property, a property record is required.
+          {`Property (${PropertyCount}) — For crimes against property, a property record is required.`}
         </span>
       );
     }
@@ -561,7 +398,7 @@ const NibrsHome = () => {
     if (isSuspectedDrugTypeErrorStatus) {
       return (
         <span style={baseStyle}>
-          Property — Add at least one suspected drug type (create a Property with type ‘Drug’).
+          {`Property (${PropertyCount}) — Add at least one suspected drug type (create a Property with type ‘Drug’).`}
         </span>
       );
     }
@@ -569,7 +406,7 @@ const NibrsHome = () => {
     if (isPropertyIdZeroError) {
       return (
         <span style={baseStyle}>
-          Property — Need a property loss code of 5 or 7 for offense 23B.
+          {`Property (${PropertyCount}) — Need a property loss code of 5 or 7 for offense 23B.`}
         </span>
       );
     }
@@ -594,36 +431,30 @@ const NibrsHome = () => {
             transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
           }}
         >
-          Offense --- This Incident does not have any TIBRS reportable Crime(s)
+          {`Offense (${offenseCount}) --- This Incident does not have any TIBRS reportable Crime(s)`}
         </span>
       ),
       status: !offenseErrorStatus && !isOffenseInc ? "completed" : "attention highlighted",
       sectionKey: "offenses",
-      list: (
-        <Offense
-          offenseClick={offenseClick}
-          isNibrsSummited={isNibrsSummited}
-          ValidateProperty={ValidateProperty}
-        />
-      )
+      list: (<Offense offenseClick={offenseClick} isNibrsSummited={isNibrsSummited} />)
     },
     {
       title: `Offender (${OffenderCount})`,
       status: !offenderErrorStatus ? "completed" : "attention highlighted",
       sectionKey: "offenders",
-      list: <MainOffender offenderClick={offenderClick} isNibrsSummited={isNibrsSummited} ValidateProperty={ValidateProperty} />
+      list: <MainOffender offenderClick={offenderClick} isNibrsSummited={isNibrsSummited} />
     },
     {
       title: isVictimConnectedError ? <span className="text-center" style={{
         border: '1px solid red', backgroundColor: '#ffe6e6', color: 'red', padding: '3px', borderRadius: '4px', display: 'inline-block',
         transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
       }}>
-        Victim --- Connection of Victim and Offense is needed
+        {`Victim (${VictimCount}) --- Connection of victim and offense is needed`}
 
       </span> : `Victim (${VictimCount})`,
       status: !victimErrorStatus && !isVictimConnectedError ? "completed" : "attention highlighted",
       sectionKey: "Victims",
-      list: <MainVictims victimClick={victimClick} isNibrsSummited={isNibrsSummited} ValidateProperty={ValidateProperty} />
+      list: <MainVictims victimClick={victimClick} isNibrsSummited={isNibrsSummited} />
     },
     {
       title: getPropertyTitle(),
@@ -645,36 +476,41 @@ const NibrsHome = () => {
 
       status: !propErrorStatus && !isCrimeAgainstPropertyError && !isSuspectedDrugTypeErrorStatus && !isPropertyIdZeroError ? "completed" : "attention highlighted",
       sectionKey: "Properties",
-      list: <Properties propertyClick={propertyClick} isNibrsSummited={isNibrsSummited} ValidateProperty={ValidateProperty} />
+      list: <Properties propertyClick={propertyClick} isNibrsSummited={isNibrsSummited} />
     },
     {
       title: `Vehicle (${VehicleCount})`,
       status: !vehErrorStatus ? "completed" : "attention highlighted",
       sectionKey: "VehicleTab",
-      list: <VehicleTab vehicleClick={vehicleClick} isNibrsSummited={isNibrsSummited} ValidateProperty={ValidateProperty} />
+      list: <VehicleTab vehicleClick={vehicleClick} isNibrsSummited={isNibrsSummited} />
     },
     {
       title: !isGroup_B_Offense_ArrestInc ? `Arrestee (${ArrestCount})` : <span className="text-center" style={{
         border: '1px solid red', backgroundColor: '#ffe6e6', color: 'red',
         padding: '3px', borderRadius: '4px', display: 'inline-block',
         transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
-      }}>Arrestee --- Warning: There is no arrest attached to this Group B offense Incident</span>,
+      }}>Arrestee --- There is no arrest attached to this Group B offense Incident</span>,
       status: !nibrsValidateIncidentData?.Arrestees && !isGroup_B_Offense_ArrestInc ? "completed" : "attention highlighted",
       sectionKey: "Arrestees",
       list: <Arrestees arrestClick={arrestClick} isNibrsSummited={isNibrsSummited} />
-    },
+    },  
   ];
 
-  // useEffect(() => {
-  //   const validateIncident = async () => {
-  //     if (IncID && incReportedDate && baseDate && oriNumber) {
-  //       if (nibrsValidateIncidentData?.length === 0) {
-  //         await ValidateProperty(IncID);
-  //       }
-  //     }
-  //   }
-  //   validateIncident();
-  // }, [incReportedDate, IncID, baseDate, oriNumber]);
+
+  const getGroupBOffenseData = async (IncID) => {
+    try {
+      const groupBOffenseArrestError = await fetchPostData(`NIBRSError/GetData_OffenceGroupBArrestError`, { IncID: IncID })
+      // console.log("🚀 ~ getGroupBOffenseData ~ groupBOffenseArrestError:", groupBOffenseArrestError)
+      if (groupBOffenseArrestError && groupBOffenseArrestError[0]?.OffenceGroupBArrest) {
+        return true
+      }
+      return false
+
+    } catch (error) {
+      console.error("🚀 ~ getGroupBOffenseData ~ error:", error)
+      return false
+    }
+  }
 
 
   return (
@@ -742,7 +578,6 @@ const NibrsHome = () => {
         <button
           type="button"
           onClick={() => {
-            // ValidateProperty(incidentID);
             validate_IncSideBar(incidentID, IncNo, loginAgencyID);
             setNibrsErrModalStatus(true);
           }}
@@ -770,6 +605,7 @@ const NibrsHome = () => {
         offenderErrorString={offenderErrorString}
         propertyErrorString={propertyErrorString}
         vehicleErrorString={vehicleErrorString}
+        arrestErrorString={arrestErrorString}
       />
 
       {
