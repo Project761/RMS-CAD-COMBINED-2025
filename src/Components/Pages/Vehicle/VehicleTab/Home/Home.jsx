@@ -147,7 +147,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
         'OANID': '', 'StyleID': '', 'MakeID': null, 'ModelID': null, 'ManufactureYear': '', 'Weight': '', 'OwnerID': null,
         'PrimaryColorID': '', 'SecondaryColorID': '', 'Value': '', 'Inspection_Sticker': '', 'InspectionExpiresDtTm': '',
         'PrimaryOfficerID': null, 'InProfessionOf': '', 'TagID': null, 'NICBID': null, 'DestroyDtTm': '', 'Description': '',
-        'IsEvidence': '', 'IsRecoveredByAgencyOfOther' : '' , 'IsPropertyRecovered': '', 'IsImmobalizationDevice': '', 'IsEligibleForImmobalization': '',
+        'IsEvidence': '', 'IsRecoveredByAgencyOfOther': '', 'IsPropertyRecovered': '', 'IsImmobalizationDevice': '', 'IsEligibleForImmobalization': '',
         'ModifiedByUserFK': "", 'ArrestID': "", 'AgencyID': '', 'IsMaster': MstVehicle === "MST-Vehicle-Dash" ? true : false,
         'ModelName': '',
         'PlateExpirationMonth': '',
@@ -376,7 +376,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                 'VIN': '', 'VODID': '', 'PlateExpireDtTm': '', 'StyleID': '', 'MakeID': null, 'ModelID': null, 'ManufactureYear': '',
                 'Weight': '', 'OwnerID': null, 'PrimaryColorID': '', 'SecondaryColorID': '', 'Value': '',
                 'PrimaryOfficerID': null, 'InProfessionOf': '', 'TagID': null, 'NICBID': null, 'DestroyDtTm': '', 'Description': '',
-                'IsEvidence': '', 'IsRecoveredByAgencyOfOther' : '' , 'IsPropertyRecovered': '', 'IsImmobalizationDevice': '', 'IsEligibleForImmobalization': '', 'ModelName': '',
+                'IsEvidence': '', 'IsRecoveredByAgencyOfOther': '', 'IsPropertyRecovered': '', 'IsImmobalizationDevice': '', 'IsEligibleForImmobalization': '', 'ModelName': '',
                 'PlateExpirationMonth': '', 'PlateExpirationYear': '',
             });
             setuploadImgFiles([]); setVehicleMultiImg([]);
@@ -639,11 +639,11 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
             'VIN': '', 'VODID': '', 'PlateExpireDtTm': '', 'OANID': '', 'StyleID': '', 'MakeID': '', 'ModelID': '', 'ManufactureYear': '',
             'Weight': '', 'OwnerID': '', 'PrimaryColorID': '', 'SecondaryColorID': '', 'Value': '', 'Inspection_Sticker': '', 'InspectionExpiresDtTm': '', 'ModelName': '',
             'InProfessionOf': '', 'TagID': '', 'NICBID': '', 'DestroyDtTm': '', 'Description': '', 'PrimaryOfficerID': '',
-            'IsEvidence': '', 'IsRecoveredByAgencyOfOther' : '' , 'IsPropertyRecovered': '', 'IsImmobalizationDevice': '', 'IsEligibleForImmobalization': '', 'IsSendToPropertyRoom': '',
+            'IsEvidence': '', 'IsRecoveredByAgencyOfOther': '', 'IsPropertyRecovered': '', 'IsImmobalizationDevice': '', 'IsEligibleForImmobalization': '', 'IsSendToPropertyRoom': '',
             'ReportedDtTm': MstVehicle === "MST-Vehicle-Dash" ? getShowingMonthDateYear(new Date(datezone)) : incReportedDate ? getShowingDateText(incReportedDate) : getShowingMonthDateYear(new Date()),
             "MasterPropertyID": '', 'PropertyID': '', 'IsMasterManufactureYear': '', 'IsMasterIsEvidence': '',
             'PlateExpirationMonth': '', 'PlateExpirationYear': '',
-             
+
         });
         setShowVehicleRecovered(false);
         setErrors({
@@ -1849,19 +1849,19 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                             </div>
                                         </div>
 
-                                        <div className="col-4 col-md-4 col-lg-2">
+                                        <div className="col-4 col-md-4 col-lg-3 ml-5">
                                             {
                                                 showVehicleRecovered ?
-                                                <>
-                                                <div className="form-check ">
-                                                <input className="form-check-input" name='IsRecoveredByAgencyOfOther' value={value?.IsRecoveredByAgencyOfOther} checked={value?.IsRecoveredByAgencyOfOther} onChange={HandleChanges} type="checkbox" id="flexCheckDefault" />
-                                                <label className="form-check-label" htmlFor="flexCheckDefault">
-                                                    Recovered By Other Agency
-                                                </label>
-                                            </div>
-                                                </> : <></>
+                                                    <>
+                                                        <div className="form-check ">
+                                                            <input className="form-check-input" name='IsRecoveredByAgencyOfOther' value={value?.IsRecoveredByAgencyOfOther} checked={value?.IsRecoveredByAgencyOfOther} onChange={HandleChanges} type="checkbox" id="flexCheckDefault" />
+                                                            <label className="form-check-label" htmlFor="flexCheckDefault">
+                                                                Recovered By Other Agency
+                                                            </label>
+                                                        </div>
+                                                    </> : <></>
                                             }
-                                            
+
                                         </div>
                                     </div>
                                 </div>
