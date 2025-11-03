@@ -1856,7 +1856,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                                         <div className="form-check ">
                                                             <input className="form-check-input" name='IsRecoveredByAgencyOfOther' value={value?.IsRecoveredByAgencyOfOther} checked={value?.IsRecoveredByAgencyOfOther} onChange={HandleChanges} type="checkbox" id="flexCheckDefault" />
                                                             <label className="form-check-label" htmlFor="flexCheckDefault">
-                                                                Recovered By Other Agency
+                                                                Is Stolen From Other Agency
                                                             </label>
                                                         </div>
                                                     </> : <></>
