@@ -34,7 +34,7 @@ import CreatableSelect from 'react-select/creatable';
 import NCICModal from '../../../../../CADComponents/NCICModal';
 
 
-const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors , setResetErrors , showVehicleRecovered, get_List, setPropertyStatus, isCad = false, isViewEventDetails = false, isCADSearch = false }) => {
+const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setResetErrors, showVehicleRecovered, get_List, setPropertyStatus, isCad = false, isViewEventDetails = false, isCADSearch = false }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -85,7 +85,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors , set
     else DecMVehId = parseInt(base64ToString(MVehId));
 
 
-    const { get_vehicle_Count, get_Incident_Count, updateCount, setUpdateCount,  incidentCount, nibrsSubmittedStatus, nibrsSubmittedvehicleMain, setnibrsSubmittedvehicleMain, setnibrsSubmittedStatus, changesStatus, changesStatusCount, setChangesStatus, setVehicleStatus, vehicleStatus, VehicleFilterData, get_Data_Vehicle, get_Name_Count, datezone, GetDataTimeZone, setcountoffaduit, validate_IncSideBar, incidentReportedDate, setIncidentReportedDate } = useContext(AgencyContext)
+    const { get_vehicle_Count, get_Incident_Count, updateCount, setUpdateCount, incidentCount, nibrsSubmittedStatus, nibrsSubmittedvehicleMain, setnibrsSubmittedvehicleMain, setnibrsSubmittedStatus, changesStatus, changesStatusCount, setChangesStatus, setVehicleStatus, vehicleStatus, VehicleFilterData, get_Data_Vehicle, get_Name_Count, datezone, GetDataTimeZone, setcountoffaduit, validate_IncSideBar, incidentReportedDate, setIncidentReportedDate } = useContext(AgencyContext)
 
     const [clickedRow, setClickedRow] = useState(null);
     const [destoryDate, setDestoryDate] = useState();
@@ -132,7 +132,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors , set
     const [newClicked, SetNewClciked] = useState(0);
     const [vehErrorStatus, setVehErrorStatus] = useState(false);
     const [showModal, setShowModal] = useState(false);
-    
+
 
     // permissions
     const [permissionForAdd, setPermissionForAdd] = useState(false);
@@ -147,7 +147,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors , set
         'OANID': '', 'StyleID': '', 'MakeID': null, 'ModelID': null, 'ManufactureYear': '', 'Weight': '', 'OwnerID': null,
         'PrimaryColorID': '', 'SecondaryColorID': '', 'Value': '', 'Inspection_Sticker': '', 'InspectionExpiresDtTm': '',
         'PrimaryOfficerID': null, 'InProfessionOf': '', 'TagID': null, 'NICBID': null, 'DestroyDtTm': '', 'Description': '',
-        'IsEvidence': '', 'IsPropertyRecovered': '', 'IsImmobalizationDevice': '', 'IsEligibleForImmobalization': '',
+        'IsEvidence': '', 'IsRecoveredByAgencyOfOther' : '' , 'IsPropertyRecovered': '', 'IsImmobalizationDevice': '', 'IsEligibleForImmobalization': '',
         'ModifiedByUserFK': "", 'ArrestID': "", 'AgencyID': '', 'IsMaster': MstVehicle === "MST-Vehicle-Dash" ? true : false,
         'ModelName': '',
         'PlateExpirationMonth': '',
@@ -169,11 +169,11 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors , set
         }
     }, []);
 
-      useEffect(() => {
+    useEffect(() => {
         if (ResetErrors) {
-        reset();
+            reset();
         }
-      }, [ResetErrors]);
+    }, [ResetErrors]);
 
     // useEffect(() => {
     //     if (isNew === true) { newVehicle(); }
@@ -344,7 +344,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors , set
                 'OwnerID': editval[0]?.OwnerID, 'ModelID': editval[0]?.ModelID, 'MakeID': editval[0]?.MakeID, 'StyleID': editval[0]?.StyleID, 'OANID': editval[0]?.OANID, 'VODID': editval[0]?.VODID,
                 'ClassificationID': editval[0]?.ClassificationID, 'PlateTypeID': editval[0]?.PlateTypeID, 'PlateID': editval[0]?.PlateID ? editval[0]?.PlateID : '', 'CategoryID': editval[0]?.CategoryID,
                 'VehicleNumber': editval[0]?.VehicleNumber, 'ReportedDtTm': editval[0]?.ReportedDtTm ? getShowingDateText(editval[0]?.ReportedDtTm) : '', 'IsEligibleForImmobalization': editval[0]?.IsEligibleForImmobalization,
-                'IsImmobalizationDevice': editval[0]?.IsImmobalizationDevice, 'IsPropertyRecovered': editval[0]?.IsPropertyRecovered, 'ModelName': editval[0]?.ModelName, 'IsEvidence': editval[0]?.IsEvidence,
+                'IsImmobalizationDevice': editval[0]?.IsImmobalizationDevice, 'IsPropertyRecovered': editval[0]?.IsPropertyRecovered, 'ModelName': editval[0]?.ModelName, 'IsEvidence': editval[0]?.IsEvidence, 'IsRecoveredByAgencyOfOther': editval[0]?.IsRecoveredByAgencyOfOther,
                 'InProfessionOf': editval[0]?.InProfessionOf, 'Description': editval[0]?.Description, 'DestroyDtTm': editval[0]?.DestroyDtTm, 'InspectionExpiresDtTm': editval[0]?.InspectionExpiresDtTm,
                 'Inspection_Sticker': editval[0]?.Inspection_Sticker, 'Weight': editval[0]?.Weight, 'ManufactureYear': editval[0]?.ManufactureYear, 'VIN': editval[0]?.VIN ? editval[0]?.VIN : '',
                 'VehicleNo': editval[0]?.VehicleNo, 'PlateExpireDtTm': editval[0]?.PlateExpireDtTm, 'ModifiedByUserFK': loginPinID, 'PropertyID': editval[0]?.PropertyID, 'MasterPropertyID': editval[0]?.MasterPropertyID,
@@ -376,7 +376,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors , set
                 'VIN': '', 'VODID': '', 'PlateExpireDtTm': '', 'StyleID': '', 'MakeID': null, 'ModelID': null, 'ManufactureYear': '',
                 'Weight': '', 'OwnerID': null, 'PrimaryColorID': '', 'SecondaryColorID': '', 'Value': '',
                 'PrimaryOfficerID': null, 'InProfessionOf': '', 'TagID': null, 'NICBID': null, 'DestroyDtTm': '', 'Description': '',
-                'IsEvidence': '', 'IsPropertyRecovered': '', 'IsImmobalizationDevice': '', 'IsEligibleForImmobalization': '', 'ModelName': '',
+                'IsEvidence': '', 'IsRecoveredByAgencyOfOther' : '' , 'IsPropertyRecovered': '', 'IsImmobalizationDevice': '', 'IsEligibleForImmobalization': '', 'ModelName': '',
                 'PlateExpirationMonth': '', 'PlateExpirationYear': '',
             });
             setuploadImgFiles([]); setVehicleMultiImg([]);
@@ -522,7 +522,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors , set
 
     const HandleChanges = (e) => {
         !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-        if (e.target.name === 'IsEvidence' || e.target.name === 'IsPropertyRecovered' || e.target.name === 'IsSendToPropertyRoom' || e.target.name === 'IsImmobalizationDevice' || e.target.name === 'IsEligibleForImmobalization') {
+        if (e.target.name === 'IsEvidence' || e.target.name === 'IsRecoveredByAgencyOfOther' || e.target.name === 'IsPropertyRecovered' || e.target.name === 'IsSendToPropertyRoom' || e.target.name === 'IsImmobalizationDevice' || e.target.name === 'IsEligibleForImmobalization') {
             setValue({
                 ...value,
                 [e.target.name]: e.target.checked
@@ -639,12 +639,13 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors , set
             'VIN': '', 'VODID': '', 'PlateExpireDtTm': '', 'OANID': '', 'StyleID': '', 'MakeID': '', 'ModelID': '', 'ManufactureYear': '',
             'Weight': '', 'OwnerID': '', 'PrimaryColorID': '', 'SecondaryColorID': '', 'Value': '', 'Inspection_Sticker': '', 'InspectionExpiresDtTm': '', 'ModelName': '',
             'InProfessionOf': '', 'TagID': '', 'NICBID': '', 'DestroyDtTm': '', 'Description': '', 'PrimaryOfficerID': '',
-            'IsEvidence': '', 'IsPropertyRecovered': '', 'IsImmobalizationDevice': '', 'IsEligibleForImmobalization': '', 'IsSendToPropertyRoom': '',
+            'IsEvidence': '', 'IsRecoveredByAgencyOfOther' : '' , 'IsPropertyRecovered': '', 'IsImmobalizationDevice': '', 'IsEligibleForImmobalization': '', 'IsSendToPropertyRoom': '',
             'ReportedDtTm': MstVehicle === "MST-Vehicle-Dash" ? getShowingMonthDateYear(new Date(datezone)) : incReportedDate ? getShowingDateText(incReportedDate) : getShowingMonthDateYear(new Date()),
             "MasterPropertyID": '', 'PropertyID': '', 'IsMasterManufactureYear': '', 'IsMasterIsEvidence': '',
             'PlateExpirationMonth': '', 'PlateExpirationYear': '',
-
+             
         });
+        setShowVehicleRecovered(false);
         setErrors({
             ...errors,
             'LossCodeIDError': '', 'CategoryIDError': '', 'RecoveryTypeIDError': '', 'PlateTypeIDError': '', 'PlateStateNoError': '', 'VehicleNoError': '', 'ContactError': '', 'vinLengthError': ''
@@ -1687,10 +1688,11 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors , set
                                 <div className="col-4 col-md-4 col-lg-1 mt-0 text-field ">
                                     <input style={{ padding: '5px 9px 7px 8px' }} type="text" name='Inspection_Sticker' id='Inspection_Sticker' value={value?.Inspection_Sticker} onChange={HandleChanges} className='h-100' required autoComplete='off' />
                                 </div>
-                                <div className="col-2 col-md-2 col-lg-2">
+                                <div className='col-3 col-lg-2'></div>
+                                <div className="col-2 col-md-2 col-lg-1">
                                     <label htmlFor="" className='new-label mb-0'>Inspection Expires</label>
                                 </div>
-                                <div className="col-4 col-md-4 col-lg-2">
+                                <div className="col-4 col-md-4 col-lg-3">
                                     <DatePicker
                                         id='InspectionExpiresDtTm'
                                         name='InspectionExpiresDtTm'
@@ -1737,31 +1739,9 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors , set
                                         dropdownMode="select"
                                     />
                                 </div>
-                                <div className="col-2 col-md-2 col-lg-1">
-                                    <label htmlFor="" className='new-label mb-0'>Manu. Year</label>
-                                </div>
-                                <div className="col-4 col-md-4 col-lg-1">
-                                    <DatePicker
-                                        name='ManufactureYear'
-                                        id='ManufactureYear'
-                                        selected={manufactureDate}
-                                        onChange={(date) => {
-                                            !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
-                                            setManufactureDate(date); setValue({ ...value, ['ManufactureYear']: date ? getYearWithOutDateTime(date) : null })
-                                        }}
-                                        showYearPicker
-                                        dateFormat="yyyy"
-                                        yearItemNumber={8}
-                                        ref={startRef2}
-                                        onKeyDown={onKeyDown}
-                                        autoComplete="off"
-                                        showYearDropdown
-                                        showMonthDropdown
-                                        dropdownMode="select"
-                                        maxDate={new Date()}
-                                        minDate={new Date(1900, 0, 1)}
-                                    />
-                                </div>
+
+
+
                                 <div className="col-2 col-md-2 col-lg-1">
                                     <label htmlFor="" className='new-label mb-0 ' >Primary&nbsp;Officer</label>
                                 </div>
@@ -1825,16 +1805,67 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors , set
                                         <i className="fa fa-plus"></i>
                                     </button>
                                 </div>
-                                <div className="col-4 col-md-4 col-lg-1">
-                                    <div className="form-check ">
-                                        <input className="form-check-input" name='IsEvidence' value={value?.IsEvidence} checked={value?.IsEvidence} onChange={HandleChanges} type="checkbox" id="flexCheckDefault" />
-                                        <label className="form-check-label" htmlFor="flexCheckDefault">
-                                            Evidence
-                                        </label>
-                                    </div>
+
+                                <div className="col-2 col-md-2 col-lg-1">
+                                    <label htmlFor="" className='new-label mb-0'>Manu. Year</label>
                                 </div>
+                                <div className="col-4 col-md-4 col-lg-1">
+                                    <DatePicker
+                                        name='ManufactureYear'
+                                        id='ManufactureYear'
+                                        selected={manufactureDate}
+                                        onChange={(date) => {
+                                            !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
+                                            setManufactureDate(date); setValue({ ...value, ['ManufactureYear']: date ? getYearWithOutDateTime(date) : null })
+                                        }}
+                                        showYearPicker
+                                        dateFormat="yyyy"
+                                        yearItemNumber={8}
+                                        ref={startRef2}
+                                        onKeyDown={onKeyDown}
+                                        autoComplete="off"
+                                        showYearDropdown
+                                        showMonthDropdown
+                                        dropdownMode="select"
+                                        maxDate={new Date()}
+                                        minDate={new Date(1900, 0, 1)}
+                                    />
+                                </div>
+
+
+
                                 <div className="col-12 col-md-12 col-lg-2 text-right" >
                                 </div>
+
+                                <div className='col-11 mb-md-5 mb-sm-5 mb-lg-0'>
+                                    <div className='row'>
+                                        <div className="col-4 col-md-4 col-lg-1" ></div>
+                                        <div className="col-4 col-md-4 col-lg-1 ml-2">
+                                            <div className="form-check ">
+                                                <input className="form-check-input" name='IsEvidence' value={value?.IsEvidence} checked={value?.IsEvidence} onChange={HandleChanges} type="checkbox" id="flexCheckDefault" />
+                                                <label className="form-check-label" htmlFor="flexCheckDefault">
+                                                    Evidence
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div className="col-4 col-md-4 col-lg-2">
+                                            {
+                                                showVehicleRecovered ?
+                                                <>
+                                                <div className="form-check ">
+                                                <input className="form-check-input" name='IsRecoveredByAgencyOfOther' value={value?.IsRecoveredByAgencyOfOther} checked={value?.IsRecoveredByAgencyOfOther} onChange={HandleChanges} type="checkbox" id="flexCheckDefault" />
+                                                <label className="form-check-label" htmlFor="flexCheckDefault">
+                                                    Recovered By Other Agency
+                                                </label>
+                                            </div>
+                                                </> : <></>
+                                            }
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div className='col-11 mb-md-5 mb-sm-5 mb-lg-0'>
                                     <AlertTable availableAlert={availableAlert} masterPropertyID={masterPropertyID} ProSta={VehSta} />
 
@@ -1909,6 +1940,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors , set
                                         </div>
                                     </div>
                                 </div>
+
                                 <div className=" col-3 col-md-3 col-lg-1 ">
                                     <div className="img-box" style={{ marginTop: '-18px' }}>
                                         <Carousel autoPlay={true} className="carousel-style" showArrows={true} showThumbs={false} showStatus={false} >
