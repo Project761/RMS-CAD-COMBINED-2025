@@ -9,12 +9,12 @@ export const ORIValidator = (ORI) => {
 		return 'Please enter a valid format (eg: WV0034500)';
 	}
 };
-export const ORIValidatorVictim = (ORI) => {
+
+export const ORIValidatorVictim = (ORI , isRequire = false) => {
 	console.log(ORI)
 	if (ORI?.trim() === '' || ORI?.trim() === null || ORI === null) {
 		console.log(ORI)
-		return 'true';
-		
+		return isRequire ? 'Required *' : 'true';
 	}
 	if (ORI?.toUpperCase()?.match(`(^[A-Z]{2})([0-9]{5})([0]{2}$)`)) {
 		return 'true';
