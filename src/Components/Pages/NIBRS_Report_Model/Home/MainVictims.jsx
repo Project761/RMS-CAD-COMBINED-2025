@@ -200,7 +200,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
         'NameTypeIDError': '', 'LastNameError': '', 'FirstNameError': '', 'MiddleNameError': '', 'NameReasonCodeIDError': '', 'CertifiedByIDError': '', 'ContactError': 'true', 'WeightError': 'true', 'InjuryTypeError': '',
         'HeightError': 'true', 'AgeError': 'true', 'DateOfBirthError': '', 'RaceIDError': '', 'DLError': 'true', 'SexIDError': '', 'AddressError': 'true', 'CrimeLocationError': '', 'InjuryError': '', 'ResidentError': '', 'EthnicityErrorr': '',
 
-        'CallTypeIDError': '', 'AssignmentTypeIDError': '', "AssaultTypeIDError": '', 'JusifiableHomicideError': '',
+        'CallTypeIDError': '', 'AssignmentTypeIDError': '', "AssaultTypeIDError": '', 'JusifiableHomicideError': '', 'ORITypeErrors': '',
     })
 
     const [imgData, setImgData] = useState({
@@ -342,7 +342,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
     const check_Validation_Error = (e) => {
         const { LastName, FirstName, MiddleName, NameTypeID, NameReasonCodeID, SSN, DLStateID, DLNumber, Contact, HeightFrom, HeightTo, WeightFrom, WeightTo, AgeFrom, AgeTo, SexID, RaceID, DateOfBirth, IsUnknown } = value;
         if (isAdult || IsOffender || victimTypeStatus) {
-            const ORI = ORIValidatorVictim(value?.ORI);
+            const ORI = victimCode === 'L' ? ORIValidatorVictim(value?.ORI, true) : ORIValidatorVictim(value?.ORI, false);
             const SexIDError = RequiredField(value.SexID);
             const RaceIDErr = RequiredField(value.RaceID);
             const DateOfBirthErr = (isAdult && value?.IsUnknown) || isAdult || IsOffender || victimTypeStatus ? 'true' : RequiredField(value.DateOfBirth);
@@ -430,7 +430,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
 
 
         } else {
-            const ORI = ORIValidatorVictim(value?.ORI);
+            const ORI = victimCode === 'L' ? ORIValidatorVictim(value?.ORI, true) : ORIValidatorVictim(value?.ORI, false);
             const LastNameErr = NameValidationCharacter(LastName, 'LastName', FirstName, MiddleName, LastName);
             const FirstNameErr = NameValidationCharacter(FirstName, 'FirstName', FirstName, MiddleName, LastName);
             const MiddleNameErr = NameValidationCharacter(MiddleName, 'MiddleName', FirstName, MiddleName, LastName);
@@ -1229,12 +1229,17 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
     const ChangeDropDownRole = (e, name) => {
         setChangesStatus(true); setStatesChangeStatus(true);
         if (e) {
-
             setVictimCode(e.id)
+            setErrors({
+                ...errors, 'ORITypeErrors': '', 'AssignmentTypeIDError': '', 'CallTypeIDError': '',
+            });
             setValue({ ...value, [name]: e.value, CallTypeID: '', AssignmentTypeID: '', ORI: '' });
 
         } else {
-            setVictimCode('')
+            setVictimCode('');
+            setErrors({
+                ...errors, 'ORITypeErrors': '', 'AssignmentTypeIDError': '', 'CallTypeIDError': '',
+            });
             setValue({ ...value, [name]: null, CallTypeID: '', AssignmentTypeID: '', ORI: '' });
 
         }
@@ -1720,7 +1725,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
         setHas120RoberyOffense(false);
         setIsCrimeAgainstPerson(false);
 
-        setnibrsFieldError([]);
+        setnibrsFieldError([]); setVictimCode('');
     }
 
     const ResetSearch = () => {
@@ -4034,6 +4039,9 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                                                     <div className="d-flex align-items-center justify-content-end " style={{ gap: "6px" }}> {/* Flex wrapper */}
                                                         <label htmlFor="" className="new-label mb-0">
                                                             ORI
+                                                            {errors.ORITypeErrors === 'Required *' ? (
+                                                                <p style={{ color: 'red', fontSize: '13px', margin: '10px', padding: '0px', textAlign: "left", display: "block" }}>{errors.ORITypeErrors}</p>
+                                                            ) : null}
                                                         </label>
                                                         <span
                                                             className="hovertext"
@@ -4046,7 +4054,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                                                 <div className="col-4 col-md-4 col-lg-5  mt-2 ">
                                                     <input
                                                         type="text"
-                                                        className={`form-control ${victimCode === 'L' ? '' : 'readonlyColor'}`}
+                                                        className={`form-control ${victimCode === 'L' ? 'requiredColor' : 'readonlyColor'}`}
                                                         name="ORI"
                                                         value={value?.ORI}
                                                         disabled={victimCode === 'L' ? false : true}
@@ -4056,7 +4064,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                                                         autoComplete="off"
                                                     />
                                                     <div>
-                                                        {errors.ORITypeErrors !== 'true' ? (
+                                                        {errors.ORITypeErrors == 'Please enter a valid format (eg: WV0034500)' ? (
                                                             <p style={{ color: 'red', fontSize: '13px', margin: '10px', padding: '0px', textAlign: "left", display: "block" }}>{errors.ORITypeErrors}</p>
                                                         ) : null}
                                                     </div>

@@ -483,7 +483,7 @@ const NibrsHome = () => {
       //   //  fetchPostData(`NIBRSError/GetData_OffenceGroupBArrestError`, { IncID: IncID }),
       // ])
 
-      const groupBOffenseArrestError = await fetchPostData(`NIBRSError/GetData_OffenceGroupBArrestError`, { IncID: IncID })
+      const groupBOffenseArrestError = await fetchPostData(`NIBRSError/GetData_OffenceGroupBArrestError`, { IncidentID: IncID })
 
       if (groupBOffenseArrestError && groupBOffenseArrestError[0]?.OffenceGroupBArrest) {
         return true
@@ -498,7 +498,7 @@ const NibrsHome = () => {
 
   const getVehicle240Error = async (IncID) => {
     try {
-      const vehicle240Error = await fetchPostData(`NIBRSError/GetData_OffenceVehcileError`, { IncID: IncID })
+      const vehicle240Error = await fetchPostData(`NIBRSError/GetData_OffenceVehcileError`, { IncidentID: IncID })
       // console.log("🚀 ~ getVehicle240Error ~ vehicle240Error:", vehicle240Error)
 
       if (vehicle240Error && vehicle240Error[0]?.OffenceVehcileError) {
