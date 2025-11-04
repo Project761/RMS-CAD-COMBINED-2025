@@ -157,7 +157,6 @@ const Charges = (props) => {
         ...value,
         'ChargeDateTime': defaultDate
       });
-      // dispatch(get_PropertyTypeData(loginAgencyID));
     }
   }, [LoginAgencyID, incReportedDate]);
 
