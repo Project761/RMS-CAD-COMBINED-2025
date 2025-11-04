@@ -499,7 +499,7 @@ const NibrsHome = () => {
   const getVehicle240Error = async (IncID) => {
     try {
       const vehicle240Error = await fetchPostData(`NIBRSError/GetData_OffenceVehcileError`, { IncID: IncID })
-      console.log("🚀 ~ getVehicle240Error ~ vehicle240Error:", vehicle240Error)
+      // console.log("🚀 ~ getVehicle240Error ~ vehicle240Error:", vehicle240Error)
 
       if (vehicle240Error && vehicle240Error[0]?.OffenceVehcileError) {
         return true

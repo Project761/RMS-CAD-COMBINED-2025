@@ -1521,7 +1521,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                                 setErrors({ ...errors, ['AddressError']: 'true', ['WeightError']: 'true', ['AgeError']: 'true', ['ContactError']: 'true', ['NameTypeIDError']: '', });
 
                                 // Validate Name
-                       
+
                                 ValidateIncNames(mainIncidentID, IncNo);
                                 getNibrsErrorToolTip(res?.NameID, mainIncidentID, IncNo);
                                 // validateIncSideBar
@@ -1635,7 +1635,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                                 setErrors({ ...errors, ['ContactError']: 'true', ['NameTypeIDError']: '', });
 
                                 // Validate Name
-                         
+
                                 ValidateIncNames(mainIncidentID, IncNo);
                                 getNibrsErrorToolTip(nameID, mainIncidentID, IncNo);
                                 // validateIncSideBar
@@ -2780,7 +2780,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
     const NibrsErrorsStyles = {
         control: (styles) => ({
             ...styles,
-            backgroundColor: "rgb(255 202 194)",
+            // backgroundColor: "rgb(255 202 194)",
+            backgroundColor: "#F29A9A",
             height: 20,
             minHeight: 35,
             fontSize: 14,
@@ -3970,7 +3971,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                                                         styles={
                                                             loginAgencyState === 'TX'
                                                                 ?
-                                                                victimCode === 'L' ? ColorStyle : customStylesWithOutColor
+                                                                victimCode === 'L' ? NibrsErrorsStyles : customStylesWithOutColor
                                                                 :
                                                                 customStylesWithOutColor
                                                         }
@@ -4013,7 +4014,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                                                         value={assignmentTypeDrp?.filter((obj) => obj.value === value?.AssignmentTypeID)}
                                                         styles={
                                                             loginAgencyState === 'TX' ?
-                                                                victimCode === 'L' ? ColorStyle : customStylesWithOutColor
+                                                                victimCode === 'L' ? NibrsErrorsStyles : customStylesWithOutColor
                                                                 :
                                                                 customStylesWithOutColor
                                                         }
@@ -4116,7 +4117,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                                                 <div className="col-2 col-md-2 col-lg-1 mt-3">
                                                     <label htmlFor="" className='label-name'>
                                                         Offender
-
                                                         {errors1?.VictimNameIDErrors !== 'true' ? (
                                                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors1?.VictimNameIDErrors}</p>
                                                         ) : null}
