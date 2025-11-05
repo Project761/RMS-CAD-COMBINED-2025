@@ -1477,8 +1477,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                                 setMasterNameID(res?.MasterNameID)
                                 GetSingleData(res?.NameID, res?.MasterNameID);
 
-                                ValidateIncNames(mainIncidentID, IncNo, false);
-                                getNibrsErrorToolTip(res?.NameID, mainIncidentID, IncNo);
+                                // ValidateIncNames(mainIncidentID, IncNo, false);
+                                // getNibrsErrorToolTip(res?.NameID, mainIncidentID, IncNo);
                                 // validateIncSideBar
                                 validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
                             } else {
@@ -1591,7 +1591,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
 
                                 // Validate Name
 
-                                ValidateIncNames(mainIncidentID, IncNo);
+                                ValidateIncNames(mainIncidentID, IncNo, false);
                                 getNibrsErrorToolTip(nameID, mainIncidentID, IncNo);
                                 // validateIncSideBar
                                 validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
@@ -2878,45 +2878,47 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
             "NameID": NameId,
             "gIntAgencyID": loginAgencyID,
         }
-        fetchPostDataNibrs('NIBRS/GetVictimNIBRSError', val).then((data) => {
+        if (NameId) {
+            fetchPostDataNibrs('NIBRS/GetVictimNIBRSError', val).then((data) => {
 
-            if (data) {
-                const victimError = data?.Victim && data?.Victim[0] ? data?.Victim[0] : [];
-                console.log("🚀 ~ getNibrsErrorToolTip ~ victimError:", victimError)
-                setnibrsFieldError(victimError);
-                if (victimError?.InjuryType) {
-                    setShowInjuryTypeError(true);
+                if (data) {
+                    const victimError = data?.Victim && data?.Victim[0] ? data?.Victim[0] : [];
+                    // console.log("🚀 ~ getNibrsErrorToolTip ~ victimError:", victimError)
+                    setnibrsFieldError(victimError);
+                    if (victimError?.InjuryType) {
+                        setShowInjuryTypeError(true);
+
+                    }
+                    if (victimError?.VictimAge) {
+                        setShowVictimAgeError(true);
+
+                    }
+                    if (victimError?.AssaultType) {
+                        setShowAssaultTypeError(true);
+
+                    }
+                    if (victimError?.AssignmentType) {
+                        setShowAssignmentTypeError(true);
+
+                    }
+                    if (victimError?.Offense) {
+                        setShowOffenseTypeError(true);
+
+                    }
+                    if (victimError?.JustHomicide) {
+                        setShowJustifyHomicideError(true);
+
+                    }
+                    if (victimError?.CallType) {
+                        setShowCallTypeError(true);
+
+                    }
+                } else {
+                    setnibrsFieldError([]);
 
                 }
-                if (victimError?.VictimAge) {
-                    setShowVictimAgeError(true);
-
-                }
-                if (victimError?.AssaultType) {
-                    setShowAssaultTypeError(true);
-
-                }
-                if (victimError?.AssignmentType) {
-                    setShowAssignmentTypeError(true);
-
-                }
-                if (victimError?.Offense) {
-                    setShowOffenseTypeError(true);
-
-                }
-                if (victimError?.JustHomicide) {
-                    setShowJustifyHomicideError(true);
-
-                }
-                if (victimError?.CallType) {
-                    setShowCallTypeError(true);
-
-                }
-            } else {
-                setnibrsFieldError([]);
-
-            }
-        })
+            })
+        }
     }
 
     function filterArray(arr, key) {
@@ -3009,15 +3011,18 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
         } else {
             setoffenceCountStatus(false);
         }
+
         // validateIncSideBar
         validate_IncSideBar(IncID, IncNo, loginAgencyID);
+
+        // ValidateIncNames(mainIncidentID, IncNo, false);
+        getNibrsErrorToolTip(nameID, mainIncidentID, IncNo);
     }
 
     const InSertBasicInfo1 = (id, col1, url) => {
         const val = {
             'NameID': nameID, [col1]: id, 'CreatedByUserFK': loginPinID, 'MasterNameID': masterNameID, 'IsMaster': nameID ? false : true
         }
-
         AddDeleteUpadate(url, val).then((res) => {
             if (res) {
                 const parsedData = JSON.parse(res.data);
@@ -3731,11 +3736,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                             :
                             <></>
                     }
-
-
                     <div className="col-lg-5 " >
                         <div className='row' style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'nowrap' }}>
-
                             {isMissing && (
                                 <div
                                     className="col-12 col-md-4"
