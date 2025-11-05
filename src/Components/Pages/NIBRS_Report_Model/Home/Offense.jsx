@@ -2317,7 +2317,7 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
             </div>
           </div>
         </div>
-        <div className="col-12 mt-1 bb ">
+        {/* <div className="col-12 mt-1 bb ">
           <div className="row">
             <div className="col-2 col-md-2 col-lg-2 mt-2 "></div>
             <div className="col-2 col-md-2 col-lg-3 mt-2 ml-4">
@@ -2333,7 +2333,7 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
               <label htmlFor="">Is Crime Against Society</label>
             </div>
           </div>
-        </div>
+        </div> */}
         <div className="text-center p-1">
           {
             !showError || isNibrs999 || nibrsCode === "999" ? (

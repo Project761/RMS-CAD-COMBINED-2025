@@ -11,9 +11,9 @@ export const ORIValidator = (ORI) => {
 };
 
 export const ORIValidatorVictim = (ORI , isRequire = false) => {
-	console.log(ORI)
+	// console.log(ORI)
 	if (ORI?.trim() === '' || ORI?.trim() === null || ORI === null) {
-		console.log(ORI)
+		// console.log(ORI)
 		return isRequire ? 'Required *' : 'true';
 	}
 	if (ORI?.toUpperCase()?.match(`(^[A-Z]{2})([0-9]{5})([0]{2}$)`)) {

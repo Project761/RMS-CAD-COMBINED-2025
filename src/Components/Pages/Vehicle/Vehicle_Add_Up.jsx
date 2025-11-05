@@ -37,6 +37,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
     const { changesStatus, vehicleCount, get_vehicle_Count, countoffaduit, get_Incident_Count, setshowOffPage, get_Data_Vehicle, VehicleFilterData, incidentCount, incidentReportedDate, setIncidentReportedDate, propertyValidateNibrsData } = useContext(AgencyContext);
     const [propertystatus, setPropertyStatus] = useState('');
     const [IsNonPropertyRoomSelected, setIsNonPropertyRoomSelected] = useState(false);
+    const [clickCount, setClickCount] = useState(0);
 
     const useQuery = () => {
         const params = new URLSearchParams(useLocation().search);
@@ -150,8 +151,9 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                 } else {
                     navigate(`/Vehicle-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${stringToBase64(row?.PropertyID)}&MVehId=${stringToBase64(row?.MasterPropertyID)}&VehSta=${true}&isNew=${true}`)
                     setResetErrors(true);
+                    setClickCount(clickCount + 1);
                 }
-                
+
                 // setMasterPropertyID(row.MasterPropertyID); dispatch({ type: MasterVehicle_ID, payload: row?.MasterPropertyID });
                 // setVehicleID(row?.PropertyID); dispatch({ type: Vehicle_ID, payload: row.PropertyID });
                 // setVehicleStatus(true); dispatch({ type: Master_Property_Status, payload: true });
@@ -789,7 +791,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
 
                                 {
                                     showPage === 'home' ?
-                                        <Home {...{ setStatus, setaddUpdatePermission, ResetErrors, setResetErrors, newStatus, status, setShowVehicleRecovered, showVehicleRecovered, get_List, setPropertyStatus, isCad, isViewEventDetails, isCADSearch }} />
+                                        <Home {...{ setStatus, setaddUpdatePermission, ResetErrors, setResetErrors, newStatus, status, setShowVehicleRecovered, showVehicleRecovered, get_List, setPropertyStatus, isCad, isViewEventDetails, isCADSearch, clickCount }} />
                                         :
                                         // showPage === 'VehicleNotes' ?
                                         //     <VehicleNotes  {...{ ListData, DecVehId, DecMVehId, DecIncID, isViewEventDetails }} />

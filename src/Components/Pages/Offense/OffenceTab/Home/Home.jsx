@@ -42,7 +42,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   const incReportedDate = useSelector((state) => state.Agency.incReportedDate);
   const uniqueId = sessionStorage.getItem("UniqueUserID") ? Decrypt_Id_Name(sessionStorage.getItem("UniqueUserID"), "UForUniqueUserID") : "";
 
-  const { get_Offence_Count, updateCount, setUpdateCount, datezone, setChangesStatus, NotApplicableError, nibrsSubmittedStatus, setnibrsSubmittedStatus, nibrsSubmittedOffenseMain, setnibrsSubmittedOffenseMain, get_Offence_Data, changesStatus, get_Incident_Count, setIncidentStatus, setIncStatus, offenceFillterData, setcountoffaduit, PanelCode, setPanelCode,
+  const { get_Offence_Count, updateCount, setUpdateCount, datezone, setChangesStatus, nibrsSubmittedStatus, setnibrsSubmittedStatus, nibrsSubmittedOffenseMain, setnibrsSubmittedOffenseMain, get_Offence_Data, changesStatus, get_Incident_Count, setIncidentStatus, setIncStatus, offenceFillterData, setcountoffaduit, PanelCode, setPanelCode,
     incidentCount, validate_IncSideBar
   } = useContext(AgencyContext);
 
@@ -2356,16 +2356,12 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   <div className="d-flex flex-column align-items-end ">
                     {offenderUsingStatus && (<ErrorTooltip ErrorStr={offenderUsingError} />)}
                     {loginAgencyState === 'TX' ? getCheckNotApplicable() ? <ErrorTooltip ErrorStr={NotApplicableError} /> : <> </> : <></>}
-
                     {errors.OffenderusingError !== "true" && (
                       <span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block", }}>{errors.OffenderusingError}</span>
-
                     )}
                   </div>
                 </div>
-
               </div>
-
               <div className="col-9 col-md-9 col-lg-4">
                 <SelectBox
                   className="basic-multi-select"
@@ -2398,7 +2394,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   {/* Tooltip or errors always below label */}
                   <div className="d-flex flex-column align-items-end ">
                     {biasStatus && <ErrorTooltip ErrorStr={biasStatusError} />}
-                    {loginAgencyState === "TX" ? (nibrsCode === "09C" && !bias09CCodeStatus ? (<ErrorTooltip ErrorStr={Bias_90C_Error} />) : check_Valid_Bias_Code(BiasSelectCodeArray) ? (<ErrorTooltip ErrorStr={ValidateBiasCodeError} />) : null) : null}
+                    {loginAgencyState === "TX" ? (nibrsCode === "09C" && !bias09CCodeStatus ? (<ErrorTooltip ErrorStr={Bias_90C_Error} />) : null) : null}
 
                     {errors.CrimeBiasCategoryError !== "true" && (<span style={{
                       color: "red", fontSize: "13px", marginTop: "4px", display: "inline-block", textAlign: "right",
