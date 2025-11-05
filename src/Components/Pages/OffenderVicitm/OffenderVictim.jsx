@@ -197,6 +197,8 @@ const OffenderVictim = () => {
                     RelationshipTypeID: singleData?.RelationshipTypeID, VictimNameID: singleData?.VictimNameID, OffenderNameID: singleData?.OffenderNameID, ModifiedByUserFK: loginPinID, RelationshipID: singleData?.RelationshipID,
                 }
             })
+            setPossessionIDVictim(singleData?.VictimNameID);
+            setPossessionID(singleData?.OffenderNameID);
         }
     }, [singleData])
 
@@ -271,7 +273,7 @@ const OffenderVictim = () => {
 
     }, [VictimDrpp, nameModalStatus])
 
-     // new end //
+    // new end //
 
     const get_Data_Name_Drp = (IncID) => {
         const val = { 'IncidentID': IncID, }
