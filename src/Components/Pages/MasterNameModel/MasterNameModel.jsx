@@ -371,10 +371,18 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                 });
             }
             else if (type === "Victim") {
+                console.log(possenSinglData[0]?.Role)
                 setMultiSelected({
                     optionSelected: possenSinglData[0]?.ReasonCode ? fourColArrayReasonCode(possenSinglData[0]?.ReasonCode, 'NameReasonCodeID', 'ReasonCode_Description', 'IsVictimName', 'IsOffenderName'
                     ) : '',
                 });
+                const possenSinglDataRole = possenSinglData[0]?.Role || [];
+                const filteredRoles = ReasonCodeRoleArr.filter(role => possenSinglDataRole.includes(role.value));
+
+                setMultiSelectedReason({
+                    optionSelected: possenSinglData[0]?.Role ? filteredRoles : [],
+                });
+
             }
             else if (type === "ComplainantName") {
                 //  GetReasonIdDrp(loginAgencyID, possenSinglData[0]?.NameTypeID, type, JSON?.parse(possenSinglData[0]?.Role));
@@ -422,8 +430,10 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                     optionSelected: possenSinglData[0]?.ReasonCode ? fourColArrayReasonCode(possenSinglData[0]?.ReasonCode, 'NameReasonCodeID', 'ReasonCode_Description', 'IsVictimName', 'IsOffenderName'
                     ) : '',
                 });
+                const possenSinglDataRole = possenSinglData[0]?.Role || [];
+                const filteredRoles = ReasonCodeRoleArr.filter(role => possenSinglDataRole.includes(role.value));
                 setMultiSelectedReason({
-                    optionSelected: possenSinglData[0]?.Role ? makeRoleArr(possenSinglData[0]?.Role) : [],
+                    optionSelected: possenSinglData[0]?.Role ? filteredRoles : [],
                 });
             }
             // else if (type === "ComplainantName") {
@@ -2608,7 +2618,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
 
 
     useEffect(() => {
-        if (type === "Offender" && filteredReasonCodeRoleArr.length > 0) {
+        if (type === "Offender" && filteredReasonCodeRoleArr.length && !possessionID > 0) {
             const selectedOption = filteredReasonCodeRoleArr[0];
 
             // Prevent re-setting if the selected option is already set
@@ -2623,7 +2633,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
 
             }
         }
-        else if (type === "Victim" && filteredReasonCodeRoleArr.length > 0) {
+        else if (type === "Victim" && filteredReasonCodeRoleArr.length && !possessionIDVictim > 0) {
             const selectedOption = filteredReasonCodeRoleArr[0];
 
             // Prevent re-setting if the selected option is already set
