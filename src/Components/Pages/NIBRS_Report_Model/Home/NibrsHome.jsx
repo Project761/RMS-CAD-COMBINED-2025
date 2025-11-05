@@ -183,7 +183,7 @@ const NibrsHome = () => {
   useEffect(() => {
     const validateNibrs = async (incidentValidateNibrsData, offenseValidateNibrsData, victimValidateNibrsData, offenderValidateNibrsData, propertyValidateNibrsData) => {
       // // loader
-      // setnibrsValidateLoder(true);
+      setnibrsValidateLoder(true);
       // Administrative
       setAdministrativeErrorString(''); setIsOffenseInc(false);
       // incident
@@ -375,9 +375,13 @@ const NibrsHome = () => {
 
         }
 
+        // // loader
+        setnibrsValidateLoder(false);
+
       } catch (error) {
         console.log("🚀 ~ ValidateProperty ~ error:", error);
-
+        // // loader
+        setnibrsValidateLoder(false);
       }
 
     }
@@ -462,7 +466,7 @@ const NibrsHome = () => {
       list: <Properties propertyClick={propertyClick} isNibrsSummited={isNibrsSummited} />
     },
     {
-      title: isOffense240VehError ? <span className="text-center" style={TitleErrorStyle}> {`Vehicle (${VehicleCount}) --- For crimes against property, a property record is required.`} </span> : `Vehicle (${VehicleCount})`,
+      title: isOffense240VehError ? <span className="text-center" style={TitleErrorStyle}> {`Vehicle (${VehicleCount}) --- For crimes against vehicle, a Vehicle record is required.`} </span> : `Vehicle (${VehicleCount})`,
       status: !vehErrorStatus ? "completed" : "attention highlighted",
       sectionKey: "VehicleTab",
       list: <VehicleTab vehicleClick={vehicleClick} isNibrsSummited={isNibrsSummited} />
@@ -594,8 +598,9 @@ const NibrsHome = () => {
         incidentErrorStatus={incidentErrorStatus}
         nibErrModalStatus={nibrsErrModalStatus}
         setNibrsErrModalStatus={setNibrsErrModalStatus}
-        nibrsValidateloder={nibrsSideBarLoading}
-        // nibrsValidateloder={nibrsValidateloder}
+
+        sideBarValidateloder={nibrsSideBarLoading }
+        nibrsValidateloder={nibrsValidateloder }
 
         administrativeErrorString={administrativeErrorString}
         incidentErrorString={incidentErrorString}

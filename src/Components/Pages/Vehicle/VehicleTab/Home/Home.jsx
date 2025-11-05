@@ -34,7 +34,7 @@ import CreatableSelect from 'react-select/creatable';
 import NCICModal from '../../../../../CADComponents/NCICModal';
 
 
-const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setResetErrors, showVehicleRecovered, get_List, setPropertyStatus, isCad = false, isViewEventDetails = false, isCADSearch = false }) => {
+const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setResetErrors, showVehicleRecovered, get_List, setPropertyStatus, isCad = false, isViewEventDetails = false, isCADSearch = false, clickCount }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -179,8 +179,6 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
     //     if (isNew === true) { newVehicle(); }
     // }, [isNew]);
 
-
-
     useEffect(() => {
         if (localStoreData) {
             setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
@@ -250,13 +248,15 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
 
     useEffect(() => {
         if (DecVehId || DecMVehId) {
-            setVehicleID(DecVehId); GetSingleData(DecVehId, DecMVehId);
+            setVehicleID(DecVehId);
+            GetSingleData(DecVehId, DecMVehId);
             setMasterPropertyID(DecMVehId);
             MstVehicle == 'MST-Vehicle-Dash' ? get_vehicle_Count(0, DecMVehId) : get_vehicle_Count(DecVehId, DecMVehId)
+
         } else {
-            reset();
+            if (!DecVehId && !DecMVehId) reset();
         }
-    }, [DecVehId, DecMVehId,]);
+    }, [DecVehId, DecMVehId, clickCount]);
 
     useEffect(() => {
         if (loginAgencyID) {
@@ -1141,8 +1141,6 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
         const d = new Date(date);
         return !isNaN(d.getTime()) ? d : null;
     };
-
-
 
     return (
         <>

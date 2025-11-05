@@ -2,7 +2,7 @@ import Loader from "./Loader";
 
 const NirbsAllModuleErrorShowModal = (props) => {
 
-    const { nibErrModalStatus, setNibrsErrModalStatus, nibrsValidateloder, administrativeErrorString, offenseErrorString, victimErrorString, offenderErrorString, propertyErrorString, vehicleErrorString, incidentErrorStatus, incidentErrorString, arrestErrorString } = props
+    const { nibErrModalStatus, setNibrsErrModalStatus, nibrsValidateloder, sideBarValidateloder, administrativeErrorString, offenseErrorString, victimErrorString, offenderErrorString, propertyErrorString, vehicleErrorString, incidentErrorStatus, incidentErrorString, arrestErrorString } = props
 
     return (
         <>
@@ -13,7 +13,7 @@ const NirbsAllModuleErrorShowModal = (props) => {
                             <div className="modal-content">
                                 <div className="btn-box mt-4 m-2">
                                     {
-                                        !nibrsValidateloder ?
+                                        !nibrsValidateloder && !sideBarValidateloder ?
                                             <>
                                                 <div className="border border-danger text-center p-3 mt-2 mb-2">
                                                     {
@@ -86,7 +86,6 @@ const NirbsAllModuleErrorShowModal = (props) => {
                                             <Loader />
                                     }
                                 </div>
-
                             </div>
                         </div>
                     </div>
