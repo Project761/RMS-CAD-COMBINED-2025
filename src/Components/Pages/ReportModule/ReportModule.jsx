@@ -87,6 +87,7 @@ const ReportModule = (props) => {
     const [narrativeTypeCode, setnarrativeTypeCode] = useState('');
     const [primaryOfficer, setprimaryOfficer] = useState('');
     const [showModal, setShowModal] = useState(false);
+    const [showModalRecall, setshowModalRecall] = useState(false);
     // ucr reportdata
     const [printIncReport, setIncMasterReport] = useState(false);
     const [IncReportCount, setIncReportCount] = useState(1);
@@ -103,7 +104,7 @@ const ReportModule = (props) => {
     const [redactedComment, setRedactedComment] = useState("");
     const [checkWebWorkFlowStatus, setcheckWebWorkFlowStatus] = useState(false);
     const [IsSelfApproved, setIsSelfApproved] = useState(false);
-    const [skipApproverAuthor , setskipApproverAuthor] = useState(false);
+    const [skipApproverAuthor, setskipApproverAuthor] = useState(false);
     const detectedWordsRef = useRef([]);
 
     const [value, setValue] = useState({
@@ -754,12 +755,13 @@ const ReportModule = (props) => {
                     toastifySuccess(message);
                     get_NarrativesData(incidentID, loginPinID);
                     // GetData_ReportWorkLevelCheck(loginAgencyID ,narrativeID);
-                    resets(); reset()
+                    // resets(); reset()
                 } else {
                     console.log("something Wrong");
                 }
             }).catch(err => console.log(err));
     }
+
 
     const Agencychange = (multiSelected) => {
         setStatesChangeStatus(true)
@@ -797,11 +799,14 @@ const ReportModule = (props) => {
         }
     }
 
+
+
     const { ApprovingOfficerError } = errors
 
     useEffect(() => {
         if (ApprovingOfficerError === 'true') {
-            Add_Approval(); updateNarrative(); reset();
+            Add_Approval(); updateNarrative();
+            //  reset();
         }
     }, [ApprovingOfficerError])
 
@@ -1953,6 +1958,29 @@ const ReportModule = (props) => {
                                                             ) : null
                                                         }
                                                         {
+                                                            narrativeID &&
+                                                                (value.Status === "Pending Review") || (value.Status === "Approved") ?
+                                                                <>
+                                                                    <button
+                                                                        type="button"
+                                                                        data-toggle="modal"
+                                                                        data-target="#QueueReportsModalRecall"
+                                                                        disabled={
+                                                                            value.ReportedByPINActivityID !== loginPinID &&
+                                                                                value.Status === 'Draft'
+
+                                                                                ? true
+                                                                                : false
+                                                                        }
+                                                                        onClick={() => setshowModalRecall(true)}
+                                                                        className="btn btn-sm btn-success"
+                                                                    >
+                                                                        Recall
+                                                                    </button>
+                                                                </> : <></>
+                                                        }
+
+                                                        {
                                                             (IsSelfApproved || skipApproverAuthor) ? (
                                                                 narrativeID && (
                                                                     (value.Status !== "Pending Review" &&
@@ -2126,6 +2154,7 @@ const ReportModule = (props) => {
                     setIncReportCount,
                 }}
             />
+            <RecallNarrativeModal showModalRecall={showModalRecall} updateNarrative={updateNarrative} setshowModalRecall={setshowModalRecall} narrativeID={narrativeID} incidentID={incidentID} showModalAssign={showModalAssign} loginAgencyID={loginAgencyID} nibrsStatus={nibrsStatus} loginPinID={loginPinID} value={value} />
             <NarrativeModal incidentID={incidentID} showModalAssign={showModalAssign} loginAgencyID={loginAgencyID} primaryOfficer={primaryOfficer} narrativeTypeCode={narrativeTypeCode} nibrsStatus={nibrsStatus} setshowModal={setshowModal} loginPinID={loginPinID} value={value} show={showModal}
             />
 
@@ -2411,6 +2440,177 @@ const NarrativeModal = (props) => {
                             <div className='col-6 col-md-4 col-lg-12 mt-2 d-flex text-right ' style={{ justifyContent: "flex-end" }}>
                                 <button type="button" style={{ backgroundColor: "#001f3f", color: "#fff" }} className="btn  mr-1 mb-2" onClick={() => check_Validation_Error()} >Save</button>
                                 <button type="button" style={{ border: " 1px solid#001f3f", color: "#001f3f" }} data-dismiss="modal" onClick={() => { resetOfficers(); setshowModal(false) }} className="btn  pl-2 mb-2">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
+
+
+    );
+};
+
+
+const RecallNarrativeModal = (props) => {
+
+
+    const localStoreData = useSelector((state) => state?.Agency?.localStoreData);
+    const { incidentID, nibrsStatus, loginPinID, setshowModal, showModalAssign, primaryOfficer, updateNarrative, loginAgencyID, showModalRecall, narrativeID, setshowModalRecall, narrativeTypeCode } = props
+    const dispatch = useDispatch()
+    const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
+
+    const useQuery = () => {
+        const params = new URLSearchParams(useLocation().search);
+        return {
+            get: (param) => params.get(param)
+        };
+    };
+
+    const query = useQuery();
+    var IncID = query?.get("IncId");
+    if (!IncID) IncID = 0;
+    else IncID = parseInt(base64ToString(IncID));
+
+
+    const [value, setValue] = useState({
+        'CommentsDoc': '', 'IncidentId': '', 'NarrativeID': '', 'Comments': '', 'AssignComment': '', 'ReportType': '',
+        'ReportedByPINActivityID': null, 'NarrativeTypeID': null, 'AsOfDate': null,
+        'CreatedByUserFK': '', 'ModifiedByUserFK': '', 'ApprovingSupervisorID': '', 'OfficerID': '',
+        'IncidentID': ''
+    })
+
+    const [errors, setErrors] = useState({
+        'OfficerError': '', 'NarrativeIDError': '', 'AssignCommentError': ''
+    })
+
+
+    useEffect(() => {
+        if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
+            if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
+        }
+    }, []);
+
+
+
+    const resetRecall = () => {
+        setValue({ ...value, 'NarrativeID': '', 'NarrativeID': '', 'Comments': '', });
+        setErrors({ ...errors, ['ApprovalCommentsError']: '', })
+    }
+
+
+    useEffect(() => {
+        if (localStoreData) {
+            dispatch(get_AgencyOfficer_Data(localStoreData?.AgencyID, IncID))
+        }
+    }, [localStoreData, IncID]);
+
+
+    const check_Validation_Recall = () => {
+        const ApprovalCommentsErr = RequiredFieldIncident(value?.Comments);
+        setErrors(prevValues => {
+            return {
+                ...prevValues,
+                ['ApprovalCommentsError']: ApprovalCommentsErr || prevValues['ApprovalCommentsError'],
+            }
+        })
+    }
+
+    const { ApprovalCommentsError } = errors
+
+    useEffect(() => {
+        if (ApprovalCommentsError === 'true') {
+            Add_Approval_Recall()
+            // reset();
+            resetserror();
+        }
+
+    }, [ApprovalCommentsError])
+
+    const resetserror = () => {
+        setErrors({ ...errors, ['ApprovalCommentsError']: '', })
+    }
+
+
+
+
+    const Add_Approval_Recall = async (id) => {
+        const { ApprovingSupervisorID, status, Comments } = value;
+
+        const val = {
+            'IncidentId': incidentID, 'NarrativeID': narrativeID, 'CreatedByUserFK': loginPinID, 'Comments': Comments, 'status': 'Draft',
+        };
+        AddDeleteUpadate('IncidentNarrativeReport/Insert_IncidentNarrativeReport', val)
+            .then((res) => {
+                if (res.success) {
+                    const parsedData = JSON.parse(res.data);
+                    const message = parsedData.Table[0].Message;
+                    toastifySuccess(message);
+                    setshowModalRecall(false);
+                    // get_NarrativesData(incidentID, loginPinID);
+                    updateNarrative();
+                    resetRecall();
+                    // resets(); reset()
+                } else {
+                    console.log("something Wrong");
+                }
+            }).catch(err => console.log(err));
+    }
+
+
+
+
+    const escFunction = useCallback((event) => {
+        if (event.key === "Escape") {
+            resetserror();
+        }
+    }, []);
+
+    useEffect(() => {
+        document.addEventListener("keydown", escFunction, false);
+        return () => {
+            document.removeEventListener("keydown", escFunction, false);
+        };
+    }, [escFunction]);
+
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        if (event) {
+            setValue((prevState) => ({ ...prevState, [name]: value, }));
+        }
+        else {
+            setValue((prevState) => ({ ...prevState, [name]: null, }));
+        }
+    };
+
+    return (
+        <>
+            {showModalRecall && (
+                <div class="modal fade" style={{ background: "rgba(0,0,0, 0.5)" }} id="QueueReportsModalRecall" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="false">
+                    <div className="modal-dialog modal-lg modal-dialog-centered">
+                        <div className="modal-content p-2 px-4 approvedReportsModal" >
+                            <div className='d-flex justify-content-between'>
+                                <h5 className="fw-bold">Recall Report</h5>
+                                <button className="btn-close b-none bg-transparent text-right" onClick={() => { resetRecall(); setshowModalRecall(false); }} data-dismiss="modal">X</button>
+                            </div>
+                            <div className="col-md-6">
+                                <label className="fw-bold">Enter Reason</label>
+                                <textarea
+                                    className="form-control"
+                                    style={{ minHeight: '80px', minWidth: '100px', background: '#FFE2A8' }}
+                                    placeholder="Enter Reason"
+                                    name="Comments"
+                                    value={value?.Comments}
+
+                                    onChange={(e) => { handleChange(e) }}
+                                />
+                                {errors.ApprovalCommentsError !== 'true' ? (
+                                    <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px', fontWeight: "400" }}>{errors.ApprovalCommentsError}</p>
+                                ) : null}
+                            </div>
+                            <div className='col-6 col-md-4 col-lg-12 mt-2 d-flex text-right ' style={{ justifyContent: "flex-end" }}>
+                                <button type="button" style={{ backgroundColor: "#001f3f", color: "#fff" }} className="btn  mr-1 mb-2" onClick={() => check_Validation_Recall()} >Save</button>
+                                <button type="button" style={{ border: " 1px solid#001f3f", color: "#001f3f" }} data-dismiss="modal" onClick={() => { resetRecall(); setshowModalRecall(false) }} className="btn  pl-2 mb-2">Close</button>
                             </div>
                         </div>
                     </div>
