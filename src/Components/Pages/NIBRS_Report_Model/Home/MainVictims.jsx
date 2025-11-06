@@ -2819,7 +2819,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
     }, [victimClick, mainIncidentID])
 
     // validate Incident
-    const ValidateIncNames = (incidentID, IncNo, isDefaultSelected = false) => {
+    const ValidateIncNames = async (incidentID, IncNo, isDefaultSelected = false) => {
         setclickNibLoder(true);
         const val = {
             'gIncidentID': incidentID,
@@ -2828,11 +2828,11 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
             'gIntAgencyID': loginAgencyID,
         }
         try {
-            fetchPostDataNibrs('NIBRS/GetVictimNIBRSError', val).then((data) => {
+            await fetchPostDataNibrs('NIBRS/GetVictimNIBRSError', val).then((data) => {
                 if (data) {
 
                     const victimList = data?.Victim;
-                    console.log("🚀 ~ ValidateIncNames ~ victimList:", victimList)
+                    // console.log("🚀 ~ ValidateIncNames ~ victimList:", victimList)
                     if (Array.isArray(victimList) && victimList.length > 0 && isDefaultSelected) {
                         const row = victimList[0];
                         getNibrsErrorToolTip(row?.NameEventID, mainIncidentID, IncNo);
@@ -2865,7 +2865,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
         }
     }
 
-    const getNibrsErrorToolTip = (NameId, IncidentID, IncNo) => {
+    const getNibrsErrorToolTip = async (NameId, IncidentID, IncNo) => {
+        console.log("🚀 ~ getNibrsErrorToolTip ~ NameId:", NameId);
         setShowInjuryTypeError(false);
         setShowVictimAgeError(false);
         setShowAssaultTypeError(false);
@@ -2879,7 +2880,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
             "gIntAgencyID": loginAgencyID,
         }
         if (NameId) {
-            fetchPostDataNibrs('NIBRS/GetVictimNIBRSError', val).then((data) => {
+            await fetchPostDataNibrs('NIBRS/GetVictimNIBRSError', val).then((data) => {
 
                 if (data) {
                     const victimError = data?.Victim && data?.Victim[0] ? data?.Victim[0] : [];
@@ -3017,6 +3018,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
 
         // ValidateIncNames(mainIncidentID, IncNo, false);
         getNibrsErrorToolTip(nameID, mainIncidentID, IncNo);
+        console.log("🚀 ~ offenseMulitiSelectOnchange ~ nameID:", nameID)
     }
 
     const InSertBasicInfo1 = (id, col1, url) => {
@@ -3179,8 +3181,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
     };
 
 
-    // console.log("🚀 ~ MainVictims ~ victimCode:", victimCode);
-    // console.log("🚀 ~ MainVictims ~ nameTypeCode:", nameTypeCode);
+    // console.log("🚀 ~ MainVictims ~ DeNameID:", DeNameID);
+    // console.log("🚀 ~ MainVictims ~ nameID:", nameID);
 
     return (
         <>
