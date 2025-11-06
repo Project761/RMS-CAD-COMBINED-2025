@@ -363,7 +363,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                     <div className="col-12 col-sm-12">
                         <div className={`card Agency ${isCad ? 'CAD-incident-card' : 'incident-card'}`}>
                             <div className="card-body" >
-                                {VehicleFilterData && VehicleFilterData.length > 0 && (
+                                {VehicleFilterData && VehicleFilterData.length > 0 && MstVehicle != "MST-Vehicle-Dash" && (
                                     <div className="card-carousel-container position-relative mb-3">
                                         {/* Cards Wrapper */}
                                         {viewType === "card" ? (

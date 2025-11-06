@@ -45,7 +45,8 @@ const MugShorts = (props) => {
     const [HairLengthIDDrp, setHairLengthIDDrp] = useState([]);
     const [HairShadeIDDrp, setHairShadeIDDrp] = useState([]);
     const [BodyBuildIDDrp, setBodyBuildIDDrp] = useState([]);
-    const [MugshotID, setMugshotID] = useState('')
+    const [MugshotID, setMugshotID] = useState('');
+    const [mugshots, setMugshots] = useState([]);
 
     const useQuery = () => {
         const params = new URLSearchParams(useLocation().search);
@@ -162,6 +163,20 @@ const MugShorts = (props) => {
             }
         })
     }
+    const GetData_Mugshots_Data_Image = (ArrestID) => {
+        const val = { MugshotID: ArrestID }
+        fetchPostData('Mugshots/GetData_MugshotsPhoto', val).then((res) => {
+            if (res) {
+                // Assuming the response is an object that includes an array with image data
+                const imageData = res.Table || [];
+                console.log(imageData, res)
+                setMugshots(res);  // Update the state with the newly fetched data
+            } else {
+                setMugshots([]);  // Clear the mugshots if no data is returned
+            }
+        });
+    };
+
 
     const check_Validation_Error = (e) => {
         const EyeColorIDErrors = RequiredFieldIncident(value.EyeColorID);
@@ -249,19 +264,21 @@ const MugShorts = (props) => {
         setValue({
             ...value, 'EyeColorID': '', 'Weight': '', 'Height': '', 'HairColorID': '', 'HairStyleID': '', 'HairLengthID': '', 'HairShadeID': '', 'BodyBuildTypeID': '', 'Complexion': '', 'FrontImage': '', 'LeftImage': '', 'RightImage': '', 'EnterImage': '', FrontMugshot: null, LeftMugshot: null, RightMugshot: null, EnterMugshot: null
         }); setErrors({ ...errors, 'EyeColorIDErrors': '', 'WeightErrors': '', 'HeightErrors': '', 'HairColorIDErrors': '', });
-        setMugshotID([])
+        setMugshotID([]);
+        setMugshots([]);
     }
 
     const set_Edit_Value = (row) => {
-        setStatus(true); setUpdateStatus(updateStatus + 1); setMugshotID(row.MugshotID); GetSingleData(row.MugshotID); setStatesChangeStatus(false); setChangesStatus(false); setErrors({ ...errors, 'EyeColorIDErrors': '', 'WeightErrors': '', 'HeightErrors': '', 'HairColorIDErrors': '', });
+        setStatus(true); setUpdateStatus(updateStatus + 1); setMugshotID(row.MugshotID); GetData_Mugshots_Data_Image(row.MugshotID); GetSingleData(row.MugshotID); setStatesChangeStatus(false); setChangesStatus(false); setErrors({ ...errors, 'EyeColorIDErrors': '', 'WeightErrors': '', 'HeightErrors': '', 'HairColorIDErrors': '', });
     }
 
     const Add_MugShorts = () => {
         const formdata = new FormData();
         const {
             EyeColorID, HairColorID, HairShadeID, Weight, Height, Complexion, HairLengthID, HairStyleID, BodyBuildTypeID,
-            FrontMugshot, LeftMugshot, RightMugshot, EnterMugshot
+            FrontMugshot, LeftMugshot, RightMugshot, EnterMugshot, ...enterMugshots
         } = value;
+
         const val = {
             ArrestID: DecArrestId, EyeColorID, Weight, Height, HairColorID, HairStyleID, HairLengthID,
             HairShadeID, BodyBuildTypeID, Complexion, CreatedByUserFK: loginPinID
@@ -269,24 +286,38 @@ const MugShorts = (props) => {
         const objectAsString = JSON.stringify(val);
         const finalDataString = JSON.stringify([objectAsString]);
         formdata.append("Data", finalDataString);
+
+        // Append images for the front, left, right mugshots
         if (FrontMugshot) formdata.append("FrontImage", FrontMugshot);
         if (LeftMugshot) formdata.append("LeftImage", LeftMugshot);
         if (RightMugshot) formdata.append("RightImage", RightMugshot);
-        if (EnterMugshot) formdata.append("EnterImage", EnterMugshot);
+        if (enterMugshots) Object.keys(enterMugshots).forEach(key => {
+            if (enterMugshots[key]) {
+                formdata.append("EnterImage", enterMugshots[key]);
+            }
+        });
+
+        // Make the API call with the FormData
         AddDelete_Img('Mugshots/Insert_Mugshots', formdata).then((res) => {
             GetData_Mugshots_Data(DecArrestId);
-            setChangesStatus(false); setStatesChangeStatus(false); get_Arrest_Count(DecArrestId);
+
+            setChangesStatus(false);
+            setStatesChangeStatus(false);
+            get_Arrest_Count(DecArrestId);
             const parseData = JSON.parse(res.data);
+            GetData_Mugshots_Data_Image(parseData?.Table[0].MugshotID);
             toastifySuccess(parseData?.Table[0].Message);
-            reset(); setErrors({ ...errors, 'EyeColorIDErrors': '' });
+            reset();
+            setErrors({ ...errors, 'EyeColorIDErrors': '' });
         });
     };
+
 
     const update_MugShorts = () => {
         const formdata = new FormData();
         const {
             MugshotID, EyeColorID, HairColorID, HairShadeID, Weight, Height, Complexion, HairLengthID, HairStyleID, BodyBuildTypeID,
-            FrontMugshot, LeftMugshot, RightMugshot, EnterMugshot
+            FrontMugshot, LeftMugshot, RightMugshot, EnterMugshot, ...enterMugshots
         } = value;
         const val = {
             MugshotID: MugshotID, ArrestID: DecArrestId, EyeColorID, Weight, Height, HairColorID, HairStyleID, HairLengthID,
@@ -298,7 +329,11 @@ const MugShorts = (props) => {
         if (FrontMugshot) formdata.append("FrontImage", FrontMugshot);
         if (LeftMugshot) formdata.append("LeftImage", LeftMugshot);
         if (RightMugshot) formdata.append("RightImage", RightMugshot);
-        if (EnterMugshot) formdata.append("EnterImage", EnterMugshot);
+        if (enterMugshots) Object.keys(enterMugshots).forEach(key => {
+            if (enterMugshots[key]) {
+                formdata.append("EnterImage", enterMugshots[key]);
+            }
+        });
         AddDelete_Img('Mugshots/Update_Mugshots', formdata).then((res) => {
             const parseData = JSON.parse(res.data);
             toastifySuccess(parseData?.Table[0].Message); get_Arrest_Count(DecArrestId);
@@ -310,15 +345,48 @@ const MugShorts = (props) => {
 
     const Delete_MugShorts = (ImageName) => {
         const val = {
-            'MugshotID': MugshotID, 'DeletedByUserFK': loginPinID, 'ImageName': ImageName,
+            'MugshotID': MugshotID, 'DeletedByUserFK': loginPinID, 'ImageName': '',
         }
         AddDeleteUpadate('Mugshots/Delete_Mugshots', val).then((res) => {
             if (res) {
+                console.log('hello')
                 const parseData = JSON.parse(res.data);
                 toastifySuccess(parseData?.Table[0].Message); setChangesStatus(false);
-                setStatus(false); reset(); GetData_Mugshots_Data(DecArrestId); get_Arrest_Count(DecArrestId);
+                setStatus(false); reset();
+                GetData_Mugshots_Data(DecArrestId);
+                get_Arrest_Count(DecArrestId);
             } else { console.log("Somthing Wrong"); }
-        })
+        }).catch(() => { })
+    }
+
+    // const Delete_MugShorts_Image = (ImageName) => {
+    //     const val = {
+    //         'MugshotID': MugshotID, 'DeletedByUserFK': loginPinID, 'ImageName': ImageName,
+    //     }
+    //     AddDeleteUpadate('Mugshots/Delete_Mugshots', val).then((res) => {
+    //         if (res) {
+    //             const parseData = JSON.parse(res.data);
+    //             toastifySuccess(parseData?.Table[0].Message); setChangesStatus(false);
+    //             setStatus(false); reset();
+    //             // GetData_Mugshots_Data(DecArrestId);
+    //             get_Arrest_Count(DecArrestId);
+    //         } else { console.log("Somthing Wrong"); }
+    //     }).catch(() => { })
+    // }
+
+    const Delete_MugShorts_Enter_Image = (ImageName) => {
+        const val = {
+            'MugshotsPhotoID': ImageName, 'DeletedByUserFK': loginPinID,
+        }
+        AddDeleteUpadate('Mugshots/Delete_MugshotsPhoto', val).then((res) => {
+            if (res) {
+                const parseData = JSON.parse(res.data);
+                toastifySuccess(parseData?.Table[0].Message); setChangesStatus(false);
+                // setStatus(false);
+                GetData_Mugshots_Data_Image(MugshotID);
+                // get_Arrest_Count(DecArrestId);
+            } else { console.log("Somthing Wrong"); }
+        }).catch(() => { })
     }
 
     const conditionalRowStyles = [
@@ -338,13 +406,15 @@ const MugShorts = (props) => {
     const startRef1 = React.useRef();
 
     const handleUpload = (name) => {
-        !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true)
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = 'image/*';
         input.onchange = (event) => {
             const file = event.target.files[0];
-            if (file) { setValue(prev => ({ ...prev, [name]: file })); }
+            if (file) {
+                // Store the uploaded file with its unique name
+                setValue(prev => ({ ...prev, [name]: file }));
+            }
         };
         input.click();
     };
@@ -362,10 +432,41 @@ const MugShorts = (props) => {
             return;
         }
         // Call delete API
-        Delete_MugShorts(imageFieldName);
+        const val = {
+            'MugshotID': MugshotID, 'DeletedByUserFK': loginPinID, 'ImageName': imageFieldName,
+        }
+        AddDeleteUpadate('Mugshots/Delete_Mugshots', val).then((res) => {
+            if (res) {
+                console.log('hello')
+                const parseData = JSON.parse(res.data);
+                toastifySuccess(parseData?.Table[0].Message); setChangesStatus(false);
+            } else { console.log("Somthing Wrong"); }
+        }).catch(() => { })
+        // Delete_MugShorts(imageFieldName);
         // Clear from local state
         setValue(prev => ({ ...prev, [name]: null }));
     };
+
+    const handleAddMugshot = () => {
+        // Add a new mugshot with a unique ID
+        setMugshots([...mugshots, { id: mugshots.length + 1, name: `EnterMugshot${mugshots.length + 1}` }]);
+    };
+
+    const handleDeleteMugshot = (mugshotId) => {
+        // Remove the mugshot section from the state by filtering out the item with the corresponding id
+        console.log(mugshotId);
+        setMugshots(mugshots.filter(mugshot => mugshot.id !== mugshotId));
+    };
+
+    // const handleUpload = (mugshotId) => {
+    //     // Handle upload functionality here
+    //     console.log(`Upload for mugshot ID: ${mugshotId}`);
+    // };
+
+    const handleDelete = (name) => {
+        setMugshots(mugshots.filter(item => item.name !== name));
+    };
+    console.log(mugshots)
 
     return (
         <>
@@ -400,7 +501,7 @@ const MugShorts = (props) => {
                         ) : null}</label>
                     </div>
                     <div className="col-3 col-md-3 col-lg-3 text-field mt-0">
-                        <input type="text" className='requiredColor' maxLength={10} value={value?.Weight} onChange={handleChange} name='Weight' required />
+                        <input type="text" placeholder="Enter Weight" className='requiredColor' maxLength={10} value={value?.Weight} onChange={handleChange} name='Weight' required />
                     </div>
 
                     <div className="col-3 col-md-3 col-lg-1">
@@ -409,7 +510,7 @@ const MugShorts = (props) => {
                         ) : null}</label>
                     </div>
                     <div className="col-3 col-md-3 col-lg-3 text-field mt-0">
-                        <input type="text" className='requiredColor' maxLength={10} value={value?.Height} onChange={handleChange} name='Height' required />
+                        <input type="text" placeholder="Enter Height" className='requiredColor' maxLength={10} value={value?.Height} onChange={handleChange} name='Height' required />
                     </div>
 
                     <div className="col-3 col-md-3 col-lg-1">
@@ -532,31 +633,81 @@ const MugShorts = (props) => {
 
                 <div className="col-md-12 mt-2">
                     <div className="row">
-                        {[
+                        {[ // Static sections for Front, Left, Right
                             { label: 'Front', name: 'FrontMugshot' },
                             { label: 'Left', name: 'LeftMugshot' },
                             { label: 'Right', name: 'RightMugshot' },
-                            // { label: 'Enter', name: 'EnterMugshot' },
                         ].map((item, index) => (
-                            <div key={index} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-3 d-flex align-items-stretch" >
+                            <div key={index} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-3 d-flex align-items-stretch">
                                 <div className="card shadow-sm w-100 border-0">
                                     <div className="card-body text-center d-flex flex-column">
                                         <label className="fw-bold mb-2">{item.label}</label>
+
                                         <div className="mugshot-preview flex-grow-1 mb-3 d-flex align-items-center justify-content-center">
                                             {value[item.name] ? (
-                                                <img src={typeof value[item.name] === 'string' ? value[item.name] : URL.createObjectURL(value[item.name])
-                                                } alt={`${item.label} preview`} className="img-fluid rounded mugshot-img" />
+                                                <img src={typeof value[item.name] === 'string' ? value[item.name] : URL.createObjectURL(value[item.name])}
+                                                    alt={`${item.label} preview`} className="img-fluid rounded mugshot-img" />
                                             ) : (<span className="text-muted">{item.label} Mugshot preview</span>)}
                                         </div>
                                         <div className="d-flex justify-content-center gap-2">
-                                            <button type="button" className="btn btn-primary btn-sm mr-2" onClick={() => handleUpload(item.name)} > Upload  </button>
-                                            {/* <button type="button" className="btn btn-outline-danger btn-sm" onClick={() => handleRemove(item.name)}
-                                            > Remove </button> */}
+                                            <button type="button" className="btn btn-sm mr-2" style={{ border: "1px solid #1A5089" }} onClick={() => handleUpload(item.name)}>
+                                                Upload
+                                            </button>
+
+                                            <button type="button" className="btn btn-primary btn-sm mr-2" onClick={() => handleRemove(item.name)}>
+                                                Remove
+                                            </button>
+
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         ))}
+                        {mugshots.map((item, index) => (
+                            <div key={index} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-3 d-flex align-items-stretch">
+                                <div className="card shadow-sm w-100 border-0 position-relative">
+                                    <div className="card-body text-center d-flex flex-column">
+
+                                        <label className="fw-bold mb-2">Enter</label>
+                                        <div style={{ position: "absolute", right: "18px", top: "20px" }}>
+                                            {/* <i onClick={() => Delete_MugShorts(item.MugshotsPhotoID)} class="fa fa-trash" aria-hidden="true"></i> */}
+                                        </div>
+                                        <div className="mugshot-preview flex-grow-1 mb-3 d-flex align-items-center justify-content-center">
+                                            {value[item.name] ? (
+                                                <img
+                                                    src={URL.createObjectURL(value[item.name])}
+                                                    alt={`${item.name} preview`}
+                                                    className="img-fluid rounded mugshot-img"
+                                                />
+                                            ) : item.EnterImage ? (
+                                                <img
+                                                    src={item.EnterImage}
+                                                    alt={`${item.name} preview`}
+                                                    className="img-fluid rounded mugshot-img"
+                                                />
+                                            ) : (
+                                                <span className="text-muted">Enter Mugshot preview</span>
+                                            )}
+                                        </div>
+                                        <div className="d-flex justify-content-center gap-2">
+                                            <button
+                                                type="button"
+                                                className="btn btn-primary btn-sm mr-2"
+                                                onClick={() => handleUpload(item.name)}
+                                            >
+                                                Upload
+                                            </button>
+                                            <button type="button" className="btn btn-primary btn-sm mr-2" onClick={() => Delete_MugShorts_Enter_Image(item.MugshotsPhotoID)}>
+                                                Remove
+                                            </button>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+
+
                     </div>
                 </div>
                 <div className="btn-box text-right mr-1 mb-2 mt-3">
@@ -567,8 +718,9 @@ const MugShorts = (props) => {
                         status ?
                             <button type="button" className="btn btn-sm btn-success mr-1" disabled={!statesChangeStatus} onClick={(e) => { check_Validation_Error(); }}>Update</button>
                             :
-                            <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); }}>Add Mughshot</button>
+                            <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); }}>Save</button>
                     }
+                    <button type="button" onClick={handleAddMugshot} className="btn btn-sm btn-success mr-1" >Add Mughshot</button>
                 </div>
             </div >
             <div className="col-12 mt-3 modal-table">
