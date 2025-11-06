@@ -380,7 +380,7 @@ const Arrest_Add_Up = () => {
                             <div className="card-body" >
 
                                 {arrestFilterData && arrestFilterData.length > 0 && (
-                                    <div className="card-carousel-container position-relative mb-3">
+                                    <div className="card-carousel-container position-relative" style={{marginBottom:"40px"}}>
                                         {/* Cards Wrapper */}
                                         {viewType === "card" ? (
                                             <div className="card-carousel" id="cardCarousel" ref={carouselRef}>
@@ -696,7 +696,7 @@ const Arrest_Add_Up = () => {
 
                                 {
                                     (status || isNew === "true" || isNew === true || ArrestCount === 0 || ArrestCount === "0") && (
-                                        <div className="row mt-2" style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
+                                        <div className="row " style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
                                             <div className="col-12 name-tab">
                                                 <ul className='nav nav-tabs'>
                                                     <Link
