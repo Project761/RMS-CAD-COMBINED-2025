@@ -1893,6 +1893,10 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                             <button type="button" className="btn btn-sm btn-success mr-1" data-toggle="modal" data-target="#NCICModal" onClick={() => { setOpenNCICModal(true) }}>TLETS</button>
 
                                             {/* <button type="button" className="btn btn-sm btn-success mr-1" onClick={newVehicle}>New</button> */}
+                                            {
+                                                MstVehicle === "MST-Vehicle-Dash" &&
+                                                <button type="button" className="btn btn-sm btn-success mr-1" onClick={newVehicle}>New</button>
+                                            }
 
                                             {
                                                 vehicleStatus && (VehSta === 'true' || VehSta === true) ?
