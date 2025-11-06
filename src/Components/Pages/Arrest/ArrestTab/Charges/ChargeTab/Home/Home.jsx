@@ -887,13 +887,13 @@ const Charges = (props) => {
         </fieldset>
       </div> */}
       <div className="container-fluid">
-        <fieldset className="p-3 mt-2">
+      <fieldset className="">
           <legend className="w-auto px-2">Weapon & Property</legend>
-          <div className="row mt-2">
-            <div className="col-2 col-md-2 col-lg-1 mt-3">
-              <label htmlFor="" className='label-name '>Weapon</label>
+          <div className="row align-items-center mt-2" style={{rowGap: "8px"}}>
+            <div className="col-2 col-md-2 col-lg-1 ">
+              <label htmlFor="" className='label-name mt-0 '>Weapon</label>
             </div>
-            <div className="col-6 col-md-6 col-lg-5 mb-3">
+            <div className="col-6 col-md-6 col-lg-5">
               {
                 value?.ChargeWeaponTypeIDName ?
                   <Select
@@ -932,10 +932,10 @@ const Charges = (props) => {
             </div>
 
             {/* Property Section */}
-            <div className="col-1 col-md-2 col-lg-1 mt-3">
-              <label htmlFor="" className='label-name '>Property</label>
+            <div className="col-1 col-md-2 col-lg-1 ">
+              <label htmlFor="" className='label-name mt-0'>Property</label>
             </div>
-            <div className="col-6 col-md-6 col-lg-5 mb-3">
+            <div className="col-6 col-md-6 col-lg-5 ">
               <Select
                 options={propertyDrp}
                 isClearable={false}
@@ -987,7 +987,7 @@ const Charges = (props) => {
                 )}
               </label>
             </div>
-            <div className="col-4 col-md-4 col-lg-4  ">
+            <div className="col-4 col-md-4 col-lg-3  ">
               <Select
                 styles={Requiredcolour}
                 name="NIBRSID"
@@ -998,7 +998,7 @@ const Charges = (props) => {
                 placeholder="Select..."
               />
             </div>
-            <div className="col-2 col-md-2 col-lg-1 ">
+            <div className="col-2 col-md-2 col-lg-2 ">
               <label htmlFor="" className='new-label mb-0'>
                 Category
               </label>
@@ -1023,7 +1023,7 @@ const Charges = (props) => {
                 ) : null}
               </Link>
             </div>
-            <div className="col-4 col-md-4 col-lg-8 mt-0 ">
+            <div className="col-4 col-md-4 col-lg-7 mt-0 ">
               <Select
                 name="ChargeCodeID"
                 value={chargeCodeDrp?.filter((obj) => obj.value === value?.ChargeCodeID)}
@@ -1036,7 +1036,7 @@ const Charges = (props) => {
             </div>
 
 
-            <div className="col-2 col-md-2 col-lg-1  text-right" >
+            <div className="col-2 col-md-2 col-lg-2 text-right" >
               <label className="new-label mb-0"  >
                 Attempt/Complete
                 {errors.AttemptRequiredError !== 'true' && (
@@ -1074,7 +1074,7 @@ const Charges = (props) => {
                 placeholder="Select..."
               />
             </div>
-            <div className="col-2 col-md-2 col-lg-2 text-right">
+            <div className="col-2 col-md-2 col-lg-1 text-right">
               <label htmlFor="" className='new-label mb-0'>Count</label>
             </div>
             <div className="col-4 col-md-4 col-lg-3 mt-0 text-field">
@@ -1082,7 +1082,7 @@ const Charges = (props) => {
                 value={value?.Count}
                 className='' />
             </div>
-            <div className="col-3 col-md-3 col-lg-1 ">
+            <div className="col-3 col-md-3 col-lg-2 ">
               <label htmlFor="" className="new-label px-0 mb-0">
                 Charge  Date/Time{errors.OffenseDttmError !== 'true' ? (
                   <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.OffenseDttmError}</p>
@@ -1138,6 +1138,7 @@ const Charges = (props) => {
                 is24Hour
               />
             </div>
+
 
           </div>
         </fieldset>
