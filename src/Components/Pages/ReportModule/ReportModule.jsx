@@ -1404,6 +1404,8 @@ const ReportModule = (props) => {
         })
     }
 
+
+
     // editor end
     return (
         <>
@@ -1981,7 +1983,7 @@ const ReportModule = (props) => {
                                                         }
 
                                                         {
-                                                            (IsSelfApproved || skipApproverAuthor) ? (
+                                                            (IsSelfApproved) ? (
                                                                 narrativeID && (
                                                                     (value.Status !== "Pending Review" &&
                                                                         value.Status !== "Rejected" &&

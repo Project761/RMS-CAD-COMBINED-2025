@@ -1573,6 +1573,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                             }
                                             setNameModalStatus(true);
                                             setType("VehicleOwner");
+                                            setPossenSinglData([]);
                                             get_Name_Count(ownerOfID);
                                             get_vehicle_Count(vehicleID);
                                         }}
