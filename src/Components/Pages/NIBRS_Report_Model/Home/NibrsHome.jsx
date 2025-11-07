@@ -360,7 +360,7 @@ const NibrsHome = () => {
           const victimObj = victimValidateNibrsData?.Victim ? victimValidateNibrsData?.Victim : [];
           // console.log("🚀 ~ validateNibrs ~ victimObj:", victimObj)
           if (victimObj?.length > 0) {
-            const isVictimConnectedError = victimObj[0]?.OnPageError?.includes("At least one victim must be present and must be connected with offence.");
+            const isVictimConnectedError = victimObj[0]?.OnPageError?.includes("At least one victim must be present and must be connected with offense.");
             if (isVictimConnectedError) {
               setIsVictimConnectedError(true);
             } else {
@@ -599,8 +599,8 @@ const NibrsHome = () => {
         nibErrModalStatus={nibrsErrModalStatus}
         setNibrsErrModalStatus={setNibrsErrModalStatus}
 
-        sideBarValidateloder={nibrsSideBarLoading }
-        nibrsValidateloder={nibrsValidateloder }
+        sideBarValidateloder={nibrsSideBarLoading}
+        nibrsValidateloder={nibrsValidateloder}
 
         administrativeErrorString={administrativeErrorString}
         incidentErrorString={incidentErrorString}
