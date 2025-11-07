@@ -167,21 +167,44 @@ const MugShorts = (props) => {
         const val = { MugshotID: ArrestID }
         fetchPostData('Mugshots/GetData_MugshotsPhoto', val).then((res) => {
             if (res) {
-                // Assuming the response is an object that includes an array with image data
                 const imageData = res.Table || [];
                 console.log(imageData, res)
-                setMugshots(res);  // Update the state with the newly fetched data
+                setMugshots(res);
             } else {
-                setMugshots([]);  // Clear the mugshots if no data is returned
+                setMugshots([]);
             }
         });
     };
+
+    const RequiredFieldIncidentHeight = (field, fieldName) => {
+        if (
+            !field ||
+            field?.length === 0 ||
+            (typeof field === 'string' && field.trim() === '') ||
+            field === null ||
+            field === undefined
+        ) {
+            return 'Required *';
+        }
+
+        if (fieldName === 'Height') {
+            // Feet: 1–9 | Inches: only 11
+            const heightPattern = /^([1-9])'\s?(11)''$/;
+            if (!heightPattern.test(field.trim())) {
+                return "Invalid height format (only like 5'11'')";
+            }
+        }
+
+        return 'true';
+    };
+
+
 
 
     const check_Validation_Error = (e) => {
         const EyeColorIDErrors = RequiredFieldIncident(value.EyeColorID);
         const WeightErrors = RequiredFieldIncident(value.Weight);
-        const HeightErrors = RequiredFieldIncident(value.Height);
+        const HeightErrors = RequiredFieldIncidentHeight(value.Height);
         const HairColorIDErrors = RequiredFieldIncident(value.HairColorID);
         setErrors(pre => {
             return {
@@ -212,8 +235,33 @@ const MugShorts = (props) => {
     }
 
     const handleChange = (e) => {
-        !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-        setValue({ ...value, [e.target.name]: e.target.value });
+        !addUpdatePermission && setStatesChangeStatus(true);
+        !addUpdatePermission && setChangesStatus(true);
+
+        const { name, value: inputValue } = e.target;
+        let formattedValue = inputValue;
+
+        if (name === 'Weight') {
+            formattedValue = inputValue.replace(/[^0-9]/g, '');
+        } else if (name === 'Height') {
+            formattedValue = formatHeight(inputValue);
+        }
+
+        setValue((prev) => ({
+            ...prev,
+            [name]: formattedValue,
+        }));
+    };
+
+
+    const formatHeight = (rawValue) => {
+        let digits = rawValue.replace(/[^0-9]/g, '');
+        if (digits.length >= 1) {
+            let feet = digits[0];
+            return `${feet}'11''`;
+        }
+
+        return digits;
     };
 
     const columns = [
@@ -287,7 +335,6 @@ const MugShorts = (props) => {
         const finalDataString = JSON.stringify([objectAsString]);
         formdata.append("Data", finalDataString);
 
-        // Append images for the front, left, right mugshots
         if (FrontMugshot) formdata.append("FrontImage", FrontMugshot);
         if (LeftMugshot) formdata.append("LeftImage", LeftMugshot);
         if (RightMugshot) formdata.append("RightImage", RightMugshot);
@@ -297,7 +344,6 @@ const MugShorts = (props) => {
             }
         });
 
-        // Make the API call with the FormData
         AddDelete_Img('Mugshots/Insert_Mugshots', formdata).then((res) => {
             GetData_Mugshots_Data(DecArrestId);
 
@@ -305,7 +351,7 @@ const MugShorts = (props) => {
             setStatesChangeStatus(false);
             get_Arrest_Count(DecArrestId);
             const parseData = JSON.parse(res.data);
-            GetData_Mugshots_Data_Image(parseData?.Table[0].MugshotID);
+            // GetData_Mugshots_Data_Image(parseData?.Table[0].MugshotID);
             toastifySuccess(parseData?.Table[0].Message);
             reset();
             setErrors({ ...errors, 'EyeColorIDErrors': '' });
@@ -315,33 +361,45 @@ const MugShorts = (props) => {
 
     const update_MugShorts = () => {
         const formdata = new FormData();
+
         const {
             MugshotID, EyeColorID, HairColorID, HairShadeID, Weight, Height, Complexion, HairLengthID, HairStyleID, BodyBuildTypeID,
             FrontMugshot, LeftMugshot, RightMugshot, EnterMugshot, ...enterMugshots
         } = value;
+
         const val = {
             MugshotID: MugshotID, ArrestID: DecArrestId, EyeColorID, Weight, Height, HairColorID, HairStyleID, HairLengthID,
             HairShadeID, BodyBuildTypeID, Complexion, ModifiedByUserFK: loginPinID
         };
+
         const objectAsString = JSON.stringify(val);
         const finalDataString = JSON.stringify([objectAsString]);
         formdata.append("Data", finalDataString);
+
         if (FrontMugshot) formdata.append("FrontImage", FrontMugshot);
         if (LeftMugshot) formdata.append("LeftImage", LeftMugshot);
         if (RightMugshot) formdata.append("RightImage", RightMugshot);
-        if (enterMugshots) Object.keys(enterMugshots).forEach(key => {
-            if (enterMugshots[key]) {
-                formdata.append("EnterImage", enterMugshots[key]);
-            }
-        });
+        if (enterMugshots) {
+            Object.keys(enterMugshots).forEach(key => {
+                if (enterMugshots[key] && enterMugshots[key] !== null && enterMugshots[key] !== undefined) {
+                    formdata.append("EnterImage", enterMugshots[key]);
+                }
+            });
+        }
+
         AddDelete_Img('Mugshots/Update_Mugshots', formdata).then((res) => {
             const parseData = JSON.parse(res.data);
-            toastifySuccess(parseData?.Table[0].Message); get_Arrest_Count(DecArrestId);
-            setChangesStatus(false); setStatesChangeStatus(false); GetData_Mugshots_Data(DecArrestId);
-            setErrors({ ...errors, 'EyeColorIDErrors': '', }); reset(); setStatus(false);
+            toastifySuccess(parseData?.Table[0].Message);
+            get_Arrest_Count(DecArrestId);
+            setChangesStatus(false);
+            setStatesChangeStatus(false);
+            GetData_Mugshots_Data(DecArrestId);
+            setErrors({ ...errors, 'EyeColorIDErrors': '', });
+            reset();
+            setStatus(false);
         });
-
     }
+
 
     const Delete_MugShorts = (ImageName) => {
         const val = {
@@ -359,35 +417,34 @@ const MugShorts = (props) => {
         }).catch(() => { })
     }
 
-    // const Delete_MugShorts_Image = (ImageName) => {
-    //     const val = {
-    //         'MugshotID': MugshotID, 'DeletedByUserFK': loginPinID, 'ImageName': ImageName,
-    //     }
-    //     AddDeleteUpadate('Mugshots/Delete_Mugshots', val).then((res) => {
-    //         if (res) {
-    //             const parseData = JSON.parse(res.data);
-    //             toastifySuccess(parseData?.Table[0].Message); setChangesStatus(false);
-    //             setStatus(false); reset();
-    //             // GetData_Mugshots_Data(DecArrestId);
-    //             get_Arrest_Count(DecArrestId);
-    //         } else { console.log("Somthing Wrong"); }
-    //     }).catch(() => { })
-    // }
 
     const Delete_MugShorts_Enter_Image = (ImageName) => {
         const val = {
-            'MugshotsPhotoID': ImageName, 'DeletedByUserFK': loginPinID,
-        }
-        AddDeleteUpadate('Mugshots/Delete_MugshotsPhoto', val).then((res) => {
-            if (res) {
-                const parseData = JSON.parse(res.data);
-                toastifySuccess(parseData?.Table[0].Message); setChangesStatus(false);
-                // setStatus(false);
-                GetData_Mugshots_Data_Image(MugshotID);
-                // get_Arrest_Count(DecArrestId);
-            } else { console.log("Somthing Wrong"); }
-        }).catch(() => { })
-    }
+            'MugshotsPhotoID': ImageName,
+            'DeletedByUserFK': loginPinID,
+        };
+
+        AddDeleteUpadate('Mugshots/Delete_MugshotsPhoto', val)
+            .then((res) => {
+                if (res) {
+                    const parseData = JSON.parse(res.data);
+                    toastifySuccess(parseData.Table[0].message);
+                    const updatedMugshots = mugshots.map(mugshot => {
+                        if (mugshot.name === ImageName) { return { ...mugshot, EnterImage: null }; }
+                        return mugshot;
+                    });
+                    setMugshots(updatedMugshots);
+                    GetData_Mugshots_Data_Image(MugshotID);
+                    setChangesStatus(false);
+                } else {
+                    console.log("Something went wrong");
+                }
+            })
+            .catch((error) => {
+                console.error("Error during deletion:", error);
+            });
+    };
+
 
     const conditionalRowStyles = [
         {
@@ -406,13 +463,14 @@ const MugShorts = (props) => {
     const startRef1 = React.useRef();
 
     const handleUpload = (name) => {
+        setChangesStatus(true);
+        setStatesChangeStatus(true);
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = 'image/*';
         input.onchange = (event) => {
             const file = event.target.files[0];
             if (file) {
-                // Store the uploaded file with its unique name
                 setValue(prev => ({ ...prev, [name]: file }));
             }
         };
@@ -421,51 +479,36 @@ const MugShorts = (props) => {
 
     const handleRemove = (name) => {
         const imageFieldMap = {
-            FrontMugshot: 'FrontImage',
-            LeftMugshot: 'LeftImage',
-            RightMugshot: 'RightImage',
-            EnterMugshot: 'EnterImage',
+            FrontMugshot: 'FrontImage', LeftMugshot: 'LeftImage', RightMugshot: 'RightImage', EnterMugshot: 'EnterImage',
         };
         const imageFieldName = imageFieldMap[name];
         if (!imageFieldName) {
             console.warn(`Unknown image field for name: ${name}`);
             return;
         }
-        // Call delete API
         const val = {
             'MugshotID': MugshotID, 'DeletedByUserFK': loginPinID, 'ImageName': imageFieldName,
         }
         AddDeleteUpadate('Mugshots/Delete_Mugshots', val).then((res) => {
             if (res) {
-                console.log('hello')
+
                 const parseData = JSON.parse(res.data);
                 toastifySuccess(parseData?.Table[0].Message); setChangesStatus(false);
             } else { console.log("Somthing Wrong"); }
         }).catch(() => { })
-        // Delete_MugShorts(imageFieldName);
-        // Clear from local state
         setValue(prev => ({ ...prev, [name]: null }));
     };
 
     const handleAddMugshot = () => {
-        // Add a new mugshot with a unique ID
-        setMugshots([...mugshots, { id: mugshots.length + 1, name: `EnterMugshot${mugshots.length + 1}` }]);
+        const newMugshot = {
+            id: Date.now(),
+            name: `EnterMugshot${Date.now()}`,
+            EnterImage: null,
+        };
+
+        setMugshots([...mugshots, newMugshot]);
     };
 
-    const handleDeleteMugshot = (mugshotId) => {
-        // Remove the mugshot section from the state by filtering out the item with the corresponding id
-        console.log(mugshotId);
-        setMugshots(mugshots.filter(mugshot => mugshot.id !== mugshotId));
-    };
-
-    // const handleUpload = (mugshotId) => {
-    //     // Handle upload functionality here
-    //     console.log(`Upload for mugshot ID: ${mugshotId}`);
-    // };
-
-    const handleDelete = (name) => {
-        setMugshots(mugshots.filter(item => item.name !== name));
-    };
     console.log(mugshots)
 
     return (

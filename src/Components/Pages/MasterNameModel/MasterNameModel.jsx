@@ -194,15 +194,18 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
             // else if (type === "Pro-Owner") {
 
             // }
-            else {
+            else if (type !== "ArrestMod") {
                 get_Arrestee_Drp_Data('', 0, IncID);
-                // dispatch(get_ArresteeName_Data('', 0, IncID));
+                dispatch(get_ArresteeName_Data('', 0, IncID));
             }
 
             // condition for unwanted api calling
             // nameModalStatus && get_vehicle_Count(possessionID)
         }
         if (!value.InProfessionOf) {
+            Reset();
+        }
+        else if (!value.OwnerID && (type === "VehicleOwner")) {
             Reset();
         }
     }, [IncID, nameModalStatus]);
@@ -235,6 +238,10 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                 GetReasonIdDrp(loginAgencyID, masterNameValues?.NameTypeID, type, JSON?.parse(masterNameValues?.Role));
             }
             else if (!complainNameID && (type === "ComplainantName")) {
+                GetReasonIdDrp(loginAgencyID, masterNameValues?.NameTypeID, type, JSON?.parse(masterNameValues?.Role));
+            }
+            else if (!ownerOfID && (type === "VehicleOwner")) {
+                console.log('hello')
                 GetReasonIdDrp(loginAgencyID, masterNameValues?.NameTypeID, type, JSON?.parse(masterNameValues?.Role));
             }
 
@@ -1314,7 +1321,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                                 else if (type === "VehicleName") {
                                     setValue({ ...value, ['InProfessionOf']: res?.NameID, ['Name']: res.Name });
                                     setPossessionID(parseInt(res?.NameID)); setMstPossessionID(res?.MasterNameID); GetSingleDataPassion(res?.NameID, res?.MasterNameID);
-
+                                    Reset();
                                     if (MstPage && res?.MasterNameID) { dispatch(get_Masters_PossessionOwnerData(parseInt(res?.NameID))); }
                                 }
                                 else if (type === "LastSeenInfo") {
