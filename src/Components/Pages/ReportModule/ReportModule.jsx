@@ -1397,6 +1397,7 @@ const ReportModule = (props) => {
             toastifySuccess(parseData?.Table[0].Message);
             get_NarrativesData(incidentID, loginPinID);
             setIsSelfApproved(false);
+            updateNarrative();
             // setStatesChangeStatus(false);
             // setIsSaved(true);
             // setModelStatus(true);
