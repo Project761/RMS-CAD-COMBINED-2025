@@ -10,7 +10,7 @@ import { get_AgencyOfficer_Data, get_Eye_Color_Drp_Data, get_Hair_Color_Drp_Data
 import { Comman_changeArrayFormat_With_Name } from '../../../../Common/ChangeArrayFormat';
 import { AddDelete_Img, AddDeleteUpadate, fetchPostData } from '../../../../hooks/Api';
 import { RequiredFieldIncident } from '../../../Utility/Personnel/Validation';
-import { toastifySuccess } from '../../../../Common/AlertMsg';
+import { toastifyError, toastifySuccess } from '../../../../Common/AlertMsg';
 import DeletePopUpModal from '../../../../Common/DeleteModal';
 import ChangesModal from '../../../../Common/ChangesModal';
 import ListModal from '../../../Utility/ListManagementModel/ListModal';
@@ -234,6 +234,50 @@ const MugShorts = (props) => {
         }
     }
 
+    const HeightFromOnBlur = (e) => {
+        !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true)
+        const heightstates = e.target.value;
+        var len = heightstates.length;
+        let heights = "";
+        var oldvalue = heightstates.substring(len - 1, len);
+        if (oldvalue != "\"") {
+            if (len == 0) {
+                heights = '';
+            }
+            else if (len == 1) {
+                heights = heightstates.substring(0, len) + "'00\"";
+            }
+            else if (len == 2) {
+                heights = heightstates.substring(0, len - 1) + "'0" + heightstates.substring(len - 1) + "\"";
+            }
+            else {
+                var lengthstate = heightstates.substring(len - 2)
+                heights = heightstates.substring(0, len - 2) + "'" + heightstates.substring(len - 2) + "\"";
+                if (heightstates.substring(len - 2, len - 1) == 0) {
+                    heights = heightstates.substring(0, len - 2) + "'" + heightstates.substring(len - 2) + "\"";
+                }
+                if (lengthstate > 11) {
+                    heights = '';
+                    toastifyError('invalid');
+                }
+            }
+        }
+        else {
+            heights = heightstates;
+        }
+        if (parseInt(heights.replace("\"", "").replace("'", "")) < 101) {
+            toastifyError('Height should be greater than or equal to 1\'01"');
+            heights = '';
+        }
+        if (heights != '') {
+            // setglobalname(heights);
+        }
+        setValue({
+            ...value,
+            ['Height']: heights,
+        })
+    }
+
     const handleChange = (e) => {
         !addUpdatePermission && setStatesChangeStatus(true);
         !addUpdatePermission && setChangesStatus(true);
@@ -244,7 +288,8 @@ const MugShorts = (props) => {
         if (name === 'Weight') {
             formattedValue = inputValue.replace(/[^0-9]/g, '');
         } else if (name === 'Height') {
-            formattedValue = formatHeight(inputValue);
+            formattedValue = inputValue.replace(/[^0-9]/g, '');
+            // formattedValue = formatHeight(inputValue);
         }
 
         setValue((prev) => ({
@@ -553,7 +598,11 @@ const MugShorts = (props) => {
                         ) : null}</label>
                     </div>
                     <div className="col-3 col-md-3 col-lg-3 text-field mt-0">
-                        <input type="text" placeholder="Enter Height" className='requiredColor' maxLength={10} value={value?.Height} onChange={handleChange} name='Height' required />
+                        <input type="text" placeholder="Enter Height" onBlur={(e) => {
+
+                            HeightFromOnBlur(e);
+
+                        }} className='requiredColor' maxLength={10} value={value?.Height} onChange={handleChange} name='Height' required />
                     </div>
 
                     <div className="col-3 col-md-3 col-lg-1">

@@ -252,8 +252,10 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
     useEffect(() => {
 
         if (possenSinglData?.length > 0 && possenSinglData[0]?.LastName?.trim() !== null) {
+            const id = nameTypeIdDrp?.filter((val) => { if (val.value === possenSinglData[0]?.NameTypeID) return val })
+            get_Victim_Type_Data(loginAgencyID, id[0].id);
 
-            get_Victim_Type_Data(loginAgencyID, nameTypeCode);
+            // get_Victim_Type_Data(loginAgencyID, nameTypeCode);
 
             if (type !== "VehicleName") { dispatch(get_Masters_Name_Drp_Data(possenSinglData[0]?.NameID)); }
             if (type === "VehicleName") { dispatch(get_Masters_PossessionOwnerData(possenSinglData[0]?.NameID)); }
@@ -1367,7 +1369,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                                 }
                                 else if (type === "ComplainantName") {
                                     setValue({ ...value, ['Name']: res.Name }); setcomplainNameID(res?.NameID);
-
+                                    GetSingleDataPassion(res?.NameID, res?.MasterNameID);
                                     Reset();
                                 }
                                 else if (type === "Victim") {
@@ -2465,7 +2467,9 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
         }
         if (finalValueList.includes(VICTIM_ROLE_ID)) {
             setroleStatus(true);
-            get_Victim_Type_Data(loginAgencyID, nameTypeCode);
+            const id = nameTypeIdDrp?.filter((val) => { if (val.value === masterNameValues.NameTypeID) return val })
+            get_Victim_Type_Data(loginAgencyID, id[0].id);
+            // get_Victim_Type_Data(loginAgencyID, nameTypeCode);
         } else {
             setroleStatus(false);
         }
