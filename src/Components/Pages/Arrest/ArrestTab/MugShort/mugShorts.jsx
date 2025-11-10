@@ -589,7 +589,7 @@ const MugShorts = (props) => {
                         ) : null}</label>
                     </div>
                     <div className="col-3 col-md-3 col-lg-3 text-field mt-0">
-                        <input type="text" placeholder="Enter Weight" className='requiredColor' maxLength={10} value={value?.Weight} onChange={handleChange} name='Weight' required />
+                        <input type="text" placeholder="Enter Weight" className='requiredColor' maxLength={3} value={value?.Weight} onChange={handleChange} name='Weight' required />
                     </div>
 
                     <div className="col-3 col-md-3 col-lg-1">
@@ -602,7 +602,7 @@ const MugShorts = (props) => {
 
                             HeightFromOnBlur(e);
 
-                        }} className='requiredColor' maxLength={10} value={value?.Height} onChange={handleChange} name='Height' required />
+                        }} className='requiredColor' maxLength={3} value={value?.Height} onChange={handleChange} name='Height' required />
                     </div>
 
                     <div className="col-3 col-md-3 col-lg-1">
