@@ -173,7 +173,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
   });
 
   const [errors, setErrors] = useState({
-    OccuredError: "", CrimeLocationError: "", ExceptionalClearaceError: "", IsVerify: "", NIBRSclearancedateError: "", DispositionDateError: "", IncNumberError: "", OffenceTypeError: "", CargoTheftError: "", PrimaryOfficerIdError: "", CaseStatusError: ""
+    OccuredError: "", CrimeLocationError: "", ExceptionalClearaceError: "", ExceptionalClearaceErrorYes: "", IsVerify: "", NIBRSclearancedateError: "", DispositionDateError: "", IncNumberError: "", OffenceTypeError: "", CargoTheftError: "", PrimaryOfficerIdError: "", CaseStatusError: ""
   });
 
   const useQuery = () => {
@@ -437,6 +437,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
         const OffenceTypeErr = RequiredFieldIncident(value?.OffenseTypeID);
         const PrimaryOfficerIDErr = RequiredFieldIncident(value?.PrimaryOfficerID);
         const CaseStatusErr = RequiredFieldIncident(value?.CaseStatusID);
+        const ExceptionalClearaceErrorYes = RequiredFieldIncident(value?.RMSDispositionId);
 
         setErrors((prevValues) => {
           return {
@@ -444,6 +445,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
             ["OccuredError"]: ReportedDateErr || prevValues["OccuredError"],
             ["CrimeLocationError"]: CrimeLocationErr || prevValues["CrimeLocationError"],
             ["ExceptionalClearaceError"]: NIBRSClearanceIDErr || prevValues["ExceptionalClearaceError"],
+            ["ExceptionalClearaceErrorYes"]: ExceptionalClearaceErrorYes || prevValues["ExceptionalClearaceErrorYes"],
             ["NIBRSclearancedateError"]: NIBRSclearancedateErrorErr || prevValues["NIBRSclearancedateError"],
             ["IncNumberError"]: IncNumberErr || prevValues["IncNumberError"],
             ["OffenceTypeError"]: OffenceTypeErr || prevValues["OffenceTypeError"],
@@ -461,6 +463,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
         const CargoTheftErrorErr = carboTheft ? RequiredFieldIncidentCarboTheft(value.IsCargoTheftInvolved) : "true";
         const PrimaryOfficerIDErr = RequiredFieldIncident(value?.PrimaryOfficerID);
         const CaseStatusErr = RequiredFieldIncident(value?.CaseStatusID);
+        const ExceptionalClearaceErrorYes = RequiredFieldIncident(value?.RMSDispositionId);
         setErrors((prevValues) => {
           return {
             ...prevValues,
@@ -472,6 +475,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
             ["CargoTheftError"]: CargoTheftErrorErr || prevValues["CargoTheftError"],
             ["PrimaryOfficerIdError"]: PrimaryOfficerIDErr || prevValues["PrimaryOfficerIdError"],
             ["CaseStatusError"]: CaseStatusErr || prevValues["CaseStatusError"],
+            ["ExceptionalClearaceErrorYes"]: ExceptionalClearaceErrorYes || prevValues["ExceptionalClearaceErrorYes"],
           };
         });
       }
@@ -483,6 +487,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
       const CargoTheftErrorErr = carboTheft ? RequiredFieldIncidentCarboTheft(value.IsCargoTheftInvolved) : "true";
       const PrimaryOfficerIDErr = RequiredFieldIncident(value?.PrimaryOfficerID);
       const CaseStatusErr = RequiredFieldIncident(value?.CaseStatusID);
+      const ExceptionalClearaceErrorYes = RequiredFieldIncident(value?.RMSDispositionId);
       setErrors((prevValues) => {
         return {
           ...prevValues,
@@ -493,39 +498,40 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
           ["CargoTheftError"]: CargoTheftErrorErr || prevValues["CargoTheftError"],
           ["PrimaryOfficerIdError"]: PrimaryOfficerIDErr || prevValues["PrimaryOfficerIdError"],
           ["CaseStatusError"]: CaseStatusErr || prevValues["CaseStatusError"],
+          ["ExceptionalClearaceErrorYes"]: ExceptionalClearaceErrorYes || prevValues["ExceptionalClearaceErrorYes"],
         };
       });
     }
   };
 
   // Check All Field Format is True Then Submit
-  const { OccuredError, CrimeLocationError, ExceptionalClearaceError, NIBRSclearancedateError, IncNumberError, OffenceTypeError, CargoTheftError, PrimaryOfficerIdError, CaseStatusError } = errors;
+  const { OccuredError, CrimeLocationError, ExceptionalClearaceError, ExceptionalClearaceErrorYes, NIBRSclearancedateError, IncNumberError, OffenceTypeError, CargoTheftError, PrimaryOfficerIdError, CaseStatusError } = errors;
 
   useEffect(() => {
     if (clsDrpCode === "01" || value.RMSDispositionId === "15" || value.RMSDispositionId === 15) {
       if (exClsDateCode != "N") {
-        if (OccuredError === "true" && CrimeLocationError === "true" && ExceptionalClearaceError === "true" && NIBRSclearancedateError === "true" && IncNumberError === "true" && OffenceTypeError === "true" && CargoTheftError === "true" && PrimaryOfficerIdError === "true" && CaseStatusError === "true") {
+        if (OccuredError === "true" && CrimeLocationError === "true" && ExceptionalClearaceErrorYes === "true" && ExceptionalClearaceError === "true" && NIBRSclearancedateError === "true" && IncNumberError === "true" && OffenceTypeError === "true" && CargoTheftError === "true" && PrimaryOfficerIdError === "true" && CaseStatusError === "true") {
           if (IncSta === true || IncSta === "true") {
             UpdateIncident();
           } else {
             AddIncident();
           }
         }
-      } else if (OccuredError === "true" && CrimeLocationError === "true" && ExceptionalClearaceError === "true" && IncNumberError === "true" && OffenceTypeError === "true" && CargoTheftError === "true" && PrimaryOfficerIdError === "true" && CaseStatusError === "true") {
+      } else if (OccuredError === "true" && CrimeLocationError === "true" && ExceptionalClearaceErrorYes === "true" && ExceptionalClearaceError === "true" && IncNumberError === "true" && OffenceTypeError === "true" && CargoTheftError === "true" && PrimaryOfficerIdError === "true" && CaseStatusError === "true") {
         if (IncSta === true || IncSta === "true") {
           UpdateIncident();
         } else {
           AddIncident();
         }
       }
-    } else if (OccuredError === "true" && CrimeLocationError === "true" && IncNumberError === "true" && OffenceTypeError === "true" && CargoTheftError === "true" && PrimaryOfficerIdError === "true" && CaseStatusError === "true") {
+    } else if (OccuredError === "true" && CrimeLocationError === "true" && ExceptionalClearaceErrorYes === "true" && IncNumberError === "true" && OffenceTypeError === "true" && CargoTheftError === "true" && PrimaryOfficerIdError === "true" && CaseStatusError === "true") {
       if (IncSta === true || IncSta === "true") {
         UpdateIncident();
       } else {
         AddIncident();
       }
     }
-  }, [OccuredError, CrimeLocationError, ExceptionalClearaceError, NIBRSclearancedateError, IncNumberError, OffenceTypeError, CargoTheftError, PrimaryOfficerIdError, CaseStatusError]);
+  }, [OccuredError, CrimeLocationError, ExceptionalClearaceError, NIBRSclearancedateError, ExceptionalClearaceErrorYes, IncNumberError, OffenceTypeError, CargoTheftError, PrimaryOfficerIdError, CaseStatusError]);
 
   const Reset = () => {
     setValue({
@@ -534,7 +540,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
       // PrimaryOfficerId: "",
     });
     setErrors({
-      ...errors, OccuredError: "", CrimeLocationError: "", ExceptionalClearaceError: "", NIBRSclearancedateError: "", OffenceTypeError: "", CargoTheftError: "", PrimaryOfficerIdError: "", CaseStatusError: "",
+      ...errors, OccuredError: "", CrimeLocationError: "", ExceptionalClearaceError: "", ExceptionalClearaceErrorYes: "", NIBRSclearancedateError: "", OffenceTypeError: "", CargoTheftError: "", PrimaryOfficerIdError: "", CaseStatusError: "",
     });
     setExClsDateCode(""); setCaseStatus('Open')
   };
@@ -2001,6 +2007,11 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
               className="new-link "
             >
               Exceptional Clearance (Yes/No)
+              {errors.ExceptionalClearaceErrorYes !== "true" ? (
+                <p style={{ color: "red", fontSize: "11px", margin: "0px", padding: "0px", }}>
+                  {errors.ExceptionalClearaceErrorYes}
+                </p>
+              ) : null}
             </span>
           </div>
           <div className="col-9 col-md-9 col-lg-3 ">
@@ -2009,11 +2020,12 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
               value={rmsDispositionDrpData?.filter((obj) => obj.value === value?.RMSDispositionId)}
               isDisabled={adultArrestStatus}
               // isDisabled={true}
+              styles={Requiredcolour}
               isClearable
               options={rmsDispositionDrpData}
               onChange={(e) => onChangeExceptionalClearance(e, "RMSDispositionId")}
               placeholder="Select..."
-              styles={customStylesWithOutColor}
+            // styles={customStylesWithOutColor}
             />
           </div>
           <div className="col-3 col-md-3 col-lg-4 ">

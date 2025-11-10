@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import Select from "react-select";
 import DatePicker from "react-datepicker";
 import { AgencyContext } from '../../../../Context/Agency/Index';
-import { getShowingDateText, getShowingMonthDateYear, Decrypt_Id_Name, base64ToString, stringToBase64, formatDate, filterPassedTimeZone, filterPassedTimeZoneException, nibrscolourStyles, } from '../../../Common/Utility';
+import { getShowingDateText, getShowingMonthDateYear, Decrypt_Id_Name, base64ToString, stringToBase64, formatDate, filterPassedTimeZone, filterPassedTimeZoneException, nibrscolourStyles, Requiredcolour, } from '../../../Common/Utility';
 import { AddDeleteUpadate, ScreenPermision, fetchPostData, fetchPostDataNibrs } from '../../../hooks/Api';
 import { toastifyError, toastifySuccess } from '../../../Common/AlertMsg';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -28,9 +28,9 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
     const dispatch = useDispatch()
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
-    const rmsDispositionDrpData = useSelector((state) => state.DropDown.rmsDispositionDrpData);
+    // const rmsDispositionDrpData = useSelector((state) => state.DropDown.rmsDispositionDrpData);
 
-    const { updateCount, get_IncidentTab_Count, get_Incident_Count, nibrsSubmittedAdministartive, setnibrsSubmittedAdministartive, incidentCount, exceptionalClearID, setChangesStatus, GetDataTimeZone, datezone, validate_IncSideBar } = useContext(AgencyContext);
+    const { updateCount, get_IncidentTab_Count, get_Incident_Count, nibrsSubmittedAdministartive, GetDataExceptionalClearanceID, setnibrsSubmittedAdministartive, incidentCount, exceptionalClearID, setChangesStatus, GetDataTimeZone, datezone, validate_IncSideBar } = useContext(AgencyContext);
 
     const [reportedDate, setReportedDate] = useState(new Date(datezone));
     const [loder, setLoder] = useState(false);
@@ -54,6 +54,20 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
     const [oriNumber, setOriNumber] = useState('');
     /// Error String
     const [IncidentErrorString, setIncidentErrorString] = useState('');
+
+
+    const rmsDispositionDrpData = [
+        {
+            value: 15,
+            label: "Yes",
+            id: "01",
+        },
+        {
+            value: 16,
+            label: "No",
+            id: "02",
+        },
+    ];
 
 
     const [value, setValue] = useState({
@@ -102,6 +116,12 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
     }, [localStoreData]);
 
     useEffect(() => {
+        if (loginAgencyID) {
+            if (exceptionalClearID.length === 0 && loginAgencyID) { GetDataExceptionalClearanceID(loginAgencyID); }
+        }
+    }, [loginAgencyID]);
+
+    useEffect(() => {
         const defaultDate = datezone ? new Date(datezone) : null;
 
         setValue({ ...value, 'BIBRSDate': getShowingMonthDateYear(datezone), });
@@ -146,6 +166,7 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
             });
 
             setcarboTheft(editval[0]?.IsCargoTheftVisible);
+            setClsDrpCode(Get_Exceptional_Code(editval, rmsDispositionDrpData));
             setExClsDateCode(Get_ExClsDate_Code(editval, exceptionalClearID));
             setnibrsSubmittedAdministartive(editval[0]?.IsNIBRSSummited);
             setReportedDate(
@@ -170,7 +191,7 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
 
     useEffect(() => {
         if (editval?.length > 0 && rmsDispositionDrpData?.length > 0) {
-            setClsDrpCode(Get_Exceptional_Code(editval, rmsDispositionDrpData));
+            // setClsDrpCode(Get_Exceptional_Code(editval, rmsDispositionDrpData));
         }
     }, [rmsDispositionDrpData, editval]);
 
@@ -348,7 +369,7 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
     }
 
     const UpdateIncident = () => {
-        AddDeleteUpadate('Incident/IncidentUpdate', value).then((res) => {  
+        AddDeleteUpadate('Incident/IncidentUpdate', value).then((res) => {
             const parsedData = JSON.parse(res.data);
             const message = parsedData.Table[0].Message;
             toastifySuccess(message); get_IncidentTab_Count(incidentID, loginPinID); setChangesStatus(false);
@@ -462,6 +483,8 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
             boxShadow: 0,
         }),
     };
+
+    console.log(clsDrpCode?.toString())
 
     return (
         loder ?
@@ -612,9 +635,10 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
                                 isClearable={false}
                                 isDisabled={adultArrestStatus}
                                 options={rmsDispositionDrpData}
+                                styles={Requiredcolour}
                                 onChange={(e) => ChangeDropDown(e, 'RMSDispositionId')}
                                 placeholder="Select..."
-                                styles={customStylesWithOutColor}
+                            // styles={customStylesWithOutColor}
                             />
                         </div>
                         {
@@ -670,7 +694,8 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
                                 options={exceptionalClearID}
                                 onChange={(e) => ChangeDropDown(e, 'NIBRSClearanceID')}
                                 placeholder="Select..."
-                                isDisabled={clsDrpCode === '01' ? false : true}
+                                isDisabled={clsDrpCode === '02' ? true : false}
+
                             />
                         </div>
                         <div className="col-5 col-md-5 col-lg-3 mt-2 pt-1">

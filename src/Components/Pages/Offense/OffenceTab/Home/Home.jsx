@@ -179,7 +179,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   });
 
   const [errors, setErrors] = useState({
-    NibrsIdError: "", ChargeCodeIDError: "", PremisesEnteredError: "", PrimaryLocationError: "", AttemptRequiredError: "", CommentsError: "",
+    NibrsIdError: "", ChargeCodeIDError: "", PremisesEnteredError: "", GangInformationError: '', PrimaryLocationError: "", AttemptRequiredError: "", CommentsError: "",
     CargoTheftError: "",
   });
 
@@ -289,6 +289,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     const CommentsErr = nibrsCode === "11B" && loginAgencyState === "TX" ? RequiredFieldIncident(value?.Comments) : "true";
     const MethodEntryErr = nibrsCode === '220' ? RequiredFieldIncident(value?.CrimeMethodOfEntryID) : 'true'
     const OffenseDttmError = nibrsCode === '220' ? RequiredFieldIncident(value?.OffenseDateTime) : 'true'
+
     // const CargoTheftErrorErr = carboTheft ? RequiredFieldIncidentCarboTheft(value.IsCargoTheftInvolved) : "true";
     // const CargoTheftErrorErr = RequiredFieldIncident(value.);
     const CargoTheftErrorErr = !nibrsCode === "220" || nibrsCode === "210" || nibrsCode === "120" || nibrsCode === "23D" || nibrsCode === "23F" || nibrsCode === "23H" || nibrsCode === "240" || nibrsCode === "26A" || nibrsCode === "26A" || nibrsCode === "23D" || nibrsCode === "26C" || nibrsCode === "26E" || nibrsCode === "26F" || nibrsCode === "26G" || nibrsCode === "270" || nibrsCode === "510" ? RequiredFieldIncident(value?.IsCargoTheftInvolved) : "true";
@@ -301,6 +302,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
 
     const offenderusingErr = nibrsCode != "999" ? RequiredFieldIncidentOffender(crimeOffenderUse) : 'true';
     const CrimeBiasCategoryErr = nibrsCode != "999" ? validateFields(crimeBiasCategory) : 'true';
+    const GangInformationError = loginAgencyState === "TX" && isGangDisabled(nibrsCode) && value?.NIBRSCodeId ? RequiredFieldIncident(value?.IsGangInfo) : "true";
 
 
     setErrors((pre) => {
@@ -319,6 +321,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
         ['CriminalActivityError']: CriminalActivityErr || pre['CriminalActivityError'],
         ['OffenderusingError']: offenderusingErr || pre['OffenderusingError'],
         ['CrimeBiasCategoryError']: CrimeBiasCategoryErr || pre['CrimeBiasCategoryError'],
+        ["GangInformationError"]: GangInformationError || pre["GangInformationError"],
       };
     });
 
@@ -326,17 +329,17 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   };
 
   // Check All Field Format is True Then Submit
-  const { ChargeCodeIDError, NibrsIdError, PremisesEnteredError, MethodOfEnrtyError, WeaponTypeError, CriminalActivityError, OffenderusingError, CrimeBiasCategoryError, AttemptRequiredError, OffenseDttmError, PrimaryLocationError, CommentsError, CargoTheftError } = errors;
+  const { ChargeCodeIDError, NibrsIdError, PremisesEnteredError, MethodOfEnrtyError, GangInformationError, WeaponTypeError, CriminalActivityError, OffenderusingError, CrimeBiasCategoryError, AttemptRequiredError, OffenseDttmError, PrimaryLocationError, CommentsError, CargoTheftError } = errors;
 
   useEffect(() => {
-    if (ChargeCodeIDError === "true" && NibrsIdError === "true" && MethodOfEnrtyError === 'true' && WeaponTypeError === 'true' && CriminalActivityError === 'true' && OffenderusingError === 'true' && CrimeBiasCategoryError === 'true' && PremisesEnteredError === "true" && OffenseDttmError === "true" && AttemptRequiredError === "true" && PrimaryLocationError === "true" && CommentsError === "true" && CargoTheftError === 'true') {
+    if (ChargeCodeIDError === "true" && NibrsIdError === "true" && MethodOfEnrtyError === 'true' && GangInformationError === "true" && WeaponTypeError === 'true' && CriminalActivityError === 'true' && OffenderusingError === 'true' && CrimeBiasCategoryError === 'true' && PremisesEnteredError === "true" && OffenseDttmError === "true" && AttemptRequiredError === "true" && PrimaryLocationError === "true" && CommentsError === "true" && CargoTheftError === 'true') {
       if (OffId && (OffSta === true || OffSta === "true")) {
         Update_Offence();
       } else {
         Add_Offense();
       }
     }
-  }, [ChargeCodeIDError, NibrsIdError, PremisesEnteredError, MethodOfEnrtyError, WeaponTypeError, CriminalActivityError, OffenderusingError, CrimeBiasCategoryError, PrimaryLocationError, OffenseDttmError, AttemptRequiredError, CommentsError, CargoTheftError]);
+  }, [ChargeCodeIDError, NibrsIdError, PremisesEnteredError, MethodOfEnrtyError, GangInformationError, WeaponTypeError, CriminalActivityError, OffenderusingError, CrimeBiasCategoryError, PrimaryLocationError, OffenseDttmError, AttemptRequiredError, CommentsError, CargoTheftError]);
 
   const getScreenPermision = (LoginAgencyID, PinID) => {
     ScreenPermision("O036", LoginAgencyID, PinID).then((res) => {
@@ -510,7 +513,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     });
     setErrors({
       ...errors, ChargeCodeIDError: "", NibrsIdError: "", PremisesEnteredError: "", PrimaryLocationError: "", AttemptRequiredError: "", CommentsError: "",
-      CargoTheftError: "", 'MethodOfEnrtyError': '', 'CriminalActivityError': '', 'WeaponTypeError': '', 'OffenderusingError': '', 'CrimeBiasCategoryError': '',
+      CargoTheftError: "", GangInformationError: '', 'MethodOfEnrtyError': '', 'CriminalActivityError': '', 'WeaponTypeError': '', 'OffenderusingError': '', 'CrimeBiasCategoryError': '',
     });
 
     setCrimeOffenderUse([]); setCrimeBiasCategory([]); setWeaponID([]); setCrimeActivity([]);
@@ -2170,6 +2173,15 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   Gang Information
                   {gangInformationStatus && (<ErrorTooltip ErrorStr={gangInformationError} />)}
                 </label>
+                {errors.GangInformationError !== "true" ? (
+                  <span
+                    style={{
+                      color: "red", fontSize: "13px", display: "block", display: "flex", width: "100%", justifyContent: "flex-end"
+                    }}
+                  >
+                    {errors.GangInformationError}
+                  </span>
+                ) : null}
               </div>
               <div className="col-7 col-md-7 col-lg-4">
                 <Select
