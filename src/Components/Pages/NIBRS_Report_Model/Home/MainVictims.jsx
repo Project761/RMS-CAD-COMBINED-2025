@@ -2464,7 +2464,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
 
     const check_Validation_Error1 = () => {
 
-        const RelationshipTypeIDErr = isCrimeAgainstPerson || has120RoberyOffense ? RequiredFieldIncident(value1.RelationshipTypeID) : 'true';
+        // const RelationshipTypeIDErr = isCrimeAgainstPerson || has120RoberyOffense ? RequiredFieldIncident(value1.RelationshipTypeID) : 'true';
+        const RelationshipTypeIDErr = isCrimeAgainstPerson ? RequiredFieldIncident(value1.RelationshipTypeID) : 'true';
         const OffenderNameIDErr = isCrimeAgainstPerson || has120RoberyOffense ? RequiredFieldIncident(value1.OffenderNameID) : 'true';
 
         setErrors1(prevValues => {
@@ -4113,7 +4114,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                                                     <Select
                                                         name='RelationshipTypeID'
 
-                                                        styles={isCrimeAgainstPerson || has120RoberyOffense ? colourStyles1 : withOutColorStyle1}
+                                                        // styles={isCrimeAgainstPerson || has120RoberyOffense ? colourStyles1 : withOutColorStyle1}
+                                                        styles={isCrimeAgainstPerson ? colourStyles1 : withOutColorStyle1}
                                                         isClearable
                                                         value={relationShipDrp?.filter((obj) => obj.value === value1.RelationshipTypeID)}
                                                         options={relationShipDrp}

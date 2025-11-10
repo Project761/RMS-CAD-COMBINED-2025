@@ -153,7 +153,7 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
   });
 
   const [errors, setErrors] = useState({
-    NibrsIdError: "", ChargeCodeIDError: "", PremisesEnteredError: "", PrimaryLocationError: "", AttemptRequiredError: "", CommentsError: "", MethodOfEnrtyError: "", WeaponTypeError: "", CriminalActivityError: "",
+    NibrsIdError: "", ChargeCodeIDError: "", PremisesEnteredError: "", PrimaryLocationError: "", GangInformationError: '', AttemptRequiredError: "", CommentsError: "", MethodOfEnrtyError: "", WeaponTypeError: "", CriminalActivityError: "",
     OffenderUsingError: "", BiasCategoryError: "", CargoTheftError: "",
   });
 
@@ -635,6 +635,7 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
     const MethodOfEnrtyErr = checkMethodOfEntryIsRequire(nibrsCode, loginAgencyState) ? validateFieldsMethodOfEntry(value.CrimeMethodOfEntryID) : "true";
     const WeaponTypeErr = checkWeaponTypeIsRequire(nibrsCode, loginAgencyState) ? validateFields(weaponID) : "true";
     const CriminalActivityErr = checkCriminalActivityIsRequire(nibrsCode, loginAgencyState) ? validateFields(crimeActivity) : "true";
+    const GangInformationError = loginAgencyState === "TX" && isGangDisabled(nibrsCode) && value?.NIBRSCodeId ? RequiredFieldIncident(value?.IsGangInfo) : "true";
 
     // const OffenderUsingErr = validateFields(crimeOffenderUse);
     // const BiasCategoryErr = validateFields(crimeBiasCategory);
@@ -667,22 +668,23 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
 
         ["OffenderUsingError"]: OffenderUsingErr || pre["OffenderUsingError"],
         ["BiasCategoryError"]: BiasCategoryErr || pre["BiasCategoryError"],
+        ["GangInformationError"]: GangInformationError || pre["GangInformationError"],
       };
     });
   };
 
   // Check All Field Format is True Then Submit
-  const { MethodOfEnrtyError, WeaponTypeError, CriminalActivityError, ChargeCodeIDError, NibrsIdError, PremisesEnteredError, AttemptRequiredError, PrimaryLocationError, CommentsError, OffenderUsingError, BiasCategoryError, CargoTheftError } = errors;
+  const { MethodOfEnrtyError, WeaponTypeError, CriminalActivityError, GangInformationError, ChargeCodeIDError, NibrsIdError, PremisesEnteredError, AttemptRequiredError, PrimaryLocationError, CommentsError, OffenderUsingError, BiasCategoryError, CargoTheftError } = errors;
 
   useEffect(() => {
-    if (MethodOfEnrtyError === "true" && WeaponTypeError === "true" && CriminalActivityError === "true" && ChargeCodeIDError === "true" && NibrsIdError === "true" && PremisesEnteredError === "true" && AttemptRequiredError === "true" && PrimaryLocationError === "true" && CommentsError === "true" && OffenderUsingError === "true" && BiasCategoryError === "true" && CargoTheftError === "true") {
+    if (MethodOfEnrtyError === "true" && WeaponTypeError === "true" && CriminalActivityError === "true" && GangInformationError === "true" && ChargeCodeIDError === "true" && NibrsIdError === "true" && PremisesEnteredError === "true" && AttemptRequiredError === "true" && PrimaryLocationError === "true" && CommentsError === "true" && OffenderUsingError === "true" && BiasCategoryError === "true" && CargoTheftError === "true") {
       if (OffId && (OffSta === true || OffSta === "true")) {
         Update_Offence();
       } else {
         Add_Offense();
       }
     }
-  }, [MethodOfEnrtyError, WeaponTypeError, CriminalActivityError, ChargeCodeIDError, NibrsIdError, PremisesEnteredError, PrimaryLocationError, AttemptRequiredError, CommentsError, OffenderUsingError, BiasCategoryError, CargoTheftError]);
+  }, [MethodOfEnrtyError, WeaponTypeError, CriminalActivityError, ChargeCodeIDError, GangInformationError, NibrsIdError, PremisesEnteredError, PrimaryLocationError, AttemptRequiredError, CommentsError, OffenderUsingError, BiasCategoryError, CargoTheftError]);
 
   const getScreenPermision = (LoginAgencyID, PinID) => {
     ScreenPermision("O036", LoginAgencyID, PinID).then((res) => {
@@ -815,7 +817,7 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
     setErrors({
       ...errors,
       ChargeCodeIDError: "", NibrsIdError: "", PremisesEnteredError: "", PrimaryLocationError: "", AttemptRequiredError: "", CommentsError: "", CriminalActivityError: "", MethodOfEnrtyError: "", WeaponTypeError: "",
-      OffenderUsingError: "", BiasCategoryError: "", CargoTheftError: ''
+      OffenderUsingError: "", BiasCategoryError: "", CargoTheftError: '', GangInformationError: '',
     });
     setCrimeId("");
     setChargeCodeDrp([]);
@@ -1850,6 +1852,15 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
             <label htmlFor="" className="new-label m-0 ">
               Gang Information
             </label>
+            {errors.GangInformationError !== "true" ? (
+              <span
+                style={{
+                  color: "red", fontSize: "13px", display: "block", display: "flex", width: "100%", justifyContent: "flex-end"
+                }}
+              >
+                {errors.GangInformationError}
+              </span>
+            ) : null}
           </div>
           <div className="col-7 col-md-7 col-lg-4  ">
             {nibrsFieldError?.GangInformation && showGangInformationError && (

@@ -253,7 +253,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
 
         if (possenSinglData?.length > 0 && possenSinglData[0]?.LastName?.trim() !== null) {
             const id = nameTypeIdDrp?.filter((val) => { if (val.value === possenSinglData[0]?.NameTypeID) return val })
-            get_Victim_Type_Data(loginAgencyID, id[0].id);
+            get_Victim_Type_Data(loginAgencyID, id[0]?.id);
 
             // get_Victim_Type_Data(loginAgencyID, nameTypeCode);
 
