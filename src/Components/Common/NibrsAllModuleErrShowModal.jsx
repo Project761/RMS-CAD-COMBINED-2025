@@ -1,8 +1,14 @@
+import { useEffect } from "react";
 import Loader from "./Loader";
 
 const NirbsAllModuleErrorShowModal = (props) => {
 
-    const { nibErrModalStatus, setNibrsErrModalStatus, nibrsValidateloder, sideBarValidateloder, administrativeErrorString, offenseErrorString, victimErrorString, offenderErrorString, propertyErrorString, vehicleErrorString, incidentErrorStatus, incidentErrorString, arrestErrorString } = props
+    const { nibErrModalStatus, setNibrsErrModalStatus, nibrsValidateloder, sideBarValidateloder, administrativeErrorString, offenseErrorString, victimErrorString, offenderErrorString, propertyErrorString, vehicleErrorString, incidentErrorStatus, incidentErrorString, arrestErrorString, setnibrsValidateLoder, setNibrsSideBarLoading } = props
+
+    const isLoading = (!nibrsValidateloder && !sideBarValidateloder)
+    // console.log("🚀 ~ NirbsAllModuleErrorShowModal ~ sideBarValidateloder:", !sideBarValidateloder)
+    console.log("🚀 ~ NirbsAllModuleErrorShowModal ~ nibrsValidateloder:", !nibrsValidateloder)
+    // console.log("🚀 ~ NirbsAllModuleErrorShowModal ~ isLoading:", isLoading)
 
     return (
         <>
@@ -13,7 +19,7 @@ const NirbsAllModuleErrorShowModal = (props) => {
                             <div className="modal-content">
                                 <div className="btn-box mt-4 m-2">
                                     {
-                                        !nibrsValidateloder && !sideBarValidateloder ?
+                                        isLoading ?
                                             <>
                                                 <div className="border border-danger text-center p-3 mt-2 mb-2">
                                                     {

@@ -1178,7 +1178,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
     };
 
     const ChangeDropDownRole = (e, name) => {
-        console.log("🚀 ~ ChangeDropDownRole ~ e:", e)
+        // console.log("🚀 ~ ChangeDropDownRole ~ e:", e)
         setChangesStatus(true); setStatesChangeStatus(true);
         if (e) {
             setVictimCode(e.id)
@@ -2464,9 +2464,10 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
 
     const check_Validation_Error1 = () => {
 
-        // const RelationshipTypeIDErr = isCrimeAgainstPerson || has120RoberyOffense ? RequiredFieldIncident(value1.RelationshipTypeID) : 'true';
         const RelationshipTypeIDErr = isCrimeAgainstPerson ? RequiredFieldIncident(value1.RelationshipTypeID) : 'true';
-        const OffenderNameIDErr = isCrimeAgainstPerson || has120RoberyOffense ? RequiredFieldIncident(value1.OffenderNameID) : 'true';
+        const OffenderNameIDErr = isCrimeAgainstPerson ? RequiredFieldIncident(value1.OffenderNameID) : 'true';
+        // const RelationshipTypeIDErr = isCrimeAgainstPerson || has120RoberyOffense ? RequiredFieldIncident(value1.RelationshipTypeID) : 'true';
+        // const OffenderNameIDErr = isCrimeAgainstPerson || has120RoberyOffense ? RequiredFieldIncident(value1.OffenderNameID) : 'true';
 
         setErrors1(prevValues => {
             return {
@@ -3185,10 +3186,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
         setChangesStatus(true);
         setStatesChangeStatus(true);
     };
-
-
-    // console.log("🚀 ~ MainVictims ~ DeNameID:", DeNameID);
-    // console.log("🚀 ~ MainVictims ~ nameID:", nameID);
 
     return (
         <>
@@ -4078,7 +4075,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                                                 <div className="col-2 col-md-2 col-lg-1 mt-3">
                                                     <label htmlFor="" className='label-name'>
                                                         Offender
-
                                                         {errors1?.VictimNameIDErrors !== 'true' ? (
                                                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors1?.VictimNameIDErrors}</p>
                                                         ) : null}
@@ -4089,7 +4085,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                                                         name='OffenderNameID'
                                                         styles={
                                                             loginAgencyState === 'TX' ?
-                                                                isCrimeAgainstPerson || has120RoberyOffense ? colourStyles1 : withOutColorStyle1
+                                                                isCrimeAgainstPerson ? colourStyles1 : withOutColorStyle1
+                                                                // isCrimeAgainstPerson || has120RoberyOffense ? colourStyles1 : withOutColorStyle1
                                                                 :
                                                                 colourStyles1
                                                         }

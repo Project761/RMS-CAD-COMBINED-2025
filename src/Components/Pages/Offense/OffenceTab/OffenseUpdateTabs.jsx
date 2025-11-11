@@ -181,44 +181,44 @@ const OffenceHomeTabs = () => {
             selector: (row) => row.LawTitle_Description,
             sortable: true,
         },
-        {
-            minWidth: "110px",
-            grow: 1,
-            cell: (row) => (
-                <div >
-                    {
-                        getCrimeInfoErrorButton(row.CrimeID, nibrsValidateOffenseData) ?
-                            <>
-                                <span
-                                    onClick={(e) => {
-                                        navigate(`/Off-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${stringToBase64(row?.CrimeID)}&OffSta=${true}&CrimeSta=${true}`);
-                                    }}
-                                    className={`btn btn-sm text-white px-2 py-0 mr-1 `}
-                                    style={{
-                                        backgroundColor: "red",
-                                    }}
-                                >
-                                    Crime Info
-                                </span>
-                            </>
-                            :
-                            <>
-                                <span
-                                    onClick={(e) => {
-                                        navigate(`/Off-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${stringToBase64(row?.CrimeID)}&OffSta=${true}&CrimeSta=${true}`);
-                                    }}
-                                    className={`btn btn-sm text-white px-2 py-0 mr-1 `}
-                                    style={{
-                                        backgroundColor: "#19aea3",
-                                    }}
-                                >
-                                    Crime Info
-                                </span>
-                            </>
-                    }
-                </div>
-            ),
-        },
+        // {
+        //     minWidth: "110px",
+        //     grow: 1,
+        //     cell: (row) => (
+        //         <div >
+        //             {
+        //                 getCrimeInfoErrorButton(row.CrimeID, nibrsValidateOffenseData) ?
+        //                     <>
+        //                         <span
+        //                             onClick={(e) => {
+        //                                 navigate(`/Off-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${stringToBase64(row?.CrimeID)}&OffSta=${true}&CrimeSta=${true}`);
+        //                             }}
+        //                             className={`btn btn-sm text-white px-2 py-0 mr-1 `}
+        //                             style={{
+        //                                 backgroundColor: "red",
+        //                             }}
+        //                         >
+        //                             Crime Info
+        //                         </span>
+        //                     </>
+        //                     :
+        //                     <>
+        //                         <span
+        //                             onClick={(e) => {
+        //                                 navigate(`/Off-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${stringToBase64(row?.CrimeID)}&OffSta=${true}&CrimeSta=${true}`);
+        //                             }}
+        //                             className={`btn btn-sm text-white px-2 py-0 mr-1 `}
+        //                             style={{
+        //                                 backgroundColor: "#19aea3",
+        //                             }}
+        //                         >
+        //                             Crime Info
+        //                         </span>
+        //                     </>
+        //             }
+        //         </div>
+        //     ),
+        // },
         {
             minWidth: "120px",
             grow: 1,

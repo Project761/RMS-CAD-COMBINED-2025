@@ -406,6 +406,7 @@ const NibrsHome = () => {
       return (
         <span style={baseStyle}>
           {`Property (${PropertyCount}) — For crimes against property, a property record is required.`}
+          {/* {`Property (${PropertyCount}) — Connection of Property and Offense is needed.`} */}
         </span>
       );
     }
@@ -482,10 +483,6 @@ const NibrsHome = () => {
 
   const getGroupBOffenseData = async (IncID) => {
     try {
-      // const [groupBOffenseArrestError, vehicle240Error] = await Promise.all([
-      //   fetchPostData(`NIBRSError/GetData_OffenceGroupBArrestError`, { IncID: IncID }),
-      //   //  fetchPostData(`NIBRSError/GetData_OffenceGroupBArrestError`, { IncID: IncID }),
-      // ])
 
       const groupBOffenseArrestError = await fetchPostData(`NIBRSError/GetData_OffenceGroupBArrestError`, { IncidentID: IncID })
 
@@ -503,7 +500,6 @@ const NibrsHome = () => {
   const getVehicle240Error = async (IncID) => {
     try {
       const vehicle240Error = await fetchPostData(`NIBRSError/GetData_OffenceVehcileError`, { IncidentID: IncID })
-      // console.log("🚀 ~ getVehicle240Error ~ vehicle240Error:", vehicle240Error)
 
       if (vehicle240Error && vehicle240Error[0]?.OffenceVehcileError) {
         return true
@@ -620,13 +616,6 @@ const NibrsHome = () => {
         )
       }
 
-      {/* {
-        nibrsValidateloder && (
-          <div className="loader-overlay">
-            <Loader />
-          </div>
-        )
-      } */}
     </>
   );
 };

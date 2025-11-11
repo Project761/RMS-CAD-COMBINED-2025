@@ -31,6 +31,7 @@ import CallTakerServices from "../../../../CADServices/APIs/callTaker";
 import Location from "../../../../CADComponents/Common/Location";
 import GeoServices from "../../../../CADServices/APIs/geo";
 import GeoLocationInfoModal from "../../../Location/GeoLocationInfoModal";
+import NirbsAllModuleErrorShowModal from "../../../Common/NibrsAllModuleErrShowModal";
 
 
 
@@ -46,7 +47,10 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
   const cadDispositionDrpData = useSelector((state) => state.DropDown.cadDispositionDrpData);
   const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
 
-  const { updateCount, get_IncidentTab_Count, get_Incident_Count, nibrsSubmittedIncident, setnibrsSubmittedIncident, setIncidentRmsCfs, setnibrsStatus, exceptionalClearID, GetDataExceptionalClearanceID, setChangesStatus, changesStatus, setReportedDtTmInc, GetDataTimeZone, datezone, setOfficerApprovCount, incidentRecentData, setIncidentRecentData, incidentCount, setCaseStatus, validate_IncSideBar
+  const { updateCount, get_IncidentTab_Count, get_Incident_Count, nibrsSubmittedIncident, setnibrsSubmittedIncident, setIncidentRmsCfs, setnibrsStatus, exceptionalClearID, GetDataExceptionalClearanceID, setChangesStatus, changesStatus, setReportedDtTmInc, GetDataTimeZone, datezone, setOfficerApprovCount, incidentRecentData, setIncidentRecentData, incidentCount, setCaseStatus,
+
+    nibrsSideBarLoading, setNibrsSideBarLoading, incidentValidateNibrsData, offenseValidateNibrsData, victimValidateNibrsData, offenderValidateNibrsData, propertyValidateNibrsData, validate_IncSideBar
+
   } = useContext(AgencyContext);
 
   const [reportedDate, setReportedDate] = useState(new Date(datezone));
@@ -861,46 +865,6 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
   }
 
   // validate Incident
-  const get_NibrsErrorStatus = async (incidentID, reportDate, baseDate, oriNumber) => {
-    try {
-      const val = {
-        gIntAgencyID: loginAgencyID, IsIncidentCheck: true, gIncidentID: incidentID, dtpDateTo: reportDate,
-        dtpDateFrom: reportDate, BaseDate: baseDate, strORINumber: oriNumber, strComputerName: uniqueId,
-        //no use
-        rdbSubmissionFile: false, rdbErrorLog: false, rdbNonReportable: false, chkPastErrorPrint: false,
-        rdbOne: false, rdbTwoMonth: false, rdbThreeMonth: false, rdbAllLogFile: false, IPAddress: "",
-      };
-      await fetchPostData("NIBRS/TXIBRS", val).then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-
-          const errorObject = data[0]?.ErrorObject || {};
-          const incidentError = errorObject?.Incident ? true : false;
-          const administrativeError = errorObject?.Administrative ? true : false;
-          const status = incidentError && administrativeError ? true : false;
-          // return status;
-
-          fetchPostData('Incident/Update_IsNIBRSError', {
-            'IsNIBRSError': status,
-            'ModifiedByUserFK': loginPinID,
-            'IncidentID': incidentID
-          }).then((res) => {
-            console.log("🚀 ~ UpdateIsNIBRSError ~ res:", res)
-            if (res.success) {
-              // toastifySuccess(res?.Message);
-            }
-          });
-
-
-        } else {
-          return false;
-        }
-      });
-    } catch (error) {
-      console.log("🚀 ~ nibrsValidateInc ~ error:", error);
-      return false;
-    }
-  };
-
 
   const OnClose = () => {
     if (IsCadInc === "true" || IsCadInc === true) {
@@ -1138,45 +1102,330 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
     }),
   };
 
+  // nibrs Validate String
+  const [incidentErrorStatus, setIncidentErrorStatus] = useState(false);
+  const [vehErrorStatus, setVehErrorStatus] = useState(false);
+  const [propErrorStatus, setPropErrorStatus] = useState(false);
+  const [offenseErrorStatus, setOffenseErrorStatus] = useState(false);
+  const [victimErrorStatus, setVictimErrorStatus] = useState(false);
+  const [offenderErrorStatus, setOffenderErrorStatus] = useState(false);
+
+  /// Error String
+  const [administrativeErrorString, setAdministrativeErrorString] = useState('');
+  const [incidentErrorString, setIncidentErrorString] = useState('');
+  const [offenseErrorString, setOffenseErrorString] = useState('');
+  const [victimErrorString, setVictimErrorString] = useState('');
+  const [offenderErrorString, setOffenderErrorString] = useState('');
+  const [propertyErrorString, setPropertyErrorString] = useState('');
+  const [vehicleErrorString, setVehicleErrorString] = useState('');
+  const [arrestErrorString, setArrestErrorString] = useState('');
+
+  // 
+  const [isOffenseInc, setIsOffenseInc] = useState(false);
+  const [isGroup_B_Offense_ArrestInc, setIsGroup_B_Offense_ArrestInc] = useState(false);
+  const [isSuspectedDrugTypeErrorStatus, setSuspectedDrugTypeErrorStatus] = useState(false);
+  const [isPropertyIdZeroError, setIsPropertyIdZeroError] = useState(false);
+  const [isCrimeAgainstPropertyError, setIsCrimeAgainstPropertyError] = useState(false)
+  const [isVictimConnectedError, setIsVictimConnectedError] = useState(false);
+  const [isOffense240VehError, setIsOffense240VehError] = useState(false);
+
+
+
   // validate Incident
   const nibrsValidateInc = (incidentID, reportDate, baseDate, oriNumber) => {
     try {
       setnibrsValidateLoder(true);
-      const val = {
-        gIntAgencyID: loginAgencyID, IsIncidentCheck: true, gIncidentID: incidentID, dtpDateTo: reportDate,
-        dtpDateFrom: reportDate, BaseDate: baseDate, strORINumber: oriNumber, strComputerName: uniqueId,
-        //no use
-        rdbSubmissionFile: false, rdbErrorLog: false, rdbNonReportable: false, chkPastErrorPrint: false,
-        rdbOne: false, rdbTwoMonth: false, rdbThreeMonth: false, rdbAllLogFile: false, IPAddress: "",
-      };
-      // https://apigoldline.com:5002/api/NIBRS/TXIBRS
-      fetchPostData("NIBRS/TXIBRS", val).then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setnibrsValidateLoder(false);
-          const errorObject = data[0]?.ErrorObject || {};
 
-          setnibrsValidateIncidentData(data);
-          setnibrsValidIncScreen(!errorObject?.Administrative);
-          setnibrsValidAllIncModule(!errorObject?.Incident);
-          // console.log("🚀 ~ nibrsValidateInc ~ !errorObject?:", errorObject);
-          // console.log("🚀 ~ nibrsValidateInc ~ !errorObject?.Incident:", !errorObject?.Incident);
+      // const val = {
+      //   gIntAgencyID: loginAgencyID, IsIncidentCheck: true, gIncidentID: incidentID, dtpDateTo: reportDate,
+      //   dtpDateFrom: reportDate, BaseDate: baseDate, strORINumber: oriNumber, strComputerName: uniqueId,
+      //   //no use
+      //   rdbSubmissionFile: false, rdbErrorLog: false, rdbNonReportable: false, chkPastErrorPrint: false,
+      //   rdbOne: false, rdbTwoMonth: false, rdbThreeMonth: false, rdbAllLogFile: false, IPAddress: "",
+      // };
+      // // https://apigoldline.com:5002/api/NIBRS/TXIBRS
+      // fetchPostData("NIBRS/TXIBRS", val).then((data) => {
+      //   if (Array.isArray(data) && data.length > 0) {
+      //     setnibrsValidateLoder(false);
+      //     const errorObject = data[0]?.ErrorObject || {};
 
-          setIncValidateErrStr(errorObject?.Administrative || "");
-          setincAllModuleValidateErrStr(errorObject?.Incident || "");
-          setOffenseState(errorObject?.Offense?.[0]?.OnPageError || "");
+      //     setnibrsValidateIncidentData(data);
+      //     setnibrsValidIncScreen(!errorObject?.Administrative);
+      //     setnibrsValidAllIncModule(!errorObject?.Incident);
+      //     console.log("🚀 ~ nibrsValidateInc ~ !errorObject?:", errorObject);
+      //     // console.log("🚀 ~ nibrsValidateInc ~ !errorObject?.Incident:", !errorObject?.Incident);
 
-        } else {
-          setnibrsValidateIncidentData([]);
-          setnibrsValidIncScreen(true);
-          setnibrsValidAllIncModule(true);
-          setnibrsValidateLoder(false);
+      //     setIncValidateErrStr(errorObject?.Administrative || "");
+      //     setincAllModuleValidateErrStr(errorObject?.Incident || "");
+      //     setOffenseState(errorObject?.Offense?.[0]?.OnPageError || "");
 
-        }
-      });
+      //   } else {
+      //     setnibrsValidateIncidentData([]);
+      //     setnibrsValidIncScreen(true);
+      //     setnibrsValidAllIncModule(true);
+      //     setnibrsValidateLoder(false);
+
+      //   }
+      // });
     } catch (error) {
       console.log("🚀 ~ nibrsValidateInc ~ error:", error);
+      setnibrsValidateLoder(false);
     }
   };
+
+
+
+
+  useEffect(() => {
+    const validateNibrs = async (incidentValidateNibrsData, offenseValidateNibrsData, victimValidateNibrsData, offenderValidateNibrsData, propertyValidateNibrsData) => {
+      // // loader
+      setnibrsValidateLoder(true);
+      // Administrative
+      setAdministrativeErrorString(''); setIsOffenseInc(false);
+      // incident
+      setIncidentErrorStatus(false); setIncidentErrorString('');
+      // property
+      setSuspectedDrugTypeErrorStatus(false); setIsCrimeAgainstPropertyError(false); setIsPropertyIdZeroError(false); setPropErrorStatus(false); setPropertyErrorString('');
+      // vehicle
+      setVehErrorStatus(false); setVehicleErrorString(''); setIsOffense240VehError(false);
+      // offense
+      setOffenseErrorStatus(false); setOffenseErrorString('');
+      // offender
+      setOffenderErrorStatus(false); setOffenderErrorString('');
+      // victim
+      setVictimErrorStatus(false); setVictimErrorString(''); setIsVictimConnectedError(false);
+      // arrest
+      setArrestErrorString(''); setIsGroup_B_Offense_ArrestInc(false);
+
+      // console.log("🚀 ~ validateNibrs ~ incidentValidateNibrsData:", incidentValidateNibrsData)
+
+      try {
+          const groupBOffenseArrestError = await getGroupBOffenseData(IncID);
+          const vehicle240Error = await getVehicle240Error(IncID);
+        // const vehicle240Error = true
+        // const groupBOffenseArrestError = true
+
+
+        if (incidentValidateNibrsData?.Incident || groupBOffenseArrestError) {
+          const incObj = incidentValidateNibrsData?.Incident ? incidentValidateNibrsData?.Incident : [];
+
+          if (incObj?.IsGroupBArrest) {
+            setAdministrativeErrorString(incObj?.IsGroupBArrestError ? incObj?.IsGroupBArrestError : '');
+            setIsGroup_B_Offense_ArrestInc(true);
+
+          } else if (groupBOffenseArrestError) {
+            setArrestErrorString('There is no arrest attached to this Group B offense Incident');
+            setIsGroup_B_Offense_ArrestInc(true);
+
+          } else {
+            setIsGroup_B_Offense_ArrestInc(false);
+
+          }
+
+        }
+
+        // set offense error string
+        if (offenseValidateNibrsData) {
+          const incObj = incidentValidateNibrsData?.Incident ? incidentValidateNibrsData?.Incident : [];
+          const offenseObj = offenseValidateNibrsData?.Offense ? offenseValidateNibrsData?.Offense : [];
+
+          if (offenseObj?.length > 0) {
+
+            setOffenseErrorString(offenseObj[0]?.OnPageError ? offenseObj[0]?.OnPageError : '');
+            setOffenseErrorStatus(true);
+
+          } else {
+
+            if (incObj?.IsOffence) {
+              setOffenseErrorString(incObj?.IsOffenceError ? incObj?.IsOffenceError : '');
+              setIsOffenseInc(true); setOffenseErrorStatus(true);
+
+            } else {
+              setIsOffenseInc(false); setOffenseErrorStatus(false); setOffenseErrorString('');
+
+            }
+          }
+
+        } else {
+          setOffenseErrorStatus(false); setOffenseErrorString('');
+
+        }
+
+        if (propertyValidateNibrsData) {
+          const proObj = propertyValidateNibrsData?.Properties ? propertyValidateNibrsData?.Properties : [];
+          // console.log("🚀 ~ ValidateProperty ~ proObj:", proObj)
+
+          // set property error string
+          if (proObj?.length > 0) {
+
+            if (proObj[0]?.OnPageError?.includes("Property must be present.") && proObj[0]?.PropertyType != 'V') {
+              setIsCrimeAgainstPropertyError(true); setSuspectedDrugTypeErrorStatus(false); setIsPropertyIdZeroError(false);
+
+              setPropertyErrorString(proObj[0]?.OnPageError ? proObj[0]?.OnPageError : '');
+
+            } else if (proObj[0]?.OnPageError?.includes("For Crime Against Property Property must be present.") && proObj[0]?.PropertyType != 'V') {
+              setIsCrimeAgainstPropertyError(true); setSuspectedDrugTypeErrorStatus(false); setIsPropertyIdZeroError(false);
+
+              setPropertyErrorString(proObj[0]?.OnPageError ? proObj[0]?.OnPageError : '');
+
+            } else if (proObj[0]?.OnPageError?.includes("{352} Add at least one suspected drug type(create a property with type 'Drug')") || proObj[0]?.OnPageError?.includes("Add at least one suspected drug type(create a property with type 'Drug').") && proObj[0]?.PropertyType != 'V') {
+              setSuspectedDrugTypeErrorStatus(true); setIsPropertyIdZeroError(false); setIsCrimeAgainstPropertyError(false);
+
+              setPropertyErrorString(proObj[0]?.OnPageError ? proObj[0]?.OnPageError : '');
+
+            } else if (proObj[0]?.OnPageError?.includes("{074} Need a property loss code of 5,7 for offense  23B") && proObj[0]?.PropertyType != 'V') {
+              setIsPropertyIdZeroError(true); setSuspectedDrugTypeErrorStatus(false); setIsCrimeAgainstPropertyError(false);
+
+              setPropertyErrorString(proObj[0]?.OnPageError ? proObj[0]?.OnPageError : '');
+
+            } else {
+              setSuspectedDrugTypeErrorStatus(false); setIsPropertyIdZeroError(false); setIsCrimeAgainstPropertyError(false);
+
+            }
+
+            const VehArr = proObj?.filter((item) => item?.PropertyType === 'V');
+            // console.log("🚀 ~ validateNibrs ~ VehArr:", VehArr)
+            const PropArr = proObj?.filter((item) => item?.PropertyType !== 'V' && item?.PropertyType);
+            // console.log("🚀 ~ validateNibrs ~ PropArr:", PropArr)
+
+            if (VehArr?.length > 0) {
+              const VehErrorArray = VehArr || []
+              if (VehErrorArray.every(item => item === null || item === undefined)) {
+                setVehErrorStatus(false); setVehicleErrorString('');
+
+              } else {
+                setVehicleErrorString(VehArr[0]?.OnPageError ? VehArr[0]?.OnPageError : ''); setVehErrorStatus(true);
+
+              }
+            } else {
+              setVehErrorStatus(false); setVehicleErrorString('');
+            }
+
+            // set property error string
+            if (PropArr?.length > 0) {
+              const PropErrorArray = PropArr || []
+              // console.log("🚀 ~ validateNibrs ~ PropErrorArray:", PropErrorArray)
+              if (PropErrorArray.every(item => item === null || item === undefined)) {
+                setPropErrorStatus(false); setPropertyErrorString('');
+
+              } else {
+                setPropertyErrorString(PropArr[0]?.OnPageError ? PropArr[0]?.OnPageError : ''); setPropErrorStatus(true);
+
+              }
+
+            } else {
+              if (isCrimeAgainstPropertyError || isSuspectedDrugTypeErrorStatus || isPropertyIdZeroError) {
+
+                setPropErrorStatus(true);
+              } else {
+                setPropErrorStatus(false); setPropertyErrorString('');
+
+              }
+
+            }
+
+          } else {
+
+          }
+
+        } else {
+          setPropErrorStatus(false); setPropertyErrorString(''); setVehErrorStatus(false); setVehicleErrorString('');
+
+        }
+
+        if (vehicle240Error) {
+          setIsOffense240VehError(true);
+          setVehErrorStatus(true);
+          setVehicleErrorString('For crimes against property, a property record is required.');
+
+        }
+
+        // set offender error string
+        if (offenderValidateNibrsData) {
+          const offenderObj = offenderValidateNibrsData?.Offender ? offenderValidateNibrsData?.Offender : [];
+          if (offenderObj?.length > 0) {
+            setOffenderErrorString(offenderObj[0]?.OnPageError ? offenderObj[0]?.OnPageError : ''); setOffenderErrorStatus(true);
+          } else {
+            setOffenderErrorStatus(false); setOffenderErrorString('');
+          }
+        } else {
+          setOffenderErrorStatus(false); setOffenderErrorString('');
+
+        }
+
+        // set victim error string
+        if (victimValidateNibrsData) {
+          const victimObj = victimValidateNibrsData?.Victim ? victimValidateNibrsData?.Victim : [];
+          // console.log("🚀 ~ validateNibrs ~ victimObj:", victimObj)
+          if (victimObj?.length > 0) {
+            const isVictimConnectedError = victimObj[0]?.OnPageError?.includes("At least one victim must be present and must be connected with offense.");
+            if (isVictimConnectedError) {
+              setIsVictimConnectedError(true);
+            } else {
+              setIsVictimConnectedError(false);
+            }
+            setVictimErrorString(victimObj[0]?.OnPageError ? victimObj[0]?.OnPageError : ''); setVictimErrorStatus(true);
+          } else {
+            setVictimErrorStatus(false); setVictimErrorString(''); setIsVictimConnectedError(false);
+          }
+        } else {
+          setVictimErrorStatus(false); setVictimErrorString('');
+
+        }
+
+        // // loader
+        setnibrsValidateLoder(false);
+
+      } catch (error) {
+        console.log("🚀 ~ ValidateProperty ~ error:", error);
+        // // loader
+        setnibrsValidateLoder(false);
+      }
+
+    }
+    validateNibrs(incidentValidateNibrsData, offenseValidateNibrsData, victimValidateNibrsData, offenderValidateNibrsData, propertyValidateNibrsData);
+  }, [incidentValidateNibrsData, offenseValidateNibrsData, victimValidateNibrsData, offenderValidateNibrsData, propertyValidateNibrsData]);
+
+
+  const getGroupBOffenseData = async (IncID) => {
+    try {
+
+      const groupBOffenseArrestError = await fetchPostData(`NIBRSError/GetData_OffenceGroupBArrestError`, { IncidentID: IncID })
+
+      if (groupBOffenseArrestError && groupBOffenseArrestError[0]?.OffenceGroupBArrest) {
+        return true
+      }
+      return false
+
+    } catch (error) {
+      console.error("🚀 ~ getGroupBOffenseData ~ error:", error)
+      return false
+    }
+  }
+
+  const getVehicle240Error = async (IncID) => {
+    try {
+      const vehicle240Error = await fetchPostData(`NIBRSError/GetData_OffenceVehcileError`, { IncidentID: IncID })
+
+      if (vehicle240Error && vehicle240Error[0]?.OffenceVehcileError) {
+        return true
+      }
+      return false
+
+    } catch (error) {
+      console.error("🚀 ~ getVehicle240Error ~ error:", error)
+      return false
+    }
+  }
+
+
+
+
+
+
+
+
+
 
   const [isHovered, setIsHovered] = useState(false);
   const [isHoveredUseOfForce, setIsHoveredUseOfForce] = useState(false);
@@ -2318,12 +2567,6 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
         </div>
       </div>
 
-
-
-
-
-
-
       <div className="col-12 text-right mt-2 d-flex justify-content-between">
         <div>
           {IncSta === true || IncSta === "true" ? (
@@ -2331,30 +2574,40 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
               <button
                 type="button"
                 onClick={() => {
-                  nibrsValidateInc(incidentID, value?.ReportedDate, baseDate, oriNumber);
+                  // nibrsValidateInc(incidentID, value?.ReportedDate, baseDate, oriNumber);
+                  validate_IncSideBar(IncID, IncNo, loginAgencyID);
                   setNibIncScreen(true);
                   setNibrsErrModalStatus(true);
                   setoffenseClick(false);
                 }}
                 data-toggle={"modal"}
-                data-target={"#NibrsErrorShowModal"}
+                // data-target={"#NibrsErrorShowModal"}
                 className={`btn text-white btn-sm mr-2`}
-                style={{ backgroundColor: `${nibrsValidateIncidentData.length > 0 ? nibrsValidIncScreen ? "green" : "red" : "teal"}` }}
+                data-target={"#NibrsAllModuleErrorShowModal"}
+                // style={{ backgroundColor: `${nibrsValidateIncidentData.length > 0 ? nibrsValidIncScreen ? "green" : "red" : "teal"}` }}
+                style={{
+                  backgroundColor: `${incidentErrorStatus ? 'red' : 'teal'}`,
+                }}
               >
                 Validate Incident Screen
               </button>
               <button
                 type="button"
                 onClick={() => {
-                  nibrsValidateInc(incidentID, value?.ReportedDate, baseDate, oriNumber);
+                  // nibrsValidateInc(incidentID, value?.ReportedDate, baseDate, oriNumber);
+                  validate_IncSideBar(IncID, IncNo, loginAgencyID);
                   setNibIncScreen(false);
                   setNibrsErrModalStatus(true);
                   setoffenseClick(false);
                 }}
                 data-toggle={"modal"}
-                data-target={"#NibrsErrorShowModal"}
+                // data-target={"#NibrsErrorShowModal"}
+                data-target={"#NibrsAllModuleErrorShowModal"}
                 className={`btn text-white btn-sm mr-2`}
-                style={{ backgroundColor: `${nibrsValidateIncidentData?.length > 0 ? nibrsValidAllIncModule ? "green" : "red" : "teal"}` }}
+                // style={{ backgroundColor: `${nibrsValidateIncidentData?.length > 0 ? nibrsValidAllIncModule ? "green" : "red" : "teal"}` }}
+                style={{
+                  backgroundColor: `${incidentErrorStatus || offenderErrorStatus || propErrorStatus || vehErrorStatus || victimErrorStatus || offenseErrorStatus || isGroup_B_Offense_ArrestInc || isOffenseInc ? 'red' : 'teal'}`,
+                }}
               >
                 Validate TIBRS Incident
               </button>
@@ -2456,16 +2709,13 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
           } */}
         </div>
       </div>
-
       <GeoLocationInfoModal {...{ openLocationInformationModal, setOpenLocationInformationModal, setSelectedButton, geoFormValues, setGEOFormValues, isGoogleLocation, createLocationPayload, isVerifyLocation, geoLocationID, isCheckGoogleLocation, setIsVerifyReportedLocation, setGeoLocationID }} />
-
       <CloseHistoryModal
         incidentID={incidentID}
         assignModelShow={assignModelShow}
         setassignModelShow={setassignModelShow}
         GetEditData={GetEditData}
       />
-
       <VerifyLocation
         {...{
           loginAgencyID,
@@ -2479,7 +2729,6 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
           setStatesChangeStatus,
         }}
       />
-
       <ChangesModal func={check_Validation_Error} setToReset={setToReset} />
       <ListModal {...{ openPage, setOpenPage }} />
       <MessageModelIncident
@@ -2488,17 +2737,6 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
         IncidentNumber={value?.IncidentNumber}
         incidentID={incidentID}
         IncSta={IncSta}
-      />
-
-      <NirbsErrorShowModal
-        ErrorText={
-          nibIncScreen ? incValidateErrStr : incAllModuleValidateErrStr
-        }
-        nibErrModalStatus={nibrsErrModalStatus}
-        setNibrsErrModalStatus={setNibrsErrModalStatus}
-        nibrsValidateloder={nibrsValidateloder}
-        OffenseState={OffenseState}
-        offenseClick={offenseClick}
       />
       <CurrentIncMasterReport
         incNumber={value.IncidentNumber}
@@ -2513,7 +2751,39 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
           setIncReportCount,
         }}
       />
-      {/* <IdentifyFieldColor /> */}
+
+
+      <NirbsErrorShowModal
+      // ErrorText={
+      //   nibIncScreen ? incValidateErrStr : incAllModuleValidateErrStr
+      // }
+      // nibErrModalStatus={nibrsErrModalStatus}
+      // setNibrsErrModalStatus={setNibrsErrModalStatus}
+      // nibrsValidateloder={nibrsValidateloder}
+      // OffenseState={OffenseState}
+      // offenseClick={offenseClick}
+      />
+
+      <NirbsAllModuleErrorShowModal
+        incidentErrorStatus={incidentErrorStatus}
+        nibErrModalStatus={nibrsErrModalStatus}
+        setNibrsErrModalStatus={setNibrsErrModalStatus}
+
+        sideBarValidateloder={nibrsSideBarLoading}
+        setNibrsSideBarLoading={setNibrsSideBarLoading}
+        nibrsValidateloder={nibrsValidateloder}
+        setnibrsValidateLoder={setnibrsValidateLoder}
+
+        // administrativeErrorString={administrativeErrorString}
+        administrativeErrorString={''}
+        incidentErrorString={!nibIncScreen ? incidentErrorString : ''}
+        offenseErrorString={!nibIncScreen ? offenseErrorString : ''}
+        victimErrorString={!nibIncScreen ? victimErrorString : ''}
+        offenderErrorString={!nibIncScreen ? offenderErrorString : ''}
+        propertyErrorString={!nibIncScreen ? propertyErrorString : ''}
+        vehicleErrorString={!nibIncScreen ? vehicleErrorString : ''}
+        arrestErrorString={!nibIncScreen ? arrestErrorString : ''}
+      />
     </>
   ) : (
     <Loader />
