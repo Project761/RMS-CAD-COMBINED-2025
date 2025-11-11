@@ -380,7 +380,7 @@ const Arrest_Add_Up = () => {
                             <div className="card-body" >
 
                                 {arrestFilterData && arrestFilterData.length > 0 && (
-                                    <div className="card-carousel-container position-relative" style={{marginBottom:"40px"}}>
+                                    <div className="card-carousel-container position-relative" style={{ marginBottom: "40px" }}>
                                         {/* Cards Wrapper */}
                                         {viewType === "card" ? (
                                             <div className="card-carousel" id="cardCarousel" ref={carouselRef}>
@@ -866,7 +866,7 @@ const Arrest_Add_Up = () => {
                                             :
 
                                             showPage === 'Charges' ?
-                                                <Charges {...{ DecArrestId, DecIncID, ListData, setListData, get_List }} />
+                                                <Charges {...{ DecArrestId, DecIncID, ListData, setListData, get_List, ArresteeID }} />
                                                 :
                                                 showPage === 'Warrant' ?
                                                     <Warrant {...{ DecArrestId, DecIncID, ListData, get_List }} />

@@ -233,9 +233,8 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
             // dispatch(get_Masters_Name_Drp_Data(value.ParentNameID, 0, 0));
         }
         else if (type === "ArrestMod") {
-            console.log('hello', value.ParentNameID)
             dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
-            console.log(arresteeNameData, possessionID)
+
 
 
         }
@@ -402,7 +401,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                 'ArrestDtTm': Editval[0]?.ArrestDtTm ? getShowingDateText(Editval[0]?.ArrestDtTm) : "", 'IsMultipleArrestees': Editval[0]?.IsMultipleArrestees,
                 'ArrestingAgencyID': Editval[0]?.ArrestingAgencyID, 'ArrestingAgency': Editval[0]?.ArrestingAgency ? Editval[0]?.ArrestingAgency : '',
                 'PhoneNo': Editval[0]?.PhoneNo ? Editval[0]?.PhoneNo : '', 'ArrestTypeID': Editval[0]?.ArrestTypeID, 'SupervisorID': Editval[0]?.SupervisorID, 'PoliceForceID': Editval[0]?.PoliceForceID ? Editval[0]?.PoliceForceID : '',
-        
+
                 'RightsGivenID': Editval[0]?.RightsGivenID, 'JuvenileDispositionID': Editval[0]?.JuvenileDispositionID, 'GivenByID': Editval[0]?.GivenByID, 'PrimaryOfficerID': Editval[0]?.PrimaryOfficerID, 'ModifiedByUserFK': loginPinID,
                 // new add 
                 'IsSchoolNotified': Editval[0]?.IsSchoolNotified, 'Grade': Editval[0]?.Grade, 'LocationOfSchool': Editval[0]?.LocationOfSchool, 'LocationOfSchool': Editval[0]?.LocationOfSchool, 'NameOfSchool': Editval[0]?.NameOfSchool, 'ParentPhone': Editval[0]?.ParentPhone,
@@ -760,43 +759,44 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
             if (name === 'RightsGivenID') {
                 setRightGivenCode(e.id);
             }
-            // else if (name === 'ParentNameID') {
-            //     if (get_OffenseName_Data) {
-            //         get_OffenseName_Data(e?.value);
-            //         setNameID(e?.value)
-            //         if (e.DateOfBirth) {
-            //             setDobDate(new Date(e.DateOfBirth));
-            //             newValue['DateOfBirth'] = getShowingWithOutTime(e.DateOfBirth);
-            //         } else {
-            //             setDobDate('');
-            //             newValue['DateOfBirth'] = '';
-            //         }
-            //         setAgeFrom(e.SexID);
-            //         newValue['SexID'] = e.SexID;
-            //         newValue['RaceID'] = e.RaceID;
-            //         newValue['AgeUnitID'] = e.AgeUnitID;
-            //         setValue({
-            //             ...value,
-            //             ['DateOfBirth']: getShowingWithOutTime(e.DateOfBirth),
-            //             ['AgeFrom']: e.AgeFrom,
-            //             ['SexID']: e.SexID,
-            //             ['RaceID']: e.RaceID,
-            //             ['AgeUnitID']: e.AgeUnitID
-            //         });
-            //     }
-            //     const age = handleDOBChange(e.DateOfBirth);
-            //     if (e.AgeFrom) {
-            //         if (e.AgeFrom === null) {
-            //             newValue['IsJuvenileArrest'] = '';
-            //         } else {
-            //             newValue['IsJuvenileArrest'] = e.IsJuvenile;
-            //         }
-            //         setArresteeChange(e); setArrestParentID(e.value);
-            //     } else
-            //         if (!e.Gendre_Description || !e.Race_Description || !e.AgeFrom || !e.LastName) {
-            //             setArresteeChange(e); setArrestParentID(e.value);
-            //         }
-            // }
+            else if (name === 'ParentNameID') {
+                if (get_OffenseName_Data) {
+                    get_OffenseName_Data(e?.value);
+                    setNameID(e?.value)
+                    // if (e.DateOfBirth) {
+                    //     setDobDate(new Date(e.DateOfBirth));
+                    //     newValue['DateOfBirth'] = getShowingWithOutTime(e.DateOfBirth);
+                    // } else {
+                    //     setDobDate('');
+                    //     newValue['DateOfBirth'] = '';
+                    // }
+                    // setAgeFrom(e.SexID);
+                    // newValue['SexID'] = e.SexID;
+                    // newValue['RaceID'] = e.RaceID;
+                    // newValue['AgeUnitID'] = e.AgeUnitID;
+                    // setValue({
+                    //     ...value,
+                    //     ['DateOfBirth']: getShowingWithOutTime(e.DateOfBirth),
+                    //     ['AgeFrom']: e.AgeFrom,
+                    //     ['SexID']: e.SexID,
+                    //     ['RaceID']: e.RaceID,
+                    //     ['AgeUnitID']: e.AgeUnitID
+                    // });
+                }
+                setArrestParentID(e.value);
+                // const age = handleDOBChange(e.DateOfBirth);
+                // if (e.AgeFrom) {
+                //     if (e.AgeFrom === null) {
+                //         newValue['IsJuvenileArrest'] = '';
+                //     } else {
+                //         newValue['IsJuvenileArrest'] = e.IsJuvenile;
+                //     }
+                //     setArresteeChange(e); setArrestParentID(e.value);
+                // } else
+                //     if (!e.Gendre_Description || !e.Race_Description || !e.AgeFrom || !e.LastName) {
+                //         setArresteeChange(e);
+                //     }
+            }
             else if (name === 'ArresteeID') {
                 if (get_OffenseName_Data) {
                     get_OffenseName_Data(e?.value);
@@ -843,6 +843,11 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
             } else if (name === 'ArresteeID') {
                 setPossessionID(''); setPossenSinglData([]); setArresteeChange(''); setDobDate(null); setAgeFrom(''); newValue['SexID'] = null; newValue['AgeUnitID'] = null;
                 newValue['RaceID'] = null; newValue['DateOfBirth'] = ''; newValue['IsJuvenileArrest'] = '';
+            }
+            else if (name === 'ParentNameID') {
+                setArrestParentID('');
+                setPossenSinglData([]);
+
             }
             !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
             newValue[name] = null;
@@ -1309,6 +1314,12 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                                                 if (possessionID) {
                                                     GetSingleDataPassion(possessionID);
                                                 }
+                                                else {
+                                                    setPossenSinglData([]);
+                                                    setPossessionID('');
+
+                                                }
+                                                setType('ArrestMod');
                                                 setNameModalStatus(true); setDatePickerRequiredColor(true);
                                             }}
                                         >
@@ -1524,7 +1535,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                                                 GetSingleDataPassion(ArrestparentID);
                                             }
                                             else {
-                                                setPossessionID('');
+                                                setArrestParentID('');
                                                 setPossenSinglData('');
                                             }
                                             setType('ArrestParentMod');

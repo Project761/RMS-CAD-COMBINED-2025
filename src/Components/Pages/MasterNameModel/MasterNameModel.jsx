@@ -3792,9 +3792,9 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                                         </>
                                     }
                                     {
-                                        (type === "ArrestParentMod") && <>
+                                        nameShowPage === 'home' && (type === "ArrestParentMod") && <>
                                             {
-                                                ArrestparentID && !possessionID ?
+                                                ArrestparentID ?
                                                     <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }} disabled={!statesChangeStatus}>Update</button>
                                                     :
                                                     <>
