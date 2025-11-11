@@ -1421,12 +1421,6 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
 
 
 
-
-
-
-
-
-
   const [isHovered, setIsHovered] = useState(false);
   const [isHoveredUseOfForce, setIsHoveredUseOfForce] = useState(false);
   const handleMouseEnter = () => setIsHovered(true);
