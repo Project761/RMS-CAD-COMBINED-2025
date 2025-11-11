@@ -30,7 +30,7 @@ const StatusOption = [
 
 const Charges = (props) => {
 
-  const { setStatus, DecChargeId, ListData, setListData, get_List } = props
+  const { setStatus, DecChargeId, ListData, ArresteeID, setListData, get_List } = props
 
   const useQuery = () => {
     const params = new URLSearchParams(useLocation().search);
@@ -89,7 +89,7 @@ const Charges = (props) => {
   const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
   const incReportedDate = useSelector((state) => state.Agency.incReportedDate);
 
-  const { get_Arrest_Count, arrestChargeData, datezone, NameId, setArrestName, changesStatusCount, changesStatus, get_Data_Arrest_Charge, get_ArrestCharge_Count, setChangesStatus, updateCount, setUpdateCount, ArresteName } = useContext(AgencyContext);
+  const { get_Arrest_Count, arrestChargeData, datezone, NameId, setArrestName, get_OffenseName_Data, changesStatusCount, changesStatus, get_Data_Arrest_Charge, get_ArrestCharge_Count, setChangesStatus, updateCount, setUpdateCount, ArresteName } = useContext(AgencyContext);
   const SelectedValue = useRef();
 
   const [chargeCodeDrp, setChargeCodeDrp] = useState([]);
@@ -132,11 +132,14 @@ const Charges = (props) => {
   }, []);
 
 
-  console.log(DecArrestId)
+ 
   useEffect(() => {
     if (localStoreData) {
       setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
       dispatch(get_ScreenPermissions_Data("C073", localStoreData?.AgencyID, localStoreData?.PINID)); get_Arrest_Count(DecArrestId);
+      const storedVal = JSON.parse(localStorage.getItem('insertedArrestVal'));
+      let arresteeID = storedVal['ArresteeID'];
+      if (!DecArrestId) { get_OffenseName_Data(arresteeID); }
     }
   }, [localStoreData]);
 
@@ -171,7 +174,10 @@ const Charges = (props) => {
       });
       if (!incReportedDate) { dispatch(get_Inc_ReportedDate(IncID)); }
       // get_Property_Data(ArrestID);
-      get_Security_DropDown(DecChargeId); get_Security_Data(ChargeID); get_Data_Arrest_Charge(DecArrestId);
+      get_Security_DropDown(DecChargeId); get_Security_Data(ChargeID);
+
+      if (DecArrestId) { get_Data_Arrest_Charge(DecArrestId); }
+
       // setArrestID(ArrestID);
       get_Property_DropDown(DecEIncID);
       if (UCRClearDrpData?.length === 0) { dispatch(get_UcrClear_Drp_Data(LoginAgencyID)); }
@@ -204,7 +210,6 @@ const Charges = (props) => {
   }, [NameId])
 
   useEffect(() => {
-    console.log('hello')
     if (DecArrestId) {
       get_Data_Arrest_Charge(DecArrestId); get_Arrest_Count(DecArrestId);
     }
@@ -243,20 +248,27 @@ const Charges = (props) => {
   }, [DecChargeId]);
 
   const GetSingleData = (ChargeID) => {
-    const val = { 'ChargeID': ChargeID }
+    const val = { 'ChargeID': ChargeID };
     fetchPostData('ArrestCharge/GetSingleData_ArrestCharge', val).then((res) => {
       if (res) {
         setEditval(res);
-      } else { setEditval([]) }
-    })
+      } else {
+        setEditval([]);
+      }
+    });
+
+
   }
 
+
+
   useEffect(() => {
-    if (ChargeID) {
+    if (Editval) {
+    
       setValue({
-        ...value, 'Count': Editval[0]?.Count ? Editval[0]?.Count : '', 'Name': Editval[0]?.Name, 'ChargeCodeID': Editval[0]?.ChargeCodeID,
-        'NIBRSID': Editval[0]?.NIBRSID, 'UCRClearID': Editval[0]?.UCRClearID, 'ChargeID': Editval[0]?.ChargeID, 'ModifiedByUserFK': LoginPinID,
-        'LawTitleId': Editval[0]?.LawTitleId, 'AttemptComplete': Editval[0]?.AttemptComplete, ChargeDateTime: Editval[0]?.ChargeDateTime,
+        ...value, 'Count': Editval[0]?.Count ? Editval[0]?.Count : '', 'Name': Editval[0]?.Name, 'ChargeCodeID': Editval[0]?.ChargeCodeID || Editval?.ChargeCodeID,
+        'NIBRSID': Editval[0]?.NIBRSID || Editval?.NIBRSCodeId, 'UCRClearID': Editval[0]?.UCRClearID, 'ChargeID': Editval[0]?.ChargeID, 'ModifiedByUserFK': LoginPinID,
+        'LawTitleId': Editval[0]?.LawTitleId || Editval?.LawTitleId, 'AttemptComplete': Editval[0]?.AttemptComplete || Editval?.AttemptComplete, ChargeDateTime: Editval[0]?.ChargeDateTime,
         'CategoryId': Editval[0]?.CategoryId, 'OffenseDateTime': Editval[0]?.OffenseDateTime,
 
       });
@@ -277,6 +289,7 @@ const Charges = (props) => {
   }, [Editval, changesStatusCount])
 
   const Reset = () => {
+    setEditval('');
     setValue({ ...value, 'CreatedByUserFK': '', 'Count': '', 'ChargeCodeID': '', 'NIBRSID': '', 'UCRClearID': '', 'WarrantID': '', 'LawTitleId': '', 'AttemptComplete': '', 'CategoryId': '', 'OffenseDateTime': '', });
     setStatesChangeStatus(false); setChangesStatus(false); setErrors({}); setMultiSelected([]); setMultiSelected(prevValues => { return { ...prevValues, ['PropertyID']: '' } })
 
@@ -293,7 +306,6 @@ const Charges = (props) => {
   const get_CategoryId_Drp = (LoginAgencyID) => {
     const val = { AgencyID: LoginAgencyID }
     fetchPostData('ChargeCategory/GetDataDropDown_ChargeCategory', val).then((data) => {
-      console.log(data)
       if (data) {
         setCategoryIdDrp(Comman_changeArrayFormat(data, 'ChargeCategoryID', 'Description',))
       } else {
@@ -465,6 +477,7 @@ const Charges = (props) => {
 
 
 
+
   const insert_Arrest_Data = async () => {
     const storedVal = JSON.parse(localStorage.getItem('insertedArrestVal'));
     AddDeleteUpadate('Arrest/Insert_Arrest', storedVal).then(async (res) => {
@@ -508,7 +521,7 @@ const Charges = (props) => {
     })
   }
 
-  console.log(ArrestID)
+ 
   const onChangeAttComplete = (e, name) => {
     !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
     if (e) {
@@ -551,15 +564,16 @@ const Charges = (props) => {
 
   const columns = [
     {
-      name: 'TIBRS Code', selector: (row) => row.NIBRS_Description, sortable: true
+      name: 'TIBRS Code', selector: (row) => row.NIBRS_Description || row.FBICode_Desc, sortable: true
     },
     {
-      name: ' Offense Code/Name', selector: (row) => row.ChargeCode_Description, sortable: true
+      name: ' Offense Code/Name', selector: (row) => row.ChargeCode_Description || row.Offense_Description, sortable: true
     },
     {
-      name: 'Law Title', selector: (row) => row.LawTitle, sortable: true
+      name: 'Law Title', selector: (row) => row.LawTitle || row.LawTitleId, sortable: true
     },
   ]
+
 
   const conditionalRowStyles = [
     {
@@ -575,15 +589,31 @@ const Charges = (props) => {
     } else {
       if (MstPage === "MST-Arrest-Dash") {
         navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(row?.ArrestID)}&ChargeId=${stringToBase64(row.ChargeID)}&Name=${Name}&ArrNo=${ArrNo}&ArrestSta=${true}&ChargeSta=${true}&SideBarStatus=${false}`)
-        get_ArrestCharge_Count(row?.ChargeID); setErrors('');
+
         // setStatus(true); 
-        setChargeID(row.ChargeID);
-        GetSingleData(row.ChargeID);
+        if (row.OffenseID) {
+          setEditval(row);
+        }
+        else {
+          get_ArrestCharge_Count(row?.ChargeID); setErrors('');
+          setChargeID(row.ChargeID);
+          GetSingleData(row.ChargeID);
+        }
+
       } else {
+       
         navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(row?.ArrestID)}&ChargeId=${stringToBase64(row.ChargeID)}&Name=${Name}&ArrNo=${ArrNo}&ArrestSta=${true}&ChargeSta=${true}&SideBarStatus=${false}`)
-        get_ArrestCharge_Count(row.ChargeID); setErrors(''); setStatesChangeStatus(false);
-        //  setStatus(true); 
-        setChargeID(row.ChargeID); setChangesStatus(false); GetSingleData(row.ChargeID); get_Arrest_Count(row?.ArrestID); get_Property_Data(row?.ChargeID);
+        if (row.OffenseID) {
+          setEditval(row);
+        }
+        else {
+          get_ArrestCharge_Count(row?.ChargeID);
+          get_ArrestCharge_Count(row.ChargeID); setErrors(''); setStatesChangeStatus(false);
+          //  setStatus(true); 
+          setChargeID(row.ChargeID); setChangesStatus(false); GetSingleData(row.ChargeID); get_Arrest_Count(row?.ArrestID); get_Property_Data(row?.ChargeID);
+        }
+
+
       }
     }
   }
@@ -842,7 +872,7 @@ const Charges = (props) => {
     }),
   };
 
-  console.log(ListData)
+
   return (
     <>
       <ArresList {...{ ListData }} />
@@ -887,9 +917,9 @@ const Charges = (props) => {
         </fieldset>
       </div> */}
       <div className="container-fluid">
-      <fieldset className="">
+        <fieldset className="">
           <legend className="w-auto px-2">Weapon & Property</legend>
-          <div className="row align-items-center mt-2" style={{rowGap: "8px"}}>
+          <div className="row align-items-center mt-2" style={{ rowGap: "8px" }}>
             <div className="col-2 col-md-2 col-lg-1 ">
               <label htmlFor="" className='label-name mt-0 '>Weapon</label>
             </div>

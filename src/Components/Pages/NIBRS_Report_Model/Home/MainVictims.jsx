@@ -3945,7 +3945,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                                                         placeholder="Select.."
                                                     />
                                                 </div>
-                                                <div className="col-2 col-md-2 col-lg-1 mt-4">
+                                                <div className="col-2 col-md-2 col-lg-1 mt-2">
                                                     <span
                                                         data-toggle="modal"
                                                         data-target="#ListModel"
@@ -3957,7 +3957,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                                                         ) : null}
                                                     </span>
                                                 </div>
-                                                <div className="col-4 col-md-4 col-lg-5  mt-2" >
+                                                <div className="col-4 col-md-4 col-lg-5 mt-2" >
                                                     {nibrsFieldError?.AssignmentType && showAssignmentTypeError && (
                                                         <div className="nibrs-tooltip-error" style={{ left: '-80px' }}>
                                                             <div className="tooltip-arrow"></div>
@@ -4029,13 +4029,13 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                         {
                             DeNameID ?
                                 (
-                                    <div className="row  align-items-center mt-2">
+                                    <div className="row align-items-center mt-2">
                                         <div className="col-2 col-md-2 col-lg-1 ">
                                             <label htmlFor="" className='label-name '>Offense </label>
                                         </div>
-                                        <div className="col-8 col-md-8 col-lg-8 mt-2">
+                                        <div className="col-8 col-md-8 col-lg-8">
                                             {nibrsFieldError?.Offense && showOffenseTypeError && (
-                                                <div className="nibrs-tooltip-error" style={{ left: '-80px' }}>
+                                                <div className="nibrs-tooltip-error" style={{ left: '510px' }}>
                                                     <div className="tooltip-arrow"></div>
                                                     <div className="tooltip-content">
                                                         <span className="text-danger">⚠️ {nibrsFieldError.OffenseError || ''}</span>
