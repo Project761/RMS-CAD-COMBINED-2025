@@ -26,7 +26,7 @@ const VehicleManagement = (props) => {
     const componentRef = useRef();
     const fileInputRef = useRef(null)
 
-    const { DecVehId, DecMVehId, DecIncID, VicCategory, isViewEventDetails = false } = props
+    const { DecVehId, DecMVehId,  VicCategory, isViewEventDetails = false } = props
     const { GetDataTimeZone, datezone, setChangesStatus, incidentReportedDate } = useContext(AgencyContext);
     const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
     const dispatch = useDispatch();
@@ -160,13 +160,13 @@ const VehicleManagement = (props) => {
     }, [loginAgencyID, selectedOption]);
 
     useEffect(() => {
-        if (DecIncID) {
-            setMainIncidentID(DecIncID);
-            dispatch(get_AgencyOfficer_Data(loginAgencyID, DecIncID));
-            dispatch(get_ArresteeName_Data('', '', DecIncID, true,));
+        if (IncID) {
+            setMainIncidentID(IncID);
+            dispatch(get_AgencyOfficer_Data(loginAgencyID, IncID));
+            dispatch(get_ArresteeName_Data('', '', IncID, true,));
 
         }
-    }, [DecIncID, nameModalStatus, possessionID]);
+    }, [IncID, nameModalStatus, possessionID]);
 
     useEffect(() => {
         if (DecVehId && loginAgencyID && VicCategory) {

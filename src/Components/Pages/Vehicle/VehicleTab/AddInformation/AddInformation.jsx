@@ -21,7 +21,7 @@ import SendPropertyConfirmModel from "../../../../Common/SendPropertyConfirmMode
 
 const AddInformation = (props) => {
 
-  const { ListData, DecVehId, DecMVehId, DecIncID, propertystatus, setIsNonPropertyRoomSelected, setPropertyStatus, isViewEventDetails = false, } = props;
+  const { ListData, DecVehId, DecMVehId,  propertystatus, setIsNonPropertyRoomSelected, setPropertyStatus, isViewEventDetails = false, } = props;
   const dispatch = useDispatch();
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
   const uniqueId = sessionStorage.getItem("UniqueUserID") ? Decrypt_Id_Name(sessionStorage.getItem("UniqueUserID"), "UForUniqueUserID") : "";
@@ -120,7 +120,7 @@ const AddInformation = (props) => {
 
   useEffect(() => {
     if (DecVehId) {
-      setValue({ ...value, PropertyID: DecVehId, ModifiedByUserFK: "", AgencyID: loginAgencyID, CreatedByUserFK: loginPinID, IncidentID: DecIncID, });
+      setValue({ ...value, PropertyID: DecVehId, ModifiedByUserFK: "", AgencyID: loginAgencyID, CreatedByUserFK: loginPinID, IncidentID: IncID, });
       Get_TaskList_Status(DecVehId, loginAgencyID);
     }
   }, [DecVehId]);

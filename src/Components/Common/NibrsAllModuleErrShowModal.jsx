@@ -7,7 +7,7 @@ const NirbsAllModuleErrorShowModal = (props) => {
 
     const isLoading = (!nibrsValidateloder && !sideBarValidateloder)
     // console.log("🚀 ~ NirbsAllModuleErrorShowModal ~ sideBarValidateloder:", !sideBarValidateloder)
-    console.log("🚀 ~ NirbsAllModuleErrorShowModal ~ nibrsValidateloder:", !nibrsValidateloder)
+    // console.log("🚀 ~ NirbsAllModuleErrorShowModal ~ nibrsValidateloder:", !nibrsValidateloder)
     // console.log("🚀 ~ NirbsAllModuleErrorShowModal ~ isLoading:", isLoading)
 
     return (

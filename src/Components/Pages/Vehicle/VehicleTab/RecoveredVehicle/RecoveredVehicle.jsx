@@ -18,7 +18,7 @@ import { get_AgencyOfficer_Data, get_ScreenPermissions_Data } from '../../../../
 
 const RecoveredVehicle = (props) => {
     const dispatch = useDispatch();
-    const { ListData, DecVehId, DecMVehId, DecIncID, incidentReportedDate, isViewEventDetails = false } = props
+    const { ListData, DecVehId, DecMVehId, IncID, incidentReportedDate, isViewEventDetails = false } = props
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
     const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
@@ -110,10 +110,10 @@ const RecoveredVehicle = (props) => {
     }, [DecVehId, DecMVehId]);
 
     useEffect(() => {
-        if (DecIncID) {
-            setMainIncidentID(DecIncID); dispatch(get_AgencyOfficer_Data(localStoreData?.AgencyID, DecIncID))
+        if (IncID) {
+            setMainIncidentID(IncID); dispatch(get_AgencyOfficer_Data(localStoreData?.AgencyID, IncID))
         }
-    }, [DecIncID])
+    }, [IncID])
 
     const get_property_Data = (PropertyID) => {
         const val = { 'PropertyID': 0, 'MasterPropertyID': DecMVehId, 'IsMaster': true }
