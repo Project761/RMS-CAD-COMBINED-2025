@@ -2715,7 +2715,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
     const colourStyles1 = {
         control: (styles) => ({
             ...styles,
-            backgroundColor: "#fce9bf",
+            // backgroundColor: "#fce9bf",
+            backgroundColor: "#FFE2A8",
             height: 20,
             minHeight: 35,
             fontSize: 14,
@@ -3186,6 +3187,23 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
         setChangesStatus(true);
         setStatesChangeStatus(true);
     };
+
+    const getAssignmentAndCallTypeStyle = (VictimCode, Offense) => {
+
+        if (VictimCode === 'L' && Offense?.length > 0) {
+            return NibrsErrorsStyles
+
+        } else if (VictimCode === 'L' && Offense?.length === 0) {
+            return colourStyles1
+
+        } else if (VictimCode === 'L') {
+            return colourStyles1
+
+        } else {
+            return customStylesWithOutColor
+
+        }
+    }
 
     return (
         <>
@@ -3917,7 +3935,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                                                     {nibrsFieldError?.CallType && showCallTypeError && (
                                                         <div className="nibrs-tooltip-error" style={{ left: '-80px' }}>
                                                             <div className="tooltip-arrow"></div>
-
                                                             <div className="tooltip-content">
                                                                 <span className="text-danger">⚠️ {nibrsFieldError.CallTypeError || ''}</span>
                                                             </div>
@@ -3929,7 +3946,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                                                         styles={
                                                             loginAgencyState === 'TX'
                                                                 ?
-                                                                victimCode === 'L' ? NibrsErrorsStyles : customStylesWithOutColor
+                                                                // victimCode === 'L' ? NibrsErrorsStyles : customStylesWithOutColor
+                                                                getAssignmentAndCallTypeStyle(victimCode, offensemultiSelected.OffenseID)
                                                                 :
                                                                 customStylesWithOutColor
                                                         }
@@ -3972,7 +3990,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                                                         value={assignmentTypeDrp?.filter((obj) => obj.value === value?.AssignmentTypeID)}
                                                         styles={
                                                             loginAgencyState === 'TX' ?
-                                                                victimCode === 'L' ? NibrsErrorsStyles : customStylesWithOutColor
+                                                                // victimCode === 'L' ? NibrsErrorsStyles : customStylesWithOutColor
+                                                                getAssignmentAndCallTypeStyle(victimCode, offensemultiSelected.OffenseID)
                                                                 :
                                                                 customStylesWithOutColor
                                                         }

@@ -794,7 +794,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                         <Home {...{ setStatus, setaddUpdatePermission, ResetErrors, setResetErrors, newStatus, status, setShowVehicleRecovered, showVehicleRecovered, get_List, setPropertyStatus, isCad, isViewEventDetails, isCADSearch, clickCount }} />
                                         :
                                         // showPage === 'VehicleNotes' ?
-                                        //     <VehicleNotes  {...{ ListData, DecVehId, DecMVehId, DecIncID, isViewEventDetails }} />
+                                        //     <VehicleNotes  {...{ ListData, DecVehId, DecMVehId, IncID, isViewEventDetails }} />
                                         //     :
                                         showPage === 'Document' ?
                                             <DocumentModal
@@ -814,13 +814,13 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                             />
                                             :
                                             showPage === 'RecoveredVehicle' ?
-                                                <RecoveredVehicle  {...{ ListData, DecVehId, DecMVehId, DecIncID, isViewEventDetails }} />
+                                                <RecoveredVehicle  {...{ ListData, DecVehId, DecMVehId, IncID, isViewEventDetails }} />
                                                 :
                                                 showPage === 'pawnvehicle' ?
-                                                    <VehiclePawnProperty  {...{ ListData, DecVehId, DecMVehId, DecIncID }} />
+                                                    <VehiclePawnProperty  {...{ ListData, DecVehId, DecMVehId, IncID }} />
                                                     :
                                                     showPage === 'Offense' ?
-                                                        <Offense {...{ ListData, DecVehId, DecMVehId, DecIncID, }} />
+                                                        <Offense {...{ ListData, DecVehId, DecMVehId, IncID, }} />
                                                         :
                                                         showPage === 'VehicleTransactionLog' ?
                                                             <VehicleInvolvement
@@ -828,7 +828,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                                                 url={''}
                                                                 IncNo={IncNo}
                                                                 IncSta={IncSta}
-                                                                incId={DecIncID}
+                                                                incId={IncID}
                                                                 scrCode={'V085'}
                                                                 tabID={DecVehId}
                                                                 masterID={DecMVehId}
@@ -836,13 +836,13 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                                             />
                                                             :
                                                             showPage === 'AdditionalInformation' ?
-                                                                <AddInformation   {...{ ListData, DecVehId, setIsNonPropertyRoomSelected, DecMVehId, DecIncID, propertystatus, setPropertyStatus, isViewEventDetails }} />
+                                                                <AddInformation   {...{ ListData, DecVehId, setIsNonPropertyRoomSelected, DecMVehId, IncID, propertystatus, setPropertyStatus, isViewEventDetails }} />
                                                                 :
                                                                 showPage === 'PropertyManagement' ?
-                                                                    <VehicleManagement {...{ DecVehId, DecMVehId, DecIncID, VicCategory, isViewEventDetails }} />
+                                                                    <VehicleManagement {...{ DecVehId, DecMVehId, IncID, VicCategory, isViewEventDetails }} />
                                                                     :
                                                                     showPage === 'ChainOfCustody' ?
-                                                                        <VehicleChain {...{ DecVehId, DecMVehId, DecIncID, isViewEventDetails }} />
+                                                                        <VehicleChain {...{ DecVehId, DecMVehId, IncID, isViewEventDetails }} />
                                                                         :
                                                                         showPage === 'AuditLog' ?
                                                                             <Log

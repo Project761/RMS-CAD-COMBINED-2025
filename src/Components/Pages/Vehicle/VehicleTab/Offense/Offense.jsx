@@ -18,7 +18,7 @@ import VehicleListing from '../../../ShowAllList/VehicleListing';
 
 const Offense = (props) => {
 
-  const { ListData, DecVehId, DecMVehId, DecIncID } = props
+  const { ListData, DecVehId, DecMVehId, IncID } = props
 
   const dispatch = useDispatch();
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -74,17 +74,17 @@ const Offense = (props) => {
 
   useEffect(() => {
     if (DecVehId || DecMVehId) {
-      get_Data_Owner(DecVehId, DecMVehId, DecIncID);
+      get_Data_Owner(DecVehId, DecMVehId, IncID);
       setValue({
         ...value,
-        'IncidentID': DecIncID, 'PropertyID': DecVehId, 'CreatedByUserFK': loginPinID, 'MasterPropertyID': DecMVehId, 'labal': '', 'OffenseID': null,
+        'IncidentID': IncID, 'PropertyID': DecVehId, 'CreatedByUserFK': loginPinID, 'MasterPropertyID': DecMVehId, 'labal': '', 'OffenseID': null,
       })
     }
   }, [DecVehId, DecMVehId]);
 
   useEffect(() => {
-    if (DecIncID) { get_OwnerID_Drp(DecIncID); setMainIncidentID(DecIncID); }
-  }, [DecIncID])
+    if (IncID) { get_OwnerID_Drp(IncID); setMainIncidentID(IncID); }
+  }, [IncID])
 
   const check_Validation_Error = (e) => {
     if (RequiredFieldIncident(value.OffenseID)) {
@@ -153,7 +153,7 @@ const Offense = (props) => {
     } else if (value.OffenseID !== '') {
       const { IncidentID, PropertyID, CreatedByUserFK, MasterPropertyID, labal, OffenseID, IsMaster } = value
       const val = {
-        'IncidentID': DecIncID, 'PropertyID': DecVehId, 'CreatedByUserFK': loginPinID, 'IsMaster': IsMaster,
+        'IncidentID': IncID, 'PropertyID': DecVehId, 'CreatedByUserFK': loginPinID, 'IsMaster': IsMaster,
         'MasterPropertyID': DecMVehId, 'labal': labal, 'OffenseID': OffenseID,
       }
       AddDeleteUpadate('PropertyOffense/Insert_PropertyOffense', val).then((res) => {
@@ -163,8 +163,8 @@ const Offense = (props) => {
         const message = parsedData.Table[0].Message;
         toastifySuccess(message);
         get_vehicle_Count(DecVehId, DecMVehId, MstPage === "MST-Property-Dash" ? true : false);
-        get_Data_Owner(DecVehId, DecMVehId, DecIncID);
-        get_OwnerID_Drp(DecIncID);
+        get_Data_Owner(DecVehId, DecMVehId, IncID);
+        get_OwnerID_Drp(IncID);
         onClear();
         setErrors({ ...errors, ['OwnerIDError']: '', })
       })
@@ -228,7 +228,7 @@ const Offense = (props) => {
         toastifySuccess(message);
 
         get_vehicle_Count(DecVehId, DecMVehId, MstPage === "MST-Property-Dash" ? true : false); setDeleteStatus(false);
-        get_OwnerID_Drp(DecIncID); get_Data_Owner(DecVehId, DecMVehId, DecIncID);
+        get_OwnerID_Drp(IncID); get_Data_Owner(DecVehId, DecMVehId, IncID);
         onClear();
       } else { console.log("Somthing Wrong"); }
     })
