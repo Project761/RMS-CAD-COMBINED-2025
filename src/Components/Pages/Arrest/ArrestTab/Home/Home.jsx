@@ -411,7 +411,8 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                 ['ArresteeID']: Editval[0]?.ArresteeID,
                 'IsJuvenileArrest': newvalue[0]?.IsJuvenile,
             });
-
+            setPossessionID(Editval[0]?.ArresteeID);
+            setArrestParentID(Editval[0]?.ParentNameID);
             setIsEditvalProcessed(true);
             // setPossessionID(Editval[0]?.ArresteeID);
             setArrestName(Editval[0]?.Arrestee_Name ? Editval[0]?.Arrestee_Name : '');
