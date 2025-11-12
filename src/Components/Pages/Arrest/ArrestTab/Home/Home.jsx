@@ -229,7 +229,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
             dispatch(get_Masters_Name_Drp_Data(possessionID, 0, 0));
         }
         else if (type === "ArrestParentMod") {
-            dispatch(get_ArresteeName_Data('', '', DecEIncID, true, value.ParentNameID));
+            // dispatch(get_ArresteeName_Data('', '', DecEIncID, true, value.ParentNameID));
             // dispatch(get_Masters_Name_Drp_Data(value.ParentNameID, 0, 0));
         }
         else if (type === "ArrestMod") {
