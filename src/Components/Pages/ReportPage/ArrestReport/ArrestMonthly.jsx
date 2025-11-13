@@ -1,269 +1,429 @@
-import React from 'react'
-import img from '../../../../img/images1.jpg'
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import DatePicker from "react-datepicker";
-import Select from "react-select";
-import { Decrypt_Id_Name, getShowingMonthDateYear, getShowingWithOutTime } from '../../../Common/Utility';
+import { Decrypt_Id_Name, getShowingWithOutTime, getShowingDateText, getShowingWithMonthOnly, getShowingWithFixedTime01 } from '../../../Common/Utility';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
 import { useReactToPrint } from 'react-to-print';
-import { useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import ReportAddress from '../../ReportAddress/ReportAddress';
+import { get_ScreenPermissions_Data } from '../../../../redux/actions/IncidentAction';
+import Loader from '../../../Common/Loader';
+import { fetchPostData } from '../../../hooks/Api';
+import { toastifyError } from '../../../Common/AlertMsg';
+import { AgencyContext } from '../../../../Context/Agency/Index';
+import { get_LocalStoreData } from '../../../../redux/actions/Agency';
+
+
 const ArrestMonthly = () => {
 
-    const [verifyArrest, setVerifyArrest] = useState(false)
-    const [reportData, setReportData] = useState([]);
-    const [ArrestDate, setArrestDate] = useState();
-    const [ArrestToDate, setArrestToDate] = useState();
+    const { GetDataTimeZone, datezone } = useContext(AgencyContext);
+
+    const dispatch = useDispatch();
+
+    const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
+
+    const localStoreData = useSelector((state) => state.Agency.localStoreData);
+    const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
+    const ipAddress = sessionStorage.getItem('IPAddress');
+
+    const [multiImage, setMultiImage] = useState([]);
+    const [verifyArrest, setVerifyArrest] = useState(false);
     const [startDate, setStartDate] = useState();
-    const componentRef = useRef();
+    const [arrestData, setArrestData] = useState([]);
+    const [masterReportData, setMasterReportData] = useState([]);
+    const [LoginAgencyID, setLoginAgencyID] = useState('');
+    const [loder, setLoder] = useState(false);
+    const [loginPinID, setloginPinID] = useState('');
+    const [LoginUserName, setLoginUserName] = useState('');
+    const [isPermissionsLoaded, setIsPermissionsLoaded] = useState(false);
+    const [showFooter, setShowFooter] = useState(false);
+    const [showWatermark, setShowWatermark] = useState(false);
+
+    useEffect(() => {
+        if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
+            if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
+        }
+    }, []);
+
+    useEffect(() => {
+        if (localStoreData) {
+            setLoginAgencyID(localStoreData?.AgencyID);
+            setLoginUserName(localStoreData?.UserName);
+            setloginPinID(parseInt(localStoreData?.PINID));
+            dispatch(get_ScreenPermissions_Data("I099", localStoreData?.AgencyID, localStoreData?.PINID)); // agar Arrest ka alag ScreenCode hai toh yahan change karna
+            GetDataTimeZone(localStoreData?.AgencyID);
+        }
+    }, [localStoreData]);
+
     const [value, setValue] = useState({
-        'IncidentNumber': '',
-        'ArrestDtTm': '',
-        'ArrestDtToTm': '',
-        'AgencyID': '',
+        ReportedDate: '',
+        AgencyID: '',
     });
+
+    const [searchValue, setSearchValue] = useState({
+        ReportedDate: '',
+    });
+
+    const [showFields, setShowFields] = useState({
+        showReportedDateFrom: false,
+    });
+
+    useEffect(() => {
+        setShowFields({ showReportedDateFrom: searchValue.ReportedDate });
+    }, [searchValue]);
+
+    useEffect(() => {
+        if (arrestData?.length > 0) {
+            setVerifyArrest(true);
+        }
+    }, [arrestData]);
+
+    const myStateRef = useRef(value);
+
+    useEffect(() => {
+        myStateRef.current = value;
+    }, [value]);
+
+    //     api/ArrestReport/ArrestReport_Monthly
+    // ArrestDtTm
+    // AgencyID
+
+    const get_MonthlyReport = async (isPrintReport = false) => {
+        setLoder(true);
+        if (value?.ReportedDate?.trim()?.length > 0) {
+
+            const { ReportedDate } = myStateRef.current;
+
+            const val = { ArrestDtTm: ReportedDate, AgencyID: LoginAgencyID, };
+            try {
+                const res = await fetchPostData('ArrestReport/ArrestReport_Monthly', val);
+                console.log(res)
+                if (res.length > 0) {
+                    const data = res[0].Arrest || res[0].Incident || [];
+                    setArrestData(data);
+                    setMasterReportData(res[0]);
+                    getAgencyImg(LoginAgencyID);
+                    setSearchValue(value);
+                    setLoder(false);
+
+                } else {
+                    toastifyError("Data Not Available");
+                    setArrestData([]);
+                    setLoder(false);
+
+                }
+
+            } catch (error) {
+                console.log(error)
+                setLoder(false);
+
+            }
+        } else {
+            toastifyError("Please Enter Details");
+            setLoder(false);
+        }
+    };
+
+
+
+    const Reset = () => {
+        setValue({ ...value, ReportedDate: '' });
+        setStartDate('');
+        setVerifyArrest(false);
+        setArrestData([]);
+        setMasterReportData([]);
+        setShowWatermark(false);
+    };
+
+    const getAgencyImg = (LoginAgencyID) => {
+        const val = { AgencyID: LoginAgencyID };
+        fetchPostData('Agency/GetDataAgencyPhoto', val).then((res) => {
+            if (res) {
+                let imgUrl = `data:image/png;base64,${res[0]?.Agency_Photo}`;
+                setMultiImage(imgUrl);
+            } else {
+                console.log("error");
+            }
+        });
+    };
+
+    const componentRef = useRef();
 
     const printForm = useReactToPrint({
         content: () => componentRef.current,
-        documentTitle: 'Data',
-        onAfterPrint: () => { '' }
-    })
+        documentTitle: 'Arrest-Monthly-Report',
+        onBeforeGetContent: () => { setLoder(true); },
+        onAfterPrint: () => { setLoder(false); }
+    });
 
-    const handleChange = (e) => {
-        setValue({
-            ...value,
-            [e.target.name]: e.target.value
-        })
-    }
+    const handlePrintClick = () => {
+        setShowFooter(true);
+        setTimeout(() => {
+            printForm();
+            get_MonthlyReport(true);
+            setShowFooter(false);
+        }, 100);
+    };
+
+    useEffect(() => {
+        const handleKeyDown = async (event) => {
+            if (event.key === 'Enter') {
+                await dispatch(get_ScreenPermissions_Data("I099", localStoreData?.AgencyID, localStoreData?.PINID));
+                setIsPermissionsLoaded(true);
+            }
+        };
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, []);
+
+    useEffect(() => {
+        if (isPermissionsLoaded) {
+            get_MonthlyReport();
+        }
+    }, [isPermissionsLoaded]);
 
     return (
         <>
-
-            <div class="section-body view_page_design pt-3">
+            {/* ========= FILTER / TOP FORM ========= */}
+            <div className="section-body view_page_design pt-3">
                 <div className="row clearfix">
                     <div className="col-12 col-sm-12">
                         <div className="card Agency">
                             <div className="card-body">
-                                <div className="row">
-                                    <div className="col-12 col-md-12 col-lg-12 mb-1 " >
-                                        <div className="bg-line  py-1 px-2 mt-1 d-flex justify-content-between align-items-center">
-                                            <p className="p-0 m-0 d-flex align-items-center">Arrest Monthly Report</p>
+                                <fieldset>
+                                    <legend>Arrest Monthly Report</legend>
+                                    <div className="row mt-2">
+                                        <div className="col-3 col-md-3 col-lg-1 mt-2">
+                                            <label className="new-label">Year</label>
                                         </div>
-                                    </div>
-                                    <div className="col-6 col-md-6 col-lg-3 mb-1">
-                                        <div className="dropdown__box">
+                                        <div className="col-3 col-md-3 col-lg-2">
                                             <DatePicker
                                                 selected={startDate}
-                                                // peekNextMonth
                                                 onChange={(date) => {
                                                     setStartDate(date);
-                                                    setValue({ ...value, ['ReportedDate']: getShowingWithOutTime(date) })
+                                                    setValue({
+                                                        ...value,
+                                                        ReportedDate: getShowingWithOutTime(date)
+                                                    });
                                                 }}
                                                 dateFormat="MM/yyyy"
                                                 showMonthYearPicker
-                                                maxDate={new Date()}
+                                                maxDate={new Date(datezone)}
                                                 autoComplete="nope"
-                                                placeholderText={'Select...'}
+                                                placeholderText="Select..."
                                             />
-                                            <label htmlFor="" className='pl-0 pt-1' >Month/Year</label>
+                                        </div>
+
+                                        <div className="col-9 col-md-9 col-lg-5 mt-1 pt-1">
+                                            {effectiveScreenPermission
+                                                ? effectiveScreenPermission[0]?.AddOK
+                                                    ? (
+                                                        <button
+                                                            className="btn btn-sm bg-green text-white px-2 py-1"
+                                                            onClick={() => { get_MonthlyReport(false); }}
+                                                        >
+                                                            Show Report
+                                                        </button>
+                                                    )
+                                                    : <></>
+                                                : (
+                                                    <button
+                                                        className="btn btn-sm bg-green text-white px-2 py-1"
+                                                        onClick={() => { get_MonthlyReport(false); }}
+                                                    >
+                                                        Show Report
+                                                    </button>
+                                                )}
+                                            <button
+                                                className="btn btn-sm bg-green text-white px-2 py-1 ml-2"
+                                                onClick={Reset}
+                                            >
+                                                Clear
+                                            </button>
+                                            <Link to="/Reports">
+                                                <button className="btn btn-sm bg-green text-white px-2 py-1 ml-2">
+                                                    Close
+                                                </button>
+                                            </Link>
+                                        </div>
+
+                                        <div className="form-check ml-2 col-9 col-md-9 col-lg-3 mt-1 pt-1 text-right">
+                                            <input
+                                                type="checkbox"
+                                                className="form-check-input"
+                                                id="watermarkCheckbox"
+                                                checked={showWatermark}
+                                                onChange={(e) => setShowWatermark(e.target.checked)}
+                                            />
+                                            <label className="form-check-label" htmlFor="watermarkCheckbox">
+                                                Print Confidential Report
+                                            </label>
                                         </div>
                                     </div>
-                                    <div className="col-9 col-md-9 col-lg-9 mt-3">
-                                        <button className="btn btn-sm bg-green text-white px-2 py-1" onClick={() => { setVerifyArrest(true); }}>Show Report</button>
-                                        <button className="btn btn-sm bg-green text-white px-2 py-1 ml-2" onClick={() => { setVerifyArrest(false); }}>Clear</button>
-                                        <Link to={'/Reports'}>
-                                            <button className="btn btn-sm bg-green text-white px-2 py-1 ml-2" >Close</button>
-                                        </Link>
-                                    </div>
-                                </div>
-                                {/* <div className="row">
-                                    <div className="col-6 col-md-4 col-lg-3  ">
-                                        <div className="dropdown__box">
-                                            <DatePicker
-                                                id='ArrestDtTm'
-                                                name='ArrestDtTm'
-                                                onChange={(date) => { setArrestDate(date); setValue({ ...value, ['ArrestDtTm']: date ? getShowingMonthDateYear(date) : null }) }}
-                                                className=''
-                                                dateFormat="MM/dd/yyyy HH:mm"
-                                                timeInputLabel
-                                                showYearDropdown
-                                                showMonthDropdown
-                                                dropdownMode="select"
-                                                isClearable={value?.ArrestDtTm ? true : false}
-                                                selected={ArrestDate}
-                                                placeholderText={value?.ArrestDtTm ? value.ArrestDtTm : 'Select...'}
-                                                showTimeSelect
-                                                timeIntervals={1}
-                                                timeCaption="Time"
-                                                autoComplete="Off"
-                                                maxDate={new Date()}
-                                            />
-                                            <label htmlFor="" className='pt-1'>Arrest From Date</label>
-                                        </div>
-                                    </div>
-                                    <div className="col-6 col-md-4 col-lg-3  ">
-                                        <div className="dropdown__box">
-                                            <DatePicker
-                                                id='ArrestDtTmTo'
-                                                name='ArrestDtTmTo'
-                                                onChange={(date) => { setArrestToDate(date); setValue({ ...value, ['ArrestDtTmTo']: date ? getShowingMonthDateYear(date) : null }) }}
-                                                className=''
-                                                dateFormat="MM/dd/yyyy HH:mm"
-                                                timeInputLabel
-                                                showYearDropdown
-                                                showMonthDropdown
-                                                dropdownMode="select"
-                                                isClearable={value?.ArrestDtTmTo ? true : false}
-                                                selected={ArrestToDate}
-                                                placeholderText={value?.ArrestDtTmTo ? value.ArrestDtTmTo : 'Select...'}
-                                                showTimeSelect
-                                                timeIntervals={1}
-                                                timeCaption="Time"
-                                                autoComplete="Off"
-                                                maxDate={new Date()}
-                                            />
-                                            <label htmlFor="" className='pt-1'>Arrest To Date</label>
-                                        </div>
-                                    </div>
-                                </div> */}
-                                {/* <DataTable
-                                    columns={columns}
-                                    dense
-                                    data={incidentData}
-                                    pagination
-                                    paginationPerPage={'10'}
-                                    paginationRowsPerPageOptions={[10, 15, 20]}
-                                    highlightOnHover
-                                    subHeader
-                                    responsive
-                                    showPaginationBottom={10}
-                                    subHeaderAlign='left'
-                                /> */}
+                                </fieldset>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            {
-                verifyArrest &&
-                <>
-                    <div className="col-12 col-md-12 col-lg-12 pt-2  px-2" >
-                        <div className="bg-line  py-1 px-2 mt-1 d-flex justify-content-between align-items-center">
-                            <p className="p-0 m-0 d-flex align-items-center">Arrest Monthly Report</p>
-                            <div style={{ marginLeft: 'auto' }}>
-                                <Link to={''} className="btn btn-sm bg-green  mr-2 text-white px-2 py-0"  >
-                                    <i className="fa fa-print" onClick={printForm}></i>
-                                </Link>
-                                {/* <Link to={''} className="btn btn-sm bg-green  text-white px-2 py-0"  >
-                                    <i className="fa fa-file"></i>
-                                </Link> */}
+
+            {/* ========= REPORT SECTION ========= */}
+            {verifyArrest && (
+                arrestData?.length > 0 ? (
+                    <>
+                        <div className="col-12 col-md-12 col-lg-12 pt-2 px-2">
+                            <div className="bg-line py-1 px-2 mt-1 d-flex justify-content-between align-items-center">
+                                <p className="p-0 m-0 d-flex align-items-center">
+                                    Arrest Monthly Report
+                                </p>
+
+                                <div style={{ marginLeft: 'auto' }}>
+                                    <Link
+                                        to=""
+                                        className="btn btn-sm bg-green mr-2 text-white px-2 py-0"
+                                    >
+                                        <i className="fa fa-print" onClick={handlePrintClick}></i>
+                                    </Link>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="container mt-1" ref={componentRef}>
-                        <div className="row" style={{ border: '1px solid #80808085' }}>
-                            <>
-                                <div className="col-4 col-md-3 col-lg-2">
-                                    <div className="main">
-                                        <img src={img} className="img-fluid" alt='Agency_Photo' style={{ border: '1px solid aliceblue', marginTop: '4px', width: '150px' }} />
-                                    </div>
+
+                        <div className="container mt-1">
+                            <div
+                                className="row clearfix"
+                                ref={componentRef}
+                                style={{ border: '1px solid #80808085', pageBreakAfter: 'always' }}
+                            >
+                                <ReportAddress {...{ multiImage, masterReportData }} />
+                                {/* Watermark */}
+                                {showWatermark && (
+                                    <div className="watermark-print">Confidential</div>
+                                )}
+                                <div className="col-12">
+                                    <hr style={{ border: '1px solid rgb(20, 38, 51)' }} />
+                                    <h5 className="text-white text-bold bg-green py-1 px-3 text-center">
+                                        Arrest Monthly Report
+                                    </h5>
                                 </div>
-                                <div className="col-7  col-md-7 col-lg-9 mt-4 pt-1 ml-5">
-                                    <div className="main">
-                                        <h5 className='text-dark text-bold'>{reportData?.Agency_Name} Test Test Test</h5>
-                                        <p className='text-p'>Address: <span className=''>{reportData?.Agency_Address1}Test</span></p>
-                                        <div className='d-flex '>
-                                            <p className='text-p'>State: <span className='new-span '>{reportData?.StateName}</span>
-                                            </p>
-                                            <p className='text-p ml-5 pl-1'>City: <span className='new-span  '>{reportData?.CityName}</span>
-                                            </p>
-                                            <p className='text-p ml-2'>Zip: <span className='new-span  '>{reportData?.Agency_ZipId}</span>
-                                            </p>
+
+                                {/* Search Criteria show */}
+                                <div className="col-12">
+                                    <fieldset>
+                                        <legend>Search Criteria</legend>
+                                        <div className="row">
+                                            {showFields.showReportedDateFrom && (
+                                                <>
+                                                    <div className="col-3 col-md-3 col-lg-2 mt-2">
+                                                        <label className="new-label">Year</label>
+                                                    </div>
+                                                    <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
+                                                        <input
+                                                            type="text"
+                                                            className="readonlyColor"
+                                                            value={
+                                                                searchValue.ReportedDate &&
+                                                                getShowingWithMonthOnly(searchValue.ReportedDate)
+                                                            }
+                                                            readOnly
+                                                        />
+                                                    </div>
+                                                </>
+                                            )}
                                         </div>
-                                        <div className='d-flex'>
-                                            <p className='text-p'>Phone: <span className='new-span  '>{reportData?.Agency_Phone}</span></p>
-                                            <p className='text-p ml-3 '>Fax: <span className='new-span  '> {reportData?.Agency_Fax}</span></p>
+                                    </fieldset>
+                                </div>
+                                {/* Arrest table */}
+                                {arrestData?.length > 0 && (
+                                    <div className="container">
+                                        <div className="col-12">
+                                            <div className="table-responsive">
+                                                {/* <div className="d-flex justify-content-between bb bt">
+                                                    <h6 className="text-dark">
+                                                        Patrol Zone <span></span>
+                                                    </h6>
+                                                    <h6 className="text-dark">
+                                                        Zip Code:{' '}
+                                                        <span className="text-gray">
+                                                            {masterReportData?.Zipcode}
+                                                        </span>
+                                                    </h6>
+                                                    <h6 className="text-dark">
+                                                        City:{' '}
+                                                        <span className="text-gray">
+                                                            {masterReportData?.CityName}
+                                                        </span>
+                                                    </h6>
+                                                </div> */}
+
+                                                <table className="table" style={{ border: "1px solid #444" }}>
+                                                    <thead className="text-dark master-table" style={{ background: "#f2f2f2" }}>
+                                                        <tr className="bb" style={{ borderBottom: "2px solid #444" }}>
+                                                            <th style={{ width: '110px', border: "1px solid #444" }}>Arrest Number</th>
+                                                            <th style={{ width: '140px', border: "1px solid #444" }}>Arrestee</th>
+                                                            <th style={{ width: '140px', border: "1px solid #444" }}>Arrest Date/Time</th>
+                                                            <th style={{ width: '140px', border: "1px solid #444" }}>Location</th>
+                                                            <th style={{ width: '120px', border: "1px solid #444" }}>DOB</th>
+                                                            <th style={{ width: '80px', border: "1px solid #444" }}>AGE</th>
+                                                            <th style={{ width: '80px', border: "1px solid #444" }}>SEX</th>
+
+                                                            <th style={{ width: '220px', border: "1px solid #444" }}>Reason Code</th>
+                                                            <th style={{ width: '260px', border: "1px solid #444" }}>Charge</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody className="master-tbody">
+                                                        {arrestData?.map((item, key) => (
+                                                            <tr
+                                                                key={key}
+                                                                style={{ borderBottom: "1px solid #ccc" }}
+                                                            >
+                                                                <td style={{ border: "1px solid #ccc" }} className="text-list">{item.ArrestNumber || ''}</td>
+                                                                <td style={{ border: "1px solid #ccc" }} className="text-list">{item.Arrestee_Name}</td>
+                                                                <td style={{ border: "1px solid #ccc" }} className="text-list">
+                                                                    {item.ArrestDtTm ? getShowingDateText(item.ArrestDtTm) : ''}
+                                                                </td>
+                                                                <td style={{ border: "1px solid #ccc" }} className="text-list">{item?.CrimeLocation || ''}</td>
+                                                                <td style={{ border: "1px solid #ccc" }} className="text-list">
+                                                                    {item.DOB ? getShowingDateText(item.DOB) : ''}
+                                                                </td>
+                                                                <td style={{ border: "1px solid #ccc" }} className="text-list">{item.Age || ''}</td>
+                                                                <td style={{ border: "1px solid #ccc" }} className="text-list">{item.Gender || ''}</td>
+
+                                                                {/* Wider Columns */}
+                                                                <td style={{ border: "1px solid #ccc" }} className="text-list">{item.NameReasonCode || ''}</td>
+                                                                <td style={{ border: "1px solid #ccc" }} className="text-list">{item.Charge || ''}</td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+
+
+                                                <hr />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </>
-                            <div className="col-12">
-                                <hr style={{ border: '1px solid rgb(3, 105, 184)' }} />
+                                )}
+                                {/* Footer (Officer / IP / Time) */}
+                                {showFooter && (
+                                    <footer className="print-footer">
+                                        <p>
+                                            Officer Name: {LoginUserName || ''} | Date/Time:{' '}
+                                            {getShowingWithFixedTime01(datezone || '')} | IP Address:{' '}
+                                            {ipAddress || ''}
+                                        </p>
+                                    </footer>
+                                )}
                             </div>
-
-                            <div className="container">
-
-                                <div className="row">
-                                    <div className="table-responsive">
-                                        <div className="text-white text-bold bg-green py-1 px-2  d-flex justify-content-between align-items-center">
-                                            <p className="p-0 m-0 d-flex align-items-center">Arrest Monthly: 54565654</p>
-                                        </div>
-                                        <table className="table table-bordered ">
-                                            <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <h6 className='text-dark text-bold'>Arrest Id:</h6>
-                                                        {/* <p>{nameReportData[0]?.NameIDNumber}</p> */}
-                                                    </td>
-                                                    <td >
-                                                        <h6 className='text-dark text-bold'>Arrestee:</h6>
-                                                        {/* <p>{nameReportData[0]?.LastName}</p> */}
-                                                        <p>agsdvadbav</p>
-                                                    </td>
-                                                    <td >
-                                                        <h6 className='text-dark text-bold'>Arrest Date:</h6>
-                                                        {/* <p>{nameReportData[0]?.LastName}</p> */}
-                                                        <p>agsdvadbav</p>
-                                                    </td>
-                                                    <td colSpan={2}>
-                                                        <h6 className='text-dark text-bold'>Location:</h6>
-                                                        {/* <p>{nameReportData[0]?.LastName}</p> */}
-                                                        <p>agsdvadbav</p>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td >
-                                                        <h6 className='text-dark text-bold'>DOB:</h6>
-                                                        <p>0005465</p>
-                                                    </td>
-                                                    <td >
-                                                        <h6 className='text-dark text-bold'>Age:</h6>
-                                                        <p>45</p>
-                                                    </td>
-                                                    <td >
-                                                        <h6 className='text-dark text-bold'>Gender:</h6>
-                                                        <p>male</p>
-                                                    </td>
-                                                    <td >
-                                                        <h6 className='text-dark text-bold'>Bail Amt:</h6>
-                                                        <p>Adult,Offender</p>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td colSpan={12}>
-                                                        <h6 className='text-dark text-bold'>Charges:</h6>
-                                                        <p>Adult,Offende 634646644745r</p>
-                                                    </td>
-
-                                                </tr>
-                                            </tbody>
-
-
-                                        </table>
-                                    </div>
-
-
-
-                                </div>
-                            </div >
-
                         </div>
-                        
-                    </div>
-                </>
-            }
+                    </>
+                ) : <></>
+            )}
+            {loder && (
+                <div className="loader-overlay">
+                    <Loader />
+                </div>
+            )}
         </>
-        
-    )
-}
+    );
+};
 
-export default ArrestMonthly
+export default ArrestMonthly;
