@@ -344,7 +344,7 @@ function App() {
 
 
             {/* ---------------------------------------------- Incident-Reports ------------------------------------- */}
-            <Route exact path="/incident-DailyEvent" element={<Auth cmp={DailyEvent} reportSidebar={reportSidebar} path="/incident-DailyEvent" />} />
+            <Route exact path="/incident-DailyEvent" element={<Auth cmp={DailyEvent} reportSidebar={reportSidebar} path="/incident-DailyEvent" />} />  
             <Route exact path="/incident-Location" element={<Auth cmp={IncidentLocation} reportSidebar={reportSidebar} path="/incident-Location" />} />
             <Route exact path="/incident-Monthly" element={<Auth cmp={IncidentMonthly} reportSidebar={reportSidebar} path="/incident-Monthly" />} />
             <Route exact path="/incident-Master" element={<Auth cmp={MasterIncident} reportSidebar={reportSidebar} path="/incident-Master" />} />

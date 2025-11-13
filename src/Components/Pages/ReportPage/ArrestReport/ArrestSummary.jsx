@@ -58,12 +58,13 @@ const ArrestSummary = () => {
     const [nibrsCodeDrp, setNibrsCodeDrp] = useState([]);
     // Offense Code/Name
     const [chargeCodeDrp, setChargeCodeDrp] = useState([]);
+    const [categoryIdDrp, setCategoryIdDrp] = useState([]);
     const [filteredOptions, setFilteredOptions] = useState(nibrsCodeDrp);
 
     const [value, setValue] = useState({
         AgencyID: '', ArrestNumber: '', ArrestNumberTo: '', ArrestDtTmTo: '', ArrestDtTm: '', NameIDNumber: '', PrimaryOfficerID: '', LawTitleId: '',
         LastName: '', FirstName: '', MiddleName: '', SexID: '', RMSCFSCodeList: '', FBIID: '', AgeFrom: '', AgeTo: '',
-        IPAddress: '', UserID: LoginPinID, SearchCriteria: '', SearchCriteriaJson: '', FormatedReportName: effectiveScreenPermission[0]?.ScreenCode1, Status: '', ModuleName: effectiveScreenPermission[0]?.ScreenCode1, ModuleID: effectiveScreenPermission[0]?.ModuleFK,
+        IPAddress: '', UserID: LoginPinID, SearchCriteria: '', SearchCriteriaJson: '', FormatedReportName: effectiveScreenPermission[0]?.ScreenCode1, Status: '', ModuleName: effectiveScreenPermission[0]?.ScreenCode1, ModuleID: effectiveScreenPermission[0]?.ModuleFK,CategoryId:''
 
     });
     const [searchValue, setSearchValue] = useState({
@@ -71,7 +72,6 @@ const ArrestSummary = () => {
     });
 
     const [showFields, setShowFields] = useState({
-
         showArrestNumber: false, showArrestNumberTo: false, showArrestDtTm: false, showArrestDtTmTo: false, showNameIDNumber: false, showPrimaryOfficerID: false, showLastName: false, showFirstName: false, showMiddleName: false, showSexID: false, showRMSCFSCodeList: false, showFBIID: false, showAgeFrom: false, showAgeTo: false, showLawTitleId: false,
     });
 
@@ -122,6 +122,8 @@ const ArrestSummary = () => {
             NIBRSCodeDrpDwnVal(LoginAgencyID, 0);
             // charge / offence codeName
             getRMSCFSCodeListDrp(LoginAgencyID, 0, 0);
+            // Category
+            CategoryDrpDwnVal(LoginAgencyID, null);
         }
     }, [LoginAgencyID,]);
 
@@ -136,6 +138,7 @@ const ArrestSummary = () => {
             }
         })
     }
+
     // -----------------------old---------------------------
     const get_ArrestSearchData1 = async (isPrintReport = false) => {
         const {
@@ -180,6 +183,7 @@ const ArrestSummary = () => {
             (value?.SexID !== null && value?.SexID !== '') ||
             (value?.RMSCFSCodeList !== null && value?.RMSCFSCodeList !== '') ||
             (value?.FBIID !== null && value?.FBIID !== '') ||
+            (value?.CategoryId !== null && value?.CategoryId !== '') ||
             (value?.PrimaryOfficerID !== null && value?.PrimaryOfficerID !== '') || (value?.LawTitleId !== null && value?.LawTitleId !== '')
             // (value?.UserID !== null && value?.CategoryID !== '') ||
             // (value?.ModuleID !== null && value?.CategoryID !== '')
@@ -187,10 +191,10 @@ const ArrestSummary = () => {
             const {
                 ArrestNumber, ArrestNumberTo, ArrestDtTm, ArrestDtTmTo, NameIDNumber, LastName, FirstName,
                 MiddleName, SexID, RMSCFSCodeList, FBIID, AgeFrom, AgeTo, PrimaryOfficerID, LawTitleId,
-                IPAddress, UserID, SearchCriteria, SearchCriteriaJson, ReportName, Status, ModuleName, ModuleID,
+                IPAddress, UserID, SearchCriteria, SearchCriteriaJson, ReportName, Status, ModuleName, ModuleID, CategoryId
             } = myStateRef.current;
             const val = {
-                'AgencyID': LoginAgencyID, 'ArrestNumber': ArrestNumber?.trim(), 'ArrestNumberTo': ArrestNumberTo?.trim(), 'ArrestDtTm': ArrestDtTm, 'ArrestDtTmTo': ArrestDtTmTo, 'NameIDNumber': NameIDNumber?.trim(), 'LastName': LastName?.trim(), 'FirstName': FirstName?.trim(), 'MiddleName': MiddleName?.trim(), 'SexID': SexID, 'RMSCFSCodeList': RMSCFSCodeList, 'FBIID': FBIID, 'AgeFrom': AgeFrom?.trim(), 'AgeTo': AgeTo?.trim(), 'PrimaryOfficerID': PrimaryOfficerID, 'LawTitleID': LawTitleId, 'IPAddress': IPAddress, 'UserID': LoginPinID, 'SearchCriteria': SearchCriteria, 'SearchCriteriaJson': SearchCriteriaJson, 'FormatedReportName': effectiveScreenPermission[0]?.ScreenCode1, 'Status': Status, 'ModuleName': effectiveScreenPermission[0]?.ScreenCode1, 'ModuleID': effectiveScreenPermission[0]?.ModuleFK
+                'AgencyID': LoginAgencyID, 'ArrestNumber': ArrestNumber?.trim(), 'ArrestNumberTo': ArrestNumberTo?.trim(), 'ArrestDtTm': ArrestDtTm, 'ArrestDtTmTo': ArrestDtTmTo, 'NameIDNumber': NameIDNumber?.trim(), 'LastName': LastName?.trim(), 'FirstName': FirstName?.trim(), 'MiddleName': MiddleName?.trim(), 'SexID': SexID, 'RMSCFSCodeList': RMSCFSCodeList, 'FBIID': FBIID, 'AgeFrom': AgeFrom?.trim(), 'AgeTo': AgeTo?.trim(), 'PrimaryOfficerID': PrimaryOfficerID, 'LawTitleID': LawTitleId, 'IPAddress': IPAddress, 'UserID': LoginPinID, 'SearchCriteria': SearchCriteria, 'SearchCriteriaJson': SearchCriteriaJson, 'FormatedReportName': effectiveScreenPermission[0]?.ScreenCode1, 'Status': Status, 'ModuleName': effectiveScreenPermission[0]?.ScreenCode1, 'ModuleID': effectiveScreenPermission[0]?.ModuleFK, 'CategoryId': CategoryId
             }
             try {
                 const apiUrl = isPrintReport ? 'ArrestReport/PrintArrestReport' : 'ArrestReport/ArrestSummaryReport';
@@ -219,6 +223,7 @@ const ArrestSummary = () => {
         }
 
     }
+
     function hasValues(obj) {
         for (let key in obj) {
             if (key != 'AgencyID' && key != 'PINID') {
@@ -244,7 +249,7 @@ const ArrestSummary = () => {
     const resetFields = () => {
         setValue({
             ...value,
-            AgencyID: '', ArrestNumber: '', ArrestNumberTo: '', ArrestDtTmTo: '', ArrestDtTm: '', NameIDNumber: '', LastName: '', FirstName: '', MiddleName: '', SexID: '', RMSCFSCodeList: '', FBIID: '', AgeFrom: '', AgeTo: '', PrimaryOfficerID: '', LawTitleId: '',
+            AgencyID: '', ArrestNumber: '', ArrestNumberTo: '', ArrestDtTmTo: '', ArrestDtTm: '', NameIDNumber: '', LastName: '', FirstName: '', MiddleName: '', SexID: '', RMSCFSCodeList: '', FBIID: '', AgeFrom: '', AgeTo: '', PrimaryOfficerID: '', LawTitleId: '',  CategoryId: '',
         })
         setverifyArrestMaster(false); setMasterReportData([]); setShowWatermark('')
 
@@ -370,8 +375,6 @@ const ArrestSummary = () => {
         }
     }
 
-
-
     const [showFooter, setShowFooter] = useState(false);
 
     const handlePrintClick = () => {
@@ -380,7 +383,6 @@ const ArrestSummary = () => {
             printForm(); get_ArrestSearchData(true); setShowFooter(false);
         }, 100);
     };
-
 
     //harsh
     useEffect(() => {
@@ -393,7 +395,6 @@ const ArrestSummary = () => {
         document.addEventListener('keydown', handleKeyDown);
         return () => document.removeEventListener('keydown', handleKeyDown);
     }, []);
-
 
     useEffect(() => {
 
@@ -433,7 +434,6 @@ const ArrestSummary = () => {
         }
     };
 
-
     const handleInputChange = (inputValue) => {
         if (inputValue) {
             const filtered = nibrsCodeDrp.filter((option) =>
@@ -444,7 +444,6 @@ const ArrestSummary = () => {
             setFilteredOptions([]);
         }
     };
-
 
     const getLawTitleNibrsByCharge = async (loginAgencyID, lawTitleID, RMSCFSCodeList, mainIncidentID) => {
         const lawTitleObj = { 'AgencyID': loginAgencyID, 'ChargeCodeID': RMSCFSCodeList };
@@ -470,7 +469,6 @@ const ArrestSummary = () => {
             console.error("Error during data fetching:", error);
         }
     };
-
 
     const getRMSCFSCodeListDrp = (loginAgencyID, FBIID, LawTitleID) => {
         const val = {
@@ -502,6 +500,16 @@ const ArrestSummary = () => {
         );
     };
 
+    const CategoryDrpDwnVal = (loginAgencyID, CategoryID) => {
+        const val = { 'AgencyID': loginAgencyID, 'CategoryID': 0 };
+        fetchPostData("ChargeCategory/GetDataDropDown_ChargeCategory", val).then(
+            (data) => {
+                // console.log("🚀 ~ CategoryDrpDwnVal ~ data:", data)
+                if (data) setCategoryIdDrp(Comman_changeArrayFormat(data, "ChargeCategoryID", "Description"));
+                else setCategoryIdDrp([]);
+            }
+        );
+    };
 
     const NIBRSCodeDrpDwnVal = (loginAgencyID, LawTitleID, mainIncidentID) => {
         const val = {
@@ -673,12 +681,10 @@ const ArrestSummary = () => {
                                             />
                                         </div>
 
-
-
-
-
-                                        <div className="col-4 col-md-4 col-lg-2 mt-2 pt-1">
-                                            <label htmlFor="" className='new-label'> Law Title</label>
+                                      <div className="col-4 col-md-4 col-lg-1 mt-2 pt-1">
+                                            <label htmlFor="" className="new-label text-nowrap"> Law Title
+                                                <br />
+                                            </label>
                                         </div>
                                         <div className="col-7 col-md-7 col-lg-3  mt-2">
                                             <Select
@@ -690,8 +696,8 @@ const ArrestSummary = () => {
                                                 placeholder="Select..."
                                             />
                                         </div>
-                                        <div className="col-4 col-md-4 col-lg-4 mt-2 pt-1">
-                                            <label htmlFor="" className="new-label text-nowrap"   >   TIBRS Code
+                                        <div className="col-4 col-md-4 col-lg-1 mt-2 pt-1">
+                                            <label htmlFor="" className="new-label text-nowrap"> TIBRS Code
                                                 <br />
                                             </label>
                                         </div>
@@ -705,6 +711,24 @@ const ArrestSummary = () => {
                                                 onInputChange={handleInputChange}
                                                 isClearable
                                                 onChange={(e) => onChangeNIBRSCode(e, "FBIID")}
+                                                placeholder="Select..."
+                                            />
+                                        </div>
+                                       <div className="col-4 col-md-4 col-lg-1 mt-2 pt-1">
+                                            <label htmlFor="" className="new-label text-nowrap"> Category
+                                                <br />
+                                            </label>
+                                        </div>
+                                        <div className="col-7 col-md-7 col-lg-3 mt-2">
+                                            <Select
+                                                name="CategoryId"
+                                                styles={customStylesWithOutColor}
+                                                value={categoryIdDrp?.filter(
+                                                    (obj) => obj.value === value?.CategoryId
+                                                )}
+                                                isClearable
+                                                options={categoryIdDrp}
+                                                onChange={(e) => ChangeDropDown(e, "CategoryId")}
                                                 placeholder="Select..."
                                             />
                                         </div>
@@ -1139,6 +1163,7 @@ const ArrestSummary = () => {
                                                     {
                                                         JSON.parse(obj?.Arrest)?.length > 0 ?
                                                             <>
+                                                            {/* {console.log(JSON.parse(obj?.Arrest))} */}
                                                                 <div className="table-responsive" >
                                                                     <table className="table table-bordered" >
                                                                         <hr />
@@ -1178,8 +1203,10 @@ const ArrestSummary = () => {
                                                                                         <tr>
                                                                                             <td colSpan={12}>
                                                                                                 <h6 className='text-dark text-bold'>Charge</h6>
+                                                                                              
                                                                                                 {
                                                                                                     (JSON.parse(obj?.Arrest || "[]") || []).map((arrest, arrestKey) => (
+                                                                                                        // {console.log(JSON.parse(arrest?.Charge || "[]"))}
                                                                                                         (JSON.parse(arrest?.Charge || "[]") || []).map((charge, chargeKey) => (
                                                                                                             <p className='text-list' key={`${arrestKey}-${chargeKey}`} >
                                                                                                                 {charge.ChargeCode_Description}
