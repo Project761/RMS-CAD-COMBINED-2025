@@ -13,10 +13,17 @@ import { useReactToPrint } from 'react-to-print';
 import OtherSummaryModel from '../../SummaryModel/OtherSummaryModel';
 import * as XLSX from 'xlsx';
 import ArrestPrintReport from './ArrestPrintReport';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { get_LocalStoreData } from '../../../../redux/actions/Agency';
 
 const ArrestSearch = () => {
 
   const { arrestSearchData, setArrestSearchData, recentSearchData, setRecentSearchData, searchObject, setSearchObject } = useContext(AgencyContext);
+  const dispatch = useDispatch();
+  const localStoreData = useSelector((state) => state.Agency.localStoreData);
+  const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
+
 
   const useQuery = () => {
     const params = new URLSearchParams(useLocation().search);
@@ -41,7 +48,8 @@ const ArrestSearch = () => {
   const [selectedStatus, setSelectedStatus] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
   const [recentArrestSearchData, setRecentArrestSearchData] = useState([]);
-
+  const [searchData, setSearchData] = useState([]);
+  const [LoginAgencyID, setLoginAgencyID] = useState('');
 
   const exportToExcel = () => {
     const filteredData = arrestSearchData?.map(item => ({
@@ -173,6 +181,18 @@ const ArrestSearch = () => {
     // },
   ]
 
+  useEffect(() => {
+    if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
+      if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (localStoreData) {
+      setLoginAgencyID(parseInt(localStoreData?.AgencyID));
+    }
+  }, [localStoreData]);
+
   const set_Edit_Value = (row) => {
     if (row.ArrestID) {
       // console.log(row.ArrestID)
@@ -229,6 +249,24 @@ const ArrestSearch = () => {
       }
       else {
         setRecentArrestSearchData([]);
+      }
+    })
+  }
+
+  useEffect(() => {
+    if (LoginAgencyID) {
+      getAgencyImg(LoginAgencyID);
+    }
+  }, [LoginAgencyID]);
+
+  const getAgencyImg = (LoginAgencyID) => {
+    const val = { 'AgencyID': LoginAgencyID }
+    fetchPostData('Agency/GetData_AgencyWithPhoto', val).then((res) => {
+      if (res) {
+        setSearchData(res[0]);
+      }
+      else {
+        setSearchData([]);
       }
     })
   }
@@ -488,7 +526,7 @@ const ArrestSearch = () => {
       />
       {selectedStatus && (
         <div style={{ position: 'absolute', top: '-10000px', left: '-10000px' }}>
-          <ArrestPrintReport  {...{ componentRef, selectedStatus, setSelectedStatus, arrestSearchData }} />
+          <ArrestPrintReport  {...{ componentRef, selectedStatus, setSelectedStatus, arrestSearchData, searchData }} />
         </div>
       )}
     </>
