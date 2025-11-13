@@ -92,6 +92,7 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
   const [nibrsCodeDrp, setNibrsCodeDrp] = useState([]);
   // Offense Code/Name
   const [chargeCodeDrp, setChargeCodeDrp] = useState([]);
+  const [categoryIdDrp, setCategoryIdDrp] = useState([]);
 
   const [locationIdDrp, setLocationIdDrp] = useState([]);
   const [crimeId, setCrimeId] = useState("");
@@ -150,6 +151,7 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
     CrimeMethodOfEntryID: "",
     Comments: "",
     IsCargoTheftInvolved: null,
+    CategoryId: null,
   });
 
   const [errors, setErrors] = useState({
@@ -382,7 +384,6 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
 
     }
   };
-
 
   useEffect(() => {
     if (openPage || loginAgencyID) {
@@ -770,6 +771,8 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
         // charge code / offence code name
         getChargeCodeIDDrp(loginAgencyID, editval[0]?.NIBRSCodeId, editval[0]?.LawTitleId);
         setPrimaryLocationCode(Get_PrimaryLocation_Code(editval, locationIdDrp));
+        // getCategory
+        CategoryDrpDwnVal(loginAgencyID, editval[0]?.CategoryId);
       }
     } else {
       setValue({
@@ -919,8 +922,13 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
     };
     fetchPostData("ChargeCodes/GetDataDropDown_ChargeCodes", val).then(
       (data) => {
-        if (data) setChargeCodeDrp(Comman_changeArrayFormat(data, "ChargeCodeID", "Description"));
-        else setChargeCodeDrp([]);
+        if (data) {
+          // setChargeCodeDrp(Comman_changeArrayFormat(data, "ChargeCodeID", "Description"));
+          setChargeCodeDrp(threeColArray(data, "ChargeCodeID", "Description", "CategoryID"));
+        }
+        else {
+          setChargeCodeDrp([]);
+        }
       }
     );
   };
@@ -928,7 +936,8 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
   const getLawTitleNibrsByCharge = async (
     loginAgencyID,
     lawTitleID,
-    chargeCodeId
+    chargeCodeId,
+    categoryId
   ) => {
     const lawTitleObj = { AgencyID: loginAgencyID, ChargeCodeID: chargeCodeId };
     const nibrsCodeObj = {
@@ -959,11 +968,23 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
         LawTitleId: lawTitleArr[0]?.value,
         NIBRSCodeId: nibrsArr[0]?.value,
         ChargeCodeID: chargeCodeId,
+        CategoryId: categoryId,
       });
-      const isSingleEntry = lawTitleArr.length === 1 && nibrsArr.length === 1;
+
     } catch (error) {
       console.error("Error during data fetching:", error);
     }
+  };
+
+  const CategoryDrpDwnVal = (loginAgencyID, CategoryID) => {
+    const val = { 'AgencyID': loginAgencyID, 'CategoryID': CategoryID };
+    fetchPostData("ChargeCategory/GetDataDropDown_ChargeCategory", val).then(
+      (data) => {
+        // console.log("🚀 ~ CategoryDrpDwnVal ~ data:", data)
+        if (data) setCategoryIdDrp(Comman_changeArrayFormat(data, "ChargeCategoryID", "Description"));
+        else setCategoryIdDrp([]);
+      }
+    );
   };
 
   const onChangeDrpLawTitle = async (e, name) => {
@@ -984,11 +1005,12 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
         // charge code
         getChargeCodeIDDrp(loginAgencyID, value?.NIBRSCodeId, e.value);
       } else if (name === "ChargeCodeID") {
-        const res = await getLawTitleNibrsByCharge(
-          loginAgencyID,
-          value?.LawTitleId,
-          e.value
-        );
+        // getCategory
+        setCategoryIdDrp([])
+        CategoryDrpDwnVal(loginAgencyID, e.id);
+
+        const res = await getLawTitleNibrsByCharge(loginAgencyID, value?.LawTitleId, e.value, e.id);
+
       } else {
         setValue({ ...value, [name]: e.value });
       }
@@ -1009,11 +1031,17 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
         //offence code
         getChargeCodeIDDrp(loginAgencyID, null, null);
       } else if (name === "ChargeCodeID") {
-        setValue({ ...value, ["ChargeCodeID"]: null });
+
+        setValue({ ...value, ["ChargeCodeID"]: null, ["CategoryId"]: null });
         // nibrs code
         NIBRSCodeDrpDwnVal(loginAgencyID, value?.LawTitleId);
+        // getCategory
+        setCategoryIdDrp([])
+        // CategoryDrpDwnVal(loginAgencyID, null);
+
       } else {
         setValue({ ...value, [name]: null });
+
       }
     }
   };
@@ -1682,7 +1710,7 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
 
   const [isHovered, setIsHovered] = useState(false);
 
-  const handleMouseEnter = () => setIsHovered(true);
+  const handleMouseEnter = () => setIsHovered(true);  
   const handleMouseLeave = () => setIsHovered(false);
 
 
@@ -1769,6 +1797,22 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
               placeholder="Select..."
             />
 
+          </div>
+          <div className="col-4 col-md-4 col-lg-2">
+            <label htmlFor="" className="new-label m-0">Category</label>
+          </div>
+          <div className="col-7 col-md-7 col-lg-4">
+            <Select
+              name="CategoryId"
+              styles={MethodOfEntryStyles}
+              value={categoryIdDrp?.filter(
+                (obj) => obj.value === value?.CategoryId
+              )}
+              isClearable
+              options={categoryIdDrp}
+              onChange={(e) => changeDropDown(e, "CategoryId")}
+              placeholder="Select..."
+            />
           </div>
           <div className={`col-2 mt-0 `}>
             <label
