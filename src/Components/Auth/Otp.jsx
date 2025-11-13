@@ -8,8 +8,7 @@ import { AgencyContext } from "../../Context/Agency/Index";
 
 
 
-const Otp = ({ username, otp, loginResData, setOtp, timerOn, type, isMDT }) => {
-
+const Otp = ({ username, otp, loginResData, setOtp, timerOn, type, isMDT, typeOfAccount }) => {
     const navigate = useNavigate();
     const { setForgetPasswordArray, } = useContext(AgencyContext);
 
@@ -92,6 +91,8 @@ const Otp = ({ username, otp, loginResData, setOtp, timerOn, type, isMDT }) => {
         setTimeout(() => {
             if (isMDT) {
                 navigate('/incident-dashboard');
+            } else if (typeOfAccount === 'CAD') {
+                navigate('/cad/dashboard-page');
             } else {
                 navigate('/dashboard-page');
             }

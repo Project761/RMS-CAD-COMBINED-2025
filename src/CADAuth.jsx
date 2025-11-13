@@ -59,7 +59,7 @@ const CADAuth = (props) => {
         navigate('/');
       }
     }
-  }, []);
+  }, [localStoreData]);
 
   useEffect(() => {
     if (localStoreData?.Is2FAEnabled) {
@@ -86,7 +86,7 @@ const CADAuth = (props) => {
         navigate('/');
       }
     }
-  }, [IsLoginSession]);
+  }, [IsLoginSession, localStoreData]);
 
 
   useEffect(() => {

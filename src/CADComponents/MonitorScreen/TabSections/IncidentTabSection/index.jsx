@@ -25,14 +25,16 @@ import LocationInformationModal from "../../../LocationInformationModal";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import { getData_DropDown_Priority } from "../../../../CADRedux/actions/DropDownsData";
-
+import img from '../../../../img/file.jpg';
+import { get_ScreenPermissions_Data } from "../../../../redux/actions/IncidentAction";
+import { ScreenPermision } from "../../../../Components/hooks/Api";
 const IncidentTabSection = (props) => {
   const dispatch = useDispatch();
   const { isViewEventDetails = false } = props;
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
   const PriorityDrpData = useSelector((state) => state.CADDropDown.PriorityDrpData);
   const { setAgencyName, agnecyName, GetDataTimeZone, datezone } = useContext(AgencyContext);
-
+  const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
   const { resourceRefetch, incidentRefetch } = useContext(IncidentContext);
   const navigate = useNavigate();
   const [loginAgencyID, setLoginAgencyID] = useState('');
@@ -56,6 +58,9 @@ const IncidentTabSection = (props) => {
   const [otherZoneDropDown, setOtherZoneDropDown] = useState([]);
   const [openLocationInformationModal, setOpenLocationInformationModal] = useState(false);
   const [geoZoneDropDown, setGeoZoneDropDown] = useState([]);
+  const [cfsImageData, setCfsImageData] = useState(null);
+  const [cfsFoundImageData, setCfsFoundImageData] = useState(null);
+  const [effectiveFlagScreenPermission, setEffectiveFlagScreenPermission] = useState(null);
 
   const originalIncidentState = useRef({});
   const [
@@ -125,9 +130,27 @@ const IncidentTabSection = (props) => {
       setAgencyName(localStoreData?.Agency_Name);
       setUserName(localStoreData?.UserName);
       GetDataTimeZone(localStoreData?.AgencyID);
+      dispatch(get_ScreenPermissions_Data("CA102", localStoreData?.AgencyID, localStoreData?.PINID));
+      getFlagScreenPermission(localStoreData?.AgencyID, localStoreData?.PINID);
       if (PriorityDrpData?.length === 0 && localStoreData?.AgencyID) dispatch(getData_DropDown_Priority(localStoreData?.AgencyID))
     }
   }, [localStoreData]);
+
+  const getFlagScreenPermission = (aId, pinID) => {
+    try {
+      ScreenPermision("CA106", aId, pinID).then(res => {
+        if (res) {
+          setEffectiveFlagScreenPermission(res);
+        }
+        else {
+          setEffectiveFlagScreenPermission(null);
+        }
+      });
+    } catch (error) {
+      console.error('There was an error!', error);
+      setEffectiveFlagScreenPermission(null);
+    }
+  }
 
   const useRouteQuery = () => {
     const params = new URLSearchParams(useLocation().search);
@@ -187,6 +210,8 @@ const IncidentTabSection = (props) => {
         isVerifyReportedLocation: parsedData[0]?.isVerifyReportedLocation || 0,
         isVerifyFoundLocation: parsedData[0]?.isVerifyFoundLocation || 0
       };
+      setCfsImageData(CFSDropDown.find((opt) => opt.CallforServiceID === parsedData[0]?.ReportedCFSCodeID)?.Path || null)
+      setCfsFoundImageData(CFSDropDown.find((opt) => opt.CallforServiceID === parsedData[0]?.FoundCFSCodeID)?.Path || null)
       if (parsedData[0]?.FoundLocation) {
         const getAptData = aptSuiteNoDropDown.find(
           (option) => option?.value === parsedData[0]?.FoundApartmentNo
@@ -197,7 +222,7 @@ const IncidentTabSection = (props) => {
       originalIncidentState.current = { ...initialData };
       setIncidentState(initialData);
     }
-  }, [singleIncidentData, isFetchSingleIncidentData]);
+  }, [singleIncidentData, isFetchSingleIncidentData, isSelectLocation, CFSDropDown, setIncidentState, aptSuiteNoDropDown]);
 
   const isValidZone = (zone) => zone && Object.keys(zone).length > 0;
 
@@ -610,6 +635,30 @@ const IncidentTabSection = (props) => {
     }
   }
 
+  const isImageFile = (fileName) => {
+    const imageExtensions = /\.(png|jpg|jpeg|jfif|bmp|gif|webp|tiff|tif|svg|ico|heif|heic)$/i;
+    return imageExtensions.test(fileName);
+  };
+
+  const handleFileClick = (file) => {
+    const fileType = file.name ? file.name : file;
+    if (isImageFile(fileType)) {
+      if (file.name) {
+        const url = URL.createObjectURL(file);
+        window.open(url, '_blank');
+      } else {
+        window.open(fileType, '_blank');
+      }
+    } else {
+      if (file.name) {
+        const url = URL.createObjectURL(file);
+        window.open(url, '_blank');
+      } else {
+        window.open(fileType, '_blank');
+      }
+    }
+  };
+
   return (
     <>
       <div className="tab-form-monitor-container section-body pt-1 p-1 bt">
@@ -1002,6 +1051,7 @@ const IncidentTabSection = (props) => {
                       handleIncidentState("CFSLId", v?.CallforServiceID);
                       handleIncidentState("CFSLDesc", v?.CallforServiceID);
                       handleIncidentState("CFSLPriority", v?.PriorityID);
+                      setCfsImageData(v?.Path || null)
                       setIsChangeData(true);
                     }}
                     isDisabled
@@ -1031,6 +1081,7 @@ const IncidentTabSection = (props) => {
                         handleIncidentState("CFSLId", v?.CallforServiceID);
                         handleIncidentState("CFSLDesc", v?.CallforServiceID);
                         handleIncidentState("CFSLPriority", v?.PriorityID);
+                        setCfsImageData(v?.Path || null)
                         setIsChangeData(true);
                       }}
                       isDisabled
@@ -1050,6 +1101,14 @@ const IncidentTabSection = (props) => {
                       }}
                     />
                   </div>
+                  {cfsImageData &&
+                    <img
+                      src={img}
+                      alt="Document Icon"
+                      onClick={() => handleFileClick(cfsImageData)}
+                      style={{ width: '30px', height: '30px' }}
+                    />
+                  }
                 </div>
                 <div className="col-3 d-flex align-items-center justify-content-end">
                   <label for="" className="tab-form-label mr-2">
@@ -1303,6 +1362,7 @@ const IncidentTabSection = (props) => {
                       handleIncidentState("FoundCFSCodeID", v?.CallforServiceID);
                       handleIncidentState("FoundCFSLDesc", v?.CallforServiceID);
                       handleIncidentState("FoundPriorityID", v?.PriorityID);
+                      setCfsFoundImageData(v?.Path || null)
                       setIsChangeData(true);
                     }}
                     placeholder="Select..."
@@ -1331,6 +1391,7 @@ const IncidentTabSection = (props) => {
                         handleIncidentState("FoundCFSCodeID", v?.CallforServiceID);
                         handleIncidentState("FoundCFSLDesc", v?.CallforServiceID);
                         handleIncidentState("FoundPriorityID", v?.PriorityID);
+                        setCfsFoundImageData(v?.Path || null)
                         setIsChangeData(true);
                       }}
                       placeholder="Select..."
@@ -1349,6 +1410,14 @@ const IncidentTabSection = (props) => {
                       }}
                     />
                   </div>
+                  {cfsFoundImageData &&
+                    <img
+                      src={img}
+                      alt="Document Icon"
+                      onClick={() => handleFileClick(cfsFoundImageData)}
+                      style={{ width: '30px', height: '30px' }}
+                    />
+                  }
                 </div>
                 <div className="col-3 d-flex align-items-center justify-content-end">
                   <label for="" className="tab-form-label mr-2">
@@ -1411,7 +1480,7 @@ const IncidentTabSection = (props) => {
                             }}
                             data-toggle="modal"
                             data-target="#FlagTableModal"
-                            onClick={() => { setOpenFlagTableModal(true); setFlagName("Is24HourFlag"); }}
+                            onClick={effectiveFlagScreenPermission?.[0]?.DisplayOK === 1 ? () => { setOpenFlagTableModal(true); setFlagName("Is24HourFlag"); } : () => { }}
                             className="btn btn-sm btn-CADprimary1"
                             disabled={isViewEventDetails || (IsChangeData && isSelectLocation)}
                           >
@@ -1432,7 +1501,7 @@ const IncidentTabSection = (props) => {
                             }}
                             data-toggle="modal"
                             data-target="#FlagTableModal"
-                            onClick={() => { setOpenFlagTableModal(true); setFlagName("PremiseFlag") }}
+                            onClick={effectiveFlagScreenPermission?.[0]?.DisplayOK === 1 ? () => { setOpenFlagTableModal(true); setFlagName("PremiseFlag") } : () => { }}
                             className="btn btn-sm btn-CADprimary1"
                             disabled={isViewEventDetails || (IsChangeData && isSelectLocation)}
                           >
@@ -1455,7 +1524,7 @@ const IncidentTabSection = (props) => {
                           }}
                           data-toggle="modal"
                           data-target="#addFlagModal"
-                          onClick={() => { setOpenAddFlagModalViewInc(true); setSelectedFlagData(item); }}
+                          onClick={effectiveFlagScreenPermission?.[0]?.DisplayOK === 1 ? () => { setOpenAddFlagModalViewInc(true); setSelectedFlagData(item); } : () => { }}
                           className="btn btn-sm btn-CADprimary1"
                           disabled={isViewEventDetails || (IsChangeData && isSelectLocation)}
                         >
@@ -1482,14 +1551,16 @@ const IncidentTabSection = (props) => {
                               : "#addFlagModal"
                           }
                           onClick={
-                            isViewEventDetails ||
-                              IsChangeData || isSelectLocation ||
-                              (incidentState?.FoundLocation && !aptData?.aptId)
-                              ? undefined
-                              : () => {
-                                setOpenAddFlagModalViewInc(true);
-                                setSelectedFlagData({});
-                              }
+                            effectiveFlagScreenPermission?.[0]?.AddOK === 1 ?
+                              isViewEventDetails ||
+                                IsChangeData || isSelectLocation ||
+                                (incidentState?.FoundLocation && !aptData?.aptId)
+                                ? undefined
+                                : () => {
+                                  setOpenAddFlagModalViewInc(true);
+                                  setSelectedFlagData({});
+                                }
+                              : () => { }
                           }
                           style={{
                             fontSize: "13px",
@@ -1526,7 +1597,7 @@ const IncidentTabSection = (props) => {
               clearStateIncidentTab();
               setAptData({});
             }}>Cancel</button>
-            <button className="btn btn-sm btn-success mr-1" disabled={!IsChangeData} onClick={() => handelSave()}>Save</button>
+            {effectiveScreenPermission[0]?.Changeok === 1 && <button className="btn btn-sm btn-success mr-1" disabled={!IsChangeData} onClick={() => handelSave()}>Save</button>}
           </div>}
         </div>
       </div>

@@ -45,8 +45,6 @@ function DashboardAllReports({ isPreview }) {
     const [editval, setEditval] = useState([]);
     const [narrativeID, setNarrativeID] = useState();
     const [queData, setqueData] = useState();
-    const [narrativeReportData, setNarrativeReportData] = useState([]);
-    const [useOfForceData, setUseOfForceData] = useState([]);
     const [modelStatus, setModelStatus] = useState(false);
     const [WrittenForID, setWrittenForID] = useState();
     const [loder, setLoder] = useState(false);
@@ -62,7 +60,6 @@ function DashboardAllReports({ isPreview }) {
         if (localStoreData) {
             setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
             get_Data_Que_Report(localStoreData?.PINID, localStoreData?.AgencyID);
-            getUseOfForceReport(localStoreData?.PINID, localStoreData?.AgencyID);
             dispatch(get_ScreenPermissions_Data("N046", localStoreData?.AgencyID, localStoreData?.PINID));
 
         }
@@ -71,7 +68,6 @@ function DashboardAllReports({ isPreview }) {
     useEffect(() => {
         if (modelStatus) {
             get_Data_Que_Report(loginPinID, loginAgencyID);
-            getUseOfForceReport(loginPinID, loginAgencyID);
         }
     }, [modelStatus]);
 
@@ -127,7 +123,7 @@ function DashboardAllReports({ isPreview }) {
             grow: 0,
             cell: row => (
                 <div style={{ position: 'absolute', top: 4 }}>
-                    {row.ReportTypeJson === "Use Of Force" ? (
+                    {row.NarrativeDescription?.toLowerCase() === "use of force" ? (
                         row?.ArrestID ? (
                             effectiveScreenPermission ?
                                 effectiveScreenPermission[0]?.Changeok ? (
@@ -216,7 +212,7 @@ function DashboardAllReports({ isPreview }) {
                         onClick={() => {
                             <>
                                 {
-                                    row.ReportTypeJson === "Use Of Force" ? (
+                                    row.NarrativeDescription?.toLowerCase() === "use of force" ? (
                                         row?.ArrestID ? (
                                             effectiveScreenPermission ?
                                                 effectiveScreenPermission[0]?.Changeok ?
@@ -258,7 +254,7 @@ function DashboardAllReports({ isPreview }) {
             sortable: true,
 
             cell: row => {
-                const desc = row?.ReportTypeJson || row.NarrativeDescription?.toLowerCase();
+                const desc = row.NarrativeDescription?.toLowerCase();
 
                 let backgroundColor = 'transparent';
                 let color = 'inherit';
@@ -277,9 +273,9 @@ function DashboardAllReports({ isPreview }) {
                     backgroundColor = '#f87171'; // red-400
                     color = 'inherit';
                 }
-                else if (desc === 'Use Of Force') {
+                else if (desc === 'use of force') {
                     backgroundColor = '#007bff';
-                    color = '#ffff';
+                    color = 'inherit';
                 }
 
                 return (
@@ -294,7 +290,7 @@ function DashboardAllReports({ isPreview }) {
 
                         }}
                     >
-                        {row?.ReportTypeJson || row.NarrativeDescription}
+                        {row.NarrativeDescription}
                     </span>
                 );
             },
@@ -383,34 +379,13 @@ function DashboardAllReports({ isPreview }) {
         const val = { 'OfficerID': OfficerID, 'AgencyID': agencyId };
         fetchPostData('/IncidentNarrativeReport/GetData_AllNarrativeReport', val).then((res) => {
             if (res) {
-                setNarrativeReportData(res);
+                setqueData(res);
                 setLoder(true);
             } else {
-                setNarrativeReportData([]);
+                setqueData([]);
             }
         });
     };
-
-
-    const getUseOfForceReport = (OfficerID, agencyId) => {
-        const val = { 'ApprovePinID': OfficerID, 'AgencyID': agencyId }
-        if (OfficerID && agencyId) {
-            fetchPostData('CAD/UseOfForceReport/GetUseOfForceReport', val).then((res) => {
-                if (res) {
-                    setUseOfForceData(res);
-                    setLoder(true);
-                } else {
-                    setUseOfForceData([]);
-                    setLoder(true);
-                }
-            })
-        }
-    }
-
-    useEffect(() => {
-        setqueData([...useOfForceData, ...narrativeReportData]);
-        setLoder(true);
-    }, [useOfForceData, narrativeReportData]);
 
     const GetSingleData = (NarrativeID) => {
         const val = { 'NarrativeID': NarrativeID, }

@@ -69,6 +69,7 @@ const MissingTab = () => {
         if (pathname.includes('Missing-Home')) setCurrentTab('MissingPersonInfo');
         if (pathname.includes('Missing-Vehicle-Home')) setCurrentTab('MissingPersonVehicle');
         if (pathname.includes('Missing-Document-Home')) setCurrentTab('Document');
+        if (pathname.includes('Missing-Person-Form')) setCurrentTab('MissingPersonForm');
     }, [window.location.pathname]);
 
     const handleTabClick = (tabName) => {
@@ -126,6 +127,20 @@ const MissingTab = () => {
                     </Link>
 
                 </li>
+                 {/* <li className="nav-item" >
+                    <Link
+                        className={`nav-item  ${currentTab === `/Missing-Person-Form` ? 'active' : ''}${!status ? 'disabled' : ''}`}
+                        to={changesStatus ? currentLocation : `/Missing-Person-Form?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&MissPerID=${MissPerId}&MissPerSta=${MissPerSta}&MissVehID=${MissVehID}`}
+                        // style={{ color: currentTab === 'MissingPersonForm' ? 'Red' : 'gray', fontWeight: '500' }}
+                        style={{ color: currentTab === 'MissingPersonForm' ? 'Red' : '#130e0e', fontWeight: '600' }}
+
+                        data-toggle={changesStatus ? "modal" : "pill"}
+                        data-target={changesStatus ? "#SaveModal" : ''}
+                        onClick={() => { if (!changesStatus) { setCurrentTab('MissingPersonForm') } }}
+                    >
+                        Missing Person Form
+                    </Link>
+                </li> */}
             </ul>
         </div>
     )

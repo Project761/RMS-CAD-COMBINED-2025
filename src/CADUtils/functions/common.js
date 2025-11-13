@@ -204,7 +204,6 @@ export function compareStrings(a, b) {
 
 // export async function SetTimeOut() {
 //   const localStoreData = useSelector((state) => state.Agency.localStoreData);
-//     console.log("ResetTimer", localStoreData)
 //     try {
 //         const token = sessionStorage.getItem("access_token");
 //         if (!token) return;
@@ -225,7 +224,6 @@ export function compareStrings(a, b) {
 //         const res = await response.json();
 //         const parsedData = JSON.parse(res?.data?.data);
 //         const data = parsedData?.Table;
-//         console.log("API Response:", data);
 
 //         const { setSessionTimeOut } = useContext(LoginContext);
 //         setSessionTimeOut(data?.[0]?.SessionTimeOut);

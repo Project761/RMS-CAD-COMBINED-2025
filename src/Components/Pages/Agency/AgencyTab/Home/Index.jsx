@@ -156,7 +156,6 @@ const Home = ({ allowMultipleLogin }) => {
     const getScreenPermision = (Aid, pinID) => {
         try {
             ScreenPermision("A001", Aid, pinID).then(res => {
-                console.log("🚀 ~ getScreenPermision ~ res:", res)
                 if (res) {
                     setEffectiveScreenPermission(res);
                     setPermissionForAddAgency(res[0]?.AddOK);
@@ -495,7 +494,7 @@ const Home = ({ allowMultipleLogin }) => {
                 setImage('')
 
             }
-            else { console.log("errror") }
+            else { console.error("errror") }
         })
     }
 
@@ -545,7 +544,7 @@ const Home = ({ allowMultipleLogin }) => {
                     get_Edit_Agency_Data(Aid);
 
                 } else setImage('');
-            }).catch(err => console.log(err))
+            }).catch(err => console.error(err))
         }
     }
 

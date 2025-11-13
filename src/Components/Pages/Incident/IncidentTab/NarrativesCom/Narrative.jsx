@@ -26,6 +26,8 @@ import { ClassicEditor } from 'ckeditor5';
 import CurrentIncMasterReport from '../CurrentIncMasterReport';
 import ReactQuill from 'react-quill';
 import { matchIncidentWords } from '../../../../../CADUtils/functions/redactFind';
+import { isEmptyCheck } from '../../../../../CADUtils/functions/common';
+import { OverlayTrigger, Popover, Tooltip } from 'react-bootstrap';
 
 
 const Narrative = (props) => {
@@ -96,13 +98,12 @@ const Narrative = (props) => {
   const [isUpdated, setIsUpdated] = useState(false);
   const [redactingData, setRedactingData] = useState({});
   const [detectedWords, setDetectedWords] = useState([]);
-  const [missingField, setMissingField] = useState([]);
+  const [missingField, setMissingField] = useState({});
   const [isNormalReport, setNormalReport] = useState(true);
   const [redactedComment, setRedactedComment] = useState("");
   const [checkWebWorkFlowStatus, setcheckWebWorkFlowStatus] = useState(false);
   const [IsSelfApproved, setIsSelfApproved] = useState(false);
   const detectedWordsRef = useRef([]);
-
   const [value, setValue] = useState({
     'IncidentId': '', 'NarrativeID': '', 'ReportedByPINActivityID': null, 'NarrativeTypeID': null, 'AsOfDate': null,
     'CreatedByUserFK': '', 'ModifiedByUserFK': '', 'ApprovingSupervisorID': '', 'NarrativeAssignedID': '', 'WrittenForID': '',
@@ -439,6 +440,7 @@ const Narrative = (props) => {
       ...errors, 'ReportedByPinError': '', 'AsOfDateError': '', 'NarrativeIDError': '', 'CommentsError': '', ['ApprovingOfficerError']: '', 'WrittenForIDError': '',
     });
     setStatesChangeStatus(false); setChangesStatus(false);
+    setMissingField({})
   }
 
 
@@ -550,14 +552,6 @@ const Narrative = (props) => {
     {
       name: 'Date/Time',
       selector: (row) => getShowingDateText(row.CreatedDtTm),
-      sortable: true
-    },
-    {
-      name: 'Report',
-      selector: (row) => row?.Comments || '',
-      format: (row) => (
-        <>{row?.Comments ? row?.Comments.substring(0, 70) : ''}{row?.Comments?.length > 40 ? '  . . .' : null} </>
-      ),
       sortable: true
     },
     {
@@ -1006,14 +1000,16 @@ const Narrative = (props) => {
     if (data?.length > 0) {
       const val = {
         text: data,
+        IncidentID: incidentID,
+        AgencyID: loginAgencyID
       };
       AddDeleteUpadate('/suggestion/MissingFiled', val)
         .then((res) => {
-          setMissingField(res?.MissingFields);
+          setMissingField(res);
         })
-        .catch(err => setMissingField([]));
+        .catch(err => setMissingField({}));
     } else {
-      setMissingField([]);
+      setMissingField({});
     }
   }, [value.Comments]);
 
@@ -1034,6 +1030,12 @@ const Narrative = (props) => {
     const isGreen = (v) => {
       const n = normalize(v);
       return n === "#008000" || n === "green";
+    };
+
+    // NEW: treat #7FFFD4 / aquamarine as the suggestion text color
+    const isAquamarine = (v) => {
+      const n = normalize(v);
+      return n === "#7fffd4" || n === "aquamarine";
     };
 
     const isWs = (ch) => /\s/.test(ch);
@@ -1125,14 +1127,14 @@ const Narrative = (props) => {
               let alreadySuggestion = false;
               if (Array.isArray(fmt) && fmt.length > 0) {
                 alreadySuggestion = fmt.every(
-                  (f) => isBlack(f?.color) && isGreen(f?.background)
+                  (f) => isAquamarine(f?.color) && isGreen(f?.background)
                 );
               } else {
-                alreadySuggestion = isBlack(fmt?.color) && isGreen(fmt?.background);
+                alreadySuggestion = isAquamarine(fmt?.color) && isGreen(fmt?.background);
               }
 
               if (!alreadySuggestion) {
-                quill.formatText(start, len, { color: "#000000", background: "#008000" }, "user");
+                quill.formatText(start, len, { color: "#7FFFD4", background: "#008000" }, "user");
               }
             }
           }
@@ -1533,10 +1535,6 @@ const Narrative = (props) => {
                 isDisabled
               />
             </div>
-
-
-
-
             <div className="col-2 col-md-2 col-lg-1 mt-2 pt-2">
               <label htmlFor="" className='new-label text-nowrap'>Written For {errors.WrittenForIDError !== 'true' ? (
                 <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.WrittenForIDError}</p>
@@ -1562,9 +1560,11 @@ const Narrative = (props) => {
 
 
             </div>
-            {value.Status === "Rejected" && (
+          </div>
+          {value.Status === "Rejected" &&
+            <div className="row">
               <>
-                <div className="col-2 col-md-2 col-lg-2 mt-2 pt-2">
+                <div className="col-2 col-md-2 col-lg-1 mt-2 pt-2">
                   <label htmlFor="" className='new-label'>Comment</label>
                 </div>
                 <div className="col-4 col-md-4 col-lg-4 mt-2 text-field">
@@ -1574,9 +1574,37 @@ const Narrative = (props) => {
                     readOnly />
                 </div>
               </>
-            )}
-          </div>
-          {
+              <div className={'col-4 text-right ml-auto'}>
+                <div
+                  id="NIBRSStatus"
+                  className={
+                    value.Status === "Draft"
+                      ? "nibrs-draft-Nar"
+                      : value.Status === "Approved"
+                        ? "nibrs-submitted-Nar"
+                        : value.Status === "Rejected"
+                          ? "nibrs-rejected-Nar"
+                          : value.Status === "Pending Review"
+                            ? "nibrs-reopened-Nar"
+                            : ""
+                  }
+                  style={{
+                    color: "black",
+                    opacity: 1,
+                    height: "35px",
+                    fontSize: "14px",
+                    marginTop: "2px",
+                    boxShadow: "none",
+                    userSelect: "none",
+                    padding: "5px", // optional for spacing
+                  }}
+                >
+                  {value.Status}
+                </div>
+              </div>
+            </div>
+          }
+          {(value.Status !== "Rejected" && value.Status) &&
             <div className="row mt-2 align-items-center">
               {value.Status === 'Approved' &&
                 <>
@@ -1609,7 +1637,7 @@ const Narrative = (props) => {
                   </div>
                 </>
               }
-              {value.Status && <div className={'col-4 text-right mb-2 ml-auto'}>
+              <div className={'col-4 text-right mb-2 ml-auto'}>
                 <div
                   id="NIBRSStatus"
                   className={
@@ -1636,7 +1664,7 @@ const Narrative = (props) => {
                 >
                   {value.Status}
                 </div>
-              </div>}
+              </div>
             </div>
           }
 
@@ -1644,25 +1672,220 @@ const Narrative = (props) => {
 
           {isNormalReport &&
             <span>
-              {missingField.length > 0 &&
+
+              {(missingField?.MissingFields?.length > 0 || missingField.ReasonCodeSuggestions || missingField.ChargeCodeSuggestions) &&
                 <div className='mx-2'>
                   <label htmlFor="" className='new-summary' style={{ fontSize: "18px" }}>NIBRS Missing Information</label>
                   <div className="d-flex flex-row flex-wrap mt-1">
-                    {missingField.map((word, index) => (
-                      <>
-                        <button
-                          key={index}
-                          type="button"
-                          className="btn btn-primary m-1 py-1 px-1.5" // 'me-3' adds space to the right and 'mb-2' adds space below
-                          style={{ cursor: 'default', fontSize: "13px" }}
-                        >
-                          <i className="fa fa-close" style={{ color: "red", fontSize: "13px" }}></i>  {word}
-                        </button>
-                      </>
-                    ))}
+                    {/* For when no reson code  */}
+                    {missingField.ReasonCodeSuggestions &&
+                      <div class="badge-bar px-2 py-2 mx-1 my-1">
+                        <div class="d-flex align-items-center justify-content-between">
+                          <div class="d-flex align-items-center">
+                            <span class="badge-pill mr-2"><i class="fa fa-times"></i></span>
+                            <span class="badge-title">{missingField.ReasonCodeSuggestions}</span>
+                          </div>
+                          {/* tooltip */}
+                          <OverlayTrigger
+                            placement="top"
+                            trigger={["hover", "focus"]}
+                            overlay={
+                              <Tooltip id="fmt-tip" className="wide-tooltip">
+                                <div className="fw-bold mb-2" style={{ color: "red" }}><b>VALID FORMAT</b></div>
+                                <div className="mb-1">
+                                  <b>Please Enter Details In The Following Order:</b> Name, Reason Code, DOB, Age, Gender, Race, Ethnicity, Resident
+                                </div>
+                                <div style={{ wordBreak: "break-word" }}>
+                                  <b>Example:</b> Maria Castillo (Victim) (DOB: 09/15/1986) (Age: 45) (Gender: Female) (Race: Unknown) (Ethnicity: Hispanic Or Latino) (Resident: Non-Resident)
+                                </div>
+                              </Tooltip>
+                            }
+                          >
+                            <span className="badge-pill ml-3" style={{ cursor: "pointer" }}>
+                              <i className="fa fa-exclamation" />
+                            </span>
+                          </OverlayTrigger>
+                        </div>
+                        <div className="d-flex align-items-center flex-wrap mt-0">
+                          <span>
+                            <span className="bullet"></span>
+                            <span className="meta">Reason Code</span>
+                          </span>
+                        </div>
+                      </div>
+                    }
+
+                    {/* For other missing field  */}
+                    {missingField?.MissingFields?.length > 0 &&
+                      missingField.MissingFields.map((p, idx) => {
+                        if (!p?.REASON_CODE) return null;
+                        const role = (p?.REASON_CODE || "").trim().toLowerCase();
+                        const fields =
+                          role === "victim"
+                            ? ["AGE", "DOB", "RACE", "GENDER", "ETHNICITY", "RESIDENT"]
+                            : ["AGE", "DOB", "RACE", "GENDER"]
+
+
+                        // --- OR logic for AGE/DOB ---
+                        const isEmpty = (v) => isEmptyCheck(v);
+                        const hasAge = !isEmpty(p?.AGE);
+                        const hasDob = !isEmpty(p?.DOB);
+
+                        // start with naive missing
+                        let missing = fields.filter((f) => isEmpty(p?.[f]));
+
+                        // if either AGE or DOB exists, drop both from "missing"
+                        if (fields.includes("AGE") && fields.includes("DOB") && (hasAge || hasDob)) {
+                          missing = missing.filter((f) => f !== "AGE" && f !== "DOB");
+                        }
+
+                        if (missing.length === 0) return null; // nothing missing ⇒ skip
+
+                        const labels = {
+                          AGE: "Age",
+                          DOB: "DOB",
+                          RACE: "Race",
+                          GENDER: "Gender",
+                          ETHNICITY: "Ethnicity",
+                          RESIDENT: "Resident",
+                        };
+
+                        const toTitleCaseList = (s = "") =>
+                          s
+                            .split(",")
+                            .map(part =>
+                              part
+                                .trim()
+                                .split(/\s+/)
+                                .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+                                .join(" ")
+                            )
+                            .filter(Boolean)
+                            .join(", ");
+
+                        const roleLabel = role ? toTitleCaseList(role) : "";
+
+                        return (
+                          <div class="badge-bar px-2 py-2 mx-1 my-1">
+                            <div class="d-flex align-items-center justify-content-between">
+                              <div class="d-flex align-items-center">
+                                <span class="badge-pill mr-2"><i class="fa fa-times"></i></span>
+                                <span class="badge-title">{roleLabel}: {p?.NAME}</span>
+                              </div>
+                              {/* tooltip */}
+                              <OverlayTrigger
+                                placement="top"
+                                trigger={["hover", "focus"]}
+                                overlay={
+                                  <Tooltip id="fmt-tip" className="wide-tooltip">
+                                    <div className="fw-bold mb-2" style={{ color: "red" }}><b>VALID FORMAT</b></div>
+                                    <div className="mb-1">
+                                      <b>Please Enter Details In The Following Order:</b> Name, Reason Code, DOB, Age, Gender, Race, Ethnicity, Resident
+                                    </div>
+                                    <div style={{ wordBreak: "break-word" }}>
+                                      <b>Example:</b> Maria Castillo (Victim) (DOB: 09/15/1986) (Age: 45) (Gender: Female) (Race: Unknown) (Ethnicity: Hispanic Or Latino) (Resident: Non-Resident)
+                                    </div>
+                                  </Tooltip>
+                                }
+                              >
+                                <span className="badge-pill ml-3" style={{ cursor: "pointer" }}>
+                                  <i className="fa fa-exclamation" />
+                                </span>
+                              </OverlayTrigger>
+                            </div>
+                            <div className="d-flex align-items-center flex-wrap mt-0">
+                              {missing.map((f) => (
+                                <span key={f}>
+                                  <span className="bullet"></span>
+                                  <span className="meta">{labels[f]}</span>
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+
+                    {missingField.ChargeCodeSuggestions &&
+                      <div class="badge-bar px-2 py-2 mx-1 my-1">
+                        <div class="d-flex align-items-center justify-content-between">
+                          <div class="d-flex align-items-center">
+                            <span class="badge-pill mr-2"><i class="fa fa-times"></i></span>
+                            <span class="badge-title">Charge Code</span>
+                          </div>
+                        </div>
+                        <div className="d-flex align-items-center flex-wrap mt-0">
+                          <span>
+                            <span className="bullet"></span>
+                            <span className="meta">Enter Charge Code</span>
+                          </span>
+                        </div>
+                      </div>
+                    }
+                    {missingField?.VehicleSuggestions &&
+                      <div class="badge-bar px-2 py-2 mx-1 my-1">
+                        <div class="d-flex align-items-center justify-content-between">
+                          <div class="d-flex align-items-center">
+                            <span class="badge-pill mr-2"><i class="fa fa-times"></i></span>
+                            <span class="badge-title">Vehicle Missing Field</span>
+                          </div>
+                          {/* tooltip */}
+                          <OverlayTrigger
+                            placement="top"
+                            trigger={["hover", "focus"]}
+                            overlay={
+                              <Tooltip id="fmt-tip" className="wide-tooltip">
+                                <div className="fw-bold mb-2" style={{ color: "red" }}><b>VALID FORMAT</b></div>
+                                <div className="mb-1">
+                                  <b>Please Enter Details In The Following Order:</b> Vehicle, Plate State & No, Loss Code, Category, Plate Type
+                                </div>
+                                <div style={{ wordBreak: "break-word" }}>
+                                  <b>Example:</b> Vehicle (TXLP#WHT7386) (Loss Code: Stolen) (Category: Automobile) (Plate Type: Ambulance)
+                                </div>
+                              </Tooltip>
+                            }
+                          >
+                            <span className="badge-pill ml-3" style={{ cursor: "pointer" }}>
+                              <i className="fa fa-exclamation" />
+                            </span>
+                          </OverlayTrigger>
+                        </div>
+                        <div className="d-flex align-items-center flex-wrap mt-0">
+                          {missingField.VehicleSuggestions.split(",").map((f) => (
+                            <span key={f}>
+                              <span className="bullet"></span>
+                              <span className="meta">{f}</span>
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    }
+                    {missingField?.KeyWordHitsSuggestions &&
+                      <div class="badge-bar px-2 py-2 mx-1 my-1">
+                        <div class="d-flex align-items-center justify-content-between">
+                          <div class="d-flex align-items-center">
+                            <span class="badge-pill mr-2"><i class="fa fa-times"></i></span>
+                            <span class="badge-title">Charge Code</span>
+                          </div>
+
+                        </div>
+                        <div className="d-flex align-items-center flex-wrap mt-0">
+                          {missingField.KeyWordHitsSuggestions.split(",").map((f) => {
+                            const formatted = f.trim().replace(/\b\w/g, (c) => c.toUpperCase());
+                            return (
+                              <span key={f}>
+                                <span className="bullet"></span>
+                                <span className="meta">{formatted}</span>
+                              </span>
+                            );
+                          })}
+
+                        </div>
+                      </div>
+                    }
+
                   </div>
-                </div>
-              }
+                </div>}
+
               <ReactQuill
                 className={`editor-class ${value.Status === 'Pending Review' || value.Status === 'Approved' || ((value.Status === 'Draft' || value.Status === 'Rejected') && !IsSuperadmin && !(value.ReportedByPINActivityID === loginPinID || value.WrittenForID === loginPinID)) ? 'readonly' : ''}`}
                 disabled={value.Status === 'Pending Review' || value.Status === 'Approved' || ((value.Status === 'Draft' || value.Status === 'Rejected') &&
@@ -1764,8 +1987,9 @@ const Narrative = (props) => {
                     white-space: nowrap; /* Prevent text from wrapping */
                 }
                   .ql-redact::before {
-                    content: "Redact";
-                    font-size: 14px;
+                    content: "REDACT";
+                    font-size: 16px;
+                    color:blue;
                     font-weight: normal;
                 }
                 .ql-editor .redacted::selection {
@@ -2012,7 +2236,7 @@ const Narrative = (props) => {
                     effectiveScreenPermission ?
                       effectiveScreenPermission[0]?.Changeok ?
                         <>
-                          <button type="button" onClick={() => check_Validation_Error()} className="btn btn-sm btn-success pl-2 ">{value.Status === "Approved" ? "Redact" : "Update"}</button>
+                          <button type="button" onClick={() => check_Validation_Error()} className="btn btn-sm btn-success pl-2 ">{value.Status === "Approved" ? "Save Redact" : "Update"}</button>
                           <button
                             type="button"
                             className="btn btn-sm btn-success ml-2 "
@@ -2033,7 +2257,7 @@ const Narrative = (props) => {
                         </>
                       :
                       <>
-                        <button type="button" disabled={!statesChangeStatus || value.Status === 'Pending Review' || value.Status === 'Approve'} onClick={() => check_Validation_Error()} className="btn btn-sm btn-success pl-2 ">{value.Status === "Approved" ? "Redact" : "Update"}</button>
+                        <button type="button" disabled={!statesChangeStatus || value.Status === 'Pending Review' || value.Status === 'Approve'} onClick={() => check_Validation_Error()} className="btn btn-sm btn-success pl-2 ">{value.Status === "Approved" ? "Save Redact" : "Update"}</button>
                         <button
                           type="button"
                           className="btn btn-sm btn-success ml-2 "
@@ -2082,7 +2306,6 @@ const Narrative = (props) => {
               customStyles={tableCustomStyles}
               conditionalRowStyles={conditionalRowStyles}
               onRowClicked={(row) => {
-                console.log("row", row)
                 if (row?.NarrativeDescription === "Use Of Force") {
                   row?.ArrestID ? (
                     navigate(`/Arrest-Home?IncId=${stringToBase64(row?.IncidentId)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&ArrestId=${stringToBase64(row?.ArrestID)}&ArrNo=${stringToBase64(row?.ArrestNumber)}&isFromDashboard=true`)

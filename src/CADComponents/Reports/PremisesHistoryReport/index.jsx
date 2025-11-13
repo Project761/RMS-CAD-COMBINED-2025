@@ -232,7 +232,7 @@ const PremisesHistoryReport = () => {
                 let imgUrl = `data:image/png;base64,${res[0]?.Agency_Photo}`;
                 setMultiImage(imgUrl);
             }
-            else { console.log("error") }
+            else { console.error("error") }
         })
     }
     const getIncidentSearchData = async (isPrintReport = false) => {
@@ -283,7 +283,7 @@ const PremisesHistoryReport = () => {
                 }
             }
         } catch (error) {
-            console.log("error", error)
+            console.error("error", error)
             if (!isPrintReport) {
                 toastifyError("Data Not Available");
             }

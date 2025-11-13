@@ -21,7 +21,7 @@ const ClearModal = (props) => {
     const IncidentDispositionsDrpData = useSelector((state) => state.CADDropDown.IncidentDispositionsDrpData);
     const { openClearModal, setOpenClearModal, incidentID } = props;
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
-    const { incidentData, resourceData, resourceRefetch, incidentRefetch, refetchGetComments } = useContext(IncidentContext);
+    const { incidentData, resourceData, resourceRefetch, incidentRefetch, refetchGetComments, unassignedIncidentListRefetch, assignedIncidentListRefetch } = useContext(IncidentContext);
     const [resourceDropDown, setResourceDropDown] = useState([]);
     const [loginAgencyID, setLoginAgencyID] = useState();
     const [dispositionDropDown, setDispositionDropDown] = useState([]);
@@ -217,6 +217,8 @@ const ClearModal = (props) => {
             toastifySuccess("Data Saved Successfully");
             incidentRefetch();
             resourceRefetch();
+            unassignedIncidentListRefetch();
+            assignedIncidentListRefetch();
             onCloseLocation();
             refetchGetComments();
             const searchParams = new URLSearchParams(location.search);

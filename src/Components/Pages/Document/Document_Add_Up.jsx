@@ -7,8 +7,9 @@ import DocumentHistory from './DocumentHistory/DocumentHistory'
 import Home from './DocumentTab/Home/Home'
 import Tab from '../../Utility/Tab/Tab'
 import Comments from './Comments/Comments'
+import MissingTab from '../../Utility/Tab/MissingTab'
 
-const Document_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails = false, isCitation = false }) => {
+const Document_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails = false, isCitation = false, isMissingPerson = false }) => {
 
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
     const { updateCount, changesStatus, } = useContext(AgencyContext)
@@ -36,9 +37,11 @@ const Document_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetail
     var Name = query?.get("Name");
     var ChargeSta = query?.get('ChargeSta');
     let documentID = query?.get('documentId');
+    var MissPerSta = query?.get('MissPerSta');
+    var MissVehID = query?.get('MissVehID');
+    var MissPerID = query?.get('MissPerID');
 
     let DecArrestId = 0, DecIncID = 0, DecdocumentID = 0;
-
 
     if (!IncID) IncID = 0;
     else DecIncID = parseInt(base64ToString(IncID));
@@ -58,13 +61,17 @@ const Document_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetail
     return (
         <div className=" section-body pt-1 p-1 bt" >
             <div className="div">
-                {!isCad &&
+                {!isCad && !isMissingPerson &&
                     <div className="col-12  inc__tabs">
                         {
                             <Tab />
                         }
                     </div>
                 }
+                {isMissingPerson &&
+                    <div className="col-12  inc__tabs">
+                        <MissingTab />
+                    </div>}
                 <div className="dark-row" >
                     <div className="col-12 col-sm-12">
                         <div className={`Agency ${isCitation ? '' : 'card'} ${isCad ? 'CAD-incident-card' : 'incident-card'}`}>
@@ -78,7 +85,9 @@ const Document_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetail
                                                     className={`nav-item ${showPage === 'home' ? 'active' : ''}`}
                                                     to={isCad ?
                                                         `/cad/dispatcher?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&DocSta=${true}&documentId=${(documentID)}`
-                                                        : `/Document-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&DocSta=${true}&documentId=${(documentID)}`
+                                                        : isMissingPerson ?
+                                                            `/Missing-Document-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&MissPerID=${MissPerID}&MissPerSta=${MissPerSta}&MissVehID=${MissVehID}&documentId=${(documentID)}`
+                                                            : `/Document-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&DocSta=${true}&documentId=${(documentID)}`
                                                     }
 
                                                     style={{ color: showPage === 'home' ? 'Red' : '#000' }}
@@ -142,6 +151,7 @@ const Document_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetail
                                             showPage,
                                             setShowPage,
                                             isCitation,
+                                            isMissingPerson,
 
                                         }} />
                                         :

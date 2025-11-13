@@ -156,7 +156,7 @@ const NotificationManagement = ({ aId }) => {
 
     const GetAllNotifications = (aId) => {
         const value = { AgencyId: aId }
-        fetchPostData('CAD/Notification/GetAllNotifications', value).then(res => {
+        fetchPostData('Notification/GetAllNotifications', value).then(res => {
             if (res) {
                 setNotificationData(res)
             } else {
@@ -248,8 +248,8 @@ const NotificationManagement = ({ aId }) => {
 
         const isUpdate = !!notificationID;
         const endpoint = isUpdate
-            ? 'CAD/Notification/UpdateNotification'
-            : 'CAD/Notification/InsertNotification';
+            ? 'Notification/UpdateNotification'
+            : 'Notification/InsertNotification';
 
         const payload = {
             ...(isUpdate && { NotificationID: notificationID }),
@@ -533,6 +533,22 @@ const NotificationManagement = ({ aId }) => {
     };
     const matchedNotificationTypeData = NotificationType.filter(i => i.key === notificationState.category);
 
+    const handleSubject = (content, delta, source, editor) => {
+        const text = editor.getText().trim();
+        const words = text.split(/\s+/).filter(Boolean);
+
+        if (words.length <= 50) {
+            // allow typing until 50 words
+            handleNotificationState("subject", content);
+            setIsChange(true);
+        } else {
+            // Block extra input by resetting editor back to first 50 words
+            const quill = quillRef1.current.getEditor();
+            const limitedText = words.slice(0, 50).join(" ") + " ";
+            quill.setText(limitedText);
+        }
+    };
+
     return (
         <div>
             {/* Notification Module Category */}
@@ -807,16 +823,19 @@ const NotificationManagement = ({ aId }) => {
                             </div> */}
                         <div className="col-7  mt-2 react-quill-container">
                             <div>
-                                {tags?.map((tag) => (
-                                    <button
-                                        key={tag}
-                                        type="button" class="btn btn-primary"
-                                        onClick={() => insertTagTemplate(tag.value)}
-                                        style={{ margin: '3px', padding: "4px 8px" }}
-                                    >
-                                        {tag.label}
-                                    </button>
-                                ))}
+                                {tags
+                                    ?.filter(tag => !["AgencyName", "AgencyContactInformation", "OfficerName"].includes(tag.value))
+                                    .map((tag) => (
+                                        <button
+                                            key={tag.value}
+                                            type="button"
+                                            className="btn btn-primary"
+                                            onClick={() => insertTagTemplate(tag.value)}
+                                            style={{ margin: '3px', padding: "4px 8px" }}
+                                        >
+                                            {tag.label}
+                                        </button>
+                                    ))}
                             </div>
                             <ReactQuill
                                 ref={quillRef2}
@@ -887,11 +906,11 @@ const NotificationManagement = ({ aId }) => {
                             </div>
                         </div>
                         <div className="row">
-                            <div className="col-2 col-md-2 col-lg-1 mt-5 offset-1">
-                                <label htmlFor="" className='new-label'>Subject</label>
+                            <div className="col-2 col-md-2 col-lg-1 mt-1 offset-1">
+                                <label htmlFor="subject" className='new-label'>Subject</label>
                             </div>
                             <div className="col-7 react-quill-container">
-                                <div>
+                                {/* <div>
                                     {tags?.map((tag) => (
                                         <button
                                             key={tag}
@@ -902,27 +921,24 @@ const NotificationManagement = ({ aId }) => {
                                             {tag.label}
                                         </button>
                                     ))}
-                                </div>
+                                </div> */}
                                 <ReactQuill
                                     ref={quillRef1}
                                     value={notificationState?.subject || ''}
-                                    onChange={(e) => {
-                                        handleNotificationState("subject", e);
-                                        setIsChange(true);
-                                    }}
+                                    onChange={handleSubject}
                                     theme="snow"
                                     modules={{ toolbar: false }}
-                                    // formats={formats}
                                     editorProps={{ spellCheck: true }}
                                     placeholder="Subject"
-                                    style={{ height: '60px', marginTop: "5px" }}
+                                    style={{ height: '50px', marginTop: "5px" }}
                                     onKeyDown={handleKeyDownSubject}
                                 />
+
                             </div>
                         </div>
                         <div className="row">
                             <div className="col-2 col-md-2 col-lg-1 mt-5 pt-2 offset-1">
-                                <label htmlFor="" className='new-label'>Body</label>
+                                <label htmlFor="body" className='new-label'>Body</label>
                             </div>
                             <div className="col-7 mt-2 react-quill-container">
                                 <div>

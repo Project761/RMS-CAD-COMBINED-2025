@@ -13,6 +13,7 @@ import GeoServices from "../../../CADServices/APIs/geo";
 import { getShowingMonthDateYear } from '../../../Components/Common/Utility';
 import { AgencyContext } from '../../../Context/Agency/Index';
 import { getData_DropDown_Priority } from '../../../CADRedux/actions/DropDownsData';
+import { ScreenPermision } from '../../../Components/hooks/Api';
 
 const FlagModalViewInc = (props) => {
     const dispatch = useDispatch();
@@ -23,6 +24,7 @@ const FlagModalViewInc = (props) => {
     const [loginAgencyID, setLoginAgencyID] = useState();
     const [flagData, setFlagData] = useState([]);
     const [isDisabled, setIsDisabled] = useState(false);
+    const [effectiveFlagScreenPermission, setEffectiveFlagScreenPermission] = useState(null);
     const { openAddFlagModalViewInc, setOpenAddFlagModalViewInc, isGoogleLocation, createLocationPayload, geoLocationID, setGeoLocationID = () => { }, getFlagListRefetch, selectedFlagData, setSelectedFlagData, refetchSingleIncidentData = () => { }, aptData, setAptData, refetchAptSuiteNoData } = props;
 
     const [
@@ -98,9 +100,26 @@ const FlagModalViewInc = (props) => {
             setLoginPinID(localStoreData?.PINID);
             setLoginAgencyID(localStoreData?.AgencyID);
             GetDataTimeZone(localStoreData?.AgencyID);
+            getFlagScreenPermission(localStoreData?.AgencyID, localStoreData?.PINID);
             if (PriorityDrpData?.length === 0 && localStoreData?.AgencyID) dispatch(getData_DropDown_Priority(localStoreData?.AgencyID))
         }
     }, [localStoreData]);
+
+    const getFlagScreenPermission = (aId, pinID) => {
+        try {
+            ScreenPermision("CA106", aId, pinID).then(res => {
+                if (res) {
+                    setEffectiveFlagScreenPermission(res);
+                }
+                else {
+                    setEffectiveFlagScreenPermission(null);
+                }
+            });
+        } catch (error) {
+            console.error('There was an error!', error);
+            setEffectiveFlagScreenPermission(null);
+        }
+    }
 
     const handleClose = () => {
         clearFlagState();
@@ -390,14 +409,14 @@ const FlagModalViewInc = (props) => {
                                         <div className="col-12 p-0">
                                             <div className="py-0 px-2 d-flex justify-content-end align-items-center">
                                                 <div className="d-flex justify-content-end tab-form-row-gap mt-1">
-                                                    <button
+                                                    {effectiveFlagScreenPermission?.[0]?.AddOK === 1 && <button
                                                         type="button"
                                                         className="save-button ml-2"
                                                         disabled={isDisabled}
                                                         onClick={() => handleSave()}
                                                     >
                                                         {"Save"}
-                                                    </button>
+                                                    </button>}
                                                     <button
                                                         type="button"
                                                         data-dismiss="modal"
@@ -428,32 +447,32 @@ export default memo(FlagModalViewInc)
 
 // PropTypes definition
 FlagModalViewInc.propTypes = {
-  openAddFlagModalViewInc: PropTypes.bool.isRequired,
-  setOpenAddFlagModalViewInc: PropTypes.func.isRequired,
-  isGoogleLocation: PropTypes.bool,
-  createLocationPayload: PropTypes.func,
-  geoLocationID: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  setGeoLocationID: PropTypes.func,
-  getFlagListRefetch: PropTypes.func,
-  selectedFlagData: PropTypes.object,
-  setSelectedFlagData: PropTypes.func,
-  refetchSingleIncidentData: PropTypes.func,
-  aptData: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-  setAptData: PropTypes.func,
-  refetchAptSuiteNoData: PropTypes.func
+    openAddFlagModalViewInc: PropTypes.bool.isRequired,
+    setOpenAddFlagModalViewInc: PropTypes.func.isRequired,
+    isGoogleLocation: PropTypes.bool,
+    createLocationPayload: PropTypes.func,
+    geoLocationID: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    setGeoLocationID: PropTypes.func,
+    getFlagListRefetch: PropTypes.func,
+    selectedFlagData: PropTypes.object,
+    setSelectedFlagData: PropTypes.func,
+    refetchSingleIncidentData: PropTypes.func,
+    aptData: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+    setAptData: PropTypes.func,
+    refetchAptSuiteNoData: PropTypes.func
 };
 
 // Default props
 FlagModalViewInc.defaultProps = {
-  isGoogleLocation: false,
-  createLocationPayload: () => {},
-  geoLocationID: null,
-  setGeoLocationID: () => {},
-  getFlagListRefetch: () => {},
-  selectedFlagData: {},
-  setSelectedFlagData: () => {},
-  refetchSingleIncidentData: () => {},
-  aptData: "",
-  setAptData: () => {},
-  refetchAptSuiteNoData: () => {}
+    isGoogleLocation: false,
+    createLocationPayload: () => { },
+    geoLocationID: null,
+    setGeoLocationID: () => { },
+    getFlagListRefetch: () => { },
+    selectedFlagData: {},
+    setSelectedFlagData: () => { },
+    refetchSingleIncidentData: () => { },
+    aptData: "",
+    setAptData: () => { },
+    refetchAptSuiteNoData: () => { }
 };

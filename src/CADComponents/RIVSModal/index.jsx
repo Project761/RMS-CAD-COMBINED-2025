@@ -18,11 +18,13 @@ import VehicleSearch from "./VehicleSearch";
 import NameSearch from "./NameSearch";
 import LocationInformationModal from "../LocationInformationModal";
 import { getData_DropDown_Priority } from "../../CADRedux/actions/DropDownsData";
-import { customStylesWithOutColor, requiredFieldColourStyles } from "../Utility/CustomStylesForReact";
+import { customStylesWithOutColor, coloredStyle_Select } from "../Utility/CustomStylesForReact";
+import { get_PlateType_Drp_Data, get_State_Drp_Data } from "../../redux/actions/DropDownsData";
+import NCICModal from "../NCICModal";
 
 const RIVSModal = (props) => {
     const { openRIVSModal, setOpenRIVSModal } = props;
-    const { resourceData, resourceRefetch, incidentRefetch } = useContext(IncidentContext);
+    const { resourceRefetch, incidentRefetch, unassignedIncidentListRefetch, assignedIncidentListRefetch } = useContext(IncidentContext);
     const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
     const stateList = useSelector((state) => state.DropDown.stateDrpData);
@@ -66,7 +68,7 @@ const RIVSModal = (props) => {
         isApartmentNo: false,
         isCoordinateX: false,
         isCoordinateY: false,
-        isVerify: false
+        IsVerify: false
     };
     const [isCheckGoogleLocation, setIsCheckGoogleLocation] = useState(false)
     const [geoFormValues, setGEOFormValues] = useState(initialFormValues);
@@ -97,7 +99,11 @@ const RIVSModal = (props) => {
     const [isCallAPI, setIsCallAPI] = useState(false)
     const [isVerifyReportedLocation, setIsVerifyReportedLocation] = useState(false);
     const PriorityDrpData = useSelector((state) => state.CADDropDown.PriorityDrpData);
-
+    const [resourceDropDown, setResourceDropDown] = useState([]);
+    const [filteredResourceDropDown, setFilteredResourceDropDown] = useState([]);
+    const [filteredCFSDropDown, setFilteredCFSDropDown] = useState([]);
+    const [receiveSourceDropDown, setReceiveSourceDropDown] = useState([]);
+    const [openNCICModal, setOpenNCICModal] = useState(false);
     const [
         rIVSState,
         setRIVSState,
@@ -105,7 +111,7 @@ const RIVSModal = (props) => {
         clearRIVSState,
     ] = useObjState({
         vehicleStop: false,
-        assignResource: false,
+        assignResource: true,
         Resources: "",
         location: "",
         ApartmentNo: "",
@@ -123,6 +129,8 @@ const RIVSModal = (props) => {
         Comments: "",
         AddressApartment: "",
         VehiclePlate: "",
+        ReceiveSourceID: "",
+        TagYear: "",
     });
 
     const [
@@ -135,7 +143,11 @@ const RIVSModal = (props) => {
         PriorityID: false,
         location: false,
         CFSCodeID: false,
-
+        ReceiveSourceID: false,
+        VehiclePlate: false,
+        StateCode: false,
+        PlateTypeCode: false,
+        TagYear: false,
     });
 
     const [openLocationInformationModal, setOpenLocationInformationModal] = useState(false);
@@ -165,6 +177,26 @@ const RIVSModal = (props) => {
         };
     }, [escFunction]);
 
+    const getResourcesKey = `/CAD/MasterResource/GetDataDropDown_Resource/${loginAgencyID}`;
+    const { data: getResourcesData, isSuccess: isFetchResourcesData } = useQuery(
+        [getResourcesKey, { AgencyID: loginAgencyID },],
+        MasterTableListServices.getDataDropDown_Resource,
+        {
+            refetchOnWindowFocus: false,
+            retry: 0,
+            enabled: openRIVSModal && !!loginAgencyID,
+        }
+    );
+
+    useEffect(() => {
+        if (isFetchResourcesData && getResourcesData) {
+            const data = JSON.parse(getResourcesData?.data?.data);
+            setResourceDropDown(data?.Table || [])
+            setFilteredResourceDropDown(data?.Table || [])
+        }
+    }, [isFetchResourcesData, getResourcesData])
+
+
     const handleKeyDown = (e) => {
         const charCode = e.keyCode || e.which;
         const charStr = String.fromCharCode(charCode);
@@ -188,10 +220,29 @@ const RIVSModal = (props) => {
             setLoginAgencyID(localStoreData?.AgencyID);
             setLoginPinID(localStoreData?.PINID);
             dispatch(get_NameTypeData(loginAgencyID))
+            if (stateList?.length === 0) { dispatch(get_State_Drp_Data()) };
+            if (plateTypeIdDrp?.length === 0) dispatch(get_PlateType_Drp_Data(localStoreData?.AgencyID))
             if (PriorityDrpData?.length === 0 && localStoreData?.AgencyID) dispatch(getData_DropDown_Priority(localStoreData?.AgencyID))
         }
     }, [localStoreData]);
 
+    const receiveSourceKey = `/CAD/CallTakerReceiveSource/GetData_ReceiveSource`;
+    const { data: receiveSourceData, isSuccess: isFetchReceiveSourceData } =
+        useQuery(
+            [receiveSourceKey, { Action: "GetData_ReceiveSource", AgencyID: loginAgencyID }],
+            CallTakerServices.getReceiveSource,
+            {
+                refetchOnWindowFocus: false,
+                enabled: !!loginAgencyID && openRIVSModal,
+            }
+        );
+
+    useEffect(() => {
+        if (isFetchReceiveSourceData && receiveSourceData) {
+            const data = JSON.parse(receiveSourceData?.data?.data);
+            setReceiveSourceDropDown(data?.Table || []);
+        }
+    }, [isFetchReceiveSourceData, receiveSourceData]);
 
     const CFSCodeKey = `/CAD/MasterCallforServiceCode/InsertCallforServiceCode`;
     const { data: CFSCodeData, isSuccess: isFetchCFSCodeData } = useQuery(
@@ -215,6 +266,82 @@ const RIVSModal = (props) => {
             setCFSDropDown(parsedData?.Table);
         }
     }, [isFetchCFSCodeData, CFSCodeData]);
+
+    // Filter CFS data based on selected resource capabilities and vehicle stop
+    useEffect(() => {
+        if (CFSDropDown.length > 0) {
+            let filteredData = CFSDropDown;
+
+            // Filter by resource capabilities if resource is selected
+            if (rIVSState?.Resources) {
+                const selectedResource = rIVSState.Resources;
+                filteredData = filteredData.filter(cfsItem => {
+                    // Check if ALL of the resource's capabilities match the CFS item's requirements
+                    // If resource field is null, don't filter by that field
+                    // If resource field is true, CFS item must be true
+                    // If resource field is false, CFS item can be false or null (null is acceptable for false requirement)
+                    const matchLAW = selectedResource.LAW === null ? true : (selectedResource.LAW === true ? cfsItem.LAW === true : (cfsItem.LAW === false || cfsItem.LAW === null));
+                    const matchFIRE = selectedResource.FIRE === null ? true : (selectedResource.FIRE === true ? cfsItem.FIRE === true : (cfsItem.FIRE === false || cfsItem.FIRE === null));
+                    const matchEMERGENCY = selectedResource.EMERGENCY === null ? true : (selectedResource.EMERGENCY === true ? cfsItem.EMERGENCY === true : (cfsItem.EMERGENCY === false || cfsItem.EMERGENCY === null));
+                    const matchOTHER = selectedResource.OTHER === null ? true : (selectedResource.OTHER === true ? cfsItem.OTHER === true : (cfsItem.OTHER === false || cfsItem.OTHER === null));
+
+                    return matchLAW && matchFIRE && matchEMERGENCY && matchOTHER;
+                });
+            }
+
+            // Filter by Istrafficvehicle if vehicleStop is true
+            if (rIVSState?.vehicleStop === true) {
+                filteredData = filteredData.filter(cfsItem => {
+                    // Check if Istrafficvehicle is true (1) or true (boolean)
+                    return cfsItem.Istrafficvehicle === 1 || cfsItem.Istrafficvehicle === true || cfsItem.IsTrafficVehicle === 1 || cfsItem.IsTrafficVehicle === true;
+                });
+            }
+
+            setFilteredCFSDropDown(filteredData);
+        } else {
+            // If no CFS data, show empty array
+            setFilteredCFSDropDown([]);
+        }
+    }, [CFSDropDown, rIVSState?.Resources, rIVSState?.vehicleStop]);
+
+    // Filter resources based on selected CFS capabilities
+    useEffect(() => {
+        if (resourceDropDown.length > 0 && rIVSState?.CFSCodeID) {
+            // Find the selected CFS from the dropdown (check both filtered and original)
+            const selectedCFS = filteredCFSDropDown.find(cfs => cfs.CallforServiceID === rIVSState.CFSCodeID)
+                || CFSDropDown.find(cfs => cfs.CallforServiceID === rIVSState.CFSCodeID);
+
+            if (selectedCFS) {
+                const filteredResources = resourceDropDown.filter(resource => {
+                    const matchLAW = selectedCFS.LAW === null ? true : (selectedCFS.LAW === true ? resource.LAW === true : (resource.LAW === false || resource.LAW === null));
+                    const matchFIRE = selectedCFS.FIRE === null ? true : (selectedCFS.FIRE === true ? resource.FIRE === true : (resource.FIRE === false || resource.FIRE === null));
+                    const matchEMERGENCY = selectedCFS.EMERGENCY === null ? true : (selectedCFS.EMERGENCY === true ? resource.EMERGENCY === true : (resource.EMERGENCY === false || resource.EMERGENCY === null));
+                    const matchOTHER = selectedCFS.OTHER === null ? true : (selectedCFS.OTHER === true ? resource.OTHER === true : (resource.OTHER === false || resource.OTHER === null));
+                    
+                    return matchLAW && matchFIRE && matchEMERGENCY && matchOTHER;
+                });
+                setFilteredResourceDropDown(filteredResources);
+
+                // Clear resource selection if it doesn't match the selected CFS
+                // Only check when CFSCodeID changes (not Resources)
+                if (rIVSState?.Resources) {
+                    const currentResourceMatches = filteredResources.find(
+                        res => res.ResourceID === rIVSState.Resources?.ResourceID
+                    );
+                    if (!currentResourceMatches) {
+                        handleRIVSState("Resources", "");
+                    }
+                }
+            } else {
+                // If CFS not found, show all resources
+                setFilteredResourceDropDown(resourceDropDown);
+            }
+        } else {
+            // If no CFS selected, show all resources
+            setFilteredResourceDropDown(resourceDropDown);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [resourceDropDown, rIVSState?.CFSCodeID, CFSDropDown, filteredCFSDropDown]);
 
     const aptSuiteNoPayload = {
         GeoLocationID: geoLocationID,
@@ -276,10 +403,11 @@ const RIVSModal = (props) => {
 
     const geoZoneKey = `/CAD/GeoPetrolZone/GetData_Zone`;
     const { data: geoZoneData, isSuccess: isFetchGeoZoneData } = useQuery(
-        [geoZoneKey, { IsActive: 1 }],
+        [geoZoneKey, { IsActive: 1, AgencyID: loginAgencyID }],
         GeoServices.getGeoZone,
         {
             refetchOnWindowFocus: false,
+            enabled: openRIVSModal && !!loginAgencyID
         }
     );
     useEffect(() => {
@@ -374,7 +502,7 @@ const RIVSModal = (props) => {
     const defaultOption = aptSuiteNoDropDown.find(
         (option) => option?.aptId && !option?.value && !option?.label
     );
-    
+
     useEffect(() => {
         if (!aptData?.value && !aptData?.label && defaultOption) {
             setAptData({ value: '', label: '', aptId: defaultOption.aptId });
@@ -384,14 +512,14 @@ const RIVSModal = (props) => {
     const isValidZone = (zone) => zone && Object.keys(zone).length > 0;
 
     const isVerifyLocation =
-        geoFormValues.isVerify &&
+        geoFormValues.IsVerify &&
         isValidZone(geoFormValues.patrolZone) &&
         isValidZone(geoFormValues.emsZone) &&
         isValidZone(geoFormValues.fireZone) &&
         isValidZone(geoFormValues.otherZone);
 
     const isVerifyAddress =
-        addressFormValues.isVerify &&
+        addressFormValues.IsVerify &&
         isValidZone(addressFormValues.patrolZone) &&
         isValidZone(addressFormValues.emsZone) &&
         isValidZone(addressFormValues.fireZone) &&
@@ -441,6 +569,7 @@ const RIVSModal = (props) => {
             Location: geoFormValues?.location || "",
             Latitude: geoFormValues?.coordinateY || "",
             Longitude: geoFormValues?.coordinateX || "",
+            ReceiveSourceID: rIVSState?.ReceiveSourceID?.ReceiveSourceID || "",
             ChildNameJson: transformedData?.length > 0 ? JSON.stringify(transformedData) : "",
             ChildVehicleJson: transformedVehicleData?.length > 0 ? JSON.stringify(transformedVehicleData) : "",
         };
@@ -475,9 +604,11 @@ const RIVSModal = (props) => {
         try {
             const response = await CallTakerServices.insertRIVSIncident(formData);
             if (response) {
-                onCloseLocation()
+                incidentRefetch();
+                unassignedIncidentListRefetch();
+                assignedIncidentListRefetch();
                 resourceRefetch();
-                incidentRefetch()
+                onCloseLocation();
             }
         } catch (error) {
             console.error("Failed to insert incident data", error);
@@ -493,13 +624,28 @@ const RIVSModal = (props) => {
                 isEmpty(geoFormValues[field])) {
                 handleErrorState(field, true);
                 isError = true;
-            } else if (field === "Resources" && isEmptyObject(rIVSState[field])) {
+            } else if (rIVSState?.assignResource === true && field === "Resources" && isEmptyObject(rIVSState[field])) {
+                handleErrorState(field, true);
+                isError = true;
+            } else if (field === "ReceiveSourceID" && isEmptyObject(rIVSState[field])) {
                 handleErrorState(field, true);
                 isError = true;
             } else if (field === "CFSCodeID" && isEmpty(rIVSState[field])) {
                 handleErrorState(field, true);
                 isError = true;
             } else if (field === "PriorityID" && isEmpty(rIVSState[field])) {
+                handleErrorState(field, true);
+                isError = true;
+            } else if (rIVSState?.vehicleStop === true && field === "VehiclePlate" && isEmpty(rIVSState[field])) {
+                handleErrorState(field, true);
+                isError = true;
+            } else if (rIVSState?.vehicleStop === true && field === "StateCode" && isEmpty(rIVSState[field])) {
+                handleErrorState(field, true);
+                isError = true;
+            } else if (rIVSState?.vehicleStop === true && field === "PlateTypeCode" && isEmpty(rIVSState[field])) {
+                handleErrorState(field, true);
+                isError = true;
+            } else if (rIVSState?.vehicleStop === true && field === "TagYear" && isEmpty(rIVSState[field])) {
                 handleErrorState(field, true);
                 isError = true;
             } else {
@@ -509,6 +655,7 @@ const RIVSModal = (props) => {
         });
         return !isError;
     };
+
     async function handleSave() {
         if (!validateGeoFormValues()) return;
         setIsCallAPI(true);
@@ -567,8 +714,6 @@ const RIVSModal = (props) => {
         isFieldEmpty(rIVSState.LastName) &&
         isFieldEmpty(rIVSState.FirstName) &&
         isFieldEmpty(rIVSState.MiddleName);
-
-
 
     return (
         <>
@@ -647,14 +792,20 @@ const RIVSModal = (props) => {
                                                         <Select
                                                             className="w-100"
                                                             isClearable
-                                                            options={resourceData || []}
+                                                            options={filteredResourceDropDown || []}
                                                             placeholder="Select..."
                                                             name="Resource1"
                                                             value={rIVSState?.Resources}
                                                             onChange={(selectedOptions) => {
                                                                 handleRIVSState("Resources", selectedOptions);
+                                                                // Clear CFS when resource is cleared
+                                                                if (!selectedOptions) {
+                                                                    handleRIVSState("CFSCodeID", "");
+                                                                    handleRIVSState("CFSLDesc", "");
+                                                                    handleRIVSState("PriorityID", "");
+                                                                }
                                                             }}
-                                                            styles={requiredFieldColourStyles}
+                                                            styles={rIVSState?.assignResource ? coloredStyle_Select : customStylesWithOutColor}
                                                             maxMenuHeight={180}
                                                             getOptionLabel={(v) => v?.ResourceNumber}
                                                             getOptionValue={(v) => v?.ResourceID}
@@ -665,6 +816,37 @@ const RIVSModal = (props) => {
                                                                 return inputValue;
                                                             }}
                                                             isSearchable={true}
+                                                        />
+                                                    </div>
+                                                    <div className="col-4 d-flex tab-form-row-gap">
+                                                        <label
+                                                            htmlFor="ReceiveSource"
+                                                            className="new-label text-nowrap" style={{ textAlign: "end", paddingTop: "8px" }}
+                                                        >
+                                                            Receive Source{errorState.ReceiveSourceID && isEmptyObject(rIVSState.ReceiveSourceID) && (
+                                                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{"Select Source"}</p>
+                                                            )}
+                                                        </label>
+                                                        <Select
+                                                            isClearable
+                                                            options={receiveSourceDropDown}
+                                                            placeholder="Select..."
+                                                            styles={coloredStyle_Select}
+                                                            className="w-100"
+                                                            name="ReceiveSourceID"
+                                                            isSearchable
+                                                            getOptionLabel={(v) => v?.ReceiveSourceCode}
+                                                            getOptionValue={(v) => v?.ReceiveSourceID}
+                                                            value={rIVSState.ReceiveSourceID}
+                                                            onChange={(selectedOptions) => {
+                                                                handleRIVSState("ReceiveSourceID", selectedOptions);
+                                                            }}
+                                                            onInputChange={(inputValue, actionMeta) => {
+                                                                if (inputValue.length > 12) {
+                                                                    return inputValue.slice(0, 12);
+                                                                }
+                                                                return inputValue;
+                                                            }}
                                                         />
                                                     </div>
                                                 </div>
@@ -699,7 +881,7 @@ const RIVSModal = (props) => {
                                                                 col="location"
                                                                 locationID="NameLocationID"
                                                                 check={true}
-                                                                verify={geoFormValues.IsVerify}
+                                                                // verify={geoFormValues.IsVerify}
                                                                 page="Name"
                                                                 isGEO
                                                             />
@@ -789,8 +971,8 @@ const RIVSModal = (props) => {
                                                     <div className="col-2 d-flex tab-form-row-gap">
                                                         <Select
                                                             name="CFSLId"
-                                                            value={CFSDropDown.find((opt) => opt.CallforServiceID === rIVSState?.CFSCodeID)}  // Keep the selected value
-                                                            options={CFSDropDown}
+                                                            value={rIVSState?.CFSCodeID ? filteredCFSDropDown.find((opt) => opt.CallforServiceID === rIVSState?.CFSCodeID) : ""}  // Keep the selected value
+                                                            options={filteredCFSDropDown}
                                                             getOptionLabel={(v) => v?.CFSCODE}  // Show only value after selection
                                                             getOptionValue={(v) => v?.CallforServiceID}
                                                             maxMenuHeight={200}
@@ -798,9 +980,14 @@ const RIVSModal = (props) => {
                                                                 handleRIVSState("CFSCodeID", v?.CallforServiceID);
                                                                 handleRIVSState("CFSLDesc", v?.CallforServiceID);
                                                                 handleRIVSState("PriorityID", v?.PriorityID);
+                                                                // Clear Resource when CFS is cleared
+                                                                if (!v) {
+                                                                    handleRIVSState("Resources", "");
+                                                                }
                                                             }}
                                                             placeholder="Select..."
-                                                            styles={requiredFieldColourStyles}
+                                                            styles={coloredStyle_Select}
+                                                            isSearchable={true}
                                                             className="w-100"
                                                             isClearable
                                                             filterOption={(option, inputValue) =>
@@ -817,8 +1004,8 @@ const RIVSModal = (props) => {
                                                     <div className="col-6 d-flex tab-form-row-gap">
                                                         <Select
                                                             name="CFSLDesc"
-                                                            value={CFSDropDown.find((opt) => opt.CallforServiceID === rIVSState?.CFSLDesc)}  // Keep the selected value
-                                                            options={CFSDropDown}
+                                                            value={filteredCFSDropDown.find((opt) => opt.CallforServiceID === rIVSState?.CFSLDesc)}  // Keep the selected value
+                                                            options={filteredCFSDropDown}
                                                             getOptionLabel={(v) => v?.CFSCodeDescription}  // Show only value after selection
                                                             getOptionValue={(v) => v?.CallforServiceID}
                                                             maxMenuHeight={200}
@@ -826,9 +1013,14 @@ const RIVSModal = (props) => {
                                                                 handleRIVSState("CFSCodeID", v?.CallforServiceID);
                                                                 handleRIVSState("CFSLDesc", v?.CallforServiceID);
                                                                 handleRIVSState("PriorityID", v?.PriorityID);
+                                                                // Clear Resource when CFS is cleared
+                                                                if (!v) {
+                                                                    handleRIVSState("Resources", "");
+                                                                }
                                                             }}
                                                             placeholder="Select..."
-                                                            styles={requiredFieldColourStyles}
+                                                            styles={coloredStyle_Select}
+                                                            isSearchable={true}
                                                             className="w-100"
                                                             isClearable
                                                             filterOption={(option, inputValue) =>
@@ -867,7 +1059,7 @@ const RIVSModal = (props) => {
                                                             }}
                                                             onChange={(v) => { handleRIVSState("PriorityID", v?.PriorityID) }}
                                                             placeholder="Select..."
-                                                            styles={requiredFieldColourStyles}
+                                                            styles={coloredStyle_Select}
                                                             className="w-100"
                                                             isClearable
                                                             onInputChange={(inputValue, actionMeta) => {
@@ -905,13 +1097,18 @@ const RIVSModal = (props) => {
                                                 {/* Line 7 */}
                                                 <div className="tab-from-row d-flex align-items-center">
                                                     <div className="col-2 d-flex justify-content-end">
-                                                        <label className="tab-form-label d-flex justify-content-end mr-1 text-nowrap">Vehicle Plate</label>
+                                                        <label className="tab-form-label mr-1 text-nowrap">
+                                                            Vehicle Plate
+                                                            {errorState.VehiclePlate && isEmpty(rIVSState.VehiclePlate) && (
+                                                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{"Required"}</p>
+                                                            )}
+                                                        </label>
                                                     </div>
                                                     <div className="col-2">
                                                         <input
                                                             name="location"
                                                             type="text"
-                                                            className="form-control py-1 new-input"
+                                                            className={ClassNames("form-control py-1 new-input", rIVSState?.vehicleStop && "requiredColor")}
                                                             value={rIVSState?.VehiclePlate}
                                                             onChange={(e) => {
                                                                 let ele = e.target.value.replace(/[^0-9a-zA-Z]/g, "");
@@ -921,14 +1118,19 @@ const RIVSModal = (props) => {
                                                         />
                                                     </div>
                                                     <div className="d-flex justify-content-end ml-4">
-                                                        <label className="tab-form-label d-flex justify-content-end mr-1 text-nowrap">State</label>
+                                                        <label className="tab-form-label mr-1 text-nowrap">
+                                                            State
+                                                            {errorState.StateCode && isEmpty(rIVSState.StateCode) && (
+                                                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{"Required"}</p>
+                                                            )}
+                                                        </label>
                                                     </div>
                                                     <div className="col-2">
                                                         <Select
                                                             isClearable
                                                             options={stateList}
                                                             placeholder="Select..."
-                                                            styles={customStylesWithOutColor}
+                                                            styles={rIVSState?.vehicleStop ? coloredStyle_Select : customStylesWithOutColor}
                                                             className="w-100"
                                                             maxMenuHeight={200}
                                                             name="StateCode"
@@ -943,7 +1145,12 @@ const RIVSModal = (props) => {
                                                         />
                                                     </div>
                                                     <div className="d-flex justify-content-end ml-4">
-                                                        <label className="tab-form-label d-flex justify-content-end mr-1 text-nowrap">Plate Type</label>
+                                                        <label className="tab-form-label mr-1 text-nowrap">
+                                                            Plate Type
+                                                            {errorState.PlateTypeCode && isEmpty(rIVSState.PlateTypeCode) && (
+                                                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{"Required"}</p>
+                                                            )}
+                                                        </label>
                                                     </div>
                                                     <div className="col-2">
                                                         <Select
@@ -953,7 +1160,7 @@ const RIVSModal = (props) => {
                                                             name="PlateTypeCode"
                                                             value={rIVSState?.PlateTypeCode ? plateTypeIdDrp?.find((i) => i?.value === parseInt(rIVSState?.PlateTypeCode)) : ""}
                                                             onChange={(e) => { if (e?.value) { handleRIVSState("PlateTypeCode", e.value) } else { handleRIVSState("PlateTypeCode", "") } }}
-                                                            styles={customStylesWithOutColor}
+                                                            styles={rIVSState?.vehicleStop ? coloredStyle_Select : customStylesWithOutColor}
                                                             className="w-100"
                                                             maxMenuHeight={200}
                                                             onInputChange={(inputValue, actionMeta) => {
@@ -965,7 +1172,12 @@ const RIVSModal = (props) => {
                                                         />
                                                     </div>
                                                     <div className="d-flex justify-content-end ml-4">
-                                                        <label className="tab-form-label d-flex justify-content-end mr-1 text-nowrap">Tag Year</label>
+                                                        <label className="tab-form-label mr-1 text-nowrap">
+                                                            Tag Year
+                                                            {errorState.TagYear && isEmpty(rIVSState.TagYear) && (
+                                                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{"Required"}</p>
+                                                            )}
+                                                        </label>
                                                     </div>
                                                     <div className="col-2 d-flex align-items-center">
                                                         <Select
@@ -975,7 +1187,7 @@ const RIVSModal = (props) => {
                                                             name="TagYear"
                                                             value={rIVSState?.TagYear ? tagYearDropDown?.find((i) => i.value === parseInt(rIVSState?.TagYear)) : ""}
                                                             onChange={(e) => { if (e?.value) { handleRIVSState("TagYear", e.value) } else { handleRIVSState("TagYear", "") } }}
-                                                            styles={customStylesWithOutColor}
+                                                            styles={rIVSState?.vehicleStop ? coloredStyle_Select : customStylesWithOutColor}
                                                             className="w-100"
                                                             maxMenuHeight={200}
                                                             onInputChange={(inputValue, actionMeta) => {
@@ -1138,7 +1350,7 @@ const RIVSModal = (props) => {
                                                                 col="location"
                                                                 locationID="NameLocationID"
                                                                 check={false}
-                                                                verify={addressFormValues.IsVerify}
+                                                                // verify={addressFormValues.IsVerify}
                                                                 page="Name"
                                                                 isGEO
                                                             />
@@ -1223,6 +1435,18 @@ const RIVSModal = (props) => {
                                             <div className="py-0 px-2 d-flex justify-content-end align-items-center">
                                                 <div className="d-flex justify-content-end tab-form-row-gap mt-1">
                                                     <button
+                                                        className="save-button ml-2"
+                                                        data-toggle="modal"
+                                                        data-target="#NCICModal"
+                                                        // style={{ width: "8%" }}
+                                                        onClick={() => {
+                                                            setOpenNCICModal(true);
+                                                        }}
+                                                    // disabled={!isNameCallTakerData}
+                                                    >
+                                                        NCIC
+                                                    </button>
+                                                    <button
                                                         type="button"
                                                         className="save-button ml-2"
                                                         disabled={isCallAPI}
@@ -1256,6 +1480,7 @@ const RIVSModal = (props) => {
             {isOpenVehicleSearchModel && <VehicleSearch isOpenVehicleSearchModel={isOpenVehicleSearchModel} setIsOpenVehicleSearchModel={setIsOpenVehicleSearchModel} rIVSState={rIVSState} setRIVSState={setRIVSState} />}
             {isOpenSearchNameModel && <NameSearch {...{ isOpenSearchNameModel, setIsOpenSearchNameModel, rIVSState, setRIVSState }} />}
             <LocationInformationModal {...{ openLocationInformationModal, setOpenLocationInformationModal, geoFormValues, setGEOFormValues, isGoogleLocation, createLocationPayload, isVerifyLocation, geoLocationID, isCheckGoogleLocation, setIsVerifyReportedLocation }} />
+            <NCICModal {...{ openNCICModal, setOpenNCICModal }} />
         </>
     );
 };

@@ -1153,7 +1153,7 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                                 />
                             </div>
                             <div className="col-2 col-md-2 col-lg-2">
-                                <label className='new-label mb-0'>Use of Force?</label>
+                                <label className='new-label mb-0'>Use of Force Applied</label>
                             </div>
                             <div className="col-4 col-md-5 col-lg-2">
                                 <Select

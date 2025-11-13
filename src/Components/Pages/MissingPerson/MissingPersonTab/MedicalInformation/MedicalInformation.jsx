@@ -1,23 +1,22 @@
 import React, { useContext, useEffect, useState } from 'react'
-import DataTable from 'react-data-table-component';
-import { filterPassedTime, getShowingDateText, getShowingMonthDateYear, stringToBase64, tableCustomStyles } from '../../../../Common/Utility';
+import { colourStyles, customStylesWithOutColor } from '../../../../Common/Utility';
 import DatePicker from "react-datepicker";
 import { toastifySuccess } from '../../../../Common/AlertMsg';
 import { AddDeleteUpadate, fetchPostData } from '../../../../hooks/Api';
 import { useSelector } from 'react-redux';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
-import DeletePopUpModal from '../../../../Common/DeleteModal';
-import { RequiredFieldIncident } from '../../../Utility/Personnel/Validation';
+import { useLocation } from 'react-router-dom';
 import { AgencyContext } from '../../../../../Context/Agency/Index';
-import ChangesModal from '../../../../Common/ChangesModal';
 import { get_ScreenPermissions_Data } from '../../../../../redux/actions/IncidentAction';
 import { useDispatch } from 'react-redux';
+import Select from "react-select";
+import { get_BloodType_Drp_Data } from '../../../../../redux/actions/DropDownsData';
+import ChangesModal from '../../../../Common/ChangesModal';
+import { PhoneFieldNotReq } from '../../../Agency/AgencyValidation/validators';
 
 const MedicalInformation = (props) => {
     const dispatch = useDispatch();
     const { DecMissPerID } = props
 
-    const navigate = useNavigate();
     const useQuery = () => {
         const params = new URLSearchParams(useLocation().search);
         return {
@@ -40,32 +39,76 @@ const MedicalInformation = (props) => {
 
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
     const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
+    const bloodTypeDrpData = useSelector((state) => state.DropDown.bloodTypeDrpData);
     const { setChangesStatus, get_MissingPerson_Count, GetDataTimeZone, datezone } = useContext(AgencyContext);
+    const agencyOfficerDrpData = useSelector((state) => state.DropDown.agencyOfficerDrpData);
+    const arresteeNameMissingData = useSelector((state) => state.DropDown.arresteeNameMissingData);
 
-    const [Medicaldata, setMedicaldata] = useState([])
     const [loginPinID, setloginPinID,] = useState('');
-    const [manimedical, setmanimedical] = useState('')
     const [loginAgencyID, setloginAgencyID] = useState('');
-    const [MedicalDtTm, setMedicalDtTm] = useState('')
-    const [Medicalid, setMedicalid] = useState('')
-    const [status, setStatus] = useState(false)
     const [Editval, setEditval] = useState();
-    const [clickedRow, setClickedRow] = useState(null);
-
     const [addUpdatePermission, setaddUpdatePermission] = useState();
-
-    const [value, setValue] = useState({
-        'MissingPersonID': '', 'Description': '', 'MedicalInformationDtTm': '', 'CreatedByUserFK': '',
-    })
+    const [statesChangeStatus, setStatesChangeStatus] = useState(false);
 
     const [errors, setErrors] = useState({
-        'MedicalInformationDtTmError': '', 'DescriptionError': ''
+        'TelephoneNumberError': '',
+        'OpticalTelephoneNumberError': '',
+        'AuthorizationTelephoneNumberError': '',
+        'AgencyTelephoneError': ''
+    });
+
+    const [value, setValue] = useState({
+        'MissingPersonID': '',
+        'Description': '',
+        'MedicalInformationDtTm': '',
+        'CreatedByUserFK': '',
+        // Medical Info
+        MedicalIsRecord: true,
+        MedicalIsIssues: true,
+        MedicalTypeIssues: '',
+        MedicalPrescription: '',
+        MissingPersonNameID: '',
+        dateOfBirth: "",
+        DateOfLastContact: "",
+        InvestigationAgency: '',
+        AgencyTelephone: '',
+        InvestigationOfficers: '',
+        xRaysAvailable: true,
+        BodyXrayWhere: '',
+        NameOfMedicalDoctor: '',
+        BloodTypeID: '',
+        TelephoneNumber: '',
+        StreetAdd: '',
+        CityStateZip: '',
+
+        // Optical
+        OpticalIsGlassesOrContact: true,
+        OpticalWhatKindGlassesOrContact: '',
+        OpticalWhatTypeOfFramGlasses: '',
+        OpticalPrescriptionRightEye: '',
+        OpticalPrescriptionLeftEye: '',
+        NameOfOpticion: '',
+        OpticalTelephoneNumber: '',
+        OpticalStreetAdd: '',
+        OpticalCityStateZip: '',
+
+        // Authorization to Release Medical Records
+        AuthorizationSignatureOfParent: '',
+        AuthorizationDate: "",
+        AuthorizationPrintedName: '',
+        AuthorizationRelationship: '',
+        AuthorizationTelephoneNumber: '',
+        AuthorizationStreetAdd: '',
+        AuthorizationCityStateZip: '',
+
+        // Internal Characteristics Coding Sheet
+        InternalCharacteristicsCodingSheet: '',
     })
-    const [statesChangeStatus, setStatesChangeStatus] = useState(false);
 
     useEffect(() => {
         if (localStoreData) {
-            setloginAgencyID(localStoreData?.AgencyID); setloginPinID(localStoreData?.PINID);
+            setloginAgencyID(localStoreData?.AgencyID);
+            setloginPinID(localStoreData?.PINID);
             GetDataTimeZone(localStoreData?.AgencyID);
             dispatch(get_ScreenPermissions_Data("M125", localStoreData?.AgencyID, localStoreData?.PINID));
             get_MissingPerson_Count(DecMissPerID, localStoreData?.PINID);
@@ -81,53 +124,68 @@ const MedicalInformation = (props) => {
         }
     }, [effectiveScreenPermission]);
 
-    const handleChange = (e) => {
-        !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-        if (e) {
-            const val = e.target.value;
-            const val1 = val?.split('')
-            if (val?.length <= 1 || val1[0] === ' ') {
-                setValue({ ...value, [e.target.name]: val?.trim() });
-                setErrors({ ...errors, ['DescriptionError']: '' })
-            } else {
-                setValue({ ...value, [e.target.name]: val });
-                setErrors({ ...errors, ['DescriptionError']: '' })
-            }
+    useEffect(() => {
+        if (loginAgencyID) {
+            setValue({ ...value, 'CreatedByUserFK': loginPinID, 'MissingPersonID': DecMissPerID });
         }
-        else { setValue({ ...value, [e.target.name]: null }); }
-    };
 
+        if (bloodTypeDrpData?.length === 0) { dispatch(get_BloodType_Drp_Data(loginAgencyID)) }
 
-    const check_Validation_Error = (e) => {
-        if (RequiredFieldIncident(value.MedicalInformationDtTm)) {
-            setErrors(prevValues => { return { ...prevValues, ['MedicalInformationDtTmError']: RequiredFieldIncident(value.MedicalInformationDtTm) } })
-        }
-        if (RequiredFieldIncident(value.Description)) {
-            setErrors(prevValues => { return { ...prevValues, ['DescriptionError']: RequiredFieldIncident(value.Description) } })
-        }
-    }
-
-    const { MedicalInformationDtTmError, DescriptionError } = errors
+    }, [loginAgencyID]);
 
     useEffect(() => {
-        if (MedicalInformationDtTmError === 'true' && DescriptionError === 'true') {
-            if (Medicalid && (MissPerSta === true || MissPerSta || 'true')) {
-                update_medicalInformation_data();
-            }
-            else {
-                insert_MedicalInformation_Data();
-            }
+        if (DecMissPerID) {
+            GetSingleData_MedicalInformation_Data(DecMissPerID);
         }
-    }, [MedicalInformationDtTmError, DescriptionError])
+    }, [DecMissPerID]);
 
 
     useEffect(() => {
         if (Editval) {
             setValue({
-                ...value, 'MissingPersonID': Editval[0]?.MissingPersonID, 'Description': Editval[0]?.Description, 'MedicalInformationDtTm': Editval[0]?.MedicalInformationDtTm,
-                'MedicalInformationID': Editval[0]?.MedicalInformationID, 'ModifiedByUserFK:': '',
+                ...value,
+                'MissingPersonID': Editval[0]?.MissingPersonID,
+                'Description': Editval[0]?.Description,
+                'MedicalInformationDtTm': Editval[0]?.MedicalInformationDtTm,
+                'MedicalInformationID': Editval[0]?.MedicalInformationID,
+                'ModifiedByUserFK:': '',
+                'MedicalIsRecord': Editval[0]?.MedicalIsRecord,
+                'MedicalIsIssues': Editval[0]?.MedicalIsIssues,
+                'MedicalTypeIssues': Editval[0]?.MedicalTypeIssues,
+                'MedicalPrescription': Editval[0]?.MedicalPrescription,
+                'MissingPersonNameID': arresteeNameMissingData?.filter((obj) => obj.value === Editval[0]?.MissingPersonNameID)[0]?.label || '',
+                'dateOfBirth': Editval[0]?.dateOfBirth ? new Date(Editval[0]?.dateOfBirth) : "",
+                'DateOfLastContact': Editval[0]?.DateOfLastContact ? new Date(Editval[0]?.DateOfLastContact) : "",
+                'InvestigationAgency': Editval[0]?.InvestigationAgency,
+                'AgencyTelephone': Editval[0]?.AgencyTelephone,
+                'InvestigationOfficers': Editval[0]?.InvestigationOfficers,
+                'xRaysAvailable': Editval[0]?.xRaysAvailable,
+                'BodyXrayWhere': Editval[0]?.BodyXrayWhere,
+                'NameOfMedicalDoctor': Editval[0]?.NameOfMedicalDoctor,
+                'BloodTypeID': Editval[0]?.BloodTypeID,
+                'TelephoneNumber': Editval[0]?.TelephoneNumber,
+                'StreetAdd': Editval[0]?.StreetAdd,
+                'CityStateZip': Editval[0]?.CityStateZip,
+                'OpticalIsGlassesOrContact': Editval[0]?.OpticalIsGlassesOrContact,
+                'OpticalWhatKindGlassesOrContact': Editval[0]?.OpticalWhatKindGlassesOrContact,
+                'OpticalWhatTypeOfFramGlasses': Editval[0]?.OpticalWhatTypeOfFramGlasses,
+                'OpticalPrescriptionRightEye': Editval[0]?.OpticalPrescriptionRightEye,
+                'OpticalPrescriptionLeftEye': Editval[0]?.OpticalPrescriptionLeftEye,
+                'NameOfOpticion': Editval[0]?.NameOfOpticion,
+                'OpticalTelephoneNumber': Editval[0]?.OpticalTelephoneNumber,
+                'OpticalStreetAdd': Editval[0]?.OpticalStreetAdd,
+                'OpticalCityStateZip': Editval[0]?.OpticalCityStateZip,
+                'AuthorizationSignatureOfParent': Editval[0]?.AuthorizationSignatureOfParent,
+                'AuthorizationDate': Editval[0]?.AuthorizationDate ? new Date(Editval[0]?.AuthorizationDate) : null,
+                'AuthorizationPrintedName': Editval[0]?.AuthorizationPrintedName,
+                'AuthorizationRelationship': Editval[0]?.AuthorizationRelationship,
+                'AuthorizationTelephoneNumber': Editval[0]?.AuthorizationTelephoneNumber,
+                'AuthorizationStreetAdd': Editval[0]?.AuthorizationStreetAdd,
+                'AuthorizationCityStateZip': Editval[0]?.AuthorizationCityStateZip,
+                'InternalCharacteristicsCodingSheet': Editval[0]?.InternalCharacteristicsCodingSheet,
+                'ModifiedByUserFK': loginPinID,
+                'CreatedByUserFK': loginPinID,
             })
-            setMedicalDtTm(Editval[0]?.MedicalInformationDtTm ? new Date(Editval[0]?.MedicalInformationDtTm) : '');
         } else {
             setValue({
                 ...value, 'MissingPersonID': '', 'Description': '', 'MedicalInformationDtTm': '', 'ModifiedByUserFK:': loginPinID,
@@ -135,68 +193,25 @@ const MedicalInformation = (props) => {
         }
     }, [Editval])
 
-
     const reset = () => {
-        setValue({ ...value, 'MedicalInformationDtTm': '', 'Description': '', });
-        setMedicalDtTm(''); setErrors({ ...errors, 'MedicalInformationDtTmError': '', 'DescriptionError': '' });
-        setMedicalid(''); setStatesChangeStatus(false);
+        setValue({});
+        setStatesChangeStatus(false);
+        setErrors({
+            'TelephoneNumberError': '',
+            'OpticalTelephoneNumberError': '',
+            'AuthorizationTelephoneNumberError': '',
+            'AgencyTelephoneError': ''
+        });
     }
 
-    useEffect(() => {
-        if (localStoreData) { setloginPinID(localStoreData?.PINID); }
-    }, [localStoreData]);
-
-    useEffect(() => {
-        if (loginAgencyID) {
-            setValue({ ...value, 'CreatedByUserFK': loginPinID, 'MissingPersonID': DecMissPerID });
-        }
-        get_MedicalInformation_Data()
-    }, [loginAgencyID]);
-
-    const get_MedicalInformation_Data = () => {
-        const val = { 'MissingPersonID': DecMissPerID }
-        fetchPostData('MedicalInformation/GetData_MedicalInformation', val)
-            .then((res) => {
-                if (res.length > 0) {
-                    setMedicaldata(res);
-                }
-                else { setMedicaldata([]) }
-            })
+    const setStatusFalse = () => {
+        reset();
+        setChangesStatus(false)
     }
-
-    const insert_MedicalInformation_Data = () => {
-        AddDeleteUpadate('MedicalInformation/Insert_MedicalInformation', value).then((res) => {
-            if (res.success) {
-                const parsedData = JSON.parse(res.data);
-                const message = parsedData.Table[0].Message;
-                toastifySuccess(message); get_MedicalInformation_Data(); setStatusFalse()
-                get_MissingPerson_Count(DecMissPerID, loginPinID); setStatus(true); setStatesChangeStatus(false);
-                setChangesStatus(false); setErrors({ ...errors, ['DescriptionError']: '' });
-            }
-        })
-    }
-
-    const Delete_MedicalInformation_Data = () => {
-        const val = { 'MedicalInformationID': Medicalid, 'DeletedByUserFK': loginPinID }
-        AddDeleteUpadate('MedicalInformation/Delete_MedicalInformation', val).then((res) => {
-            if (res) {
-                const parsedData = JSON.parse(res.data);
-                const message = parsedData.Table[0].Message;
-                toastifySuccess(message); get_MissingPerson_Count(DecMissPerID, loginPinID)
-                get_MedicalInformation_Data(); setStatusFalse(); setStatesChangeStatus(false);
-            } else console.log("Somthing Wrong");
-        })
-    }
-
-    useEffect(() => {
-        if (clickedRow?.MedicalInformationID && status) {
-            GetSingleData_MedicalInformation_Data(clickedRow?.MedicalInformationID);
-        }
-    }, [clickedRow, status]);
 
     const GetSingleData_MedicalInformation_Data = (ID) => {
-        const val = { 'MedicalInformationID': ID }
-        fetchPostData('MedicalInformation/GetSingleData_MedicalInformation', val)
+        const val = { 'MissingPersonID': ID }
+        fetchPostData('MissingPerson/Getsingal_MissingPerson', val)
             .then((res) => {
                 if (res.length > 0) {
                     setEditval(res);
@@ -207,193 +222,736 @@ const MedicalInformation = (props) => {
     }
 
     const update_medicalInformation_data = () => {
-        const { MedicalInformationDtTm, Description } = value;
-        const val = {
-            'MissingPersonID': DecMissPerID, 'MedicalInformationDtTm': MedicalInformationDtTm,
-            'Description': Description, 'ModifiedByUserFK': loginPinID, 'MedicalInformationID': Medicalid
-        }
-        AddDeleteUpadate('MedicalInformation/Update_MedicalInformation', val).then((res) => {
-            const parsedData = JSON.parse(res.data);
-            const message = parsedData.Table[0].Message;
-            toastifySuccess(message); get_MedicalInformation_Data(); setStatusFalse()
-            setStatesChangeStatus(false); setChangesStatus(false); setErrors({ ...errors, ['DescriptionError']: '' })
-        })
-    }
+        // Validate all phone fields first
+        let telephoneNumberErr = '';
+        let opticalTelephoneNumberErr = '';
+        let authorizationTelephoneNumberErr = '';
+        let hasErrors = false;
 
-    const conditionalRowStyles = [
-        {
-            when: row => row === clickedRow,
-            style: {
-                backgroundColor: '#001f3fbd', color: 'white', cursor: 'pointer',
-            },
-        },
-    ];
-
-    const setStatusFalse = () => {
-        setMedicalid(''); reset(); setClickedRow(null); setStatus(false); setChangesStatus(false)
-    }
-
-    const set_Edit_Value = (row) => {
-        if (row) {
-
-            setStatus(true); setErrors(''); setMedicalid(row?.MedicalInformationID);
-        }
-    }
-
-    const columns = [
-        {
-            name: 'Date/Time', selector: (row) => row.MedicalInformationDtTm ? getShowingDateText(row.MedicalInformationDtTm) : '', sortable: true
-        },
-        {
-            name: 'Description', selector: (row) => row.Description ? row.Description : '',
-            format: (row) => (<>{row?.Description ? row?.Description.substring(0, 70) : ''}{row?.Description?.length > 40 ? '  . . .' : null} </>),
-            sortable: true
-        },
-        {
-            name: <p className='text-end' style={{ position: 'absolute', top: 8, right: 10 }}>Delete</p>,
-            cell: row =>
-
-
-                <div className="div" style={{ position: 'absolute', top: 4, right: 10 }}>
-                    {
-                        effectiveScreenPermission ? effectiveScreenPermission[0]?.DeleteOK ?
-                            <span className="btn btn-sm bg-green text-white px-1 py-0 mr-1" onClick={() => { setMedicalid(row?.MedicalInformationID) }} data-toggle="modal" data-target="#DeleteModal">
-                                <i className="fa fa-trash"></i>
-                            </span>
-                            : <></>
-                            : <span className="btn btn-sm bg-green text-white px-1 py-0 mr-1" onClick={() => { setMedicalid(row?.MedicalInformationID) }} data-toggle="modal" data-target="#DeleteModal">
-                                <i className="fa fa-trash"></i>
-                            </span>
+        // Validate TelephoneNumber (Medical Doctor)
+        if (value.TelephoneNumber) {
+            telephoneNumberErr = PhoneFieldNotReq(value.TelephoneNumber);
+            if (telephoneNumberErr === 'true') {
+                // Validation passed
+                setErrors(prevValues => {
+                    return {
+                        ...prevValues,
+                        TelephoneNumberError: 'true'
                     }
-                </div>
-        }
-    ]
-
-
-    const filterTimeForDateZone = (time, datezone) => {
-        let currDate = new Date(MedicalDtTm);
-        let maxDate = new Date(datezone);
-        if (currDate.getDate() === maxDate.getDate() && currDate.getMonth() === maxDate.getMonth() && currDate.getFullYear() === maxDate.getFullYear()) {
-
-            const zoneDate = new Date(datezone);
-            const zoneHours = zoneDate.getHours();
-            const zoneMinutes = zoneDate.getMinutes();
-            const timeHours = time.getHours();
-            const timeMinutes = time.getMinutes();
-            if (timeHours > zoneHours || (timeHours === zoneHours && timeMinutes > zoneMinutes)) {
-                return false;
+                });
+            } else {
+                // Validation failed - has error message
+                setErrors(prevValues => {
+                    return {
+                        ...prevValues,
+                        TelephoneNumberError: telephoneNumberErr
+                    }
+                });
+                hasErrors = true;
             }
-            return true;
         } else {
-            return true;
+            // Empty field - no validation needed
+            setErrors(prevValues => {
+                return {
+                    ...prevValues,
+                    TelephoneNumberError: ''
+                }
+            });
+        }
+
+        // Validate OpticalTelephoneNumber
+        if (value.OpticalTelephoneNumber) {
+            opticalTelephoneNumberErr = PhoneFieldNotReq(value.OpticalTelephoneNumber);
+            if (opticalTelephoneNumberErr === 'true') {
+                // Validation passed
+                setErrors(prevValues => {
+                    return {
+                        ...prevValues,
+                        OpticalTelephoneNumberError: 'true'
+                    }
+                });
+            } else {
+                // Validation failed - has error message
+                setErrors(prevValues => {
+                    return {
+                        ...prevValues,
+                        OpticalTelephoneNumberError: opticalTelephoneNumberErr
+                    }
+                });
+                hasErrors = true;
+            }
+        } else {
+            // Empty field - no validation needed
+            setErrors(prevValues => {
+                return {
+                    ...prevValues,
+                    OpticalTelephoneNumberError: ''
+                }
+            });
+        }
+
+        // Validate AuthorizationTelephoneNumber
+        if (value.AuthorizationTelephoneNumber) {
+            authorizationTelephoneNumberErr = PhoneFieldNotReq(value.AuthorizationTelephoneNumber);
+            if (authorizationTelephoneNumberErr === 'true') {
+                // Validation passed
+                setErrors(prevValues => {
+                    return {
+                        ...prevValues,
+                        AuthorizationTelephoneNumberError: 'true'
+                    }
+                });
+            } else {
+                // Validation failed - has error message
+                setErrors(prevValues => {
+                    return {
+                        ...prevValues,
+                        AuthorizationTelephoneNumberError: authorizationTelephoneNumberErr
+                    }
+                });
+                hasErrors = true;
+            }
+        } else {
+            // Empty field - no validation needed
+            setErrors(prevValues => {
+                return {
+                    ...prevValues,
+                    AuthorizationTelephoneNumberError: ''
+                }
+            });
+        }
+
+        // Validate AgencyTelephone
+        let agencyTelephoneErr = '';
+        if (value.AgencyTelephone) {
+            agencyTelephoneErr = PhoneFieldNotReq(value.AgencyTelephone);
+            if (agencyTelephoneErr === 'true') {
+                // Validation passed
+                setErrors(prevValues => {
+                    return {
+                        ...prevValues,
+                        AgencyTelephoneError: 'true'
+                    }
+                });
+            } else {
+                // Validation failed - has error message
+                setErrors(prevValues => {
+                    return {
+                        ...prevValues,
+                        AgencyTelephoneError: agencyTelephoneErr
+                    }
+                });
+                hasErrors = true;
+            }
+        } else {
+            // Empty field - no validation needed
+            setErrors(prevValues => {
+                return {
+                    ...prevValues,
+                    AgencyTelephoneError: ''
+                }
+            });
+        }
+
+        // If no errors, proceed with save
+        if (!hasErrors) {
+            const { MissingPersonNameID, ...val } = value || {};
+            AddDeleteUpadate('MissingPerson/MedicalDetails_Update', val).then((res) => {
+                const parsedData = JSON.parse(res.data);
+                const message = parsedData.Table[0].Message;
+                toastifySuccess(message);
+                GetSingleData_MedicalInformation_Data(DecMissPerID);
+                setStatusFalse()
+                setStatesChangeStatus(false);
+                setChangesStatus(false);
+            })
+        }
+    }
+
+
+
+
+    const handleInputChange = (e) => {
+        !addUpdatePermission && setStatesChangeStatus(true);
+        !addUpdatePermission && setChangesStatus(true);
+        const { name, value, type, checked } = e.target;
+
+        if (name === 'TelephoneNumber' || name === 'OpticalTelephoneNumber' || name === 'AuthorizationTelephoneNumber' || name === 'AgencyTelephone') {
+            // Format phone number as XXX-XXX-XXXX
+            let ele = value.replace(/\D/g, '');
+            if (ele.length === 10) {
+                const cleaned = ('' + ele).replace(/\D/g, '');
+                const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+                if (match) {
+                    setValue(prev => ({ ...prev, [name]: match[1] + '-' + match[2] + '-' + match[3] }));
+                    setErrors(prev => ({ ...prev, [name + 'Error']: '' }));
+                }
+            } else {
+                ele = value.split('-').join('').replace(/\D/g, '');
+                setValue(prev => ({ ...prev, [name]: ele }));
+                setErrors(prev => ({ ...prev, [name + 'Error']: '' }));
+            }
+        } else {
+            setValue(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
         }
     };
+
+    const handleDateChange = (date, name) => {
+        !addUpdatePermission && setStatesChangeStatus(true);
+        !addUpdatePermission && setChangesStatus(true);
+        setValue(prev => ({ ...prev, [name]: date ? new Date(date) : null }));
+    };
+
+    const handleDropDownChange = (e, name) => {
+        !addUpdatePermission && setStatesChangeStatus(true);
+        !addUpdatePermission && setChangesStatus(true);
+        if (e) {
+            setValue({ ...value, [name]: e.value })
+        } else if (e === null) {
+            setValue({ ...value, [name]: null })
+        } else {
+            setValue({ ...value, [name]: null })
+        }
+    }
 
 
     return (
         <>
-            <fieldset className='mt-2'>
-                <legend>Medical Info</legend>
-                <div className="col-12 ">
-                    <div className="row">
-                        <div className="col-2 col-md-2 col-lg-1 mt-2 pt-1">
-                            <label htmlFor="" className='new-label'>Date/Time {errors.MedicalInformationDtTmError !== 'true' ? (
-                                <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.MedicalInformationDtTmError}</p>
-                            ) : null}</label>
+            <div className="col-12  child" >
+                {/* Detailed Medical Information UI (per mock) */}
+                <fieldset className='mt-2'>
+                    <legend>Medical Info</legend>
+                    <div className="col-12">
+                        <div className="row align-items-center">
+                            <div className="col-6 col-md-4 col-lg-3 mt-2">
+                                <div className="d-flex align-items-center">
+                                    <label className='new-label mr-2 mb-0 text-right' style={{ minWidth: '160px', flexShrink: 0 }}>Medical Records Available?</label>
+                                    <div className='d-flex align-items-center'>
+                                        <input type='radio' name='MedicalIsRecord' checked={!!value.MedicalIsRecord} onChange={(e) => {
+                                            setValue(prev => ({ ...prev, MedicalIsRecord: true }));
+                                            !addUpdatePermission && setStatesChangeStatus(true);
+                                            !addUpdatePermission && setChangesStatus(true);
+                                        }} className='mr-1' />
+                                        <span className='mr-2'>Yes</span>
+                                        <input type='radio' name='MedicalIsRecord' checked={!value.MedicalIsRecord} onChange={(e) => {
+                                            setValue(prev => ({ ...prev, MedicalIsRecord: false }));
+                                            !addUpdatePermission && setStatesChangeStatus(true);
+                                            !addUpdatePermission && setChangesStatus(true);
+                                        }} className='mr-1' />
+                                        <span>No</span>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
-                        <div className="col-4 col-md-4 col-lg-3  ">
-                            <DatePicker
-                                id="MedicalInformationDtTm"
-                                name='MedicalInformationDtTm'
-                                dateFormat="MM/dd/yyyy HH:mm"
-                                timeFormat="HH:mm "
-                                is24Hour
-                                maxDate={new Date(datezone)}
-                                className='requiredColor'
-                                timeInputLabel
-                                showTimeSelect
-                                timeIntervals={1}
-                                timeCaption="Time"
-                                showMonthDropdown
-                                showYearDropdown
-                                dropdownMode="select"
-                                showDisabledMonthNavigation
-                                autoComplete='off'
-                                placeholderText='Select...'
-                                filterTime={(time) => filterTimeForDateZone(time, datezone)}
-                                selected={MedicalDtTm}
-                                onChange={(date) => {
-                                    let currDate = new Date(date);
-                                    let prevDate = new Date(MedicalDtTm);
-                                    let maxDate = new Date(datezone)
-                                    if (((currDate.getDate() === maxDate.getDate() && currDate.getMonth() === maxDate.getMonth() && currDate.getFullYear() === maxDate.getFullYear()) && !(currDate.getDate() === prevDate.getDate() && currDate.getMonth() === prevDate.getMonth() && currDate.getFullYear() === prevDate.getFullYear())
-                                    ) || (currDate.getTime() > maxDate.getTime())) {
-                                        setValue({ ...value, ['MedicalInformationDtTm']: maxDate ? getShowingMonthDateYear(maxDate) : null });
-                                        setMedicalDtTm(maxDate); setErrors({ ...errors, ['MedicalInformationDtTmError']: '' });
-                                    }
-                                    else {
-                                        setValue({ ...value, ['MedicalInformationDtTm']: date ? getShowingMonthDateYear(date) : null });
-                                        setMedicalDtTm(date); setErrors({ ...errors, ['MedicalInformationDtTmError']: '' });
-                                    }
-                                    !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-                                }}
-                                onKeyDown={(e) => {
-                                    if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
-                                        e?.preventDefault();
-                                    }
-                                }}
-                                isClearable={MedicalDtTm ? true : false}
-                            />
+                        <div className="row align-items-center">
+
+                            <div className="col-2 col-md-4 col-lg-3 mt-2">
+                                <div className="d-flex align-items-center">
+                                    <label className='new-label mr-2 mb-0 text-right' style={{ minWidth: '160px', flexShrink: 0 }}>Medical Issues?</label>
+                                    <div className='d-flex align-items-center'>
+                                        <input type='radio' name='MedicalIsIssues' checked={!!value.MedicalIsIssues} onChange={(e) => {
+                                            setValue(prev => ({
+                                                ...prev,
+                                                MedicalIsIssues: true,
+                                                MedicalTypeIssues: prev.MedicalTypeIssues,
+                                                MedicalPrescription: prev.MedicalPrescription
+                                            }));
+                                            !addUpdatePermission && setStatesChangeStatus(true);
+                                            !addUpdatePermission && setChangesStatus(true);
+                                        }} className='mr-1' />
+                                        <span className='mr-2'>Yes</span>
+                                        <input type='radio' name='MedicalIsIssues' checked={!value.MedicalIsIssues} onChange={(e) => {
+                                            setValue(prev => ({
+                                                ...prev,
+                                                MedicalIsIssues: false,
+                                                MedicalTypeIssues: '',
+                                                MedicalPrescription: ''
+                                            }));
+                                            !addUpdatePermission && setStatesChangeStatus(true);
+                                            !addUpdatePermission && setChangesStatus(true);
+                                        }} className='mr-1' />
+                                        <span>No</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-5 col-md-4 col-lg-4 mt-2">
+                                <div className="d-flex align-items-center">
+                                    <label className='new-label mr-2 mb-0 text-nowrap'>If "Yes," Type of Issue?</label>
+                                    <input
+                                        type='text'
+                                        name='MedicalTypeIssues'
+                                        value={value.MedicalTypeIssues}
+                                        onChange={handleInputChange}
+                                        className='form-control'
+                                        disabled={!value.MedicalIsIssues}
+                                        placeholder=''
+                                    />
+                                </div>
+                            </div>
+                            <div className="col-5 col-md-4 col-lg-5 mt-2">
+                                <div className="d-flex align-items-center">
+                                    <label className='new-label mr-2 mb-0'>Prescription</label>
+                                    <input
+                                        type='text'
+                                        name='MedicalPrescription'
+                                        value={value.MedicalPrescription}
+                                        onChange={handleInputChange}
+                                        className='form-control'
+                                        disabled={!value.MedicalIsIssues}
+                                        placeholder=''
+                                    />
+                                </div>
+                            </div>
                         </div>
-                        <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
-                            <label htmlFor="" className='new-label'>Medical Description {errors.DescriptionError !== 'true' ? (
-                                <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.DescriptionError}</p>
-                            ) : null}</label>
+
+                        <div className='row mt-2 align-items-center'>
+                            <div className="col-6 col-md-5 col-lg-4">
+
+                                <div className="d-flex align-items-center">
+                                    <label className='new-label mr-2 mb-0 text-nowrap text-right' style={{ minWidth: '160px', flexShrink: 0 }}>Missing Person's Name</label>
+                                    <input type='text' name='MissingPersonNameID'
+                                        value={value.MissingPersonNameID}
+                                        readOnly
+                                        className='form-control' placeholder='' />
+                                </div>
+                            </div>
+                            <div className="col-1 col-md-1 col-lg-1 " >
+                                <label className='new-label right-align text-right mb-0'>Date of Birth</label>
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-3">
+                                <div className="d-flex align-items-center">
+                                    <DatePicker
+                                        name="dateOfBirth"
+                                        id="dateOfBirth"
+                                        className="form-control"
+                                        onChange={(date) => handleDateChange(date, 'dateOfBirth')}
+                                        selected={value.dateOfBirth ? value.dateOfBirth && new Date(value.dateOfBirth) : null}
+                                        dateFormat="MM/dd/yyyy"
+                                        isClearable={!!value.dateOfBirth}
+                                        showMonthDropdown
+                                        showYearDropdown
+                                        dropdownMode="select"
+                                        autoComplete="off"
+                                        placeholderText="Select..."
+                                        maxDate={new Date(datezone)}
+                                    />
+                                </div>
+                            </div>
+                            <div className="col-1 col-md-1 col-lg-1 d-flex justify-content-center" >
+                                <label className='new-label right-align text-right mb-0'>Date of Last Contact</label>
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-3">
+                                <div className="d-flex align-items-center">
+                                    <DatePicker
+                                        name="DateOfLastContact"
+                                        id="DateOfLastContact"
+                                        className="form-control"
+                                        onChange={(date) => handleDateChange(date, 'DateOfLastContact')}
+                                        selected={value.DateOfLastContact ? value.DateOfLastContact && new Date(value.DateOfLastContact) : null}
+                                        dateFormat="MM/dd/yyyy"
+                                        isClearable={!!value.DateOfLastContact}
+                                        showMonthDropdown
+                                        showYearDropdown
+                                        dropdownMode="select"
+                                        autoComplete="off"
+                                        placeholderText=""
+                                        maxDate={new Date(datezone)}
+                                    />
+                                </div>
+                            </div>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-6  ">
-                            <textarea name='Description' id="Description" cols="30" maxLength={1000} rows='2' className="form-control pt-2 pb-2 requiredColor" onChange={handleChange} value={value.Description} ></textarea>
+
+                        <div className='row mt-2 align-items-center'>
+                            <div className="col-6 col-md-4 col-lg-4">
+                                <div className="d-flex align-items-center">
+                                    <label className='new-label mr-2 mb-0 text-nowrap text-right' style={{ minWidth: '160px', flexShrink: 0 }}>Investigation Agency</label>
+                                    <input type='text' name='InvestigationAgency' value={value.InvestigationAgency} onChange={handleInputChange} className='form-control' placeholder='' />
+                                </div>
+                            </div>
+                            <div className="col-1 col-md-1 col-lg-1" >
+                                <label className='new-label right-align text-right mb-0'>Agency Telephone #
+                                    {errors.AgencyTelephoneError && errors.AgencyTelephoneError !== 'true' ? (
+                                        <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.AgencyTelephoneError}</p>
+                                    ) : null}
+                                </label>
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-3">
+                                <div className="d-flex align-items-center">
+                                    <input type='text' name='AgencyTelephone' value={value.AgencyTelephone} onChange={handleInputChange} className={errors.AgencyTelephoneError && errors.AgencyTelephoneError !== 'true' ? 'form-control requiredColor' : 'form-control'} placeholder='' maxLength={10} />
+                                </div>
+                            </div>
+                            <div className="col-4 col-md-4 col-lg-4">
+                                <div className="d-flex align-items-center">
+                                    <label className='new-label mr-2 mb-0 text-nowrap'>Investigation Officers</label>
+                                    {/* <input type='text' name='InvestigationOfficers' value={value.InvestigationOfficers} onChange={handleInputChange} className='form-control' placeholder='Select' /> */}
+                                    <Select
+                                        name='InvestigationOfficers'
+                                        styles={colourStyles}
+                                        value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.InvestigationOfficers)}
+                                        isClearable
+                                        options={agencyOfficerDrpData}
+                                        onChange={(e) => handleDropDownChange(e, 'InvestigationOfficers')}
+                                        placeholder="Select..."
+                                        className='w-100'
+                                    />
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                        <div className='row mt-2 align-items-center'>
+
+                            <div className="col-6 col-md-6 col-lg-4">
+                                <div className="d-flex align-items-center">
+                                    <label className='new-label mr-2 mb-0 text-nowrap text-right' style={{ minWidth: '160px', flexShrink: 0 }}>Are body X-rays Available?</label>
+                                    <div className='d-flex align-items-center'>
+                                        <input type='radio' name='xRaysAvailable' checked={!!value.xRaysAvailable} onChange={(e) => {
+                                            setValue(prev => ({
+                                                ...prev,
+                                                xRaysAvailable: true,
+                                                BodyXrayWhere: prev.BodyXrayWhere
+                                            }));
+                                            !addUpdatePermission && setStatesChangeStatus(true);
+                                            !addUpdatePermission && setChangesStatus(true);
+                                        }} className='mr-1' />
+                                        <span className='mr-2'>Yes</span>
+                                        <input type='radio' name='xRaysAvailable' checked={!value.xRaysAvailable} onChange={(e) => {
+                                            setValue(prev => ({
+                                                ...prev,
+                                                xRaysAvailable: false,
+                                                BodyXrayWhere: ''
+                                            }));
+                                            !addUpdatePermission && setStatesChangeStatus(true);
+                                            !addUpdatePermission && setChangesStatus(true);
+                                        }} className='mr-1' />
+                                        <span>No</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-1 " >
+                                <label className='new-label right-align text-right mb-0'>Where?</label>
+                            </div>
+                            <div className="col-4 col-md-4 col-lg-7">
+                                <div className="d-flex align-items-center">
+                                    <input
+                                        type='text'
+                                        name='BodyXrayWhere'
+                                        value={value.BodyXrayWhere}
+                                        onChange={handleInputChange}
+                                        className='form-control'
+                                        disabled={!value.xRaysAvailable}
+                                        placeholder=''
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div className='row mt-2 align-items-center'>
+                            <div className="col-6 col-md-4 col-lg-4">
+                                <div className="d-flex align-items-center">
+                                    <label className='new-label mr-2 mb-0 text-nowrap text-right' style={{ minWidth: '160px', flexShrink: 0 }}>Name of Medical Doctor</label>
+                                    <input type='text' name='NameOfMedicalDoctor' value={value.NameOfMedicalDoctor} onChange={handleInputChange} className='form-control' placeholder='' />
+                                </div>
+                            </div>
+                            <div className="col-1 col-md-1 col-lg-1 " >
+                                <label className='new-label right-align text-right mb-0'>Blood Type</label>
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-3">
+                                <div className="d-flex align-items-center">
+                                    <Select
+                                        styles={customStylesWithOutColor}
+                                        name="BloodTypeID"
+                                        value={bloodTypeDrpData?.filter((obj) => obj.value === value?.BloodTypeID)}
+                                        options={bloodTypeDrpData}
+                                        onChange={(e) => { handleDropDownChange(e, 'BloodTypeID') }}
+
+                                        isClearable
+                                        placeholder="Select..."
+                                        className='w-100'
+                                    />
+
+                                </div>
+                            </div>
+
+                            <div className="col-1 col-md-1 col-lg-1 " >
+                                <label className='new-label right-align text-right mb-0'>Telephone Number
+                                    {errors.TelephoneNumberError && errors.TelephoneNumberError !== 'true' ? (
+                                        <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.TelephoneNumberError}</p>
+                                    ) : null}
+                                </label>
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-3">
+                                <div className="d-flex align-items-center">
+                                    <input type='text' name='TelephoneNumber' value={value.TelephoneNumber} onChange={handleInputChange} className={errors.TelephoneNumberError && errors.TelephoneNumberError !== 'true' ? 'form-control requiredColor' : 'form-control'} placeholder='' maxLength={10} />
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div className='row mt-2 align-items-center'>
+                            <div className="col-8 col-md-8 col-lg-8">
+                                <div className="d-flex align-items-center">
+                                    <label className='new-label mr-2 mb-0 text-nowrap text-right' style={{ minWidth: '160px', flexShrink: 0 }}>Street Address</label>
+                                    <input type='text' name='StreetAdd' value={value.StreetAdd} onChange={handleInputChange} className='form-control' placeholder='' />
+                                </div>
+                            </div>
+                            <div className="col-1 col-md-1 col-lg-1 " >
+                                <label className='new-label right-align text-right mb-0'>City, State, Zip</label>
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-3">
+                                <div className="d-flex align-items-center">
+                                    <input type='text' name='CityStateZip' value={value.CityStateZip} onChange={handleInputChange} className='form-control' placeholder='' />
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </fieldset>
+                </fieldset>
 
-            <div className="col-12 text-right mt-2 p-0">
-                <button type="button" className="btn btn-sm btn-success  mr-1" onClick={() => { setStatusFalse(); }}  >New</button>
-                {
-                    Medicalid && status === true ?
+                <fieldset className='mt-2'>
+                    <legend>Optical</legend>
+                    <div className='col-12'>
+                        <div className='row align-items-center'>
+                            <div className='col-6 col-md-3 col-lg-3 mt-2'>
+                                <div className="d-flex align-items-center">
+                                    <label className='new-label mr-2 mb-0 text-nowrap text-right' style={{ minWidth: '160px', flexShrink: 0 }}>Glasses or Contact Lenses?</label>
+                                    <div className='d-flex align-items-center'>
+                                        <input type='radio' name='OpticalIsGlassesOrContact' checked={!!value.OpticalIsGlassesOrContact} onChange={(e) => {
+                                            setValue(prev => ({
+                                                ...prev,
+                                                OpticalIsGlassesOrContact: true,
+                                                OpticalWhatKindGlassesOrContact: prev.OpticalWhatKindGlassesOrContact,
+                                                OpticalWhatTypeOfFramGlasses: prev.OpticalWhatTypeOfFramGlasses
+                                            }));
+                                            !addUpdatePermission && setStatesChangeStatus(true);
+                                            !addUpdatePermission && setChangesStatus(true);
+                                        }} className='mr-1' />
+                                        <span className='mr-2'>Yes</span>
+                                        <input type='radio' name='OpticalIsGlassesOrContact' checked={!value.OpticalIsGlassesOrContact} onChange={(e) => {
+                                            setValue(prev => ({
+                                                ...prev,
+                                                OpticalIsGlassesOrContact: false,
+                                                OpticalWhatKindGlassesOrContact: '',
+                                                OpticalWhatTypeOfFramGlasses: ''
+                                            }));
+                                            !addUpdatePermission && setStatesChangeStatus(true);
+                                            !addUpdatePermission && setChangesStatus(true);
+                                        }} className='mr-1' />
+                                        <span>No</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='col-6 col-md-4 col-lg-4 mt-2'>
+                                <div className="d-flex align-items-center">
+                                    <label className='new-label mr-2 mb-0 text-nowrap'>If contact lenses, what kind?</label>
+                                    <input
+                                        type='text'
+                                        name='OpticalWhatKindGlassesOrContact'
+                                        value={value.OpticalWhatKindGlassesOrContact}
+                                        onChange={handleInputChange}
+                                        className='form-control'
+                                        disabled={!value.OpticalIsGlassesOrContact}
+                                        placeholder=''
+                                    />
+                                </div>
+                            </div>
+                            <div className='col-6 col-md-5 col-lg-5 mt-2'>
+                                <div className="d-flex align-items-center">
+                                    <label className='new-label mr-2 mb-0 text-nowrap'>If glasses, what type of frame?</label>
+                                    <input
+                                        type='text'
+                                        name='OpticalWhatTypeOfFramGlasses'
+                                        value={value.OpticalWhatTypeOfFramGlasses}
+                                        onChange={handleInputChange}
+                                        className='form-control'
+                                        disabled={!value.OpticalIsGlassesOrContact}
+                                        placeholder=''
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className='row mt-2 align-items-center'>
+                            <div className='col-6 col-md-6 col-lg-6'>
+                                <div className="d-flex align-items-center">
+                                    <label className='new-label mr-2 mb-0 text-nowrap text-right' style={{ minWidth: '160px', flexShrink: 0 }}>Prescription: Right Eye</label>
+                                    <input type='text' name='OpticalPrescriptionRightEye' value={value.OpticalPrescriptionRightEye} onChange={handleInputChange} className='form-control' placeholder='' />
+                                </div>
+                            </div>
+                            <div className='col-6 col-md-6 col-lg-6'>
+                                <div className="d-flex align-items-center">
+                                    <label className='new-label mr-2 mb-0 text-nowrap'>Prescription: Left Eye</label>
+                                    <input type='text' name='OpticalPrescriptionLeftEye' value={value.OpticalPrescriptionLeftEye} onChange={handleInputChange} className='form-control' placeholder='' />
+                                </div>
+                            </div>
+
+                        </div>
+                        <div className='row mt-2 align-items-center'>
+                            <div className='col-6 col-md-8 col-lg-8'>
+                                <div className="d-flex align-items-center">
+                                    <label className='new-label mr-2 mb-0 text-nowrap text-right' style={{ minWidth: '160px', flexShrink: 0 }}>Name of Optician, Optometrist, or Ophthalmologist</label>
+                                    <input type='text' name='NameOfOpticion' value={value.NameOfOpticion} onChange={handleInputChange} className='form-control' placeholder='' />
+                                </div>
+                            </div>
+                            <div className="col-1 col-md-1 col-lg-1" >
+                                <label className='new-label right-align text-right mb-0'>Telephone Number
+                                    {errors.OpticalTelephoneNumberError && errors.OpticalTelephoneNumberError !== 'true' ? (
+                                        <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.OpticalTelephoneNumberError}</p>
+                                    ) : null}
+                                </label>
+                            </div>
+                            <div className='col-5 col-md-3 col-lg-3'>
+                                <div className="d-flex align-items-center">
+
+                                    <input type='text' name='OpticalTelephoneNumber' value={value.OpticalTelephoneNumber} onChange={handleInputChange} className={errors.OpticalTelephoneNumberError && errors.OpticalTelephoneNumberError !== 'true' ? 'form-control requiredColor' : 'form-control'} placeholder='' maxLength={10} />
+                                </div>
+                            </div>
+
+                        </div>
+                        <div className='row mt-2 align-items-center'>
+
+                            <div className='col-6 col-md-8 col-lg-8'>
+                                <div className="d-flex align-items-center">
+                                    <label className='new-label mr-2 mb-0 text-nowrap text-right' style={{ minWidth: '160px', flexShrink: 0 }}>Street Address</label>
+                                    <input type='text' name='OpticalStreetAdd' value={value.OpticalStreetAdd} onChange={handleInputChange} className='form-control' placeholder='' />
+                                </div>
+                            </div>
+                            <div className="col-1 col-md-1 col-lg-1" >
+                                <label className='new-label right-align text-right mb-0'>City, State, Zip</label>
+                            </div>
+                            <div className='col-5 col-md-2 col-lg-3'>
+                                <div className="d-flex align-items-center">
+                                    <input type='text' name='OpticalCityStateZip' value={value.OpticalCityStateZip} onChange={handleInputChange} className='form-control' placeholder='' />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset className='mt-2'>
+                    <legend>Authorization to Release Medical Records</legend>
+                    <div className='col-12'>
+                        <div className='row align-items-center'>
+                            <div className='col-6 col-md-8 col-lg-8 mt-2'>
+                                <div className="d-flex align-items-center">
+                                    <label className='new-label mr-2 mb-0 text-nowrap text-right' style={{ minWidth: '160px', flexShrink: 0 }}>Signature of Parent/Legal Guardian/Next of Kin</label>
+                                    <input type='text' name='AuthorizationSignatureOfParent' value={value.AuthorizationSignatureOfParent} onChange={handleInputChange} className='form-control' placeholder='' />
+                                </div>
+                            </div>
+                            <div className="col-1 col-md-1 col-lg-1 " >
+                                <label className='new-label right-align text-right mb-0'>Date</label>
+                            </div>
+
+                            <div className='col-5 col-md-3 col-lg-3 mt-2'>
+                                <div className="d-flex align-items-center">
+
+                                    {/* <DatePicker
+                                    selected={value.AuthorizationDate}
+                                    onChange={(date) => setValue(prev => ({ ...prev, AuthorizationDate: date }))}
+                                    className='form-control'
+                                    placeholderText='Select'
+                                    showMonthDropdown
+                                    showYearDropdown
+                                    dropdownMode='select'
+                                /> */}
+                                    <DatePicker
+                                        name="AuthorizationDate"
+                                        id="AuthorizationDate"
+                                        className="form-control"
+                                        onChange={(date) => handleDateChange(date, 'AuthorizationDate')}
+                                        selected={value.AuthorizationDate ? value.AuthorizationDate && new Date(value.AuthorizationDate) : null}
+                                        dateFormat="MM/dd/yyyy"
+                                        isClearable={!!value.AuthorizationDate}
+                                        showMonthDropdown
+                                        showYearDropdown
+                                        dropdownMode="select"
+                                        autoComplete="off"
+                                        placeholderText="Select..."
+                                        minDate={new Date(datezone)}
+                                    />
+
+                                </div>
+                            </div>
+                        </div>
+                        <div className='row mt-2 align-items-center'>
+                            <div className='col-6 col-md-4 col-lg-4'>
+                                <div className="d-flex align-items-center">
+                                    <label className='new-label mr-2 mb-0 text-nowrap text-right' style={{ minWidth: '160px', flexShrink: 0 }}>Printed Name</label>
+                                    <input type='text' name='AuthorizationPrintedName' value={value.AuthorizationPrintedName} onChange={handleInputChange} className='form-control' placeholder='' />
+                                </div>
+                            </div>
+                            <div className='col-6 col-md-4 col-lg-4'>
+                                <div className="d-flex align-items-center">
+                                    <label className='new-label mr-2 mb-0 text-nowrap'>Relationship</label>
+                                    <input type='text' name='AuthorizationRelationship' value={value.AuthorizationRelationship} onChange={handleInputChange} className='form-control' placeholder='' />
+                                </div>
+                            </div>
+                            <div className="col-1 col-md-1 col-lg-1 " >
+                                <label className='new-label right-align text-right mb-0'>Telephone Number
+                                    {errors.AuthorizationTelephoneNumberError && errors.AuthorizationTelephoneNumberError !== 'true' ? (
+                                        <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.AuthorizationTelephoneNumberError}</p>
+                                    ) : null}
+                                </label>
+                            </div>
+
+
+                            <div className='col-5 col-md-3 col-lg-3'>
+                                <div className="d-flex align-items-center">
+
+                                    <input type='text' name='AuthorizationTelephoneNumber' value={value.AuthorizationTelephoneNumber} onChange={handleInputChange} className={errors.AuthorizationTelephoneNumberError && errors.AuthorizationTelephoneNumberError !== 'true' ? 'form-control requiredColor' : 'form-control'} placeholder='' maxLength={10} />
+                                </div>
+                            </div>
+
+                        </div>
+                        <div className='row mt-2 align-items-center'>
+                            <div className='col-6 col-md-8 col-lg-8'>
+                                <div className="d-flex align-items-center">
+                                    <label className='new-label mr-2 mb-0 text-nowrap text-right' style={{ minWidth: '160px', flexShrink: 0 }}>Street Address</label>
+                                    <input type='text' name='AuthorizationStreetAdd' value={value.AuthorizationStreetAdd} onChange={handleInputChange} className='form-control' placeholder='' />
+                                </div>
+                            </div>
+                            <div className="col-1 col-md-1 col-lg-1 " >
+                                <label className='new-label right-align text-right'>City, State, Zip</label>
+                            </div>
+                            <div className='col-5 col-md-3 col-lg-3'>
+                                <div className="d-flex align-items-center">
+                                    <input type='text' name='AuthorizationCityStateZip' value={value.AuthorizationCityStateZip} onChange={handleInputChange} className='form-control' placeholder='' />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset className='mt-2'>
+                    <legend>Internal Characteristics Coding Sheet</legend>
+                    <div className='col-12'>
+                        <div className='row'>
+                            <div className='col-12'>
+
+                                <label className='new-label mr-2 my-2'>This sheet may be used by the next of kin or physician to list or describe additional characteristics that may not be readily visible, such as surgical procedures and missing organs. Information documented on this sheet should be coded by the NCIC operator and added to the missing person record.</label>
+                                <textarea
+                                    name='InternalCharacteristicsCodingSheet'
+                                    value={value.InternalCharacteristicsCodingSheet}
+                                    onChange={handleInputChange}
+                                    className='form-control'
+                                    rows='4'
+                                    placeholder=''
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <div className="col-12 text-right mt-2 p-0">
+                    {
                         effectiveScreenPermission ? effectiveScreenPermission[0]?.Changeok ?
-                            <button type="button" className="btn btn-sm btn-success  mr-1" disabled={!statesChangeStatus} onClick={() => { check_Validation_Error(); }}  >Update</button>
+                            <button type="button" className="btn btn-sm btn-success  mr-4" disabled={!statesChangeStatus} onClick={() => { update_medicalInformation_data(); }} >Update</button>
                             : <></> :
-                            <button type="button" className="btn btn-sm btn-success  mr-1" disabled={!statesChangeStatus} onClick={() => { check_Validation_Error(); }}  >Update</button>
-                        :
-                        effectiveScreenPermission ? effectiveScreenPermission[0]?.AddOK ?
-                            <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => { check_Validation_Error(); }}  >Save</button>
-                            : <></> :
-                            <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => { check_Validation_Error(); }}  >Save</button>
-                }
+                            <button type="button" className="btn btn-sm btn-success  mr-4" disabled={!statesChangeStatus} onClick={() => { update_medicalInformation_data(); }} >Update</button>
+                    }
+                </div>
+
+                <ChangesModal func={update_medicalInformation_data} setToReset={reset} />
             </div>
-            <div className="col-12 mt-2">
-                <DataTable
-                    dense
-                    data={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? Medicaldata : [] : Medicaldata}
-                    columns={columns}
-                    selectableRowsHighlight
-                    highlightOnHover
-                    responsive
-                    fixedHeader
-                    conditionalRowStyles={conditionalRowStyles}
-                    onRowClicked={(row) => { set_Edit_Value(row); setClickedRow(row); setStatesChangeStatus(false); }}
-                    persistTableHead={true}
-                    customStyles={tableCustomStyles}
-                    pagination
-                    paginationPerPage={'10'}
-                    paginationRowsPerPageOptions={[10, 15, 20, 50]}
-                    fixedHeaderScrollHeight='300px'
-                    noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : 'There are no data to display'}
-                />
-            </div>
-            <DeletePopUpModal func={Delete_MedicalInformation_Data} />
-            <ChangesModal func={check_Validation_Error} />
         </>
     )
 }

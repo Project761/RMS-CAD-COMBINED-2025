@@ -7,7 +7,7 @@ import Tooltip from "../../Common/Tooltip";
 import NcicServices from "../../../CADServices/APIs/ncic";
 
 
-function ResponseSection({ ncicResponseData, loginAgencyID, tabState }) {
+function ResponseSection({ ncicResponseData, loginAgencyID, tabState, setResponseSectionData }) {
   const [
     responseSectionState,
     setResponseSectionState,
@@ -60,6 +60,7 @@ function ResponseSection({ ncicResponseData, loginAgencyID, tabState }) {
     const res = await NcicServices.getNCICParsedResponse(payload);
     if (res) {
       setSummaryData(res?.data);
+      setResponseSectionData(res?.data);
       setViewSummary(true);
     }
     const payloadSummary = {
@@ -157,6 +158,17 @@ function ResponseSection({ ncicResponseData, loginAgencyID, tabState }) {
       sortFunction: (rowA, rowB) => compareStrings(rowA.ResponseType, rowB.ResponseType),
       width: "130px",
     },
+  ];
+
+  const conditionalRowStyles = [
+    {
+      when: row => row?.hit === true,
+      style: {
+        color: 'red',
+        backgroundColor: 'darkorange',
+        cursor: 'pointer',
+      },
+    }
   ];
 
   return (
@@ -673,6 +685,7 @@ function ResponseSection({ ncicResponseData, loginAgencyID, tabState }) {
           selectableRowsHighlight
           noDataComponent={ncicResponseData?.length > 0 ? "There are no data to display" : 'There are no data to display'}
           fixedHeaderScrollHeight="190px"
+          // conditionalRowStyles={conditionalRowStyles}
           persistTableHead={true}
         />
       </div>

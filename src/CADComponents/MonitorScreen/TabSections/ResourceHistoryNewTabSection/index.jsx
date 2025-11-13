@@ -7,12 +7,13 @@ import MonitorServices from '../../../../CADServices/APIs/monitor'
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import Tooltip from "../../../Common/Tooltip";
+import { ScreenPermision } from "../../../../Components/hooks/Api";
 
 const ResourceHistoryTabSection = ({ isRMS = false }) => {
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
   const [filterListData, setFilterListData] = useState([]);
   const [loginAgencyID, setLoginAgencyID] = useState('');
-
+  const [effectiveScreenPermission, setEffectiveScreenPermission] = useState(null);
   const useRouteQuery = () => {
     const params = new URLSearchParams(useLocation().search);
     return {
@@ -102,8 +103,22 @@ const ResourceHistoryTabSection = ({ isRMS = false }) => {
   useEffect(() => {
     if (localStoreData) {
       setLoginAgencyID(localStoreData?.AgencyID);
+      getScreenPermission(localStoreData?.AgencyID, localStoreData?.PINID)
     }
   }, [localStoreData]);
+
+  const getScreenPermission = (aId, pinID) => {
+    try {
+      ScreenPermision("CI104", aId, pinID).then(res => {
+        if (res) {
+          setEffectiveScreenPermission(res);
+        }
+      });
+    } catch (error) {
+      console.error('There was an error!', error);
+      setEffectiveScreenPermission(null);
+    }
+  }
 
   useEffect(() => {
     if (isFetchResourceHistoryList && getResourceHistoryList) {
@@ -121,7 +136,8 @@ const ResourceHistoryTabSection = ({ isRMS = false }) => {
         <DataTable
           dense
           columns={columns}
-          data={filterListData}
+          data={effectiveScreenPermission ? effectiveScreenPermission?.[0]?.DisplayOK ? filterListData : '' : ''}
+          noDataComponent={effectiveScreenPermission ? effectiveScreenPermission?.[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : 'There are no data to display'}
           persistTableHead={true}
           customStyles={tableMinCustomStyles}
           pagination

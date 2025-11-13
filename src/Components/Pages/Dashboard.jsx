@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Decrypt_Id_Name } from "../Common/Utility";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { AgencyContext } from "../../Context/Agency/Index";
 import { useDispatch, useSelector } from "react-redux";
 import { get_LocalStoreData } from "../../redux/actions/Agency";
@@ -10,38 +10,33 @@ import QueueReports from "./QueueReports/QueueReports";
 import PropertyEvidenceReport from "./PropertyEvidenceReport/PropertyEvidenceReport";
 import DashwhiteBoard from "./WhiteBoardTab/DashwhiteBoard";
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
-import WhiteBoard from "./WhiteBoardTab/WhiteBoard";
 import IncompleteNibrsIncident from "./IncompleteNibrsIncident/IncompleteNibrsIncident";
-import UseOfForcePendingReport from "./UseOfForcePendingReport/UseOfForcePendingReport";
+import PendingCaseReview from "./WhiteBoardTab/PendingCaseReview";
+import SupervisorCaseReview from "./DashboardTab/SupervisorCaseReview";
 // import 'bootstrap-icons/font/bootstrap-icons.css';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const Dashboard = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const IncRef = useRef(null);
 
   const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
   const { setUpdateCount, updateCount, setIncidentStatus, setPropertyCount, setTabCount, setNameTabCount, setIncidentCount, setVehicleCount, GetDataTimeZone, datezone, setCaseStatus } = useContext(AgencyContext);
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
 
-  const [loginAgencyID, setLoginAgencyID] = useState('');
-  const [loginPinID, setLoginPinID] = useState('');
+  const [activeTab, setActiveTab] = useState('home');
 
   useEffect(() => {
     if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
       if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
     }
-  }, []);
+  }, [dispatch, localStoreData?.AgencyID, localStoreData?.PINID, uniqueId]);
 
   useEffect(() => {
     if (localStoreData) {
       GetDataTimeZone(localStoreData?.AgencyID);
-      setLoginAgencyID(localStoreData?.AgencyID);
-      setLoginPinID(parseInt(localStoreData?.PINID));
     }
-  }, [localStoreData, datezone]);
+  }, [localStoreData, datezone, GetDataTimeZone]);
 
   const clickOnIncident = () => {
     setUpdateCount(updateCount + 1);
@@ -54,8 +49,6 @@ const Dashboard = () => {
   };
 
   const [show, setShow] = useState(false);
-  const [Data, setData] = useState('');
-  const [modelSelected, setModalSelected] = useState(null);
   const handleModel = (val) => setShow(val);
 
   const cardStyle = {
@@ -150,67 +143,196 @@ const Dashboard = () => {
                   </div>
                 </div>
               </div>
-
-
             </div>
-
-
-
-
-
           </div>
         </div>
-      </div >
+      </div>
 
-      {/* Main Content */}
-      < div className="container-fluid mt-2 mb-2" >
-        <div className="row"  >
-          {/* Left side: Whiteboard */}
-          <div className="col-md-5 pl-0 mb-2"  >
-            <div style={cardStyle} className="p-3 mb-3 main-dashboard_content_left" >
-              <DashwhiteBoard />
+      {/* Tab Navigation */}
+      {localStoreData?.IsCaseManagementVisible &&
+        <div className="container-fluid mt-2 mb-2">
+          <div className="row">
+            <div className="col-12">
+              <div
+                style={{
+                  border: '1px solid #e0e0e0',
+                  borderRadius: '4px',
+                  backgroundColor: 'white',
+                  display: 'flex',
+                  padding: '0'
+                }}
+              >
+                <div
+                  className={`nav-link ${activeTab === 'home' ? 'active' : ''}`}
+                  id="home-tab"
+                  type="button"
+                  role="tab"
+                  aria-controls="home"
+                  aria-selected={activeTab === 'home'}
+                  onClick={() => setActiveTab('home')}
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: activeTab === 'home' ? '#007bff' : '#333',
+                    border: 'none',
+                    borderRight: '1px solid #e0e0e0',
+                    padding: '12px 20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    fontSize: '14px',
+                    fontWeight: activeTab === 'home' ? '500' : '400',
+                    cursor: 'pointer',
+                    flex: '0 0 auto'
+                  }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    fill={activeTab === 'home' ? '#dc3545' : '#666'}
+                  >
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                  </svg>
+                </div>
+                {/* <div
+                  className={`nav-link ${activeTab === 'pending' ? 'active' : ''}`}
+                  id="pending-tab"
+                  type="button"
+                  role="tab"
+                  aria-controls="pending"
+                  aria-selected={activeTab === 'pending'}
+                  onClick={() => setActiveTab('pending')}
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: activeTab === 'pending' ? '#007bff' : '#333',
+                    border: 'none',
+                    borderRight: '1px solid #e0e0e0',
+                    padding: '12px 20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    fontSize: '14px',
+                    fontWeight: activeTab === 'pending' ? '500' : '400',
+                    cursor: 'pointer',
+                    flex: '0 0 auto'
+                  }}
+                >
+                  Pending Case Review
+
+                </div> */}
+                <div
+                  className={`nav-link ${activeTab === 'supervisor' ? 'active' : ''}`}
+                  id="supervisor-tab"
+                  type="button"
+                  role="tab"
+                  aria-controls="supervisor"
+                  aria-selected={activeTab === 'pending'}
+                  onClick={() => setActiveTab('supervisor')}
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: activeTab === 'supervisor' ? '#007bff' : '#333',
+                    border: 'none',
+                    padding: '12px 20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    fontSize: '14px',
+                    fontWeight: activeTab === 'supervisor' ? '500' : '400',
+                    cursor: 'pointer',
+                    flex: '0 0 auto'
+                  }}
+                >
+                  Supervisor Case Review
+                </div>
+              </div>
             </div>
           </div>
+        </div>}
 
-          {/* Right side: Reports stacked */}
-          <div className="col-md-7" style={{ maxHeight: '75vh', overflowY: 'auto' }}>
+      {/* Tab Content */}
+      <div className="container-fluid mt-2 mb-2">
+        <div className="tab-content" id="dashboardTabContent">
+          {/* Home Tab */}
+          <div
+            className={`tab-pane fade ${activeTab === 'home' ? 'show active' : ''}`}
+            id="home"
+            role="tabpanel"
+            aria-labelledby="home-tab"
+          >
             <div className="row">
-              <div className="col-12 mb-3">
-                <div style={cardStyle} className="p-3 ">
-                  <DashboardAllReports isPreview={true} />
+              {/* Left side: Whiteboard */}
+              <div className="col-md-6 pl-0 mb-2" style={{ maxHeight: '75vh', overflowY: 'auto' }}>
+                <div style={cardStyle} className="p-3 mb-3">
+                  <DashwhiteBoard />
                 </div>
               </div>
 
-              <div className="col-12 mb-3">
-                <div style={cardStyle} className="p-3 ">
-                  <QueueReports isPreview={true} />
+              {/* Right side: Reports stacked */}
+              <div className="col-md-6" style={{ maxHeight: '75vh', overflowY: 'auto' }}>
+                <div className="row">
+                  <div className="col-12 mb-3">
+                    <div style={cardStyle} className="p-3">
+                      <DashboardAllReports isPreview={true} />
+                    </div>
+                  </div>
+
+                  <div className="col-12 mb-3">
+                    <div style={cardStyle} className="p-3">
+                      <QueueReports isPreview={true} />
+                    </div>
+                  </div>
+                  <div className="col-12 mb-3">
+                    <div style={cardStyle} className="p-3">
+                      <PropertyEvidenceReport isPreview={true} />
+                    </div>
+                  </div>
+
+                  <div className="col-12">
+                    <div style={cardStyle} className="p-3 h-100">
+                      <IncompleteNibrsIncident isPreview={true} />
+                    </div>
+                  </div>
                 </div>
               </div>
-              {/* <div className="col-12 mb-3">
-                <div style={cardStyle} className="p-3 ">
-                  <UseOfForcePendingReport isPreview={true} />
-                </div>
-              </div> */}
-              <div className="col-12 mb-3">
-                <div style={cardStyle} className="p-3 ">
-                  <PropertyEvidenceReport isPreview={true} />
+            </div>
+          </div>
+
+          {/* Pending Case Review Tab */}
+          <div
+            className={`tab-pane fade ${activeTab === 'pending' ? 'show active' : ''}`}
+            id="pending"
+            role="tabpanel"
+            aria-labelledby="pending-tab"
+          >
+            <div className="row">
+              <div className="col-12">
+                <div style={cardStyle} className="p-3">
+                  <PendingCaseReview />
                 </div>
               </div>
+            </div>
+          </div>
 
-              <div className="col-12 ">
-                <div style={cardStyle} className="p-3 h-100">
-                  <IncompleteNibrsIncident isPreview={true} />
+          <div
+            className={`tab-pane fade ${activeTab === 'supervisor' ? 'show active' : ''}`}
+            id="supervisor"
+            role="tabpanel"
+            aria-labelledby="supervisor-tab"
+          >
+            <div className="row">
+              <div className="col-12">
+                <div style={cardStyle} className="p-3">
+                  <SupervisorCaseReview />
                 </div>
               </div>
-
-
             </div>
           </div>
         </div>
-      </div >
+      </div>
 
       {/* Modal */}
-      <DashboardIncidentListModel show={show} handleModel={handleModel} Data={Data} modelSelected={modelSelected} />
+      <DashboardIncidentListModel show={show} handleModel={handleModel} Data="" modelSelected={null} />
     </>
   );
 };

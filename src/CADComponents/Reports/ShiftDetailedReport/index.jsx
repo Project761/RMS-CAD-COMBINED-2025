@@ -16,12 +16,16 @@ import { getShowingMonthDateYear, getShowingWithOutTime } from '../../../Compone
 import { AgencyContext } from '../../../Context/Agency/Index';
 import ReportMainAddress from '../ReportMainAddress/ReportMainAddress';
 import { getData_DropDown_IncidentDispositions, getData_DropDown_Operator } from '../../../CADRedux/actions/DropDownsData';
+import { get_ScreenPermissions_Data } from '../../../redux/actions/IncidentAction';
+import { IncidentContext } from '../../../CADContext/Incident';
 
 const ShiftDetailedReport = () => {
     const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
+    const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
     const IncidentDispositionsDrpData = useSelector((state) => state.CADDropDown.IncidentDispositionsDrpData);
     const { datezone, GetDataTimeZone } = useContext(AgencyContext);
+    const { allResourcesData } = useContext(IncidentContext);
     const [loginAgencyID, setLoginAgencyID] = useState('');
     const [loader, setLoader] = useState(false);
     const [verifyIncident, setverifyIncident] = useState(false);
@@ -31,7 +35,6 @@ const ShiftDetailedReport = () => {
     const [LoginUserName, setLoginUserName] = useState('');
     const [showFooter, setShowFooter] = useState(false);
     const [CFSDropDown, setCFSDropDown] = useState([]);
-    const [resourceDropDown, setResourceDropDown] = useState([]);
     const OperatorDrpData = useSelector((state) => state.CADDropDown.OperatorDrpData);
 
     const [
@@ -94,6 +97,7 @@ const ShiftDetailedReport = () => {
             setLoginUserName(localStoreData?.UserName)
             setLoginAgencyID(localStoreData?.AgencyID);
             GetDataTimeZone(localStoreData?.AgencyID);
+            dispatch(get_ScreenPermissions_Data("CU106", localStoreData?.AgencyID, localStoreData?.PINID));
             dispatch(getData_DropDown_Operator(localStoreData?.AgencyID))
             if (IncidentDispositionsDrpData?.length === 0 && localStoreData?.AgencyID) dispatch(getData_DropDown_IncidentDispositions({ AgencyID: localStoreData?.AgencyID }))
         }
@@ -115,24 +119,6 @@ const ShiftDetailedReport = () => {
         }
     );
 
-    const getResourcesKey = `/CAD/MasterResource/GetDataDropDown_Resource/${loginAgencyID}`;
-    const { data: getResourcesData, isSuccess, refetch, isError: isNoData } = useQuery(
-        [getResourcesKey, { AgencyID: loginAgencyID },],
-        MasterTableListServices.getDataDropDown_Resource,
-        {
-            refetchOnWindowFocus: false,
-            retry: 0,
-            enabled: !!loginAgencyID,
-        }
-    );
-
-    useEffect(() => {
-        if (isSuccess && getResourcesData) {
-            const data = JSON.parse(getResourcesData?.data?.data);
-            setResourceDropDown(data?.Table || [])
-        }
-    }, [isSuccess, getResourcesData])
-
     useEffect(() => {
         if (isFetchCFSCodeData && CFSCodeData) {
             const parsedData = JSON.parse(CFSCodeData?.data?.data);
@@ -147,7 +133,7 @@ const ShiftDetailedReport = () => {
                 let imgUrl = `data:image/png;base64,${res[0]?.Agency_Photo}`;
                 setMultiImage(imgUrl);
             }
-            else { console.log("error") }
+            else { console.error("error") }
         })
     }
 
@@ -221,7 +207,7 @@ const ShiftDetailedReport = () => {
                 }
             }
         } catch (error) {
-            console.log("error", error)
+            console.error("error", error)
             if (!isPrintReport) {
                 toastifyError("Data Not Available");
             }
@@ -361,7 +347,7 @@ const ShiftDetailedReport = () => {
                                                     <div className="col-2 w-100">
                                                         <Select
                                                             isClearable
-                                                            options={resourceDropDown}
+                                                            options={allResourcesData}
                                                             placeholder="Select..."
                                                             name="Resource1"
                                                             value={shiftDetailedState?.Resource1}
@@ -475,7 +461,7 @@ const ShiftDetailedReport = () => {
                                     </div>
                                 </div>
                                 <div className="col-12 col-md-12 col-lg-12 mt-1 text-right mb-1">
-                                    <button className="btn btn-sm bg-green text-white px-2 py-1" onClick={() => { getShiftDetailedData(false); }} >Show Report</button>
+                                    {effectiveScreenPermission?.[0]?.AddOK ? <button className="btn btn-sm bg-green text-white px-2 py-1" onClick={() => { getShiftDetailedData(false); }} >Show Report</button> : <></>}
                                     <button className="btn btn-sm bg-green text-white px-2 py-1 ml-2"
                                         onClick={() => { resetFields(); }}
                                     >Clear</button>

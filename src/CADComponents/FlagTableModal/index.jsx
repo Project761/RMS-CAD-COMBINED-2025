@@ -213,7 +213,7 @@ const FlagTableModal = (props) => {
                                 </div>
                             </div>
                         </div>
-                    </dialog >
+                    </dialog>
                 </>
             ) : (
                 <> </>

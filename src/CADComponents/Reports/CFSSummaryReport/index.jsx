@@ -5,7 +5,7 @@ import Select from "react-select";
 import { colorLessStyle_Select } from '../../Utility/CustomStylesForReact';
 import MasterTableListServices from "../../../CADServices/APIs/masterTableList";
 import { useQuery } from 'react-query';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ReportsServices from "../../../CADServices/APIs/reports";
 import { toastifyError } from '../../../Components/Common/AlertMsg';
 import { fetchPostData } from '../../../Components/hooks/Api';
@@ -15,11 +15,13 @@ import { useReactToPrint } from 'react-to-print';
 import { getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime } from '../../../Components/Common/Utility';
 import { AgencyContext } from '../../../Context/Agency/Index';
 import ReportMainAddress from '../ReportMainAddress/ReportMainAddress';
+import { get_ScreenPermissions_Data } from '../../../redux/actions/IncidentAction';
 
 const CFSSummaryReport = () => {
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
+    const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
     const { datezone, GetDataTimeZone } = useContext(AgencyContext);
-
+    const dispatch = useDispatch();
     const [loginAgencyID, setLoginAgencyID] = useState('');
     const [CFSDropDown, setCFSDropDown] = useState([]);
 
@@ -77,6 +79,7 @@ const CFSSummaryReport = () => {
             setLoginUserName(localStoreData?.UserName)
             setLoginAgencyID(localStoreData?.AgencyID);
             GetDataTimeZone(localStoreData?.AgencyID);
+            dispatch(get_ScreenPermissions_Data("CC103", localStoreData?.AgencyID, localStoreData?.PINID));
         }
     }, [localStoreData]);
 
@@ -130,7 +133,7 @@ const CFSSummaryReport = () => {
                 let imgUrl = `data:image/png;base64,${res[0]?.Agency_Photo}`;
                 setMultiImage(imgUrl);
             }
-            else { console.log("error") }
+            else { console.error("error") }
         })
     }
 
@@ -150,9 +153,9 @@ const CFSSummaryReport = () => {
 
         const payload = {
             "AgencyID": loginAgencyID,
-            "REPORTEDDATE": cfsSummaryState?.reportedFromDate ? getShowingMonthDateYear(cfsSummaryState?.reportedFromDate) : "",
-            "ReportedDateTo": cfsSummaryState?.reportedToDate ? getShowingMonthDateYear(cfsSummaryState?.reportedToDate) : "",
-            "CFSID": cfsSummaryState?.FoundCFSCodeID,
+            "ReportedDate": cfsSummaryState?.reportedFromDate ? getShowingMonthDateYear(cfsSummaryState?.reportedFromDate) : "",
+            "ReportedDateTO": cfsSummaryState?.reportedToDate ? getShowingMonthDateYear(cfsSummaryState?.reportedToDate) : "",
+            "CADCFSCodeID": cfsSummaryState?.FoundCFSCodeID,
             // "ZoneID": cfsSummaryState?.zone?.value,
             // "ZoneDescription": cfsSummaryState?.zone?.label,
         }
@@ -340,7 +343,7 @@ const CFSSummaryReport = () => {
                                 </div>
 
                                 <div className="col-12 col-md-12 col-lg-12 mt-1 text-right mb-1">
-                                    <button className="btn btn-sm bg-green text-white px-2 py-1" onClick={() => { getCFSSummaryData(false); }} >Show Report</button>
+                                    {effectiveScreenPermission?.[0]?.AddOK ? <button className="btn btn-sm bg-green text-white px-2 py-1" onClick={() => { getCFSSummaryData(false); }} >Show Report</button> : <></>}
                                     <button className="btn btn-sm bg-green text-white px-2 py-1 ml-2"
                                         onClick={() => { resetFields(); }}
                                     >Clear</button>

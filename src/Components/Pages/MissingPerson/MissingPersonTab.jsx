@@ -13,6 +13,9 @@ import LastSeenInformation from './MissingPersonTab/LastSeenInformation/LastSeen
 import PersonNotify from './MissingPersonTab/PersonNotify/PersonNotify';
 import Involvement from './MissingPersonTab/Involvement/Involvement';
 import MissingTab from '../../Utility/Tab/MissingTab';
+import DentalInformation from './MissingPersonTab/DentalInformation/DentalInformation';
+import Tab from '../../Utility/Tab/Tab';
+import MissingPersonVehicle from './MissingPersonVehicle/MissingPersonVehicle';
 
 const MissingPersonTab = () => {
 
@@ -32,6 +35,7 @@ const MissingPersonTab = () => {
     var MissPerSta = query?.get('MissPerSta');
     var MissVehID = query?.get("MissVehID");
     var MissPerPg = query?.get("MissPerPg");
+    var openPage = query?.get('page');
 
     function isValidBase64(str) {
         const base64Pattern = /^[A-Za-z0-9+/=]+$/;
@@ -66,7 +70,8 @@ const MissingPersonTab = () => {
     const [status, setStatus] = useState();
     const [showIncPage, setShowIncPage] = useState('home');
     const iconHome = <i className="fa fa-home" style={{ fontSize: '20px' }}></i>
-
+    console.log('changesStatus', changesStatus);
+    console.log('showIncPage', showIncPage);
     useEffect(() => {
         if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
             if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
@@ -102,8 +107,13 @@ const MissingPersonTab = () => {
             <div className="section-body view_page_design pt-1 p-1 bt" >
                 <div className="div">
                     <div className="col-12  inc__tabs">
-                        <MissingTab />
+                        {
+                            !openPage && <Tab />
+                        }
                     </div>
+                    {/* <div className="col-12  inc__tabs">
+                        <MissingTab />
+                    </div> */}
                     <div className="dark-row" >
                         <div className="col-12 col-sm-12">
                             <div className="card Agency incident-card ">
@@ -130,17 +140,27 @@ const MissingPersonTab = () => {
                                                     aria-current="page"
                                                     onClick={() => { if (!changesStatus) setShowIncPage('NCIC') }}
                                                 >
-                                                    NCIC Information
+                                                    Other Info
                                                 </span>
                                                 <span
-                                                    className={`nav-item ${showIncPage === 'Hobbies' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+                                                    className={`nav-item ${showIncPage === 'MedicalInformation' ? 'active' : ''}${!status ? 'disabled' : ''}`}
                                                     data-toggle={changesStatus ? "modal" : "pill"}
                                                     data-target={changesStatus ? "#SaveModal" : ''}
-                                                    style={{ color: showIncPage === 'Hobbies' ? 'Red' : tabCount?.MissingPersonHobbies > 0 ? 'blue' : '#000' }}
+                                                    style={{ color: showIncPage === 'MedicalInformation' ? 'Red' : tabCount?.MedicalInformation > 0 ? 'blue' : '#000' }}
                                                     aria-current="page"
-                                                    onClick={() => { if (!changesStatus) setShowIncPage('Hobbies') }}
+                                                    onClick={() => { if (!changesStatus) setShowIncPage('MedicalInformation') }}
                                                 >
-                                                    Hobbies {`${tabCount?.MissingPersonHobbies > 0 ? '(' + tabCount?.MissingPersonHobbies + ')' : ''}`}
+                                                    Medical Info {`${tabCount?.MedicalInformation > 0 ? '(' + tabCount?.MedicalInformation + ')' : ''}`}
+                                                </span>
+                                                <span
+                                                    className={`nav-item ${showIncPage === 'DentalInfo' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+                                                    data-toggle={changesStatus ? "modal" : "pill"}
+                                                    data-target={changesStatus ? "#SaveModal" : ''}
+                                                    style={{ color: showIncPage === 'DentalInfo' ? 'Red' : tabCount?.DentalInfo > 0 ? 'blue' : '#000' }}
+                                                    aria-current="page"
+                                                    onClick={() => { if (!changesStatus) setShowIncPage('DentalInfo') }}
+                                                >
+                                                    Dental Info {`${tabCount?.DentalInfo > 0 ? '(' + tabCount?.DentalInfo + ')' : ''}`}
                                                 </span>
                                                 <span
                                                     className={`nav-item ${showIncPage === 'Jewellery' ? 'active' : ''}${!status ? 'disabled' : ''}`}
@@ -152,17 +172,7 @@ const MissingPersonTab = () => {
                                                 >
                                                     Jewellery {`${tabCount?.MissingPersonJewellery > 0 ? '(' + tabCount?.MissingPersonJewellery + ')' : ''}`}
                                                 </span>
-                                                <span
-                                                    className={`nav-item ${showIncPage === 'MedicalInformation' ? 'active' : ''}${!status ? 'disabled' : ''}`}
-                                                    data-toggle={changesStatus ? "modal" : "pill"}
-                                                    data-target={changesStatus ? "#SaveModal" : ''}
-                                                    style={{ color: showIncPage === 'MedicalInformation' ? 'Red' : tabCount?.MedicalInformation > 0 ? 'blue' : '#000' }}
-                                                    aria-current="page"
-                                                    onClick={() => { if (!changesStatus) setShowIncPage('MedicalInformation') }}
-                                                >
-                                                    Medical Information {`${tabCount?.MedicalInformation > 0 ? '(' + tabCount?.MedicalInformation + ')' : ''}`}
-                                                </span>
-                                                <span
+                                                {/* <span
                                                     className={`nav-item ${showIncPage === 'LastSeenInformation' ? 'active' : ''}${!status ? 'disabled' : ''}`}
                                                     data-toggle={changesStatus ? "modal" : "pill"}
                                                     data-target={changesStatus ? "#SaveModal" : ''}
@@ -171,7 +181,21 @@ const MissingPersonTab = () => {
                                                     onClick={() => { if (!changesStatus) setShowIncPage('LastSeenInformation') }}
                                                 >
                                                     Last Seen Information {`${tabCount?.LastSeenInformation > 0 ? '(' + tabCount?.LastSeenInformation + ')' : ''}`}
+                                                </span> */}
+                                                <span
+                                                    className={`nav-item ${showIncPage === 'Hobbies' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+                                                    data-toggle={changesStatus ? "modal" : "pill"}
+                                                    data-target={changesStatus ? "#SaveModal" : ''}
+                                                    style={{ color: showIncPage === 'Hobbies' ? 'Red' : tabCount?.MissingPersonHobbies > 0 ? 'blue' : '#000' }}
+                                                    aria-current="page"
+                                                    onClick={() => { if (!changesStatus) setShowIncPage('Hobbies') }}
+                                                >
+                                                    Last Seen, Hobbies & Associates Info {`${tabCount?.MissingPersonHobbies > 0 ? '(' + tabCount?.MissingPersonHobbies + ')' : ''}`}
                                                 </span>
+
+
+
+
                                                 <span
                                                     className={`nav-item ${showIncPage === 'PersonNotify' ? 'active' : ''}${!status ? 'disabled' : ''}`}
                                                     data-toggle={changesStatus ? "modal" : "pill"}
@@ -180,10 +204,18 @@ const MissingPersonTab = () => {
                                                     aria-current="page"
                                                     onClick={() => { if (!changesStatus) setShowIncPage('PersonNotify') }}
                                                 >
-                                                    Person To Be Notified {`${tabCount?.PersonToBeNotified > 0 ? '(' + tabCount?.PersonToBeNotified + ')' : ''}`}
+                                                    Associated & Reporting Persons Info {`${tabCount?.PersonToBeNotified > 0 ? '(' + tabCount?.PersonToBeNotified + ')' : ''}`}
                                                 </span>
-
-
+                                                <span
+                                                    className={`nav-item ${showIncPage === 'MissingPersonVehicle' ? 'active' : ''}${!status ? 'disabled' : ''}`}
+                                                    data-toggle={changesStatus ? "modal" : "pill"}
+                                                    data-target={changesStatus ? "#SaveModal" : ''}
+                                                    style={{ color: showIncPage === 'MissingPersonVehicle' ? 'Red' : tabCount?.PersonToBeNotified > 0 ? 'blue' : '#000' }}
+                                                    aria-current="page"
+                                                    onClick={() => { if (!changesStatus) setShowIncPage('MissingPersonVehicle') }}
+                                                >
+                                                    Missing Person Vehicle
+                                                </span>
                                                 <span
                                                     className={`nav-item ${showIncPage === 'Involvement' ? 'active' : ''}${!status ? 'disabled' : ''}`}
                                                     data-toggle={changesStatus ? "modal" : "pill"}
@@ -217,16 +249,22 @@ const MissingPersonTab = () => {
                                                         showIncPage === 'MedicalInformation' ?
                                                             <MedicalInformation {...{ DecMissPerID, DecIncID }} />
                                                             :
-                                                            showIncPage === 'LastSeenInformation' ?
-                                                                <LastSeenInformation {...{ DecMissPerID, DecIncID }} />
+                                                            showIncPage === 'DentalInfo' ?
+                                                                <DentalInformation {...{ DecMissPerID, DecIncID }} />
                                                                 :
-                                                                showIncPage === 'PersonNotify' ?
-                                                                    <PersonNotify {...{ DecMissPerID, DecIncID }} />
+                                                                showIncPage === 'LastSeenInformation' ?
+                                                                    <LastSeenInformation {...{ DecMissPerID, DecIncID }} />
                                                                     :
-                                                                    showIncPage === 'Involvement' ?
-                                                                        <Involvement {...{ DecMissPerID, DecIncID }} />
+                                                                    showIncPage === 'PersonNotify' ?
+                                                                        <PersonNotify {...{ DecMissPerID, DecIncID }} />
                                                                         :
-                                                                        <></>
+                                                                        showIncPage === 'MissingPersonVehicle' ?
+                                                                            <MissingPersonVehicle {...{ DecMissPerID, DecIncID }} />
+                                                                            :
+                                                                            showIncPage === 'Involvement' ?
+                                                                                <Involvement {...{ DecMissPerID, DecIncID }} />
+                                                                                :
+                                                                                <></>
                                     }
                                 </div>
                             </div>

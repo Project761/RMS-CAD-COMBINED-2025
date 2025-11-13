@@ -121,68 +121,72 @@ const Involvement = ({ DecMissPerID, DecIncID }) => {
     ]
     return (
         <>
-            <div className="row g-2 mb-2 mt-2">
-                <div className="col-12 col-sm-6 col-md">
-                    <input
-                        type="text"
-                        placeholder="Search By Column Name..."
-                        className="form-control"
-                        value={filters.ColumnName}
-                        onChange={(e) => setFilters({ ...filters, ColumnName: e.target.value })}
+            <div className="col-12 child" >
+                <div className="row g-2 mb-2 mt-2">
+                    <div className="col-12 col-sm-6 col-md">
+                        <input
+                            type="text"
+                            placeholder="Search By Column Name..."
+                            className="form-control"
+                            value={filters.ColumnName}
+                            onChange={(e) => setFilters({ ...filters, ColumnName: e.target.value })}
+                        />
+                    </div>
+                    <div className="col-12 col-sm-6 col-md">
+                        <input
+                            type="text"
+                            placeholder="Search By Old Value..."
+                            className="form-control"
+                            value={filters.OldValue}
+                            onChange={(e) => setFilters({ ...filters, OldValue: e.target.value })}
+                        />
+                    </div>
+                    <div className="col-12 col-sm-6 col-md">
+                        <input
+                            type="text"
+                            placeholder="Search By New Value..."
+                            className="form-control"
+                            value={filters.NewValue}
+                            onChange={(e) => setFilters({ ...filters, NewValue: e.target.value })}
+                        />
+                    </div>
+                    <div className="col-12 col-sm-6 col-md">
+                        <input
+                            type="text"
+                            placeholder="Search By Officer Name..."
+                            className="form-control"
+                            value={filters.Officer_Name}
+                            onChange={(e) => setFilters({ ...filters, Officer_Name: e.target.value })}
+                        />
+                    </div>
+                    <div className="col-12 col-sm-6 col-md">
+                        <input
+                            type="text"
+                            placeholder="Search By Module..."
+                            className="form-control"
+                            value={filters.Module}
+                            onChange={(e) => setFilters({ ...filters, Module: e.target.value })}
+                        />
+                    </div>
+                </div>
+                <div className="col-12 mt-2">
+                    <DataTable
+                        dense
+                        columns={columns}
+                        data={filteredData}
+                        selectableRowsHighlight
+                        highlightOnHover
+                        responsive
+                        fixedHeaderScrollHeight='450px'
+                        fixedHeader
+                        persistTableHead={true}
+                        customStyles={tableCustomStyles}
+                        noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : 'There are no data to display'}
+                        pagination
+                        paginationPerPage={100}
+                        paginationRowsPerPageOptions={[100, 150, 200, 500]}
                     />
                 </div>
-                <div className="col-12 col-sm-6 col-md">
-                    <input
-                        type="text"
-                        placeholder="Search By Old Value..."
-                        className="form-control"
-                        value={filters.OldValue}
-                        onChange={(e) => setFilters({ ...filters, OldValue: e.target.value })}
-                    />
-                </div>
-                <div className="col-12 col-sm-6 col-md">
-                    <input
-                        type="text"
-                        placeholder="Search By New Value..."
-                        className="form-control"
-                        value={filters.NewValue}
-                        onChange={(e) => setFilters({ ...filters, NewValue: e.target.value })}
-                    />
-                </div>
-                <div className="col-12 col-sm-6 col-md">
-                    <input
-                        type="text"
-                        placeholder="Search By Officer Name..."
-                        className="form-control"
-                        value={filters.Officer_Name}
-                        onChange={(e) => setFilters({ ...filters, Officer_Name: e.target.value })}
-                    />
-                </div>
-                <div className="col-12 col-sm-6 col-md">
-                    <input
-                        type="text"
-                        placeholder="Search By Module..."
-                        className="form-control"
-                        value={filters.Module}
-                        onChange={(e) => setFilters({ ...filters, Module: e.target.value })}
-                    />
-                </div>
-            </div>
-            <div className="col-12 mt-2">
-                <DataTable
-                    dense
-                    columns={columns}
-                    data={filteredData}
-                    selectableRowsHighlight
-                    highlightOnHover
-                    responsive
-                    fixedHeaderScrollHeight=''
-                    fixedHeader
-                    persistTableHead={true}
-                    customStyles={tableCustomStyles}
-                    noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : 'There are no data to display'}
-
-                />
             </div>
         </>
     )

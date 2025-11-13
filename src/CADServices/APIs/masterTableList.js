@@ -12,9 +12,17 @@ class MasterTableListServices {
     getCFS = async ({ queryKey }) => {
         const [_key, payload] = queryKey;
         if (payload) {
-            return await axios.post(`/CAD/MasterCallforServiceCode/InsertCallforServiceCode`, payload);
+            return await axios.post(`/CAD/MasterCallforServiceCode/GetCallforServiceCode`, payload);
         }
         console.warn("payload not provided, MasterTableListServices.getCFS");
+        return null;
+    };
+
+    deleteCFSImage = async (payload) => {
+        if (payload) {
+            return await axios.post(`/CAD/MasterCallforServiceCode/GetCallforServiceCode`, payload);
+        }
+        console.warn("payload not provided, MasterTableListServices.deleteCFSImage");
         return null;
     };
 
@@ -153,6 +161,15 @@ class MasterTableListServices {
             return await axios.post(`/CAD/MasterResource/GetDataDropDown_Resource`, payload);
         }
         console.warn("payload not provided, MasterTableListServices.getDataDropDown_Resource");
+        return null;
+    };
+
+    getAllResources = async ({ queryKey }) => {
+        const [_key, payload] = queryKey;
+        if (payload) {
+            return await axios.post(`/CAD/MasterResource/GetAllActiveResources`, payload);
+        }
+        console.warn("payload not provided, MasterTableListServices.getAllResources");
         return null;
     };
 
@@ -302,9 +319,9 @@ class MasterTableListServices {
         console.warn("payload not provided, MasterTableListServices.changeStatusMasterResource");
         return null;
     };
-    
 
-      getDispositionData = async (payload) => {
+
+    getDispositionData = async (payload) => {
         if (payload) {
             return await axios.post(`/CAD/MasterIncidentDispositions/GetDataDropDown_IncidentDispositions`, payload);
         }

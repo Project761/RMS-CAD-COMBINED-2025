@@ -18,8 +18,12 @@ import PARTimerOverDueModal from '../../PARTimerOverDueModal';
 import { AgencyContext } from '../../../Context/Agency/Index';
 import moment from 'moment';
 import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
+import { get_ScreenPermissions_Data } from '../../../redux/actions/IncidentAction';
+import { ScreenPermision } from '../../../Components/hooks/Api';
 
 const ResourcesTableSection = (props) => {
+  const dispatch = useDispatch();
   const { GetDataTimeZone, datezone } =
     useContext(AgencyContext);
   const navigate = useNavigate();
@@ -42,6 +46,8 @@ const ResourcesTableSection = (props) => {
   const [isResourcePAR, setIsResourcePAR] = useState(false);
   const [isOfficer1PAR, setIsOfficer1PAR] = useState(false);
   const [isOfficer2PAR, setIsOfficer2PAR] = useState(false);
+  const [effectiveScreenPermission, setEffectiveScreenPermission] = useState(null);
+  const [effectivePARScreenPermission, setEffectivePARScreenPermission] = useState(null);
 
   const getFilteredOptions = (status) => {
     let validStatusCodes = [];
@@ -87,8 +93,42 @@ const ResourcesTableSection = (props) => {
       setLoginAgencyID(localStoreData?.AgencyID);
       setLoginPinID(localStoreData?.PINID)
       GetDataTimeZone(localStoreData?.AgencyID);
+      getScreenPermision(localStoreData?.AgencyID, localStoreData?.PINID)
+      getPARScreenPermision(localStoreData?.AgencyID, localStoreData?.PINID)
     }
   }, [localStoreData]);
+
+  const getScreenPermision = (aId, pinID) => {
+    try {
+      ScreenPermision("CA104", aId, pinID).then(res => {
+        if (res) {
+          setEffectiveScreenPermission(res);
+        }
+        else {
+          setEffectiveScreenPermission(null);
+        }
+      });
+    } catch (error) {
+      console.error('There was an error!', error);
+      setEffectiveScreenPermission(null);
+    }
+  }
+
+  const getPARScreenPermision = (aId, pinID) => {
+    try {
+      ScreenPermision("CA103", aId, pinID).then(res => {
+        if (res) {
+          setEffectivePARScreenPermission(res);
+        }
+        else {
+          setEffectivePARScreenPermission(null);
+        }
+      });
+    } catch (error) {
+      console.error('There was an error!', error);
+      setEffectivePARScreenPermission(null);
+    }
+  }
 
   const handleStatusChange = async (row, newValue) => {
     const data = {
@@ -520,7 +560,7 @@ const ResourcesTableSection = (props) => {
           width: '100%',
           fontSize: '12px'
         }}
-        onClick={handleClick}
+        onClick={effectivePARScreenPermission?.[0]?.Changeok === 1 ? handleClick : () => { }}
         data-toggle="modal"
         data-target="#PARTimerModal"
       >
@@ -608,7 +648,7 @@ const ResourcesTableSection = (props) => {
             >
               {row.Status}
             </span>
-            {(row.Status !== "AV" && !!row?.ResourceAvailableStatus) && (
+            {(row.Status !== "AV" && !!row?.ResourceAvailableStatus && effectiveScreenPermission?.[0]?.Changeok === 1) && (
               <select
                 onChange={(e) => { if (row.Status !== e.target.value) { handleStatusChange(row, e.target.value) } }}
                 value={

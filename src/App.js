@@ -192,11 +192,13 @@ import DashboardAllReports from './Components/Pages/DashboardAllReports/Dashboar
 import PropertyEvidenceReport from './Components/Pages/PropertyEvidenceReport/PropertyEvidenceReport';
 import IncompleteNibrsIncident from './Components/Pages/IncompleteNibrsIncident/IncompleteNibrsIncident';
 import NLETShistory from './Components/Pages/NLETShistory/NLETShistory';
-import UseOfForcePendingReport from './Components/Pages/UseOfForcePendingReport/UseOfForcePendingReport';
 import DashboardAll from './Components/Pages/AllReport/AllReport';
 import PropertyAuditTab from './Components/Pages/Audit/Home';
 import Property_RoomTab from './Components/Pages/Audit/Audit_RoomTab';
+import CaseManagement from './CADPage/CaseManagement';
+import MissingPersonForm from './Components/Pages/MissingPerson/MissingPersonForm/MissingPersonForm';
 import ReportModule from './Components/Pages/ReportModule/ReportModule';
+import HomeCaseManagement from './CADPage/HomeCaseManagement';
 // import PropertyAuditTab from './Components/Pages/PropertyRoom/Audit/Home';
 
 
@@ -279,7 +281,6 @@ function App() {
             <Route exact path="/pastDue-Reports" element={<Auth cmp={PastDueReports} path="/pastDue-Reports" dashboardSidebar={dashboardSidebar} />} />
             <Route exact path="/CadincidentList" element={<Auth cmp={CadIncidentList} path="/CadincidentList" dashboardSidebar={dashboardSidebar} />} />
             <Route exact path="/queue-Reports" element={<Auth cmp={QueueReports} path="/queue-Reports" dashboardSidebar={dashboardSidebar} />} />
-            <Route exact path="/useOfForce-Pending-Report" element={<Auth cmp={UseOfForcePendingReport} path="/useOfForce-Pending-Report" dashboardSidebar={dashboardSidebar} />} />
             <Route exact path="/dashboard-Reports" element={<Auth cmp={DashboardAllReports} path="dashboard-Reports" dashboardSidebar={dashboardSidebar} />} />
             <Route exact path="/assigned-Reports" element={<Auth cmp={AssignedReports} path="/assignedReports" dashboardSidebar={dashboardSidebar} />} />
             <Route exact path="/all" element={<Auth cmp={DashboardAll} path="/all" dashboardSidebar={dashboardSidebar} />} />
@@ -289,8 +290,11 @@ function App() {
 
             <Route exact path="/Cadpropertymodal" element={<Auth cmp={CadPropertyModel} path="/Cadpropertymodal" dashboardSidebar={dashboardSidebar} />} />
             <Route exact path="/Inc-Home" element={<Auth cmp={IncidentTab} path="/Inc-Home" incidentSideBar={incidentSideBar} />} />
+            <Route exact path="/inc-case-management" element={<Auth cmp={CaseManagement} path="/inc-case-management" incidentSideBar={incidentSideBar} />} />
+            <Route exact path="/case-management" element={<Auth cmp={HomeCaseManagement} path="case-management" incidentSideBar={incidentSideBar} />} />
             <Route exact path="/Missing-Home" element={<Auth cmp={MissingPersonTab} path="/Missing-Home" incidentSideBar={incidentSideBar} />} />
             <Route exact path="/Missing-Vehicle-Home" element={<Auth cmp={MissingPersonVehicle} path="/Missing-Vehicle-Home" incidentSideBar={incidentSideBar} />} />
+            <Route exact path="/Missing-Person-Form" element={<Auth cmp={MissingPersonForm} path="/Missing-Person-Form" incidentSideBar={incidentSideBar} />} />
 
             {/* //------------------------------------Dinesh------------------------------------ */}
             <Route exact path="/Missing-Document-Home" element={<Auth cmp={MissingDocument_Add_Up} path="/Missing-Document-Home" incidentSideBar={incidentSideBar} />} />

@@ -213,9 +213,7 @@ const Offense = (props) => {
                 <i className="fa fa-trash"></i>
               </span>
           }
-
         </div>
-
     }
   ]
 

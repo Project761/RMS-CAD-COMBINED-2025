@@ -5,7 +5,7 @@ const signalRAPI = process.env.REACT_APP_SIGNALR_URL_KEY;
 const APIurl = process.env.REACT_APP_DOMAIN_URL_KEY;
 
 export const connection = new HubConnectionBuilder()
-    .withUrl(signalRAPI, {
+    .withUrl(`${signalRAPI}?AgencyID=${sessionStorage.getItem("AgencyID")}`, {
         accessTokenFactory: (data) => {
             const token = sessionStorage.getItem("PINID");
             return token;
@@ -13,6 +13,22 @@ export const connection = new HubConnectionBuilder()
     })
     .build();
 
+// Function to set up SignalR handlers with context functions
+export const setupSignalRHandlers = (incidentRefetch, resourceRefetch) => {
+    // Remove existing handlers to avoid duplicates
+    connection.off("MonitorIncidentsView");
+    connection.off("MonitorResourceView");
+
+    connection.on("MonitorIncidentsView", (e) => {
+        console.log("MonitorIncidentsView")
+        incidentRefetch();
+    });
+
+    connection.on("MonitorResourceView", (e) => {
+        console.log("MonitorResourceView")
+        resourceRefetch();
+    });
+};
 
 connection.on("Logout", () => {
     toastifySuccess("Logout Successfully !!");
@@ -47,7 +63,6 @@ connection.on("ResetTimer", async (message) => {
         console.error("Error fetching session timeout data:", error);
     }
 });
-
 
 connection.on("ReceiveNotification", async (message) => {
     const token = sessionStorage.getItem("access_token");

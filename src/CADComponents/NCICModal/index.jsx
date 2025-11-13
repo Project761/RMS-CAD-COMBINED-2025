@@ -17,7 +17,7 @@ import WantedCheckSection from "./NCICTabSection/WantedCheckSection";
 import StolenVehicleSection from "./NCICTabSection/StolenVehicleSection";
 import NcicServices from "../../CADServices/APIs/ncic";
 import { useSelector } from "react-redux";
-import { fetchPostData } from "../../Components/hooks/Api";
+import { fetchPostData, ScreenPermision } from "../../Components/hooks/Api";
 import { Comman_changeArrayFormat, Comman_changeArrayFormat3 } from "../../Components/Common/ChangeArrayFormat";
 import { useQuery } from "react-query";
 
@@ -36,6 +36,8 @@ const NCICModal = (props) => {
     const [summaryData, setSummaryData] = useState(null);
     const [clickedRow, setClickedRow] = useState(null);
     const [isDisableSendButton, setIsDisableSendButton] = useState(false);
+    const [responseSectionData, setResponseSectionData] = useState(null);
+
     useEffect(() => {
         if (isNameCallTaker) {
             setTabState('driver-license');
@@ -239,6 +241,8 @@ const NCICModal = (props) => {
         createdDateTime: "",
     });
 
+    const [effectiveNcicScreenPermission, setEffectiveNcicScreenPermission] = useState(null);
+
     const getNCICResponseKey = `/NCICDetails/GetNCICResponse`;
     const { data: getNCICResponseData, isSuccess: isFetchNCICResponse, refetch, isError: isNoData } = useQuery(
         [getNCICResponseKey, {
@@ -412,6 +416,7 @@ const NCICModal = (props) => {
 
     // Logic to set view based on button clicks
     const handleMixClick = () => {
+        setResponseSectionData(null);
         setViewMode('mix');
     };
     const handleResponseClick = () => {
@@ -419,6 +424,7 @@ const NCICModal = (props) => {
     };
 
     const handleRequestClick = () => {
+        setResponseSectionData(null);
         setViewMode('request');
     };
 
@@ -434,6 +440,7 @@ const NCICModal = (props) => {
         clearWantedCheckSectionState();
         clearDriverLicenseSectionState();
         clearWantedSectionState();
+        setResponseSectionData(null);
     };
     function handelChangeTab(tab) {
         clearNameSectionState();
@@ -456,11 +463,29 @@ const NCICModal = (props) => {
             setSearchListData(JSON.parse(data));
         }
     }, [tabState]);
+
     useEffect(() => {
         if (localStoreData) {
             setLoginAgencyID(localStoreData?.AgencyID);
+            getNcicScreenPermission(localStoreData?.AgencyID, localStoreData?.PINID);
         }
     }, [localStoreData]);
+    const getNcicScreenPermission = (aId, pinID) => {
+        try {
+            ScreenPermision("CN101", aId, pinID).then(res => {
+                if (res) {
+                    setEffectiveNcicScreenPermission(res);
+                }
+                else {
+                    setEffectiveNcicScreenPermission(null);
+                }
+            });
+        } catch (error) {
+            console.error('There was an error!', error);
+            setEffectiveNcicScreenPermission(null);
+        }
+    }
+
 
     const get_Name_Drp_Data = (loginAgencyID) => {
         const val = { AgencyID: loginAgencyID, }
@@ -476,6 +501,7 @@ const NCICModal = (props) => {
             }
         })
     };
+
     const get_PlateType_Drp = (loginAgencyID) => {
         const val = {
             AgencyID: loginAgencyID,
@@ -844,7 +870,6 @@ const NCICModal = (props) => {
         await sendRequestAndRefetch(payload);
     }
 
-
     const handleSummary = async (row) => {
         setClickedRow(row);
         const ncicState = row?.DisplayString ? row.DisplayString.slice(-2) : '';
@@ -1007,7 +1032,7 @@ const NCICModal = (props) => {
                                             </div>
                                             <Tab.Container activeKey={tabState}>
                                                 {viewMode !== 'response' && <NCICNav tabState={tabState} setTabState={handelChangeTab} isNameCallTaker={isNameCallTaker} />}
-                                                {viewMode === 'response' ? <ResponseSection ncicResponseData={ncicResponseData} loginAgencyID={loginAgencyID} tabState={tabState} /> :
+                                                {viewMode === 'response' ? <ResponseSection ncicResponseData={ncicResponseData} loginAgencyID={loginAgencyID} tabState={tabState} setResponseSectionData={setResponseSectionData} /> :
                                                     <fieldset className="ncic-main-container">
                                                         <div className="d-flex">
                                                             <div className={`${viewMode === 'mix' ? 'col-6' : 'col-12'
@@ -1144,10 +1169,10 @@ const NCICModal = (props) => {
                                                                                         noDataComponent={isNoData ? "There are no data to display" : 'There are no data to display'}
                                                                                         fixedHeaderScrollHeight="190px"
                                                                                         persistTableHead={true}
-                                                                                        // onRowClicked={(row) => {
-                                                                                        //     handelSetEditData(row); setClickedRow(row);
-                                                                                        // }}
-                                                                                        conditionalRowStyles={conditionalRowStyles}
+                                                                                    // onRowClicked={(row) => {
+                                                                                    //     handelSetEditData(row); setClickedRow(row);
+                                                                                    // }}
+                                                                                    // conditionalRowStyles={conditionalRowStyles}
 
                                                                                     />
                                                                                 </div>
@@ -1170,14 +1195,14 @@ const NCICModal = (props) => {
                                             <div className="col-12 p-0">
                                                 <div className="d-flex justify-content-between tab-form-row-gap">
                                                     <div className="d-flex tab-form-row-gap">
-                                                        <button
+                                                        {effectiveNcicScreenPermission?.[0]?.AddOK ? <button
                                                             type="button"
                                                             className="save-button"
                                                             onClick={handleSendClick}
                                                             disabled={isDisableSendButton}
                                                         >
                                                             {isDisableSendButton ? "Sending..." : "Send"}
-                                                        </button>
+                                                        </button> : <></>}
                                                         <button
                                                             type="button"
                                                             className="cancel-button"
@@ -1202,7 +1227,8 @@ const NCICModal = (props) => {
                                                     <div className="d-flex tab-form-row-gap justify-content-center">
                                                         <button
                                                             type="button"
-                                                            className={summaryData?.FormattedResponse?.search("<span style='color: red;") > 0 ? "error-button" : summaryData?.FormattedResponse?.search("<span style='color: blue;") > 0 ? "hitOrange-button" : "save-button"}
+                                                            className={viewMode === 'response' ? responseSectionData?.FormattedResponse?.search("<span style='color: red;") > 0 ? "error-button" : responseSectionData?.FormattedResponse?.search("<span style='color: blue;") > 0 ? "hitOrange-button" : "save-button"
+                                                                : summaryData?.FormattedResponse?.search("<span style='color: red;") > 0 ? "error-button" : summaryData?.FormattedResponse?.search("<span style='color: blue;") > 0 ? "hitOrange-button" : "save-button"}
                                                         // className={clickedRow?.hit ? "error-button" : !clickedRow?.hit ? "hitGreen-button" : "save-button"}
                                                         >
                                                             {"HIT YQ/YR"}

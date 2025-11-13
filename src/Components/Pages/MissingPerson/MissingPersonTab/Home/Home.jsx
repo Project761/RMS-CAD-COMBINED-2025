@@ -18,6 +18,7 @@ import { GetData_MissingPerson } from '../../../../../redux/actions/MissingPerso
 import ChangesModal from '../../../../Common/ChangesModal';
 import ListModal from '../../../Utility/ListManagementModel/ListModal';
 import { get_ScreenPermissions_Data } from '../../../../../redux/actions/IncidentAction';
+import { PhoneFieldNotReq } from '../../../Agency/AgencyValidation/validators';
 
 const Home = ({ DecMissPerID, DecIncID }) => {
 
@@ -86,13 +87,13 @@ const Home = ({ DecMissPerID, DecIncID }) => {
     const [addUpdatePermission, setaddUpdatePermission] = useState();
 
     const [value, setValue] = useState({
-        'IncidentID': '', 'MissingPersonNumber': "", 'ReportingOfficerID': "", 'ReportedDttm': "", 'PersonID': "", 'IncidentNumber': IncNo, 'MessageKeyID': "", 'PossibleDestination': "", 'Occupation': "", 'PhysicalCondition': "", 'EmancipationDt': "", 'CompaintID': "", 'Relationwithmp': "", 'AgencyID': "", 'CreatedByUserFK': "", 'MissingPersonNameID': ''
+        'IncidentID': '', 'MissingPersonNumber': "", 'ReportingOfficerID': "", 'ReportedDttm': "", 'PersonID': "", 'IncidentNumber': IncNo, 'MessageKeyID': "", 'PossibleDestination': "", 'Occupation': "", 'PhysicalCondition': "", 'EmancipationDt': "", 'CompaintID': "", 'Relationwithmp': "", 'AgencyID': "", 'CreatedByUserFK': "", 'MissingPersonNameID': '', 'CloseFriends': "", 'PlaceMissingPerson': "", 'InvestigationOfficer': "", 'InvestigationOfficerTelephoneNumber': ""
     });
 
     const [errors, setErrors] = useState({
-        'ReportingOfficerIDError': '', 'ReportedDttmError': '', 'PersonIDError': '', 'IncidentIDError': '', 'MissingPersonNameIDError': ''
+        'ReportingOfficerIDError': '', 'ReportedDttmError': '', 'PersonIDError': '', 'IncidentIDError': '', 'MissingPersonNameIDError': '', 'InvestigationOfficerTelephoneNumberError': ''
     })
-
+console.log("errors", errors)
     useEffect(() => {
         if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
             if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
@@ -103,6 +104,7 @@ const Home = ({ DecMissPerID, DecIncID }) => {
         if (localStoreData) {
             setloginAgencyID(localStoreData?.AgencyID); setloginPinID(localStoreData?.PINID); GetDataTimeZone(localStoreData?.AgencyID);
             dispatch(get_ScreenPermissions_Data("M121", localStoreData?.AgencyID, localStoreData?.PINID)); get_MissingPerson_Count(DecMissPerID, localStoreData?.PINID);
+            dispatch(GetData_MissingPerson(DecEIncID))
         }
     }, [localStoreData, nameModalStatus]);
 
@@ -204,7 +206,11 @@ const Home = ({ DecMissPerID, DecIncID }) => {
             setValue({
                 ...value,
                 'MissingPersonNumber': Editval[0]?.MissingPersonNumber, 'ReportingOfficerID': Editval[0]?.ReportingOfficerID, 'ReportedDttm': Editval[0]?.MissingPerson_ReportedDttm, 'PersonID': Editval[0]?.PersonID, 'IncidentNumber': Editval[0]?.IncidentNumber, 'MessageKeyID': Editval[0]?.MessageKeyID,
-                'PossibleDestination': Editval[0]?.PossibleDestination ? Editval[0]?.PossibleDestination : '', 'Occupation': Editval[0]?.Occupation ? Editval[0]?.Occupation : '', 'PhysicalCondition': Editval[0]?.PhysicalCondition ? Editval[0]?.PhysicalCondition : '', 'EmancipationDt': Editval[0]?.EmancipationDt, 'CompaintID': Editval[0]?.CompaintID, 'Relationwithmp': Editval[0]?.Relationwithmp ? Editval[0]?.Relationwithmp : '', 'MissingPersonNameID': Editval[0]?.MissingPersonNameID
+                'PossibleDestination': Editval[0]?.PossibleDestination ? Editval[0]?.PossibleDestination : '', 'Occupation': Editval[0]?.Occupation ? Editval[0]?.Occupation : '', 'PhysicalCondition': Editval[0]?.PhysicalCondition ? Editval[0]?.PhysicalCondition : '', 'EmancipationDt': Editval[0]?.EmancipationDt, 'CompaintID': Editval[0]?.CompaintID, 'Relationwithmp': Editval[0]?.Relationwithmp ? Editval[0]?.Relationwithmp : '', 'MissingPersonNameID': Editval[0]?.MissingPersonNameID,
+                'CloseFriends': Editval[0]?.CloseFriends ? Editval[0]?.CloseFriends : '',
+                'PlaceMissingPerson': Editval[0]?.PlaceMissingPerson ? Editval[0]?.PlaceMissingPerson : '',
+                'InvestigationOfficer': Editval[0]?.InvestigationOfficer ? Editval[0]?.InvestigationOfficer : '',
+                'InvestigationOfficerTelephoneNumber': Editval[0]?.InvestigationOfficerTelephoneNumber ? Editval[0]?.InvestigationOfficerTelephoneNumber : ''
             });
 
             setPossessionID(Editval[0]?.MissingPersonNameID);
@@ -217,17 +223,17 @@ const Home = ({ DecMissPerID, DecIncID }) => {
 
         } else {
             setValue({
-                ...value, 'MissingPersonNumber': "", 'ReportingOfficerID': "", 'ReportedDttm': incReportedDate ? getShowingDateText(incReportedDate) : getShowingMonthDateYear(new Date()), 'PersonID': "", 'IncidentNumber': IncNo, 'MessageKeyID': "", 'PossibleDestination': "", 'Occupation': "", 'PhysicalCondition': "", 'EmancipationDt': "", 'CompaintID': "", 'Relationwithmp': "", 'CreatedByUserFK': "", 'MissingPersonNameID': ''
+                ...value, 'MissingPersonNumber': "", 'ReportingOfficerID': "", 'ReportedDttm': incReportedDate ? getShowingDateText(incReportedDate) : getShowingMonthDateYear(new Date()), 'PersonID': "", 'IncidentNumber': IncNo, 'MessageKeyID': "", 'PossibleDestination': "", 'Occupation': "", 'PhysicalCondition': "", 'EmancipationDt': "", 'CompaintID': "", 'Relationwithmp': "", 'CreatedByUserFK': "", 'MissingPersonNameID': '', 'CloseFriends': "", 'PlaceMissingPerson': "", 'InvestigationOfficer': "", 'InvestigationOfficerTelephoneNumber': ""
             });
         }
     }, [Editval, changesStatusCount])
 
     const reset = () => {
         setValue({
-            ...value, 'MissingPersonNumber': "", 'ReportingOfficerID': "", 'ReportedDttm': incReportedDate ? getShowingDateText(incReportedDate) : getShowingMonthDateYear(new Date()), 'PersonID': "", 'IncidentNumber': IncNo, 'MessageKeyID': "", 'PossibleDestination': "", 'Occupation': "", 'PhysicalCondition': "", 'EmancipationDt': "", 'CompaintID': "", 'Relationwithmp': "", 'MissingPersonNameID': ''
+            ...value, 'MissingPersonNumber': "", 'ReportingOfficerID': "", 'ReportedDttm': incReportedDate ? getShowingDateText(incReportedDate) : getShowingMonthDateYear(new Date()), 'PersonID': "", 'IncidentNumber': IncNo, 'MessageKeyID': "", 'PossibleDestination': "", 'Occupation': "", 'PhysicalCondition': "", 'EmancipationDt': "", 'CompaintID': "", 'Relationwithmp': "", 'MissingPersonNameID': '', 'CloseFriends': "", 'PlaceMissingPerson': "", 'InvestigationOfficer': "", 'InvestigationOfficerTelephoneNumber': ""
         });
         setStatesChangeStatus(false);
-        setErrors({ ...errors, 'ReportingOfficerIDError': '', 'ReportedDttmError': '', 'PersonIDError': '', 'IncidentIDError': '', 'MissingPersonNameIDError': '' });
+        setErrors({ ...errors, 'ReportingOfficerIDError': '', 'ReportedDttmError': '', 'PersonIDError': '', 'IncidentIDError': '', 'MissingPersonNameIDError': '', 'InvestigationOfficerTelephoneNumberError': '' });
         setReportedDtTm(''); setPossessionID(''); setPossenSinglData([]); setEmancipationDt(''); setMissingPersonID(''); setcomplainNameID('');
         setType('');
     }
@@ -246,32 +252,42 @@ const Home = ({ DecMissPerID, DecIncID }) => {
         if (RequiredFieldIncident(value.MissingPersonNameID)) {
             setErrors(prevValues => { return { ...prevValues, ['MissingPersonNameIDError']: RequiredFieldIncident(value.MissingPersonNameID) } })
         }
+
+        // Phone Validation for Investigating Officer Telephone Number (Business type validation)
+        if (value.InvestigationOfficerTelephoneNumber) {
+            const InvestigationOfficerTelephoneNumberErr = PhoneFieldNotReq(value.InvestigationOfficerTelephoneNumber);
+            console.log("InvestigationOfficerTelephoneNumberErr", InvestigationOfficerTelephoneNumberErr)
+            if (InvestigationOfficerTelephoneNumberErr) {
+                setErrors(prevValues => { return { ...prevValues, ['InvestigationOfficerTelephoneNumberError']: InvestigationOfficerTelephoneNumberErr } })
+            }
+        }
     }
 
     // Check All Field Format is True Then Submit 
-    const { ReportingOfficerIDError, ReportedDttmError, PersonIDError, MissingPersonNameIDError } = errors
+    const { ReportingOfficerIDError, ReportedDttmError, PersonIDError, MissingPersonNameIDError, InvestigationOfficerTelephoneNumberError } = errors
 
     useEffect(() => {
-        if (ReportingOfficerIDError === 'true' && ReportedDttmError === 'true' && PersonIDError === 'true' && MissingPersonNameIDError === 'true') {
+        const phoneValidationPass = value.InvestigationOfficerTelephoneNumber ? InvestigationOfficerTelephoneNumberError === 'true' : true;
+        if (ReportingOfficerIDError === 'true' && ReportedDttmError === 'true' && PersonIDError === 'true' && MissingPersonNameIDError === 'true' && phoneValidationPass) {
             if (MissingPersonID && (MissPerSta === true || MissPerSta || 'true')) { update_MissingPerson() }
             else {
                 insert_MissingPerson_Data();
             }
         }
-    }, [ReportingOfficerIDError, ReportedDttmError, PersonIDError, MissingPersonNameIDError])
+    }, [ReportingOfficerIDError, ReportedDttmError, PersonIDError, MissingPersonNameIDError, InvestigationOfficerTelephoneNumberError])
 
 
     const insert_MissingPerson_Data = () => {
         const {
             IncidentID, MissingPersonNumber, ReportingOfficerID, ReportedDttm, PersonID, IncidentNumber, MessageKeyID, PossibleDestination, Occupation, PhysicalCondition, EmancipationDt,
-            CompaintID, Relationwithmp, AgencyID, CreatedByUserFK, MissingPersonNameID, MissingPersonID,
+            CompaintID, Relationwithmp, AgencyID, CreatedByUserFK, MissingPersonNameID, MissingPersonID, CloseFriends, PlaceMissingPerson, InvestigationOfficer, InvestigationOfficerTelephoneNumber
         } = value
 
 
         const val = {
             "IncidentID": IncidentID, "MissingPersonNumber": MissingPersonNumber, "ReportingOfficerID": ReportingOfficerID, "ReportedDttm": ReportedDttm,
             "PersonID": PersonID, "IncidentNumber": IncidentNumber, "MessageKeyID": MessageKeyID, "PossibleDestination": PossibleDestination, "Occupation": Occupation, "PhysicalCondition": PhysicalCondition,
-            "EmancipationDt": EmancipationDt, "CompaintID": CompaintID, "Relationwithmp": Relationwithmp, "AgencyID": AgencyID,
+            "EmancipationDt": EmancipationDt, "CompaintID": CompaintID, "Relationwithmp": Relationwithmp, 'CloseFriends': CloseFriends, 'PlaceMissingPerson': PlaceMissingPerson, 'InvestigationOfficer': InvestigationOfficer, 'InvestigationOfficerTelephoneNumber': InvestigationOfficerTelephoneNumber, "AgencyID": AgencyID,
             "CreatedByUserFK": CreatedByUserFK, "MissingPersonNameID": MissingPersonNameID, "MissingPersonID": MissingPersonID,
 
         }
@@ -298,8 +314,8 @@ const Home = ({ DecMissPerID, DecIncID }) => {
     }
 
     const update_MissingPerson = () => {
-        const { MissingPersonNumber, ReportingOfficerID, ReportedDttm, PersonID, IncidentNumber, MessageKeyID, PossibleDestination, Occupation, PhysicalCondition, EmancipationDt, CompaintID, Relationwithmp, MissingPersonNameID } = value;
-        const val = { 'MissingPersonNumber': MissingPersonNumber, 'ReportingOfficerID': ReportingOfficerID, 'ReportedDttm': ReportedDttm, 'PersonID': PersonID, 'IncidentNumber': IncidentNumber, 'MessageKeyID': MessageKeyID, 'PossibleDestination': PossibleDestination, 'Occupation': Occupation, 'PhysicalCondition': PhysicalCondition, 'EmancipationDt': EmancipationDt, 'CompaintID': CompaintID, 'Relationwithmp': Relationwithmp, 'ModifiedByUserFK': loginPinID, 'MissingPersonID': MissingPersonID, 'MissingPersonNameID': MissingPersonNameID }
+        const { MissingPersonNumber, ReportingOfficerID, ReportedDttm, PersonID, IncidentNumber, MessageKeyID, PossibleDestination, Occupation, PhysicalCondition, EmancipationDt, CompaintID, Relationwithmp, CloseFriends, PlaceMissingPerson, InvestigationOfficer, InvestigationOfficerTelephoneNumber, MissingPersonNameID } = value;
+        const val = { 'MissingPersonNumber': MissingPersonNumber, 'ReportingOfficerID': ReportingOfficerID, 'ReportedDttm': ReportedDttm, 'PersonID': PersonID, 'IncidentNumber': IncidentNumber, 'MessageKeyID': MessageKeyID, 'PossibleDestination': PossibleDestination, 'Occupation': Occupation, 'PhysicalCondition': PhysicalCondition, 'EmancipationDt': EmancipationDt, 'CompaintID': CompaintID, 'Relationwithmp': Relationwithmp, 'CloseFriends': CloseFriends, 'PlaceMissingPerson': PlaceMissingPerson, 'InvestigationOfficer': InvestigationOfficer, 'InvestigationOfficerTelephoneNumber': InvestigationOfficerTelephoneNumber, 'ModifiedByUserFK': loginPinID, 'MissingPersonID': MissingPersonID, 'MissingPersonNameID': MissingPersonNameID }
 
         AddDeleteUpadate('MissingPerson/Update_MissingPerson', val).then((res) => {
             const parsedData = JSON.parse(res.data);
@@ -362,7 +378,25 @@ const Home = ({ DecMissPerID, DecIncID }) => {
     const HandleChange = (e) => {
         !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
         if (e.target.name) {
-            setValue({ ...value, [e.target.name]: e.target.value });
+            if (e.target.name === 'InvestigationOfficerTelephoneNumber') {
+                let ele = e.target.value.replace(/\D/g, '');
+                if (ele.length === 10) {
+                    const cleaned = ('' + ele).replace(/\D/g, '');
+                    const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+                    if (match) {
+                        !addUpdatePermission && setChangesStatus(true);
+                        setValue({ ...value, [e.target.name]: match[1] + '-' + match[2] + '-' + match[3] });
+                        setErrors({ ...errors, ['InvestigationOfficerTelephoneNumberError']: '' });
+                    }
+                } else {
+                    ele = e.target.value.split('-').join('').replace(/\D/g, '');
+                    !addUpdatePermission && setChangesStatus(true);
+                    setValue({ ...value, [e.target.name]: ele });
+                    setErrors({ ...errors, ['InvestigationOfficerTelephoneNumberError']: '' });
+                }
+            } else {
+                setValue({ ...value, [e.target.name]: e.target.value });
+            }
         }
         else { setChangesStatus(false) }
     };
@@ -692,7 +726,43 @@ const Home = ({ DecMissPerID, DecIncID }) => {
                     <div className="col-4 col-md-4 col-lg-2 mt-0 text-field">
                         <input type="text" className='' name='Relationwithmp' value={value?.Relationwithmp} onChange={HandleChange} required />
                     </div>
-
+                    <div className="col-2 col-md-2 col-lg-2">
+                        <label htmlFor="" className='new-label mb-0'>Close Friends/Relatives </label>
+                    </div>
+                    <div className="col-4 col-md-4 col-lg-4 mt-0 text-field">
+                        <input type="text" className='' name='CloseFriends' value={value?.CloseFriends} onChange={HandleChange} required />
+                    </div>
+                    <div className="col-2 col-md-2 col-lg-2">
+                        <label htmlFor="" className='new-label mb-0'>Places Missing Person Frequented </label>
+                    </div>
+                    <div className="col-4 col-md-4 col-lg-4 mt-0 text-field">
+                        <input type="text" className='' name='PlaceMissingPerson' value={value?.PlaceMissingPerson} onChange={HandleChange} required />
+                    </div>
+                    <div className="col-2 col-md-2 col-lg-2">
+                        <label htmlFor="" className='new-label mb-0'>Investigating Officer </label>
+                    </div>
+                    <div className="col-4 col-md-4 col-lg-4">
+                        <Select
+                            styles={customStylesWithOutColor}
+                            name="InvestigationOfficer"
+                            value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.InvestigationOfficer)}
+                            options={agencyOfficerDrpData}
+                            onChange={(e) => { ChangeDropDown(e, 'InvestigationOfficer') }}
+                            isClearable
+                            placeholder="Select..."
+                        />
+                    </div>
+                    <div className="col-2 col-md-2 col-lg-2">
+                        <label htmlFor="" className='new-label mb-0'>Investigating Officer's Telephone Number
+                            {errors.InvestigationOfficerTelephoneNumberError && errors.InvestigationOfficerTelephoneNumberError !== 'true' ? (
+                                <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.InvestigationOfficerTelephoneNumberError}</p>
+                            ) : null}
+                        </label>
+                    </div>
+                    <div className="col-4 col-md-4 col-lg-4 mt-0 text-field">
+                        <input type="text"
+                        maxLength={10} className={errors.InvestigationOfficerTelephoneNumberError && errors.InvestigationOfficerTelephoneNumberError !== 'true' ? '' : ''} name='InvestigationOfficerTelephoneNumber' value={value?.InvestigationOfficerTelephoneNumber} onChange={HandleChange} required />
+                    </div>
 
                 </div>
             </div>

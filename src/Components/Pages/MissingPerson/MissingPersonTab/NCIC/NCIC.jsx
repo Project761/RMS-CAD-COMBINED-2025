@@ -4,7 +4,7 @@ import { Decrypt_Id_Name, customStylesWithOutColor } from "../../../../Common/Ut
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { get_LocalStoreData } from "../../../../../redux/actions/Agency";
-import { get_BloodType_Drp_Data, get_Body_XRay_Drp_Data, get_Circumcision_Drp_Data, get_Circumstances_Drp_Data, get_Corrected_Vision_Drp_Data, get_Ever_DonatedBlood_Drp_Data, get_Fingerprinted_Drp_Data, get_Missing_CMC_Drp_Data } from "../../../../../redux/actions/DropDownsData";
+import { get_BloodType_Drp_Data, get_Body_XRay_Drp_Data, get_Circumcision_Drp_Data, get_Circumstances_Drp_Data, get_Corrected_Vision_Drp_Data, get_Ever_DonatedBlood_Drp_Data, get_Fingerprinted_Drp_Data, get_Missing_CMC_Drp_Data, get_Skin_Tone_Drp_Data } from "../../../../../redux/actions/DropDownsData";
 import { AgencyContext } from "../../../../../Context/Agency/Index";
 import { AddDeleteUpadate, fetchPostData } from "../../../../hooks/Api";
 import { toastifySuccess } from "../../../../Common/AlertMsg";
@@ -28,9 +28,9 @@ const NCIC = (props) => {
     const fingerPrintedDrpData = useSelector((state) => state.DropDown.fingerPrintedDrpData);
     const missingCMCDrpData = useSelector((state) => state.DropDown.missingCMCDrpData);
     const bodyXRayDrpData = useSelector((state) => state.DropDown.bodyXRayDrpData);
+    const skinToneDrpData = useSelector((state) => state.DropDown.skinToneDrpData);
     const bloodTypeDrpData = useSelector((state) => state.DropDown.bloodTypeDrpData);
     const circumcisionDrpData = useSelector((state) => state.DropDown.circumcisionDrpData);
-
     const [loginPinID, setloginPinID,] = useState('');
     const [loginAgencyID, setloginAgencyID] = useState('');
     const [Editval, setEditval] = useState();
@@ -38,21 +38,29 @@ const NCIC = (props) => {
     const [statesChangeStatus, setStatesChangeStatus] = useState(false);
     const [updateCount, setUpdateCount] = useState(0);
     const [addUpdatePermission, setaddUpdatePermission] = useState();
+    const option = [
+        {
+            label: "Yes",
+            value: true
+        },
+        {
+            label: "No",
+            value: false
+        }
+    ]
 
     const [value, setValue] = useState({
-        'CMCID': "", 'BloodDonateID': "", 'BloodTypeID': "", 'CircumcisionID': "", 'CircumstancesID': "", 'XrayID': "", 'CorrVisionID': "", 'VisionPerscription': "", 'FingerprintID': "", 'FingerprintClassification': "", 'IsDNA': "", 'IsPreviouslyMissing': "", 'IsDisability': "", 'IsFootprint': "", 'IsNoLongerMissing': "", 'MissingPersonID': "", 'ModifiedByUserFK': "",
+        'CautionAndMedicalConditions': "", 'BloodDonateID': "", 'BloodTypeID': "", 'CircumcisionID': "", 'CircumstancesID': "", 'XrayID': "", 'CorrVisionID': "", 'VisionPerscription': "", 'FingerprintID': "", 'FingerprintClassification': "", 'IsDNA': "", 'IsPreviouslyMissing': "", 'IsDisability': "", 'IsFootprint': "", 'IsNoLongerMissing': "", 'MissingPersonID': "", 'ModifiedByUserFK': "", IsHasMissing: "", ByWhom: "", FingerprintClassification1: "", FingerprintClassification2: "", FingerprintClassification3: "", FingerprintClassification4: "", FingerprintClassification5: "", FingerprintClassification6: "", FingerprintClassification7: "", FingerprintClassification8: "", FingerprintClassification9: "", FingerprintClassification10: "", IsFootprintAvailable: "", SkinID: "", CautionAndMedicalConditions: "", IsGlasses: "", IsConLenses: "", IsDnaProfile: "", DnaLocation: "", MiscellaneousInfo: "", ModifiedByUserFK: "",
     });
 
-    const [errors, setErrors] = useState({
-        'ReportingOfficerIDError': '', 'ReportedDttmError': '', 'PersonIDError': '', 'IncidentIDError': ''
-    })
 
     const Reset = (e) => {
         setValue({
             ...value,
-            'CMCID': "", 'BloodDonateID': "", 'BloodTypeID': "", 'CircumcisionID': "", 'CircumstancesID': "", 'XrayID': "", 'CorrVisionID': "", 'VisionPerscription': "", 'FingerprintID': "", 'FingerprintClassification': "", 'IsDNA': "", 'IsPreviouslyMissing': "", 'IsDisability': "", 'IsFootprint': "", 'IsNoLongerMissing': "",
-        }); setStatesChangeStatus(false);
-        if (Editval[0]?.CMCID?.length || Editval[0]?.BloodDonateID?.length || Editval[0]?.BloodTypeID?.length || Editval[0]?.CircumcisionID?.length || Editval[0]?.CircumstancesID?.length || Editval[0]?.XrayID?.length || Editval[0]?.CorrVisionID?.length || Editval[0]?.VisionPerscription?.length || Editval[0]?.FingerprintID?.length || Editval[0]?.FingerprintClassification?.length > 0) {
+            'CautionAndMedicalConditions': "", 'BloodDonateID': "", 'BloodTypeID': "", 'CircumcisionID': "", 'CircumstancesID': "", 'XrayID': "", 'CorrVisionID': "", 'VisionPerscription': "", 'FingerprintID': "", 'FingerprintClassification': "", 'IsDNA': "", 'IsPreviouslyMissing': "", 'IsDisability': "", 'IsFootprint': "", 'IsNoLongerMissing': "", IsHasMissing: "", ByWhom: "", FingerprintClassification1: "", FingerprintClassification2: "", FingerprintClassification3: "", FingerprintClassification4: "", FingerprintClassification5: "", FingerprintClassification6: "", FingerprintClassification7: "", FingerprintClassification8: "", FingerprintClassification9: "", FingerprintClassification10: "", IsFootprintAvailable: "", SkinID: "", CautionAndMedicalConditions: "", IsGlasses: "", IsConLenses: "", IsDnaProfile: "", DnaLocation: "", MiscellaneousInfo: "", ModifiedByUserFK: "",
+        });
+        setStatesChangeStatus(false);
+        if (Editval[0]?.CautionAndMedicalConditions?.length || Editval[0]?.BloodDonateID?.length || Editval[0]?.BloodTypeID?.length || Editval[0]?.CircumcisionID?.length || Editval[0]?.CircumstancesID?.length || Editval[0]?.XrayID?.length || Editval[0]?.CorrVisionID?.length || Editval[0]?.VisionPerscription?.length || Editval[0]?.FingerprintID?.length || Editval[0]?.FingerprintClassification?.length > 0) {
             setUpdateCount(updateCount + 1)
         }
     }
@@ -105,6 +113,7 @@ const NCIC = (props) => {
             if (donatedBloodDrpData?.length === 0) { dispatch(get_Ever_DonatedBlood_Drp_Data(loginAgencyID)) }
             if (circumstancesDrpData?.length === 0) { dispatch(get_Circumstances_Drp_Data(loginAgencyID)) }
             if (bodyXRayDrpData?.length === 0) { dispatch(get_Body_XRay_Drp_Data(loginAgencyID)) }
+            if (skinToneDrpData?.length === 0) { dispatch(get_Skin_Tone_Drp_Data(loginAgencyID)) }
             if (correctedVisionDrpData?.length === 0) { dispatch(get_Corrected_Vision_Drp_Data(loginAgencyID)) }
             if (fingerPrintedDrpData?.length === 0) { dispatch(get_Fingerprinted_Drp_Data(loginAgencyID)) }
             if (bloodTypeDrpData?.length === 0) { dispatch(get_BloodType_Drp_Data(loginAgencyID)) }
@@ -116,12 +125,12 @@ const NCIC = (props) => {
         if (Editval) {
             setValue({
                 ...value,
-                'CMCID': Editval[0]?.CMCID, 'BloodDonateID': Editval[0]?.BloodDonateID, 'BloodTypeID': Editval[0]?.BloodTypeID, 'CircumcisionID': Editval[0]?.CircumcisionID, 'CircumstancesID': Editval[0]?.CircumstancesID, 'XrayID': Editval[0]?.XrayID, 'CorrVisionID': Editval[0]?.CorrVisionID, 'VisionPerscription': Editval[0]?.VisionPerscription, 'FingerprintID': Editval[0]?.FingerprintID, 'FingerprintClassification': Editval[0]?.FingerprintClassification, 'IsDNA': Editval[0]?.IsDNA, 'IsPreviouslyMissing': Editval[0]?.IsPreviouslyMissing, 'IsDisability': Editval[0]?.IsDisability, 'IsFootprint': Editval[0]?.IsFootprint, 'IsNoLongerMissing': Editval[0]?.IsNoLongerMissing, 'MissingPersonID': Editval[0]?.MissingPersonID, 'ModifiedByUserFK': loginPinID,
+                'CautionAndMedicalConditions': Editval[0]?.CautionAndMedicalConditions, 'BloodDonateID': Editval[0]?.BloodDonateID, 'BloodTypeID': Editval[0]?.BloodTypeID, 'CircumcisionID': Editval[0]?.CircumcisionID, 'CircumstancesID': Editval[0]?.CircumstancesID, 'XrayID': Editval[0]?.XrayID, 'CorrVisionID': Editval[0]?.CorrVisionID, 'VisionPerscription': Editval[0]?.VisionPerscription, 'FingerprintID': Editval[0]?.FingerprintID, 'FingerprintClassification': Editval[0]?.FingerprintClassification, 'IsDNA': Editval[0]?.IsDNA, 'IsPreviouslyMissing': Editval[0]?.IsPreviouslyMissing, 'IsDisability': Editval[0]?.IsDisability, 'IsFootprint': Editval[0]?.IsFootprint, 'IsNoLongerMissing': Editval[0]?.IsNoLongerMissing, 'MissingPersonID': Editval[0]?.MissingPersonID, 'ModifiedByUserFK': loginPinID, IsHasMissing: Editval[0]?.IsHasMissing, ByWhom: Editval[0]?.ByWhom, FingerprintClassification1: Editval[0]?.FingerprintClassification1, FingerprintClassification2: Editval[0]?.FingerprintClassification2, FingerprintClassification3: Editval[0]?.FingerprintClassification3, FingerprintClassification4: Editval[0]?.FingerprintClassification4, FingerprintClassification5: Editval[0]?.FingerprintClassification5, FingerprintClassification6: Editval[0]?.FingerprintClassification6, FingerprintClassification7: Editval[0]?.FingerprintClassification7, FingerprintClassification8: Editval[0]?.FingerprintClassification8, FingerprintClassification9: Editval[0]?.FingerprintClassification9, FingerprintClassification10: Editval[0]?.FingerprintClassification10, IsFootprintAvailable: Editval[0]?.IsFootprintAvailable, SkinID: Editval[0]?.SkinID, CautionAndMedicalConditions: Editval[0]?.CautionAndMedicalConditions, IsGlasses: Editval[0]?.IsGlasses, IsConLenses: Editval[0]?.IsConLenses, IsDnaProfile: Editval[0]?.IsDnaProfile, DnaLocation: Editval[0]?.DnaLocation, MiscellaneousInfo: Editval[0]?.MiscellaneousInfo, ModifiedByUserFK: loginPinID,
             });
         } else {
             setValue({
                 ...value,
-                'CMCID': "", 'BloodDonateID': "", 'BloodTypeID': "", 'CircumcisionID': "", 'CircumstancesID': "", 'XrayID': "", 'CorrVisionID': "", 'VisionPerscription': "", 'FingerprintID': "", 'FingerprintClassification': "", 'IsDNA': "", 'IsPreviouslyMissing': "", 'IsDisability': "", 'IsFootprint': "", 'IsNoLongerMissing': "", 'MissingPersonID': "", 'ModifiedByUserFK': "",
+                'CautionAndMedicalConditions': "", 'BloodDonateID': "", 'BloodTypeID': "", 'CircumcisionID': "", 'CircumstancesID': "", 'XrayID': "", 'CorrVisionID': "", 'VisionPerscription': "", 'FingerprintID': "", 'FingerprintClassification': "", 'IsDNA': "", 'IsPreviouslyMissing': "", 'IsDisability': "", 'IsFootprint': "", 'IsNoLongerMissing': "", 'MissingPersonID': "", 'ModifiedByUserFK': "", IsHasMissing: "", ByWhom: "", FingerprintClassification1: "", FingerprintClassification2: "", FingerprintClassification3: "", FingerprintClassification4: "", FingerprintClassification5: "", FingerprintClassification6: "", FingerprintClassification7: "", FingerprintClassification8: "", FingerprintClassification9: "", FingerprintClassification10: "", IsFootprintAvailable: "", SkinID: "", CautionAndMedicalConditions: "", IsGlasses: "", IsConLenses: "", IsDnaProfile: "", DnaLocation: "", MiscellaneousInfo: "", ModifiedByUserFK: "",
             });
         }
     }, [Editval, updateCount])
@@ -130,8 +139,14 @@ const NCIC = (props) => {
     const ChangeDropDown = (e, name) => {
         !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
         if (e) {
-            if (name === 'CMCID') {
-                setValue({ ...value, [name]: e.value })
+            if (name === 'CautionAndMedicalConditions') {
+                // const id = []
+
+                // value?.CautionAndMedicalConditions?.map((item, i) => { id.push(item.value); })
+                // setValue({ ...value, [name]: id.toString(), })
+                // Convert selected values to a comma-separated string
+                const id = e.map(item => item.value).join(',');
+                setValue({ ...value, [name]: id });
             } else if (name === 'BloodDonateID') {
                 setValue({ ...value, [name]: e.value })
             } else if (name === 'BloodTypeID') {
@@ -148,27 +163,68 @@ const NCIC = (props) => {
                 setValue({ ...value, [name]: e.value })
             }
             else if (name === 'CorrVisionID') {
-                setValue({ ...value, [name]: e.value })
+                // Reset Glasses and Con Lenses when Corrected Vision is not "Yes" (value 1)
+                if (e.value !== 1) {
+                    setValue({ ...value, [name]: e.value, IsGlasses: false, IsConLenses: false, VisionPerscription: "" })
+                } else {
+                    setValue({ ...value, [name]: e.value })
+                }
             } else {
                 setValue({ ...value, [name]: e.value })
             }
         } else if (e === null) {
-            setValue({ ...value, [name]: null })
+            // Reset Glasses and Con Lenses when Corrected Vision is cleared
+            if (name === 'CorrVisionID') {
+                setValue({ ...value, [name]: null, IsGlasses: false, IsConLenses: false, VisionPerscription: "" })
+            } else {
+                setValue({ ...value, [name]: null })
+            }
         } else {
             setValue({ ...value, [name]: null })
         }
     }
 
+
     const HandleChange = (e) => {
-        !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-        if (e.target.name === 'IsDNA' || e.target.name === 'IsPreviouslyMissing' || e.target.name === 'IsDisability' || e.target.name === 'IsFootprint' || e.target.name === 'IsNoLongerMissing') {
-            setValue({ ...value, [e.target.name]: e.target.checked })
+        !addUpdatePermission && setStatesChangeStatus(true);
+        !addUpdatePermission && setChangesStatus(true);
+
+        const { name, id, checked, value: inputValue } = e.target;
+
+
+
+        // ✅ Special case for IsGlasses and IsConLenses - reset VisionPerscription when both are unchecked
+        if (name === 'IsGlasses' || name === 'IsConLenses') {
+            setValue(prev => {
+                const newValue = { ...prev, [name]: checked };
+                // Reset VisionPerscription if both Glasses and Con Lenses are now unchecked
+                const isGlassesChecked = name === 'IsGlasses' ? checked : prev.IsGlasses;
+                const isConLensesChecked = name === 'IsConLenses' ? checked : prev.IsConLenses;
+                if (!isGlassesChecked && !isConLensesChecked) {
+                    newValue.VisionPerscription = "";
+                }
+                return newValue;
+            });
         }
-        else if (e.target.name === 'VisionPerscription' || e.target.name === 'FingerprintClassification') {
-            setValue({ ...value, [e.target.name]: e.target.value });
+        // ✅ For standard boolean checkboxes
+        else if (
+            name === 'IsDNA' ||
+            name === 'IsPreviouslyMissing' ||
+            name === 'IsDisability' ||
+            name === 'IsFootprint' ||
+            name === 'IsNoLongerMissing'
+        ) {
+            setValue({ ...value, [name]: checked });
         }
+
+        // ✅ For text input fields
+        else if (name === 'VisionPerscription' || name === 'FingerprintClassification1' || name === 'FingerprintClassification2' || name === 'FingerprintClassification3' || name === 'FingerprintClassification4' || name === 'FingerprintClassification5' || name === 'FingerprintClassification6' || name === 'FingerprintClassification7' || name === 'FingerprintClassification8' || name === 'FingerprintClassification9' || name === 'FingerprintClassification10' || name === 'ByWhom' || name === 'DnaLocation' || name === 'MiscellaneousInfo') {
+            setValue({ ...value, [name]: inputValue });
+        }
+
+        // ✅ For all others
         else {
-            setValue({ ...value, [e.target.name]: null });
+            setValue({ ...value, [name]: null });
         }
     };
 
@@ -177,207 +233,413 @@ const NCIC = (props) => {
             const parsedData = JSON.parse(res.data);
             const message = parsedData.Table[0].Message;
             toastifySuccess(message); setStatesChangeStatus(false); setChangesStatus(false)
+            GetSingleData(DecMissPerID)
         })
     }
     return (
         <>
             <div className="col-12 mt-2">
-                <div className="row">
-                    <fieldset>
-                        <legend>NCIC Information</legend>
-                        <div className="col-12">
-                            <div className="row ">
-                                <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
 
-                                    <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('CMC') }}>
-                                        CMC
-                                    </span>
-                                </div>
-                                <div className="col-4 col-md-4 col-lg-2 mt-1 ">
-                                    <Select
-                                        styles={customStylesWithOutColor}
-                                        name="CMCID"
-                                        value={missingCMCDrpData?.filter((obj) => obj.value === value?.CMCID)}
-                                        options={missingCMCDrpData}
-                                        onChange={(e) => { ChangeDropDown(e, 'CMCID') }}
-                                        isClearable
-                                        placeholder="Select..."
-                                    />
-                                </div>
-                                <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
+                <fieldset>
+                    <legend>Other Information</legend>
+                    <div className="col-12">
+                        <div className="row ">
+                            <div className="col-4 col-md-4 col-lg-4 mt-2 pt-1">
+                                <div className="d-flex align-items-center ">
+                                    <label htmlFor="" className='new-label mr-2 mb-0 text-nowrap'>Has the missing person ever been fingerprinted?</label>
+                                    <div className="d-flex align-items-center">
+                                        <input
+                                            className="mr-1"
+                                            type="radio"
+                                            id="FingerprintYes"
+                                            name="IsHasMissing"
+                                            checked={value?.IsHasMissing === true}
+                                            onChange={(e) => {
+                                                setValue(prev => ({
+                                                    ...prev,
+                                                    IsHasMissing: true,
+                                                    ByWhom: prev.ByWhom
+                                                }));
+                                                !addUpdatePermission && setStatesChangeStatus(true);
+                                                !addUpdatePermission && setChangesStatus(true);
+                                            }}
+                                        />
+                                        <span className="mr-2">Yes</span>
 
-                                    <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Ever Donated Blood') }}>
-                                        Ever Donated Blood
-                                    </span>
-                                </div>
-                                <div className="col-4 col-md-4 col-lg-2 mt-1 ">
-                                    <Select
-                                        styles={customStylesWithOutColor}
-                                        name="BloodDonateID"
-                                        value={donatedBloodDrpData?.filter((obj) => obj.value === value?.BloodDonateID)}
-                                        options={donatedBloodDrpData}
-                                        onChange={(e) => { ChangeDropDown(e, 'BloodDonateID') }}
+                                        <input
+                                            className="mr-1"
+                                            type="radio"
+                                            id="FingerprintNo"
+                                            name="IsHasMissing"
+                                            checked={value?.IsHasMissing === false}
+                                            onChange={(e) => {
+                                                setValue(prev => ({
+                                                    ...prev,
+                                                    IsHasMissing: false,
+                                                    ByWhom: ''
+                                                }));
+                                                !addUpdatePermission && setStatesChangeStatus(true);
+                                                !addUpdatePermission && setChangesStatus(true);
+                                            }}
+                                        />
+                                        <span>No</span>
+                                    </div>
 
-                                        isClearable
-                                        placeholder="Select..."
-                                    />
                                 </div>
-                                <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
-
-                                    <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Blood Type') }}>
-                                        Blood Type
-                                    </span>
-                                </div>
-                                <div className="col-4 col-md-4 col-lg-2 mt-1 ">
-                                    <Select
-                                        styles={customStylesWithOutColor}
-                                        name="BloodTypeID"
-                                        value={bloodTypeDrpData?.filter((obj) => obj.value === value?.BloodTypeID)}
-                                        options={bloodTypeDrpData}
-                                        onChange={(e) => { ChangeDropDown(e, 'BloodTypeID') }}
-
-                                        isClearable
-                                        placeholder="Select..."
-                                    />
-                                </div>
-                                <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
-
-                                    <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Circumcision') }}>
-                                        Circumcision
-                                    </span>
-                                </div>
-                                <div className="col-4 col-md-4 col-lg-2 mt-1 ">
-                                    <Select
-                                        styles={customStylesWithOutColor}
-                                        name="CircumcisionID"
-                                        value={circumcisionDrpData?.filter((obj) => obj.value === value?.CircumcisionID)}
-                                        options={circumcisionDrpData}
-                                        onChange={(e) => { ChangeDropDown(e, 'CircumcisionID') }}
-                                        isClearable
-                                        placeholder="Select..."
-                                    />
-                                </div>
-                                <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
-
-                                    <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Circumstances') }}>
-                                        Circumstances
-                                    </span>
-                                </div>
-                                <div className="col-4 col-md-4 col-lg-2 mt-1 ">
-                                    <Select
-                                        styles={customStylesWithOutColor}
-                                        name="CircumstancesID"
-                                        value={circumstancesDrpData?.filter((obj) => obj.value === value?.CircumstancesID)}
-                                        options={circumstancesDrpData}
-                                        onChange={(e) => { ChangeDropDown(e, 'CircumstancesID') }}
-                                        isClearable
-                                        placeholder="Select..."
-                                    />
-                                </div>
-                                <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
-
-                                    <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Body X Ray') }}>
-                                        Body-X-Rays
-                                    </span>
-                                </div>
-                                <div className="col-4 col-md-4 col-lg-2 mt-1 ">
-                                    <Select
-                                        styles={customStylesWithOutColor}
-                                        name="XrayID"
-                                        value={bodyXRayDrpData?.filter((obj) => obj.value === value?.XrayID)}
-                                        options={bodyXRayDrpData}
-                                        onChange={(e) => { ChangeDropDown(e, 'XrayID') }}
-                                        isClearable
-                                        placeholder="Select..."
-                                    />
-                                </div>
-                                <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
-
-                                    <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Corrected Vision') }}>
-                                        Corrected Vision
-                                    </span>
-                                </div>
-                                <div className="col-4 col-md-4 col-lg-2 mt-1 ">
-                                    <Select
-                                        styles={customStylesWithOutColor}
-                                        name="CorrVisionID"
-                                        value={correctedVisionDrpData?.filter((obj) => obj.value === value?.CorrVisionID)}
-                                        options={correctedVisionDrpData}
-                                        onChange={(e) => { ChangeDropDown(e, 'CorrVisionID') }}
-                                        isClearable
-                                        placeholder="Select..."
-                                    />
-                                </div>
-                                <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
-                                    <label htmlFor="" className='new-label'>Vision Prescription</label>
-                                </div>
-                                <div className="col-4 col-md-4 col-lg-2 mt-1 text-field">
-                                    <input type="text" className='' name='VisionPerscription' value={value?.VisionPerscription} onChange={HandleChange} required />
-                                </div>
-                                <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
-
-                                    <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Fingerprinted') }}>
-                                        Fingerprinted
-                                    </span>
-                                </div>
-                                <div className="col-4 col-md-4 col-lg-2 mt-1 ">
-                                    <Select
-                                        styles={customStylesWithOutColor}
-                                        name="FingerprintID"
-                                        value={fingerPrintedDrpData?.filter((obj) => obj.value === value?.FingerprintID)}
-                                        options={fingerPrintedDrpData}
-                                        onChange={(e) => { ChangeDropDown(e, 'FingerprintID') }}
-                                        isClearable
-                                        placeholder="Select..."
-                                    />
-                                </div>
-                                <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
-                                    <label htmlFor="" className='new-label'>Fingerprint Classification</label>
-                                </div>
-                                <div className="col-4 col-md-4 col-lg-2 mt-1 text-field ">
-                                    <input type="text" className='' name='FingerprintClassification' value={value?.FingerprintClassification} onChange={HandleChange} required />
-                                </div>
-
                             </div>
-                            <div className="row">
-                                <div className="col-6 col-md-6 col-lg-4 pl-5 ml-5 mt-2 " >
-                                    <div className="form-check">
-                                        <input className="form-check-input" type="checkbox" id="IsDNA" name='IsDNA' value={value?.IsDNA} onChange={HandleChange} checked={value?.IsDNA} />
-                                        <label className="form-check-label" htmlFor="DNA">DNA</label>
-                                    </div>
-                                </div>
-                                <div className="col-6 col-md-6 col-lg-4 mt-2 " >
-                                    <div className="form-check">
-                                        <input className="form-check-input" type="checkbox" id="IsPreviouslyMissing" name='IsPreviouslyMissing' value={value?.IsPreviouslyMissing} onChange={HandleChange} checked={value?.IsPreviouslyMissing} />
-                                        <label className="form-check-label" htmlFor="PreviouslyMissing">Previously Missing</label>
-                                    </div>
-                                </div>
-                                <div className="col-6 col-md-6 col-lg-3 mt-2 " >
-                                    <div className="form-check">
-                                        <input className="form-check-input" type="checkbox" id="IsDisability" name='IsDisability' value={value?.IsDisability} onChange={HandleChange} checked={value?.IsDisability} />
-                                        <label className="form-check-label" htmlFor="Disability">Disability</label>
-                                    </div>
-                                </div>
-                                <div className="col-6 col-md-6 col-lg-4 mt-2 pl-5 ml-5" >
-                                    <div className="form-check">
-                                        <input className="form-check-input" type="checkbox" id="IsFootprint" name='IsFootprint' value={value?.IsFootprint} onChange={HandleChange} checked={value?.IsFootprint} />
-                                        <label className="form-check-label" htmlFor="Footprint">Footprint</label>
-                                    </div>
-                                </div>
-                                <div className="col-6 col-md-6 col-lg-4 mt-2 " >
-                                    <div className="form-check">
-                                        <input className="form-check-input" type="checkbox" id="IsNoLongerMissing" name='IsNoLongerMissing' value={value?.IsNoLongerMissing} onChange={HandleChange} checked={value?.IsNoLongerMissing} />
-                                        <label className="form-check-label" htmlFor="NOlonger">No Longer Missing</label>
-                                    </div>
-                                </div>
+
+                            <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
+                                <label htmlFor="" className='new-label'>By Whom?</label>
+                            </div>
+                            <div className="col-6 col-md-6 col-lg-6 mt-1 text-field">
+                                <input
+                                    type="text"
+                                    className='form-control'
+                                    name='ByWhom'
+                                    value={value?.ByWhom}
+                                    onChange={HandleChange}
+                                    disabled={!value?.IsHasMissing}
+                                    required
+                                />
                             </div>
                         </div>
-                    </fieldset>
-                </div>
 
+                        <div className="row ">
+                            <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
+                                <label htmlFor="" className='new-label'>Fingerprint Classification</label>
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2 mt-1 text-field">
+                                <input type="text" className='' name='FingerprintClassification1' value={value?.FingerprintClassification1} onChange={HandleChange} required />
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2 mt-1 text-field">
+                                <input type="text" className='' name='FingerprintClassification2' value={value?.FingerprintClassification2} onChange={HandleChange} required />
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2 mt-1 text-field">
+                                <input type="text" className='' name='FingerprintClassification3' value={value?.FingerprintClassification3} onChange={HandleChange} required />
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2 mt-1 text-field">
+                                <input type="text" className='' name='FingerprintClassification4' value={value?.FingerprintClassification4} onChange={HandleChange} required />
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2 mt-1 text-field">
+                                <input type="text" className='' name='FingerprintClassification5' value={value?.FingerprintClassification5} onChange={HandleChange} required />
+                            </div>
+                        </div>
+
+                        <div className="row ">
+                            <div className="offset-2 col-2 col-md-2 col-lg-2 mt-1 text-field">
+                                <input type="text" className='' name='FingerprintClassification6' value={value?.FingerprintClassification6} onChange={HandleChange} required />
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2 mt-1 text-field">
+                                <input type="text" className='' name='FingerprintClassification7' value={value?.FingerprintClassification7} onChange={HandleChange} required />
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2 mt-1 text-field">
+                                <input type="text" className='' name='FingerprintClassification8' value={value?.FingerprintClassification8} onChange={HandleChange} required />
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2 mt-1 text-field">
+                                <input type="text" className='' name='FingerprintClassification9' value={value?.FingerprintClassification9} onChange={HandleChange} required />
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2 mt-1 text-field">
+                                <input type="text" className='' name='FingerprintClassification10' value={value?.FingerprintClassification10} onChange={HandleChange} required />
+                            </div>
+                        </div>
+
+                        <div className="row ">
+                            <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
+                                <label htmlFor="" className='new-label'>Footprints Available?</label>
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2 mt-1 text-field">
+                                <Select
+                                    styles={customStylesWithOutColor}
+                                    name="IsFootprintAvailable"
+                                    value={option?.filter((obj) => obj.value === value?.IsFootprintAvailable)}
+                                    options={option}
+                                    onChange={(e) => { ChangeDropDown(e, 'IsFootprintAvailable') }}
+                                    isClearable
+                                    placeholder="Select..."
+                                />
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
+
+                                <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Circumstances') }}>
+                                    Circumstances
+                                </span>
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2 mt-1 ">
+                                <Select
+                                    styles={customStylesWithOutColor}
+                                    name="CircumstancesID"
+                                    value={circumstancesDrpData?.filter((obj) => obj.value === value?.CircumstancesID)}
+                                    options={circumstancesDrpData}
+                                    onChange={(e) => { ChangeDropDown(e, 'CircumstancesID') }}
+                                    isClearable
+                                    placeholder="Select..."
+                                />
+                            </div>
+
+                            <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
+
+                                <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Circumcision') }}>
+                                    Circumcision
+                                </span>
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2 mt-1 ">
+                                <Select
+                                    styles={customStylesWithOutColor}
+                                    name="CircumcisionID"
+                                    value={circumcisionDrpData?.filter((obj) => obj.value === value?.CircumcisionID)}
+                                    options={circumcisionDrpData}
+                                    onChange={(e) => { ChangeDropDown(e, 'CircumcisionID') }}
+                                    isClearable
+                                    placeholder="Select..."
+                                />
+                            </div>
+                        </div>
+
+                        <div className="row ">
+                            <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
+                                <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('CMC') }}>
+                                    Caution and Medical Conditions
+                                </span>
+                            </div>
+                            <div className="col-6 col-md-6 col-lg-6 mt-1 ">
+                                <Select
+                                    styles={customStylesWithOutColor}
+                                    name="CautionAndMedicalConditions"
+                                    // value={missingCMCDrpData?.filter((obj) => obj.value === value?.CautionAndMedicalConditions)}
+                                    // value={missingCMCDrpData?.filter((obj) => value?.CautionAndMedicalConditions?.split(',').includes(obj.value.toString()))}
+                                    value={missingCMCDrpData?.filter((obj) =>
+                                        (String(value?.CautionAndMedicalConditions).split(',').includes(obj.value.toString()))
+                                    )}
+                                    options={missingCMCDrpData}
+                                    onChange={(e) => { ChangeDropDown(e, 'CautionAndMedicalConditions') }}
+                                    isClearable
+                                    placeholder="Select..."
+                                    isMulti={true}
+                                />
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
+                                <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Body X Ray') }}>
+                                    Body-X-Rays?
+                                </span>
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2 mt-1 ">
+                                <Select
+                                    styles={customStylesWithOutColor}
+                                    name="XrayID"
+                                    value={bodyXRayDrpData?.filter((obj) => obj.value === value?.XrayID)}
+                                    options={bodyXRayDrpData}
+                                    onChange={(e) => { ChangeDropDown(e, 'XrayID') }}
+                                    isClearable
+                                    placeholder="Select..."
+                                />
+                            </div>
+                        </div>
+
+                        <div className="row ">
+
+                            <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
+                                <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Ever Donated Blood') }}>
+                                    Ever Donated Blood?
+                                </span>
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2 mt-1 ">
+                                <Select
+                                    styles={customStylesWithOutColor}
+                                    name="BloodDonateID"
+                                    value={donatedBloodDrpData?.filter((obj) => obj.value === value?.BloodDonateID)}
+                                    options={donatedBloodDrpData}
+                                    onChange={(e) => { ChangeDropDown(e, 'BloodDonateID') }}
+
+                                    isClearable
+                                    placeholder="Select..."
+                                />
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
+
+                                <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Blood Type') }}>
+                                    Blood Type
+                                </span>
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2 mt-1 ">
+                                <Select
+                                    styles={customStylesWithOutColor}
+                                    name="BloodTypeID"
+                                    value={bloodTypeDrpData?.filter((obj) => obj.value === value?.BloodTypeID)}
+                                    options={bloodTypeDrpData}
+                                    onChange={(e) => { ChangeDropDown(e, 'BloodTypeID') }}
+
+                                    isClearable
+                                    placeholder="Select..."
+                                />
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
+                                <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Skin Tone') }}>
+                                    Skin Tone
+                                </span>
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2 mt-1 ">
+                                <Select
+                                    styles={customStylesWithOutColor}
+                                    name="SkinID"
+                                    value={skinToneDrpData?.filter((obj) => obj.value === value?.SkinID)}
+                                    options={skinToneDrpData}
+                                    onChange={(e) => { ChangeDropDown(e, 'SkinID') }}
+                                    isClearable
+                                    placeholder="Select..."
+                                />
+                            </div>
+
+                        </div>
+
+                        <div className="row ">
+                            <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
+                                <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Corrected Vision') }}>
+                                    Corrected Vision?
+                                </span>
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2 mt-1 ">
+                                <Select
+                                    styles={customStylesWithOutColor}
+                                    name="CorrVisionID"
+                                    value={correctedVisionDrpData?.filter((obj) => obj.value === value?.CorrVisionID)}
+                                    options={correctedVisionDrpData}
+                                    onChange={(e) => { ChangeDropDown(e, 'CorrVisionID') }}
+                                    isClearable
+                                    placeholder="Select..."
+                                />
+                            </div>
+
+                            {value?.CorrVisionID === 1 && (
+                                <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
+                                    <div className="d-flex align-items-center ">
+
+                                        <div className='d-flex align-items-center'>
+                                            <input
+                                                className="mr-1"
+                                                type="checkbox"
+                                                id="IsGlasses"
+                                                name="IsGlasses"
+                                                value={value?.IsGlasses}
+                                                onChange={HandleChange}
+                                                checked={value?.IsGlasses}
+                                            />
+                                            <span className='mr-2'> Glasses</span>
+                                            <input
+                                                className="mr-1"
+                                                type="checkbox"
+                                                id="IsConLenses"
+                                                name="IsConLenses"
+                                                value={value?.IsConLenses}
+                                                onChange={HandleChange}
+                                                checked={value?.IsConLenses}
+                                            />
+                                            <span>Con Lenses</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            {(value?.IsGlasses === true || value?.IsConLenses === true) && (
+                                <>
+                                    <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
+                                        <label htmlFor="" className='new-label'>Corrective Vision Prescription</label>
+                                    </div>
+                                    <div className="col-4 col-md-4 col-lg-4 mt-1 text-field">
+                                        <input type="text" className='' name='VisionPerscription' value={value?.VisionPerscription} onChange={HandleChange} required />
+                                    </div>
+                                </>
+                            )}
+                        </div>
+
+                        <div className="row ">
+
+                            <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
+                                <label htmlFor="" className='new-label  mb-0 text-nowrap'>DNA Profile Indicator</label>
+                            </div>
+                            <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
+                                <div className="d-flex align-items-center">
+                                    <input
+                                        className="mr-1"
+                                        type="radio"
+                                        id="IsDnaProfileYes"
+                                        name="IsDnaProfile"
+                                        checked={value?.IsDnaProfile === true}
+                                        onChange={(e) => {
+                                            setValue(prev => ({
+                                                ...prev,
+                                                IsDnaProfile: true,
+                                                DnaLocation: prev.DnaLocation
+                                            }));
+                                            !addUpdatePermission && setStatesChangeStatus(true);
+                                            !addUpdatePermission && setChangesStatus(true);
+                                        }}
+                                    />
+                                    <span className="mr-2">Yes</span>
+
+                                    <input
+                                        className="mr-1"
+                                        type="radio"
+                                        id="IsDnaProfileNo"
+                                        name="IsDnaProfile"
+                                        checked={value?.IsDnaProfile === false}
+                                        onChange={(e) => {
+                                            setValue(prev => ({
+                                                ...prev,
+                                                IsDnaProfile: false,
+                                                DnaLocation: ''
+                                            }));
+                                            !addUpdatePermission && setStatesChangeStatus(true);
+                                            !addUpdatePermission && setChangesStatus(true);
+                                        }}
+                                    />
+                                    <span>No</span>
+                                </div>
+
+                            </div>
+
+                            <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
+                                <label htmlFor="" className='new-label'>DNA Location</label>
+                            </div>
+                            <div className="col-6 col-md-6 col-lg-6 mt-1 text-field">
+                                <input
+                                    type="text"
+                                    className='form-control'
+                                    name='DnaLocation'
+                                    value={value?.DnaLocation}
+                                    onChange={HandleChange}
+                                    disabled={!value?.IsDnaProfile}
+                                    required
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Miscellaneous Information</legend>
+                    <div className="col-12">
+                        <div className="row">
+                            <div className="col-12 col-md-12 col-lg-12 mt-2 pt-1">
+                                <label htmlFor="" className='new-label' style={{ float: 'left' }}>Miscellaneous (MIS) information such as build, handedness, any illness or diseases, clothing description, hair description, should be included. If more space is needed, attach additional sheet.</label>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-12 col-md-12 col-lg-12 mt-1 text-field">
+
+                                <textarea
+                                    name='MiscellaneousInfo'
+                                    value={value?.MiscellaneousInfo}
+                                    onChange={HandleChange}
+                                    className='form-control'
+                                    rows='4'
+                                    placeholder=''
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
             </div>
 
-            <div className="col-12  text-right p-0" style={{ marginTop: '-10px' }}>
+            <div className="col-12  text-right p-0">
                 {
                     effectiveScreenPermission ? effectiveScreenPermission[0]?.Changeok ?
                         <button type="button" className="btn btn-sm btn-success  mr-4" disabled={!statesChangeStatus} onClick={Update_NCIC_Information} >Update</button>

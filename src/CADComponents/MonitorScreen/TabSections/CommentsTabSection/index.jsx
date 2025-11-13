@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { toastifySuccess } from "../../../../Components/Common/AlertMsg";
 import { isEmpty, compareStrings } from "../../../../CADUtils/functions/common";
 import { IncidentContext } from "../../../../CADContext/Incident";
+import { ScreenPermision } from "../../../../Components/hooks/Api";
 
 const columns = [
   {
@@ -51,6 +52,7 @@ const CommentsTabFrom = (props) => {
   const [loginAgencyID, setLoginAgencyID] = useState('');
   const [isCallAPI, setIsCallAPI] = useState(false)
   const [loginPinID, setLoginPinID,] = useState('');
+  const [effectiveScreenPermission, setEffectiveScreenPermission] = useState(null);
 
   const [
     commentState,
@@ -93,8 +95,25 @@ const CommentsTabFrom = (props) => {
     if (localStoreData) {
       setLoginAgencyID(localStoreData?.AgencyID);
       setLoginPinID(parseInt(localStoreData?.PINID));
+      getScreenPermision(localStoreData?.AgencyID, localStoreData?.PINID)
     }
   }, [localStoreData]);
+
+  const getScreenPermision = (aId, pinID) => {
+    try {
+      ScreenPermision("CA105", aId, pinID).then(res => {
+        if (res) {
+          setEffectiveScreenPermission(res);
+        }
+        else {
+          setEffectiveScreenPermission(null);
+        }
+      });
+    } catch (error) {
+      console.error('There was an error!', error);
+      setEffectiveScreenPermission(null);
+    }
+  }
 
   const getSingleIncidentKey = `/CAD/Monitor/MonitorIncidentByID/${IncID}`;
   const { data: singleIncidentData, isSuccess: isFetchSingleIncidentData } = useQuery(
@@ -220,7 +239,7 @@ const CommentsTabFrom = (props) => {
               </div>
             </div>
             <div className="tab-form-row">
-              {!isViewEventDetails && <div className="offset-1 col-3 d-flex align-self-center justify-content-start">
+              {!isViewEventDetails && effectiveScreenPermission?.[0]?.AddOK === 1 && <div className="offset-1 col-3 d-flex align-self-center justify-content-start">
                 <button className="save-button d-flex align-items-center justify-content-center" style={{ gap: '3px' }} disabled={isCallAPI} onClick={() => handleSave()}>
                   <FontAwesomeIcon icon={faAdd} style={{ color: 'white' }} />
                   {"Add Comment"}
@@ -232,7 +251,8 @@ const CommentsTabFrom = (props) => {
             <DataTable
               dense
               columns={columns}
-              data={CommentsData}
+              data={effectiveScreenPermission ? effectiveScreenPermission?.[0]?.DisplayOK ? CommentsData : '' : ''}
+              noDataComponent={effectiveScreenPermission ? effectiveScreenPermission?.[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : 'There are no data to display'}
               customStyles={tableCustomStyles}
               pagination
               responsive

@@ -17,10 +17,12 @@ import { getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime } fr
 import { AgencyContext } from '../../../Context/Agency/Index';
 import ReportMainAddress from '../ReportMainAddress/ReportMainAddress';
 import { getData_DropDown_Zone } from '../../../CADRedux/actions/DropDownsData';
+import { get_ScreenPermissions_Data } from '../../../redux/actions/IncidentAction';
 
 const CallDispatchSummaryReport = () => {
     const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
+    const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
     const ZoneDrpData = useSelector((state) => state.CADDropDown.ZoneDrpData);
     const { datezone, GetDataTimeZone } = useContext(AgencyContext);
     const [zoneDropDown, setZoneDropDown] = useState([])
@@ -95,6 +97,7 @@ const CallDispatchSummaryReport = () => {
             setLoginUserName(localStoreData?.UserName)
             setLoginAgencyID(localStoreData?.AgencyID);
             GetDataTimeZone(localStoreData?.AgencyID);
+            dispatch(get_ScreenPermissions_Data("CE110", localStoreData?.AgencyID, localStoreData?.PINID));
             if (ZoneDrpData?.length === 0 && localStoreData?.AgencyID) dispatch(getData_DropDown_Zone(localStoreData?.AgencyID))
         }
     }, [localStoreData]);
@@ -485,7 +488,7 @@ const CallDispatchSummaryReport = () => {
                                     </div>
                                 </div>
                                 <div className="col-12 col-md-12 col-lg-12 mt-1 text-right mb-1">
-                                    <button className="btn btn-sm bg-green text-white px-2 py-1" onClick={() => { getCallDispatchSummaryData(false); }} >Show Report</button>
+                                    {effectiveScreenPermission?.[0]?.AddOK ? <button className="btn btn-sm bg-green text-white px-2 py-1" onClick={() => { getCallDispatchSummaryData(false); }} >Show Report</button> : <></>}
                                     <button className="btn btn-sm bg-green text-white px-2 py-1 ml-2"
                                         onClick={() => { resetFields(); }}
                                     >Clear</button>

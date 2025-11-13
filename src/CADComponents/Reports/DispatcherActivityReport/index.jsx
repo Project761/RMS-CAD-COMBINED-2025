@@ -189,7 +189,7 @@ const DispatcherActivityReport = () => {
                 let imgUrl = `data:image/png;base64,${res[0]?.Agency_Photo}`;
                 setMultiImage(imgUrl);
             }
-            else { console.log("error") }
+            else { console.error("error") }
         })
     }
     const getDispatcherActivityData = async (isPrintReport = false) => {

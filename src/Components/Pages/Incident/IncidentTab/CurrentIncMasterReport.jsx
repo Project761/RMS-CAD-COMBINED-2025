@@ -219,7 +219,15 @@ const CurrentIncMasterReport = (props) => {
                                         </div>
                                     ) : (
                                         <>
-                                            <div className="row printable-area" ref={componentRef} style={{ border: '1px solid #80808085', marginBottom: '100px' }}>
+                                            <div
+                                                className="row printable-area"
+                                                ref={componentRef}
+                                                style={{
+                                                    border: '1px solid #80808085',
+                                                    marginBottom: '100px',
+                                                    pointerEvents: isRedactedReport ? 'none' : 'auto'
+                                                }}
+                                            >
                                                 <>
                                                     <ReportAddress {...{ multiImage, masterReportData }} />
                                                 </>
@@ -594,7 +602,12 @@ const CurrentIncMasterReport = (props) => {
 
                                                                                                     redactedComment = redactedComment?.replace(
                                                                                                         /background-color:\s*rgb\(0,\s*128,\s*0\)/g,
-                                                                                                        "background-color: rgb(0, 0, 0)"
+                                                                                                        "background-color: #EAEAE8"
+                                                                                                    );
+
+                                                                                                    redactedComment = redactedComment?.replace(
+                                                                                                        /color:\s*rgb\(127,\s*255,\s*212\)/g,
+                                                                                                        "color: #434A54"
                                                                                                     );
 
                                                                                                     return (
@@ -878,7 +891,7 @@ const CurrentIncMasterReport = (props) => {
                                                                                                                                 className={`readonlyColor ${isRedactedReport && containsKeywordInTable(item.AgeFrom, "AgeFrom", "Table", redactingData) ? "redacted" : ""}`}
 
                                                                                                                                 name='' required readOnly
-                                                                                                                                value={item?.AgeFrom}
+                                                                                                                                value={item?.AgeFrom > 0 ? item?.AgeFrom : ""}
                                                                                                                             />
                                                                                                                             <label htmlFor="" className='new-summary'>Age From</label>
                                                                                                                         </div>
@@ -889,7 +902,7 @@ const CurrentIncMasterReport = (props) => {
                                                                                                                                 className={`readonlyColor ${isRedactedReport && containsKeywordInTable(item.AgeTo, "AgeTo", "Table", redactingData) ? "redacted" : ""}`}
 
                                                                                                                                 name='' required readOnly
-                                                                                                                                value={item?.AgeTo}
+                                                                                                                                value={item?.AgeTo > 0 ? item?.AgeTo : ""}
                                                                                                                             />
                                                                                                                             <label htmlFor="" className='new-summary'>Age To</label>
                                                                                                                         </div>

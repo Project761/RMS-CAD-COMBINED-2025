@@ -17,13 +17,17 @@ import { getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime } fr
 import { AgencyContext } from '../../../Context/Agency/Index';
 import ReportMainAddress from '../ReportMainAddress/ReportMainAddress';
 import { getData_DropDown_Operator, getData_DropDown_Zone } from '../../../CADRedux/actions/DropDownsData';
+import { get_ScreenPermissions_Data } from '../../../redux/actions/IncidentAction';
+import { IncidentContext } from '../../../CADContext/Incident';
 
 const ResourceHistoryReport = () => {
     const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
+    const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
     const ZoneDrpData = useSelector((state) => state.CADDropDown.ZoneDrpData);
     const OperatorDrpData = useSelector((state) => state.CADDropDown.OperatorDrpData);
     const { datezone, GetDataTimeZone } = useContext(AgencyContext);
+    const { allResourcesData } = useContext(IncidentContext);
 
     const [
         resourceHistoryReportState,
@@ -92,7 +96,6 @@ const ResourceHistoryReport = () => {
     const [resourceHistoryData, setResourceHistoryData] = useState([]);
     const [agencyData, setAgencyData] = useState([]);
     const [LoginUserName, setLoginUserName] = useState('');
-    const [resourceDropDown, setResourceDropDown] = useState([]);
     const [showFooter, setShowFooter] = useState(false);
 
     useEffect(() => {
@@ -100,28 +103,11 @@ const ResourceHistoryReport = () => {
             setLoginUserName(localStoreData?.UserName);
             setLoginAgencyID(localStoreData?.AgencyID);
             GetDataTimeZone(localStoreData?.AgencyID);
+            dispatch(get_ScreenPermissions_Data("CU104", localStoreData?.AgencyID, localStoreData?.PINID));
             dispatch(getData_DropDown_Operator(localStoreData?.AgencyID))
             if (ZoneDrpData?.length === 0 && localStoreData?.AgencyID) dispatch(getData_DropDown_Zone(localStoreData?.AgencyID))
         }
     }, [localStoreData]);
-
-    const getResourcesKey = `/CAD/MasterResource/GetDataDropDown_Resource/${loginAgencyID}`;
-    const { data: getResourcesData, isSuccess, refetch, isError: isNoData } = useQuery(
-        [getResourcesKey, { AgencyID: loginAgencyID },],
-        MasterTableListServices.getDataDropDown_Resource,
-        {
-            refetchOnWindowFocus: false,
-            retry: 0,
-            enabled: !!loginAgencyID,
-        }
-    );
-
-    useEffect(() => {
-        if (isSuccess && getResourcesData) {
-            const data = JSON.parse(getResourcesData?.data?.data);
-            setResourceDropDown(data?.Table || [])
-        }
-    }, [isSuccess, getResourcesData])
 
     const zoneDropDownDataModel = (data, value, label, code) => {
         const result = data?.map((item) => ({
@@ -165,7 +151,7 @@ const ResourceHistoryReport = () => {
                 let imgUrl = `data:image/png;base64,${res[0]?.Agency_Photo}`;
                 setMultiImage(imgUrl);
             }
-            else { console.log("error") }
+            else { console.error("error") }
         })
     }
 
@@ -221,7 +207,7 @@ const ResourceHistoryReport = () => {
                 }
             }
         } catch (error) {
-            console.log("error", error)
+            console.error("error", error)
             if (!isPrintReport) {
                 toastifyError("Data Not Available");
             }
@@ -367,7 +353,7 @@ const ResourceHistoryReport = () => {
                                                     <div className="col-2 w-100">
                                                         <Select
                                                             isClearable
-                                                            options={resourceDropDown}
+                                                            options={allResourcesData}
                                                             placeholder="Select..."
                                                             name="Resource1"
                                                             value={resourceHistoryReportState?.Resource1}
@@ -456,7 +442,7 @@ const ResourceHistoryReport = () => {
                                     </div>
                                 </div>
                                 <div className="col-12 col-md-12 col-lg-12 mt-1 text-right mb-1">
-                                    <button className="btn btn-sm bg-green text-white px-2 py-1" onClick={() => { getIncidentSearchData(false); }} >Show Report</button>
+                                    {effectiveScreenPermission?.[0]?.AddOK ? <button className="btn btn-sm bg-green text-white px-2 py-1" onClick={() => { getIncidentSearchData(false); }} >Show Report</button> : <></>}
                                     <button className="btn btn-sm bg-green text-white px-2 py-1 ml-2"
                                         onClick={() => { resetFields(); }}
                                     >Clear</button>

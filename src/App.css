@@ -2654,3 +2654,94 @@ input.readonlyColor_MasterInput {
 }
 
 
+/* universal css */
+
+
+
+.light_green_badge {
+  color: #117A65;
+  background-color: #D1F2EB;
+}
+
+.light_yellow_badge {
+  color: #B7950B !important;
+  background-color: #FEF5C4 !important;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 2px 5px;
+  border-radius: 5px;
+}
+
+.light_red_badge {
+  color: #C0392B;
+  background-color: #FADBD8;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 2px 5px;
+  border-radius: 5px;
+}
+
+.text_blue_color {
+  color: #3498DB;
+}
+
+
+.badge-bar {
+  background: #0e3a5a;
+  color: #fff;
+  border-radius: 12px;
+}
+
+.badge-pill {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ff5571;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: #fff;
+}
+
+.badge-title {
+  letter-spacing: 0.04em;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.new-summary {
+  font-size: 14px;
+  color: #000;
+  font-weight: 600;
+}
+
+.meta {
+  letter-spacing: 0.4px;
+  font-size: 13px;
+  white-space: nowrap;
+  margin-right: 0.5rem;
+}
+
+.wide-tooltip .tooltip-inner {
+  max-width: 600px;
+  /* Bootstrap default is ~200px / width: 600px; / optional fixed width / white-space: normal; / allow wrapping */
+  text-align: left;
+  padding: 12px 14px;
+  line-height: 1.45;
+  letter-spacing: 0.5px;
+  font-size: 15x;
+}
+
+.wide-tooltip {
+  z-index: 9999;
+}
+
+.bullet {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ff5571;
+  display: inline-block;
+  margin: 0 0.2rem 0 0;
+}
