@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { getShowingDateText, getShowingMonthDateYear } from '../../Components/Common/Utility';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import WhiteboardModal from '../../CADComponents/WhiteboardModal';
 import WhiteboardSearchModal from '../../CADComponents/WhiteboardSearchModal';
 import WhiteboardServices from "../../CADServices/APIs/whiteboard";
@@ -10,9 +10,12 @@ import { toastifySuccess } from '../../Components/Common/AlertMsg';
 import { AgencyContext } from '../../Context/Agency/Index';
 import img from '../../../src/img/file.jpg'
 import ViewSingleImageModal from '../../CADComponents/ViewSingleImageModal/ViewSingleImageModal';
+import { get_ScreenPermissions_Data } from '../../redux/actions/IncidentAction';
 
 function CADWhiteboard() {
+    const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
+    const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
     const { datezone, GetDataTimeZone } = useContext(AgencyContext);
     const [loginPinID, setLoginPinID] = useState(1);
     const [loginAgencyID, setLoginAgencyID] = useState("");
@@ -43,6 +46,7 @@ function CADWhiteboard() {
         { key: 'expiresAt', label: 'Expires at', value: (item) => item?.expiresDate ? getShowingDateText(item?.expiresDate) : "-" },
         { key: 'updatedBy', label: 'Updated by', value: (item) => item?.UpdatedByByName || "-" },
         { key: 'updatedAt', label: 'Updated at', value: (item) => item?.ModifiedDtTm ? getShowingDateText(item?.ModifiedDtTm) : "-" },
+        { key: 'file', label: 'File', value: (item) => item?.FileAttachment || "-" },
     ];
 
     // Helper function to render data field
@@ -65,8 +69,7 @@ function CADWhiteboard() {
             <img
                 src={getImageSrc(image, item)}
                 alt={getImageAlt(image, index)}
-                width="70"
-                height="70"
+                style={{ width: '30px', height: '30px' }}
             />
         </div>
     );
@@ -99,6 +102,7 @@ function CADWhiteboard() {
             setLoginPinID(localStoreData?.PINID)
             setLoginAgencyID(localStoreData?.AgencyID);
             GetDataTimeZone(localStoreData?.AgencyID);
+            dispatch(get_ScreenPermissions_Data("CW101", localStoreData?.AgencyID, localStoreData?.PINID));
         }
     }, [localStoreData, GetDataTimeZone]);
 
@@ -205,7 +209,6 @@ function CADWhiteboard() {
     };
 
     // Image end
-
     const styles = {
         badgeHigh: {
 
@@ -329,7 +332,7 @@ function CADWhiteboard() {
                             Clear Search
                         </button>
                     )}
-                    <button
+                    {effectiveScreenPermission?.[0]?.DisplayOK === 1 && <button
                         type="button"
                         data-toggle="modal"
                         data-target="#WhiteboardSearchModal"
@@ -337,8 +340,8 @@ function CADWhiteboard() {
                         onClick={() => setOpenWhiteboardSearchModal(true)}
                     >
                         Search
-                    </button>
-                    <button
+                    </button>}
+                    {effectiveScreenPermission?.[0]?.AddOK === 1 && <button
                         type="button"
                         data-toggle="modal"
                         data-target="#WhiteboardModal"
@@ -353,11 +356,19 @@ function CADWhiteboard() {
                     >
                         <i className="fa fa-plus mr-2"></i>
                         <span>Add New</span>
-                    </button>
+                    </button>}
                 </div>
 
 
-                {whiteBoardTableData && whiteBoardTableData?.length === 0 ? (
+                {effectiveScreenPermission?.[0]?.DisplayOK === 0 ? <div className="container-sm p-2 CAD-card mb-2">
+                    <div className="card-body py-2 px-2">
+                        <div className="row py-1 d-flex align-items-center justify-content-center">
+                            <div className="col-12 text-center">
+                                <strong>You don’t have permission to view data</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div> : whiteBoardTableData && whiteBoardTableData?.length === 0 ? (
                     <div className="container-sm p-2 CAD-card mb-2">
                         <div className="card-body py-2 px-2">
                             <div className="row py-1 d-flex align-items-center justify-content-center">
@@ -417,13 +428,13 @@ function CADWhiteboard() {
                                                             </div>
                                                         )}
                                                     </div>
-                                                    
+
                                                     {dataFields.map(({ key, label, value }) => renderDataField(label, value(item)))}
 
                                                     <div className="d-flex align-content-center justify-content-end table-header-buttons">
                                                         {!item?.DeletedFlag && (
                                                             <div style={styles.buttonGroup}>
-                                                                <span
+                                                                {effectiveScreenPermission?.[0]?.Changeok === 1 && <span
                                                                     style={{ ...styles.iconButton, }}
                                                                     data-toggle="modal"
                                                                     data-target="#WhiteboardModal"
@@ -434,13 +445,14 @@ function CADWhiteboard() {
                                                                     }}
                                                                     className="btn btn-lg bg-green px-2">
                                                                     <i className="fa fa-edit fa-lg"></i>
-                                                                </span>
-                                                                <span
+                                                                </span>}
+                                                                {effectiveScreenPermission?.[0]?.DeleteOK === 1 && <span
                                                                     style={{ ...styles.iconButton, background: '#FF0000', }}
                                                                     onClick={() => { setShowModal(true); setWhiteboardID(item?.whiteBoardID) }}
                                                                     className="btn btn-lg px-2">
                                                                     <i className="fa fa-trash fa-lg"></i>
-                                                                </span>
+                                                                </span>}
+
                                                             </div>
                                                         )}
                                                     </div>
@@ -458,7 +470,7 @@ function CADWhiteboard() {
                                                     </div>
                                                     <div className="tab-form-row col-12">
                                                         <div className="cad-images image-preview cursor pointer">
-                                                            {Documents?.length > 0 && Documents?.map((image, index) => 
+                                                            {Documents?.length > 0 && Documents?.map((image, index) =>
                                                                 renderImage(image, index, item)
                                                             )}
                                                         </div>

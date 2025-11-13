@@ -16,12 +16,12 @@ import { get_AgencyOfficer_Data } from '../../../../../redux/actions/DropDownsDa
 import { RequiredFieldIncident } from '../../../Utility/Personnel/Validation';
 import ListModal from '../../../Utility/ListManagementModel/ListModal';
 import DocumentAccess from '../DocumentAccess/DocumentAccess';
-import { threeColArray } from '../../../../Common/ChangeArrayFormat';
+import { dropDownDataModel, threeColArray } from '../../../../Common/ChangeArrayFormat';
+import { GetData_MissingPerson } from '../../../../../redux/actions/MissingPersonAction';
 
 
 
-const Home = ({ setStatus, DecdocumentID, setShowdocumentstatus, isCad = false, isViewEventDetails = false, isCADSearch = false, showPage, showdocumentstatus, status, isCitation = false, }) => {
-
+const Home = ({ setStatus, DecdocumentID, setShowdocumentstatus, isCad = false, isViewEventDetails = false, isCADSearch = false, showPage, showdocumentstatus, status, isCitation = false, isMissingPerson = false, }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch()
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
@@ -29,7 +29,7 @@ const Home = ({ setStatus, DecdocumentID, setShowdocumentstatus, isCad = false, 
     const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
     const incReportedDate = useSelector((state) => state.Agency.incReportedDate);
     const agencyOfficerDrpData = useSelector((state) => state.DropDown.agencyOfficerDrpData);
-
+    const missingPerData = useSelector((state) => state.MissingPerson.MissingPersonAllData);
     const useQuery = () => {
         const params = new URLSearchParams(useLocation().search);
         return { get: (param) => params.get(param) };
@@ -41,13 +41,29 @@ const Home = ({ setStatus, DecdocumentID, setShowdocumentstatus, isCad = false, 
     var IncNo = query?.get("IncNo");
     var IncSta = query?.get("IncSta");
     var DocSta = query?.get('DocSta');
-
-    let DecEIncID = 0
+    var MissPerID = query?.get('MissPerID');
+    var MissPerSta = query?.get('MissPerSta');
+    var MissVehID = query?.get('MissVehID');
+    let DecEIncID = 0, DecMissPerID = 0
 
     if (!IncID) { DecEIncID = 0; }
     else { DecEIncID = parseInt(base64ToString(IncID)); }
 
-    const { get_Incident_Count, setChangesStatus, changesStatus } = useContext(AgencyContext);
+    if (!MissPerID) { DecMissPerID = 0; }
+    else { DecMissPerID = parseInt(base64ToString(MissPerID)); }
+
+    const { get_Incident_Count, setChangesStatus, changesStatus,
+        nameFilterData,
+        propertyData,
+        VehicleFilterData,
+        arrestFilterData,
+        get_Data_Name,
+        get_Data_Property,
+        get_Data_Vehicle,
+        get_Data_Arrest,
+        get_MissingPerson_Count,
+    } = useContext(AgencyContext);
+
     const [clickedRow, setClickedRow] = useState(null);
     const [updateStatus, setUpdateStatus] = useState(0)
     const [documentdata, setDocumentdata] = useState();
@@ -69,6 +85,11 @@ const Home = ({ setStatus, DecdocumentID, setShowdocumentstatus, isCad = false, 
     const [permissionForAddDocument, setPermissionForAddDocument] = useState(false);
     // Add Update Permission
     const [addUpdatePermission, setaddUpdatePermission] = useState();
+    const [nameDropdown, setNameDropdown] = useState();
+    const [vehicleDropdown, setVehicleDropdown] = useState();
+    const [arrestDropdown, setArrestDropdown] = useState();
+    const [propertyDropdown, setPropertyDropdown] = useState();
+    const [missingPerDropdown, setMissingPerDropdown] = useState();
 
     const DocumentTypeDropDown = [
         { value: 1, label: "Incident" },
@@ -78,16 +99,16 @@ const Home = ({ setStatus, DecdocumentID, setShowdocumentstatus, isCad = false, 
         { value: 5, label: "Location" },
         { value: 6, label: "Arrest" },
         { value: 7, label: "Warrant" },
+        { value: 8, label: "Missing Person" },
     ]
     const [value, setValue] = useState({
-        'AgencyID': '', 'DocumentID': '', 'DocumentName': '', 'DocumentNotes': '', 'File': '', 'IsActive': '1', 'PermissionTypeID': '', 'DocumentTypeId': '', 'CreatedByUserFK': '', 'IncidentId': '', 'ModifiedByUserFK': '', 'DocumentAccessID': '', 'DocumentAccess': '', 'DocumentAccess_Name': '',
+        'AgencyID': '', 'DocumentID': '', 'DocumentName': '', 'DocumentNotes': '', 'File': '', 'IsActive': '1', 'PermissionTypeID': '', 'DocumentTypeId': '', 'CreatedByUserFK': '', 'IncidentId': '', 'ModifiedByUserFK': '', 'DocumentAccessID': '', 'DocumentAccess': '', 'DocumentAccess_Name': '', 'SelectDocumentTypeValue': ''
     })
 
     const [errors, setErrors] = useState({
         'DocFileNameError': '', 'DocumentTypeIDError': '', 'File_Not_Selected': '',
-        'DocumentAccessIDError': '', "DocumentTypeError": ''
+        'DocumentAccessIDError': '', "DocumentTypeError": '', "SelectDocumentTypeValueError": ''
     })
-
 
     useEffect(() => {
         if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
@@ -98,11 +119,15 @@ const Home = ({ setStatus, DecdocumentID, setShowdocumentstatus, isCad = false, 
     useEffect(() => {
         if (localStoreData) {
             setLoginPinID(localStoreData?.PINID); get_DocumentDropDwn(localStoreData?.AgencyID)
+            setLoginAgencyID(localStoreData?.AgencyID);
             dispatch(get_ScreenPermissions_Data('I035', localStoreData?.AgencyID, localStoreData?.PINID));
-            setDocumentID(DecdocumentID); get_Incident_Count(DecEIncID, localStoreData?.PINID);
-            get_Documentdata(DecEIncID, localStoreData?.PINID);
+            if (!isMissingPerson) {
+                setDocumentID(DecdocumentID);
+                get_Incident_Count(DecEIncID, localStoreData?.PINID);
+                get_Documentdata(DecEIncID, localStoreData?.PINID);
+            }
         }
-    }, [localStoreData]);
+    }, [localStoreData, isMissingPerson]);
 
     useEffect(() => {
         if (effectiveScreenPermission?.length > 0) {
@@ -114,21 +139,43 @@ const Home = ({ setStatus, DecdocumentID, setShowdocumentstatus, isCad = false, 
         }
     }, [effectiveScreenPermission]);
 
-
     useEffect(() => {
         if (DecEIncID || loginPinID) {
             setMainIncidentID(DecEIncID); dispatch(get_AgencyOfficer_Data(localStoreData?.AgencyID, DecEIncID))
             if (!incReportedDate) { dispatch(get_Inc_ReportedDate(IncID)) }
             setValue({ ...value, 'IncidentId': DecEIncID });
+            get_Data_Name(DecEIncID);
+            get_Data_Arrest(DecEIncID, false, loginPinID);
+            get_Data_Vehicle(DecEIncID)
+            get_Data_Property(DecEIncID);
+            dispatch(GetData_MissingPerson(DecEIncID))
         }
     }, [DecEIncID, loginPinID]);
 
+    useEffect(() => {
+        setNameDropdown(
+            dropDownDataModel(nameFilterData, "NameID", "FullName")
+        );
+        setPropertyDropdown(
+            dropDownDataModel(propertyData, "PropertyID", "PropertyNumber")
+        );
+        setVehicleDropdown(
+            dropDownDataModel(VehicleFilterData, "VehicleID", "VehicleNumber")
+        );
+        setArrestDropdown(
+            dropDownDataModel(arrestFilterData, "ArrestID", "Arrestee_Name")
+        );
+        setMissingPerDropdown(
+            dropDownDataModel(missingPerData, "MissingPersonID", "MissingPersonName")
+        )
+    }, [nameFilterData, propertyData, VehicleFilterData, arrestFilterData, missingPerData]);
 
     const check_Validation_Error = (e) => {
         const DocumentNameErr = RequiredFieldIncident(value.DocumentName);
         const DocumentTypeIDErr = RequiredFieldIncident(value.PermissionTypeID);
         const DocumentTypeErr = RequiredFieldIncident(value.DocumentTypeId);
         const File_Not_SelectedErr = validate_fileupload(selectedFileName);
+        const SelectDocumentTypeValue = (value.DocumentTypeId && [2, 3, 4, 6, 7].includes(value.DocumentTypeId)) ? RequiredFieldIncident(value.SelectDocumentTypeValue) : 'true';
 
         const DocumentAccessIDErr = DocumentCode == "RT" ? RequiredFieldIncident(value.DocumentAccessID) : 'true';
         setErrors(prevValues => {
@@ -139,15 +186,16 @@ const Home = ({ setStatus, DecdocumentID, setShowdocumentstatus, isCad = false, 
                 ['DocumentTypeError']: DocumentTypeErr || prevValues['DocumentTypeError'],
                 ['File_Not_Selected']: File_Not_SelectedErr || prevValues['File_Not_Selected'],
                 ['DocumentAccessIDError']: DocumentAccessIDErr || prevValues['DocumentAccessIDError'],
+                ['SelectDocumentTypeValueError']: SelectDocumentTypeValue || prevValues['SelectDocumentTypeValueError'],
 
             }
         })
     }
-    const { DocFileNameError, DocumentTypeIDError, DocumentAccessIDError, File_Not_Selected, DocumentTypeError } = errors
+    const { DocFileNameError, DocumentTypeIDError, DocumentAccessIDError, File_Not_Selected, DocumentTypeError, SelectDocumentTypeValueError } = errors
 
     useEffect(() => {
-        if (DocFileNameError === 'true' && DocumentTypeIDError === 'true' && DocumentAccessIDError === 'true' && File_Not_Selected === 'true' && DocumentTypeError === 'true') { Add_Documents(); }
-    }, [DocFileNameError, DocumentTypeIDError, DocumentAccessIDError, File_Not_Selected, DocumentTypeError])
+        if (DocFileNameError === 'true' && DocumentTypeIDError === 'true' && DocumentAccessIDError === 'true' && File_Not_Selected === 'true' && DocumentTypeError === 'true' && SelectDocumentTypeValueError === 'true') { Add_Documents(); }
+    }, [DocFileNameError, DocumentTypeIDError, DocumentAccessIDError, File_Not_Selected, DocumentTypeError, SelectDocumentTypeValueError])
 
     const changeHandler = (e) => {
         setStatesChangeStatus(true)
@@ -168,31 +216,52 @@ const Home = ({ setStatus, DecdocumentID, setShowdocumentstatus, isCad = false, 
             formdata.append("File", selectedFile[i]);
             EncFormdata.append("File", selectedFile[i]);
         }
-        const { DocumentID, DocumentName, DocumentNotes, File, PermissionTypeID, DocumentTypeId, DocumentAccessID, DocumentAccess, PrimaryOfficerID, ReportedDtTm } = value;
+        const { DocumentID, DocumentName, DocumentNotes, File, PermissionTypeID, DocumentTypeId, DocumentAccessID, DocumentAccess, PrimaryOfficerID, ReportedDtTm, SelectDocumentTypeValue } = value;
         const documentAccess = selectedOption === "Individual" ? 'Individual' : 'Group';
         const val = {
-            'IncidentId': DecEIncID, 'AgencyID': loginAgencyID, 'CreatedByUserFK': loginPinID, 'DocumentName': DocumentName, 'DocumentNotes': DocumentNotes, 'File': File, 'IsActive': '1', 'PermissionTypeID': PermissionTypeID, 'DocumentTypeId': DocumentTypeId, 'ModifiedByUserFK': '', 'PrimaryOfficerID': loginPinID, 'ReportedDtTm': ReportedDtTm, 'DocumentAccessID': DocumentAccessID, 'DocumentAccess': documentAccess,
+            'IncidentId': DecEIncID, 'AgencyID': loginAgencyID, 'CreatedByUserFK': loginPinID, 'DocumentName': DocumentName, 'DocumentNotes': DocumentNotes, 'File': File, 'IsActive': '1', 'PermissionTypeID': PermissionTypeID, 'DocumentTypeId': DocumentTypeId, 'ModifiedByUserFK': '', 'PrimaryOfficerID': loginPinID, 'ReportedDtTm': ReportedDtTm, 'SelectDocumentTypeValue': SelectDocumentTypeValue, DocumentAccess: documentAccess, DocumentAccessID: DocumentAccessID
         };
+        if (isMissingPerson) {
+            val.MissingPersonID = DecMissPerID;
+            val.PermissionTypeID = DocumentTypeId;
+            val.DocumentTypeId = PermissionTypeID;
+        } else {
+            val.PermissionTypeID = PermissionTypeID;
+            val.DocumentTypeId = DocumentTypeId;
+        }
         const values = JSON.stringify(val);
         const EncPostData = await Aes256Encrypt(JSON.stringify([JSON.stringify(val)]));
         EncDocs.push(EncPostData);
         newDoc.push(values);
         formdata.append("Data", JSON.stringify(newDoc));
         EncFormdata.append("Data", EncDocs);
-        AddDelete_Img('IncidentDocumentManagement/Insert_IncidentDocManagement', formdata, EncFormdata)
+        AddDelete_Img(isMissingPerson ? 'MissingPersonDocument/Insert_MisisngPersonDoc' : 'IncidentDocumentManagement/Insert_IncidentDocManagement', formdata, EncFormdata)
             .then((res) => {
                 if (res.success) {
                     const parsedData = JSON.parse(res.data);
                     const message = parsedData.Table[0].Message;
-                    toastifySuccess(message); get_Documentdata(DecEIncID, loginPinID); setChangesStatus(false); get_Incident_Count(mainIncidentID, loginPinID);
-
-                    reset(); setSelectedFileName([]); setSelectedFile([]); setErrors({ ...errors, 'DocFileNameError': '', 'DocumentTypeIDError': '', 'File_Not_Selected': '', 'DocumentTypeError': '' }); setStatesChangeStatus(false); setSelectedOption("Individual")
+                    toastifySuccess(message); setChangesStatus(false);
+                    if (isMissingPerson) {
+                        get_MissingPersonDocumentdata(DecMissPerID, loginPinID);
+                        get_MissingPerson_Count(DecMissPerID, loginPinID);
+                    } else {
+                        get_Documentdata(DecEIncID, loginPinID);
+                        get_Incident_Count(mainIncidentID, loginPinID);
+                    }
+                    reset(); setSelectedFileName([]); setSelectedFile([]); setErrors({ ...errors, 'DocFileNameError': '', 'DocumentTypeIDError': '', 'File_Not_Selected': '', 'DocumentTypeError': '', 'SelectDocumentTypeValueError': '' }); setStatesChangeStatus(false); setSelectedOption("Individual")
                 } else {
-                    console.log("something Wrong");
+                    console.warn("something Wrong");
                 }
-            }).catch(err => console.log(err));
+            }).catch(err => console.error(err));
     }
 
+    const get_MissingPersonDocumentdata = (DecMissPerID, loginPinID) => {
+        const val = { 'MissingPersonID': DecMissPerID, 'PINID': loginPinID }
+        fetchPostData('MissingPersonDocument/GetData_MisisngPersonDoc', val).then((res) => {
+            if (res) { setDocumentdata(res); }
+            else { setDocumentdata([]); }
+        })
+    }
 
     const get_Documentdata = (IncidentID, loginPinID) => {
         const val = { 'IncidentID': IncidentID, 'PINID': loginPinID }
@@ -276,19 +345,27 @@ const Home = ({ setStatus, DecdocumentID, setShowdocumentstatus, isCad = false, 
 
     const DeleteDocumentManagement = () => {
         const val = { 'DocumentID': DocumentID, 'IsActive': '0', 'DeletedByUserFK': loginPinID }
-        AddDeleteUpadate('IncidentDocumentManagement/Delete_IncidentDocManagement', val).then((res) => {
+        AddDeleteUpadate(isMissingPerson ? "MissingPersonDocument/Delete_MisisngPersonDoc" : 'IncidentDocumentManagement/Delete_IncidentDocManagement', val).then((res) => {
             if (res) {
                 const parsedData = JSON.parse(res.data);
                 const message = parsedData.Table[0].Message;
-                toastifySuccess(message); reset(); get_Incident_Count(mainIncidentID, loginPinID); get_Documentdata(DecEIncID, loginPinID);
-
-            } else console.log("Somthing Wrong");
+                toastifySuccess(message); reset();
+                if (isMissingPerson) {
+                    get_MissingPersonDocumentdata(DecMissPerID, loginPinID);
+                    get_MissingPerson_Count(DecMissPerID, loginPinID);
+                } else {
+                    get_Documentdata(DecEIncID, loginPinID);
+                    get_Incident_Count(mainIncidentID, loginPinID);
+                }
+            } else console.warn("Somthing Wrong");
         })
     }
 
     const setStatusFalse = () => {
         if (isCad) {
             navigate(`/cad/dispatcher?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&DocSta=${false}&documentId=${('')}`)
+        } else if (isMissingPerson) {
+            navigate(`/Missing-Document-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&MissPerID=${MissPerID}&MissPerSta=${MissPerSta}&MissVehID=${MissVehID}&documentId=${('')}`)
         } else {
             navigate(`/Document-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&DocSta=${false}&documentId=${('')}`)
         }
@@ -303,13 +380,18 @@ const Home = ({ setStatus, DecdocumentID, setShowdocumentstatus, isCad = false, 
 
         if (isCad) {
             navigate(`/cad/dispatcher?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&DocSta=${false}&documentId=${('')}`)
+        } else if (isMissingPerson) {
+            navigate(`/Missing-Document-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&MissPerID=${MissPerID}&MissPerSta=${MissPerSta}&MissVehID=${MissVehID}&documentId=${('')}`)
         } else {
             navigate(`/Document-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&DocSta=${false}&documentId=${('')}`)
-        }
 
-        setValue({ ...value, 'DocumentName': '', 'File': '', 'PermissionTypeID': '', 'DocumentTypeId': '', 'DocumentNotes': '', }); setShowdocumentstatus(false)
+        }
+        if (isMissingPerson) {
+            setValue({ ...value, 'DocumentName': '', 'File': '', 'PermissionTypeID': '', 'DocumentTypeId': 8, 'DocumentNotes': '', 'SelectDocumentTypeValue': DecMissPerID })
+        } else { setValue({ ...value, 'DocumentName': '', 'File': '', 'PermissionTypeID': '', 'DocumentTypeId': '', 'DocumentNotes': '', 'SelectDocumentTypeValue': "" }); }
+        setShowdocumentstatus(false);
         document.querySelector("input[type='file']").value = "";
-        setStatesChangeStatus(true); setDocumentID(''); setDocumentCode(''); setErrors({ ...errors, 'DocFileNameError': '', 'File_Not_Selected': '', 'DocumentTypeIDError': '', 'DocumentAccessIDError': '', 'DocumentTypeError': '' }); setSelectedFileName(''); setChangesStatus(false); setMultiSelected({ optionSelected: ' ' }); setSelectedOption("Individual"); setStatus(false);
+        setStatesChangeStatus(true); setDocumentID(''); setDocumentCode(''); setErrors({ ...errors, 'DocFileNameError': '', 'File_Not_Selected': '', 'DocumentTypeIDError': '', 'DocumentAccessIDError': '', 'DocumentTypeError': '', 'SelectDocumentTypeValueError': '' }); setSelectedFileName(''); setChangesStatus(false); setMultiSelected({ optionSelected: ' ' }); setSelectedOption("Individual"); setStatus(false);
     }
 
     const escFunction = useCallback((event) => {
@@ -326,13 +408,6 @@ const Home = ({ setStatus, DecdocumentID, setShowdocumentstatus, isCad = false, 
             when: row => row.DocumentID === DocumentID, style: { backgroundColor: '#001f3fbd', color: 'white', cursor: 'pointer', },
         },
     ];
-
-    // Custom Style
-    const colourStyles = {
-        control: (styles) => ({ ...styles, backgroundColor: "#fce9bf", height: 20, minHeight: 33, fontSize: 14, margintop: 2, boxShadow: 0, }),
-    };
-
-
 
     const setToReset = () => {
     }
@@ -351,15 +426,23 @@ const Home = ({ setStatus, DecdocumentID, setShowdocumentstatus, isCad = false, 
 
 
     useEffect(() => {
-        if (loginAgencyID) {
+        if (loginAgencyID && value?.PermissionTypeID === 4) {
             get_Group_List(loginAgencyID);
         }
-    }, [loginAgencyID]);
+    }, [loginAgencyID, value?.PermissionTypeID]);
 
+    useEffect(() => {
+        if (isMissingPerson) {
+            setValue({ ...value, 'DocumentTypeId': 8, SelectDocumentTypeValue: DecMissPerID })
+            if (DecMissPerID && localStoreData) {
+                get_MissingPersonDocumentdata(DecMissPerID, localStoreData?.PINID);
+            }
+        }
+    }, [isMissingPerson, localStoreData, DecMissPerID])
 
     const get_Group_List = (loginAgencyID) => {
-        const value = { AgencyId: loginAgencyID }
-        fetchPostData("Group/GetData_Group", value).then((res) => {
+        const payload = { AgencyId: loginAgencyID }
+        fetchPostData("Group/GetData_Group", payload).then((res) => {
             if (res) {
                 setGroupList(changeArrayFormat(res, 'group'))
                 if (res[0]?.GroupID) { setValue({ ...value, ['GroupName']: changeArrayFormat_WithFilter(res, 'group', res[0]?.GroupID) }) }
@@ -380,10 +463,9 @@ const Home = ({ setStatus, DecdocumentID, setShowdocumentstatus, isCad = false, 
     }
 
     const set_Edit_Value = (row) => {
-        console.log("row", row)
         if (row?.DocumentID) {
             setValue({
-                ...value, 'DocumentName': row?.DocumentName, 'PermissionTypeID': row?.PermissionTypeID, 'DocumentTypeId': row?.DocumentTypeId,
+                ...value, 'DocumentName': row?.DocumentName, 'PermissionTypeID': row?.PermissionTypeID, 'DocumentTypeId': row?.DocumentTypeId, 'SelectDocumentTypeValue': row?.SelectDocumentTypeValue
             })
             if (row?.DocumentType_Description === "Restriction") {
                 setShowdocumentstatus(true);
@@ -393,6 +475,8 @@ const Home = ({ setStatus, DecdocumentID, setShowdocumentstatus, isCad = false, 
 
             if (isCad) {
                 navigate(`/cad/dispatcher?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&DocSta=${true}&documentId=${stringToBase64(row?.DocumentID)}`)
+            } else if (isMissingPerson) {
+                navigate(`/Missing-Document-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&MissPerID=${MissPerID}&MissPerSta=${MissPerSta}&MissVehID=${MissVehID}&documentId=${stringToBase64(row?.DocumentID)}`)
             } else {
                 navigate(`/Document-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&DocSta=${true}&documentId=${stringToBase64(row?.DocumentID)}`)
             }
@@ -455,10 +539,8 @@ const Home = ({ setStatus, DecdocumentID, setShowdocumentstatus, isCad = false, 
         }),
     };
 
-
     return (
         <>
-
             <div className="col-md-12">
                 <div className="row">
                     <div className="col-2 col-md-2 col-lg-2 mt-3">
@@ -490,32 +572,32 @@ const Home = ({ setStatus, DecdocumentID, setShowdocumentstatus, isCad = false, 
                             placeholder="Select.."
                         />
                     </div>
-                    <div className="col-2 col-md-2 col-lg-2 mt-3">
+                    <div className="col-1 col-md-1 col-lg-2 mt-3">
                         <span htmlFor="" className='label-name '>File Attachment{errors.File_Not_Selected !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.File_Not_Selected}</p>
                         ) : null}</span>
                     </div>
                     {clickedRow ?
-                        <div className="col-4 col-md-4 col-lg-4 text-field mt-2 mb-0 d-flex">
+                        <div className="col-3 col-md-3 col-lg-3 text-field mt-2 mb-0 d-flex">
                             <input type="file" name='File' disabled={DocumentID || isCitation} onChange={changeHandler} required style={{ display: 'none' }} />
                             <input type="text" className={DocumentID || isCitation ? `readonlyColor` : `requiredColor`} disabled={!DocumentID || isCitation} name='DocumentName' value={clickedRow?.FileName} required autoComplete='off' readOnly />
                         </div> :
-                        <div className="col-4 col-md-4 col-lg-4 text-field mt-2 mb-0">
+                        <div className="col-3 col-md-3 col-lg-3 text-field mt-2 mb-0">
                             <input type="file" className='requiredColor' name='File' disabled={DocumentID || isCitation} onChange={changeHandler} required />
                             {selectedFileName?.length > 0 && !isCitation &&
                                 <i className="fa fa-close" style={{ position: "absolute", right: "1rem", top: "7px" }} onClick={() => { setSelectedFileName(''); document.querySelector("input[type='file']").value = "" }}></i>}
                         </div>
                     }
-                    <div className="col-2 col-md-2 col-lg-2 mt-3">
+                    <div className="col-1 col-md-1 col-lg-1 mt-3">
                         <label htmlFor="" className='label-name '>Document Type{errors.DocumentTypeError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.DocumentTypeError}</p>
                         ) : null}</label>
                     </div>
-                    <div className="col-4 col-md-4 col-lg-4  mt-2" >
+                    <div className="col-3 col-md-3 col-lg-3  mt-2" >
                         <Select
                             name='DocumentTypeId'
-                            isDisabled={DocumentID || isCitation}
-                            styles={DocumentID || isCitation ? customStylesWithOutColor : Requiredcolour}
+                            isDisabled={DocumentID || isCitation || isMissingPerson}
+                            styles={DocumentID || isCitation || isMissingPerson ? customStylesWithOutColor : Requiredcolour}
                             value={DocumentTypeDropDown?.filter((obj) => obj.value === value?.DocumentTypeId)}
                             isClearable
                             options={DocumentTypeDropDown}
@@ -523,6 +605,40 @@ const Home = ({ setStatus, DecdocumentID, setShowdocumentstatus, isCad = false, 
                             placeholder="Select.."
                         />
 
+                    </div>
+                    <div className="col-3 col-md-3 col-lg-3 mt-2">
+                        <Select
+                            name="SelectDocumentTypeValue"
+                            isDisabled={DocumentID || isCitation || ![2, 3, 4, 6, 7, 8].includes(value?.DocumentTypeId)} // Disable if 
+                            styles={DocumentID || isCitation || ![2, 3, 4, 6, 7, 8].includes(value?.DocumentTypeId) ? customStylesWithOutColor : Requiredcolour}
+                            value={
+                                (value?.DocumentTypeId === 2 ? nameDropdown :
+                                    value?.DocumentTypeId === 3 ? propertyDropdown :
+                                        value?.DocumentTypeId === 4 ? vehicleDropdown :
+                                            value?.DocumentTypeId === 6 ? arrestDropdown :
+                                                value?.DocumentTypeId === 7 ? nameDropdown :
+                                                    value?.DocumentTypeId === 8 ? missingPerDropdown : [])
+                                    ?.find((obj) => obj.value === value?.SelectDocumentTypeValue) ?? null
+                            }
+                            isClearable
+                            options={
+                                value?.DocumentTypeId === 2 ? nameDropdown :
+                                    value?.DocumentTypeId === 3 ? propertyDropdown :
+                                        value?.DocumentTypeId === 4 ? vehicleDropdown :
+                                            value?.DocumentTypeId === 6 ? arrestDropdown :
+                                                value?.DocumentTypeId === 7 ? nameDropdown :
+                                                    value?.DocumentTypeId === 8 ? missingPerDropdown : []
+                            }
+                            onChange={(e) => ChangeDropDown(e, "SelectDocumentTypeValue")}
+                            placeholder="Select.."
+                        />
+
+                        {/* Error Message */}
+                        {errors.SelectDocumentTypeValueError !== "true" && errors.SelectDocumentTypeValueError && (
+                            <p style={{ color: "red", fontSize: "11px", margin: "0px", padding: "0px" }}>
+                                {errors.SelectDocumentTypeValueError}
+                            </p>
+                        )}
                     </div>
 
                 </div>

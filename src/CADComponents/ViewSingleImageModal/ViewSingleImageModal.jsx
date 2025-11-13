@@ -10,6 +10,7 @@ const ViewSingleImageModal = (props) => {
                     <div className="modal-dialog modal-dialog-centered rounded modal-lg">
                         <div className="modal-content">
                             <div className="modal-header">
+                                <h5 className="modal-title">Document View</h5>
                                 <button type="button" className="close" aria-label="Close" onClick={() => { setIsOpenViewSingleImageModal(false); }}><span aria-hidden="true">&times;</span></button>
                             </div>
                             <div className="col-12">
@@ -46,14 +47,14 @@ export default memo(ViewSingleImageModal);
 
 // PropTypes definition
 ViewSingleImageModal.propTypes = {
-  isOpenViewSingleImageModal: PropTypes.bool.isRequired,
-  setIsOpenViewSingleImageModal: PropTypes.func.isRequired,
-  viewSingleImage: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
-  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    isOpenViewSingleImageModal: PropTypes.bool.isRequired,
+    setIsOpenViewSingleImageModal: PropTypes.func.isRequired,
+    viewSingleImage: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 };
 
 // Default props
 ViewSingleImageModal.defaultProps = {
-  viewSingleImage: {},
-  id: null
+    viewSingleImage: {},
+    id: null
 };

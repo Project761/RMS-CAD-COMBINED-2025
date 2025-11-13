@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component';
 import { getShowingMonthDateYear, tableCustomStyles } from '../../Components/Common/Utility';
 import { compareStrings } from '../../CADUtils/functions/common';
@@ -6,6 +6,8 @@ import { useQueueCall } from '../../CADContext/QueueCall';
 import Tooltip from '../../CADComponents/Common/Tooltip';
 import CallTakerModal from '../../CADComponents/CallTakerModal';
 import DateTimeCounter from '../../CADComponents/Common/DateTimeCounter';
+import { useSelector } from 'react-redux';
+import { ScreenPermision } from '../../Components/hooks/Api';
 
 function CADQueueCall() {
     const {
@@ -15,12 +17,35 @@ function CADQueueCall() {
         refetchQueueCall,
         isNoData
     } = useQueueCall();
-    
+    const localStoreData = useSelector((state) => state.Agency.localStoreData);
     const [incNo, setIncNo] = useState("")
     const [openCallTakerModal, setCallTakerModal] = useState(false);
+    const [effectiveQueueCallScreenPermission, setEffectiveQueueCallScreenPermission] = useState(null);
+
+    useEffect(() => {
+        if (localStoreData) {
+            getQueueCallScreenPermission(localStoreData?.AgencyID, localStoreData?.PINID);
+        }
+    }, [localStoreData]);
+
+    const getQueueCallScreenPermission = (aId, pinID) => {
+        try {
+            ScreenPermision("QC101", aId, pinID).then(res => {
+                if (res) {
+                    setEffectiveQueueCallScreenPermission(res);
+                }
+                else {
+                    setEffectiveQueueCallScreenPermission(null);
+                }
+            });
+        } catch (error) {
+            console.error('There was an error!', error);
+            setEffectiveQueueCallScreenPermission(null);
+        }
+    }
 
     const columns = [
-        {
+        ...(effectiveQueueCallScreenPermission?.[0]?.Changeok === 1 ? [{
             name: <p className='text-end' style={{ position: 'absolute', top: '7px', }}>Action</p>,
             cell: row =>
                 <div style={{ position: 'absolute', top: 4, }} data-toggle="modal"
@@ -32,7 +57,7 @@ function CADQueueCall() {
                     }
                 </div>,
             width: '100px',
-        },
+        }] : []),
         {
             name: 'Elapsed timer',
             selector: row => <DateTimeCounter data={row.TimeOfCall} />,
@@ -149,11 +174,11 @@ function CADQueueCall() {
                 <DataTable
                     dense
                     columns={columns}
-                    data={queueCallData}
+                    data={effectiveQueueCallScreenPermission?.[0]?.DisplayOK ? queueCallData : []}
                     customStyles={tableCustomStyles}
                     pagination
                     responsive
-                    noDataComponent={isNoData ? "There are no data to display" : 'There are no data to display'}
+                    noDataComponent={effectiveQueueCallScreenPermission ? effectiveQueueCallScreenPermission?.[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : 'There are no data to display'}
                     striped
                     persistTableHead={true}
                     highlightOnHover

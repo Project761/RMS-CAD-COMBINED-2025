@@ -15,7 +15,7 @@ import { colourStyles1, customStylesWithOutColor, multiSelectcolourStyles } from
 const ArriveModal = (props) => {
   const { openArriveModal, setArriveModal } = props;
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
-  const { assignedIncidentData, refetchGetComments, resourceData, resourceRefetch, incidentRefetch } = useContext(IncidentContext);
+  const { assignedIncidentData, refetchGetComments, resourceData, resourceRefetch, incidentRefetch, unassignedIncidentListRefetch, assignedIncidentListRefetch } = useContext(IncidentContext);
   const [resourceDropDown, setResourceDropDown] = useState([])
   const [hospitalCodeDropDown, setHospitalCodeDropDown] = useState([])
   const [loginPinID, setLoginPinID] = useState(1);
@@ -192,6 +192,8 @@ const ArriveModal = (props) => {
       toastifySuccess("Data Saved Successfully");
       handleClose();
       incidentRefetch();
+      assignedIncidentListRefetch();
+      unassignedIncidentListRefetch();
       resourceRefetch();
       refetchGetComments();
     }
@@ -434,7 +436,7 @@ ArriveModal.propTypes = {
 
 ArriveModal.defaultProps = {
   openArriveModal: false,
-  setArriveModal: () => {}
+  setArriveModal: () => { }
 };
 
 export default memo(ArriveModal);

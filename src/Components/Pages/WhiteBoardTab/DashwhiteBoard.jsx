@@ -13,6 +13,7 @@ import WhiteboardServices from "../../../CADServices/APIs/whiteboard";
 import DeleteConfirmModal from '../../../CADComponents/Common/DeleteConfirmModal';
 // import ViewSingleImageModal from '../../CADComponents/ViewSingleImageModal/ViewSingleImageModal';
 import ViewSingleImageModal from '../../../CADComponents/ViewSingleImageModal/ViewSingleImageModal';
+import ViewAllDocumentsModal from '../../../CADComponents/ViewAllDocumentsModal';
 import Loader from '../../Common/Loader';
 import { Link } from 'react-router-dom';
 
@@ -35,6 +36,8 @@ function DashwhiteBoard() {
     const fileInputRef = useRef(null);
     // const [WhiteboardServices, setWhiteboardServices] = useState("");
     const [documentPreviews, setDocumentPreviews] = useState({});
+    const [isOpenAllDocumentsModal, setIsOpenAllDocumentsModal] = useState(false);
+    const [allDocuments, setAllDocuments] = useState([]);
 
     const categoryData = [
         {
@@ -315,6 +318,23 @@ function DashwhiteBoard() {
         };
     }, [whiteBoardData]);
 
+    // Function to handle "See more" click
+    const handleSeeMoreClick = (documents, whiteBoardID) => {
+        setAllDocuments(documents);
+        setIsOpenAllDocumentsModal(true);
+    };
+
+    // Function to handle single document click
+    const handleSingleDocumentClick = (document, whiteBoardID) => {
+        const fileType = document.FileAttachment || document.name;
+        if (isImageFile(fileType)) {
+            setViewSingleImage(document);
+            setIsOpenViewSingleImageModal(true);
+        } else {
+            window.open(document.FileAttachment || URL.createObjectURL(document), '_blank');
+        }
+    };
+
 
     return (
         <>
@@ -378,16 +398,7 @@ function DashwhiteBoard() {
                         </span>
                     </Link>
                 </div>
-
-
-
             </div>
-
-
-
-
-
-
             <div className="mt-3 px-1 overflow-auto my-2" style={{ maxHeight: '61vh' }}>
 
                 {isLoading ? (
@@ -473,6 +484,71 @@ function DashwhiteBoard() {
                                             <span>Updated at</span><br />
                                             <strong>  {item?.ModifiedDtTm ? getShowingDateText(item?.ModifiedDtTm) : "-"}</strong>
                                         </div>
+                                        <div className="cad-images image-preview cursor pointer d-flex flex-wrap gap-4">
+                                            {Documents?.length > 0 && (
+                                                <>
+                                                    {/* Show first document */}
+                                                    <div
+                                                        className="cad-images image-container ml-3"
+                                                        data-toggle="modal"
+                                                        data-target="#ViewSingleImageModal"
+                                                        onClick={() => handleSingleDocumentClick(Documents[0], item.whiteBoardID)}
+                                                    >
+                                                        {item.whiteBoardID ? (
+                                                            isImageFile(Documents[0].FileAttachment) ? (
+                                                                <img
+                                                                    src={Documents[0].FileAttachment}
+                                                                    alt={`Selected 0`}
+                                                                    style={{ width: '30px', height: '30px' }}
+                                                                />
+                                                            ) : (
+                                                                <img
+                                                                    src={img}
+                                                                    alt="Document Icon"
+                                                                    style={{ width: '30px', height: '30px' }}
+                                                                />
+                                                            )
+                                                        ) : (
+                                                            isImageFile(Documents[0].name) ? (
+                                                                <img
+                                                                    src={URL.createObjectURL(Documents[0])}
+                                                                    alt={`Selected 0`}
+                                                                    style={{ width: '30px', height: '30px' }}
+                                                                />
+                                                            ) : (
+                                                                <img
+                                                                    src={img}
+                                                                    alt="Document Icon"
+                                                                    style={{ width: '30px', height: '30px' }}
+                                                                />
+                                                            )
+                                                        )}
+                                                    </div>
+
+                                                    {/* Show "See more" button if there are more than 1 documents */}
+                                                    {Documents.length > 1 && (
+                                                        <div
+                                                            className="cad-images image-container ml-3 d-flex align-items-center justify-content-center"
+                                                            style={{
+                                                                width: '30px',
+                                                                height: '30px',
+                                                                backgroundColor: '#007bff',
+                                                                borderRadius: '4px',
+                                                                cursor: 'pointer',
+                                                                color: 'white',
+                                                                fontSize: '12px',
+                                                                fontWeight: 'bold'
+                                                            }}
+                                                            data-toggle="modal"
+                                                            data-target="#ViewAllDocumentsModal"
+                                                            onClick={() => handleSeeMoreClick(Documents, item.whiteBoardID)}
+                                                        >
+                                                            +{Documents.length - 1}
+                                                        </div>
+                                                    )}
+                                                </>
+                                            )}
+                                        </div>
                                     </div>
                                     <div className="row clearfix py-2 align-items-center g-2">
                                         <div className="col-12 " style={{ fontSize: '13px', color: '#283041' }}>
@@ -480,92 +556,6 @@ function DashwhiteBoard() {
                                                 text={item?.Message}
                                                 lineLimit={3}
                                             />
-                                        </div>
-                                    </div>
-                                    {/* <div className="tab-form-row col-12" >
-                                        <div className="d-flex flex-wrap">
-                                            {Documents.map((doc, index) => {
-                                                const previewURL = doc.FileAttachment || documentPreviews[item.whiteBoardID]?.[index];
-                                                const fileName = doc.FileAttachment || doc.name;
-                                                const isImage = isImageFile(fileName);
-                                                return (
-                                                    <div
-                                                        key={index}
-                                                        className="image-container mr-2 mb-2"
-                                                        onClick={() => {
-                                                            if (isImage) {
-                                                                setViewSingleImage(doc);
-                                                                setIsOpenViewSingleImageModal(true);
-                                                            } else {
-                                                                window.open(previewURL, '_blank');
-                                                            }
-                                                        }}
-                                                    >
-                                                        <img
-                                                            src={isImage ? previewURL : img}
-                                                            alt={`Preview ${index}`}
-                                                            width="100"
-                                                            height="100"
-                                                        />
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    </div> */}
-
-                                    <div className="tab-form-row col-12">
-                                        <div className="cad-images image-preview cursor pointer d-flex flex-wrap gap-4">
-                                            {Documents?.length > 0 && Documents?.map((image, index) => (
-                                                <div
-                                                    key={index}
-                                                    className="cad-images image-container ml-3"
-                                                    data-toggle="modal"
-                                                    data-target="#ViewSingleImageModal"
-                                                    onClick={() => {
-                                                        const fileType = image.FileAttachment || image.name;
-                                                        if (isImageFile(fileType)) {
-                                                            setViewSingleImage(image);
-                                                            setIsOpenViewSingleImageModal(true);
-                                                        } else {
-                                                            window.open(image.FileAttachment || URL.createObjectURL(image), '_blank');
-                                                        }
-                                                    }}
-                                                >
-                                                    {item.whiteBoardID ? (
-                                                        isImageFile(image.FileAttachment) ? (
-                                                            <img
-                                                                src={image.FileAttachment}
-                                                                alt={`Selected ${index}`}
-                                                                width="100"
-                                                                height="100"
-                                                            />
-                                                        ) : (
-                                                            <img
-                                                                src={img}
-                                                                alt="Document Icon"
-                                                                width="100"
-                                                                height="100"
-                                                            />
-                                                        )
-                                                    ) : (
-                                                        isImageFile(image.name) ? (
-                                                            <img
-                                                                src={URL.createObjectURL(image)}
-                                                                alt={`Selected ${index}`}
-                                                                width="100"
-                                                                height="100"
-                                                            />
-                                                        ) : (
-                                                            <img
-                                                                src={img}
-                                                                alt="Document Icon"
-                                                                width="100"
-                                                                height="100"
-                                                            />
-                                                        )
-                                                    )}
-                                                </div>
-                                            ))}
                                         </div>
                                     </div>
                                 </div>
@@ -576,6 +566,12 @@ function DashwhiteBoard() {
             </div>
 
             <ViewSingleImageModal isOpenViewSingleImageModal={isOpenViewSingleImageModal} setIsOpenViewSingleImageModal={setIsOpenViewSingleImageModal} viewSingleImage={viewSingleImage} id={viewSingleImage.whiteBoardID} />
+            <ViewAllDocumentsModal
+                isOpenAllDocumentsModal={isOpenAllDocumentsModal}
+                setIsOpenAllDocumentsModal={setIsOpenAllDocumentsModal}
+                allDocuments={allDocuments}
+                whiteBoardID={allDocuments.length > 0 ? allDocuments[0].whiteBoardID : null}
+            />
 
         </>
     )

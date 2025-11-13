@@ -27,13 +27,15 @@ import ReactQuill from 'react-quill';
 import CurrentIncMasterReport from '../Incident/IncidentTab/CurrentIncMasterReport';
 import { matchIncidentWords } from '../../../CADUtils/functions/redactFind';
 import Tab from '../../Utility/Tab/Tab';
+import { isEmptyCheck } from '../../../CADUtils/functions/common';
+import { OverlayTrigger, Popover, Tooltip } from 'react-bootstrap';
 
 
 
 const ReportModule = (props) => {
-
     const navigate = useNavigate();
-    const { incidentReportedDate, isPreviewNormalReport } = props
+
+    const { incidentReportedDate, isPreviewNormalReport, isCaseManagement = false } = props
     const useQuery = () => {
         const params = new URLSearchParams(useLocation().search);
         return {
@@ -60,7 +62,7 @@ const ReportModule = (props) => {
     const agencyOfficerFullNameDrpData = useSelector((state) => state.DropDown.agencyOfficerFullNameDrpData);
     const reportApproveOfficer = useSelector((state) => state.Incident.reportApproveOfficer);
     const narrativeTypeDrpData = useSelector((state) => state.DropDown.narrativeTypeDrpData);
-
+    console.log("narrativeTypeDrpData", narrativeTypeDrpData)
     const { get_IncidentTab_Count, get_Incident_Count, changesStatus, setChangesStatus, nibrsStatus, GetDataTimeZone, datezone, setassignedReportID, validate_IncSideBar } = useContext(AgencyContext);
 
     const [narrativeData, setNarrativeData] = useState([]);
@@ -87,7 +89,6 @@ const ReportModule = (props) => {
     const [narrativeTypeCode, setnarrativeTypeCode] = useState('');
     const [primaryOfficer, setprimaryOfficer] = useState('');
     const [showModal, setShowModal] = useState(false);
-    const [showModalRecall, setshowModalRecall] = useState(false);
     // ucr reportdata
     const [printIncReport, setIncMasterReport] = useState(false);
     const [IncReportCount, setIncReportCount] = useState(1);
@@ -99,14 +100,14 @@ const ReportModule = (props) => {
     const [isUpdated, setIsUpdated] = useState(false);
     const [redactingData, setRedactingData] = useState({});
     const [detectedWords, setDetectedWords] = useState([]);
-    const [missingField, setMissingField] = useState([]);
+    const [missingField, setMissingField] = useState({});
     const [isNormalReport, setNormalReport] = useState(true);
     const [redactedComment, setRedactedComment] = useState("");
     const [checkWebWorkFlowStatus, setcheckWebWorkFlowStatus] = useState(false);
     const [IsSelfApproved, setIsSelfApproved] = useState(false);
     const [skipApproverAuthor, setskipApproverAuthor] = useState(false);
+    const [showModalRecall, setshowModalRecall] = useState(false);
     const detectedWordsRef = useRef([]);
-
     const [value, setValue] = useState({
         'IncidentId': '', 'NarrativeID': '', 'ReportedByPINActivityID': null, 'NarrativeTypeID': null, 'AsOfDate': null,
         'CreatedByUserFK': '', 'ModifiedByUserFK': '', 'ApprovingSupervisorID': '', 'NarrativeAssignedID': '', 'WrittenForID': '',
@@ -183,7 +184,7 @@ const ReportModule = (props) => {
         await fetchPostData('Narrative/GetData_WrittenForOfficer', val).then((data) => {
             console.log("🚀 ~ Get_WrittenForDataDrp ~ data:", data)
             if (data) {
-                setWrittenForDataDrp(changeArrayFormat_Active_InActive(data, 'PINID', 'FullName', 'IsActive'));
+                setWrittenForDataDrp(changeArrayFormat_Active_InActive(data, 'PINID', 'HeadOfAgency', 'IsActive'));
             } else {
                 setWrittenForDataDrp([]);
             }
@@ -444,6 +445,7 @@ const ReportModule = (props) => {
             ...errors, 'ReportedByPinError': '', 'AsOfDateError': '', 'NarrativeIDError': '', 'CommentsError': '', ['ApprovingOfficerError']: '', 'WrittenForIDError': '',
         });
         setStatesChangeStatus(false); setChangesStatus(false);
+        setMissingField({})
     }
 
     const startRef = React.useRef();
@@ -545,14 +547,14 @@ const ReportModule = (props) => {
             selector: (row) => getShowingDateText(row.CreatedDtTm),
             sortable: true
         },
-        {
-            name: 'Report',
-            selector: (row) => row?.Comments || '',
-            format: (row) => (
-                <>{row?.Comments ? row?.Comments.substring(0, 70) : ''}{row?.Comments?.length > 40 ? '  . . .' : null} </>
-            ),
-            sortable: true
-        },
+        // {
+        //     name: 'Report',
+        //     selector: (row) => row?.Comments || '',
+        //     format: (row) => (
+        //         <>{row?.Comments ? row?.Comments.substring(0, 70) : ''}{row?.Comments?.length > 40 ? '  . . .' : null} </>
+        //     ),
+        //     sortable: true
+        // },
         {
             name: 'Prepared by',
             selector: (row) => row.ReportedBy_Description,
@@ -564,7 +566,7 @@ const ReportModule = (props) => {
             sortable: true
         },
         {
-            name: 'Type',
+            name: 'Report Type',
             selector: (row) => row.NarrativeDescription,
             sortable: true
         },
@@ -755,13 +757,12 @@ const ReportModule = (props) => {
                     toastifySuccess(message);
                     get_NarrativesData(incidentID, loginPinID);
                     // GetData_ReportWorkLevelCheck(loginAgencyID ,narrativeID);
-                    // resets(); reset()
+                    resets(); reset()
                 } else {
                     console.log("something Wrong");
                 }
             }).catch(err => console.log(err));
     }
-
 
     const Agencychange = (multiSelected) => {
         setStatesChangeStatus(true)
@@ -799,14 +800,11 @@ const ReportModule = (props) => {
         }
     }
 
-
-
     const { ApprovingOfficerError } = errors
 
     useEffect(() => {
         if (ApprovingOfficerError === 'true') {
-            Add_Approval(); updateNarrative();
-            //  reset();
+            Add_Approval(); updateNarrative(); reset();
         }
     }, [ApprovingOfficerError])
 
@@ -1000,14 +998,16 @@ const ReportModule = (props) => {
         if (data?.length > 0) {
             const val = {
                 text: data,
+                IncidentID: incidentID,
+                AgencyID: loginAgencyID
             };
             AddDeleteUpadate('/suggestion/MissingFiled', val)
                 .then((res) => {
-                    setMissingField(res?.MissingFields);
+                    setMissingField(res);
                 })
-                .catch(err => setMissingField([]));
+                .catch(err => setMissingField({}));
         } else {
-            setMissingField([]);
+            setMissingField({});
         }
     }, [value.Comments]);
 
@@ -1027,6 +1027,12 @@ const ReportModule = (props) => {
         const isGreen = (v) => {
             const n = normalize(v);
             return n === "#008000" || n === "green";
+        };
+
+        // NEW: treat #7FFFD4 / aquamarine as the suggestion text color
+        const isAquamarine = (v) => {
+            const n = normalize(v);
+            return n === "#7fffd4" || n === "aquamarine";
         };
 
         const isWs = (ch) => /\s/.test(ch);
@@ -1118,14 +1124,14 @@ const ReportModule = (props) => {
                             let alreadySuggestion = false;
                             if (Array.isArray(fmt) && fmt.length > 0) {
                                 alreadySuggestion = fmt.every(
-                                    (f) => isBlack(f?.color) && isGreen(f?.background)
+                                    (f) => isAquamarine(f?.color) && isGreen(f?.background)
                                 );
                             } else {
-                                alreadySuggestion = isBlack(fmt?.color) && isGreen(fmt?.background);
+                                alreadySuggestion = isAquamarine(fmt?.color) && isGreen(fmt?.background);
                             }
 
                             if (!alreadySuggestion) {
-                                quill.formatText(start, len, { color: "#000000", background: "#008000" }, "user");
+                                quill.formatText(start, len, { color: "#7FFFD4", background: "#008000" }, "user");
                             }
                         }
                     }
@@ -1397,7 +1403,6 @@ const ReportModule = (props) => {
             toastifySuccess(parseData?.Table[0].Message);
             get_NarrativesData(incidentID, loginPinID);
             setIsSelfApproved(false);
-            updateNarrative();
             // setStatesChangeStatus(false);
             // setIsSaved(true);
             // setModelStatus(true);
@@ -1405,26 +1410,24 @@ const ReportModule = (props) => {
         })
     }
 
-
-
     // editor end
     return (
         <>
-            <div className=" section-body pt-1 p-1 bt" >
+            <div className={`${!isCaseManagement ? 'container-fluid section-body pt-1 p-1 bt' : ''}`} >
                 <div>
-                    <div className="col-12  inc__tabs">
+                    {!isCaseManagement && <div className="col-12  inc__tabs">
                         <Tab />
-                    </div>
-                    <div className="dark-row" >
+                    </div>}
+                    <div className={`${!isCaseManagement ? 'dark-row' : ''}`} >
                         <div className="col-12 col-sm-12">
-                            <div className="card Agency incident-card">
+                            <div className={`${!isCaseManagement ? 'card Agency incident-card' : ''}`} >
                                 <div className="card-body">
 
-                                    <div className="row mt-1 child">
+                                    <div className={`${!isCaseManagement ? 'row mt-1 child' : ''}`} >
                                         <div className="col-12 col-md-12 col-lg-12 px-0 pl-0">
                                             {/* <div>
-                                        {renderNarrativeData()}
-                                      </div> */}
+            {renderNarrativeData()}
+          </div> */}
                                             <div className="row mb-3">
                                                 <div className="col-2 col-md-2 col-lg-1 mt-2 pt-2">
                                                     <label htmlFor="" className='new-label'>Report Type  {errors.NarrativeIDError !== 'true' ? (
@@ -1440,7 +1443,7 @@ const ReportModule = (props) => {
                                                             !IsSuperadmin &&
                                                             !(value.ReportedByPINActivityID === loginPinID || value.WrittenForID === loginPinID)) ? colourStylesUsers : Requiredcolour}
                                                         value={narrativeTypeDrpData?.filter((obj) => obj.value === value?.NarrativeTypeID)}
-                                                        options={narrativeTypeDrpData}
+                                                        options={narrativeTypeDrpData?.filter((obj) => obj.value !== 6)}
                                                         onChange={(e) => ChangeDropDownReportType(e, 'NarrativeTypeID', 'NarrativeTypeCode')}
                                                         placeholder="Select.."
                                                         menuPlacement="bottom"
@@ -1538,10 +1541,6 @@ const ReportModule = (props) => {
                                                         isDisabled
                                                     />
                                                 </div>
-
-
-
-
                                                 <div className="col-2 col-md-2 col-lg-1 mt-2 pt-2">
                                                     <label htmlFor="" className='new-label text-nowrap'>Written For {errors.WrittenForIDError !== 'true' ? (
                                                         <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.WrittenForIDError}</p>
@@ -1551,6 +1550,7 @@ const ReportModule = (props) => {
                                                     <Select
                                                         name="WrittenForID"
                                                         isClearable
+
                                                         styles={
                                                             value.Status === 'Pending Review' || value.Status === 'Approved' || narrativeTypeCode.toLowerCase() === 'ni' || value.Status === 'Draft' || value.Status === 'Rejected'
                                                                 ? colourStylesUsers
@@ -1567,9 +1567,11 @@ const ReportModule = (props) => {
 
 
                                                 </div>
-                                                {value.Status === "Rejected" && (
+                                            </div>
+                                            {value.Status === "Rejected" &&
+                                                <div className="row">
                                                     <>
-                                                        <div className="col-2 col-md-2 col-lg-2 mt-2 pt-2">
+                                                        <div className="col-2 col-md-2 col-lg-1 mt-2 pt-2">
                                                             <label htmlFor="" className='new-label'>Comment</label>
                                                         </div>
                                                         <div className="col-4 col-md-4 col-lg-4 mt-2 text-field">
@@ -1579,9 +1581,37 @@ const ReportModule = (props) => {
                                                                 readOnly />
                                                         </div>
                                                     </>
-                                                )}
-                                            </div>
-                                            {
+                                                    <div className={'col-4 text-right ml-auto'}>
+                                                        <div
+                                                            id="NIBRSStatus"
+                                                            className={
+                                                                value.Status === "Draft"
+                                                                    ? "nibrs-draft-Nar"
+                                                                    : value.Status === "Approved"
+                                                                        ? "nibrs-submitted-Nar"
+                                                                        : value.Status === "Rejected"
+                                                                            ? "nibrs-rejected-Nar"
+                                                                            : value.Status === "Pending Review"
+                                                                                ? "nibrs-reopened-Nar"
+                                                                                : ""
+                                                            }
+                                                            style={{
+                                                                color: "black",
+                                                                opacity: 1,
+                                                                height: "35px",
+                                                                fontSize: "14px",
+                                                                marginTop: "2px",
+                                                                boxShadow: "none",
+                                                                userSelect: "none",
+                                                                padding: "5px", // optional for spacing
+                                                            }}
+                                                        >
+                                                            {value.Status}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            {(value.Status !== "Rejected" && value.Status) &&
                                                 <div className="row mt-2 align-items-center">
                                                     {value.Status === 'Approved' &&
                                                         <>
@@ -1614,7 +1644,7 @@ const ReportModule = (props) => {
                                                             </div>
                                                         </>
                                                     }
-                                                    {value.Status && <div className={'col-4 text-right mb-2 ml-auto'}>
+                                                    <div className={'col-4 text-right mb-2 ml-auto'}>
                                                         <div
                                                             id="NIBRSStatus"
                                                             className={
@@ -1641,33 +1671,262 @@ const ReportModule = (props) => {
                                                         >
                                                             {value.Status}
                                                         </div>
-                                                    </div>}
+                                                    </div>
                                                 </div>
                                             }
 
-
-
                                             {isNormalReport &&
                                                 <span>
-                                                    {missingField.length > 0 &&
+                                                    {value.Status !== 'Approved' && value.Status !== 'Pending Review' && (
+                                                        missingField.KeyWordHitsSuggestions ||
+                                                        missingField.PropertySuggestions ||
+                                                        missingField.VehicleSuggestions ||
+                                                        missingField?.MissingFields?.length > 0 ||
+                                                        missingField.ReasonCodeSuggestions
+                                                    ) &&
                                                         <div className='mx-2'>
                                                             <label htmlFor="" className='new-summary' style={{ fontSize: "18px" }}>NIBRS Missing Information</label>
                                                             <div className="d-flex flex-row flex-wrap mt-1">
-                                                                {missingField.map((word, index) => (
-                                                                    <>
-                                                                        <button
-                                                                            key={index}
-                                                                            type="button"
-                                                                            className="btn btn-primary m-1 py-1 px-1.5" // 'me-3' adds space to the right and 'mb-2' adds space below
-                                                                            style={{ cursor: 'default', fontSize: "13px" }}
-                                                                        >
-                                                                            <i className="fa fa-close" style={{ color: "red", fontSize: "13px" }}></i>  {word}
-                                                                        </button>
-                                                                    </>
-                                                                ))}
+                                                                {/* For when no reson code  */}
+                                                                {missingField.ReasonCodeSuggestions &&
+                                                                    <div class="badge-bar px-2 py-2 mx-1 my-1">
+                                                                        <div class="d-flex align-items-center justify-content-between">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <span class="badge-pill mr-2"><i class="fa fa-times"></i></span>
+                                                                                <span class="badge-title">{missingField.ReasonCodeSuggestions}</span>
+                                                                            </div>
+                                                                            {/* tooltip */}
+                                                                            <OverlayTrigger
+                                                                                placement="top"
+                                                                                trigger={["hover", "focus"]}
+                                                                                overlay={
+                                                                                    <Tooltip id="fmt-tip" className="wide-tooltip">
+                                                                                        <div className="fw-bold mb-2" style={{ color: "red" }}><b>VALID FORMAT</b></div>
+                                                                                        <div className="mb-1">
+                                                                                            <b>Please Enter Details In The Following Order:</b> Name, Reason Code, DOB, Age, Gender, Race, Ethnicity, Resident
+                                                                                        </div>
+                                                                                        <div style={{ wordBreak: "break-word" }}>
+                                                                                            <b>Example:</b> Maria Castillo (Victim) (DOB: 09/15/1986) (Age: 45) (Gender: Female) (Race: Unknown) (Ethnicity: Hispanic Or Latino) (Resident: Non-Resident)
+                                                                                        </div>
+                                                                                    </Tooltip>
+                                                                                }
+                                                                            >
+                                                                                <span className="badge-pill ml-3" style={{ cursor: "pointer" }}>
+                                                                                    <i className="fa fa-exclamation" />
+                                                                                </span>
+                                                                            </OverlayTrigger>
+                                                                        </div>
+                                                                        <div className="d-flex align-items-center flex-wrap mt-0">
+                                                                            <span>
+                                                                                <span className="bullet"></span>
+                                                                                <span className="meta">Reason Code</span>
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+
+                                                                {/* For other missing field  */}
+                                                                {missingField?.MissingFields?.length > 0 &&
+                                                                    missingField.MissingFields.map((p, idx) => {
+                                                                        if (!p?.REASON_CODE) return null;
+                                                                        const role = (p?.REASON_CODE || "").trim().toLowerCase();
+                                                                        const fields =
+                                                                            role === "victim"
+                                                                                ? ["AGE", "DOB", "RACE", "GENDER", "ETHNICITY", "RESIDENT"]
+                                                                                : ["AGE", "DOB", "RACE", "GENDER"]
+
+
+                                                                        // --- OR logic for AGE/DOB ---
+                                                                        const isEmpty = (v) => isEmptyCheck(v);
+                                                                        const hasAge = !isEmpty(p?.AGE);
+                                                                        const hasDob = !isEmpty(p?.DOB);
+
+                                                                        // start with naive missing
+                                                                        let missing = fields.filter((f) => isEmpty(p?.[f]));
+
+                                                                        // if either AGE or DOB exists, drop both from "missing"
+                                                                        if (fields.includes("AGE") && fields.includes("DOB") && (hasAge || hasDob)) {
+                                                                            missing = missing.filter((f) => f !== "AGE" && f !== "DOB");
+                                                                        }
+
+                                                                        if (missing.length === 0) return null; // nothing missing ⇒ skip
+
+                                                                        const labels = {
+                                                                            AGE: "Age",
+                                                                            DOB: "DOB",
+                                                                            RACE: "Race",
+                                                                            GENDER: "Gender",
+                                                                            ETHNICITY: "Ethnicity",
+                                                                            RESIDENT: "Resident",
+                                                                        };
+
+                                                                        const toTitleCaseList = (s = "") =>
+                                                                            s
+                                                                                .split(",")
+                                                                                .map(part =>
+                                                                                    part
+                                                                                        .trim()
+                                                                                        .split(/\s+/)
+                                                                                        .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+                                                                                        .join(" ")
+                                                                                )
+                                                                                .filter(Boolean)
+                                                                                .join(", ");
+
+                                                                        const roleLabel = role ? toTitleCaseList(role) : "";
+
+                                                                        return (
+                                                                            <div class="badge-bar px-2 py-2 mx-1 my-1">
+                                                                                <div class="d-flex align-items-center justify-content-between">
+                                                                                    <div class="d-flex align-items-center">
+                                                                                        <span class="badge-pill mr-2"><i class="fa fa-times"></i></span>
+                                                                                        <span class="badge-title">{roleLabel}: {p?.NAME}</span>
+                                                                                    </div>
+                                                                                    {/* tooltip */}
+                                                                                    <OverlayTrigger
+                                                                                        placement="top"
+                                                                                        trigger={["hover", "focus"]}
+                                                                                        overlay={
+                                                                                            <Tooltip id="fmt-tip" className="wide-tooltip">
+                                                                                                <div className="fw-bold mb-2" style={{ color: "red" }}><b>VALID FORMAT</b></div>
+                                                                                                <div className="mb-1">
+                                                                                                    <b>Please Enter Details In The Following Order:</b> Name, Reason Code, DOB, Age, Gender, Race, Ethnicity, Resident
+                                                                                                </div>
+                                                                                                <div style={{ wordBreak: "break-word" }}>
+                                                                                                    <b>Example:</b> Maria Castillo (Victim) (DOB: 09/15/1986) (Age: 45) (Gender: Female) (Race: Unknown) (Ethnicity: Hispanic Or Latino) (Resident: Non-Resident)
+                                                                                                </div>
+                                                                                            </Tooltip>
+                                                                                        }
+                                                                                    >
+                                                                                        <span className="badge-pill ml-3" style={{ cursor: "pointer" }}>
+                                                                                            <i className="fa fa-exclamation" />
+                                                                                        </span>
+                                                                                    </OverlayTrigger>
+                                                                                </div>
+                                                                                <div className="d-flex align-items-center flex-wrap mt-0">
+                                                                                    {missing.map((f) => (
+                                                                                        <span key={f}>
+                                                                                            <span className="bullet"></span>
+                                                                                            <span className="meta">{labels[f]}</span>
+                                                                                        </span>
+                                                                                    ))}
+                                                                                </div>
+                                                                            </div>
+                                                                        );
+                                                                    })}
+
+
+                                                                {missingField?.VehicleSuggestions &&
+                                                                    <div class="badge-bar px-2 py-2 mx-1 my-1">
+                                                                        <div class="d-flex align-items-center justify-content-between">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <span class="badge-pill mr-2"><i class="fa fa-times"></i></span>
+                                                                                <span class="badge-title">Vehicle Missing Field</span>
+                                                                            </div>
+                                                                            {/* tooltip */}
+                                                                            <OverlayTrigger
+                                                                                placement="top"
+                                                                                trigger={["hover", "focus"]}
+                                                                                overlay={
+                                                                                    <Tooltip id="fmt-tip" className="wide-tooltip">
+                                                                                        <div className="fw-bold mb-2" style={{ color: "red" }}><b>VALID FORMAT</b></div>
+                                                                                        <div className="mb-1">
+                                                                                            <b>Please Enter Details In The Following Order:</b> Vehicle, Plate State & No, Loss Code, Category, Plate Type
+                                                                                        </div>
+                                                                                        <div style={{ wordBreak: "break-word" }}>
+                                                                                            <b>Example:</b> Vehicle (TXLP#WHT7386) (Loss Code: Stolen) (Category: Automobile) (Plate Type: Ambulance)
+                                                                                        </div>
+                                                                                    </Tooltip>
+                                                                                }
+                                                                            >
+                                                                                <span className="badge-pill ml-3" style={{ cursor: "pointer" }}>
+                                                                                    <i className="fa fa-exclamation" />
+                                                                                </span>
+                                                                            </OverlayTrigger>
+                                                                        </div>
+                                                                        <div className="d-flex align-items-center flex-wrap mt-0">
+                                                                            {missingField.VehicleSuggestions.split(",").map((f) => (
+                                                                                <span key={f}>
+                                                                                    <span className="bullet"></span>
+                                                                                    <span className="meta">{f}</span>
+                                                                                </span>
+                                                                            ))}
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                {missingField?.PropertySuggestions &&
+                                                                    <div class="badge-bar px-2 py-2 mx-1 my-1">
+                                                                        <div class="d-flex align-items-center justify-content-between">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <span class="badge-pill mr-2"><i class="fa fa-times"></i></span>
+                                                                                <span class="badge-title">Property Missing Field</span>
+                                                                            </div>
+                                                                            {/* tooltip */}
+                                                                            <OverlayTrigger
+                                                                                placement="top"
+                                                                                trigger={["hover", "focus"]}
+                                                                                overlay={
+                                                                                    <Tooltip id="fmt-tip" className="wide-tooltip">
+                                                                                        <div className="fw-bold mb-2" style={{ color: "red" }}><b>VALID FORMAT</b></div>
+                                                                                        <div className="mb-1">
+                                                                                            <b>Please Enter Details In The Following Order:</b> Property, Loss Code, Category
+                                                                                        </div>
+                                                                                        <div style={{ wordBreak: "break-word" }}>
+                                                                                            <b>Example:</b> Property (Loss Code: Stolen Property) (Category: Personal Paper)
+                                                                                        </div>
+                                                                                    </Tooltip>
+                                                                                }
+                                                                            >
+                                                                                <span className="badge-pill ml-3" style={{ cursor: "pointer" }}>
+                                                                                    <i className="fa fa-exclamation" />
+                                                                                </span>
+                                                                            </OverlayTrigger>
+                                                                        </div>
+                                                                        <div className="d-flex align-items-center flex-wrap mt-0">
+                                                                            {missingField.PropertySuggestions.split(",").map((f) => (
+                                                                                <span key={f}>
+                                                                                    <span className="bullet"></span>
+                                                                                    <span className="meta">{f}</span>
+                                                                                </span>
+                                                                            ))}
+                                                                        </div>
+                                                                    </div>
+                                                                }
+
+                                                                {missingField?.KeyWordHitsSuggestions &&
+                                                                    <div class="badge-bar px-2 py-2 mx-1 my-1">
+                                                                        <div class="d-flex align-items-center justify-content-between">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <span class="badge-pill mr-2"><i class="fa fa-times"></i></span>
+                                                                                <span class="badge-title">Charge Code</span>
+                                                                            </div>
+
+                                                                        </div>
+                                                                        <div className="d-flex align-items-center flex-wrap mt-0">
+                                                                            {missingField.KeyWordHitsSuggestions.split(",").map((f) => {
+                                                                                const formatted = f.trim().replace(/\b\w/g, (c) => c.toUpperCase());
+                                                                                return (
+                                                                                    <span key={f}>
+                                                                                        <span className="bullet"></span>
+                                                                                        <span
+                                                                                            className="meta"
+                                                                                            style={{ color: 'white', cursor: 'pointer', textDecoration: 'underline' }}
+                                                                                            onClick={() => { navigate(`/Off-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${true}&IsCadInc=${true}&narrativeAssignId=${stringToBase64('')}`) }}
+                                                                                        >
+                                                                                            {formatted}
+                                                                                        </span>
+                                                                                    </span>
+                                                                                );
+                                                                            })}
+
+                                                                        </div>
+                                                                    </div>
+                                                                }
+
                                                             </div>
                                                         </div>
                                                     }
+
                                                     <ReactQuill
                                                         className={`editor-class ${value.Status === 'Pending Review' || value.Status === 'Approved' || ((value.Status === 'Draft' || value.Status === 'Rejected') && !IsSuperadmin && !(value.ReportedByPINActivityID === loginPinID || value.WrittenForID === loginPinID)) ? 'readonly' : ''}`}
                                                         disabled={value.Status === 'Pending Review' || value.Status === 'Approved' || ((value.Status === 'Draft' || value.Status === 'Rejected') &&
@@ -1757,33 +2016,33 @@ const ReportModule = (props) => {
                                                     />
                                                     <style jsx>
                                                         {`
-                                            ::selection {
-                                               background: #000000 !important;  /* Red background for normal selection */
-                                                color: #000000 !important;  /* White text for normal selection */
-                                             }
-                                            .ql-toolbar .ql-redact {
-                                                width: auto !important; /* Ensure it takes the width of the content */
-                                                min-width: 60px; /* Set a reasonable minimum width */
-                                                padding: 4px 10px; /* Add more padding if needed */
-                                                text-align: center; /* Center the text */
-                                                white-space: nowrap; /* Prevent text from wrapping */
-                                            }
-                                              .ql-redact::before {
-                                                content: "Redact";
-                                                font-size: 14px;
-                                                font-weight: normal;
-                                            }
-                                            .ql-editor .redacted::selection {
-                                                background: transparent !important; 
-                                                color: transparent !important;
-                                              }
-                                          `}
+                ::selection {
+                   background: #000000 !important;  /* Red background for normal selection */
+                    color: #000000 !important;  /* White text for normal selection */
+                 }
+                .ql-toolbar .ql-redact {
+                    width: auto !important; /* Ensure it takes the width of the content */
+                    min-width: 60px; /* Set a reasonable minimum width */
+                    padding: 4px 10px; /* Add more padding if needed */
+                    text-align: center; /* Center the text */
+                    white-space: nowrap; /* Prevent text from wrapping */
+                }
+                  .ql-redact::before {
+                    content: "REDACT";
+                    font-size: 16px;
+                    color:blue;
+                    font-weight: normal;
+                }
+                .ql-editor .redacted::selection {
+                    background: transparent !important; 
+                    color: transparent !important;
+                  }
+              `}
                                                     </style>
                                                 </span>
                                             }
                                         </div>
-                                    </div >
-
+                                    </div>
                                     <div className="col-12">
                                         {/* Approval  */}
                                         <div className="row ">
@@ -1922,7 +2181,7 @@ const ReportModule = (props) => {
 
 
                                                         {/* {
-                                              narrativeID && value.Status != "Pending Review" && value.Status != "Rejected" && value.Status != "Approved" || narrativeID && value.Status === "Rejected" && value.ReportedByPINActivityID === loginPinID  ? <>
+                                            narrativeID && value.Status != "Pending Review" && value.Status != "Rejected" && value.Status != "Approved" || narrativeID && value.Status === "Rejected" && value.ReportedByPINActivityID === loginPinID  ? <>
                                                 <div className=" ">
                                                   <button type="button" disabled={((value.ReportedByPINActivityID != loginPinID && value.Status === 'Draft') || value.Status === 'Approved') ? true : false} onClick={(e) => { check_Validation_ErrorApproval(); }} className="btn btn-sm btn-success"  >Send For Approval</button>
                                                 </div>
@@ -1982,7 +2241,6 @@ const ReportModule = (props) => {
                                                                     </button>
                                                                 </> : <></>
                                                         }
-
                                                         {
                                                             (IsSelfApproved) ? (
                                                                 narrativeID && (
@@ -2015,23 +2273,23 @@ const ReportModule = (props) => {
                                                             ) : null
                                                         }
                                                         {/* {
-                                              IsSelfApproved ?
-                                                <>
-                                                  <div className=" ">
-                                                    <button
-                                                      type="button"
-                                                      onClick={(e) => {
-                                                        Add_Type_Comments();
-                                                      }}
-                                                      className="btn btn-sm btn-success"
-                                                    >
-                                                      Approved
-                                                    </button>
-                                                  </div>
-                                                </> : <></>
-                            
-                            
-                                            } */}
+                                  IsSelfApproved ?
+                                    <>
+                                      <div className=" ">
+                                        <button
+                                          type="button"
+                                          onClick={(e) => {
+                                            Add_Type_Comments();
+                                          }}
+                                          className="btn btn-sm btn-success"
+                                        >
+                                          Approved
+                                        </button>
+                                      </div>
+                                    </> : <></>
+                
+                
+                                } */}
 
                                                     </li>
                                                     <li className=''>
@@ -2041,7 +2299,7 @@ const ReportModule = (props) => {
                                                                 effectiveScreenPermission ?
                                                                     effectiveScreenPermission[0]?.Changeok ?
                                                                         <>
-                                                                            <button type="button" onClick={() => check_Validation_Error()} className="btn btn-sm btn-success pl-2 ">{value.Status === "Approved" ? "Redact" : "Update"}</button>
+                                                                            <button type="button" disabled={!statesChangeStatus || value.Status === 'Pending Review' || value.Status === 'Approve'} onClick={() => check_Validation_Error()} className="btn btn-sm btn-success pl-2 ">{value.Status === "Approved" ? "Save Redact" : "Update"}</button>
                                                                             <button
                                                                                 type="button"
                                                                                 className="btn btn-sm btn-success ml-2 "
@@ -2062,7 +2320,7 @@ const ReportModule = (props) => {
                                                                         </>
                                                                     :
                                                                     <>
-                                                                        <button type="button" disabled={!statesChangeStatus || value.Status === 'Pending Review' || value.Status === 'Approve'} onClick={() => check_Validation_Error()} className="btn btn-sm btn-success pl-2 ">{value.Status === "Approved" ? "Redact" : "Update"}</button>
+                                                                        <button type="button" disabled={!statesChangeStatus || value.Status === 'Pending Review' || value.Status === 'Approve'} onClick={() => check_Validation_Error()} className="btn btn-sm btn-success pl-2 ">{value.Status === "Approved" ? "Save Redact" : "Update"}</button>
                                                                         <button
                                                                             type="button"
                                                                             className="btn btn-sm btn-success ml-2 "
@@ -2116,7 +2374,7 @@ const ReportModule = (props) => {
                                                             row?.ArrestID ? (
                                                                 navigate(`/Arrest-Home?IncId=${stringToBase64(row?.IncidentId)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&ArrestId=${stringToBase64(row?.ArrestID)}&ArrNo=${stringToBase64(row?.ArrestNumber)}&isFromDashboard=true`)
                                                             ) : (
-                                                                navigate(`/Inc-Report?IncId=${stringToBase64(row?.IncidentId)}&IncNo=${row?.IncidentNumber}&IncSta=true&isFromDashboard=true`)
+                                                                navigate(`/Inc-Home?IncId=${stringToBase64(row?.IncidentId)}&IncNo=${row?.IncidentNumber}&IncSta=true&isFromDashboard=true`)
                                                             )
                                                         }
                                                         else {
@@ -2420,7 +2678,7 @@ const NarrativeModal = (props) => {
                                                 isClearable
                                                 styles={Requiredcolour}
                                                 value={narrativeTypeDrpData?.filter((obj) => obj.value === value?.NarrativeTypeID)}
-                                                options={narrativeTypeDrpData}
+                                                options={narrativeTypeDrpData?.filter((obj) => obj.value !== 6)}
                                                 onChange={(e) => ChangeDropDown(e, 'NarrativeTypeID', 'NarrativeTypeCode')}
                                                 placeholder="Select.."
                                                 menuPlacement="bottom"

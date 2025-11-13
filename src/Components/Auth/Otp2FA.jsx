@@ -14,7 +14,7 @@ import { insert_LocalStoreData } from "../../redux/actions/Agency";
 
 
 
-const Otp = ({ username, otp, loginResData, setOtp, timerOn, type, isMDT, isSuperAdmin = false, isValidUser = false, userEmail = "", isForgotPassword = false, PINID = "" }) => {
+const Otp = ({ username, otp, loginResData, setOtp, timerOn, type, isMDT, isSuperAdmin = false, isValidUser = false, userEmail = "", isForgotPassword = false, PINID = "", typeOfAccount }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -98,7 +98,8 @@ const Otp = ({ username, otp, loginResData, setOtp, timerOn, type, isMDT, isSupe
             'NCICLoginTerminalID': data['NCICLoginTerminalID'],
             'NCICORI': data['NCICORI'],
             'ReportApproval': data['ReportApproval'] === "1" ? "Single" : 'Multi',
-            'IsLevel': data['IsLevel']
+            'IsLevel': data['IsLevel'],
+            'IsCaseManagementVisible': data['IsCaseManagementVisible'] === "False" || data['IsCaseManagementVisible'] === "false" || data['IsCaseManagementVisible'] === false ? false : true,
         }
         const val = {
             // UniqueId: uniUserId,
@@ -159,6 +160,8 @@ const Otp = ({ username, otp, loginResData, setOtp, timerOn, type, isMDT, isSupe
         setTimeout(() => {
             if (isMDT) {
                 navigate('/incident-dashboard');
+            } else if (typeOfAccount === 'CAD') {
+                navigate('/cad/dashboard-page');
             } else {
                 navigate('/dashboard-page');
             }

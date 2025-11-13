@@ -1,69 +1,37 @@
-import React from 'react'
+import React, { useState } from 'react'
 import DataTable from 'react-data-table-component';
 import PropTypes from 'prop-types';
 import { compareStrings } from '../../CADUtils/functions/common';
 import { getShowingWithOutTime, subTableCustomStyles, tableCustomStyles } from '../../Components/Common/Utility';
 
 function NameInfoContent(props) {
-    const { citationState } = props;
-
-    const identificationData = [
-        {
-            IdentificationType: 'Driver License',
-            IdentificationNumber: '1234567890',
-            IdExpiry: '2025-01-01',
-            state: 'CA',
-            country: 'USA'
-        }
-    ]
-
-    const columns = [
-        {
-            name: 'Identification Type',
-            selector: row => row.IdentificationType,
-            sortable: true,
-            sortFunction: (rowA, rowB) => compareStrings(rowA.IdentificationType, rowB.IdentificationType),
-            style: {
-                position: "static",
-            },
-        },
-        {
-            name: 'Identification Number',
-            selector: row => row.IdentificationNumber,
-            sortable: true,
-            sortFunction: (rowA, rowB) => compareStrings(rowA.IdentificationNumber, rowB.IdentificationNumber),
-            style: {
-                position: "static",
-            },
-        },
-        {
-            name: 'Id Expiry',
-            selector: row => row.IdExpiry,
-            sortable: true,
-            sortFunction: (rowA, rowB) => compareStrings(rowA.IdExpiry, rowB.IdExpiry),
-            style: {
-                position: "static",
-            },
-        },
-        {
-            name: 'State',
-            selector: row => row.state,
-            sortable: true,
-            sortFunction: (rowA, rowB) => compareStrings(rowA.state, rowB.state),
-            style: {
-                position: "static",
-            },
-        },
-        {
-            name: 'Country',
-            selector: row => row.country,
-            sortable: true,
-            sortFunction: (rowA, rowB) => compareStrings(rowA.country, rowB.country),
-            style: {
-                position: "static",
-            },
-        },
-    ]
+    const { nameData } = props;
+    const [nameState, setNameState] = useState({
+        lastName: '',
+        firstName: '',
+        middleName: '',
+        dateOfBirth: '',
+        juvenile: false,
+        age: '',
+        gender: '',
+        race: '',
+        ethnicity: '',
+        resident: '',
+        weightLbs: '',
+        heightFt: '',
+        eyeColor: '',
+        hairColor: '',
+        stateDL: '',
+        identificationType: '',
+        identificationNumber: '',
+        idExpiry: '',
+        country: '',
+        state: '',
+        address: '',
+        contactType: '',
+        contactNumber: '',
+        unlisted: false,
+    });
 
     const nameColumns = [
         {
@@ -86,39 +54,58 @@ function NameInfoContent(props) {
             selector: (row) => row.DateOfBirth ? getShowingWithOutTime(row.DateOfBirth) : " ",
             sortable: true
         },
-        // {
-        //   name: 'Race',
-        //   selector: (row) => row.Description_Race,
-        //   sortable: true
-        // },
         {
-            name: 'SSN',
-            selector: (row) => row.SSN,
-            sortable: true
-        },
-        {
-            width: '100px',
-            name: 'View',
-            // sortable: true,
-            cell: row =>
-                <div style={{ position: 'absolute', top: 4, right: 30 }}>
-                    <span
-                        className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
-                    >
-                        <i className="fa fa-eye"></i>
-                    </span>
-                </div>
-        },
-        {
-            name: 'Reason Code',
-            selector: (row) => row?.NameReasonCode || '',
-            format: (row) => (
-                <>{row?.NameReasonCode ? row?.NameReasonCode.substring(0, 50) : ''}{row?.NameReasonCode?.length > 40 ? '  . . .' : null} </>
-            ),
-            // selector: (row) => <>{row?.NameReasonCode ? row?.NameReasonCode.substring(0, 50) : ''}{row?.NameReasonCode?.length > 40 ? '  . . .' : null} </>,
+            name: 'DL Number',
+            selector: (row) => row.DLNumber,
             sortable: true
         },
     ]
+
+
+    const conditionalRowStyles = [
+        {
+            when: row => row?.NameIDNumber === nameState?.NameIDNumber,
+            style: {
+                backgroundColor: '#001f3fbd',
+                color: 'white',
+                cursor: 'pointer',
+                '&:hover': {
+                    backgroundColor: '#001f3fbd',
+                    color: 'white',
+                },
+            },
+        }
+    ];
+
+    function handelSetEditData(data) {
+        setNameState({
+            NameID: data?.NameID || null,
+            lastName: data?.LastName || null,
+            firstName: data?.FirstName || null,
+            middleName: data?.MiddleName || null,
+            dateOfBirth: data?.DateOfBirth ? getShowingWithOutTime(data?.DateOfBirth) : '' || null,
+            juvenile: data?.IsJuvenile || null,
+            age: data?.AgeFrom || null,
+            gender: data?.Gender || null,
+            race: data?.Race || null,
+            ethnicity: data?.Ethnicity || null,
+            resident: data?.Resident || null,
+            weightLbs: data?.WeightFrom || null,
+            heightFt: data?.HeightFrom || null,
+            eyeColor: data?.EyeColor || null,
+            hairColor: data?.HairColor || null,
+            stateDL: data?.StateDescription || null,
+            identificationType: 'Driver License' || null,
+            identificationNumber: data?.DLNumber || null,
+            idExpiry: data?.DLExpiryDate || null,
+            country: data?.CountryName || null,
+            state: data?.StateDescription || null,
+            address: data?.Address || null,
+            contactType: '' || null,
+            contactNumber: data?.Contact || null,
+            unlisted: data?.IsUnListedPhNo || null,
+        })
+    }
 
     return (
         <>
@@ -128,9 +115,8 @@ function NameInfoContent(props) {
                 </div>
                 <div className="col-3 text-field">
                     <input
-                        type="text"
                         className="form-control"
-                        value={citationState.lastName}
+                        value={nameState.lastName}
                         disabled
                     />
                 </div>
@@ -139,9 +125,8 @@ function NameInfoContent(props) {
                 </div>
                 <div className="col-3 text-field">
                     <input
-                        type="text"
                         className="form-control"
-                        value={citationState.firstName}
+                        value={nameState.firstName}
                         disabled
                     />
                 </div>
@@ -150,9 +135,8 @@ function NameInfoContent(props) {
                 </div>
                 <div className="col-3 text-field">
                     <input
-                        type="text"
                         className="form-control"
-                        value={citationState.middleName}
+                        value={nameState.middleName}
                         disabled
                     />
                 </div>
@@ -163,16 +147,15 @@ function NameInfoContent(props) {
                 </div>
                 <div className="col-1 text-field">
                     <input
-                        type="text"
                         className="form-control"
-                        value={citationState.dateOfBirth}
+                        value={nameState.dateOfBirth}
                         disabled
                     />
                 </div>
                 <div className="col-1 d-flex align-items-center justify-content-center mt-2">
                     <input
                         type="checkbox"
-                        checked={citationState.juvenile}
+                        checked={nameState.juvenile}
                         disabled
                     />
                     <label htmlFor="" className='new-label ml-3 mt-2'>Juvenile</label>
@@ -182,17 +165,15 @@ function NameInfoContent(props) {
                 </div>
                 <div className="col-1 text-field">
                     <input
-                        type="text"
                         className="form-control"
-                        value={citationState.age}
+                        value={nameState.age}
                         disabled
                     />
                 </div>
                 <div className="col-1 text-field">
                     <input
-                        type="text"
                         className="form-control"
-                        value={citationState.age}
+                        value={nameState.age}
                         disabled
                     />
                 </div>
@@ -201,9 +182,8 @@ function NameInfoContent(props) {
                 </div>
                 <div className="col-2 text-field">
                     <input
-                        type="text"
                         className="form-control"
-                        value={citationState.gender}
+                        value={nameState.gender}
                         disabled
                     />
                 </div>
@@ -212,9 +192,8 @@ function NameInfoContent(props) {
                 </div>
                 <div className="col-2 text-field">
                     <input
-                        type="text"
                         className="form-control"
-                        value={citationState.race}
+                        value={nameState.race}
                         disabled
                     />
                 </div>
@@ -225,9 +204,8 @@ function NameInfoContent(props) {
                 </div>
                 <div className="col-2 text-field">
                     <input
-                        type="text"
                         className="form-control"
-                        value={citationState.ethnicity}
+                        value={nameState.ethnicity}
                         disabled
                     />
                 </div>
@@ -236,9 +214,8 @@ function NameInfoContent(props) {
                 </div>
                 <div className="col-2 text-field">
                     <input
-                        type="text"
                         className="form-control"
-                        value={citationState.resident}
+                        value={nameState.resident}
                         disabled
                     />
                 </div>
@@ -247,9 +224,8 @@ function NameInfoContent(props) {
                 </div>
                 <div className="col-2 text-field">
                     <input
-                        type="text"
                         className="form-control"
-                        value={citationState.weightLbs}
+                        value={nameState.weightLbs}
                         disabled
                     />
                 </div>
@@ -258,9 +234,8 @@ function NameInfoContent(props) {
                 </div>
                 <div className="col-2 text-field">
                     <input
-                        type="text"
                         className="form-control"
-                        value={citationState.heightFt}
+                        value={nameState.heightFt}
                         disabled
                     />
                 </div>
@@ -271,9 +246,8 @@ function NameInfoContent(props) {
                 </div>
                 <div className="col-3 text-field">
                     <input
-                        type="text"
                         className="form-control"
-                        value={citationState.eyeColor}
+                        value={nameState.eyeColor}
                         disabled
                     />
                 </div>
@@ -282,9 +256,8 @@ function NameInfoContent(props) {
                 </div>
                 <div className="col-3 text-field">
                     <input
-                        type="text"
                         className="form-control"
-                        value={citationState.hairColor}
+                        value={nameState.hairColor}
                         disabled
                     />
                 </div>
@@ -293,17 +266,15 @@ function NameInfoContent(props) {
                 </div>
                 <div className="col-1 text-field">
                     <input
-                        type="text"
                         className="form-control"
-                        value={citationState.stateDL}
+                        value={nameState.stateDL}
                         disabled
                     />
                 </div>
                 <div className="col-2 text-field">
                     <input
-                        type="text"
                         className="form-control"
-                        value={citationState.stateDL}
+                        value={nameState.identificationNumber}
                         disabled
                     />
                 </div>
@@ -316,9 +287,9 @@ function NameInfoContent(props) {
                     </div>
                     <div className="col-3 text-field">
                         <input
-                            type="text"
+
                             className="form-control"
-                            value={citationState.identificationType}
+                            value={nameState.identificationType}
                             disabled
                         />
                     </div>
@@ -327,9 +298,9 @@ function NameInfoContent(props) {
                     </div>
                     <div className="col-2 text-field">
                         <input
-                            type="text"
+
                             className="form-control"
-                            value={citationState.identificationNumber}
+                            value={nameState.identificationNumber}
                             disabled
                         />
                     </div>
@@ -338,9 +309,9 @@ function NameInfoContent(props) {
                     </div>
                     <div className="col-3 text-field">
                         <input
-                            type="text"
+
                             className="form-control"
-                            value={citationState.idExpiry}
+                            value={nameState.idExpiry}
                             disabled
                         />
                     </div>
@@ -353,9 +324,9 @@ function NameInfoContent(props) {
                             </div>
                             <div className="col-3 text-field">
                                 <input
-                                    type="text"
+
                                     className="form-control"
-                                    value={citationState.country}
+                                    value={nameState.country}
                                     disabled
                                 />
                             </div>
@@ -364,27 +335,12 @@ function NameInfoContent(props) {
                             </div>
                             <div className="col-3 text-field">
                                 <input
-                                    type="text"
+
                                     className="form-control"
-                                    value={citationState.state}
+                                    value={nameState.state}
                                     disabled
                                 />
                             </div>
-                        </div>
-                        <div className="table-responsive mt-2">
-                            <DataTable
-                                dense
-                                columns={columns}
-                                data={identificationData}
-                                customStyles={subTableCustomStyles}
-                                pagination
-                                responsive
-                                striped
-                                persistTableHead={true}
-                                highlightOnHover
-                                fixedHeader
-                                showPaginationBottom={false}
-                            />
                         </div>
                     </div>
                     <div className="col-md-3">
@@ -405,9 +361,9 @@ function NameInfoContent(props) {
                     </div>
                     <div className="col-8 text-field">
                         <input
-                            type="text"
+
                             className="form-control"
-                            value={citationState.address}
+                            value={nameState.address}
                             disabled
                         />
                     </div>
@@ -418,9 +374,9 @@ function NameInfoContent(props) {
                     </div>
                     <div className="col-3 text-field">
                         <input
-                            type="text"
+
                             className="form-control"
-                            value={citationState.contactType}
+                            value={nameState.contactType}
                             disabled
                         />
                     </div>
@@ -429,16 +385,16 @@ function NameInfoContent(props) {
                     </div>
                     <div className="col-3 text-field">
                         <input
-                            type="text"
+
                             className="form-control"
-                            value={citationState.contactNumber}
+                            value={nameState.contactNumber}
                             disabled
                         />
                     </div>
                     <div className="col-1 d-flex align-items-center justify-content-center mt-2">
                         <input
                             type="checkbox"
-                            checked={citationState.unlisted}
+                            checked={nameState.unlisted}
                             disabled
                         />
                         <label htmlFor="" className='new-label ml-3 mt-2'>Unlisted</label>
@@ -449,7 +405,7 @@ function NameInfoContent(props) {
                 <DataTable
                     dense
                     columns={nameColumns}
-                    data={[]}
+                    data={nameData}
                     customStyles={tableCustomStyles}
                     pagination
                     responsive
@@ -457,7 +413,12 @@ function NameInfoContent(props) {
                     persistTableHead={true}
                     highlightOnHover
                     fixedHeader
+                    conditionalRowStyles={conditionalRowStyles}
                     showPaginationBottom={false}
+                    onRowClicked={(row) => {
+                        handelSetEditData(row);
+                    }}
+
                 />
             </div>
         </>
@@ -468,10 +429,10 @@ export default NameInfoContent
 
 // PropTypes definition
 NameInfoContent.propTypes = {
-  citationState: PropTypes.object.isRequired
+    citationState: PropTypes.object.isRequired
 };
 
 // Default props
 NameInfoContent.defaultProps = {
-  citationState: {}
+    citationState: {}
 };

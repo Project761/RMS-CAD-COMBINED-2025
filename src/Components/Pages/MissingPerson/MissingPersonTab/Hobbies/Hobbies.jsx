@@ -58,23 +58,33 @@ export const Hobbies = (props) => {
     const [loginPinID, setloginPinID,] = useState('');
     const [loginAgencyID, setloginAgencyID] = useState('');
     const [Editval, setEditval] = useState();
-    const [missingPersonHobbiesData, setMissingPersonHobbiesData] = useState()
-    const [hobbiesId, setHobbiesId] = useState();
-    const [status, setStatus] = useState()
-    const [statesChangeStatus, setStatesChangeStatus] = useState(false);
+    const [lastSeenID, setLastSeenID] = useState();
 
+    const [statesChangeStatus, setStatesChangeStatus] = useState(false);
     const [addUpdatePermission, setaddUpdatePermission] = useState();
 
-    const [value, setValue] = useState({
-        'MissingPersonID': '', 'HobbiesDtTm': '', 'Description': '', 'CreatedByUserFK': ''
-    });
+    const initialValue = {
+        // Last Seen Info
+        MentalStatus: '',
+        LocationLastSeen_City: '',
+        LocationLastSeen_State: '',
+        LocationLastSeen_Country: '',
+        LocationLastSeen_Zip: '',
+        DateTimeLastSeen: "",
+        PossibleDestination: '',
+        LastSeenWearing: '',
+        HobbiesAndInterests: '',
+        AssociationsAndHangouts: '',
+        MissingPersonID: "",
+        CreatedByUserFK: ''
+    }
+    const [value, setValue] = useState(initialValue);
 
-    const [errors, setErrors] = useState({ 'HobbiesDtTmError': '', 'DescriptionError': '' })
 
     const reset = () => {
-        setValue({ ...value, 'HobbiesDtTm': '', 'Description': '', });
-        setErrors({ ...errors, 'HobbiesDtTmError': '', 'DescriptionError': '' });
-        setHobbiesId(''); setHobbiesDtTm(''); setStatesChangeStatus(false);
+        setValue(initialValue);
+
+        setStatesChangeStatus(false);
     }
 
     useEffect(() => {
@@ -110,7 +120,20 @@ export const Hobbies = (props) => {
     useEffect(() => {
         if (Editval) {
             setValue({
-                ...value, 'MissingPersonID': Editval[0]?.MissingPersonID, 'HobbiesDtTm': Editval[0]?.HobbiesDtTm, 'Description': Editval[0]?.Description, 'ModifiedByUserFK:': loginPinID, 'MissingPersonHobbiesID:': Editval[0]?.MissingPersonHobbiesID
+                ...value,
+                'MissingPersonID': Editval[0]?.MissingPersonID,
+                'ModifiedByUserFK:': loginPinID,
+                'MissingPersonHobbiesID:': Editval[0]?.MissingPersonHobbiesID,
+                'MentalStatus': Editval[0]?.MentalStatus,
+                'LocationLastSeen_City': Editval[0]?.LocationLastSeen_City,
+                'LocationLastSeen_State': Editval[0]?.LocationLastSeen_State,
+                'LocationLastSeen_Country': Editval[0]?.LocationLastSeen_Country,
+                'LocationLastSeen_Zip': Editval[0]?.LocationLastSeen_Zip,
+                'DateTimeLastSeen': Editval[0]?.DateTimeLastSeen ? new Date(Editval[0]?.DateTimeLastSeen) : "",
+                'PossibleDestination': Editval[0]?.PossibleDestination,
+                'LastSeenWearing': Editval[0]?.LastSeenWearing,
+                'HobbiesAndInterests': Editval[0]?.HobbiesAndInterests,
+                'AssociationsAndHangouts': Editval[0]?.AssociationsAndHangouts,
             });
             setHobbiesDtTm(Editval[0]?.HobbiesDtTm ? new Date(Editval[0]?.HobbiesDtTm) : '');
 
@@ -121,271 +144,228 @@ export const Hobbies = (props) => {
 
     const check_Validation_Error = (e) => {
         if (RequiredFieldIncident(value.HobbiesDtTm)) {
-            setErrors(prevValues => { return { ...prevValues, ['HobbiesDtTmError']: RequiredFieldIncident(value.HobbiesDtTm) } })
         }
         if (RequiredFieldIncident(value.Description)) {
-            setErrors(prevValues => { return { ...prevValues, ['DescriptionError']: RequiredFieldIncident(value.Description) } })
         }
     }
     // Check All Field Format is True Then Submit 
-    const { HobbiesDtTmError, DescriptionError } = errors
 
-    useEffect(() => {
-        if (HobbiesDtTmError === 'true' && DescriptionError === 'true') {
-            if (hobbiesId && (MissPerSta === true || MissPerSta || 'true')) { update_MissingPerson_Hobbies() }
-            else { insert_Hobbies_Data(); }
-        }
-    }, [HobbiesDtTmError, DescriptionError])
+    // useEffect(() => {
+    //     if (HobbiesDtTmError === 'true' && DescriptionError === 'true') {
+    //         if (hobbiesId && (MissPerSta === true || MissPerSta || 'true')) { update_MissingPerson_Hobbies() }
+    //         else { insert_Hobbies_Data(); }
+    //     }
+    // }, [HobbiesDtTmError, DescriptionError])
 
-    useEffect(() => {
-        if (hobbiesId && status) {
-            GetSingleData(hobbiesId);
-        }
-    }, [hobbiesId, status]);
+
 
     // function to get single person data
-    const GetSingleData = (ID) => {
-        const val = { 'MissingPersonHobbiesID': ID }
-        fetchPostData('MissingPersonHobbies/GetSingleData_MissingPersonHobbies', val)
-            .then((res) => {
-                if (res.length > 0) {
-                    setEditval(res);
-                } else { setEditval([]) }
-            })
-    }
+
     // function to get single person data
     const Get_MissingPersonHobbies_Data = () => {
         const val = { 'MissingPersonID': DecMissPerID }
-        fetchPostData('MissingPersonHobbies/GetData_MissingPersonHobbies', val)
+        fetchPostData('MissingPersonLastScreen/GetData_MissingPersonLastScreen', val)
             .then((res) => {
                 if (res.length > 0) {
-                    setMissingPersonHobbiesData(res);
-                } else { setMissingPersonHobbiesData([]) }
+                    setEditval(res);
+                    setLastSeenID(res[0]?.LastSeenID || null);
+                } else { setEditval([]); setLastSeenID(null); }
             })
     }
 
     const insert_Hobbies_Data = () => {
-        const { MissingPersonID, HobbiesDtTm, Description, CreatedByUserFK } = value;
-        const val = { 'MissingPersonID': DecMissPerID, 'HobbiesDtTm': HobbiesDtTm, 'Description': Description, 'CreatedByUserFK': loginPinID }
-        AddDeleteUpadate('MissingPersonHobbies/Insert_MissingPersonHobbies', val).then((res) => {
+        const val = { ...value, 'MissingPersonID': DecMissPerID, 'CreatedByUserFK': loginPinID, AgencyID: loginAgencyID }
+        AddDeleteUpadate('MissingPersonLastScreen/Insert_MissingPersonLastScreen', val).then((res) => {
             if (res.success) {
-                const parsedData = JSON.parse(res.data);
-                const message = parsedData.Table[0].Message;
-                toastifySuccess(message); Get_MissingPersonHobbies_Data()
-                setStatusFalse(); get_MissingPerson_Count(DecMissPerID, loginPinID)
-                setErrors({ ...errors, ['DescriptionError']: '' }); setStatesChangeStatus(false); setChangesStatus(false)
+                const message = res.Message;
+                toastifySuccess(message);
+                Get_MissingPersonHobbies_Data()
+                setStatusFalse();
+                get_MissingPerson_Count(DecMissPerID, loginPinID)
+                setStatesChangeStatus(false);
+                setChangesStatus(false)
             }
         })
     }
 
     const update_MissingPerson_Hobbies = () => {
-        const { HobbiesDtTm, Description } = value;
-        const val = {
-            'HobbiesDtTm': HobbiesDtTm, 'Description': Description, 'ModifiedByUserFK': loginPinID, 'MissingPersonHobbiesID': hobbiesId
-        }
-        AddDeleteUpadate('MissingPersonHobbies/Update_MissingPersonHobbies', val).then((res) => {
-            const parsedData = JSON.parse(res.data);
-            const message = parsedData.Table[0].Message;
-            toastifySuccess(message); setChangesStatus(false); Get_MissingPersonHobbies_Data()
-            setStatusFalse(); setStatesChangeStatus(false); setErrors({ ...errors, ['DescriptionError']: '' })
+        const val = { ...value, 'MissingPersonID': DecMissPerID, 'ModifiedByUserFK': loginPinID, AgencyID: loginAgencyID, LastSeenID: lastSeenID }
+        AddDeleteUpadate('MissingPersonLastScreen/Update_MissingPersonLastScreen', val).then((res) => {
+            // const parsedData = JSON.parse(res.data);
+            // const message = parsedData.Table[0].Message;
+            toastifySuccess(res?.Message); setChangesStatus(false); Get_MissingPersonHobbies_Data()
+            setStatusFalse(); setStatesChangeStatus(false);
         })
-    }
-
-    const Delete_MissingPerson_Hobbies = () => {
-        const val = { 'MissingPersonHobbiesID': hobbiesId, 'DeletedByUserFK': loginPinID }
-        AddDeleteUpadate('MissingPersonHobbies/Delete_MissingPersonHobbies', val).then((res) => {
-            if (res) {
-                const parsedData = JSON.parse(res.data);
-                const message = parsedData.Table[0].Message;
-                toastifySuccess(message); Get_MissingPersonHobbies_Data(); setStatesChangeStatus(false);
-                get_MissingPerson_Count(DecMissPerID, loginPinID); setStatusFalse()
-
-            } else console.log("Somthing Wrong");
-        })
-    }
-
-    const HandleChange = (e) => {
-        !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-        if (e) {
-            const val = e.target.value;
-            const val1 = val?.split('')
-            if (val?.length <= 1 || val1[0] === ' ') {
-                setValue({ ...value, [e.target.name]: val?.trim() });
-                setErrors({ ...errors, ['DescriptionError']: '' })
-            } else {
-                setValue({ ...value, [e.target.name]: val });
-                setErrors({ ...errors, ['DescriptionError']: '' })
-            }
-        }
-        else {
-            setValue({ ...value, [e.target.name]: null });
-        }
-    };
-
-    const set_Edit_Value = (row) => {
-        if (row) {
-            setStatesChangeStatus(false); setStatus(true); setErrors(''); setHobbiesId(row?.MissingPersonHobbiesID);
-
-        }
     }
 
     const setStatusFalse = () => {
-        setHobbiesId(''); reset(); setStatus(false); setChangesStatus(false)
-
+        reset(); setChangesStatus(false)
     }
 
-    const conditionalRowStyles = [
-        {
-            when: row => row.MissingPersonHobbiesID === hobbiesId && status,
-            style: {
-                backgroundColor: '#001f3fbd',
-                color: 'white',
-                cursor: 'pointer',
-            },
-        },
-    ];
-
-    const columns = [
-        {
-            name: 'Date/Time', selector: (row) => row.HobbiesDtTm ? getShowingDateText(row.HobbiesDtTm) : '', sortable: true
-        },
-        {
-            name: 'Description', selector: (row) => row.Description ? row.Description : '',
-            format: (row) => (<>{row?.Description ? row?.Description.substring(0, 70) : ''}{row?.Description?.length > 40 ? '  . . .' : null} </>),
-            sortable: true
-        },
-        {
-            name: <p className='text-end' style={{ position: 'absolute', top: 8, right: 10 }}>Delete</p>,
-            cell: row =>
-
-                <div className="div" style={{ position: 'absolute', top: 4, right: 10 }}>
-                    {
-                        effectiveScreenPermission ? effectiveScreenPermission[0]?.DeleteOK ?
-                            <span className="btn btn-sm bg-green text-white px-1 py-0 mr-1" onClick={() => setHobbiesId(row?.MissingPersonHobbiesID)} data-toggle="modal" data-target="#DeleteModal">
-                                <i className="fa fa-trash"></i>
-                            </span>
-                            : <></>
-                            : <span className="btn btn-sm bg-green text-white px-1 py-0 mr-1" onClick={() => setHobbiesId(row?.MissingPersonHobbiesID)} data-toggle="modal" data-target="#DeleteModal">
-                                <i className="fa fa-trash"></i>
-                            </span>
-                    }
-                </div>
-        }
-    ]
-
-    const filterTimeForDateZone = (time, datezone) => {
-        const zoneDate = new Date(datezone);
-        const zoneHours = zoneDate.getHours();
-        const zoneMinutes = zoneDate.getMinutes();
-        const timeHours = time.getHours();
-        const timeMinutes = time.getMinutes();
-        if (timeHours > zoneHours || (timeHours === zoneHours && timeMinutes > zoneMinutes)) {
-            return false;
-        }
-        return true;
+    const handleInputChange = (e) => {
+        !addUpdatePermission && setStatesChangeStatus(true);
+        !addUpdatePermission && setChangesStatus(true);
+        const { name, value, type, checked } = e.target;
+        setValue(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
     };
 
+    const handleDateChange = (date, name) => {
+        !addUpdatePermission && setStatesChangeStatus(true);
+        !addUpdatePermission && setChangesStatus(true);
+        setValue(prev => ({ ...prev, [name]: date ? new Date(date) : null }));
+    };
 
     return (
         <>
+            {/* Last Seen Info Section */}
             <fieldset className='mt-2'>
-                <legend>Hobbies</legend>
-                <div className="col-12 ">
+                <legend>Last Seen Info</legend>
+                <div className="col-12 mt-1">
                     <div className="row">
-                        <div className="col-2 col-md-2 col-lg-1 mt-2 pt-1">
-                            <label htmlFor="" className='new-label'>Date/Time {errors.HobbiesDtTmError !== 'true' ? (
-                                <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.HobbiesDtTmError}</p>
-                            ) : null}</label>
+                        <div className="col-12 col-md-12 col-lg-12 mt-2">
+                            <div className="d-flex align-items-center">
+                                <label className='new-label mr-2 mb-0 text-nowrap text-right' style={{ minWidth: '145px', flexShrink: 0 }}>Mental State</label>
+                                <input type='text' name='MentalStatus' value={value.MentalStatus} onChange={handleInputChange} className='form-control' placeholder='' />
+                            </div>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-3  ">
-                            <DatePicker
-                                id="HobbiesDtTm"
-                                name='HobbiesDtTm'
-                                dateFormat="MM/dd/yyyy HH:mm"
-                                timeFormat="HH:mm "
-                                is24Hour
-                                maxDate={new Date(datezone)}
-                                className='requiredColor'
-                                onChange={(date) => {
-                                    !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-                                    setHobbiesDtTm(date);
-                                    setValue({ ...value, ['HobbiesDtTm']: date ? getShowingMonthDateYear(date) : null });
-                                    setErrors({ ...errors, ['HobbiesDtTmError']: '' })
-                                }}
-                                selected={hobbiesDtTm}
-                                timeInputLabel
-                                showTimeSelect
-                                timeIntervals={1}
-                                timeCaption="Time"
-                                showMonthDropdown
-                                showYearDropdown
-                                dropdownMode="select"
-                                showDisabledMonthNavigation
-                                autoComplete='off'
-                                placeholderText='Select...'
+                    </div>
 
-                                filterTime={(time) => filterTimeForDateZone(time, datezone)}
-                                onKeyDown={(e) => {
-                                    if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
-                                        e?.preventDefault();
-                                    }
-                                }}
-                                isClearable={hobbiesDtTm ? true : false}
+                    <div className="row mt-1">
+                        <div className="col-6 col-md-6 col-lg-4">
+                            <div className="d-flex align-items-center">
+                                <label className='new-label mr-2 mb-0 text-nowrap text-right' style={{ minWidth: '145px', flexShrink: 0 }}>Location Last Seen: City</label>
+                                <input type='text' name='LocationLastSeen_City' value={value.LocationLastSeen_City} onChange={handleInputChange} className='form-control' placeholder='' />
+                            </div>
+                        </div>
+                        <div className="col-6 col-md-6 col-lg-3">
+                            <div className="d-flex align-items-center">
+                                <label className='new-label mr-2 mb-0 text-nowrap'>State</label>
+                                <input type='text' name='LocationLastSeen_State' value={value.LocationLastSeen_State} onChange={handleInputChange} className='form-control' placeholder='' />
+                            </div>
+                        </div>
+                        <div className="col-6 col-md-6 col-lg-3">
+                            <div className="d-flex align-items-center">
+                                <label className='new-label mr-2 mb-0 text-nowrap'>Country</label>
+                                <input type='text' name='LocationLastSeen_Country' value={value.LocationLastSeen_Country} onChange={handleInputChange} className='form-control' placeholder='' />
+                            </div>
+                        </div>
+                        <div className="col-6 col-md-6 col-lg-2">
+                            <div className="d-flex align-items-center">
+                                <label className='new-label mr-2 mb-0 text-nowrap'>Zip</label>
+                                <input type='text' name='LocationLastSeen_Zip' value={value.LocationLastSeen_Zip} onChange={handleInputChange} className='form-control' placeholder='' />
+                            </div>
+                        </div>
+                    </div>
 
-                            />
+
+
+                    <div className="row mt-1">
+                        <div className="col-4 col-md-4 col-lg-4">
+                            <div className="d-flex align-items-center">
+                                <label className='new-label mr-2 mb-0 text-nowrap text-right' style={{ minWidth: '145px', flexShrink: 0 }}>Date/Time Last Seen</label>
+
+                                <DatePicker
+                                    name="DateTimeLastSeen"
+                                    id="DateTimeLastSeen"
+                                    className="form-control"
+                                    onChange={(date) => handleDateChange(date, 'DateTimeLastSeen')}
+                                    selected={value.DateTimeLastSeen ? value.DateTimeLastSeen && new Date(value.DateTimeLastSeen) : null}
+                                    timeFormat="HH:mm"
+                                    dateFormat="MM/dd/yyyy HH:mm"
+                                    isClearable={!!value.DateTimeLastSeen}
+                                    showTimeSelect
+                                    showMonthDropdown
+                                    showYearDropdown
+                                    dropdownMode="select"
+                                    autoComplete="off"
+                                    placeholderText="Select..."
+                                    minDate={new Date(datezone)}
+                                />
+                            </div>
                         </div>
-                        <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
-                            <label htmlFor="" className='new-label'>Hobbies Description {errors.DescriptionError !== 'true' ? (
-                                <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.DescriptionError}</p>
-                            ) : null}</label>
+                        <div className="col-8 col-md-8 col-lg-8">
+                            <div className="d-flex align-items-center">
+                                <label className='new-label mr-2 mb-0 text-nowrap'>Possible Destination (City, State)</label>
+                                <input type='text' name='PossibleDestination' value={value.PossibleDestination} onChange={handleInputChange} className='form-control' placeholder='' />
+                            </div>
                         </div>
-                        <div className="col-4 col-md-4 col-lg-6  ">
-                            <textarea name='Description' id="Description" maxLength={1000} cols="30" rows='2' value={value?.Description} onChange={HandleChange} className="form-control pt-2 pb-2 requiredColor" style={{ resize: 'none' }}></textarea>
+                    </div>
+
+                    <div className="row mt-1">
+                        <div className="col-12 col-md-12 col-lg-12">
+                            <div className="d-flex align-items-center">
+                                <label className='new-label mr-2 mb-0 text-nowrap text-right' style={{ minWidth: '145px', flexShrink: 0 }}>Last Seen Wearing</label>
+                                <input type='text' name='LastSeenWearing' value={value.LastSeenWearing} onChange={handleInputChange} className='form-control' placeholder='' />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            {/* Hobbies & Interests Section */}
+            <fieldset className='mt-2'>
+                <legend>Hobbies & Interests</legend>
+                <div className='col-12 mt-2'>
+                    <div className='row'>
+                        <div className='col-12'>
+                            <div className="d-flex align-items-start">
+                                <label className='new-label mr-2 mb-0 text-nowrap text-right' style={{ minWidth: '145px', flexShrink: 0 }}>Hobbies & Interests</label>
+                                <textarea
+                                    name='HobbiesAndInterests'
+                                    value={value.HobbiesAndInterests}
+                                    onChange={handleInputChange}
+                                    className='form-control'
+                                    rows='4'
+                                    placeholder=''
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            {/* Associations & Hangouts Section */}
+            <fieldset className='mt-2'>
+                <legend>Associations & Hangouts</legend>
+                <div className='col-12 mt-2'>
+                    <div className='row'>
+                        <div className='col-12'>
+                            <div className="d-flex align-items-start">
+                                <label className='new-label mr-2 mb-0 text-nowrap text-right' style={{ minWidth: '145px', flexShrink: 0 }}>Associations & Hangouts</label>
+                                <textarea
+                                    name='AssociationsAndHangouts'
+                                    value={value.AssociationsAndHangouts}
+                                    onChange={handleInputChange}
+                                    className='form-control'
+                                    rows='4'
+                                    placeholder=''
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
             </fieldset>
 
 
+
             <div className="col-12 text-right mt-2 p-0">
                 <button type="button" className="btn btn-sm btn-success  mr-1" onClick={() => { setStatusFalse(); }}  >New</button>
                 {
-                    hobbiesId && status === true ?
+                    lastSeenID ?
                         effectiveScreenPermission ? effectiveScreenPermission[0]?.Changeok ?
-                            <button type="button" className="btn btn-sm btn-success mr-1" disabled={!statesChangeStatus} onClick={() => { check_Validation_Error(); }}  > Update</button>
+                            <button type="button" className="btn btn-sm btn-success mr-1" disabled={!statesChangeStatus} onClick={() => { update_MissingPerson_Hobbies(); }}  > Update</button>
                             : <></> :
-                            <button type="button" className="btn btn-sm btn-success mr-1" disabled={!statesChangeStatus} onClick={() => { check_Validation_Error(); }}  > Update</button>
+                            <button type="button" className="btn btn-sm btn-success mr-1" disabled={!statesChangeStatus} onClick={() => { update_MissingPerson_Hobbies(); }}  > Update</button>
                         :
                         effectiveScreenPermission ? effectiveScreenPermission[0]?.AddOK ?
-                            <button type="button" className="btn btn-sm btn-success  mr-1" onClick={() => { check_Validation_Error(); }}  >Save</button>
+                            <button type="button" className="btn btn-sm btn-success  mr-1" onClick={() => { insert_Hobbies_Data(); }}  >Save</button>
                             : <></> :
-                            <button type="button" className="btn btn-sm btn-success  mr-1" onClick={() => { check_Validation_Error(); }}  >Save</button>
+                            <button type="button" className="btn btn-sm btn-success  mr-1" onClick={() => { insert_Hobbies_Data(); }}  >Save</button>
                 }
             </div>
 
-            <div className="col-12 mt-2">
-                <DataTable
-                    dense
-                    columns={columns}
 
-                    data={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? missingPersonHobbiesData : [] : missingPersonHobbiesData}
-                    selectableRowsHighlight
-                    highlightOnHover
-                    onRowClicked={(row) => { set_Edit_Value(row); }}
-                    responsive
-                    fixedHeader
-                    persistTableHead={true}
-                    customStyles={tableCustomStyles}
-                    conditionalRowStyles={conditionalRowStyles}
-                    pagination
-                    noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : 'There are no data to display'}
-                    paginationPerPage={'10'}
-                    paginationRowsPerPageOptions={[10, 15, 20, 50]}
-                    fixedHeaderScrollHeight='300px'
-                />
-            </div>
-            <DeletePopUpModal func={Delete_MissingPerson_Hobbies} />
-            <ChangesModal func={check_Validation_Error} />
+            <ChangesModal func={lastSeenID ? update_MissingPerson_Hobbies : insert_Hobbies_Data} setToReset={reset} />
 
         </>
     )

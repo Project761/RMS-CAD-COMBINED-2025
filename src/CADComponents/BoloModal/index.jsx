@@ -14,7 +14,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { compareStrings, dropDownDataModel } from "../../CADUtils/functions/common";
 import BoloServices from "../../CADServices/APIs/bolo";
 import CloseBoloModal from "../CloseBoloModal";
-import { AddDelete_Img } from "../../Components/hooks/Api";
+import { AddDelete_Img, ScreenPermision } from "../../Components/hooks/Api";
 import ViewImageModal from "../ViewImageModal/ViewImageModal";
 import Tooltip from "../Common/Tooltip";
 import ViewSingleImageModal from "../ViewSingleImageModal/ViewSingleImageModal";
@@ -137,11 +137,13 @@ const BoloModal = (props) => {
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [confirmParams, setConfirmParams] = useState(null);
     const [isDataUpdated, setIsDataUpdated] = useState(false);
-
+    const [effectiveBoloScreenPermission, setEffectiveBoloScreenPermission] = useState(null);
+    const [canAddBolo, setCanAddBolo] = useState(false);
+    const [canUpdateBolo, setCanUpdateBolo] = useState(false);
+    const [canDeleteBolo, setCanDeleteBolo] = useState(false);
     const fileInputRef = useRef(null);
     const PriorityDrpData = useSelector((state) => state.CADDropDown.PriorityDrpData);
     const ZoneDrpData = useSelector((state) => state.CADDropDown.ZoneDrpData);
-
     const { incidentData, resourceRefetch, incidentRefetch } = useContext(IncidentContext);
 
     // Custom hooks for data fetching
@@ -204,6 +206,7 @@ const BoloModal = (props) => {
         if (localStoreData) {
             setLoginPinID(localStoreData?.PINID);
             setLoginAgencyID(localStoreData?.AgencyID);
+            getBoloScreenPermission(localStoreData?.AgencyID, localStoreData?.PINID);
             if (PriorityDrpData?.length === 0 && localStoreData?.AgencyID) {
                 dispatch(getData_DropDown_Priority(localStoreData?.AgencyID));
             }
@@ -212,6 +215,32 @@ const BoloModal = (props) => {
             }
         }
     }, [localStoreData, PriorityDrpData, ZoneDrpData, dispatch]);
+
+    const getBoloScreenPermission = (aId, pinID) => {
+        try {
+            ScreenPermision("BL101", aId, pinID).then(res => {
+                if (res) {
+                    setEffectiveBoloScreenPermission(res);
+                    // Set individual permissions based on AddOK, Changeok, and DeleteOK
+                    setCanAddBolo(res?.[0]?.AddOK === 1);
+                    setCanUpdateBolo(res?.[0]?.Changeok === 1);
+                    setCanDeleteBolo(res?.[0]?.DeleteOK === 1);
+                }
+                else {
+                    setEffectiveBoloScreenPermission(null);
+                    setCanAddBolo(false);
+                    setCanUpdateBolo(false);
+                    setCanDeleteBolo(false);
+                }
+            });
+        } catch (error) {
+            console.error('There was an error!', error);
+            setEffectiveBoloScreenPermission(null);
+            setCanAddBolo(false);
+            setCanUpdateBolo(false);
+            setCanDeleteBolo(false);
+        }
+    }
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -444,7 +473,7 @@ const BoloModal = (props) => {
                 Add_Documents(boloState?.BoloID ? boloState?.BoloID : responseData?.Table?.[0]?.BoloTypeID);
             }
             refetch();
-            incidentRefetch();
+            // incidentRefetch();
             resourceRefetch();
         }
         handelClear();
@@ -656,15 +685,13 @@ const BoloModal = (props) => {
                             <img
                                 src={image.FileAttachment}
                                 alt={`Selected ${index}`}
-                                width="50"
-                                height="50"
+                                style={{ width: '30px', height: '30px' }}
                             />
                         ) : (
                             <img
                                 src={img}
                                 alt="Document Icon"
-                                width="50"
-                                height="50"
+                                style={{ width: '30px', height: '30px' }}
                             />
                         )
                     ) : (
@@ -672,15 +699,13 @@ const BoloModal = (props) => {
                             <img
                                 src={URL.createObjectURL(image)}
                                 alt={`Selected ${index}`}
-                                width="50"
-                                height="50"
+                                style={{ width: '30px', height: '30px' }}
                             />
                         ) : (
                             <img
                                 src={img}
                                 alt="Document Icon"
-                                width="50"
-                                height="50"
+                                style={{ width: '30px', height: '30px' }}
                             />
                         )
                     )}
@@ -696,7 +721,7 @@ const BoloModal = (props) => {
                             whiteSpace: 'normal',
                         }}
                     >
-                        <Tooltip text={image?.DocumentID ? image?.DocumentName : image?.name || 'No Name'} isRight isSmallFont maxLength={18} />
+                        <Tooltip text={image?.DocumentID ? image?.DocumentName : image?.name || 'No Name'} isRight isSmallFont maxLength={10} />
                     </p>
 
                     <button
@@ -711,7 +736,7 @@ const BoloModal = (props) => {
     );
 
     const renderForm = () => {
-        const closeBoloButton = !!boloState?.BoloID && (
+        const closeBoloButton = !!boloState?.BoloID && canDeleteBolo && (
             <button
                 type="button"
                 className="cancel-button"
@@ -883,7 +908,7 @@ const BoloModal = (props) => {
                         </div>
 
                         <div className="tab-form-row">
-                            <div className="col-1 d-flex justify-content-end">
+                            <div className="col-1 d-flex justify-content-end mt-1">
                                 <label htmlFor="DeleteAfter" className="tab-form-label d-flex justify-content-end mr-1 text-nowrap">Delete After</label>
                             </div>
                             <div className="col-1 text-field mt-0">
@@ -908,14 +933,15 @@ const BoloModal = (props) => {
                                     maxLength={3}
                                 />
                             </div>
-                            <div className="col-1 d-flex justify-content-start">
+                            <div className="col-1 d-flex justify-content-start mt-1">
                                 <label htmlFor="DeleteAfter" className="tab-form-label d-flex justify-content-end mr-1 text-nowrap">Days</label>
                             </div>
-                        </div>
-
-                        <div className="tab-form-row col-11 offset-1">
                             {renderImagePreview()}
                         </div>
+
+                        {/* <div className="tab-form-row col-11 offset-1">
+                            {renderImagePreview()}
+                        </div> */}
 
                         <div className="row">
                             <div className="col-12 p-0">
@@ -924,14 +950,29 @@ const BoloModal = (props) => {
                                         {closeBoloButton}
                                         <button type="button" className="save-button ml-2" data-toggle="modal"
                                             data-target="#BoloSearchModal" onClick={() => { setOpenBoloSearchModal(true); handelClear(); }}>Search</button>
-                                        <button
-                                            type="button"
-                                            className="save-button"
-                                            disabled={isLoading || (!!boloState?.BoloID && !isDataUpdated)}
-                                            onClick={() => handleSave()}
-                                        >
-                                            {!!boloState?.BoloID ? "Update" : "Save"}
-                                        </button>
+                                        {/* Save Button - Show only when user can add and no BoloID exists */}
+                                        {!boloState?.BoloID && canAddBolo && (
+                                            <button
+                                                type="button"
+                                                className="save-button"
+                                                disabled={isLoading}
+                                                onClick={() => handleSave()}
+                                            >
+                                                Save
+                                            </button>
+                                        )}
+
+                                        {/* Update Button - Show only when user can update and BoloID exists */}
+                                        {!!boloState?.BoloID && canUpdateBolo && (
+                                            <button
+                                                type="button"
+                                                className="save-button"
+                                                disabled={isLoading || !isDataUpdated}
+                                                onClick={() => handleSave()}
+                                            >
+                                                Update
+                                            </button>
+                                        )}
                                         <button type="button" className="cancel-button" onClick={() => handelClear()}>Clear</button>
                                         <button type="button" data-dismiss="modal" className="cancel-button" onClick={() => handleCancel()}>Close</button>
                                     </div>

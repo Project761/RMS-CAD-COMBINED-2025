@@ -1200,8 +1200,8 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
       // console.log("🚀 ~ validateNibrs ~ incidentValidateNibrsData:", incidentValidateNibrsData)
 
       try {
-          const groupBOffenseArrestError = await getGroupBOffenseData(IncID);
-          const vehicle240Error = await getVehicle240Error(IncID);
+        const groupBOffenseArrestError = await getGroupBOffenseData(IncID);
+        const vehicle240Error = await getVehicle240Error(IncID);
         // const vehicle240Error = true
         // const groupBOffenseArrestError = true
 
@@ -2288,21 +2288,32 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
               }}
               placeholder="Select..."
             />
-            {isEnabled && (
-              <span
+          </div>
+          {isEnabled && (
+            <div className="offset-9 ">
+              <div className=''
+                style={{
+                  backgroundColor: '#fbecec',
+                  border: '1px solid red',
+                  borderRadius: '6px',
+                  padding: '3px 6px',
+                  textAlign: 'center',
+                  color: isHoveredUseOfForce ? 'blue' : 'red',
+                  fontSize: '16px',
+                  maxWidth: '100%',
+                  width: '220px', // can be % if inside flex/grid
+                  boxSizing: 'border-box',
+                  wordWrap: 'break-word',
+                  cursor: 'pointer',
+                }}
                 onMouseEnter={() => setIsHoveredUseOfForce(true)}
                 onMouseLeave={() => setIsHoveredUseOfForce(false)}
                 onClick={() => setShowIncPage('PoliceForce')}
-                style={{
-                  color: isHoveredUseOfForce ? 'blue' : 'red',
-                  transition: 'background-color 0.3s ease',
-                  cursor: 'pointer'
-                }}
               >
-                <u>Enter Details in Use of Force</u>
-              </span>
-            )}
-          </div>
+                Enter Details in Use of Force
+              </div>
+            </div>
+          )}
           <div className="col-3 col-md-3 col-lg-2">
             <span
               data-toggle="modal"

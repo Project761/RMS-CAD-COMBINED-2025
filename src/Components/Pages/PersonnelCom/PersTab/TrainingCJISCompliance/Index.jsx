@@ -16,6 +16,7 @@ import DatePicker from "react-datepicker";
 import img from '../../../../../../src/img/file.jpg'
 import ModalConfirm from '../../../../../CADComponents/Common/ModalConfirm';
 import ViewSingleImageModal from '../../../../Common/ViewSingleImageModal';
+import Tooltip from '../../../../../CADComponents/Common/Tooltip';
 
 const TrainingCJISCompliance = ({ aId, setaddUpdatePermission }) => {
 
@@ -659,7 +660,7 @@ const TrainingCJISCompliance = ({ aId, setaddUpdatePermission }) => {
                         <div className="col-1 mt-3 d-flex justify-content-end">
                             <label className="new-label">Upload Training Certificate</label>
                         </div>
-                        <div className="col-11 text-field">
+                        <div className="col-9 text-field">
                             <input
                                 type="file"
                                 accept="image/png, image/jpeg, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, text/csv, 'text/plain'"
@@ -668,9 +669,7 @@ const TrainingCJISCompliance = ({ aId, setaddUpdatePermission }) => {
                                 disabled={!AssignTrainingID}
                             />
                         </div>
-                    </div>
-                    <div className="row mt-2">
-                        <div className="offset-1 col-11 cad-images image-preview cursor pointer" style={{ width: "max-content" }}>
+                        <div className="col-2 cad-images image-preview cursor pointer mt-3" style={{ width: "max-content" }}>
                             {(selectedImage?.FileAttachment || selectedImage?.name) &&
                                 <div
                                     className="cad-images image-container"
@@ -692,15 +691,13 @@ const TrainingCJISCompliance = ({ aId, setaddUpdatePermission }) => {
                                             <img
                                                 src={selectedImage.FileAttachment}
                                                 alt={`Selected`}
-                                                width="100"
-                                                height="100"
+                                                style={{ width: '30px', height: '30px' }}
                                             />
                                         ) : (
                                             <img
                                                 src={img}
                                                 alt="Document Icon"
-                                                width="100"
-                                                height="100"
+                                                style={{ width: '30px', height: '30px' }}
                                             />
                                         )
                                     ) : (
@@ -708,15 +705,13 @@ const TrainingCJISCompliance = ({ aId, setaddUpdatePermission }) => {
                                             <img
                                                 src={URL.createObjectURL(selectedImage)}
                                                 alt={`Selected`}
-                                                width="100"
-                                                height="100"
+                                                style={{ width: '30px', height: '30px' }}
                                             />
                                         ) : (
                                             <img
                                                 src={img}
                                                 alt="Document Icon"
-                                                width="100"
-                                                height="100"
+                                                style={{ width: '30px', height: '30px' }}
                                             />
                                         )
                                     )}
@@ -733,7 +728,7 @@ const TrainingCJISCompliance = ({ aId, setaddUpdatePermission }) => {
                                             whiteSpace: 'normal',
                                         }}
                                     >
-                                        {selectedImage?.DocumentID ? selectedImage?.DocumentName : selectedImage?.name || 'No Name'}
+                                        <Tooltip text={selectedImage?.DocumentID ? selectedImage?.DocumentName : selectedImage?.name || 'No Name'} isRight isSmallFont maxLength={10} />
                                     </p>
 
                                     {/* Trash icon */}

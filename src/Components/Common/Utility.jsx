@@ -456,7 +456,7 @@ export const subTableCustomStyles = {
 export const tableMinCustomStyles = {
   tableWrapper: {
     style: {
-      minHeight: '150px',
+      minHeight: '170px',
     },
   },
   headRow: {

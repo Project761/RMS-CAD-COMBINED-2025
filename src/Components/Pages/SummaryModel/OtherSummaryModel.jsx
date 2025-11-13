@@ -9,7 +9,7 @@ import DOMPurify from 'dompurify';
 
 const OtherSummaryModel = (props) => {
 
-    const { updateCount, otherSummModal, otherColName, otherUrl, otherColID, openPage, modalTitle, masterID, idColName } = props
+    const { updateCount, otherSummModal, otherColName, otherUrl, otherColID, openPage, modalTitle, IsMaster = false, idColName } = props
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
     const dispatch = useDispatch();
 
@@ -52,13 +52,12 @@ const OtherSummaryModel = (props) => {
         const val = {
             'AgencyID': LoginAgencyID,
             [otherColName]: otherColID,
-            IsMaster: MstPage ? otherColName === 'NameID' ? false : true : false,
+            IsMaster: IsMaster ? true : MstPage ? otherColName === 'NameID' ? false : true : false,
         }
-        const val1 = { 'AgencyID': LoginAgencyID, [otherColName]: otherColID, IsMaster: MstPage ? true : false, }
+        const val1 = { 'AgencyID': LoginAgencyID, [otherColName]: otherColID, IsMaster: IsMaster ? true : MstPage ? true : false, }
 
         fetchPostData(otherUrl, otherColName === "MasterPropertyID" ? val1 : val).then((res) => {
             if (res) {
-                console.log(res)
                 // console.log("Modal Title:", modalTitle);
                 setListData(res);
             } else {
@@ -89,7 +88,7 @@ const OtherSummaryModel = (props) => {
                 let imgUrl = `data:image/png;base64,${res[0]?.Agency_Photo}`;
                 setMultiImage(imgUrl);
             }
-            else { console.log("errror") }
+            else { console.error("errror") }
         })
     }
 

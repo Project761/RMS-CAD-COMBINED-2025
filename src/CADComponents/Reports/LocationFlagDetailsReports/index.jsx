@@ -7,7 +7,7 @@ import { customStylesWithOutColorArrow } from '../../Utility/CustomStylesForReac
 import { dropDownDataModelForAptNo, isEmpty } from '../../../CADUtils/functions/common';
 import MasterTableListServices from "../../../CADServices/APIs/masterTableList";
 import { useQuery } from 'react-query';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import CallTakerServices from "../../../CADServices/APIs/callTaker";
 import GeoServices from "../../../CADServices/APIs/geo";
 import ReportsServices from "../../../CADServices/APIs/reports";
@@ -19,9 +19,12 @@ import { useReactToPrint } from 'react-to-print';
 import { getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime } from '../../../Components/Common/Utility';
 import { AgencyContext } from '../../../Context/Agency/Index';
 import ReportMainAddress from '../ReportMainAddress/ReportMainAddress';
+import { get_ScreenPermissions_Data } from '../../../redux/actions/IncidentAction';
 
 const LocationFlagDetailsReports = () => {
+    const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
+    const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
     const { datezone, GetDataTimeZone } = useContext(AgencyContext);
     const [
         locationFlagState,
@@ -75,6 +78,7 @@ const LocationFlagDetailsReports = () => {
             setLoginUserName(localStoreData?.UserName)
             setLoginAgencyID(localStoreData?.AgencyID);
             GetDataTimeZone(localStoreData?.AgencyID);
+            dispatch(get_ScreenPermissions_Data("CG102", localStoreData?.AgencyID, localStoreData?.PINID));
         }
     }, [localStoreData]);
 
@@ -237,7 +241,7 @@ const LocationFlagDetailsReports = () => {
                 let imgUrl = `data:image/png;base64,${res[0]?.Agency_Photo}`;
                 setMultiImage(imgUrl);
             }
-            else { console.log("error") }
+            else { console.error("error") }
         })
     }
     const getLocationFlagDetails = async (isPrintReport = false) => {
@@ -284,7 +288,7 @@ const LocationFlagDetailsReports = () => {
                 }
             }
         } catch (error) {
-            console.log("error", error)
+            console.error("error", error)
             if (!isPrintReport) {
                 toastifyError("Data Not Available");
             }
@@ -469,7 +473,7 @@ const LocationFlagDetailsReports = () => {
                                 </div>
 
                                 <div className="col-12 col-md-12 col-lg-12 mt-1 text-right mb-1">
-                                    <button className="btn btn-sm bg-green text-white px-2 py-1" onClick={() => { getLocationFlagDetails(false); }} >Show Report</button>
+                                    {effectiveScreenPermission?.[0]?.AddOK ? <button className="btn btn-sm bg-green text-white px-2 py-1" onClick={() => { getLocationFlagDetails(false); }} >Show Report</button> : <></>}
                                     <button className="btn btn-sm bg-green text-white px-2 py-1 ml-2"
                                         onClick={() => { resetFields(); }}
                                     >Clear</button>

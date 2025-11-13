@@ -2,6 +2,8 @@ import { createContext, useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import MonitorServices from '../../CADServices/APIs/monitor';
+import MasterTableListServices from '../../CADServices/APIs/masterTableList';
+import { setupSignalRHandlers } from '../../CADServices/signalRService';
 
 export const IncidentContext = createContext();
 
@@ -11,42 +13,47 @@ const IncidentData = ({ children }) => {
   const [isOnCAD, setIsOnCAD] = useState(false);
   const [incidentData, setIncidentData] = useState([]);
   const [resourceData, setResourceData] = useState([]);
+  const [allResourcesData, setAllResourcesData] = useState([]);
   const [assignedIncidentData, setAssignedIncidentData] = useState([]);
   const [unassignedIncidentData, setUnassignedIncidentData] = useState([]);
   const [CommentsData, setCommentsData] = useState([]);
   const [offset, setOffset] = useState('');
   const [incID, setIncID] = useState(null);
+
   const getIncidentListKey = `/CAD/Monitor/MonitorIncidentsView`;
-  const { isSuccess: isFetchIncidentList, refetch: incidentRefetch } = useQuery(
+  const { data: getIncidentData, isSuccess: isFetchIncidentList, refetch: incidentRefetch, error: getIncidentError } = useQuery(
     [getIncidentListKey, { AgencyID: loginAgencyID, Action: "ALL" }],
     MonitorServices.getIncidentsView,
     {
       refetchOnWindowFocus: false,
-      enabled: window.location.pathname.includes('/cad/') && !!loginAgencyID,
-      onSuccess: (res) => {
-        if (res?.data?.Data?.length === 0) {
-          return;
-        } else {
-          try {
-            const parsedData = JSON.parse(res?.data?.data);
-            const data = parsedData?.Table;
-            if (JSON.stringify(data) !== JSON.stringify(incidentData)) {
-              setIncidentData(data);
-            }
-          } catch (error) {
-            console.error("Error parsing name:", error);
-          }
-        }
-      },
+      enabled: !!loginAgencyID,
       onError: (error) => {
-        if (error?.response?.data?.Code === 400) {
+        if (error?.response?.status === 400) {
           console.error("No Data Available", error?.response?.data?.Message);
+          setIncidentData([]);
         } else {
+          setIncidentData([]);
           console.error("An error occurred:", error);
         }
       },
     }
   );
+
+  useEffect(() => {
+    if (getIncidentData && isFetchIncidentList) {
+      const parsedData = JSON.parse(getIncidentData?.data?.data);
+      const data = parsedData?.Table;
+      if (JSON.stringify(data) !== JSON.stringify(incidentData)) {
+        setIncidentData(data);
+      }
+      setIncidentData(data);
+    } else {
+      setIncidentData([]);
+    }
+    if (getIncidentError) {
+      setIncidentData([]);
+    }
+  }, [getIncidentData, isFetchIncidentList, getIncidentError]);
   const access_token = sessionStorage.getItem("access_token");
 
   const getOffSetTimeKey = `/CAD/CallTakerIncident/GetOffSetTime`;
@@ -81,7 +88,7 @@ const IncidentData = ({ children }) => {
     MonitorServices.getIncidentsView,
     {
       refetchOnWindowFocus: false,
-      enabled: window.location.pathname.includes('/cad/') && !!loginAgencyID,
+      enabled: !!loginAgencyID,
       onSuccess: (res) => {
         if (res?.data?.Data?.length === 0) {
           return;
@@ -113,7 +120,7 @@ const IncidentData = ({ children }) => {
     MonitorServices.getIncidentsView,
     {
       refetchOnWindowFocus: false,
-      enabled: window.location.pathname.includes('/cad/') && !!loginAgencyID,
+      enabled: !!loginAgencyID,
       onSuccess: (res) => {
         if (res?.data?.Data?.length === 0) {
           return;
@@ -141,38 +148,74 @@ const IncidentData = ({ children }) => {
 
 
   const getResourceListKey = `CAD/Monitor/MonitorResourceView`;
-  const { isSuccess: isFetchResourceList, refetch: resourceRefetch } = useQuery(
+  const { data: getResourceData, isSuccess: isFetchResourceList, refetch: resourceRefetch, error: getResourceError } = useQuery(
     [getResourceListKey, { AgencyID: loginAgencyID }],
     MonitorServices.getResourceView,
     {
       refetchOnWindowFocus: false,
-      enabled: window.location.pathname.includes('/cad/') && !!loginAgencyID,
-      onSuccess: (res) => {
-        if (res?.data?.Data?.length === 0) {
-          return;
-        } else {
-          try {
-            const parsedData = JSON.parse(res?.data?.data);
-            const data = parsedData?.Table;
-            if (JSON.stringify(data) !== JSON.stringify(resourceData)) {
-              setResourceData(data);
-            }
-            setResourceData(data);
-          } catch (error) {
-            console.error("Error parsing name:", error);
-          }
-        }
-      },
+      enabled: !!loginAgencyID,
       onError: (error) => {
-        if (error?.response?.data?.Code === 400) {
+        if (error?.response?.status === 400) {
           console.error("No Data Available", error?.response?.data?.Message);
-
+          setResourceData([]);
         } else {
-          console.error("An error occurred:", error);
+          setResourceData([]);
         }
       }
     }
   );
+
+  useEffect(() => {
+    if (getResourceData && isFetchResourceList) {
+      const parsedData = JSON.parse(getResourceData?.data?.data);
+      const data = parsedData?.Table;
+      if (JSON.stringify(data) !== JSON.stringify(resourceData)) {
+        setResourceData(data);
+      }
+      setResourceData(data);
+    } else {
+      setResourceData([]);
+    }
+    if (getResourceError) {
+      setResourceData([]);
+    }
+  }, [getResourceData, isFetchResourceList, getResourceError]);
+
+
+  const getAllResourcesKey = `/CAD/MasterResource/GetAllActiveResources`;
+  const { data: getAllResourcesData, isSuccess: isFetchAllResourcesData, refetch: getAllResourcesRefetch, error: getAllResourcesError } = useQuery(
+    [getAllResourcesKey, { AgencyID: loginAgencyID }],
+    MasterTableListServices.getAllResources,
+    {
+      refetchOnWindowFocus: false,
+      enabled: !!loginAgencyID,
+      onError: (error) => {
+        if (error?.response?.status === 400) {
+          console.error("No Data Available", error?.response?.data?.Message);
+          setAllResourcesData([]);
+        } else {
+          setAllResourcesData([]);
+        }
+      }
+    }
+  );
+
+  useEffect(() => {
+    if (getAllResourcesData && isFetchAllResourcesData) {
+      const parsedData = JSON.parse(getAllResourcesData?.data?.data);
+      const data = parsedData?.Table;
+      if (JSON.stringify(data) !== JSON.stringify(allResourcesData)) {
+        setAllResourcesData(data);
+      }
+      setAllResourcesData(data);
+    } else {
+      setAllResourcesData([]);
+    }
+    if (getAllResourcesError) {
+      setAllResourcesData([]);
+    }
+  }, [getAllResourcesData, isFetchAllResourcesData, getAllResourcesError]);
+
 
   const getCommentsKey = `/CAD/DispatcherComments/GetData_Comments`;
   const { refetch: refetchGetComments } = useQuery(
@@ -236,6 +279,11 @@ const IncidentData = ({ children }) => {
     }
   }, [resourceRefetch, isOnCAD]);
 
+  useEffect(() => {
+    // Set up SignalR handlers with the context functions
+    setupSignalRHandlers(incidentRefetch, resourceRefetch);
+  }, [incidentRefetch, resourceRefetch]);
+
   return (
     <IncidentContext.Provider
       value={{
@@ -256,7 +304,10 @@ const IncidentData = ({ children }) => {
         incID,
         setIncID,
         offset,
-        setIsOnCAD
+        setIsOnCAD,
+        allResourcesData,
+        isFetchAllResourcesData,
+        getAllResourcesRefetch,
       }}
     >
       {children}

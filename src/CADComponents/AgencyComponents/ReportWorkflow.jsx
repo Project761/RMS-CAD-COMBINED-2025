@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import Select from "react-select";
-import useObjState from '../../CADHook/useObjState';
 import { coloredStyle_Select, colorLessStyle_Select } from '../Utility/CustomStylesForReact';
 import DataTable from 'react-data-table-component';
-import { base64ToString, changeArrayFormat_WithFilter, Decrypt_Id_Name, Requiredcolour, tableCustomStyles } from '../../Components/Common/Utility';
+import { base64ToString, Decrypt_Id_Name, tableCustomStyles } from '../../Components/Common/Utility';
 import { AddDeleteUpadate, fetchPostData } from '../../Components/hooks/Api';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
@@ -12,18 +11,14 @@ import { toastifyError, toastifySuccess } from '../../Components/Common/AlertMsg
 import { RequiredFieldIncident } from '../../Components/Pages/Utility/Personnel/Validation';
 import { get_Narrative_Type_Drp_Data } from '../../redux/actions/DropDownsData';
 import { Comman_changeArrayFormat } from '../../Components/Common/ChangeArrayFormat';
-import Group from '../../Components/Pages/Agency/AgencyTab/Group/Group';
 import AddGroup from './AddGroup';
 import { useLocation } from 'react-router-dom';
 
 function ReportWorkflow() {
-
     const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
-    const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
     const narrativeTypeDrpData = useSelector((state) => state.DropDown.narrativeTypeDrpData);
-
     const [loginAgencyID, setLoginAgencyID] = useState('')
     const [loginPinID, setLoginPinID] = useState('');
     const [ReportWorkflowData, setReportWorkflowData] = useState('');
@@ -34,15 +29,10 @@ function ReportWorkflow() {
     const [groupList, setGroupList] = useState([]);
     const [GroupListData, setGroupListData] = useState([]);
     const [showModal, setShowModal] = useState(false);
-    const [isChange, setIsChange] = React.useState(false);
-
-    const [reportWorkflowState, setReportWorkflowState, clearReportWorkflowState,
-    ] = useObjState({
-    })
 
     const [value, setValue] = useState({
         'AgencyID': '', 'WorkflowName': '', 'ApprovalType': "IsMultipleLevel", 'AppliesReportTypeID': '', 'Notes': '', 'ReportApproverGroupID': '',
-        'ReportApproverRequired': '', 'ReportReviewerGroupID': '', 'IsSkipApproverAuthor' : '' , 'IsMultipleLevel': true, 'IsSingleLevel': '', 'IsNoApproval': '', 'IsSelfApproved': '', 'CreatedByUserFK': '',
+        'ReportApproverRequired': '', 'ReportReviewerGroupID': '', 'IsSkipApproverAuthor': '', 'IsMultipleLevel': true, 'IsSingleLevel': '', 'IsNoApproval': '', 'IsSelfApproved': '', 'CreatedByUserFK': '',
     });
 
     const [errors, setErrors] = useState({
@@ -85,30 +75,11 @@ function ReportWorkflow() {
         }
     };
 
-    const appliesToReportDrpData = [
-        { Code: 1, Description: "Initial Report" },
-        { Code: 2, Description: "Press Release" },
-        { Code: 3, Description: "Public Narrative" },
-        { Code: 4, Description: "Supplementary Narrative" },
-        { Code: 5, Description: "Use of Force" },
-    ];
-
     const timeUnitOptions = [
         { value: "hours", label: "Hours" },
         { value: "days", label: "Days" }
     ];
 
-    const approverOptions = [
-        { value: "1", label: "Supervisor" },
-        { value: "2", label: "Manager" },
-        { value: "3", label: "Administrator" }
-    ];
-
-    const reviewerOptions = [
-        { value: "1", label: "Senior Officer" },
-        { value: "2", label: "Quality Assurance" },
-        { value: "3", label: "Legal Review" }
-    ];
     const groupLevelColumns = [
         {
             name: 'Group Name',
@@ -121,54 +92,6 @@ function ReportWorkflow() {
             sortable: true
         },
     ]
-    const groupLevelData = [
-        // { groupName: "Group 1", groupLevel: "Level 1" },
-        // { groupName: "Group 2", groupLevel: "Level 2" },
-        // { groupName: "Group 3", groupLevel: "Level 3" }
-    ]
-
-    const data = [
-        {
-            workflowName: "Initial Report",
-            appliesToReportType: "Initial Report",
-            reviewer: "None",
-            reportApprover: "Multiple Level",
-            reportWritingTimeLimit: "12 Hours",
-            reportApprovalTimeLimit: "48 Hours",
-        },
-        {
-            workflowName: "Press Release",
-            appliesToReportType: "Press Release",
-            reviewer: "Records",
-            reportApprover: "Single Level",
-            reportWritingTimeLimit: "4 Hours",
-            reportApprovalTimeLimit: "48 Hours",
-        },
-        {
-            workflowName: "Public Narrative",
-            appliesToReportType: "Public Narrative",
-            reviewer: "Detectives",
-            reportApprover: "Multiple Level",
-            reportWritingTimeLimit: "24 Hours",
-            reportApprovalTimeLimit: "12 Hours",
-        },
-        {
-            workflowName: "Supplementary Narrative",
-            appliesToReportType: "Supplementary Narrative",
-            reviewer: "Records",
-            reportApprover: "Self Approval",
-            reportWritingTimeLimit: "48 Hours",
-            reportApprovalTimeLimit: "48 Hours",
-        },
-        {
-            workflowName: "Use of Force",
-            appliesToReportType: "Use of Force",
-            reviewer: "Detectives",
-            reportApprover: "Multiple Level",
-            reportWritingTimeLimit: "4 Hours",
-            reportApprovalTimeLimit: "12 Hours",
-        },
-    ];
 
     useEffect(() => {
         if (aId) {
@@ -184,7 +107,6 @@ function ReportWorkflow() {
             else { setReportWorkflowData(); }
         })
     }
-
 
     const GetSingleData = (ReportWorkFlowID) => {
         const val = { 'ReportWorkFlowID': ReportWorkFlowID, }
@@ -207,8 +129,6 @@ function ReportWorkflow() {
         })
     }
 
-
-
     useEffect(() => {
         if (status) {
             setValue({
@@ -216,34 +136,20 @@ function ReportWorkflow() {
                 'WorkflowName': editval[0]?.WorkflowName, 'ReportApproverGroupID': Number(editval[0]?.ReportApproverGroupID),
                 'Notes': editval[0]?.Notes, 'ReportReviewerGroupID': Number(editval[0]?.ReportReviewerGroupID),
                 'ReportApproverRequired': editval[0]?.ReportApproverRequired, 'ReportApproverRequired': editval[0]?.ReportApproverRequired != null ? Number(editval[0].ReportApproverRequired) : '', 'AppliesReportTypeID': editval[0]?.AppliesReportTypeID, 'IsMultipleLevel': editval[0]?.IsMultipleLevel,
-                'IsSingleLevel': editval[0]?.IsSingleLevel, 'IsSkipApproverAuthor' :  editval[0]?.IsSkipApproverAuthor ,
-                 'IsSelfApproved': editval[0]?.IsSelfApproved, 'IsNoApproval': editval[0]?.IsNoApproval, 'ModifiedByUserFK': loginPinID,
+                'IsSingleLevel': editval[0]?.IsSingleLevel, 'IsSkipApproverAuthor': editval[0]?.IsSkipApproverAuthor,
+                'IsSelfApproved': editval[0]?.IsSelfApproved, 'IsNoApproval': editval[0]?.IsNoApproval, 'ModifiedByUserFK': loginPinID,
             })
         }
     }, [editval])
 
     const reset = () => {
         setValue({
-            ...value, 'WorkflowName': '', 'AppliesReportTypeID': '', 'Notes': '', 'IsSkipApproverAuthor' : '' , 'ReportApproverGroupID': '', 'ReportApproverRequired': '', 'ReportReviewerGroupID': '', 'IsMultipleLevel': true, 'IsSingleLevel': '', 'IsNoApproval': '', 'IsSelfApproved': '', 'AppliesReportTypeErrors': '', 'ReportApproverGroupIDErrors': ''
+            ...value, 'WorkflowName': '', 'AppliesReportTypeID': '', 'Notes': '', 'IsSkipApproverAuthor': '', 'ReportApproverGroupID': '', 'ReportApproverRequired': '', 'ReportReviewerGroupID': '', 'IsMultipleLevel': true, 'IsSingleLevel': '', 'IsNoApproval': '', 'IsSelfApproved': '', 'AppliesReportTypeErrors': '', 'ReportApproverGroupIDErrors': ''
         }); setErrors({ ...errors, 'WorkflowNameErrors': '', 'ReportApproverGroupIDErrors': '', 'AppliesReportTypeErrors': '', 'ReportReviewerGroupIDErrors': '' }); setStatus(false); setClickedRow(null)
     }
 
-    // const check_Validation_Error = (e) => {
-    //     if (RequiredFieldIncident(value.WorkflowName)) {
-    //         setErrors(prevValues => { return { ...prevValues, ['WorkflowNameErrors']: RequiredFieldIncident(value.WorkflowName) } })
-    //     }
-    //     if (RequiredFieldIncident(value.AppliesReportTypeID)) {
-    //         setErrors(prevValues => { return { ...prevValues, ['AppliesReportTypeErrors']: RequiredFieldIncident(value.AppliesReportTypeID) } })
-    //     }
-    //     if (RequiredFieldIncident(value.ReportApproverGroupID)) {
-    //         setErrors(prevValues => { return { ...prevValues, ['ReportApproverGroupIDErrors']: RequiredFieldIncident(value.ReportApproverGroupID) } })
-    //     }
-    // if (RequiredFieldIncident(value.ReportApproverRequiredID)) {
-    //     setErrors(prevValues => { return { ...prevValues, [ReportApproverRequiredIDErrors]: RequiredFieldIncident(value.ReportApproverRequiredID) } })
-    // }
-    // }
     const check_Validation_Error = (e) => {
-        
+
         setErrors(prev => ({
             ...prev,
             WorkflowNameErrors: RequiredFieldIncident(value.WorkflowName),
@@ -264,11 +170,10 @@ function ReportWorkflow() {
 
 
     const Add_Type = () => {
-        const { AgencyID, WorkflowName, IsSkipApproverAuthor , AppliesReportTypeID, Notes, ReportApproverGroupID, ReportApproverRequired, ReportReviewerGroupID, IsMultipleLevel, IsSingleLevel, IsNoApproval, IsSelfApproved, CreatedByUserFK } = value;
+        const { AgencyID, WorkflowName, IsSkipApproverAuthor, AppliesReportTypeID, Notes, ReportApproverGroupID, ReportApproverRequired, ReportReviewerGroupID, IsMultipleLevel, IsSingleLevel, IsNoApproval, IsSelfApproved, CreatedByUserFK } = value;
         const Value = {
-            AgencyID: aId, WorkflowName: WorkflowName, IsSkipApproverAuthor: IsSkipApproverAuthor , AppliesReportTypeID: AppliesReportTypeID, Notes: Notes, ReportApproverGroupID: ReportApproverGroupID, ReportApproverRequired: ReportApproverRequired, ReportReviewerGroupID: ReportReviewerGroupID, IsMultipleLevel: IsMultipleLevel, IsSingleLevel: IsSingleLevel, IsNoApproval: IsNoApproval, IsSelfApproved: IsSelfApproved, CreatedByUserFK: loginPinID
+            AgencyID: aId, WorkflowName: WorkflowName, IsSkipApproverAuthor: IsSkipApproverAuthor, AppliesReportTypeID: AppliesReportTypeID, Notes: Notes, ReportApproverGroupID: ReportApproverGroupID, ReportApproverRequired: ReportApproverRequired, ReportReviewerGroupID: ReportReviewerGroupID, IsMultipleLevel: IsMultipleLevel, IsSingleLevel: IsSingleLevel, IsNoApproval: IsNoApproval, IsSelfApproved: IsSelfApproved, CreatedByUserFK: loginPinID
         };
-        console.log(ReportWorkflowData);
         const result = ReportWorkflowData?.find(item => {
             if (item.AppliesReportTypeID === value.AppliesReportTypeID) {
                 return item.AppliesReportTypeID === value.AppliesReportTypeID
@@ -287,21 +192,22 @@ function ReportWorkflow() {
         }
 
     }
+
     const update_Juvenile = () => {
-        const { AgencyID, ReportWorkFlowID, IsSkipApproverAuthor , WorkflowName, AppliesReportTypeID, Notes, ReportApproverGroupID, ReportApproverRequired, ReportReviewerGroupID, IsMultipleLevel, IsSingleLevel, IsNoApproval, IsSelfApproved, CreatedByUserFK } = value;
+        const { AgencyID, ReportWorkFlowID, IsSkipApproverAuthor, WorkflowName, AppliesReportTypeID, Notes, ReportApproverGroupID, ReportApproverRequired, ReportReviewerGroupID, IsMultipleLevel, IsSingleLevel, IsNoApproval, IsSelfApproved, CreatedByUserFK } = value;
         const Value = {
-            AgencyID: aId, ReportWorkFlowID: reportWorkFlowID, IsSkipApproverAuthor : IsSkipApproverAuthor , WorkflowName: WorkflowName, AppliesReportTypeID: AppliesReportTypeID, Notes: Notes, ReportApproverGroupID: ReportApproverGroupID, ReportApproverRequired: ReportApproverRequired, ReportReviewerGroupID: ReportReviewerGroupID, IsMultipleLevel: IsMultipleLevel, IsSingleLevel: IsSingleLevel, IsNoApproval: IsNoApproval, IsSelfApproved: IsSelfApproved, ModifiedByUserFK: loginPinID
+            AgencyID: aId, ReportWorkFlowID: reportWorkFlowID, IsSkipApproverAuthor: IsSkipApproverAuthor, WorkflowName: WorkflowName, AppliesReportTypeID: AppliesReportTypeID, Notes: Notes, ReportApproverGroupID: ReportApproverGroupID, ReportApproverRequired: ReportApproverRequired, ReportReviewerGroupID: ReportReviewerGroupID, IsMultipleLevel: IsMultipleLevel, IsSingleLevel: IsSingleLevel, IsNoApproval: IsNoApproval, IsSelfApproved: IsSelfApproved, ModifiedByUserFK: loginPinID
         };
         const result = ReportWorkflowData?.find(item => {
             if (item?.ReportWorkFlowID != reportWorkFlowID) {
-                
+
                 if (item.AppliesReportTypeID === value.AppliesReportTypeID) {
                     return item.AppliesReportTypeID === value.AppliesReportTypeID
                 } else return item.AppliesReportTypeID === value.AppliesReportTypeID
             }
 
         });
-        
+
         if (result) {
 
             toastifyError('Report Type  Already Exists')
@@ -318,18 +224,6 @@ function ReportWorkflow() {
 
     }
 
-    // const HandleChange = (e) => {
-    //     if (
-    //         e.target.name === "IsSelfApproved" ||
-    //         e.target.name === "IsNoApproval" ||
-    //         e.target.name === "IsSingleLevel" ||
-    //         e.target.name === "IsMultipleLevel"
-    //     ) {
-    //         setValue({ ...value, [e.target.name]: e.target.checked });
-    //     } else {
-    //         setValue({ ...value, [e.target.name]: e.target.value });
-    //     }
-    // };
     const HandleChange = (e) => {
         const { name, value: inputValue, checked } = e.target;
         if (name === "ApprovalType") {
@@ -353,7 +247,6 @@ function ReportWorkflow() {
         }
     };
 
-
     const columns = [
         {
             name: "Workflow Name", selector: row => row?.WorkflowName, sortable: true,
@@ -375,11 +268,11 @@ function ReportWorkflow() {
         },
     ];
 
-
     const set_Edit_Value = (row) => {
         setStatus(true); setErrors(''); setReportWorkFlowID(row.ReportWorkFlowID);
         GetSingleData(row?.ReportWorkFlowID)
     }
+
     const conditionalRowStyles = [
         {
             when: row => row === clickedRow,
@@ -409,10 +302,10 @@ function ReportWorkflow() {
             IsSelfApproved: selectedOptionnew === 'IsSelfApproved',
             IsNoApproval: selectedOptionnew === 'IsNoApproval',
         }));
-        setErrors({ ...errors, 'WorkflowNameErrors': '', 'WorkflowNameErrors': '' , 'AppliesReportTypeErrors' : '' , 'ReportApproverGroupIDErrors' : '' , 'ReportReviewerGroupIDErrors' : '' });
+        setErrors({ ...errors, 'WorkflowNameErrors': '', 'WorkflowNameErrors': '', 'AppliesReportTypeErrors': '', 'ReportApproverGroupIDErrors': '', 'ReportReviewerGroupIDErrors': '' });
     };
 
-     const handleReportWorkflowState = (e) => {
+    const handleReportWorkflowState = (e) => {
         let { name, value: inputValue } = e.target;
         if (e) {
             if (e.target.name === "IsSkipApproverAuthor") {
@@ -450,9 +343,6 @@ function ReportWorkflow() {
                             ) : null}  </label>
                         </div>
                         <div className="col-3 d-flex align-self-center">
-                            {/* <input name="workflowName" type="text" className="form-control py-1 new-input requiredColor" placeholder='Placeholder'
-                                onKeyDown={handleSpecialKeyDown} value={reportWorkflowState?.WorkflowName} onChange={(e) => { handleReportWorkflowState("workflowName", e.target.value); setIsChange(true); }}
-                            /> */}
                             <input type="text" name='WorkflowName' onKeyDown={handleSpecialKeyDown} value={value?.WorkflowName} placeholder='Placeholder' onChange={HandleChange} className="form-control py-1 new-input requiredColor" id='WorkflowName' required />
                         </div>
                         <div className="col-2 d-flex align-self-center justify-content-end">
@@ -477,20 +367,13 @@ function ReportWorkflow() {
                                 <label className="form-check-label" htmlFor="FOIA"> FOIA </label>
                             </div>
                         </div>
-                    </div>
-
-                    {/* Notes Section */}
-                    <fieldset className='mt-2'>
-                        <legend>Notes</legend>
-                        <div className="row mt-2">
-                            <div className="col-12">
-                                {/* <input name="Notes" type="text" className="form-control py-1 new-input" placeholder='Notes'
-                                    onKeyDown={handleSpecialKeyDown} value={value?.Notes} onChange={HandleChange}
-                                /> */}
-                                <input type="text" name='Notes' onKeyDown={handleSpecialKeyDown} value={value?.Notes} placeholder='Placeholder' onChange={HandleChange} className="form-control py-1 new-input" id='Notes' required />
-                            </div>
+                        <div className="col-2 d-flex align-self-center justify-content-end mt-1">
+                            <label htmlFor="" className="tab-form-label">Notes</label>
                         </div>
-                    </fieldset>
+                        <div className="col-10 d-flex align-self-center mt-1">
+                            <input type="text" name='Notes' onKeyDown={handleSpecialKeyDown} value={value?.Notes} placeholder='Placeholder' onChange={HandleChange} className="form-control py-1 new-input" id='Notes' required />
+                        </div>
+                    </div>
                 </fieldset>
             </div>
 
@@ -498,7 +381,7 @@ function ReportWorkflow() {
                 {/* Approver & Reviewer Eligibility Section */}
                 <fieldset>
                     <legend>Approver & Reviewer Eligibility</legend>
-                    <div className="border rounded p-3 mt-2 mb-4">
+                    <div className="mt-2 mb-4">
                         {/* Report Approver */}
                         <div className="row mb-3">
                             <div className="col-12 d-flex align-items-center">
@@ -510,149 +393,136 @@ function ReportWorkflow() {
                                     </small>
                                 </div>
                             </div>
-                           
-                               
-                                 <div className="col-12 d-flex align-items-center mb-2">
-                                <div className="col-7 offset-1 d-flex gap-2 align-content-center">
-                                    <div className="form-check mr-3">
-                                        <input
-                                            className="form-check-input"
-                                            type="radio"
-                                            name="ApprovalType"
-                                            id="IsMultipleLevel"
-                                            value="IsMultipleLevel"
-                                            checked={value?.IsMultipleLevel}
-                                            onChange={handleRadioChange}
-                                        />
-                                        <label className="form-check-label" htmlFor="IsMultipleLevel">Multiple Level</label>
-                                    </div>
+                         
+                                    
+                                        <div className="col-12 d-flex align-items-center mb-2" style={{ marginLeft: "15px" }}>
+                                            <div className="col-7 d-flex gap-2 align-content-center">
+                                                <div className="form-check mr-3">
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="radio"
+                                                        name="ApprovalType"
+                                                        id="IsMultipleLevel"
+                                                        value="IsMultipleLevel"
+                                                        checked={value?.IsMultipleLevel}
+                                                        onChange={handleRadioChange}
+                                                    />
+                                                    <label className="form-check-label" htmlFor="IsMultipleLevel">Multiple Level</label>
+                                                </div>
 
-                                    <div className="form-check mr-3">
-                                        <input
-                                            className="form-check-input"
-                                            type="radio"
-                                            name="ApprovalType"
-                                            id="IsSingleLevel"
-                                            value="IsSingleLevel"
-                                            checked={value?.IsSingleLevel}
-                                            onChange={handleRadioChange}
-                                        />
-                                        <label className="form-check-label" htmlFor="IsSingleLevel">Single Level</label>
-                                    </div>
+                                                <div className="form-check mr-3">
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="radio"
+                                                        name="ApprovalType"
+                                                        id="IsSingleLevel"
+                                                        value="IsSingleLevel"
+                                                        checked={value?.IsSingleLevel}
+                                                        onChange={handleRadioChange}
+                                                    />
+                                                    <label className="form-check-label" htmlFor="IsSingleLevel">Single Level</label>
+                                                </div>
 
-                                    <div className="form-check mr-3">
-                                        <input
-                                            className="form-check-input"
-                                            type="radio"
-                                            name="ApprovalType"
-                                            id="IsSelfApproved"
-                                            value="IsSelfApproved"
-                                            checked={value?.IsSelfApproved}
-                                            onChange={handleRadioChange}
-                                        />
-                                        <label className="form-check-label" htmlFor="IsSelfApproved">Self Approved</label>
-                                    </div>
+                                                <div className="form-check mr-3">
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="radio"
+                                                        name="ApprovalType"
+                                                        id="IsSelfApproved"
+                                                        value="IsSelfApproved"
+                                                        checked={value?.IsSelfApproved}
+                                                        onChange={handleRadioChange}
+                                                    />
+                                                    <label className="form-check-label" htmlFor="IsSelfApproved">Self Approved</label>
+                                                </div>
 
-                                    <div className="form-check">
-                                        <input
-                                            className="form-check-input"
-                                            type="radio"
-                                            name="ApprovalType"
-                                            id="IsNoApproval"
-                                            value="IsNoApproval"
-                                            checked={value?.IsNoApproval}
-                                            onChange={handleRadioChange}
-                                        />
-                                        <label className="form-check-label" htmlFor="IsNoApproval">No Approval</label>
-                                    </div>
-                                </div>
+                                                <div className="form-check">
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="radio"
+                                                        name="ApprovalType"
+                                                        id="IsNoApproval"
+                                                        value="IsNoApproval"
+                                                        checked={value?.IsNoApproval}
+                                                        onChange={handleRadioChange}
+                                                    />
+                                                    <label className="form-check-label" htmlFor="IsNoApproval">No Approval</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col-12 d-flex align-items-center" style={{ marginLeft: "15px" }}>
+                                            <div className="col-4 d-flex gap-2 align-content-center" >
+                                                <label htmlFor="" className="tab-form-label"> {errors.ReportApproverGroupIDErrors !== 'true' ? (
+                                                    <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReportApproverGroupIDErrors}</p>
+                                                ) : null}  </label>
+                                                <Select
+                                                    // styles={coloredStyle_Select}
+                                                    name="ReportApproverGroupID"
+                                                    value={ReportApprovingLevel?.filter((obj) => obj.value === value?.ReportApproverGroupID)}
+                                                    isClearable
+                                                    placeholder="Select..."
+                                                    options={ReportApprovingLevel}
+                                                    onChange={(e) => ChangeDropDownReportType(e, 'ReportApproverGroupID')}
+                                                    styles={value.IsSelfApproved || value.IsNoApproval ? colorLessStyle_Select : coloredStyle_Select}
+                                                    className="w-100"
+                                                    isDisabled={value.IsSelfApproved || value.IsNoApproval || value.ApprovalType === "IsNoApproval"}
+                                                />
+                                            </div>
+                                            <div className="col-4 d-flex align-items-center" style={{ gap: "10px" }}>
+                                                <label htmlFor="" className="tab-form-label text-nowrap"> Approvals Required (hops) <span className='hovertext ml-2' data-hover="Approvals stop at Level 1 (highest) even if more hops are configured" ><i className='fa fa-exclamation-circle'></i></span>
+                                                </label>
+                                                <input type="number" name='ReportApproverRequired' className="form-control py-1 new-input " placeholder="Enter hops" min="1"
+                                                    disabled={value.IsNoApproval || value.IsSelfApproved || value.IsSingleLevel} value={value.ReportApproverRequired} onChange={HandleChange}
+                                                />
+                                            </div>
+                                            <div className="col-4 d-flex align-items-center" style={{ gap: "10px" }}>
+                                                <label className="form-label text-nowrap ">Reviewer (read-only)
+                                                    <span className='hovertext ml-2' data-hover=" Reviewers can comment but cannot block Approval process" ><i className='fa fa-exclamation-circle'></i></span>
+                                                    {errors.ReportReviewerGroupIDErrors !== 'true' ? (
+                                                        <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReportReviewerGroupIDErrors}</p>
+                                                    ) : null}</label>
+                                                <Select
+                                                    name="ReportReviewerGroupID"
+                                                    value={groupList?.filter((obj) => obj.value === value?.ReportReviewerGroupID)}
+                                                    isClearable
+                                                    placeholder="Select..."
+                                                    options={groupList}
+                                                    onChange={(e) => ChangeDropDownReportType(e, 'ReportReviewerGroupID')}
+                                                    styles={value.IsSelfApproved || value.IsNoApproval ? colorLessStyle_Select : coloredStyle_Select}
+                                                    className="w-100"
+                                                    isDisabled={value.IsSelfApproved || value.IsNoApproval}
+                                                />
+                                            </div>
+                                            {/* <div className="col-4 d-flex align-items-center">
+                                                    <small className="text-danger">  Reviewers can comment but cannot block Approval process </small>
+                                                </div> */}
+                                        </div>
+                                   
+                        
 
-                                <div className="col-4 d-flex align-items-center">
-                                    <i className="fa fa-exclamation-triangle text-danger mr-2"></i>
-                                    <small className="text-danger">   Approvals stop at Level 1 (highest) even if more hops are configured </small>
-                                </div>
-                            </div>
-                            <div className="col-12 d-flex align-items-center">
-                                <div className="col-6 offset-1 d-flex gap-2 align-content-center">
-
-                                    <label htmlFor="" className="tab-form-label"> {errors.ReportApproverGroupIDErrors !== 'true' ? (
-                                        <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReportApproverGroupIDErrors}</p>
-                                    ) : null}  </label>
-                                    <Select
-                                        // styles={coloredStyle_Select}
-                                        name="ReportApproverGroupID"
-                                        value={ReportApprovingLevel?.filter((obj) => obj.value === value?.ReportApproverGroupID)}
-                                        isClearable
-                                        placeholder="Select..."
-                                        options={ReportApprovingLevel}
-                                        onChange={(e) => ChangeDropDownReportType(e, 'ReportApproverGroupID')}
-                                        styles={value.IsSelfApproved || value.IsNoApproval ? colorLessStyle_Select : coloredStyle_Select}
-                                        className="w-100"
-                                        isDisabled={value.IsSelfApproved || value.IsNoApproval || value.ApprovalType === "IsNoApproval"}
-                                    />
-                                </div>
-                                <div className="col-2 d-flex align-self-center justify-content-end">
-                                    <label htmlFor="" className="tab-form-label"> Approvals Required (hops)
-                                        {/* {errors.ReportApproverRequiredErrors !== 'true' ? (
-                                        <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReportApproverRequiredErrors}</p>
-                                    ) : null}   */}
-                                    </label>
-                                </div>
-                                <div className="col-3">
-                                    <input type="number" name='ReportApproverRequired' className="form-control py-1 new-input " placeholder="Enter hops" min="1"
-                                        disabled={value.IsNoApproval || value.IsSelfApproved || value.IsSingleLevel} value={value.ReportApproverRequired} onChange={HandleChange}
-                                    />
-                                </div>
-                            </div>
-                               
-                           {
-                            ((value?.IsSingleLevel && value.ReportApproverGroupID === 2) || (value?.IsMultipleLevel && value.ReportApproverGroupID === 2)) ?
-                            <>
-                             <div className="col-4 d-flex align-items-center offset-1 mt-1">
-                                <div className="form-check">
-                                    <input className="form-check-input" type="checkbox" id="IsSkipApproverAuthor"
-                                       name='IsSkipApproverAuthor'  checked={value.IsSkipApproverAuthor} disabled={value.IsNoApproval || value.IsSelfApproved} onChange={handleReportWorkflowState}
-                                    />
-                                    <label className="form-check-label" htmlFor="IsSkipApproverAuthor">  Skip if the approver is the author </label>
-                                </div>
-                                <div className='ml-2'><span className='hovertext' data-hover="If the author belongs to the approver’s group level, they cannot approve their own report. 
+                            {
+                                ((value?.IsSingleLevel && value.ReportApproverGroupID === 2) || (value?.IsMultipleLevel && value.ReportApproverGroupID === 2)) ?
+                                    <>
+                                        <div className="col-4 d-flex align-items-center offset-1 mt-1">
+                                            <div className="form-check">
+                                                <input className="form-check-input" type="checkbox" id="IsSkipApproverAuthor"
+                                                    name='IsSkipApproverAuthor' checked={value.IsSkipApproverAuthor} disabled={value.IsNoApproval || value.IsSelfApproved} onChange={handleReportWorkflowState}
+                                                />
+                                                <label className="form-check-label" htmlFor="IsSkipApproverAuthor">  Skip if the approver is the author </label>
+                                            </div>
+                                            <div className='ml-2'><span className='hovertext' data-hover="If the author belongs to the approver’s group level, they cannot approve their own report.
     The system skips the author, and another officer from the same level will take action" ><i className='fa fa-exclamation-circle'></i></span></div>
-                            </div> 
-                            </> : <></>
-                           }
-                           
-                        </div>
-                        {/* Report Reviewer */}
-                        <div className='h6 mb-3'>Report Reviewer</div>
-                        <div className="col-12 d-flex align-items-center">
-                            <div style={{ width: '9%' }}>
-                                <label className="form-label">Reviewer (read-only){errors.ReportReviewerGroupIDErrors !== 'true' ? (
-                                    <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReportReviewerGroupIDErrors}</p>
-                                ) : null}</label>  </div>
-                            <div className="col-4">
-                                <Select
+                                        </div>
+                                    </> : <></>
+                            }
 
-                                    name="ReportReviewerGroupID"
-                                    value={groupList?.filter((obj) => obj.value === value?.ReportReviewerGroupID)}
-                                    isClearable
-                                    placeholder="Select..."
-                                    options={groupList}
-                                    onChange={(e) => ChangeDropDownReportType(e, 'ReportReviewerGroupID')}
-                                    styles={value.IsSelfApproved || value.IsNoApproval ? colorLessStyle_Select : coloredStyle_Select}
-                                    className="w-100"
-                                    isDisabled={value.IsSelfApproved || value.IsNoApproval}
-                                />
-                            </div>
-                            <div className="col-4 d-flex align-items-center">
-                                <small className="text-danger">  Reviewers can comment but cannot block Approval process </small>
-                            </div>
                         </div>
                     </div>
 
                     {/* Escalation & Rules Section */}
                     <fieldset>
                         <legend>Escalation & Rules (Reminder and Notification)</legend>
-                        <div className="border rounded p-2 mt-2">
+                        <div className="mt-2">
                             <div className="col-12 d-flex align-items-center">
                                 <div className="col-2 d-flex align-self-center justify-content-end">
                                     <label htmlFor="" className="tab-form-label">   Report Writing Time Limit  </label>
@@ -772,6 +642,7 @@ function ReportWorkflow() {
                                 <div className="col-2 d-flex align-self-center justify-content-end">
                                     <label htmlFor="" className="tab-form-label">
                                         Notification
+                                        <span className='hovertext ml-2' data-hover="Notification will be received by the current level approver, even  if you have not selected them to the notification field."><i className='fa fa-exclamation-circle'></i></span>
                                     </label>
                                 </div>
                                 <div className="col-7 d-flex align-items-center">
@@ -803,11 +674,6 @@ function ReportWorkflow() {
                                         Notify Upon Expiration
                                     </label>
                                 </div>
-                            </div>
-                            <div className="col-12 d-flex justify-content-center">
-                                <small className="text-danger">
-                                    Notification will be received by the current level approver, even  if you have not selected them to the notification field.
-                                </small>
                             </div>
                         </div>
                     </fieldset>

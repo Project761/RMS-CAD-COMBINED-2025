@@ -26,8 +26,6 @@ function RejectedReports() {
   const [editval, setEditval] = useState([]);
   const [narrativeID, setNarrativeID] = useState();
   const [rejectedData, setRejectedData] = useState();
-  const [narrativeReportData, setNarrativeReportData] = useState([]);
-  const [useOfForceData, setUseOfForceData] = useState([]);
 
   useEffect(() => {
     if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
@@ -42,7 +40,6 @@ function RejectedReports() {
       setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
       //  getScreenPermision(localStoreData?.AgencyID, localStoreData?.PINID);
       get_Data_Rejected_Report(localStoreData?.PINID);
-      getUseOfForceReport(localStoreData?.PINID, localStoreData?.AgencyID);
       dispatch(get_ScreenPermissions_Data("N046", localStoreData?.AgencyID, localStoreData?.PINID));
 
     }
@@ -115,7 +112,7 @@ function RejectedReports() {
     //       }
     //     </div>)
     // },
-    
+
     {
       name: 'Incident# ',
       grow: 1,
@@ -155,7 +152,7 @@ function RejectedReports() {
       selector: row => row.NarrativeDescription,
       sortable: true,
       cell: row => {
-        const desc = row?.ReportTypeJson || row.NarrativeDescription?.toLowerCase();
+        const desc = row.NarrativeDescription?.toLowerCase();
 
         let backgroundColor = 'transparent';
         let color = 'inherit';
@@ -173,9 +170,9 @@ function RejectedReports() {
         else if (desc === 'press release') {
           backgroundColor = '#f87171'; // red-400
           color = 'inherit';
-        } else if (desc === 'Use Of Force') {
+        } else if (desc === 'use of force') {
           backgroundColor = '#007bff'; // red-400
-          color = '#ffff';
+          color = 'inherit';
         }
 
         return (
@@ -188,7 +185,7 @@ function RejectedReports() {
               display: 'inline-block',
             }}
           >
-            {row?.ReportTypeJson || row.NarrativeDescription}
+            {row.NarrativeDescription}
           </span>
         );
       },
@@ -255,32 +252,14 @@ function RejectedReports() {
     fetchPostData('IncidentNarrativeReport/GetData_NarrativeReject', val).then((res) => {
       if (res) {
         console.log(res)
-        setNarrativeReportData(res);
+        setRejectedData(res);
         // setNameFilterData(res)
       } else {
-        setNarrativeReportData([]);
+        setRejectedData([]);
         // setNameFilterData([])
       }
     })
   }
-
-
-  const getUseOfForceReport = (OfficerID, agencyId) => {
-    const val = { 'ApprovePinID': OfficerID, 'AgencyID': agencyId }
-    if (OfficerID && agencyId) {
-      fetchPostData('CAD/UseOfForceReport/GetUseOfForceReport', val).then((res) => {
-        if (res) {
-          const Data = res?.filter((item) => item?.Status === "Rejected")
-          setUseOfForceData(Data);
-        } else {
-          setUseOfForceData([]);
-        }
-      })
-    }
-  }
-  useEffect(() => {
-    setRejectedData([...useOfForceData, ...narrativeReportData]);
-  }, [useOfForceData, narrativeReportData]);
 
   const conditionalRowStyles = [
     {

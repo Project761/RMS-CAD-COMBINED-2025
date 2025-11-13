@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { useQuery } from "react-query";
 import { compareStrings } from "../../../../CADUtils/functions/common";
 import ResourcesStatusServices from "../../../../CADServices/APIs/resourcesStatus";
+import { ScreenPermision } from "../../../../Components/hooks/Api";
 
 const ResourceStatusTabSection = ({ isViewEventDetails = false }) => {
   const { resourceData, resourceRefetch } = useContext(IncidentContext);
@@ -16,7 +17,7 @@ const ResourceStatusTabSection = ({ isViewEventDetails = false }) => {
   const [loginAgencyID, setLoginAgencyID] = useState();
   const [resourceStatusColorData, setResourceStatusColorData] = useState([]);
   const [loginPinID, setLoginPinID] = useState(1);
-
+  const [effectiveScreenPermission, setEffectiveScreenPermission] = useState(null);
   const useRouteQuery = () => {
     const params = new URLSearchParams(useLocation().search);
     return {
@@ -55,9 +56,25 @@ const ResourceStatusTabSection = ({ isViewEventDetails = false }) => {
     if (localStoreData) {
       setLoginAgencyID(localStoreData?.AgencyID);
       setLoginPinID(localStoreData?.PINID)
-
+      getScreenPermission(localStoreData?.AgencyID, localStoreData?.PINID)
     }
   }, [localStoreData]);
+
+  const getScreenPermission = (aId, pinID) => {
+    try {
+      ScreenPermision("CI103", aId, pinID).then(res => {
+        if (res) {
+          setEffectiveScreenPermission(res);
+        }
+        else {
+          setEffectiveScreenPermission(null);
+        }
+      });
+    } catch (error) {
+      console.error('There was an error!', error);
+      setEffectiveScreenPermission(null);
+    }
+  }
 
   useEffect(() => {
     if (resourceData?.length > 0) {
@@ -133,7 +150,7 @@ const ResourceStatusTabSection = ({ isViewEventDetails = false }) => {
             >
               {row.Status}
             </span>
-            {row.Status !== "AV" && (
+            {row.Status !== "AV" && effectiveScreenPermission?.[0]?.Changeok === 1 ? (
               <select
                 onChange={(e) => { if (row.Status !== e.target.value) { handleStatusChange(row, e.target.value) } }}
                 className="form-select status-dropdown"
@@ -154,7 +171,7 @@ const ResourceStatusTabSection = ({ isViewEventDetails = false }) => {
                   </option>
                 ))}
               </select>
-            )}
+            ) : <></>}
           </div>
         );
       },
@@ -174,7 +191,8 @@ const ResourceStatusTabSection = ({ isViewEventDetails = false }) => {
       <DataTable
         dense
         columns={ResourceStatusColumns}
-        data={resources}
+        data={effectiveScreenPermission ? effectiveScreenPermission?.[0]?.DisplayOK === 1 ? resources : '' : ''}
+        noDataComponent={effectiveScreenPermission ? effectiveScreenPermission?.[0]?.DisplayOK === 1 ? "There are no data to display" : "You don’t have permission to view data" : ''}
         persistTableHead={true}
         customStyles={tableCustomStyles}
         pagination // enable pagination

@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useRef } from 'react'
+import React, { useState, useEffect, useContext, useRef } from 'react'
 import Select from "react-select";
 import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,16 +14,19 @@ import {
 } from "fabric";
 import DatePicker from "react-datepicker";
 import useObjState from '../../../../../CADHook/useObjState';
-import { base64ToString, changeArrayFormat, Decrypt_Id_Name, getShowingWithOutTime, } from '../../../../Common/Utility';
+import { base64ToString, changeArrayFormat, Decrypt_Id_Name, filterPassedDateTimeZone, getShowingMonthDateYear, getShowingWithOutTime, } from '../../../../Common/Utility';
 import { changeArrayFormat_Active_InActive } from '../../../../Common/ChangeArrayFormat';
 import SelectBox from '../../../../Common/SelectBox';
 import { get_AgencyOfficer_Data, get_Report_Approve_Officer_Data } from '../../../../../redux/actions/IncidentAction';
 import { toastifySuccess } from '../../../../Common/AlertMsg';
+import { useReactToPrint } from 'react-to-print';
+import Loader from '../../../../Common/Loader';
 
 const PoliceForce = (props) => {
-  // const { DecArrestId } = props
+  const { incidentReportedDate } = props
   const deleteSelectedRef = useRef(null);
   const clearAllRef = useRef(null);
+  const componentRef = useRef();
 
   const dispatch = useDispatch();
 
@@ -41,10 +44,22 @@ const PoliceForce = (props) => {
   const [loginPinID, setLoginPinID] = useState('');
   const [useOfForceID, setUseOfForceID] = useState('');
   const [editValUseOfForce, setEditValUseOfForce] = useState([]);
-  const [selectedOption, setSelectedOption] = useState("IND");
+  const [selectedOption, setSelectedOption] = useState("Individual");
   const [IsSuperadmin, setIsSuperadmin] = useState(false);
   const [isViewMode, setIsViewMode] = useState(false);
   const [groupList, setGroupList] = useState([]);
+  const [loader, setLoader] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState(false);
+  const [isEnablePrintPreview, setIsEnablePrintPreview] = useState(true);
+  const [statesChangeStatus, setStatesChangeStatus] = useState(false);
+
+  const startRef = React.useRef();
+
+  const onKeyDown = (e) => {
+    if (e.keyCode === 9 || e.which === 9) {
+      startRef.current.setOpen(false);
+    }
+  }
 
   const useQuery = () => {
     const params = new URLSearchParams(useLocation().search);
@@ -127,10 +142,6 @@ const PoliceForce = (props) => {
     }
   }, [loginAgencyID])
 
-  const handleSelectIncidentName = (selectedOption, { name }) => {
-    const data = selectedOption.map(item => item?.value);
-    handleApprovalState("ApprovingSupervisorID", data.join(","));
-  };
 
   useEffect(() => {
     if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
@@ -175,7 +186,7 @@ const PoliceForce = (props) => {
       ambulance2: false,
       refusedTreatment2: false
     },
-    reasonForce: {
+    JsonDataReason: {
       toEffectArrest: false,
       toDefendSelf: false,
       toDefendOfficer: false,
@@ -185,7 +196,7 @@ const PoliceForce = (props) => {
       other: false,
       otherText: ''
     },
-    subjectActions: {
+    JsonDataSubjectActions: {
       nonVerbalCues: false,
       verbalThreats: false,
       deadlyPull: false,
@@ -202,7 +213,7 @@ const PoliceForce = (props) => {
       otherUnderInfluence: false,
       otherUnderInfluenceText: ''
     },
-    officerActions: {
+    JsonDataOfficerActions: {
       verbalDirection: false,
       softWeapons: false,
       hardWeapons: false,
@@ -217,7 +228,7 @@ const PoliceForce = (props) => {
       other: false,
       otherText: ''
     },
-    physicalControl: {
+    JsonDataPhysicalControl: {
       notUsed: false,
       muscling: false,
       pressurePoints: false,
@@ -231,7 +242,7 @@ const PoliceForce = (props) => {
       effectiveNo: false,
       effectiveNote: "",
     },
-    ocSpray: {
+    JsonDataOCSpray: {
       notUsed: false,
       attempted: false,
       used: false,
@@ -244,7 +255,7 @@ const PoliceForce = (props) => {
       effectiveNo: false,
       effectiveNote: "",
     },
-    aspBaton: {
+    JsonDataASPBaton: {
       notUsed: false,
       used: false,
       numStrikes: '',
@@ -253,7 +264,7 @@ const PoliceForce = (props) => {
       effectiveNo: false,
       effectiveNote: "",
     },
-    lessLethal: {
+    JsonDataNonLethal: {
       notUsed: false,
       used: false,
       beanBag: '',
@@ -265,7 +276,7 @@ const PoliceForce = (props) => {
       effectiveNo: false,
       effectiveNote: "",
     },
-    taser: {
+    JsonDataTASER: {
       notUsed: false,
       pointed: false,
       discharged: false,
@@ -282,7 +293,7 @@ const PoliceForce = (props) => {
       effectiveNo: false,
       effectiveNote: "",
     },
-    firearm: {
+    JsonDataFirearm: {
       notUsed: false,
       pointed: false,
       discharged: false,
@@ -299,7 +310,7 @@ const PoliceForce = (props) => {
       effectiveNo: false,
       effectiveNote: "",
     },
-    environmental: {
+    JsonDataEnv: {
       hot: false,
       warm: false,
       cool: false,
@@ -310,7 +321,7 @@ const PoliceForce = (props) => {
       other: false,
       otherNote: ''
     },
-    situational: {
+    JsonDataSituational: {
       multipleSuspects: false,
       hostile: false,
       threats: false,
@@ -321,12 +332,12 @@ const PoliceForce = (props) => {
       other: false,
       otherNote: ''
     },
-    officerSummary: {
+    JsonDataOfficerSummary: {
       successfulForceType: '',
       forceEffectivenessComments: '',
       reportingOfficer: ''
     },
-    supervisorReview: {
+    JsonDataSupervisor: {
       officerCount: '',
       videoReviewed: false,
       comments: '',
@@ -335,7 +346,7 @@ const PoliceForce = (props) => {
       inCompliance: false,
       investigationNeeded: false
     },
-    reviewed: {
+    JsonDataReviewed: {
       patrolLieutenantName: '',
       patrolLieutenantInCompliance: false,
       patrolLieutenantInvestigationNeeded: false,
@@ -370,7 +381,7 @@ const PoliceForce = (props) => {
       wgt: '',
     },
   });
-
+  console.log()
   const [locks, setLocks] = useState({
     address: false,
     hgt: false,
@@ -384,7 +395,7 @@ const PoliceForce = (props) => {
     clearUseOfForceBasicDetailState,
   ] = useObjState({
     ReportType: "Use Of Force",
-    ReportDateTime: new Date(datezone),
+    ReportDateTime: null,
     PreparedById: loginPinID,
     WrittenForID: "",
   });
@@ -396,7 +407,9 @@ const PoliceForce = (props) => {
     clearApprovalState,
   ] = useObjState({
     Status: "",
-    ApprovingSupervisorID: ""
+    ApprovingSupervisorID: "",
+    ApprovingSupervisorName: "",
+    Reason: ""
   });
 
   const [
@@ -417,6 +430,40 @@ const PoliceForce = (props) => {
   ] = useObjState({
     ApprovingSupervisorID: false,
   });
+
+  const handleSelectIncidentName = (selectedOption, actionMeta = {}) => {
+    console.log("selectedOption", selectedOption)
+    // selectedOption can be: array (multi), single option, or null
+    const arr = Array.isArray(selectedOption)
+      ? selectedOption
+      : selectedOption
+        ? [selectedOption]
+        : [];
+    console.log("arr", arr)
+    const ids = arr
+      .map(o => (o?.value != null ? String(o.value) : null))
+      .filter(Boolean);
+    const label = arr
+      .map(o => (o?.label != null ? String(o.label) : null))
+      .filter(Boolean);
+
+    // You were using the meta { name }, but you always set this same field anyway:
+    handleApprovalState("ApprovingSupervisorID", ids.join(","));
+    handleApprovalState("ApprovingSupervisorName", label.join(","));
+  };
+
+  // console.log("reportApproveOfficer", reportApproveOfficer)
+  // const handleSelectIncidentName = (selectedOption, { name }) => {
+  //   console.log("selectedOption", selectedOption)
+  //   const data = selectedOption.map(item => item?.value);
+  //   handleApprovalState("ApprovingSupervisorID", data.join(","));
+  // };
+
+  const selectedIds = (approvalState?.ApprovingSupervisorID || "")
+    .split(",")
+    .map(s => s.trim())
+    .filter(Boolean);
+
 
   function extractYearsAndMonths(input) {
     let years = 0;
@@ -439,18 +486,30 @@ const PoliceForce = (props) => {
   }
 
   useEffect(() => {
+    console.log("editValUseOfForce", editValUseOfForce)
+    console.log("editValUseOfForce", editValUseOfForce)
     const useForceSectionData = editValUseOfForce?.Table?.[0];
-    const table1UseOfForce = editValUseOfForce?.Table1?.[0]?.useOfForce;
+    const table1UseOfForce = editValUseOfForce?.Table1?.[0];
     const prefer = (primary, fallback) => {
+
       const isMissing =
+
         primary === undefined ||
+
         primary === null ||
+
         (typeof primary === "string" && primary.trim() === "");
+
       return !isMissing ? primary : fallback;
+
     };
-    const addressInit = prefer(useForceSectionData?.Address, table1UseOfForce?.address);
-    const hgtInit = prefer(useForceSectionData?.Height, table1UseOfForce?.hgt);
-    const wgtInit = prefer(useForceSectionData?.Weight, table1UseOfForce?.wgt);
+
+    const addressInit = prefer(useForceSectionData?.Address, table1UseOfForce?.Address);
+
+    const hgtInit = prefer(useForceSectionData?.Height, table1UseOfForce?.Hgt);
+
+    const wgtInit = prefer(useForceSectionData?.Weight, table1UseOfForce?.Wgt);
+
     const { years, months } = extractYearsAndMonths(useForceSectionData?.TimeOnDept);
     setUseOfForce({
       useOfForce: {
@@ -470,7 +529,7 @@ const PoliceForce = (props) => {
         subjectName: useForceSectionData?.Arrestee_Name,
         race: useForceSectionData?.Race_Code,
         sex: useForceSectionData?.Gender_Code,
-        dob: useForceSectionData?.DOB,
+        dob: useForceSectionData?.DOB || '',
         age: useForceSectionData?.Age,
         address: addressInit ?? "",
         hgt: hgtInit ?? "",
@@ -490,26 +549,78 @@ const PoliceForce = (props) => {
       wgt: !!wgtInit,
     }));
     if (useOfForceID) {
-      setFormData(editValUseOfForce?.Table1?.[0] || {})
+      const t1 = editValUseOfForce?.Table1?.[0] ?? {};
+      const t2 = editValUseOfForce?.Table2?.[0] ?? {};
+      const t3 = editValUseOfForce?.Table3?.[0] ?? {};
+      const t4 = editValUseOfForce?.Table4?.[0] ?? {};
+      const t5 = editValUseOfForce?.Table5?.[0] ?? {};
+      const t6 = editValUseOfForce?.Table6?.[0] ?? {};
+      const t7 = editValUseOfForce?.Table7?.[0] ?? {};
+      const t8 = editValUseOfForce?.Table8?.[0] ?? {};
+      const t9 = editValUseOfForce?.Table9?.[0] ?? {};
+      const t10 = editValUseOfForce?.Table10?.[0] ?? {};
+      const t11 = editValUseOfForce?.Table11?.[0] ?? {};
+      const t12 = editValUseOfForce?.Table12?.[0] ?? {};
+      const t13 = editValUseOfForce?.Table13?.[0] ?? {};
+      const t14 = editValUseOfForce?.Table14?.[0] ?? {};
+      const t15 = editValUseOfForce?.Table15?.[0] ?? {};
 
-      editCanvasData(editValUseOfForce?.Table1?.[0]?.canvasData || {})
+      setFormData(prev => ({
+        ...prev,
+
+        useOfForceSecond: {
+          subjectInjuredYes: t1.SubjectInjuredYes,
+          subjectInjuredNo: t1.SubjectInjuredNo,
+          subjectInjuredNote: t1.SubjectInjuredNote,
+          transportedTo1: t1.TransportedTo1,
+          transportedTo2: t1.TransportedTo2,
+          ambulance1: t1.Ambulance1,
+          refusedTreatment1: t1.RefusedTreatment1,
+          officerInjuryYes: t1.OfficerInjuryYes,
+          officerInjuryNo: t1.OfficerInjuryNo,
+          officerInjuryNote: t1.OfficerInjuryNote,
+          ambulance2: t1.Ambulance2,
+          refusedTreatment2: t1.RefusedTreatment2,
+        },
+
+        JsonDataASPBaton: t2,
+        JsonDataEnv: t3,
+        JsonDataFirearm: t4,
+        JsonDataNonLethal: t5,
+        JsonDataOCSpray: t6,
+        JsonDataOfficerSummary: t7,
+        JsonDataOfficerActions: t8,
+        JsonDataPhysicalControl: t9,
+        JsonDataReason: t10,
+        JsonDataReviewed: t11,
+        JsonDataSituational: t12,
+        JsonDataSubjectActions: t13,
+        JsonDataSupervisor: t14,
+        JsonDataTASER: t15,
+      }));
+
+      editCanvasData(editValUseOfForce?.Table16?.[0]?.ForceLocationDiagram || {})
       setUseOfForceBasicDetailState({
         ReportType: "Use Of Force",
-        ReportDateTime: editValUseOfForce?.Table1?.[0]?.useOfForceBasicDetailState?.ReportDateTime ? new Date(editValUseOfForce?.Table1?.[0]?.useOfForceBasicDetailState?.ReportDateTime) : "",
-        PreparedById: editValUseOfForce?.Table1?.[0]?.useOfForceBasicDetailState?.PreparedById,
-        WrittenForID: editValUseOfForce?.Table1?.[0]?.useOfForceBasicDetailState?.WrittenForID,
+        ReportDateTime: editValUseOfForce?.Table1?.[0]?.ReportDateTime ? getShowingMonthDateYear(editValUseOfForce?.Table1?.[0]?.ReportDateTime) : "",
+        PreparedById: editValUseOfForce?.Table1?.[0]?.PreparedById,
+        WrittenForID: editValUseOfForce?.Table1?.[0]?.WrittenForID,
       })
       setApprovalState({
         Status: editValUseOfForce?.Table1?.[0]?.Status || "",
         ApprovingSupervisorID: editValUseOfForce?.Table1?.[0]?.ApprovePinID || "",
+        Reason: editValUseOfForce?.Table1?.[0]?.Reason || "",
       })
       setIsViewMode(editValUseOfForce?.Table1?.[0]?.Status === "Pending Review" || editValUseOfForce?.Table1?.[0]?.Status === "Approved")
-      setSelectedOption(editValUseOfForce?.Table1?.[0]?.ReportApproveType || "IND")
+      setSelectedOption(editValUseOfForce?.Table1?.[0]?.ReportApproveType || "Individual")
 
     }
   }, [editValUseOfForce, changesStatusCount, reportApproveOfficer]);
 
   const handleInputChange = (field, value) => {
+    setIsEnablePrintPreview(false)
+    setStatesChangeStatus(true)
+
     if (field.includes('.')) {
       const [section, subField] = field.split('.');
       setFormData(prev => ({
@@ -528,6 +639,8 @@ const PoliceForce = (props) => {
   };
 
   const handleInputChangeUseOfForce = (field, value) => {
+    setStatesChangeStatus(true)
+    setIsEnablePrintPreview(false)
     if (field.includes('.')) {
       const [section, subField] = field.split('.');
       setUseOfForce(prev => ({
@@ -546,11 +659,13 @@ const PoliceForce = (props) => {
   };
 
   const handleRadioChange = (e) => {
+
     const selectedValue = e.target.value;
     setSelectedOption(selectedValue);
     setApprovalState((prev) => ({
       ...prev,
-      ApprovingSupervisorID: ""
+      ApprovingSupervisorID: "",
+      ApprovingSupervisorName: ""
     }));
   };
 
@@ -587,50 +702,64 @@ const PoliceForce = (props) => {
     });
     return !isError;
   };
-
   const addUseOfForceForm = () => {
     if (!validateForm()) return;
     const canvasData = fabricCanvas.toJSON();
-    const { useOfForce: _, ...formDataWithoutUseOfForce } = formData || {};
+
+    const { useOfForce: _, useOfForceSecond
+      , ...formDataWithoutUseOfForce } = formData || {};
 
     const payload = {
-      ...useOfForce,
       ...formDataWithoutUseOfForce,
-      useOfForceBasicDetailState: useOfForceBasicDetailState,
-      agencyId: loginAgencyID,
-      incidentId: IncID,
-      arrestId: DecArrestId,
-      canvasData: canvasData,
+      JsonData: { ...useOfForce?.useOfForce, ...useOfForceSecond },
+      AgencyID: loginAgencyID,
+      IncidentID: IncID,
+      ArrestID: DecArrestId,
+      ForceLocationDiagram: canvasData,
       CreatedByUserFK: loginPinID,
+      ReportType: useOfForceBasicDetailState?.ReportType,
+      ReportDateTime: getShowingMonthDateYear(useOfForceBasicDetailState?.ReportDateTime),
+      PreparedById: useOfForceBasicDetailState?.PreparedById,
+      WrittenForID: useOfForceBasicDetailState?.WrittenForID
     };
-    AddDeleteUpadate('/CAD/UseOfForce/InsertUseOfForce', payload).then((res) => {
+
+    AddDeleteUpadate('/UseOfForceSupplement/UpsertUseOfForceSupplement', payload).then((res) => {
       toastifySuccess("Use of Force added successfully")
       const parsedData = JSON.parse(res.data);
       GetUseOfForceSingleData(DecArrestId)
+      setIsEnablePrintPreview(true)
+      setStatesChangeStatus(false)
     });
   }
 
   const updateUseOfForceForm = () => {
     if (!validateForm()) return;
-    const canvasData = fabricCanvas.toJSON();
-    const { useOfForce: _, ...formDataWithoutUseOfForce } = formData || {};
 
+
+    const canvasData = fabricCanvas.toJSON();
+    const { useOfForce: _, useOfForceSecond
+      , ...formDataWithoutUseOfForce } = formData || {};
     const payload = {
-      ...useOfForce,
       ...formDataWithoutUseOfForce,
-      useOfForceBasicDetailState: useOfForceBasicDetailState,
-      UseofForceID: useOfForceID,
-      agencyId: loginAgencyID,
-      incidentId: IncID,
-      arrestId: DecArrestId,
-      canvasData: canvasData,
+      JsonData: { ...useOfForce?.useOfForce, ...useOfForceSecond },
+      UseOfForceSupplementID: useOfForceID,
+      AgencyID: loginAgencyID,
+      IncidentID: IncID,
+      ArrestID: DecArrestId,
+      ForceLocationDiagram: canvasData,
       ModifiedByUserFK: loginPinID,
+      ReportType: useOfForceBasicDetailState?.ReportType,
+      ReportDateTime: getShowingMonthDateYear(useOfForceBasicDetailState?.ReportDateTime),
+      PreparedById: useOfForceBasicDetailState?.PreparedById,
+      WrittenForID: useOfForceBasicDetailState?.WrittenForID
     };
-    AddDeleteUpadate('/CAD/UseOfForce/UpdateUseOfForce', payload).then((res) => {
-      toastifySuccess("Use of Force updated successfully");
+
+    AddDeleteUpadate('/UseOfForceSupplement/UpsertUseOfForceSupplement', payload).then((res) => {
+      toastifySuccess("Use of Force updated successfully")
       const parsedData = JSON.parse(res.data);
       GetUseOfForceSingleData(DecArrestId)
-
+      setIsEnablePrintPreview(true)
+      setStatesChangeStatus(false)
     });
   }
 
@@ -649,21 +778,39 @@ const PoliceForce = (props) => {
     return !isError;
   };
   const Add_Approval = async (id) => {
+
     if (!validateApprovalForm()) return;
+    updateUseOfForceForm()
+
     const val = {
+      // "UseofForceID": useOfForceID,
+      // "ArrestID": DecArrestId,
+      // "IncidentID": IncID,
+      // "ReportApproveType": selectedOption,    // Individual // Group
+      // "ApprovePinID": approvalState?.ApprovingSupervisorID,    // Report Approver
+      // "CreatedByUserFK": loginPinID,
+      // "Status": "Pending Review",
+
       "UseofForceID": useOfForceID,
-      "ArrestID": DecArrestId,
-      "IncidentID": IncID,
-      "ReportApproveType": selectedOption,    // IND // Group
-      "ApprovePinID": approvalState?.ApprovingSupervisorID,    // Report Approver
+      // "ArrestID": DecArrestId,
+      "IncidentId": IncID,
+      "NarrativeID": null,
+      "ApprovingSupervisorType": selectedOption,
+      "ApprovingSupervisorID": approvalState?.ApprovingSupervisorID,
+      "IsApprove": "",
       "CreatedByUserFK": loginPinID,
-      "Status": "Pending Review",
+      "IsReject": "",
+      "Comments": "",
+      "ApprovingSupervisorName": approvalState?.ApprovingSupervisorName,
+      // "IPAddress": "180.211.110.2"
     };
 
-    AddDeleteUpadate('CAD/UseOfForceApprove/UseOfForceApprove', val)
+    AddDeleteUpadate('IncidentNarrativeReport/Insert_IncidentNarrativeReport', val)
       .then((res) => {
         if (res.success) {
           GetUseOfForceSingleData(DecArrestId)
+          setIsEnablePrintPreview(true)
+          setStatesChangeStatus(false)
 
           const parsedData = JSON.parse(res.data);
           const message = parsedData.Table[0].Message;
@@ -685,12 +832,14 @@ const PoliceForce = (props) => {
   };
 
   const handleDeleteSelected = () => {
+    setStatesChangeStatus(true)
     if (deleteSelectedRef.current) {
       deleteSelectedRef.current();
     }
   };
 
   const handleClearAll = () => {
+    setStatesChangeStatus(true)
     if (clearAllRef.current) {
       clearAllRef.current();
     }
@@ -715,14 +864,14 @@ const PoliceForce = (props) => {
 
   useEffect(() => {
     const canvas = new FabricCanvas(canvasRef.current, {
-      width: 380,
+      width: 400,
       height: 400,
       backgroundColor: "#ffffff",
     });
     wireUniformScaling(canvas);
     // Load background image
     FabricImage.fromURL(
-      "/image.jpg"
+      "/image.png"
     )
       .then((img) => {
         if (!img) return;
@@ -1055,10 +1204,28 @@ const PoliceForce = (props) => {
     },
   };
 
+  const printForm = useReactToPrint({
+    content: () => componentRef.current,
+    documentTitle: 'Use Of Force',
+    onBeforeGetContent: () => {
+      setLoader(true);
+    },
+    onAfterPrint: () => {
+      setSelectedStatus(false);
+      setLoader(false);
+    },
+  })
+
+  useEffect(() => {
+    if (selectedStatus) {
+      printForm();
+    }
+  }, [selectedStatus]);
+
   return (
     <>
       <style jsx>{`
-         body {
+    body {
       background-color: white;
       color: black;
     }
@@ -1118,6 +1285,30 @@ const PoliceForce = (props) => {
       flex-shrink: 0;
       margin-right: 6px; /* tweak as needed */
     }
+
+    .new-page {
+      page-break-before: always;
+    }
+
+    .no-break {
+      page-break-inside: avoid; /* Prevent divs from breaking across pages */
+    }
+
+    .page-number {
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: black;
+    }
+
+    @media print {
+      @page {
+        size: 8.5in 11in; /* Set page size to 8.5 inches by 11 inches (Letter size) */
+        margin: 5mm; /* Set margins, you can adjust as per your requirement */
+      }
+    }
            `}
       </style>
       <div className="col-12 col-md-12 pt-2 p-0 child" >
@@ -1127,7 +1318,8 @@ const PoliceForce = (props) => {
             cursor: isViewMode ? 'not-allowed' : 'auto',  // Change cursor to indicate it's read-only
           }}
         >
-          <div className="col-12">
+          {/* print start */}
+          <div className="col-12" ref={componentRef}>
             {/* use of force form start */}
             <div className="row mt-2" style={{ minHeight: '100vh', backgroundColor: 'white' }}>
               <div className="container-fluid">
@@ -1141,7 +1333,7 @@ const PoliceForce = (props) => {
                 {/* Main Content */}
                 <div>
                   {/* Use of Force Section */}
-                  <div className="position-relative mb-4 form-section p-3">
+                  <div className="position-relative mb-4 form-section p-3 no-break">
                     <div className="section-title">Use of Force:</div>
                     <div className="pt-2 row g-2" style={{ fontSize: '12px' }}>
                       <div className="col-2 d-flex align-items-center">
@@ -1364,7 +1556,7 @@ const PoliceForce = (props) => {
                           }}
                         />
                       </div>
-                      <div className="col-1 d-flex align-items-center">
+                      <div className="col-2 d-flex align-items-center">
                         <span className="me-1 label-nowrap">Sex:</span>
                         <input
                           type="text"
@@ -1391,9 +1583,7 @@ const PoliceForce = (props) => {
                             color: '#333333',
                           }}
                         />
-                      </div>
-                      <div className="col-1 d-flex align-items-center">
-                        <span className="me-1 label-nowrap">Age:</span>
+                        <span className="label-nowrap">Age:</span>
                         <input
                           type="text"
                           className="form-input flex-fill"
@@ -1403,6 +1593,7 @@ const PoliceForce = (props) => {
                           disabled
                           style={{
                             color: '#333333',
+                            width: "8px"
                           }}
                         />
                       </div>
@@ -1452,11 +1643,11 @@ const PoliceForce = (props) => {
                             style={{ flexGrow: 1, color: '#333333' }} // Makes the input take up the available space
                             value={useOfForce?.useOfForce?.wgt || ""}
                             onChange={(e) => {
-                              if (!locks.wgt) {
-                                handleInputChangeUseOfForce('useOfForce.wgt', e.target.value);
-                              }
+                              // if (!locks.wgt) {
+                              handleInputChangeUseOfForce('useOfForce.wgt', e.target.value);
+                              // }
                             }}
-                            readOnly={locks.wgt}
+                          // readOnly={locks.wgt}
                           />
                         </div>
                       </div>
@@ -1565,7 +1756,7 @@ const PoliceForce = (props) => {
                   </div>
 
                   {/* Reason for Use of Force Section */}
-                  <div className="position-relative mb-4 form-section p-3">
+                  <div className="position-relative mb-4 form-section p-3 no-break">
                     <div className="section-title">Reason for Use of Force:</div>
                     <div className="pt-2 row g-4" style={{ fontSize: '12px' }}>
                       <div className="col-4">
@@ -1574,8 +1765,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.reasonForce?.toEffectArrest}
-                              onChange={(e) => handleInputChange('reasonForce.toEffectArrest', e.target.checked)}
+                              checked={formData?.JsonDataReason?.toEffectArrest}
+                              onChange={(e) => handleInputChange('JsonDataReason.toEffectArrest', e.target.checked)}
                             />
                             <span>To Effect Arrest</span>
                           </label>
@@ -1583,8 +1774,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.reasonForce?.toDefendSelf}
-                              onChange={(e) => handleInputChange('reasonForce.toDefendSelf', e.target.checked)}
+                              checked={formData?.JsonDataReason?.toDefendSelf}
+                              onChange={(e) => handleInputChange('JsonDataReason.toDefendSelf', e.target.checked)}
                             />
                             <span>To Defend Self</span>
                           </label>
@@ -1596,8 +1787,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.reasonForce?.toDefendOfficer}
-                              onChange={(e) => handleInputChange('reasonForce.toDefendOfficer', e.target.checked)}
+                              checked={formData?.JsonDataReason?.toDefendOfficer}
+                              onChange={(e) => handleInputChange('JsonDataReason.toDefendOfficer', e.target.checked)}
                             />
                             <span>To Defend Another Officer</span>
                           </label>
@@ -1605,8 +1796,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.reasonForce?.toDefendPerson}
-                              onChange={(e) => handleInputChange('reasonForce.toDefendPerson', e.target.checked)}
+                              checked={formData?.JsonDataReason?.toDefendPerson}
+                              onChange={(e) => handleInputChange('JsonDataReason.toDefendPerson', e.target.checked)}
                             />
                             <span>To Defend Another Person</span>
                           </label>
@@ -1618,8 +1809,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.reasonForce?.toPreventOffense}
-                              onChange={(e) => handleInputChange('reasonForce.toPreventOffense', e.target.checked)}
+                              checked={formData?.JsonDataReason?.toPreventOffense}
+                              onChange={(e) => handleInputChange('JsonDataReason.toPreventOffense', e.target.checked)}
                             />
                             <span>To Prevent Offense</span>
                           </label>
@@ -1627,8 +1818,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.reasonForce?.restrainSafety}
-                              onChange={(e) => handleInputChange('reasonForce.restrainSafety', e.target.checked)}
+                              checked={formData?.JsonDataReason?.restrainSafety}
+                              onChange={(e) => handleInputChange('JsonDataReason.restrainSafety', e.target.checked)}
                             />
                             <span>Restrain for Subject Safety</span>
                           </label>
@@ -1640,22 +1831,22 @@ const PoliceForce = (props) => {
                         <input
                           type="checkbox"
                           className="form-checkbox me-2"
-                          checked={formData?.reasonForce?.other}
-                          onChange={(e) => handleInputChange('reasonForce.other', e.target.checked)}
+                          checked={formData?.JsonDataReason?.other}
+                          onChange={(e) => handleInputChange('JsonDataReason.other', e.target.checked)}
                         />
                         <span>Other:</span>
                       </label>
                       <input
                         type="text"
                         className="form-input flex-fill"
-                        value={formData?.reasonForce?.otherText}
-                        onChange={(e) => handleInputChange('reasonForce.otherText', e.target.value)}
+                        value={formData?.JsonDataReason?.otherText}
+                        onChange={(e) => handleInputChange('JsonDataReason.otherText', e.target.value)}
                       />
                     </div>
                   </div>
 
                   {/* Subject's Actions Section */}
-                  <div className="position-relative mb-4 form-section p-3">
+                  <div className="position-relative mb-4 form-section p-3 no-break">
                     <div className="section-title">Subject's Actions:</div>
                     <div className="pt-2 row g-4" style={{ fontSize: '12px' }}>
                       <div className="col-6">
@@ -1664,8 +1855,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.subjectActions?.nonVerbalCues}
-                              onChange={(e) => handleInputChange('subjectActions.nonVerbalCues', e.target.checked)}
+                              checked={formData?.JsonDataSubjectActions?.nonVerbalCues}
+                              onChange={(e) => handleInputChange('JsonDataSubjectActions.nonVerbalCues', e.target.checked)}
                             />
                             <span>Nonverbal cues indicating physical resistance</span>
                           </label>
@@ -1673,8 +1864,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.subjectActions?.verbalThreats}
-                              onChange={(e) => handleInputChange('subjectActions.verbalThreats', e.target.checked)}
+                              checked={formData?.JsonDataSubjectActions?.verbalThreats}
+                              onChange={(e) => handleInputChange('JsonDataSubjectActions.verbalThreats', e.target.checked)}
                             />
                             <span>Verbal threats, non-compliance with officer direction</span>
                           </label>
@@ -1682,8 +1873,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.subjectActions?.deadlyPull}
-                              onChange={(e) => handleInputChange('subjectActions.deadlyPull', e.target.checked)}
+                              checked={formData?.JsonDataSubjectActions?.deadlyPull}
+                              onChange={(e) => handleInputChange('JsonDataSubjectActions.deadlyPull', e.target.checked)}
                             />
                             <span>Dead weight, clinging to objects, preventing custody</span>
                           </label>
@@ -1691,8 +1882,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.subjectActions?.pulling}
-                              onChange={(e) => handleInputChange('subjectActions.pulling', e.target.checked)}
+                              checked={formData?.JsonDataSubjectActions?.pulling}
+                              onChange={(e) => handleInputChange('JsonDataSubjectActions.pulling', e.target.checked)}
                             />
                             <span>Pulling, pushing, running away, to avoid control, not harming officer</span>
                           </label>
@@ -1700,8 +1891,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.subjectActions?.assault}
-                              onChange={(e) => handleInputChange('subjectActions.assault', e.target.checked)}
+                              checked={formData?.JsonDataSubjectActions?.assault}
+                              onChange={(e) => handleInputChange('JsonDataSubjectActions.assault', e.target.checked)}
                             />
                             <span>Assault, grabbing, pushing, kicking, striking officer or another</span>
                           </label>
@@ -1709,8 +1900,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.subjectActions?.assaultIntent}
-                              onChange={(e) => handleInputChange('subjectActions.assaultIntent', e.target.checked)}
+                              checked={formData?.JsonDataSubjectActions?.assaultIntent}
+                              onChange={(e) => handleInputChange('JsonDataSubjectActions.assaultIntent', e.target.checked)}
                             />
                             <span>Assault with intent and ability to cause death or SBI</span>
                           </label>
@@ -1718,8 +1909,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.subjectActions?.assaultWeapon}
-                              onChange={(e) => handleInputChange('subjectActions.assaultWeapon', e.target.checked)}
+                              checked={formData?.JsonDataSubjectActions?.assaultWeapon}
+                              onChange={(e) => handleInputChange('JsonDataSubjectActions.assaultWeapon', e.target.checked)}
                             />
                             <span>Assault or threats with deadly weapon</span>
                           </label>
@@ -1733,8 +1924,8 @@ const PoliceForce = (props) => {
                               type="text"
                               className="form-input ms-2"
                               // style={{ width: '60px' }}
-                              value={formData?.subjectActions?.numberOfSuspects}
-                              onChange={(e) => handleInputChange('subjectActions.numberOfSuspects', e.target.value)}
+                              value={formData?.JsonDataSubjectActions?.numberOfSuspects}
+                              onChange={(e) => handleInputChange('JsonDataSubjectActions.numberOfSuspects', e.target.value)}
                             />
                           </label>
                         </div>
@@ -1745,8 +1936,8 @@ const PoliceForce = (props) => {
                               <input
                                 type="checkbox"
                                 className="form-checkbox me-2"
-                                checked={formData?.subjectActions?.alcohol}
-                                onChange={(e) => handleInputChange('subjectActions.alcohol', e.target.checked)}
+                                checked={formData?.JsonDataSubjectActions?.alcohol}
+                                onChange={(e) => handleInputChange('JsonDataSubjectActions.alcohol', e.target.checked)}
                               />
                               <span>Alcohol</span>
                             </label>
@@ -1754,8 +1945,8 @@ const PoliceForce = (props) => {
                               <input
                                 type="checkbox"
                                 className="form-checkbox me-2"
-                                checked={formData?.subjectActions?.drugs}
-                                onChange={(e) => handleInputChange('subjectActions.drugs', e.target.checked)}
+                                checked={formData?.JsonDataSubjectActions?.drugs}
+                                onChange={(e) => handleInputChange('JsonDataSubjectActions.drugs', e.target.checked)}
                               />
                               <span>Drugs</span>
                             </label>
@@ -1763,8 +1954,8 @@ const PoliceForce = (props) => {
                               <input
                                 type="checkbox"
                                 className="form-checkbox me-2"
-                                checked={formData?.subjectActions?.mentalIssues}
-                                onChange={(e) => handleInputChange('subjectActions.mentalIssues', e.target.checked)}
+                                checked={formData?.JsonDataSubjectActions?.mentalIssues}
+                                onChange={(e) => handleInputChange('JsonDataSubjectActions.mentalIssues', e.target.checked)}
                               />
                               <span>Mental Issues</span>
                             </label>
@@ -1773,8 +1964,8 @@ const PoliceForce = (props) => {
                                 <input
                                   type="checkbox"
                                   className="form-checkbox me-2"
-                                  checked={formData?.subjectActions?.otherUnderInfluence}
-                                  onChange={(e) => handleInputChange('subjectActions.otherUnderInfluence', e.target.checked)}
+                                  checked={formData?.JsonDataSubjectActions?.otherUnderInfluence}
+                                  onChange={(e) => handleInputChange('JsonDataSubjectActions.otherUnderInfluence', e.target.checked)}
                                 />
                                 <span>Other:</span>
                               </label>
@@ -1782,8 +1973,8 @@ const PoliceForce = (props) => {
                                 type="text"
                                 className="form-input ms-2"
                                 // style={{ width: '60px' }}
-                                value={formData?.subjectActions?.otherUnderInfluenceText}
-                                onChange={(e) => handleInputChange('subjectActions.otherUnderInfluenceText', e.target.value)}
+                                value={formData?.JsonDataSubjectActions?.otherUnderInfluenceText}
+                                onChange={(e) => handleInputChange('JsonDataSubjectActions.otherUnderInfluenceText', e.target.value)}
                               />
                             </div>
                           </div>
@@ -1795,22 +1986,22 @@ const PoliceForce = (props) => {
                         <input
                           type="checkbox"
                           className="form-checkbox me-2"
-                          checked={formData?.subjectActions?.other}
-                          onChange={(e) => handleInputChange('subjectActions.other', e.target.checked)}
+                          checked={formData?.JsonDataSubjectActions?.other}
+                          onChange={(e) => handleInputChange('JsonDataSubjectActions.other', e.target.checked)}
                         />
                         <span>Other:</span>
                       </label>
                       <input
                         type="text"
                         className="form-input flex-fill"
-                        value={formData?.subjectActions?.otherText}
-                        onChange={(e) => handleInputChange('subjectActions.otherText', e.target.value)}
+                        value={formData?.JsonDataSubjectActions?.otherText}
+                        onChange={(e) => handleInputChange('JsonDataSubjectActions.otherText', e.target.value)}
                       />
                     </div>
                   </div>
 
                   {/* Officer Actions Section */}
-                  <div className="position-relative mb-4 form-section p-3">
+                  <div className="position-relative mb-4 form-section p-3 no-break">
                     <div className="section-title">Officer Actions: (Check all that apply, if more than one type of force used, number in order of use.)</div>
                     <div className="pt-2 row g-1" style={{ fontSize: '12px' }}>
                       <div className="col-7">
@@ -1819,8 +2010,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.officerActions?.verbalDirection}
-                              onChange={(e) => handleInputChange('officerActions.verbalDirection', e.target.checked)}
+                              checked={formData?.JsonDataOfficerActions?.verbalDirection}
+                              onChange={(e) => handleInputChange('JsonDataOfficerActions.verbalDirection', e.target.checked)}
                             />
                             <span>Verbal Direction</span>
                           </label>
@@ -1828,8 +2019,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.officerActions?.softWeapons}
-                              onChange={(e) => handleInputChange('officerActions.softWeapons', e.target.checked)}
+                              checked={formData?.JsonDataOfficerActions?.softWeapons}
+                              onChange={(e) => handleInputChange('JsonDataOfficerActions.softWeapons', e.target.checked)}
                             />
                             <span>Soft Weaponless Control  <span style={{ fontSize: "11px" }}> (Muscling, joint locks, pressure points)</span></span>
                           </label>
@@ -1837,8 +2028,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.officerActions?.hardWeapons}
-                              onChange={(e) => handleInputChange('officerActions.hardWeapons', e.target.checked)}
+                              checked={formData?.JsonDataOfficerActions?.hardWeapons}
+                              onChange={(e) => handleInputChange('JsonDataOfficerActions.hardWeapons', e.target.checked)}
                             />
                             <span>Hard Weaponless Control<span style={{ fontSize: "11px" }}>(Hard strikes, leg strikes, shoulder pin)</span></span>
                           </label>
@@ -1846,8 +2037,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.officerActions?.ocSpray}
-                              onChange={(e) => handleInputChange('officerActions.ocSpray', e.target.checked)}
+                              checked={formData?.JsonDataOfficerActions?.ocSpray}
+                              onChange={(e) => handleInputChange('JsonDataOfficerActions.ocSpray', e.target.checked)}
                             />
                             <span>OC Spray</span>
                           </label>
@@ -1855,8 +2046,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.officerActions?.aspBaton}
-                              onChange={(e) => handleInputChange('officerActions.aspBaton', e.target.checked)}
+                              checked={formData?.JsonDataOfficerActions?.aspBaton}
+                              onChange={(e) => handleInputChange('JsonDataOfficerActions.aspBaton', e.target.checked)}
                             />
                             <span>Asp/Baton</span>
                           </label>
@@ -1864,8 +2055,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.officerActions?.nonLethal}
-                              onChange={(e) => handleInputChange('officerActions.nonLethal', e.target.checked)}
+                              checked={formData?.JsonDataOfficerActions?.nonLethal}
+                              onChange={(e) => handleInputChange('JsonDataOfficerActions.nonLethal', e.target.checked)}
                             />
                             <span>Non-Lethal<span style={{ fontSize: "11px" }}>(Pepperball)</span></span>
                           </label>
@@ -1877,8 +2068,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.officerActions?.lessLethal}
-                              onChange={(e) => handleInputChange('officerActions.lessLethal', e.target.checked)}
+                              checked={formData?.JsonDataOfficerActions?.lessLethal}
+                              onChange={(e) => handleInputChange('JsonDataOfficerActions.lessLethal', e.target.checked)}
                             />
                             <span>Less Lethal Munitions<span style={{ fontSize: "11px" }}>(Bean bag, stinger, rubber)</span></span>
                           </label>
@@ -1886,8 +2077,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.officerActions?.pointedTaser}
-                              onChange={(e) => handleInputChange('officerActions.pointedTaser', e.target.checked)}
+                              checked={formData?.JsonDataOfficerActions?.pointedTaser}
+                              onChange={(e) => handleInputChange('JsonDataOfficerActions.pointedTaser', e.target.checked)}
                             />
                             <span>Pointed Taser<span style={{ fontSize: "11px" }}>(Laser)</span></span>
                           </label>
@@ -1895,8 +2086,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.officerActions?.dischargedTaser}
-                              onChange={(e) => handleInputChange('officerActions.dischargedTaser', e.target.checked)}
+                              checked={formData?.JsonDataOfficerActions?.dischargedTaser}
+                              onChange={(e) => handleInputChange('JsonDataOfficerActions.dischargedTaser', e.target.checked)}
                             />
                             <span>Discharged Taser</span>
                           </label>
@@ -1904,8 +2095,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.officerActions?.pointedFirearm}
-                              onChange={(e) => handleInputChange('officerActions.pointedFirearm', e.target.checked)}
+                              checked={formData?.JsonDataOfficerActions?.pointedFirearm}
+                              onChange={(e) => handleInputChange('JsonDataOfficerActions.pointedFirearm', e.target.checked)}
                             />
                             <span>Pointed Firearm</span>
                           </label>
@@ -1913,8 +2104,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.officerActions?.dischargedFirearm}
-                              onChange={(e) => handleInputChange('officerActions.dischargedFirearm', e.target.checked)}
+                              checked={formData?.JsonDataOfficerActions?.dischargedFirearm}
+                              onChange={(e) => handleInputChange('JsonDataOfficerActions.dischargedFirearm', e.target.checked)}
                             />
                             <span>Discharged Firearm</span>
                           </label>
@@ -1923,8 +2114,8 @@ const PoliceForce = (props) => {
                               <input
                                 type="checkbox"
                                 className="form-checkbox me-2"
-                                checked={formData?.officerActions?.other}
-                                onChange={(e) => handleInputChange('officerActions.other', e.target.checked)}
+                                checked={formData?.JsonDataOfficerActions?.other}
+                                onChange={(e) => handleInputChange('JsonDataOfficerActions.other', e.target.checked)}
                               />
                               <span>Other:</span>
                             </label>
@@ -1932,8 +2123,8 @@ const PoliceForce = (props) => {
                               type="text"
                               className="form-input me-2"
                               // style={{ width: '60px' }}
-                              value={formData?.officerActions?.otherText}
-                              onChange={(e) => handleInputChange('officerActions.otherText', e.target.value)}
+                              value={formData?.JsonDataOfficerActions?.otherText}
+                              onChange={(e) => handleInputChange('JsonDataOfficerActions.otherText', e.target.value)}
                             />
                           </div>
                         </div>
@@ -1941,7 +2132,7 @@ const PoliceForce = (props) => {
                     </div>
                   </div>
                   {/* Physical Control Section */}
-                  <div className="position-relative mb-4 form-section p-3">
+                  <div className="position-relative mb-4 form-section p-3 no-break">
                     <div>Physical Control:</div>
                     <div className="pt-2 row g-4" style={{ fontSize: '12px' }}>
                       <div className="col-4">
@@ -1950,8 +2141,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.physicalControl?.notUsed}
-                              onChange={(e) => handleInputChange('physicalControl.notUsed', e.target.checked)}
+                              checked={formData?.JsonDataPhysicalControl?.notUsed}
+                              onChange={(e) => handleInputChange('JsonDataPhysicalControl.notUsed', e.target.checked)}
                             />
                             <span>Not Used</span>
                           </label>
@@ -1959,8 +2150,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.physicalControl?.muscling}
-                              onChange={(e) => handleInputChange('physicalControl.muscling', e.target.checked)}
+                              checked={formData?.JsonDataPhysicalControl?.muscling}
+                              onChange={(e) => handleInputChange('JsonDataPhysicalControl.muscling', e.target.checked)}
                             />
                             <span>Muscling <span style={{ fontSize: "11px" }}>(grip, push, pull)</span></span>
                           </label>
@@ -1972,8 +2163,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.physicalControl?.pressurePoints}
-                              onChange={(e) => handleInputChange('physicalControl.pressurePoints', e.target.checked)}
+                              checked={formData?.JsonDataPhysicalControl?.pressurePoints}
+                              onChange={(e) => handleInputChange('JsonDataPhysicalControl.pressurePoints', e.target.checked)}
                             />
                             <span>Pressure Points</span>
                           </label>
@@ -1981,8 +2172,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.physicalControl?.jointLock}
-                              onChange={(e) => handleInputChange('physicalControl.jointLock', e.target.checked)}
+                              checked={formData?.JsonDataPhysicalControl?.jointLock}
+                              onChange={(e) => handleInputChange('JsonDataPhysicalControl.jointLock', e.target.checked)}
                             />
                             <span>Joint Lock</span>
                           </label>
@@ -1994,8 +2185,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.physicalControl?.takedown}
-                              onChange={(e) => handleInputChange('physicalControl.takedown', e.target.checked)}
+                              checked={formData?.JsonDataPhysicalControl?.takedown}
+                              onChange={(e) => handleInputChange('JsonDataPhysicalControl.takedown', e.target.checked)}
                             />
                             <span>Takedown</span>
                           </label>
@@ -2003,8 +2194,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.physicalControl?.handcuffing}
-                              onChange={(e) => handleInputChange('physicalControl.handcuffing', e.target.checked)}
+                              checked={formData?.JsonDataPhysicalControl?.handcuffing}
+                              onChange={(e) => handleInputChange('JsonDataPhysicalControl.handcuffing', e.target.checked)}
                             />
                             <span>Handcuffing</span>
                           </label>
@@ -2016,8 +2207,8 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-2"
-                              checked={formData?.physicalControl?.hobble}
-                              onChange={(e) => handleInputChange('physicalControl.hobble', e.target.checked)}
+                              checked={formData?.JsonDataPhysicalControl?.hobble}
+                              onChange={(e) => handleInputChange('JsonDataPhysicalControl.hobble', e.target.checked)}
                             />
                             <span>Hobble</span>
                           </label>
@@ -2026,8 +2217,8 @@ const PoliceForce = (props) => {
                               <input
                                 type="checkbox"
                                 className="form-checkbox me-2"
-                                checked={formData?.physicalControl?.other}
-                                onChange={(e) => handleInputChange('physicalControl.other', e.target.checked)}
+                                checked={formData?.JsonDataPhysicalControl?.other}
+                                onChange={(e) => handleInputChange('JsonDataPhysicalControl.other', e.target.checked)}
                               />
                               <span>Other:</span>
                             </label>
@@ -2035,8 +2226,8 @@ const PoliceForce = (props) => {
                               type="text"
                               className="form-input me-2"
                               // style={{ width: '60px' }}
-                              value={formData?.physicalControl?.otherText}
-                              onChange={(e) => handleInputChange('physicalControl.otherText', e.target.value)}
+                              value={formData?.JsonDataPhysicalControl?.otherText}
+                              onChange={(e) => handleInputChange('JsonDataPhysicalControl.otherText', e.target.value)}
                             />
                           </div>
                         </div>
@@ -2048,29 +2239,29 @@ const PoliceForce = (props) => {
                         <input
                           type="checkbox"
                           className="form-checkbox me-1 label-nowrap"
-                          checked={formData?.physicalControl?.effectiveYes}
-                          onChange={(e) => handleInputChange('physicalControl.effectiveYes', e.target.checked)}
+                          checked={formData?.JsonDataPhysicalControl?.effectiveYes}
+                          onChange={(e) => handleInputChange('JsonDataPhysicalControl.effectiveYes', e.target.checked)}
                         />
                         <span className="me-1 label-nowrap">Yes</span>
                         <input
                           type="checkbox"
                           className="form-checkbox me-1 label-nowrap"
-                          checked={formData?.physicalControl?.effectiveNo}
-                          onChange={(e) => handleInputChange('physicalControl.effectiveNo', e.target.checked)}
+                          checked={formData?.JsonDataPhysicalControl?.effectiveNo}
+                          onChange={(e) => handleInputChange('JsonDataPhysicalControl.effectiveNo', e.target.checked)}
                         />
                         <span className="me-1 label-nowrap">No:</span>
                         <input
                           type="text"
                           className="form-input flex-fill"
-                          value={formData?.physicalControl?.effectiveNote}
-                          onChange={(e) => handleInputChange('physicalControl.effectiveNote', e.target.value)}
+                          value={formData?.JsonDataPhysicalControl?.effectiveNote}
+                          onChange={(e) => handleInputChange('JsonDataPhysicalControl.effectiveNote', e.target.value)}
                         />
                       </span>
                     </div>
                   </div>
 
                   {/* OC Spray Section */}
-                  <div className="position-relative mb-4 form-section p-3">
+                  <div className="position-relative mb-4 form-section p-3 no-break">
                     <div className="section-title">OC Spray:</div>
                     <div>OC Spray:</div>
                     <div
@@ -2081,9 +2272,9 @@ const PoliceForce = (props) => {
                         <input
                           type="checkbox"
                           className="form-checkbox me-1"
-                          checked={formData?.ocSpray?.notUsed}
+                          checked={formData?.JsonDataOCSpray?.notUsed}
                           onChange={(e) =>
-                            handleInputChange('ocSpray.notUsed', e.target.checked)
+                            handleInputChange('JsonDataOCSpray.notUsed', e.target.checked)
                           }
                         />
                         Not Used
@@ -2093,9 +2284,9 @@ const PoliceForce = (props) => {
                         <input
                           type="checkbox"
                           className="form-checkbox me-1"
-                          checked={formData?.ocSpray?.attempted}
+                          checked={formData?.JsonDataOCSpray?.attempted}
                           onChange={(e) =>
-                            handleInputChange('ocSpray.attempted', e.target.checked)
+                            handleInputChange('JsonDataOCSpray.attempted', e.target.checked)
                           }
                         />
                         Attempted
@@ -2105,22 +2296,23 @@ const PoliceForce = (props) => {
                         <input
                           type="checkbox"
                           className="form-checkbox me-1"
-                          checked={formData?.ocSpray?.used}
+                          checked={formData?.JsonDataOCSpray?.used}
                           onChange={(e) =>
-                            handleInputChange('ocSpray.used', e.target.checked)
+                            handleInputChange('JsonDataOCSpray.used', e.target.checked)
                           }
                         />
                         Used
                       </div>
+
                       <div className="d-flex align-items-center">
                         Distance
                         <input
                           type="text"
                           className="form-input"
                           style={{ width: '40px' }}
-                          value={formData?.ocSpray?.distance}
+                          value={formData?.JsonDataOCSpray?.distance}
                           onChange={(e) =>
-                            handleInputChange('ocSpray.distance', e.target.value)
+                            handleInputChange('JsonDataOCSpray.distance', e.target.value)
                           }
                         />
                         <span>-</span>
@@ -2128,9 +2320,9 @@ const PoliceForce = (props) => {
                           type="text"
                           className="form-input"
                           style={{ width: '40px' }}
-                          value={formData?.ocSpray?.distance1}
+                          value={formData?.JsonDataOCSpray?.distance1}
                           onChange={(e) =>
-                            handleInputChange('ocSpray.distance1', e.target.value)
+                            handleInputChange('JsonDataOCSpray.distance1', e.target.value)
                           }
                         />
                         <span>ft.</span>
@@ -2146,9 +2338,9 @@ const PoliceForce = (props) => {
                           type="text"
                           className="form-input"
                           style={{ width: '40px' }}
-                          value={formData?.ocSpray?.duration1}
+                          value={formData?.JsonDataOCSpray?.duration1}
                           onChange={(e) =>
-                            handleInputChange('ocSpray.duration1', e.target.value)
+                            handleInputChange('JsonDataOCSpray.duration1', e.target.value)
                           }
                         />
                         <span>2:</span>
@@ -2156,9 +2348,9 @@ const PoliceForce = (props) => {
                           type="text"
                           className="form-input"
                           style={{ width: '40px' }}
-                          value={formData?.ocSpray?.duration2}
+                          value={formData?.JsonDataOCSpray?.duration2}
                           onChange={(e) =>
-                            handleInputChange('ocSpray.duration2', e.target.value)
+                            handleInputChange('JsonDataOCSpray.duration2', e.target.value)
                           }
                         />
                         <span>3:</span>
@@ -2166,9 +2358,9 @@ const PoliceForce = (props) => {
                           type="text"
                           className="form-input"
                           style={{ width: '40px' }}
-                          value={formData?.ocSpray?.duration3}
+                          value={formData?.JsonDataOCSpray?.duration3}
                           onChange={(e) =>
-                            handleInputChange('ocSpray.duration3', e.target.value)
+                            handleInputChange('JsonDataOCSpray.duration3', e.target.value)
                           }
                         />
                       </div>
@@ -2179,29 +2371,29 @@ const PoliceForce = (props) => {
                         <input
                           type="checkbox"
                           className="form-checkbox me-1 label-nowrap"
-                          checked={formData?.ocSpray?.effectiveYes}
-                          onChange={(e) => handleInputChange('ocSpray.effectiveYes', e.target.checked)}
+                          checked={formData?.JsonDataOCSpray?.effectiveYes}
+                          onChange={(e) => handleInputChange('JsonDataOCSpray.effectiveYes', e.target.checked)}
                         />
                         <span className="me-1 label-nowrap">Yes</span>
                         <input
                           type="checkbox"
                           className="form-checkbox me-1 label-nowrap"
-                          checked={formData?.ocSpray?.effectiveNo}
-                          onChange={(e) => handleInputChange('ocSpray.effectiveNo', e.target.checked)}
+                          checked={formData?.JsonDataOCSpray?.effectiveNo}
+                          onChange={(e) => handleInputChange('JsonDataOCSpray.effectiveNo', e.target.checked)}
                         />
                         <span className="me-1 label-nowrap">No:</span>
                         <input
                           type="text"
                           className="form-input flex-fill"
-                          value={formData?.ocSpray?.effectiveNote}
-                          onChange={(e) => handleInputChange('ocSpray.effectiveNote', e.target.value)}
+                          value={formData?.JsonDataOCSpray?.effectiveNote}
+                          onChange={(e) => handleInputChange('JsonDataOCSpray.effectiveNote', e.target.value)}
                         />
                       </span>
                     </div>
                   </div>
 
                   {/* ASP / Baton */}
-                  <div className="position-relative mb-4 form-section p-3">
+                  <div className="position-relative mb-4 form-section p-3 no-break">
                     <div className="section-title">ASP / Baton:</div>
                     <div>ASP / Baton:</div>
                     <div
@@ -2212,8 +2404,8 @@ const PoliceForce = (props) => {
                         <input
                           type="checkbox"
                           className="form-checkbox me-1"
-                          checked={formData?.aspBaton?.notUsed}
-                          onChange={(e) => handleInputChange('aspBaton.notUsed', e.target.checked)} />
+                          checked={formData?.JsonDataASPBaton?.notUsed}
+                          onChange={(e) => handleInputChange('JsonDataASPBaton.notUsed', e.target.checked)} />
                         Not Used
                       </div>
 
@@ -2221,8 +2413,8 @@ const PoliceForce = (props) => {
                         <input
                           type="checkbox"
                           className="form-checkbox me-1"
-                          checked={formData?.aspBaton?.used}
-                          onChange={(e) => handleInputChange('aspBaton.used', e.target.checked)}
+                          checked={formData?.JsonDataASPBaton?.used}
+                          onChange={(e) => handleInputChange('JsonDataASPBaton.used', e.target.checked)}
                         />
                         Used
                       </div>
@@ -2233,8 +2425,8 @@ const PoliceForce = (props) => {
                           type="text"
                           className="form-input"
                           style={{ width: '60px' }}
-                          value={formData?.aspBaton?.numStrikes}
-                          onChange={(e) => handleInputChange('aspBaton.numStrikes', e.target.value)}
+                          value={formData?.JsonDataASPBaton?.numStrikes}
+                          onChange={(e) => handleInputChange('JsonDataASPBaton.numStrikes', e.target.value)}
                         />
                       </div>
 
@@ -2243,8 +2435,8 @@ const PoliceForce = (props) => {
                         <input
                           type="text"
                           className="form-input flex-fill"
-                          value={formData?.aspBaton?.location}
-                          onChange={(e) => handleInputChange('aspBaton.location', e.target.value)}
+                          value={formData?.JsonDataASPBaton?.location}
+                          onChange={(e) => handleInputChange('JsonDataASPBaton.location', e.target.value)}
                         />
                       </div>
                     </div>
@@ -2254,29 +2446,29 @@ const PoliceForce = (props) => {
                         <input
                           type="checkbox"
                           className="form-checkbox me-1 label-nowrap"
-                          checked={formData?.aspBaton?.effectiveYes}
-                          onChange={(e) => handleInputChange('aspBaton.effectiveYes', e.target.checked)}
+                          checked={formData?.JsonDataASPBaton?.effectiveYes}
+                          onChange={(e) => handleInputChange('JsonDataASPBaton.effectiveYes', e.target.checked)}
                         />
                         <span className="me-1 label-nowrap">Yes</span>
                         <input
                           type="checkbox"
                           className="form-checkbox me-1 label-nowrap"
-                          checked={formData?.aspBaton?.effectiveNo}
-                          onChange={(e) => handleInputChange('aspBaton.effectiveNo', e.target.checked)}
+                          checked={formData?.JsonDataASPBaton?.effectiveNo}
+                          onChange={(e) => handleInputChange('JsonDataASPBaton.effectiveNo', e.target.checked)}
                         />
                         <span className="me-1 label-nowrap">No:</span>
                         <input
                           type="text"
                           className="form-input flex-fill"
-                          value={formData?.aspBaton?.effectiveNote}
-                          onChange={(e) => handleInputChange('aspBaton.effectiveNote', e.target.value)}
+                          value={formData?.JsonDataASPBaton?.effectiveNote}
+                          onChange={(e) => handleInputChange('JsonDataASPBaton.effectiveNote', e.target.value)}
                         />
                       </span>
                     </div>
                   </div>
 
                   {/* Non / Less Lethal Munitions */}
-                  <div className="position-relative mb-4 form-section p-3">
+                  <div className="position-relative mb-4 form-section p-3 no-break">
                     <div className="section-title">Non Lethal / Less Lethal Munitions:</div>
                     <div>Non/Less lethal Munitions:</div>
                     <div
@@ -2284,38 +2476,38 @@ const PoliceForce = (props) => {
                       style={{ gap: '1rem', fontSize: '12px' }}
                     >
                       <div className="d-flex align-items-center">
-                        <input type="checkbox" className="form-checkbox me-1" checked={formData?.lessLethal?.notUsed} onChange={(e) => handleInputChange('lessLethal.notUsed', e.target.checked)} />
+                        <input type="checkbox" className="form-checkbox me-1" checked={formData?.JsonDataNonLethal?.notUsed} onChange={(e) => handleInputChange('JsonDataNonLethal.notUsed', e.target.checked)} />
                         Not Used
                       </div>
 
                       <div className="d-flex align-items-center">
-                        <input type="checkbox" className="form-checkbox me-1" checked={formData?.lessLethal?.used} onChange={(e) => handleInputChange('lessLethal.used', e.target.checked)} />
+                        <input type="checkbox" className="form-checkbox me-1" checked={formData?.JsonDataNonLethal?.used} onChange={(e) => handleInputChange('JsonDataNonLethal.used', e.target.checked)} />
                         Used
                       </div>
 
                       <div className="d-flex align-items-center">
                         Bean Bag:
-                        <input type="text" className="form-input" style={{ width: '40px' }} value={formData?.lessLethal?.beanBag} onChange={(e) => handleInputChange('lessLethal.beanBag', e.target.value)} />
+                        <input type="text" className="form-input" style={{ width: '40px' }} value={formData?.JsonDataNonLethal?.beanBag} onChange={(e) => handleInputChange('JsonDataNonLethal.beanBag', e.target.value)} />
 
                       </div>
 
                       <div className="d-flex align-items-center">
                         Stinger:
-                        <input type="text" className="form-input" style={{ width: '40px' }} value={formData?.lessLethal?.stinger} onChange={(e) => handleInputChange('lessLethal.stinger', e.target.value)} />
+                        <input type="text" className="form-input" style={{ width: '40px' }} value={formData?.JsonDataNonLethal?.stinger} onChange={(e) => handleInputChange('JsonDataNonLethal.stinger', e.target.value)} />
                       </div>
                       <div className="d-flex align-items-center">
                         Rubber:
-                        <input type="text" className="form-input" style={{ width: '40px' }} value={formData?.lessLethal?.rubber} onChange={(e) => handleInputChange('lessLethal.rubber', e.target.value)} />
+                        <input type="text" className="form-input" style={{ width: '40px' }} value={formData?.JsonDataNonLethal?.rubber} onChange={(e) => handleInputChange('JsonDataNonLethal.rubber', e.target.value)} />
                       </div>
                       <div className="d-flex align-items-center">
                         Pepperball:
-                        <input type="text" className="form-input" style={{ width: '40px' }} value={formData?.lessLethal?.pepperball} onChange={(e) => handleInputChange('lessLethal.pepperball', e.target.value)} />
+                        <input type="text" className="form-input" style={{ width: '40px' }} value={formData?.JsonDataNonLethal?.pepperball} onChange={(e) => handleInputChange('JsonDataNonLethal.pepperball', e.target.value)} />
                       </div>
 
                     </div>
                     <div className="d-flex align-items-center gap-3 mt-1">
                       <span className="me-1 label-nowrap">Location of Hits:</span>
-                      <input type="text" className="form-input flex-fill" value={formData?.lessLethal?.location} onChange={(e) => handleInputChange('lessLethal.location', e.target.value)} />
+                      <input type="text" className="form-input flex-fill" value={formData?.JsonDataNonLethal?.location} onChange={(e) => handleInputChange('JsonDataNonLethal.location', e.target.value)} />
                     </div>
 
 
@@ -2325,29 +2517,29 @@ const PoliceForce = (props) => {
                         <input
                           type="checkbox"
                           className="form-checkbox me-1 label-nowrap"
-                          checked={formData?.lessLethal?.effectiveYes}
-                          onChange={(e) => handleInputChange('lessLethal.effectiveYes', e.target.checked)}
+                          checked={formData?.JsonDataNonLethal?.effectiveYes}
+                          onChange={(e) => handleInputChange('JsonDataNonLethal.effectiveYes', e.target.checked)}
                         />
                         <span className="me-1 label-nowrap">Yes</span>
                         <input
                           type="checkbox"
                           className="form-checkbox me-1 label-nowrap"
-                          checked={formData?.lessLethal?.effectiveNo}
-                          onChange={(e) => handleInputChange('lessLethal.effectiveNo', e.target.checked)}
+                          checked={formData?.JsonDataNonLethal?.effectiveNo}
+                          onChange={(e) => handleInputChange('JsonDataNonLethal.effectiveNo', e.target.checked)}
                         />
                         <span className="me-1 label-nowrap">No:</span>
                         <input
                           type="text"
                           className="form-input flex-fill"
-                          value={formData?.lessLethal?.effectiveNote}
-                          onChange={(e) => handleInputChange('lessLethal.effectiveNote', e.target.value)}
+                          value={formData?.JsonDataNonLethal?.effectiveNote}
+                          onChange={(e) => handleInputChange('JsonDataNonLethal.effectiveNote', e.target.value)}
                         />
                       </span>
                     </div>
                   </div>
 
                   {/* TASER */}
-                  <div className="position-relative mb-4 form-section p-3">
+                  <div className="position-relative mb-4 form-section p-3 no-break">
                     <div className="section-title">TASER:</div>
                     <div>TASER:</div>
                     <div
@@ -2358,8 +2550,8 @@ const PoliceForce = (props) => {
                         <input
                           type="checkbox"
                           className="form-checkbox me-1"
-                          checked={formData?.taser?.notUsed}
-                          onChange={(e) => handleInputChange("taser.notUsed", e.target.checked)}
+                          checked={formData?.JsonDataTASER?.notUsed}
+                          onChange={(e) => handleInputChange("JsonDataTASER.notUsed", e.target.checked)}
                         />
                         Not Used
                       </div>
@@ -2368,8 +2560,8 @@ const PoliceForce = (props) => {
                         <input
                           type="checkbox"
                           className="form-checkbox me-1"
-                          checked={formData?.taser?.pointed}
-                          onChange={(e) => handleInputChange("taser.pointed", e.target.checked)}
+                          checked={formData?.JsonDataTASER?.pointed}
+                          onChange={(e) => handleInputChange("JsonDataTASER.pointed", e.target.checked)}
                         />
                         Pointed Taser Only (Laser)
                       </div>
@@ -2378,8 +2570,8 @@ const PoliceForce = (props) => {
                         <input
                           type="checkbox"
                           className="form-checkbox me-1"
-                          checked={formData?.taser?.discharged}
-                          onChange={(e) => handleInputChange("taser.discharged", e.target.checked)}
+                          checked={formData?.JsonDataTASER?.discharged}
+                          onChange={(e) => handleInputChange("JsonDataTASER.discharged", e.target.checked)}
                         />
                         Discharged Taser
                       </div>
@@ -2388,8 +2580,8 @@ const PoliceForce = (props) => {
                         <input
                           type="checkbox"
                           className="form-checkbox me-1"
-                          checked={formData?.taser?.driveStun}
-                          onChange={(e) => handleInputChange("taser.driveStun", e.target.checked)}
+                          checked={formData?.JsonDataTASER?.driveStun}
+                          onChange={(e) => handleInputChange("JsonDataTASER.driveStun", e.target.checked)}
                         />
                         Drive Stun
                       </div>
@@ -2402,29 +2594,29 @@ const PoliceForce = (props) => {
                     >
                       <div className="d-flex align-items-center">
                         Distance Fired:
-                        <input type="text" className="form-input" style={{ width: '60px' }} value={formData?.taser?.distance} onChange={(e) => handleInputChange('taser.distance', e.target.value)} />
+                        <input type="text" className="form-input" style={{ width: '60px' }} value={formData?.JsonDataTASER?.distance} onChange={(e) => handleInputChange('JsonDataTASER.distance', e.target.value)} />
                         <span>ft.</span>
 
                       </div>
                       <div className="d-flex align-items-center">
                         Cycles Discharged:
-                        <input type="text" className="form-input" style={{ width: '60px' }} value={formData?.taser?.cycles} onChange={(e) => handleInputChange('taser.cycles', e.target.value)} />
+                        <input type="text" className="form-input" style={{ width: '60px' }} value={formData?.JsonDataTASER?.cycles} onChange={(e) => handleInputChange('JsonDataTASER.cycles', e.target.value)} />
                       </div>
                       <div className="d-flex align-items-center">
                         Probes Penetrate Skin
                       </div>
                       <div className="d-flex align-items-center">
                         <input type="checkbox" className="form-checkbox"
-                          checked={formData?.taser?.probesPenetrateSkinYes}
-                          onChange={(e) => handleInputChange('taser.probesPenetrateSkinYes', e.target.checked)} />
+                          checked={formData?.JsonDataTASER?.probesPenetrateSkinYes}
+                          onChange={(e) => handleInputChange('JsonDataTASER.probesPenetrateSkinYes', e.target.checked)} />
                         Yes
                       </div>
                       <div className="d-flex align-items-center">
                         <input
                           type="checkbox"
                           className="form-checkbox"
-                          checked={formData?.taser?.probesPenetrateSkinNo}
-                          onChange={(e) => handleInputChange('taser.probesPenetrateSkinNo', e.target.checked)} />
+                          checked={formData?.JsonDataTASER?.probesPenetrateSkinNo}
+                          onChange={(e) => handleInputChange('JsonDataTASER.probesPenetrateSkinNo', e.target.checked)} />
                         No
                       </div>
 
@@ -2435,22 +2627,22 @@ const PoliceForce = (props) => {
                     >
                       <div className="d-flex align-items-center label-nowrap">
                         Taser Number:
-                        <input type="text" className="form-input" value={formData?.taser?.taserNumber} onChange={(e) => handleInputChange('taser.taserNumber', e.target.value)} />
+                        <input type="text" className="form-input" value={formData?.JsonDataTASER?.taserNumber} onChange={(e) => handleInputChange('JsonDataTASER.taserNumber', e.target.value)} />
 
                       </div>
                       <div className="d-flex align-items-center label-nowrap">
                         Cartridge Numbers:
-                        <input type="text" className="form-input" value={formData?.taser?.cartridgeNumbers} onChange={(e) => handleInputChange('taser.cartridgeNumbers', e.target.value)} />
+                        <input type="text" className="form-input" value={formData?.JsonDataTASER?.cartridgeNumbers} onChange={(e) => handleInputChange('JsonDataTASER.cartridgeNumbers', e.target.value)} />
                       </div>
                       <div className="d-flex align-items-center">
                         Placed in Evidence:
                       </div>
                       <div className="d-flex align-items-center">
-                        <input type="checkbox" className="form-checkbox" checked={formData?.taser?.placedInEvidenceYes} onChange={(e) => handleInputChange('taser.placedInEvidenceYes', e.target.checked)} />
+                        <input type="checkbox" className="form-checkbox" checked={formData?.JsonDataTASER?.placedInEvidenceYes} onChange={(e) => handleInputChange('JsonDataTASER.placedInEvidenceYes', e.target.checked)} />
                         Yes
                       </div>
                       <div className="d-flex align-items-center">
-                        <input type="checkbox" className="form-checkbox" checked={formData?.taser?.placedInEvidenceNo} onChange={(e) => handleInputChange('taser.placedInEvidenceNo', e.target.checked)} />
+                        <input type="checkbox" className="form-checkbox" checked={formData?.JsonDataTASER?.placedInEvidenceNo} onChange={(e) => handleInputChange('JsonDataTASER.placedInEvidenceNo', e.target.checked)} />
                         No
                       </div>
 
@@ -2461,29 +2653,29 @@ const PoliceForce = (props) => {
                         <input
                           type="checkbox"
                           className="form-checkbox me-1 label-nowrap"
-                          checked={formData?.taser?.effectiveYes}
-                          onChange={(e) => handleInputChange('taser.effectiveYes', e.target.checked)}
+                          checked={formData?.JsonDataTASER?.effectiveYes}
+                          onChange={(e) => handleInputChange('JsonDataTASER.effectiveYes', e.target.checked)}
                         />
                         <span className="me-1 label-nowrap">Yes</span>
                         <input
                           type="checkbox"
                           className="form-checkbox me-1 label-nowrap"
-                          checked={formData?.taser?.effectiveNo}
-                          onChange={(e) => handleInputChange('taser.effectiveNo', e.target.checked)}
+                          checked={formData?.JsonDataTASER?.effectiveNo}
+                          onChange={(e) => handleInputChange('JsonDataTASER.effectiveNo', e.target.checked)}
                         />
                         <span className="me-1 label-nowrap">No:</span>
                         <input
                           type="text"
                           className="form-input flex-fill"
-                          value={formData?.taser?.effectiveNote}
-                          onChange={(e) => handleInputChange('taser.effectiveNote', e.target.value)}
+                          value={formData?.JsonDataTASER?.effectiveNote}
+                          onChange={(e) => handleInputChange('JsonDataTASER.effectiveNote', e.target.value)}
                         />
                       </span>
                     </div>
                   </div>
 
                   {/* Firearm */}
-                  <div className="position-relative mb-4 form-section p-3">
+                  <div className="position-relative mb-4 form-section p-3 no-break">
                     <div className="section-title">Firearm:</div>
                     <div>Firearm:</div>
                     <div
@@ -2493,15 +2685,15 @@ const PoliceForce = (props) => {
                       <div className="d-flex align-items-center">
 
 
-                        <input type="checkbox" className="form-checkbox me-1" checked={formData?.firearm?.notUsed} onChange={(e) => handleInputChange('firearm.notUsed', e.target.checked)} />Not Used
+                        <input type="checkbox" className="form-checkbox me-1" checked={formData?.JsonDataFirearm?.notUsed} onChange={(e) => handleInputChange('JsonDataFirearm.notUsed', e.target.checked)} />Not Used
                       </div>
 
                       <div className="d-flex align-items-center">
-                        <input type="checkbox" className="form-checkbox me-1" checked={formData?.firearm?.pointed} onChange={(e) => handleInputChange('firearm.pointed', e.target.checked)} />Pointed Firearm Only
+                        <input type="checkbox" className="form-checkbox me-1" checked={formData?.JsonDataFirearm?.pointed} onChange={(e) => handleInputChange('JsonDataFirearm.pointed', e.target.checked)} />Pointed Firearm Only
                       </div>
 
                       <div className="d-flex align-items-center">
-                        <input type="checkbox" className="form-checkbox me-1" checked={formData?.firearm?.discharged} onChange={(e) => handleInputChange('firearm.discharged', e.target.checked)} />Discharged Firearm
+                        <input type="checkbox" className="form-checkbox me-1" checked={formData?.JsonDataFirearm?.discharged} onChange={(e) => handleInputChange('JsonDataFirearm.discharged', e.target.checked)} />Discharged Firearm
                       </div>
 
                     </div>
@@ -2512,25 +2704,25 @@ const PoliceForce = (props) => {
                       style={{ gap: '1rem', fontSize: '12px' }}
                     >
                       <div className="d-flex align-items-center">
-                        <input type="checkbox" className="form-checkbox me-1" checked={formData?.firearm?.sidearm} onChange={(e) => handleInputChange('firearm.sidearm', e.target.checked)} />
+                        <input type="checkbox" className="form-checkbox me-1" checked={formData?.JsonDataFirearm?.sidearm} onChange={(e) => handleInputChange('JsonDataFirearm.sidearm', e.target.checked)} />
                         Sidearm:
                       </div>
                       <div className="d-flex align-items-center">
-                        <input type="checkbox" className="form-checkbox me-1" checked={formData?.firearm?.shotgun} onChange={(e) => handleInputChange('firearm.shotgun', e.target.checked)} />
+                        <input type="checkbox" className="form-checkbox me-1" checked={formData?.JsonDataFirearm?.shotgun} onChange={(e) => handleInputChange('JsonDataFirearm.shotgun', e.target.checked)} />
                         Shotgun:
                       </div>
 
                       <div className="d-flex align-items-center">
-                        <input type="checkbox" className="form-checkbox me-1" checked={formData?.firearm?.rifle} onChange={(e) => handleInputChange('firearm.rifle', e.target.checked)} />
+                        <input type="checkbox" className="form-checkbox me-1" checked={formData?.JsonDataFirearm?.rifle} onChange={(e) => handleInputChange('JsonDataFirearm.rifle', e.target.checked)} />
                         Patrol Rifle
                       </div>
                       <div className="d-flex align-items-center">
-                        <input type="checkbox" className="form-checkbox me-1" checked={formData?.firearm?.backup} onChange={(e) => handleInputChange('firearm.backup', e.target.checked)} />
+                        <input type="checkbox" className="form-checkbox me-1" checked={formData?.JsonDataFirearm?.backup} onChange={(e) => handleInputChange('JsonDataFirearm.backup', e.target.checked)} />
                         Backup / Off Duty
                       </div>
                       <div className="d-flex align-items-center">
                         Distance Fired:
-                        <input type="text" className="form-input" style={{ width: '60px' }} value={formData?.firearm?.distance} onChange={(e) => handleInputChange('firearm.distance', e.target.value)} />
+                        <input type="text" className="form-input" style={{ width: '60px' }} value={formData?.JsonDataFirearm?.distance} onChange={(e) => handleInputChange('JsonDataFirearm.distance', e.target.value)} />
                         <span>ft.</span>
 
                       </div>
@@ -2543,16 +2735,16 @@ const PoliceForce = (props) => {
 
                       <div className="d-flex align-items-center">
                         Rounds Discharged:
-                        <input type="text" className="form-input" style={{ width: '60px' }} value={formData?.firearm?.roundsDischarged} onChange={(e) => handleInputChange('firearm.roundsDischarged', e.target.value)} />
+                        <input type="text" className="form-input" style={{ width: '60px' }} value={formData?.JsonDataFirearm?.roundsDischarged} onChange={(e) => handleInputChange('JsonDataFirearm.roundsDischarged', e.target.value)} />
                       </div>
                       <div className="d-flex align-items-center label-nowrap">
                         Number Hits on Target:
-                        <input type="text" className="form-input" style={{ width: '60px' }} value={formData?.firearm?.hitsOnTarget} onChange={(e) => handleInputChange('firearm.hitsOnTarget', e.target.value)} />
+                        <input type="text" className="form-input" style={{ width: '60px' }} value={formData?.JsonDataFirearm?.hitsOnTarget} onChange={(e) => handleInputChange('JsonDataFirearm.hitsOnTarget', e.target.value)} />
                       </div>
                       <div className="d-flex align-items-center label-nowrap">
                         Weapon Serial Number:
-                        <input type="text" className="form-input" value={formData?.firearm?.serialNumber} onChange={(e) => handleInputChange('firearm.serialNumber', e.target.value)} />
-                        <input type="checkbox" className="form-checkbox me-1" checked={formData?.firearm?.serialNumberMark} onChange={(e) => handleInputChange('firearm.serialNumberMark', e.target.checked)} />
+                        <input type="text" className="form-input" value={formData?.JsonDataFirearm?.serialNumber} onChange={(e) => handleInputChange('JsonDataFirearm.serialNumber', e.target.value)} />
+                        <input type="checkbox" className="form-checkbox me-1" checked={formData?.JsonDataFirearm?.serialNumberMark} onChange={(e) => handleInputChange('JsonDataFirearm.serialNumberMark', e.target.checked)} />
                       </div>
                     </div>
 
@@ -2563,29 +2755,29 @@ const PoliceForce = (props) => {
                         <input
                           type="checkbox"
                           className="form-checkbox me-1 label-nowrap"
-                          checked={formData?.firearm?.effectiveYes}
-                          onChange={(e) => handleInputChange('firearm.effectiveYes', e.target.checked)}
+                          checked={formData?.JsonDataFirearm?.effectiveYes}
+                          onChange={(e) => handleInputChange('JsonDataFirearm.effectiveYes', e.target.checked)}
                         />
                         <span className="me-1 label-nowrap">Yes</span>
                         <input
                           type="checkbox"
                           className="form-checkbox me-1 label-nowrap"
-                          checked={formData?.firearm?.effectiveNo}
-                          onChange={(e) => handleInputChange('firearm.effectiveNo', e.target.checked)}
+                          checked={formData?.JsonDataFirearm?.effectiveNo}
+                          onChange={(e) => handleInputChange('JsonDataFirearm.effectiveNo', e.target.checked)}
                         />
                         <span className="me-1 label-nowrap">No:</span>
                         <input
                           type="text"
                           className="form-input flex-fill"
-                          value={formData?.firearm?.effectiveNote}
-                          onChange={(e) => handleInputChange('firearm.effectiveNote', e.target.value)}
+                          value={formData?.JsonDataFirearm?.effectiveNote}
+                          onChange={(e) => handleInputChange('JsonDataFirearm.effectiveNote', e.target.value)}
                         />
                       </span>
                     </div>
                   </div>
 
                   {/* Environmental & Situational Conditions: */}
-                  <div className="position-relative mb-4 form-section p-3">
+                  <div className="position-relative mb-4 form-section p-3 no-break">
                     <div className="section-title">Environmental & Situational Conditions:</div>
 
                     <div className="row" style={{ fontSize: '12px' }}>
@@ -2595,8 +2787,8 @@ const PoliceForce = (props) => {
                           <input
                             type="checkbox"
                             className="form-checkbox me-1 label-nowrap"
-                            checked={formData?.environmental?.hot}
-                            onChange={(e) => handleInputChange('environmental.hot', e.target.checked)}
+                            checked={formData?.JsonDataEnv?.hot}
+                            onChange={(e) => handleInputChange('JsonDataEnv.hot', e.target.checked)}
                           />
                           Hot (Little or thin clothing)
                         </label>
@@ -2604,8 +2796,8 @@ const PoliceForce = (props) => {
                           <input
                             type="checkbox"
                             className="form-checkbox me-1 label-nowrap"
-                            checked={formData?.environmental?.warm}
-                            onChange={(e) => handleInputChange('environmental.warm', e.target.checked)}
+                            checked={formData?.JsonDataEnv?.warm}
+                            onChange={(e) => handleInputChange('JsonDataEnv.warm', e.target.checked)}
                           />
                           Warm
                         </label>
@@ -2613,8 +2805,8 @@ const PoliceForce = (props) => {
                           <input
                             type="checkbox"
                             className="form-checkbox me-1 label-nowrap"
-                            checked={formData?.environmental?.cool}
-                            onChange={(e) => handleInputChange('environmental.cool', e.target.checked)}
+                            checked={formData?.JsonDataEnv?.cool}
+                            onChange={(e) => handleInputChange('JsonDataEnv.cool', e.target.checked)}
                           />
                           Cool
                         </label>
@@ -2622,8 +2814,8 @@ const PoliceForce = (props) => {
                           <input
                             type="checkbox"
                             className="form-checkbox me-1 label-nowrap"
-                            checked={formData?.environmental?.cold}
-                            onChange={(e) => handleInputChange('environmental.cold', e.target.checked)}
+                            checked={formData?.JsonDataEnv?.cold}
+                            onChange={(e) => handleInputChange('JsonDataEnv.cold', e.target.checked)}
                           />
                           Cold (Heavy clothing)
                         </label>
@@ -2631,8 +2823,8 @@ const PoliceForce = (props) => {
                           <input
                             type="checkbox"
                             className="form-checkbox me-1 label-nowrap"
-                            checked={formData?.environmental?.daylight}
-                            onChange={(e) => handleInputChange('environmental.daylight', e.target.checked)}
+                            checked={formData?.JsonDataEnv?.daylight}
+                            onChange={(e) => handleInputChange('JsonDataEnv.daylight', e.target.checked)}
                           />
                           Daylight
                         </label>
@@ -2640,8 +2832,8 @@ const PoliceForce = (props) => {
                           <input
                             type="checkbox"
                             className="form-checkbox me-1 label-nowrap"
-                            checked={formData?.environmental?.dawnDusk}
-                            onChange={(e) => handleInputChange('environmental.dawnDusk', e.target.checked)}
+                            checked={formData?.JsonDataEnv?.dawnDusk}
+                            onChange={(e) => handleInputChange('JsonDataEnv.dawnDusk', e.target.checked)}
                           />
                           Dawn/Dusk
                         </label>
@@ -2649,8 +2841,8 @@ const PoliceForce = (props) => {
                           <input
                             type="checkbox"
                             className="form-checkbox me-1 label-nowrap"
-                            checked={formData?.environmental?.darkness}
-                            onChange={(e) => handleInputChange('environmental.darkness', e.target.checked)}
+                            checked={formData?.JsonDataEnv?.darkness}
+                            onChange={(e) => handleInputChange('JsonDataEnv.darkness', e.target.checked)}
                           />
                           Darkness
                         </label>
@@ -2659,16 +2851,16 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-1"
-                              checked={formData?.environmental?.other}
-                              onChange={(e) => handleInputChange('environmental.other', e.target.checked)}
+                              checked={formData?.JsonDataEnv?.other}
+                              onChange={(e) => handleInputChange('JsonDataEnv.other', e.target.checked)}
                             />
                             Other:
                           </label>
                           <input
                             type="text"
                             className="form-input ms-2"
-                            value={formData?.environmental?.otherNote}
-                            onChange={(e) => handleInputChange('environmental.otherNote', e.target.value)}
+                            value={formData?.JsonDataEnv?.otherNote}
+                            onChange={(e) => handleInputChange('JsonDataEnv.otherNote', e.target.value)}
                           />
                         </div>
                       </div>
@@ -2679,8 +2871,8 @@ const PoliceForce = (props) => {
                           <input
                             type="checkbox"
                             className="form-checkbox me-1 label-nowrap"
-                            checked={formData?.situational?.multipleSuspects}
-                            onChange={(e) => handleInputChange('situational.multipleSuspects', e.target.checked)}
+                            checked={formData?.JsonDataSituational?.multipleSuspects}
+                            onChange={(e) => handleInputChange('JsonDataSituational.multipleSuspects', e.target.checked)}
                           />
                           Multiple Suspects
                         </label>
@@ -2688,8 +2880,8 @@ const PoliceForce = (props) => {
                           <input
                             type="checkbox"
                             className="form-checkbox me-1 label-nowrap"
-                            checked={formData?.situational?.hostile}
-                            onChange={(e) => handleInputChange('situational.hostile', e.target.checked)}
+                            checked={formData?.JsonDataSituational?.hostile}
+                            onChange={(e) => handleInputChange('JsonDataSituational.hostile', e.target.checked)}
                           />
                           Hostile Environment
                         </label>
@@ -2697,8 +2889,8 @@ const PoliceForce = (props) => {
                           <input
                             type="checkbox"
                             className="form-checkbox me-1 label-nowrap"
-                            checked={formData?.situational?.threats}
-                            onChange={(e) => handleInputChange('situational.threats', e.target.checked)}
+                            checked={formData?.JsonDataSituational?.threats}
+                            onChange={(e) => handleInputChange('JsonDataSituational.threats', e.target.checked)}
                           />
                           Threats to Officer(s)
                         </label>
@@ -2706,8 +2898,8 @@ const PoliceForce = (props) => {
                           <input
                             type="checkbox"
                             className="form-checkbox me-1 label-nowrap"
-                            checked={formData?.situational?.confined}
-                            onChange={(e) => handleInputChange('situational.confined', e.target.checked)}
+                            checked={formData?.JsonDataSituational?.confined}
+                            onChange={(e) => handleInputChange('JsonDataSituational.confined', e.target.checked)}
                           />
                           Confined Space
                         </label>
@@ -2715,8 +2907,8 @@ const PoliceForce = (props) => {
                           <input
                             type="checkbox"
                             className="form-checkbox me-1 label-nowrap"
-                            checked={formData?.situational?.indoors}
-                            onChange={(e) => handleInputChange('situational.indoors', e.target.checked)}
+                            checked={formData?.JsonDataSituational?.indoors}
+                            onChange={(e) => handleInputChange('JsonDataSituational.indoors', e.target.checked)}
                           />
                           Indoors
                         </label>
@@ -2724,8 +2916,8 @@ const PoliceForce = (props) => {
                           <input
                             type="checkbox"
                             className="form-checkbox me-1 label-nowrap"
-                            checked={formData?.situational?.outdoors}
-                            onChange={(e) => handleInputChange('situational.outdoors', e.target.checked)}
+                            checked={formData?.JsonDataSituational?.outdoors}
+                            onChange={(e) => handleInputChange('JsonDataSituational.outdoors', e.target.checked)}
                           />
                           Outdoors
                         </label>
@@ -2733,8 +2925,8 @@ const PoliceForce = (props) => {
                           <input
                             type="checkbox"
                             className="form-checkbox me-1 label-nowrap"
-                            checked={formData?.situational?.inVehicle}
-                            onChange={(e) => handleInputChange('situational.inVehicle', e.target.checked)}
+                            checked={formData?.JsonDataSituational?.inVehicle}
+                            onChange={(e) => handleInputChange('JsonDataSituational.inVehicle', e.target.checked)}
                           />
                           In Vehicle
                         </label>
@@ -2743,16 +2935,16 @@ const PoliceForce = (props) => {
                             <input
                               type="checkbox"
                               className="form-checkbox me-1"
-                              checked={formData?.situational?.other}
-                              onChange={(e) => handleInputChange('situational.other', e.target.checked)}
+                              checked={formData?.JsonDataSituational?.other}
+                              onChange={(e) => handleInputChange('JsonDataSituational.other', e.target.checked)}
                             />
                             Other:
                           </label>
                           <input
                             type="text"
                             className="form-input ms-2"
-                            value={formData?.situational?.otherNote}
-                            onChange={(e) => handleInputChange('situational.otherNote', e.target.value)}
+                            value={formData?.JsonDataSituational?.otherNote}
+                            onChange={(e) => handleInputChange('JsonDataSituational.otherNote', e.target.value)}
                           />
                         </div>
                       </div>
@@ -2760,7 +2952,7 @@ const PoliceForce = (props) => {
                   </div>
 
                   {/* Officer Summary + Diagram Placeholder */}
-                  <div className="position-relative mb-4 form-section p-3">
+                  <div className="position-relative mb-4 form-section p-3 no-break">
                     <div className="row" style={{ fontSize: '12px' }}>
                       <div className="col-6">
                         <div className="section-title">Officer Summary:</div>
@@ -2768,15 +2960,15 @@ const PoliceForce = (props) => {
                         <input
                           type="text"
                           className="form-input ms-2"
-                          value={formData?.officerSummary?.successfulForceType}
-                          onChange={(e) => handleInputChange('officerSummary.successfulForceType', e.target.value)}
+                          value={formData?.JsonDataOfficerSummary?.successfulForceType}
+                          onChange={(e) => handleInputChange('JsonDataOfficerSummary.successfulForceType', e.target.value)}
                         />
                         <div className="mb-2 fw-bold mt-2">Officer comments on regarding force effectiveness:</div>
                         <textarea
                           style={{ width: "100%" }}
                           rows={16}
-                          value={formData?.officerSummary?.forceEffectivenessComments}
-                          onChange={(e) => handleInputChange('officerSummary.forceEffectivenessComments', e.target.value)}
+                          value={formData?.JsonDataOfficerSummary?.forceEffectivenessComments}
+                          onChange={(e) => handleInputChange('JsonDataOfficerSummary.forceEffectivenessComments', e.target.value)}
                         />
 
                         <div className="mt-2 d-flex align-items-center label-nowrap">
@@ -2784,8 +2976,8 @@ const PoliceForce = (props) => {
                           <input
                             type="text"
                             className="form-input"
-                            value={formData?.officerSummary?.reportingOfficer}
-                            onChange={(e) => handleInputChange('officerSummary.reportingOfficer', e.target.value)}
+                            value={formData?.JsonDataOfficerSummary?.reportingOfficer}
+                            onChange={(e) => handleInputChange('JsonDataOfficerSummary.reportingOfficer', e.target.value)}
                           />
                         </div>
                       </div>
@@ -2800,7 +2992,7 @@ const PoliceForce = (props) => {
                                 <button
                                   key={tool.type}
                                   className={`btn ${selectedTool === tool.type ? 'btn-primary' : 'btn-outline-secondary'} d-flex align-items-center gap-2 mr-2 mb-1`}
-                                  onClick={() => setSelectedTool(tool.type)}
+                                  onClick={() => { setSelectedTool(tool.type); setStatesChangeStatus(true) }}
                                 >
                                   {tool.label}
                                 </button>
@@ -2844,7 +3036,7 @@ const PoliceForce = (props) => {
                   <p className='text-center' style={{ fontWeight: "bold" }}>*** Full Narrative of Use of Force in Arrest or Offense Report - Attach Copy to this Supplement **</p>
 
                   {/* Supervisor Review Section */}
-                  <div className="position-relative mb-4 form-section p-3">
+                  <div className="position-relative mb-4 form-section p-3 no-break">
                     <div className="section-title">Supervisor:</div>
                     <div className="row g-2" style={{ fontSize: '12px' }}>
                       <div className="col-6 d-flex align-items-center label-nowrap">
@@ -2852,16 +3044,16 @@ const PoliceForce = (props) => {
                         <input
                           type="text"
                           className="form-input"
-                          value={formData?.supervisorReview?.officerCount}
-                          onChange={(e) => handleInputChange('supervisorReview.officerCount', e.target.value)}
+                          value={formData?.JsonDataSupervisor?.officerCount}
+                          onChange={(e) => handleInputChange('JsonDataSupervisor.officerCount', e.target.value)}
                         />
                       </div>
                       <div className="col-4 d-flex align-items-center">
                         <input
                           type="checkbox"
                           className="form-checkbox me-2"
-                          checked={formData?.supervisorReview?.videoReviewed}
-                          onChange={(e) => handleInputChange('supervisorReview.videoReviewed', e.target.checked)}
+                          checked={formData?.JsonDataSupervisor?.videoReviewed}
+                          onChange={(e) => handleInputChange('JsonDataSupervisor.videoReviewed', e.target.checked)}
                         />
                         <span>Video Reviewed</span>
                       </div>
@@ -2870,8 +3062,8 @@ const PoliceForce = (props) => {
                         <textarea
                           className="form-input"
                           rows={6}
-                          value={formData?.supervisorReview?.comments}
-                          onChange={(e) => handleInputChange('supervisorReview.comments', e.target.value)}
+                          value={formData?.JsonDataSupervisor?.comments}
+                          onChange={(e) => handleInputChange('JsonDataSupervisor.comments', e.target.value)}
                         />
                       </div>
                       <div className="col-6 d-flex align-items-center">
@@ -2879,16 +3071,16 @@ const PoliceForce = (props) => {
                         <input
                           type="text"
                           className="form-input me-3"
-                          value={formData?.supervisorReview?.supervisorName}
-                          onChange={(e) => handleInputChange('supervisorReview.supervisorName', e.target.value)}
+                          value={formData?.JsonDataSupervisor?.supervisorName}
+                          onChange={(e) => handleInputChange('JsonDataSupervisor.supervisorName', e.target.value)}
                         />
                         <span className="me-2">#</span>
                         <input
                           type="text"
                           className="form-input"
                           style={{ width: '80px' }}
-                          value={formData?.supervisorReview?.badgeNumber}
-                          onChange={(e) => handleInputChange('supervisorReview.badgeNumber', e.target.value)}
+                          value={formData?.JsonDataSupervisor?.badgeNumber}
+                          onChange={(e) => handleInputChange('JsonDataSupervisor.badgeNumber', e.target.value)}
                         />
                       </div>
 
@@ -2897,12 +3089,12 @@ const PoliceForce = (props) => {
                         style={{ gap: '1rem', fontSize: '12px' }}
                       >
                         <div className="d-flex align-items-center">
-                          <input type="checkbox" className="form-checkbox" checked={formData?.supervisorReview?.inCompliance} onChange={(e) => handleInputChange('supervisorReview.inCompliance', e.target.checked)} />
+                          <input type="checkbox" className="form-checkbox" checked={formData?.JsonDataSupervisor?.inCompliance} onChange={(e) => handleInputChange('JsonDataSupervisor.inCompliance', e.target.checked)} />
                           In Compliance with Policy
                         </div>
 
                         <div className="d-flex align-items-center">
-                          <input type="checkbox" className="form-checkbox" checked={formData?.supervisorReview?.investigationNeeded} onChange={(e) => handleInputChange('supervisorReview.investigationNeeded', e.target.checked)} />
+                          <input type="checkbox" className="form-checkbox" checked={formData?.JsonDataSupervisor?.investigationNeeded} onChange={(e) => handleInputChange('JsonDataSupervisor.investigationNeeded', e.target.checked)} />
                           Further Investigation Needed
                         </div>
                       </div>
@@ -2910,23 +3102,23 @@ const PoliceForce = (props) => {
                   </div>
 
                   {/* Final Reviewed by Section */}
-                  <div className="position-relative mb-4 form-section p-3">
+                  <div className="position-relative mb-4 form-section p-3 no-break ">
                     <div className="row g-3" style={{ fontSize: '12px' }}>
                       <div className="col-12 d-flex align-items-center gap-3">
                         <span className="me-2">Reviewed:</span>
                         <input
                           type="text"
                           className="form-input"
-                          value={formData?.reviewed?.patrolLieutenantName}
-                          onChange={(e) => handleInputChange("reviewed.patrolLieutenantName", e.target.value)}
+                          value={formData?.JsonDataReviewed?.patrolLieutenantName}
+                          onChange={(e) => handleInputChange("JsonDataReviewed.patrolLieutenantName", e.target.value)}
                         />
                         <span className="ms-2 label-nowrap">Patrol Lieutenant</span>
                         <label className="label-nowrap">
                           <input
                             type="checkbox"
                             className="form-checkbox ms-3 me-1 "
-                            checked={formData?.reviewed?.patrolLieutenantInCompliance}
-                            onChange={(e) => handleInputChange("reviewed.patrolLieutenantInCompliance", e.target.checked)}
+                            checked={formData?.JsonDataReviewed?.patrolLieutenantInCompliance}
+                            onChange={(e) => handleInputChange("JsonDataReviewed.patrolLieutenantInCompliance", e.target.checked)}
 
                           />
                           In Compliance
@@ -2935,9 +3127,9 @@ const PoliceForce = (props) => {
                           <input
                             type="checkbox"
                             className="form-checkbox ms-2 me-1"
-                            checked={formData?.reviewed?.patrolLieutenantInvestigationNeeded}
+                            checked={formData?.JsonDataReviewed?.patrolLieutenantInvestigationNeeded}
                             onChange={(e) =>
-                              handleInputChange("reviewed.patrolLieutenantInvestigationNeeded", e.target.checked)}
+                              handleInputChange("JsonDataReviewed.patrolLieutenantInvestigationNeeded", e.target.checked)}
                           />
                           Investigation Needed
                         </label>
@@ -2949,16 +3141,16 @@ const PoliceForce = (props) => {
                         <input
                           type="text"
                           className="form-input"
-                          value={formData?.reviewed?.chiefOfPoliceName}
-                          onChange={(e) => handleInputChange("reviewed.chiefOfPoliceName", e.target.value)}
+                          value={formData?.JsonDataReviewed?.chiefOfPoliceName}
+                          onChange={(e) => handleInputChange("JsonDataReviewed.chiefOfPoliceName", e.target.value)}
                         />
                         <span className="ms-2 label-nowrap">Chief of Police</span>
                         <label className="label-nowrap">
                           <input
                             type="checkbox"
                             className="form-checkbox ms-3 me-1 "
-                            checked={formData?.reviewed?.chiefOfPoliceInCompliance}
-                            onChange={(e) => handleInputChange("reviewed.chiefOfPoliceInCompliance", e.target.checked)}
+                            checked={formData?.JsonDataReviewed?.chiefOfPoliceInCompliance}
+                            onChange={(e) => handleInputChange("JsonDataReviewed.chiefOfPoliceInCompliance", e.target.checked)}
 
                           />
                           In Compliance
@@ -2967,9 +3159,9 @@ const PoliceForce = (props) => {
                           <input
                             type="checkbox"
                             className="form-checkbox ms-2 me-1"
-                            checked={formData?.reviewed?.chiefOfPoliceInvestigationNeeded}
+                            checked={formData?.JsonDataReviewed?.chiefOfPoliceInvestigationNeeded}
                             onChange={(e) =>
-                              handleInputChange("reviewed.chiefOfPoliceInvestigationNeeded", e.target.checked)}
+                              handleInputChange("JsonDataReviewed.chiefOfPoliceInvestigationNeeded", e.target.checked)}
                           />
                           Investigation Needed
                         </label>
@@ -2981,6 +3173,7 @@ const PoliceForce = (props) => {
             </div>
             {/* use of force form end */}
           </div>
+          {/* print end */}
           <div className="col-12 mt-2">
             <div className="row">
               <div className="col-2 mt-2 pt-2">
@@ -3003,30 +3196,64 @@ const PoliceForce = (props) => {
               </div>
               <div className="col-3 mt-2 ">
                 <DatePicker
+                  ref={startRef}
+                  onKeyDown={(e) => {
+                    if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                      e.preventDefault();
+                    } else {
+                      onKeyDown(e);
+                    }
+                  }
+                  }
+                  dateFormat="MM/dd/yyyy HH:mm"
+                  timeFormat="HH:mm "
+                  is24Hour
+                  timeInputLabel
+                  isClearable={useOfForceBasicDetailState?.ReportDateTime ? true : false}
                   name='ReportDateTime'
                   id='ReportDateTime'
                   onChange={(date) => {
-                    handleUseOfForceBasicDetailState("ReportDateTime", date);
+                    if (date) {
+                      let currDate = new Date(date);
+                      let prevDate = new Date(useOfForceBasicDetailState?.ReportDateTime);
+                      let maxDate = new Date(datezone);
+                      setStatesChangeStatus(true)
+
+                      if ((currDate.getDate() === maxDate.getDate() && currDate.getMonth() === maxDate.getMonth() && currDate.getFullYear() === maxDate.getFullYear()) && !(currDate.getDate() === prevDate.getDate() && currDate.getMonth() === prevDate.getMonth() && currDate.getFullYear() === prevDate.getFullYear())) {
+
+                        handleUseOfForceBasicDetailState("ReportDateTime", getShowingMonthDateYear(maxDate));
+                      }
+                      else if (date >= new Date()) {
+
+                        handleUseOfForceBasicDetailState("ReportDateTime", new Date() ? getShowingMonthDateYear(new Date()) : null);
+
+                      } else if (date <= new Date(incidentReportedDate)) {
+                        handleUseOfForceBasicDetailState("ReportDateTime", incidentReportedDate ? getShowingMonthDateYear(incidentReportedDate) : null);
+
+                      } else {
+
+                        handleUseOfForceBasicDetailState("ReportDateTime", date ? getShowingMonthDateYear(date) : null);
+                      }
+                    } else {
+                      handleUseOfForceBasicDetailState("ReportDateTime", null);
+
+                    }
                   }}
-                  selected={useOfForceBasicDetailState?.ReportDateTime || ""}
-                  dateFormat="MM/dd/yyyy HH:mm"
+                  selected={useOfForceBasicDetailState?.ReportDateTime && new Date(useOfForceBasicDetailState?.ReportDateTime)}
+                  placeholderText={'Select...'}
+                  showTimeSelect
+                  timeIntervals={1}
                   timeCaption="Time"
+                  popperPlacement="bottom"
+                  maxDate={new Date(datezone)}
+                  minDate={new Date(incidentReportedDate)}
+                  autoComplete="Off"
                   showMonthDropdown
                   showYearDropdown
-                  showTimeSelect
-                  timeInputLabel
-                  is24Hour
-                  timeFormat="HH:mm "
-                  isClearable={useOfForceBasicDetailState?.ReportDateTime ? true : false}
-                  showDisabledMonthNavigation
                   dropdownMode="select"
-                  autoComplete="off"
-                  placeholderText="Select To Date..."
-                  minDate={useOfForceBasicDetailState?.ReportDateTime || new Date(1991, 0, 1)}
-                  maxDate={new Date(datezone)}
-                  disabled={approvalState.Status === "Pending Review" || approvalState.Status === "Approved"} // Disable if from date is not selected
-                  // className={!useOfForceBasicDetailState?.ReportDateTime && 'readonlyColor'}
+                  filterTime={(time) => filterPassedDateTimeZone(time, useOfForceBasicDetailState?.ReportDateTime, incidentReportedDate, datezone)}
                   className={(approvalState.Status === "Pending Review" || approvalState.Status === "Approved") ? "readonlyColor" : "requiredColor"}
+                  disabled={approvalState.Status === "Pending Review" || approvalState.Status === "Approved"} // Disable if from date is not selected
                 />
 
               </div>
@@ -3041,7 +3268,8 @@ const PoliceForce = (props) => {
                   isClearable
                   value={agencyOfficerDrpData?.filter((obj) => obj.value === useOfForceBasicDetailState?.PreparedById)}
                   options={agencyOfficerDrpData}
-                  onChange={(e) => handleUseOfForceBasicDetailState('PreparedById', e)}
+                  onChange={(e) => { handleUseOfForceBasicDetailState('PreparedById', e); setStatesChangeStatus(true) }}
+
                   placeholder="Select.."
                   menuPlacement="bottom"
                   isDisabled
@@ -3062,13 +3290,30 @@ const PoliceForce = (props) => {
                   }
                   value={WrittenForDataDrp?.filter((obj) => obj.value === useOfForceBasicDetailState?.WrittenForID)}
                   options={WrittenForDataDrp}
-                  onChange={(e) => handleUseOfForceBasicDetailState('WrittenForID', e.value)}
+                  onChange={(e) => { handleUseOfForceBasicDetailState('WrittenForID', e.value); setStatesChangeStatus(true) }}
+
                   placeholder="Select.."
                   menuPlacement="bottom"
                   isDisabled={approvalState.Status === 'Pending Review' || approvalState.Status === 'Approved' || approvalState.Status === 'Draft' || approvalState.Status === 'Rejected'}
                 />
               </div>
             </div>
+            {approvalState.Status === "Rejected" &&
+              <div className="row">
+                <div className="col-2 mt-2 pt-2">
+                  <label htmlFor="" className='new-label'>Comment</label>
+                </div>
+                <div className="col-5 col-lg-4 mt-2 text-field">
+                  <textarea
+                    type="text"
+                    className="form-control"
+                    name='Justification'
+                    id="Justification"
+                    value={approvalState?.Reason}
+                    readOnly />
+                </div>
+              </div>
+            }
             <div className="row ">
               {
                 useOfForceID ?
@@ -3081,9 +3326,9 @@ const PoliceForce = (props) => {
                             <input
                               type="radio"
                               name="approverType"
-                              value="IND"
+                              value="Individual"
                               className="form-check-input"
-                              checked={selectedOption === "IND"}
+                              checked={selectedOption === "Individual"}
                               onChange={handleRadioChange}
                               disabled={approvalState.Status === 'Pending Review' || approvalState.Status === 'Approved' ? true : false}
                             />
@@ -3109,7 +3354,7 @@ const PoliceForce = (props) => {
                           </div>
                         </div>
                         <div className='col-lg-6'></div>
-                        {selectedOption === "IND" ? (
+                        {selectedOption === "Individual" ? (
                           <>
                             <div className="col-2 col-md-2 col-lg-2 mt-3 pt-2">
                               <span htmlFor="" className='label-name '>Report Approver {errorApprovalState.ApprovingSupervisorID && (
@@ -3122,16 +3367,17 @@ const PoliceForce = (props) => {
                                 classNamePrefix="custom"
                                 options={reportApproveOfficer}
                                 isMulti
+                                menuPlacement="top"
                                 styles={colourStylesUsers}
                                 isDisabled={
                                   approvalState.Status?.trim() === 'Approved' || approvalState.Status === 'Pending Review' ||
-                                  (!IsSuperadmin && approvalState.ReportedByPINActivityID != loginPinID && approvalState.Status === 'Draft')
+                                  (!IsSuperadmin && useOfForceBasicDetailState.PreparedById != loginPinID && approvalState.Status === 'Draft')
                                 }
                                 closeMenuOnSelect={false}
                                 hideSelectedOptions={true}
-                                menuPlacement="top"
-                                value={reportApproveOfficer?.filter(option => approvalState?.ApprovingSupervisorID?.includes(option.value))}
+                                value={reportApproveOfficer?.filter(option => approvalState?.ApprovingSupervisorID?.split(',').includes(option.value.toString()))}
                                 onChange={handleSelectIncidentName}
+                                allowSelectAll={!!reportApproveOfficer?.length}
                               />
                             </div>
 
@@ -3144,21 +3390,44 @@ const PoliceForce = (props) => {
                               )}</span>
                             </div>
                             <div className="col-4 col-md-12 col-lg-4 dropdown__box">
+                              {/* <SelectBox
+                                                              className="custom-multiselect"
+                                                              classNamePrefix="custom"
+                                                              options={reportApproveOfficer}
+                                                              isMulti
+                                                              styles={colourStylesUsers}
+                                                              isDisabled={
+                                                                approvalState.Status?.trim() === 'Approved' || approvalState.Status === 'Pending Review' ||
+                                                                (!IsSuperadmin && approvalState.ReportedByPINActivityID != loginPinID && approvalState.Status === 'Draft')
+                                                              }
+                                                              closeMenuOnSelect={false}
+                                                              hideSelectedOptions={true}
+                                                              menuPlacement="top"
+                                                              value={reportApproveOfficer?.filter(option => approvalState?.ApprovingSupervisorID?.includes(option.value))}
+                                                              onChange={handleSelectIncidentName}
+                                                             allowSelectAll={reportApproveOfficer?.length > 0 ? true : false}
+                                                            /> */}
+
                               <SelectBox
+                                name="ApprovingSupervisorID"               // <- ensures actionMeta.name exists in normal changes
                                 className="custom-multiselect"
                                 classNamePrefix="custom"
                                 options={groupList}
                                 isMulti
                                 styles={colourStylesUsers}
                                 isDisabled={
-                                  approvalState.Status?.trim() === 'Approved' || approvalState.Status === 'Pending Review' ||
-                                  (!IsSuperadmin && approvalState.ReportedByPINActivityID != loginPinID && approvalState.Status === 'Draft')
+                                  approvalState.Status?.trim() === 'Approved' ||
+                                  approvalState.Status === 'Pending Review' ||
+                                  (!IsSuperadmin && useOfForceBasicDetailState.PreparedById != loginPinID && approvalState.Status === 'Draft')
                                 }
                                 closeMenuOnSelect={false}
                                 hideSelectedOptions={true}
-                                value={groupList?.filter(option => approvalState?.ApprovingSupervisorID?.includes(option.value))}
-                                onChange={handleSelectIncidentName}
                                 menuPlacement="top"
+                                value={groupList?.filter(
+                                  option => selectedIds.includes(String(option.value))
+                                )}
+                                onChange={handleSelectIncidentName}
+                                allowSelectAll={!!groupList?.length}
                               />
                             </div>
                           </>
@@ -3202,25 +3471,48 @@ const PoliceForce = (props) => {
 
             </div>
           </div>
-          <div className="btn-box d-flex justify-content-between offset-md-3 offset-lg-2 mt-2">
-            {
-              useOfForceID && approvalState.Status != "Pending Review" && approvalState.Status != "Approved" || useOfForceID && approvalState.ReportedByPINActivityID === loginPinID ? <>
-                <button
-                  type="button"
-                  // disabled={(approvalState.Status === 'Pending Review' || approvalState.Status === 'Approved') ? true : false}
-                  // disabled={((approvalState.ReportedByPINActivityID != loginPinID && approvalState.Status === 'Draft') || approvalState.Status === 'Pending Review' || approvalState.Status === 'Approved') ? true : false}
-                  onClick={() => Add_Approval()}
-                  className="btn btn-sm btn-success ml-1"  >
-                  Send For Approval
-                </button>
-              </> :
-                <></>
-            }
-            {useOfForceID ?
-              <button type="button" disabled={approvalState.Status === "Pending Review" || approvalState.Status === "Approved"} onClick={() => updateUseOfForceForm()} className="btn btn-sm btn-success ml-auto">Update</button>
-              :
-              <button type="button" onClick={() => addUseOfForceForm()} className="btn btn-sm btn-success ml-auto">Save</button>}
+          {/* Save and Update action */}
+          <div className="btn-box d-flex justify-content-end  mt-2">
+            <div>
+              {
+                useOfForceID && approvalState.Status != "Pending Review" && approvalState.Status != "Approved" || useOfForceID && useOfForceBasicDetailState.PreparedById === loginPinID ?
+                  <>
+                    <button
+                      type="button"
+                      disabled={((useOfForceBasicDetailState.PreparedById != loginPinID && approvalState.Status === 'Draft') || approvalState.Status === 'Pending Review' || approvalState.Status === 'Approved') ? true : false}
+                      onClick={() => Add_Approval()}
+                      className="btn btn-sm btn-success mr-2"  >
+                      Send For Approval
+                    </button>
+                  </> :
+                  <></>
+              }
+              {(approvalState.Status) && <button
+                type="button"
+                style={{
+                  pointerEvents: 'auto',
+                  cursor: 'pointer',
+                }}
+                disabled={!isEnablePrintPreview}
+                onClick={() => setSelectedStatus(true)}
+                className="btn btn-sm btn-success mr-2">
+                <i className="fa fa-print mr-1"></i>
+                Print Preview
+              </button>}
+              {useOfForceID ?
+                <button type="button" disabled={approvalState.Status === "Pending Review" || approvalState.Status === "Approved" || !statesChangeStatus} onClick={() => updateUseOfForceForm()} className="btn btn-sm btn-success">Update</button>
+                :
+                <button type="button" onClick={() => addUseOfForceForm()} className="btn btn-sm btn-success">Save</button>}
+
+            </div>
           </div>
+          {
+            loader && (
+              <div className="loader-overlay">
+                <Loader />
+              </div>
+            )
+          }
         </div>
 
       </div>
@@ -3228,4 +3520,4 @@ const PoliceForce = (props) => {
   )
 }
 
-export default PoliceForce
+export default PoliceForce 

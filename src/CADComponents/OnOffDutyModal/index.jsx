@@ -47,7 +47,7 @@ const OnOffDutyModal = (props) => {
     if (selectedResource) {
       updatedRow.shift = shiftDropDown.find(shift => shift.ShiftId === selectedResource.ShiftID) || null;
       updatedRow.zone = zoneDropDown.find(zone => zone.value === selectedResource.ZoneID) || null;
-      
+
       if (selectedResource?.OfficerIDs) {
         const [primaryOfficerID, primaryOfficerToID] = selectedResource?.OfficerIDs?.split(',').map(id => parseInt(id.trim()));
         updatedRow.primaryOfficer = OperatorDrpData?.find(officer => officer?.PINID === primaryOfficerID) || null;
@@ -225,16 +225,16 @@ const OnOffDutyModal = (props) => {
         }
 
         const updatedRow = { ...row, [key]: value };
-        
+
         if (key === 'resource') {
           const selectedResource = resourceData.find(res => res.ResourceID === value?.ResourceID);
           return handleResourceSelection(selectedResource, updatedRow);
         }
-        
+
         if (key === 'resourceType' && !value) {
           return handleResourceTypeChange(updatedRow);
         }
-        
+
         return updatedRow;
       });
       return updatedRows;
@@ -270,6 +270,7 @@ const OnOffDutyModal = (props) => {
     if (row.resourceType) {
       rowErrors.resource = row.resource ? '' : 'required';
       rowErrors.zone = !isEmptyObject(row.zone) ? '' : 'required';
+      rowErrors.shift = row.shift ? '' : 'required';
       rowErrors.personnel = !isEmptyObject(row.primaryOfficer) ? '' : 'required';
     }
 
@@ -298,7 +299,7 @@ const OnOffDutyModal = (props) => {
         if (row.primaryOfficerTo?.PINID) {
           officerIds.push(row.primaryOfficerTo.PINID);
         }
-        
+
         // If no officers are selected, use resource's OfficerIDs if available
         if (officerIds.length === 0 && row.resource?.OfficerIDs) {
           const resourceOfficerIds = row.resource.OfficerIDs.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
@@ -337,21 +338,22 @@ const OnOffDutyModal = (props) => {
 
       const response = await MonitorServices.changeOnOffDuty(finalPayload);
       if (response?.status === 200) {
+        resourceRefetch();
         toastifySuccess("Data Saved Successfully");
         setOnOffDutyModal(false);
+        setOnOffStatus("OnDuty");
         refetchOnOffDuty();
         incidentRefetch();
         setErrors([]);
-        resourceRefetch();
       }
     }
   }
 
   const escFunction = useCallback((event) => {
     if (event.key === "Escape") {
-      setOnOffDutyModal(false); 
-      refetchOnOffDuty(); 
-      setErrors([]); 
+      setOnOffDutyModal(false);
+      refetchOnOffDuty();
+      setErrors([]);
       setOnOffStatus("OnDuty")
     }
   }, []);
@@ -502,7 +504,7 @@ const OnOffDutyModal = (props) => {
             {index === 0 && onOffStatus === "OnDuty" ? (
               <div style={{ width: "290px" }}></div>
             ) : (
-              <button onClick={() => removeRow(index)} className="btn btn-sm text-white" style={{ backgroundColor: "red" }}> 
+              <button onClick={() => removeRow(index)} className="btn btn-sm text-white" style={{ backgroundColor: "red" }}>
                 <i className="fa fa-trash"></i>
               </button>
             )}
@@ -551,30 +553,30 @@ const OnOffDutyModal = (props) => {
                     {/* Line 1 */}
                     <div className="col-12 d-flex justify-content-start align-items-center mt-4 mb-1" style={{ gap: "50px" }}>
                       <div className="form-check ">
-                        <input 
-                          className="form-check-input" 
-                          style={{ marginTop: "6px" }} 
-                          type="radio" 
-                          value="Attempted" 
-                          name="AttemptComplete" 
-                          id="flexRadioDefault1" 
-                          checked={onOffStatus === 'OnDuty'} 
-                          onChange={() => handleRadioChange("OnDuty")} 
+                        <input
+                          className="form-check-input"
+                          style={{ marginTop: "6px" }}
+                          type="radio"
+                          value="Attempted"
+                          name="AttemptComplete"
+                          id="flexRadioDefault1"
+                          checked={onOffStatus === 'OnDuty'}
+                          onChange={() => handleRadioChange("OnDuty")}
                         />
                         <label className="form-check-label " htmlFor="flexRadioDefault1" >
                           On Duty
                         </label>
                       </div>
                       <div className="form-check ">
-                        <input 
-                          className="form-check-input" 
-                          style={{ marginTop: "6px" }} 
-                          type="radio" 
-                          value="Attempted" 
-                          name="AttemptComplete" 
-                          id="flexRadioDefault12" 
-                          checked={onOffStatus === 'OffDuty'} 
-                          onChange={() => handleRadioChange("OffDuty")} 
+                        <input
+                          className="form-check-input"
+                          style={{ marginTop: "6px" }}
+                          type="radio"
+                          value="Attempted"
+                          name="AttemptComplete"
+                          id="flexRadioDefault12"
+                          checked={onOffStatus === 'OffDuty'}
+                          onChange={() => handleRadioChange("OffDuty")}
                         />
                         <label className="form-check-label " htmlFor="flexRadioDefault12">
                           Off Duty
@@ -638,5 +640,5 @@ OnOffDutyModal.propTypes = {
 // Default props
 OnOffDutyModal.defaultProps = {
   openOnOffDutyModal: false,
-  setOnOffDutyModal: () => {}
+  setOnOffDutyModal: () => { }
 };

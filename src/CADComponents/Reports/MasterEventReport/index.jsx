@@ -7,7 +7,7 @@ import { colorLessStyle_Select, customStylesWithOutColorArrow } from '../../Util
 import { dropDownDataModelForAptNo, handleNumberTextKeyDown, isNotEmpty } from '../../../CADUtils/functions/common';
 import MasterTableListServices from "../../../CADServices/APIs/masterTableList";
 import { useQuery } from 'react-query';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import CallTakerServices from "../../../CADServices/APIs/callTaker";
 import GeoServices from "../../../CADServices/APIs/geo";
 import ReportsServices from "../../../CADServices/APIs/reports";
@@ -19,9 +19,12 @@ import { useReactToPrint } from 'react-to-print';
 import { getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime } from '../../../Components/Common/Utility';
 import { AgencyContext } from '../../../Context/Agency/Index';
 import ReportMainAddress from '../ReportMainAddress/ReportMainAddress';
+import { get_ScreenPermissions_Data } from '../../../redux/actions/IncidentAction';
 
 const MasterEventReport = () => {
+    const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
+    const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
     const { datezone, GetDataTimeZone, } = useContext(AgencyContext);
     const [loginAgencyID, setLoginAgencyID] = useState('');
     const [CFSDropDown, setCFSDropDown] = useState([]);
@@ -111,6 +114,7 @@ const MasterEventReport = () => {
             setLoginUserName(localStoreData?.UserName)
             setLoginAgencyID(localStoreData?.AgencyID);
             GetDataTimeZone(localStoreData?.AgencyID);
+            dispatch(get_ScreenPermissions_Data("CE103", localStoreData?.AgencyID, localStoreData?.PINID));
         }
     }, [localStoreData]);
 
@@ -324,7 +328,7 @@ const MasterEventReport = () => {
 
     const groupByResourceNumber = (data) => {
         const groupedData = {};
-    
+
         data.forEach(item => {
             const key = `${item.ResourceNumber}|${item.PrimaryOfficeR}|${item.ZoneDescription}|${item.ShiftDescription}|${item.SecondaryOfficer}|${item.ResourceType}`;
             if (!groupedData[key]) {
@@ -633,7 +637,8 @@ const MasterEventReport = () => {
                                 </div>
 
                                 <div className="col-12 col-md-12 col-lg-12 mt-1 text-right mb-1">
-                                    <button className="btn btn-sm bg-green text-white px-2 py-1" onClick={() => { getMasterEventReport(false); }} >Show Report</button>
+                                    {effectiveScreenPermission?.[0]?.AddOK ? <button className="btn btn-sm bg-green text-white px-2 py-1" onClick={() => { getMasterEventReport(false); }} >Show Report</button> : <></>
+                                    }
                                     <button className="btn btn-sm bg-green text-white px-2 py-1 ml-2"
                                         onClick={() => { resetFields(); }}
                                     >Clear</button>

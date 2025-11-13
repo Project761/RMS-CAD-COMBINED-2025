@@ -20,10 +20,12 @@ import { getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime } fr
 import { AgencyContext } from '../../../Context/Agency/Index';
 import ReportMainAddress from '../ReportMainAddress/ReportMainAddress';
 import { getData_DropDown_IncidentDispositions } from '../../../CADRedux/actions/DropDownsData';
+import { get_ScreenPermissions_Data } from '../../../redux/actions/IncidentAction';
 
 const LocationReport = () => {
     const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
+    const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
     const IncidentDispositionsDrpData = useSelector((state) => state.CADDropDown.IncidentDispositionsDrpData);
     const { datezone, GetDataTimeZone } = useContext(AgencyContext);
     const [loginAgencyID, setLoginAgencyID] = useState('');
@@ -113,8 +115,9 @@ const LocationReport = () => {
             setLoginUserName(localStoreData?.UserName)
             setLoginAgencyID(localStoreData?.AgencyID);
             GetDataTimeZone(localStoreData?.AgencyID);
+            dispatch(get_ScreenPermissions_Data("CG104", localStoreData?.AgencyID, localStoreData?.PINID));
             if (IncidentDispositionsDrpData?.length === 0 && localStoreData?.AgencyID)
-                 dispatch(getData_DropDown_IncidentDispositions({ AgencyID: localStoreData?.AgencyID }))
+                dispatch(getData_DropDown_IncidentDispositions({ AgencyID: localStoreData?.AgencyID }))
         }
     }, [localStoreData]);
 
@@ -257,7 +260,7 @@ const LocationReport = () => {
                 let imgUrl = `data:image/png;base64,${res[0]?.Agency_Photo}`;
                 setMultiImage(imgUrl);
             }
-            else { console.log("error") }
+            else { console.error("error") }
         })
     }
     const getLocationReportData = async (isPrintReport = false) => {
@@ -599,7 +602,7 @@ const LocationReport = () => {
                                 </div>
 
                                 <div className="col-12 col-md-12 col-lg-12 mt-1 text-right mb-1">
-                                    <button className="btn btn-sm bg-green text-white px-2 py-1" onClick={() => { getLocationReportData(false); }} >Show Report</button>
+                                    {effectiveScreenPermission?.[0]?.AddOK ? <button className="btn btn-sm bg-green text-white px-2 py-1" onClick={() => { getLocationReportData(false); }} >Show Report</button> : <></>}
                                     <button className="btn btn-sm bg-green text-white px-2 py-1 ml-2"
                                         onClick={() => { resetFields(); }}
                                     >Clear</button>

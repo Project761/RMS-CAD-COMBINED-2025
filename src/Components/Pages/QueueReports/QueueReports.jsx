@@ -51,6 +51,8 @@ function QueueReports({ isPreview }) {
   const [loginPinID, setLoginPinID] = useState();
   const [editval, setEditval] = useState([]);
   const [narrativeID, setNarrativeID] = useState();
+  const [arrestID, setArrestID] = useState();
+  const [useOfForceID, setUseOfForceID] = useState("");
   const [queData, setqueData] = useState();
   const [modelStatus, setModelStatus] = useState(false);
   const [WrittenForID, setWrittenForID] = useState();
@@ -60,13 +62,9 @@ function QueueReports({ isPreview }) {
   const [checkapproveStatus, setcheckapproveStatus] = useState(false);
   const [pendingUseOfForceData, setPendingUseOfForceData] = useState([]);
   const [pendingApprovalData, setPendingApprovalData] = useState([]);
-
-
-
   const [arrsetPoliceForceID, setArrsetPoliceForceID] = useState();
   const [ArrestNumber, setArrestNumber] = useState();
   const [IncidentNumber, setIncidentNumber] = useState();
-  const [arrestID, setarrestID] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [LastComments, setLastComments] = useState();
 
@@ -85,8 +83,6 @@ function QueueReports({ isPreview }) {
 
       setreportApprovalStatus(localStoreData?.ReportApproval);
       setcheckapproveStatus(localStoreData?.IsLevel);
-      getUseOfForceData(localStoreData?.PINID, localStoreData?.AgencyID);
-
 
     }
   }, [localStoreData]);
@@ -102,36 +98,21 @@ function QueueReports({ isPreview }) {
       name: 'Review',
       cell: row => (
         <div className="text-start">
-          {row.ReportTypeJson === "Use Of Force"
-            ? <button
-              type="button"
-              className="btn btn-sm btn-dark w-100 mb-1"
-              style={{ backgroundColor: "#001f3f", color: "#fff", fontSize: '11px' }}
-              data-toggle="modal" data-target="#PoliceForceTaskModal"
-              onClick={() => {
-                // GetSingleData(row?.NarrativeID); setWrittenForID(row?.WrittenForID); setNarrativeID(row?.NarrativeID);
-                setarrestID(row?.ArrestID)
-                setIncidentNumber(row?.IncidentNumber);
-                setArrestNumber(row?.ArrestNumber);
-                setArrsetPoliceForceID(row?.ArrsetPoliceForceID);
-                setEditval(row)
-                setIsOpen(true);
-              }}
-            >
-              Review
-            </button>
-
-            : <button
-              type="button"
-              className="btn btn-sm btn-dark w-100 mb-1"
-              style={{ backgroundColor: "#001f3f", color: "#fff", fontSize: '11px' }}
-              // data-toggle="modal" data-target="#QueueReportsModal"
-              onClick={() => {
-                GetSingleData(row?.NarrativeID); setWrittenForID(row?.WrittenForID); setNarrativeID(row?.NarrativeID);
-              }}
-            >
-              Review
-            </button>}
+          <button
+            type="button"
+            className="btn btn-sm btn-dark w-100 mb-1"
+            style={{ backgroundColor: "#001f3f", color: "#fff", fontSize: '11px' }}
+            // data-toggle="modal" data-target="#QueueReportsModal"
+            onClick={() => {
+              const UseOfForceID = row?.UseofForceID != null && Number(row.UseofForceID) > 0
+                ? row.UseofForceID
+                : "";
+              GetSingleData(row?.NarrativeID, UseOfForceID); setWrittenForID(row?.WrittenForID); setNarrativeID(row?.NarrativeID); setArrestID(row?.ArrestID);
+              setUseOfForceID(UseOfForceID);
+            }}
+          >
+            Review
+          </button>
         </div>
       ),
       ignoreRowClick: true,
@@ -245,7 +226,7 @@ function QueueReports({ isPreview }) {
       sortable: true,
 
       cell: row => {
-        const desc = row?.ReportTypeJson || row.NarrativeDescription?.toLowerCase();
+        const desc = row.NarrativeDescription?.toLowerCase();
 
         let backgroundColor = 'transparent';
         let color = 'inherit';
@@ -264,9 +245,9 @@ function QueueReports({ isPreview }) {
           backgroundColor = '#f87171'; // red-400
           color = 'inherit';
         }
-        else if (desc === 'Use Of Force') {
+        else if (desc === 'use of force') {
           backgroundColor = '#007bff';
-          color = '#ffff';
+          color = 'inherit';
         }
         return (
           <span
@@ -280,7 +261,7 @@ function QueueReports({ isPreview }) {
 
             }}
           >
-            {row.ReportTypeJson || row.NarrativeDescription}
+            {row.NarrativeDescription}
           </span>
         );
       },
@@ -367,19 +348,22 @@ function QueueReports({ isPreview }) {
     fetchPostData('IncidentNarrativeReport/GetData_NarrativeQueueReport', val).then((res) => {
       if (res) {
 
-        setPendingApprovalData(res);
+        setqueData(res);
         setLoder(true);
         // setNameFilterData(res)
       } else {
-        setPendingApprovalData([]);
+        setqueData([]);
         setLoder(true);
         // setNameFilterData([])
       }
     })
   }
 
-  const GetSingleData = (NarrativeID) => {
-    const val = { 'NarrativeID': NarrativeID, }
+  const GetSingleData = (NarrativeID, UseOfForceID) => {
+    const val = UseOfForceID ? { UseOfForceID } : { NarrativeID };
+    // const narrativePayload = { 'NarrativeID': NarrativeID, }
+    // const useOfForcePayload = { 'UseOfForceID': UseOfForceID }
+    // const val = UseOfForceID ? useOfForcePayload : narrativePayload
     fetchPostData('IncidentNarrativeReport/GetSingleData_NarrativeApprove', val).then((res) => {
       if (res) {
         setEditval(res);
@@ -424,33 +408,9 @@ function QueueReports({ isPreview }) {
   // use of force 
 
   useEffect(() => {
-    setqueData([...pendingUseOfForceData, ...pendingApprovalData]);
+    setqueData(queData);
     setLoder(true);
-  }, [pendingUseOfForceData, pendingApprovalData]);
-
-
-
-  useEffect(() => {
-    getUseOfForceData(loginPinID, loginAgencyID);
-
-  }, [isOpen]);
-
-
-  const getUseOfForceData = (OfficerID, agencyId) => {
-    const val = { 'ApprovePinID': OfficerID, 'AgencyID': agencyId }
-    if (OfficerID && agencyId) {
-      fetchPostData('CAD/UseOfForceReport/GetUseOfForceReport', val).then((res) => {
-        if (res) {
-          const pendingStatusData = res?.filter((item) => item?.Status === "Pending Review")
-          setPendingUseOfForceData(pendingStatusData);
-          setLoder(true);
-        } else {
-          setPendingUseOfForceData([]);
-          setLoder(true);
-        }
-      })
-    }
-  }
+  }, [queData]);
 
 
 
@@ -553,7 +513,7 @@ function QueueReports({ isPreview }) {
         {/* </div> */}
         {modelStatus && editval?.length > 0 && (
 
-          <QueueReportsModal checkapproveStatus={checkapproveStatus} reportApprovalStatus={reportApprovalStatus} editval={editval} get_Data_Que_Report={get_Data_Que_Report} WrittenForID={WrittenForID} narrativeID={narrativeID} loginAgencyID={loginAgencyID} loginPinID={loginPinID} setModelStatus={setModelStatus} />
+          <QueueReportsModal checkapproveStatus={checkapproveStatus} reportApprovalStatus={reportApprovalStatus} editval={editval} get_Data_Que_Report={get_Data_Que_Report} WrittenForID={WrittenForID} narrativeID={narrativeID} loginAgencyID={loginAgencyID} loginPinID={loginPinID} setModelStatus={setModelStatus} useOfForceID={useOfForceID} />
 
         )}
         {/* <QueueReportsModal editval={editval} WrittenForID={WrittenForID} narrativeID={narrativeID} loginAgencyID={loginAgencyID} loginPinID={loginPinID} setModelStatus={setModelStatus} /> */}
@@ -567,7 +527,7 @@ function QueueReports({ isPreview }) {
       {/* <QueueReportsModal editval={editval} WrittenForID={WrittenForID} narrativeID={narrativeID} loginAgencyID={loginAgencyID} loginPinID={loginPinID} setModelStatus={setModelStatus} /> */}
       {/* </div> */}
 
-      {isOpen && (
+      {/* {isOpen && (
         <PoliceForceTaskModal
           editval={editval}
           LastComments={LastComments}
@@ -579,7 +539,7 @@ function QueueReports({ isPreview }) {
           loginPinID={loginPinID}
           onClose={() => setIsOpen(false)}
         />
-      )}
+      )} */}
 
     </>
   )
@@ -602,7 +562,7 @@ const QueueReportsModal = (props) => {
   const reportApproveOfficer = useSelector((state) => state.Incident.reportApproveOfficer);
   const narrativeTypeDrpData = useSelector((state) => state.DropDown.narrativeTypeDrpData);
 
-  const { editval, narrativeID, loginAgencyID, loginPinID, setModelStatus, checkapproveStatus, reportApprovalStatus, get_Data_Que_Report, WrittenForID } = props
+  const { editval, narrativeID, loginAgencyID, loginPinID, setModelStatus, checkapproveStatus, reportApprovalStatus, get_Data_Que_Report, WrittenForID, useOfForceID } = props
 
   const [clickedRow, setClickedRow] = useState(null);
   const [approvalStatus, setApprovalStatus] = useState('Approve');
@@ -677,10 +637,14 @@ const QueueReportsModal = (props) => {
       dispatch(get_Report_Approve_Officer_Data(loginAgencyID, loginPinID, narrativeID));
       if (narrativeTypeDrpData?.length === 0) { dispatch(get_Narrative_Type_Drp_Data(loginAgencyID)) }
       get_Group_List(loginAgencyID, loginPinID, narrativeID);
-      GetData_ReportWorkLevelCheck(loginAgencyID, narrativeID)
+      if (useOfForceID) {
+        GetData_ReportWorkLevelCheck_UseOfForce(loginAgencyID, useOfForceID)
+      } else {
+        GetData_ReportWorkLevelCheck(loginAgencyID, narrativeID)
+      }
       // get_IncidentTab_Count(IncID, loginPinID);
     }
-  }, [loginAgencyID])
+  }, [loginAgencyID, useOfForceID])
 
   const get_Group_List = (loginAgencyID, loginPinID, NarrativeID) => {
     const value = { AgencyId: loginAgencyID, PINID: loginPinID, NarrativeID: NarrativeID }
@@ -703,7 +667,6 @@ const QueueReportsModal = (props) => {
     })
   }
 
-  console.log(checkWebWorkFlowStatus)
 
   useEffect(() => {
     if (groupList?.GroupID) {
@@ -735,7 +698,6 @@ const QueueReportsModal = (props) => {
     return status?.length > 0
   }
 
-  console.log(editval)
   useEffect(() => {
     if (editval) {
       setIncidentNo(editval[0]?.IncidentNumber)
@@ -844,32 +806,49 @@ const QueueReportsModal = (props) => {
       'AsOfDate': AsOfDate,
       'ModifiedByUserFK': loginPinID,
     };
-    AddDeleteUpadate('Narrative/Update_Narrative', val).then((res) => {
-      // setChangesStatus(false);
+    if (!useOfForceID) {
+      AddDeleteUpadate('Narrative/Update_Narrative', val).then((res) => {
+        // setChangesStatus(false);
+        Add_Type_Comments()
+
+        get_Data_Narrative(narrativeID)
+        // get_Name_Count(DecNameID, DecMasterNameID, MstPage === "MST-Name-Dash" ? true : false);
+        // setModal(false)
+
+        const parseData = JSON.parse(res.data);
+        toastifySuccess(parseData?.Table[0].Message);
+        // setStatesChangeStatus(false);
+        // get_Data_Que_Report(loginPinID, loginAgencyID)
+        setIsSaved(true);
+        setModelStatus(false);
+        reset();
+        navigate('/dashboard-page');
+      })
+    }
+    if (useOfForceID) {
       Add_Type_Comments()
 
       get_Data_Narrative(narrativeID)
       // get_Name_Count(DecNameID, DecMasterNameID, MstPage === "MST-Name-Dash" ? true : false);
       // setModal(false)
 
-      const parseData = JSON.parse(res.data);
-      toastifySuccess(parseData?.Table[0].Message);
+      // const parseData = JSON.parse(res.data);
+      // toastifySuccess(parseData?.Table[0].Message);
       // setStatesChangeStatus(false);
       // get_Data_Que_Report(loginPinID, loginAgencyID)
       setIsSaved(true);
       setModelStatus(false);
       reset();
       navigate('/dashboard-page');
-    })
+    }
   }
 
   const Add_Type_Comments = () => {
     const { IsApprove, IsReject, Comments, CommentsDoc, ApprovalComments, ApprovingSupervisorID, IsApprovedForward, IsReview } = value
     const type = selectedOption === "Individual" ? 'Individual' : 'Group';
-
     const val = {
       'AgencyID': loginAgencyID,
-      'IncidentId': incidentID, 'NarrativeID': narrativeID, 'ApprovingSupervisorType': type, 'ApprovingSupervisorID': ApprovingSupervisorID,
+      'IncidentId': incidentID, 'ApprovingSupervisorType': type, 'ApprovingSupervisorID': ApprovingSupervisorID,
       'IsApprove': reviewStatus ? false : (value.IsApprove === undefined && value.IsReject === undefined) || IsApprovedForward ? true : value.IsApprove,
       //  'IsApprove':  (value.IsApprove === undefined && value.IsReject === undefined) || IsApprovedForward ? true : value.IsApprove,
       'CreatedByUserFK': loginPinID,
@@ -879,6 +858,8 @@ const QueueReportsModal = (props) => {
       // 'IsReject': IsApprove === undefined && IsReject === undefined ? false : IsReject,
       'IsReject': IsApprove === undefined && IsReject === undefined || reviewStatus ? false : IsReject,
       'Comments': ApprovalComments,
+      'NarrativeID': useOfForceID ? "" : narrativeID,
+      'UseofForceID': useOfForceID
       // 'IncidentId': incidentID, 'NarrativeID': narrativeID, 'ApprovingSupervisorType': type, 'ApprovingSupervisorID': ApprovingSupervisorID, 'IsApprove': IsApprovedForward ? 'true' : IsApprove, 'CreatedByUserFK': loginPinID, 'IsApprovedForward': IsApprovedForward, 'IsReject': IsReject, 'Comments': ApprovalComments,
 
     };
@@ -1012,19 +993,37 @@ const QueueReportsModal = (props) => {
 
 
   useEffect(() => {
-    if (value.IsApprovedForward || value.IsReview) {
-      if (ApprovalCommentsError === 'true' && CommentsDocumentsError === 'true' && ApprovingOfficerError === 'true') {
-        Add_Type()
-        // reset();
-        resetserror();
-      }
+    if (useOfForceID) {
+      if (value.IsApprovedForward || value.IsReview) {
+        if (ApprovalCommentsError === 'true' && ApprovingOfficerError === 'true') {
+          Add_Type()
+          // reset();
+          resetserror();
+        }
 
-    }
-    else {
-      if (ApprovalCommentsError === 'true' && CommentsDocumentsError === 'true') {
-        Add_Type()
-        // reset();
-        resetserror();
+      }
+      else {
+        if (ApprovalCommentsError === 'true') {
+          Add_Type()
+          // reset();
+          resetserror();
+        }
+      }
+    } else {
+      if (value.IsApprovedForward || value.IsReview) {
+        if (ApprovalCommentsError === 'true' && CommentsDocumentsError === 'true' && ApprovingOfficerError === 'true') {
+          Add_Type()
+          // reset();
+          resetserror();
+        }
+
+      }
+      else {
+        if (ApprovalCommentsError === 'true' && CommentsDocumentsError === 'true') {
+          Add_Type()
+          // reset();
+          resetserror();
+        }
       }
     }
   }, [ApprovalCommentsError, CommentsDocumentsError, ApprovingOfficerError])
@@ -1064,11 +1063,42 @@ const QueueReportsModal = (props) => {
       marginTop: 2,
       boxShadow: 'none',
       cursor: isDisabled ? 'not-allowed' : 'default',
+      height: 10,
+    }),
+    menu: (provided) => ({
+      ...provided,
+      maxHeight: "120px",
+    }),
+    menuList: (provided) => ({
+      ...provided,
+      maxHeight: "120px",
+      overflowY: "auto",
     }),
   };
 
   const GetData_ReportWorkLevelCheck = (loginAgencyID, narrativeID) => {
     const val = { AgencyID: loginAgencyID, NarrativeID: narrativeID };
+
+    fetchPostData('IncidentNarrativeReport/GetData_ReportWorkLevelCheck', val).then(res => {
+      if (res && res.length > 0) {
+        console.log(res);
+
+        const workflowData = res[0];
+        const canShowApprovalButton = workflowData?.IsMultipleLevel;
+        setcheckWebWorkFlowStatus(canShowApprovalButton);
+        setapproverRequiredCount(workflowData?.ReportApproverRequired);
+        // setIsSelfApproved(canApproved);
+        // setLoder(true);
+      } else {
+        // Handle case where no data is returned
+        // setNarrativeData([]);
+        // setLoder(true);
+      }
+    });
+  };
+
+  const GetData_ReportWorkLevelCheck_UseOfForce = (loginAgencyID, useOfForceID) => {
+    const val = { AgencyID: loginAgencyID, UseofForceID: useOfForceID };
 
     fetchPostData('IncidentNarrativeReport/GetData_ReportWorkLevelCheck', val).then(res => {
       if (res && res.length > 0) {
@@ -1099,9 +1129,6 @@ const QueueReportsModal = (props) => {
     );
   }
 
-  console.log(reportApprovalStatus);
-  console.log(checkapproveStatus);
-
   const setApproverStatus = (level, ApproveStatus) => {
     if (ApproveStatus === "Single") {
       return true
@@ -1115,14 +1142,12 @@ const QueueReportsModal = (props) => {
     }
   }
 
-  console.log(checkWebWorkFlowStatus , Number(approverRequiredCount) , Number(appRequiredCountCurrentStatus))
-
   return (
     <div className="modal fade show d-block" style={{ background: "rgba(0,0,0,0.5)" }}>
       {/* <div class="modal fade" style={{ background: "rgba(0,0,0, 0.5)" }} id="QueueReportsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="false"> */}
       {/* // <div className="modal fade show d-block" style={{ background: "rgba(0,0,0,0.5)" }}> */}
       <div className="modal-dialog modal-xl modal-dialog-centered">
-        <div className="modal-content p-2 px-4 approvedReportsModal" style={{ minHeight: '500px', overflowY: "scroll " }}>
+        <div className="modal-content p-2 px-4 approvedReportsModal" style={{ minHeight: useOfForceID ? '280px' : '500px', overflowY: "scroll " }}>
           <div className="d-flex justify-content-between">
             <div className='row mt-1 mb-2'>
               <div className='col-12'>
@@ -1207,10 +1232,11 @@ const QueueReportsModal = (props) => {
                 </div>
               </div>
 
-              <div className="row mt-1">
-                <div className="col-12 col-md-12 col-lg-12 px-0 pl-0">
+              {!useOfForceID &&
+                <div className="row mt-1">
+                  <div className="col-12 col-md-12 col-lg-12 px-0 pl-0">
 
-                  {/* <Editor
+                    {/* <Editor
                     editorState={editorState}
                     onEditorStateChange={handleEditorChange}
                     wrapperClassName="wrapper-class"
@@ -1259,55 +1285,55 @@ const QueueReportsModal = (props) => {
                       },
                     }}
                   /> */}
-                  <ReactQuill
-                    className={`editor-class ${reviewStatus === true ? 'readonly' : ''}`}
+                    <ReactQuill
+                      className={`editor-class ${reviewStatus === true ? 'readonly' : ''}`}
 
-                    value={value.CommentsDoc}
-                    onChange={(value, delta, source, editor) => {
-                      const text = editor?.getText();
-                      // console.log(text, "text");
-                      // console.log(value, "value");
-                      // setChangesStatus(true);
-                      //  setStatesChangeStatus(true);
+                      value={value.CommentsDoc}
+                      onChange={(value, delta, source, editor) => {
+                        const text = editor?.getText();
+                        // console.log(text, "text");
+                        // console.log(value, "value");
+                        // setChangesStatus(true);
+                        //  setStatesChangeStatus(true);
 
-                      setValue((prevValue) => ({
-                        ...prevValue,
-                        Comments: text,
-                        CommentsDoc: value,
-                      }));
+                        setValue((prevValue) => ({
+                          ...prevValue,
+                          Comments: text,
+                          CommentsDoc: value,
+                        }));
 
-                    }}
-                    modules={{
-                      history: { delay: 200, maxStack: 500, userOnly: true },
-                      toolbar: [
-                        [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
-                        [{ 'size': ['small', 'medium', 'large', 'huge'] }],  // Font 
-                        // size options 
-                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                        [{ 'align': '' }, { 'align': 'center' }, { 'align': 'right' }, { 'align': 'justify' }],
-                        ['bold', 'italic', 'underline'],
-                        // ['link', 'image'],
-                        [{ 'color': [] }, { 'background': [] }],  // Text color and 
-                        // background color 
-                        ['blockquote'],
-                        ['spell-checker'],  // spell checker
-                        ['undo', 'redo'],
-                      ],
-                    }}
-                    formats={['undo', 'redo', "header", "bold", "italic", "underline", "size", "background", "strike", 'align', "blockquote", 'list', "bullet", "indent", "code-block", "spell-checker", "color",
-                      // "link", 
-                      // "image", 
-                    ]}
-                    editorProps={{ spellCheck: true }}
-                    theme="snow"
-                    placeholder="Write something..."
-                    style={{
-                      minHeight: '200px',
-                      maxHeight: '210px',
-                      overflowY: 'auto',
-                    }}
-                  />
-                  {/* <div className="raditer-mainQue">
+                      }}
+                      modules={{
+                        history: { delay: 200, maxStack: 500, userOnly: true },
+                        toolbar: [
+                          [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
+                          [{ 'size': ['small', 'medium', 'large', 'huge'] }],  // Font 
+                          // size options 
+                          [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                          [{ 'align': '' }, { 'align': 'center' }, { 'align': 'right' }, { 'align': 'justify' }],
+                          ['bold', 'italic', 'underline'],
+                          // ['link', 'image'],
+                          [{ 'color': [] }, { 'background': [] }],  // Text color and 
+                          // background color 
+                          ['blockquote'],
+                          ['spell-checker'],  // spell checker
+                          ['undo', 'redo'],
+                        ],
+                      }}
+                      formats={['undo', 'redo', "header", "bold", "italic", "underline", "size", "background", "strike", 'align', "blockquote", 'list', "bullet", "indent", "code-block", "spell-checker", "color",
+                        // "link", 
+                        // "image", 
+                      ]}
+                      editorProps={{ spellCheck: true }}
+                      theme="snow"
+                      placeholder="Write something..."
+                      style={{
+                        minHeight: '200px',
+                        maxHeight: '210px',
+                        overflowY: 'auto',
+                      }}
+                    />
+                    {/* <div className="raditer-mainQue">
                     <CKEditor
                       editor={ClassicEditor}
                       config={editorConfig}
@@ -1338,10 +1364,10 @@ const QueueReportsModal = (props) => {
                       <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.CommentsDocumentsError}</p>
                     ) : null}
                   </div> */}
+                  </div>
+
                 </div>
-
-              </div>
-
+              }
               <div className='row mt-1'>
                 {
                   (reviewStatus === false || reviewStatus === 'false') && (
@@ -1368,9 +1394,9 @@ const QueueReportsModal = (props) => {
                             :
                             <></>
                         }
-                       
 
-                          {/* < div className="form-check">
+
+                        {/* < div className="form-check">
                             <input
                               className="form-check-input"
                               type="radio"
@@ -1388,7 +1414,7 @@ const QueueReportsModal = (props) => {
                           </div> */}
 
 
-                       
+
                       </div>
                       <div className='col-md-2'>
                         <div className="form-check">
@@ -1431,12 +1457,12 @@ const QueueReportsModal = (props) => {
                         }
 
                       </div> */}
-                       <div className='col-md-2'>
+                      <div className='col-md-2'>
 
                         {
                           (checkWebWorkFlowStatus &&
                             (Number(appRequiredCountCurrentStatus) < Number(approverRequiredCount))) &&
-                          < div className="form-check">
+                          <div className="form-check">
                             <input
                               className="form-check-input"
                               type="radio"
@@ -1461,7 +1487,7 @@ const QueueReportsModal = (props) => {
                 <div className='col-md-2'>
 
 
-                  < div className="form-check">
+                  <div className="form-check">
                     <input
                       className="form-check-input"
                       type="radio"
@@ -1541,7 +1567,7 @@ const QueueReportsModal = (props) => {
                                 options={reportApproveOfficer}
                                 isMulti
                                 required
-                                menuPlacement="top"
+                                menuPlacement="bottom"
                                 styles={colourStylesUsers}
                                 // isDisabled={value.Status === "Pending Review" || value.Status === "Approved"}
                                 closeMenuOnSelect={false}
@@ -1570,7 +1596,7 @@ const QueueReportsModal = (props) => {
                                 className="custom-multiselect"
                                 classNamePrefix="custom"
                                 options={groupList}
-                                menuPlacement="top"
+                                menuPlacement="bottom"
                                 isMulti
                                 styles={colourStylesUsers}
                                 closeMenuOnSelect={false}
@@ -1712,195 +1738,195 @@ const QueueReportsModal = (props) => {
 };
 
 
-const PoliceForceTaskModal = (props) => {
-  const { editval, loginPinID, onClose, } = props
-  const [clickedRow, setClickedRow] = useState(null);
-  const [activeTab, setActiveTab] = useState('Approve');
+// const PoliceForceTaskModal = (props) => {
+//   const { editval, loginPinID, onClose, } = props
+//   const [clickedRow, setClickedRow] = useState(null);
+//   const [activeTab, setActiveTab] = useState('Approve');
 
-  const [
-    policeForceReviewState,
-    setPoliceForceReviewState,
-    handlePoliceForceReviewState,
-    clearPoliceForceReviewState,
-  ] = useObjState({
-    reason: "",
-    previousReason: ""
-  });
+//   const [
+//     policeForceReviewState,
+//     setPoliceForceReviewState,
+//     handlePoliceForceReviewState,
+//     clearPoliceForceReviewState,
+//   ] = useObjState({
+//     reason: "",
+//     previousReason: ""
+//   });
 
 
-  const columns = [
-    {
-      name: 'Rejected By',
-      selector: row => row.CreatedBy,
-      sortable: true
-    },
-    {
-      name: 'Reason For Rejection',
-      selector: row => row.Comments,
-      sortable: true
-    },
-    {
-      name: 'Date Of Rejection',
-      selector: row => row.CreatedDtTm,
-      sortable: true
-    },
-  ];
+//   const columns = [
+//     {
+//       name: 'Rejected By',
+//       selector: row => row.CreatedBy,
+//       sortable: true
+//     },
+//     {
+//       name: 'Reason For Rejection',
+//       selector: row => row.Comments,
+//       sortable: true
+//     },
+//     {
+//       name: 'Date Of Rejection',
+//       selector: row => row.CreatedDtTm,
+//       sortable: true
+//     },
+//   ];
 
-  const saveReview = () => {
-    const payload = {
-      UseofForceReportID: editval?.UseofForceReportID,
-      ApprovePinID: editval?.ApprovePinID,
-      IsApprove: activeTab === 'Approve' ? 1 : 0,
-      IsReject: activeTab === 'Reject' ? 1 : 0,
-      Comments: policeForceReviewState?.reason,
-      UseofForceID: editval?.UseofForceID,
-      IncidentID: editval?.IncidentID,
-      ArrestID: editval?.ArrestID,
-      CreatedByUserFK: loginPinID,
-    };
-    AddDeleteUpadate('CAD/UseOfForceReport/UpdateUseOfForceReport', payload)
-      .then((res) => {
-        if (res.success) {
-          onClose()
-        } else {
-          console.log("something Wrong");
-        }
-      }).catch(err => console.log(err));
-  }
+//   const saveReview = () => {
+//     const payload = {
+//       UseofForceReportID: editval?.UseofForceReportID,
+//       ApprovePinID: editval?.ApprovePinID,
+//       IsApprove: activeTab === 'Approve' ? 1 : 0,
+//       IsReject: activeTab === 'Reject' ? 1 : 0,
+//       Comments: policeForceReviewState?.reason,
+//       UseofForceID: editval?.UseofForceID,
+//       IncidentID: editval?.IncidentID,
+//       ArrestID: editval?.ArrestID,
+//       CreatedByUserFK: loginPinID,
+//     };
+//     AddDeleteUpadate('CAD/UseOfForceReport/UpdateUseOfForceReport', payload)
+//       .then((res) => {
+//         if (res.success) {
+//           onClose()
+//         } else {
+//           console.log("something Wrong");
+//         }
+//       }).catch(err => console.log(err));
+//   }
 
-  const conditionalRowStyles = [
-    {
-      when: row => row === clickedRow,
-      style: {
-        backgroundColor: '#cce5ff',
-        color: 'black',
-      },
-    },
-  ];
+//   const conditionalRowStyles = [
+//     {
+//       when: row => row === clickedRow,
+//       style: {
+//         backgroundColor: '#cce5ff',
+//         color: 'black',
+//       },
+//     },
+//   ];
 
-  const tableCustomStyles = {
-    headCells: {
-      style: {
-        fontWeight: 'bold',
-        backgroundColor: '#00264d',
-        color: '#ffffff',
-      },
-    },
-  };
-  return (
-    <div class="modal fade" style={{ background: "rgba(0,0,0, 0.5)" }} id="PoliceForceTaskModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="false">
-      <div className="modal-dialog modal-lg modal-dialog-centered">
-        <div className="modal-content p-2 px-4 approvedReportsModal" >
-          <div className="d-flex justify-content-between">
-            <div className='row mt-1 mb-2'>
-              <div className='col-12'>
-                <h5 class="fw-bold mb-3">Use Of Force Review </h5>
-              </div>
-            </div>
-            <button
-              className="btn-close b-none bg-transparent"
-              onClick={onClose}
-              data-dismiss="modal">
-              X
-            </button>
-          </div>
+//   const tableCustomStyles = {
+//     headCells: {
+//       style: {
+//         fontWeight: 'bold',
+//         backgroundColor: '#00264d',
+//         color: '#ffffff',
+//       },
+//     },
+//   };
+//   return (
+//     <div class="modal fade" style={{ background: "rgba(0,0,0, 0.5)" }} id="PoliceForceTaskModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="false">
+//       <div className="modal-dialog modal-lg modal-dialog-centered">
+//         <div className="modal-content p-2 px-4 approvedReportsModal" >
+//           <div className="d-flex justify-content-between">
+//             <div className='row mt-1 mb-2'>
+//               <div className='col-12'>
+//                 <h5 class="fw-bold mb-3">Use Of Force Review </h5>
+//               </div>
+//             </div>
+//             <button
+//               className="btn-close b-none bg-transparent"
+//               onClick={onClose}
+//               data-dismiss="modal">
+//               X
+//             </button>
+//           </div>
 
-          <div className='row mt-1'>
-            <div className='col-md-2 offset-1'>
-              <label className="me-4">
-                <input
-                  type="radio"
-                  value="Approve"
-                  name='IsApprove'
-                  checked={activeTab === 'Approve'}
-                  className="form-check-input"
-                  onChange={() => {
-                    setActiveTab('Approve');
-                    clearPoliceForceReviewState();
-                  }}
-                />
-                Approve
-              </label>
-            </div>
-            <div className='col-md-2'>
-              <label>
-                <input
-                  type="radio"
-                  value="Reject"
-                  name='IsReject'
-                  checked={activeTab === 'Reject'}
-                  className="form-check-input"
-                  onChange={() => {
-                    setActiveTab('Reject');
-                    clearPoliceForceReviewState();
-                  }}
-                />
-                Reject
-              </label>
-            </div>
-          </div>
+//           <div className='row mt-1'>
+//             <div className='col-md-2 offset-1'>
+//               <label className="me-4">
+//                 <input
+//                   type="radio"
+//                   value="Approve"
+//                   name='IsApprove'
+//                   checked={activeTab === 'Approve'}
+//                   className="form-check-input"
+//                   onChange={() => {
+//                     setActiveTab('Approve');
+//                     clearPoliceForceReviewState();
+//                   }}
+//                 />
+//                 Approve
+//               </label>
+//             </div>
+//             <div className='col-md-2'>
+//               <label>
+//                 <input
+//                   type="radio"
+//                   value="Reject"
+//                   name='IsReject'
+//                   checked={activeTab === 'Reject'}
+//                   className="form-check-input"
+//                   onChange={() => {
+//                     setActiveTab('Reject');
+//                     clearPoliceForceReviewState();
+//                   }}
+//                 />
+//                 Reject
+//               </label>
+//             </div>
+//           </div>
 
-          {activeTab === 'Approve' && (
-            <div className="row align-items-center ">
-              <div className="col-lg-12">
-                <label className="fw-bold">Enter Reason for Approval</label>
-                <textarea
-                  className="form-control"
-                  style={{ minHeight: '50px', background: '#fef6e4' }}
-                  placeholder="Enter Reason for Approval"
-                  value={policeForceReviewState?.reason}
-                  onChange={(e) => handlePoliceForceReviewState('reason', e.target.value)}
-                />
-              </div>
-            </div>
-          )}
+//           {activeTab === 'Approve' && (
+//             <div className="row align-items-center ">
+//               <div className="col-lg-12">
+//                 <label className="fw-bold">Enter Reason for Approval</label>
+//                 <textarea
+//                   className="form-control"
+//                   style={{ minHeight: '50px', background: '#fef6e4' }}
+//                   placeholder="Enter Reason for Approval"
+//                   value={policeForceReviewState?.reason}
+//                   onChange={(e) => handlePoliceForceReviewState('reason', e.target.value)}
+//                 />
+//               </div>
+//             </div>
+//           )}
 
-          {activeTab === 'Reject' && (
-            <>
-              {/* <div className="mb-3 mt-4">
-                <label className="fw-bold">Rejected Comment</label>
-                <DataTable
-                  // data={policeForceData}
-                  columns={columns}
-                  dense
-                  highlightOnHover
-                  noHeader
-                  customStyles={tableCustomStyles}
-                  conditionalRowStyles={conditionalRowStyles}
-                  onRowClicked={setClickedRow}
-                  paginationPerPage={5}
-                  pagination
-                />
-              </div> */}
-              <div className="row g-3 ">
-                {/* <div className="col-md-6">
-                  <label className="fw-bold">Previous Reason for Rejection</label>
-                  <textarea
-                    className="form-control"
-                    style={{ minHeight: '50px', background: '#fef6e4' }}
-                    value={policeForceReviewState?.previousReason}
-                    onChange={(e) => handlePoliceForceReviewState('previousReason', e.target.value)}
-                    readOnly
-                  />
-                </div> */}
-                <div className="col-md-12">
-                  <label className="fw-bold">Enter Reason for Rejection</label>
-                  <textarea
-                    className="form-control"
-                    style={{ minHeight: '50px', background: '#fef6e4' }}
-                    placeholder="Enter Reason for Rejection"
-                    value={policeForceReviewState?.reason}
-                    onChange={(e) => handlePoliceForceReviewState('reason', e.target.value)}
-                  />
-                </div>
-              </div>
-            </>
-          )}
-          <div className="d-flex justify-content-end mt-4">
-            <button className="btn btn-primary " style={{ backgroundColor: "#001f3f", color: "#fff" }} onClick={() => saveReview()} >Save</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+//           {activeTab === 'Reject' && (
+//             <>
+//               {/* <div className="mb-3 mt-4">
+//                 <label className="fw-bold">Rejected Comment</label>
+//                 <DataTable
+//                   // data={policeForceData}
+//                   columns={columns}
+//                   dense
+//                   highlightOnHover
+//                   noHeader
+//                   customStyles={tableCustomStyles}
+//                   conditionalRowStyles={conditionalRowStyles}
+//                   onRowClicked={setClickedRow}
+//                   paginationPerPage={5}
+//                   pagination
+//                 />
+//               </div> */}
+//               <div className="row g-3 ">
+//                 {/* <div className="col-md-6">
+//                   <label className="fw-bold">Previous Reason for Rejection</label>
+//                   <textarea
+//                     className="form-control"
+//                     style={{ minHeight: '50px', background: '#fef6e4' }}
+//                     value={policeForceReviewState?.previousReason}
+//                     onChange={(e) => handlePoliceForceReviewState('previousReason', e.target.value)}
+//                     readOnly
+//                   />
+//                 </div> */}
+//                 <div className="col-md-12">
+//                   <label className="fw-bold">Enter Reason for Rejection</label>
+//                   <textarea
+//                     className="form-control"
+//                     style={{ minHeight: '50px', background: '#fef6e4' }}
+//                     placeholder="Enter Reason for Rejection"
+//                     value={policeForceReviewState?.reason}
+//                     onChange={(e) => handlePoliceForceReviewState('reason', e.target.value)}
+//                   />
+//                 </div>
+//               </div>
+//             </>
+//           )}
+//           <div className="d-flex justify-content-end mt-4">
+//             <button className="btn btn-primary " style={{ backgroundColor: "#001f3f", color: "#fff" }} onClick={() => saveReview()} >Save</button>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };

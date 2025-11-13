@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types';
 
 function VehicleInfoContent(props) {
-    const { citationState } = props;
+    const { vehicleData } = props;
     return (
         <div className="row">
             <div className="col-md-12">
@@ -13,7 +13,7 @@ function VehicleInfoContent(props) {
                             <input
                                 type="text"
                                 className="form-control"
-                                value={citationState.plateType}
+                                value={vehicleData.plateType}
                                 disabled
                             />
                         </div>
@@ -27,7 +27,7 @@ function VehicleInfoContent(props) {
                                 <input
                                     type="text"
                                     className="form-control"
-                                    value={citationState.plateState}
+                                    value={vehicleData.plateState}
                                     disabled
                                 />
                             </div>
@@ -35,7 +35,7 @@ function VehicleInfoContent(props) {
                                 <input
                                     type="text"
                                     className="form-control"
-                                    value={citationState.plateNumber}
+                                    value={vehicleData.plateNumber}
                                     disabled
                                 />
                             </div>
@@ -48,7 +48,7 @@ function VehicleInfoContent(props) {
                         <input
                             type="text"
                             className="form-control"
-                            value={citationState.vin}
+                            value={vehicleData.vin}
                             disabled
                         />
                     </div>
@@ -63,7 +63,7 @@ function VehicleInfoContent(props) {
                         <input
                             type="text"
                             className="form-control"
-                            value={citationState.category}
+                            value={vehicleData.category}
                             disabled
                         />
                     </div>
@@ -74,7 +74,7 @@ function VehicleInfoContent(props) {
                         <input
                             type="text"
                             className="form-control"
-                            value={citationState.classification}
+                            value={vehicleData.classification}
                             disabled
                         />
                     </div>
@@ -85,7 +85,7 @@ function VehicleInfoContent(props) {
                         <input
                             type="text"
                             className="form-control"
-                            value={citationState.vod}
+                            value={vehicleData.vod}
                             disabled
                         />
                     </div>
@@ -98,7 +98,7 @@ function VehicleInfoContent(props) {
                         <input
                             type="text"
                             className="form-control"
-                            value={citationState.make}
+                            value={vehicleData.make}
                             disabled
                         />
                     </div>
@@ -109,7 +109,7 @@ function VehicleInfoContent(props) {
                         <input
                             type="text"
                             className="form-control"
-                            value={citationState.model}
+                            value={vehicleData.model}
                             disabled
                         />
                     </div>
@@ -120,7 +120,7 @@ function VehicleInfoContent(props) {
                         <input
                             type="text"
                             className="form-control"
-                            value={citationState.style}
+                            value={vehicleData.style}
                             disabled
                         />
                     </div>
@@ -133,7 +133,7 @@ function VehicleInfoContent(props) {
                         <input
                             type="text"
                             className="form-control"
-                            value={citationState.plateExpires}
+                            value={vehicleData.plateExpires}
                             disabled
                         />
                     </div>
@@ -144,7 +144,7 @@ function VehicleInfoContent(props) {
                         <input
                             type="text"
                             className="form-control"
-                            value={citationState.mfgYear}
+                            value={vehicleData.mfgYear}
                             disabled
                         />
                     </div>
@@ -155,7 +155,7 @@ function VehicleInfoContent(props) {
                         <input
                             type="text"
                             className="form-control"
-                            value={citationState.weight}
+                            value={vehicleData.weight}
                             disabled
                         />
                     </div>
@@ -166,7 +166,7 @@ function VehicleInfoContent(props) {
                         <input
                             type="text"
                             className="form-control"
-                            value={citationState.oanNumber}
+                            value={vehicleData.oanNumber}
                             disabled
                         />
                     </div>
@@ -179,7 +179,7 @@ function VehicleInfoContent(props) {
                         <input
                             type="text"
                             className="form-control"
-                            value={citationState.primaryColor}
+                            value={vehicleData.primaryColor}
                             disabled
                         />
                     </div>
@@ -190,7 +190,7 @@ function VehicleInfoContent(props) {
                         <input
                             type="text"
                             className="form-control"
-                            value={citationState.secondaryColor}
+                            value={vehicleData.secondaryColor}
                             disabled
                         />
                     </div>
@@ -201,7 +201,7 @@ function VehicleInfoContent(props) {
                         <input
                             type="text"
                             className="form-control"
-                            value={citationState.owner}
+                            value={vehicleData.owner}
                             disabled
                         />
                     </div>
@@ -223,10 +223,10 @@ export default VehicleInfoContent
 
 // PropTypes definition
 VehicleInfoContent.propTypes = {
-  citationState: PropTypes.object.isRequired
+    citationState: PropTypes.object.isRequired
 };
 
 // Default props
 VehicleInfoContent.defaultProps = {
-  citationState: {}
+    citationState: {}
 };

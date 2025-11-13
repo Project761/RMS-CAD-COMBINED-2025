@@ -12,6 +12,7 @@ import ChangesModal from '../../../../Common/ChangesModal';
 import GoogleAuthServices from "../../../../../CADServices/APIs/googleAuth";
 import { LoginContext } from '../../../../../CADContext/loginAuth';
 import { insert_LocalStoreData } from '../../../../../redux/api';
+import SelectBox from '../../../../Common/SelectBox';
 
 const AgencySetting = () => {
 
@@ -38,7 +39,7 @@ const AgencySetting = () => {
     const [addUpdatePermission, setaddUpdatePermission] = useState();
 
     const [value, setValue] = useState({
-        MaxAgeForJuvenile: "", ReportingTypeID: 1, BaseDate: "", ExpiryYear: "", SolvabilityRating: "", MaxAgeForStatutoryRape: "", MaxAgeForJuvenileByFederal_UCR_NIBRS: "", IsEnhancedNameIndex: "", IsAliasReqForConsolidating: "", IsRMSCFSCode: "", IsReqHeightWeightArrest: "", IsEnableMasterIncident: '', IsCadEditable: '', ModifiedByUserFK: pinID, AgencyID: aId, IsSupervisorEdit: '', IsSearchableByOtherAgencies: false, ExpungeExpireDate: '', MaxRestrictLevel: '', MaxLockLevel: '', SessionTimeOut: '', Is2FAEnabled: '', ReportApproval: '', ReportApprovalLevel: '', RedactedItemsDescription: ""
+        MaxAgeForJuvenile: "", ReportingTypeID: 1, BaseDate: "", ExpiryYear: "", SolvabilityRating: "", MaxAgeForStatutoryRape: "", MaxAgeForJuvenileByFederal_UCR_NIBRS: "", IsEnhancedNameIndex: "", IsAliasReqForConsolidating: "", IsRMSCFSCode: "", IsReqHeightWeightArrest: "", IsEnableMasterIncident: '', IsCadEditable: '', ModifiedByUserFK: pinID, AgencyID: aId, IsSupervisorEdit: '', IsSearchableByOtherAgencies: false, ExpungeExpireDate: '', MaxRestrictLevel: '', MaxLockLevel: '', SessionTimeOut: '', Is2FAEnabled: '', ReportApproval: '', ReportApprovalLevel: '', RedactedItemsDescription: "", IsCaseManagementVisible: '', IsArrestMigrate: ''
     });
 
     const useQuery = () => {
@@ -73,9 +74,7 @@ const AgencySetting = () => {
             setValue({
                 ...value,
                 MaxAgeForJuvenile: "", ReportingTypeID: 1, BaseDate: "", ExpiryYear: "", SolvabilityRating: "", MaxAgeForStatutoryRape: "", MaxAgeForJuvenileByFederal_UCR_NIBRS: "", IsEnhancedNameIndex: "", IsAliasReqForConsolidating: "", IsRMSCFSCode: "", IsReqHeightWeightArrest: "", IsEnableMasterIncident: '', IsCadEditable: '', ModifiedByUserFK: pinID, AgencyID: aId, IsSupervisorEdit: '',
-                ExpungeExpireDate: '', MaxRestrictLevel: '', MaxLockLevel: '', IsSearchableByOtherAgencies: false, Is2FAEnabled: "",
-                ReportApproval: '', ReportApprovalLevel: '', SessionTimeOut: '', RedactedItemsDescription: ""
-
+                ExpungeExpireDate: '', MaxRestrictLevel: '', MaxLockLevel: '', IsSearchableByOtherAgencies: false, Is2FAEnabled: "", IsCaseManagementVisible: '', ReportApproval: '', ReportApprovalLevel: '', SessionTimeOut: '', RedactedItemsDescription: "", IsArrestMigrate: ''
             });
         }
     }, [pinID]);
@@ -129,14 +128,16 @@ const AgencySetting = () => {
                 ExpungeExpireDate: editVal[0]?.ExpungeDueDay, IsSearchableByOtherAgencies: editVal[0]?.IsSearchableByOtherAgencies,
                 MaxRestrictLevel: editVal[0]?.MaxRestrictLevel, MaxLockLevel: editVal[0]?.MaxLockLevel,
                 Is2FAEnabled: editVal[0]?.Is2FAEnabled,
-                ReportApproval: editVal[0]?.ReportApproval ? parseInt(editVal[0]?.ReportApproval) : '', ReportApprovalLevel: editVal[0]?.ReportApprovalLevel ? parseInt(editVal[0]?.ReportApprovalLevel) : '', RedactedItemsDescription: editVal[0]?.RedactedItemsDescription
+                ReportApproval: editVal[0]?.ReportApproval ? parseInt(editVal[0]?.ReportApproval) : '', ReportApprovalLevel: editVal[0]?.ReportApprovalLevel ? parseInt(editVal[0]?.ReportApprovalLevel) : '', RedactedItemsDescription: editVal[0]?.RedactedItemsDescription,
+                IsCaseManagementVisible: editVal[0]?.IsCaseManagementVisible
             });
+            dispatch(get_LocalStoreData(uniqueId))
         } else {
             setValue({
                 ...value,
                 MaxAgeForJuvenile: "", ReportingTypeID: "", BaseDate: "", ExpiryYear: "", SolvabilityRating: "", MaxAgeForStatutoryRape: "", MaxAgeForJuvenileByFederal_UCR_NIBRS: "",
                 IsEnhancedNameIndex: "", IsAliasReqForConsolidating: "", IsRMSCFSCode: "", IsReqHeightWeightArrest: "", IsEnableMasterIncident: '', DestroyTask: '', ReleaseTask: '', ReportDueDay: '', IsSupervisorEdit: '', IsCadEditable: '', IsArrestMigrate: '', ExpungeExpireDate: '', MaxRestrictLevel: '', MaxLockLevel: '', IsSearchableByOtherAgencies: false,
-                ReportApproval: '', ReportApprovalLevel: '', RedactedItemsDescription: ""
+                ReportApproval: '', ReportApprovalLevel: '', RedactedItemsDescription: "", IsCaseManagementVisible: ''
             })
         }
     }, [editVal]);
@@ -156,8 +157,14 @@ const AgencySetting = () => {
             'IsSupervisor': localStoreData?.IsSupervisor,
             'IsIncidentEditable': localStoreData?.IsIncidentEditable,
             'IsAdministrativeSystem': localStoreData?.IsAdministrativeSystem,
-            'Is2FAEnabled': value?.Is2FAEnabled
-
+            'Is2FAEnabled': value?.Is2FAEnabled,
+            'NCICLoginId': localStoreData?.NCICLoginId,
+            'NCICLoginPassword': localStoreData?.NCICLoginPassword,
+            'NCICLoginTerminalID': localStoreData?.NCICLoginTerminalID,
+            'NCICORI': localStoreData?.NCICORI,
+            'ReportApproval': value?.ReportApproval === 1 ? "Single" : 'Multi',
+            'IsLevel': localStoreData?.IsLevel,
+            'IsCaseManagementVisible': value?.IsCaseManagementVisible
         }
         const val = {
             UniqueId: uniqueId,
@@ -215,7 +222,7 @@ const AgencySetting = () => {
         !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
 
         if (e) {
-            if (e.target.name === "IsEnhancedNameIndex" || e.target.name === "IsAliasReqForConsolidating" || e.target.name === "IsRMSCFSCode" || e.target.name === "IsReqHeightWeightArrest" || e.target.name === "IsEnableMasterIncident" || e.target.name === "IsSupervisorEdit" || e.target.name === "IsCadEditable" || e.target.name === "Is2FAEnabled" || e.target.name === "IsArrestMigrate") {
+            if (e.target.name === "IsEnhancedNameIndex" || e.target.name === "IsAliasReqForConsolidating" || e.target.name === "IsRMSCFSCode" || e.target.name === "IsReqHeightWeightArrest" || e.target.name === "IsEnableMasterIncident" || e.target.name === "IsSupervisorEdit" || e.target.name === "IsCadEditable" || e.target.name === "Is2FAEnabled" || e.target.name === "IsArrestMigrate" || e.target.name === "IsCaseManagementVisible") {
                 setValue({
                     ...value,
                     [e.target.name]: e.target.checked
@@ -453,14 +460,19 @@ const AgencySetting = () => {
                                         </div>
 
                                         <div className="col-12 col-md-12 col-lg-12 ml-lg-5 pl-lg-5 ml-md-0 pl-md-0 mt-1">
-                                            <input type="checkbox" name='IsCadEditable' checked={value?.IsCadEditable} value={value?.IsCadEditable
+                                            <input type="checkbox" name='IsCadEditable' id='IsCadEditable' checked={value?.IsCadEditable} value={value?.IsCadEditable
                                             } onChange={HandleChanges} />
-                                            <label className='ml-2' >Is Cad Available</label>
+                                            <label className='ml-2' htmlFor='IsCadEditable' >Is Cad Available</label>
                                         </div>
                                         <div className="col-12 col-md-12 col-lg-12 ml-lg-5 pl-lg-5 ml-md-0 pl-md-0 mt-1">
-                                            <input type="checkbox" name='Is2FAEnabled' checked={value?.Is2FAEnabled} value={value?.Is2FAEnabled
+                                            <input type="checkbox" name='Is2FAEnabled' id='Is2FAEnabled' checked={value?.Is2FAEnabled} value={value?.Is2FAEnabled
                                             } onChange={HandleChanges} />
-                                            <label className='ml-2' >Is 2FA Enabled</label>
+                                            <label className='ml-2' htmlFor='Is2FAEnabled' >Is 2FA Enabled</label>
+                                        </div>
+                                        <div className="col-12 col-md-12 col-lg-12 ml-lg-5 pl-lg-5 ml-md-0 pl-md-0 mt-1">
+                                            <input type="checkbox" name='IsCaseManagementVisible' id='IsCaseManagementVisible' checked={value?.IsCaseManagementVisible} value={value?.IsCaseManagementVisible
+                                            } onChange={HandleChanges} />
+                                            <label className='ml-2' htmlFor='IsCaseManagementVisible' >Is Case Management Visible</label>
                                         </div>
                                         <div className="col-12 col-md-12 col-lg-12 ml-lg-5 pl-lg-5 ml-md-0 pl-md-0 mt-1">
                                             <input type="checkbox" name='IsArrestMigrate' checked={value?.IsArrestMigrate} value={value?.IsArrestMigrate
@@ -631,25 +643,26 @@ const AgencySetting = () => {
                                                     </div>
                                                     <div className="col-10 ">
                                                         <div className="w-100">
-                                                            <Select
+
+                                                            <SelectBox
                                                                 styles={customStylesWithOutColor}
-                                                                name="RedactedItemsDescription"
+                                                                name="RedactedItemsDescription"               // <- ensures actionMeta.name exists in normal changes
                                                                 options={RedactedItem_Type}
+                                                                className="custom-multiselect"
+                                                                classNamePrefix="custom"
                                                                 placeholder="Items need to be redacted..."
                                                                 isMulti
-                                                                isClearable
                                                                 closeMenuOnSelect={false}
-
-                                                                // string -> option[]
+                                                                hideSelectedOptions={true}
+                                                                menuPlacement="top"
                                                                 value={toOptionArray(value?.RedactedItemsDescription)}
-
-                                                                // option[] -> string
                                                                 onChange={(selected) => {
                                                                     const arr = Array.isArray(selected) ? selected.map(o => o.value) : [];
                                                                     const joined = arr.join(","); // "VictimName,WitnessName"
                                                                     setValue(v => ({ ...v, RedactedItemsDescription: joined }));
                                                                     setStatesChangeStatus(true)
                                                                 }}
+                                                                allowSelectAll={!!RedactedItem_Type?.length}
                                                             />
                                                         </div>
                                                     </div>

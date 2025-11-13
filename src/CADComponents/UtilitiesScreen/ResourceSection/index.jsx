@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import FormTitleSection from '../../Common/FormTitleSection'
 import DataTable from 'react-data-table-component';
 import Select from "react-select";
@@ -17,11 +17,13 @@ import SelectBox from '../../../Components/Common/SelectBox';
 import { getData_DropDown_Zone } from '../../../CADRedux/actions/DropDownsData';
 import { fetchPostData } from '../../../Components/hooks/Api';
 import { SearchFilter, SendIcon } from '../../Common/SearchFilter';
+import { IncidentContext } from '../../../CADContext/Incident';
 
 const ResourceSection = () => {
   const dispatch = useDispatch();
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
   const ZoneDrpData = useSelector((state) => state.CADDropDown.ZoneDrpData);
+  const { getAllResourcesRefetch } = useContext(IncidentContext);
   const [filterTypeIdOption, setFilterTypeIdOption] = useState('Contains');
   const [filterTypeDescOption, setFilterTypeDescOption] = useState('Contains');
   const [pageStatus, setPageStatus] = useState(true);
@@ -470,6 +472,7 @@ const ResourceSection = () => {
         refetchResourceById();
         setResourceId("");
         refetch();
+        getAllResourcesRefetch();
       }
       handelCancel()
       setIsUpdateAgency(!isUpdateAgency);

@@ -42,8 +42,6 @@ function DraftReport({ isPreview }) {
     const [loginAgencyID, setLoginAgencyID] = useState('');
     const [loginPinID, setLoginPinID] = useState();
     const [queData, setqueData] = useState();
-    const [narrativeReportData, setNarrativeReportData] = useState([]);
-    const [useOfForceData, setUseOfForceData] = useState([]);
     const [modelStatus] = useState(false);
     useEffect(() => {
         if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
@@ -66,7 +64,7 @@ function DraftReport({ isPreview }) {
 
     useEffect(() => {
         if (loginAgencyID && loginPinID) {
-            get_Data_Que_Report(loginPinID, loginAgencyID);   getUseOfForceReport(loginPinID, loginAgencyID);
+            get_Data_Que_Report(loginPinID, loginAgencyID);
         }
     }, [loginPinID, loginAgencyID]);
 
@@ -147,7 +145,7 @@ function DraftReport({ isPreview }) {
             minWidth: '150px',
             grow: 2,
             cell: row => {
-                const desc = row?.ReportTypeJson || row.NarrativeDescription?.toLowerCase();
+                const desc = row.NarrativeDescription?.toLowerCase();
 
                 let backgroundColor = 'transparent';
                 let color = 'inherit';
@@ -165,9 +163,9 @@ function DraftReport({ isPreview }) {
                 else if (desc === 'press release') {
                     backgroundColor = '#f87171'; // red-400
                     color = 'inherit';
-                } else if (desc === 'Use Of Force') {
+                } else if (desc === 'use of force') {
                     backgroundColor = '#007bff'; // red-400
-                    color = '#ffff';
+                    color = 'inherit';
                 }
 
                 return (
@@ -182,7 +180,7 @@ function DraftReport({ isPreview }) {
 
                         }}
                     >
-                        {row?.ReportTypeJson || row.NarrativeDescription}
+                        {row.NarrativeDescription}
                     </span>
                 );
             },
@@ -275,33 +273,12 @@ function DraftReport({ isPreview }) {
         const val = { 'OfficerID': OfficerID, 'AgencyID': agencyId };
         fetchPostData('/IncidentNarrativeReport/GetData_AllNarrativeReport', val).then((res) => {
             if (res) {
-                setNarrativeReportData(res);
+                setqueData(res);
             } else {
-                setNarrativeReportData([]);
+                setqueData([]);
             }
         });
     };
-
-
-    const getUseOfForceReport = (OfficerID, agencyId) => {
-        const val = {
-            'ApprovePinID': OfficerID,
-            'AgencyID': agencyId
-        }
-        if (OfficerID && agencyId) {
-            fetchPostData('CAD/UseOfForceReport/GetUseOfForceReport', val).then((res) => {
-                if (res) {
-                    const Data = res?.filter((item) => item?.Status === "Draft")
-                    setUseOfForceData(Data);
-                } else {
-                    setUseOfForceData([]);
-                }
-            })
-        }
-    }
-    useEffect(() => {
-        setqueData([...useOfForceData, ...narrativeReportData]);
-    }, [useOfForceData, narrativeReportData]);
 
     const conditionalRowStyles = [
         {

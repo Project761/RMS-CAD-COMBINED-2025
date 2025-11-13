@@ -356,14 +356,14 @@ export default memo(DispatcherModal);
 
 // PropTypes definition
 DispatcherModal.propTypes = {
-  openDispatcherModal: PropTypes.bool.isRequired,
-  setOpenDispatcherModal: PropTypes.func.isRequired,
-  incidentID: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    openDispatcherModal: PropTypes.bool.isRequired,
+    setOpenDispatcherModal: PropTypes.func.isRequired,
+    incidentID: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 };
 
 // Default props
 DispatcherModal.defaultProps = {
-  openDispatcherModal: false,
-  setOpenDispatcherModal: () => {},
-  incidentID: null
+    openDispatcherModal: false,
+    setOpenDispatcherModal: () => { },
+    incidentID: null
 };

@@ -50,6 +50,7 @@ const AgencyData = ({ children }) => {
     const [offenceFillterData, setOffenceFillterData] = useState([]);
     const [eventData, setEventData] = useState([]);
     const [resourceData, setResourceData] = useState([]);
+    const [allResourcesData, setAllResourcesData] = useState([]);
     const [exceptionalClearID, setEceptionalClearID] = useState([]);
     const [rmsDisposition, setRmsDisposition] = useState([]);
     const [incidentCount, setIncidentCount] = useState([]);
@@ -932,6 +933,7 @@ const AgencyData = ({ children }) => {
             eventData, setEventData,
             //resource
             resourceData, setResourceData,
+            allResourcesData, setAllResourcesData,
             // recentSearchData
             recentSearchData, setRecentSearchData,
             // searchObject

@@ -18,6 +18,7 @@ import { connection } from "../../CADServices/signalRService";
 import { HubConnectionState } from "@microsoft/signalr";
 import Otp2FA from "./Otp2FA";
 import Otp from "./Otp";
+import logo from '../../img/NewinblueLogo1.png'
 
 const Login = ({ login }) => {
 
@@ -28,7 +29,6 @@ const Login = ({ login }) => {
     const IsEncDec = encDecStatus == 'true' || encDecStatus === true;
     
     const ipAddress = useSelector((state) => state.Ip.ipAddress);
-
     // Hooks initialize   
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -180,7 +180,7 @@ const Login = ({ login }) => {
             'AgencyID': data['AgencyID'],
             'Agency_Name': data['Agency_Name'],
             'PINID': data['PINID'],
-            'UserName': data['userName'],  
+            'UserName': data['userName'],
             'fullName': data['fullName'],
             'SessionTimeOut': data['SessionTimeOut'],
             'ORI': data['ORI'],
@@ -197,7 +197,8 @@ const Login = ({ login }) => {
             'NCICORI': data['NCICORI'],
             'IsSuperadmin': data['IsSuperadmin'] === "1" ? true : false,
             'ReportApproval': data['ReportApproval'] === "1" ? "Single" : 'Multi',
-            'IsLevel': data['IsLevel']
+            'IsLevel': data['IsLevel'],
+            'IsCaseManagementVisible': data['IsCaseManagementVisible'] === "False" || data['IsCaseManagementVisible'] === "false" || data['IsCaseManagementVisible'] === false ? false : true,
         }
         // StateName
         // StateCode
@@ -239,10 +240,10 @@ const Login = ({ login }) => {
         } else {
             setPassErr(false)
         }
-        if (password === '') {
-            toastifyError("Please enter password");
-        }
         if (username === '') {
+            toastifyError("Please enter username");
+        }
+        if (password === '') {
             toastifyError("Please enter password");
         }
         if (unitName === 0) {
@@ -557,9 +558,11 @@ const Login = ({ login }) => {
             <div className="login-container" id='login' style={{ display: 'block ' }}>
                 <div className="auth mobile-login mx-4">
                     <div className="d-flex justify-content-center row" style={{ gap: '20px' }}>
-                        <div className="d-flex flex-column col-12 col-md-6" style={{ gap: '10px', background: "#edf2f6", borderRadius: '10px', padding: '30px' }}>
+                        <div className="d-flex flex-column col-12 col-md-6" style={{ gap: '10px', background: "#edf2f6", borderRadius: '10px', padding: '20px 30px 30px 30px' }}>
+                            <div className="d-flex justify-content-center mx-auto" style={{ width: '150px', height: '150px' }}><img src={logo} alt="logo" style={{ objectFit: 'contain' }} /></div>
                             <span style={{ fontSize: '20px', fontWeight: '700', color: '#000' }}>System Use Notification</span>
                             <span style={{ fontSize: '16px', fontWeight: '400', color: '#000' }}>Access to this system is restricted to authorized users only.  By logging in to this system, you are agreeing to comply with applicable privacy, security, and legal requirements, including but not limited to the CJIS Security Policy, and other relevant federal, state, and local laws.<br />This system may contain criminal justice information (CJI), including sensitive data such as criminal intelligence, investigative information, and personally identifiable information (PII). Unauthorized access or use is prohibited and subject to penalties.<br />Please read and understand the system use policies before proceeding. Your actions on this system are being monitored for compliance and security purposes.</span>
+                            <span style={{ fontSize: '14px', fontWeight: '400', color: '#666', marginTop: '15px' }}>© 2025 New In Blue Inc. All rights reserved.<br />Proprietary and confidential.<br />Unauthorized copying, modification, distribution, or use of this software is strictly prohibited without prior written consent.</span>
                         </div>
                         <div className="card py-3 py-3 col-12 col-sm-6 col-md-5 col-lg-3">
                             <div className="card-body"  >
@@ -717,10 +720,10 @@ const Login = ({ login }) => {
                             </div>
                         </div>
                     </div> :
-                        <Otp2FA {...{ username, loginResData, otp, setOtp, setTimerOn, timerOn, type, login, isMDT, isSuperAdmin, isValidUser }} />}
+                        <Otp2FA {...{ username, loginResData, otp, setOtp, setTimerOn, timerOn, type, login, isMDT, isSuperAdmin, isValidUser, typeOfAccount }} />}
                 </div> :
                 <div id='otp' style={{ display: 'none' }}>
-                    <Otp {...{ username, loginResData, otp, setOtp, setTimerOn, timerOn, type, login, isMDT }} />
+                    <Otp {...{ username, loginResData, otp, setOtp, setTimerOn, timerOn, type, login, isMDT, typeOfAccount }} />
                 </div>}
         </>
     )

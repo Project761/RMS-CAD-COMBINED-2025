@@ -14,7 +14,7 @@ import { colourStyles1, multiSelectcolourStyles } from "../Utility/CustomStylesF
 const FreeModal = (props) => {
     const { openFreeModal, setOpenFreeModal } = props;
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
-    const { assignedIncidentData, resourceData, resourceRefetch, incidentRefetch, refetchGetComments } = useContext(IncidentContext);
+    const { assignedIncidentData, resourceData, resourceRefetch, incidentRefetch, refetchGetComments, unassignedIncidentListRefetch, assignedIncidentListRefetch } = useContext(IncidentContext);
     const [resourceDropDown, setResourceDropDown] = useState([])
     const [loginPinID, setLoginPinID] = useState(1);
     const [loginAgencyID, setLoginAgencyID] = useState("");
@@ -148,6 +148,8 @@ const FreeModal = (props) => {
             onCloseLocation();
             incidentRefetch();
             resourceRefetch();
+            unassignedIncidentListRefetch();
+            assignedIncidentListRefetch();
             refetchGetComments();
         }
     }

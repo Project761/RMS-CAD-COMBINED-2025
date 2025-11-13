@@ -54,8 +54,6 @@ function DashboardAll({ isPreview }) {
     const [loder, setLoder] = useState(false);
     const [filteredData, setFilteredData] = useState([]);
     const [selectedReportType, setSelectedReportType] = useState('all');
-    const [useOfForceData, setUseOfForceData] = useState([]);
-    const [narrativeReportData, setNarrativeReportData] = useState([]);
     useEffect(() => {
         if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
             if (uniqueId) { dispatch(get_LocalStoreData(uniqueId)); }
@@ -67,15 +65,12 @@ function DashboardAll({ isPreview }) {
             setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
             get_Data_Que_Report(localStoreData?.PINID, localStoreData?.AgencyID);
             dispatch(get_ScreenPermissions_Data("N046", localStoreData?.AgencyID, localStoreData?.PINID));
-            getUseOfForceReport(localStoreData?.PINID, localStoreData?.AgencyID);
-
         }
     }, [localStoreData]);
 
     useEffect(() => {
         if (modelStatus) {
             get_Data_Que_Report(loginPinID, loginAgencyID);
-            getUseOfForceReport(loginPinID, loginAgencyID);
         }
     }, [modelStatus, selectedReportType]);
 
@@ -135,7 +130,7 @@ function DashboardAll({ isPreview }) {
                         onClick={() => {
                             <>
                                 {
-                                    row.ReportTypeJson === "Use Of Force" ? (
+                                    row.NarrativeDescription?.toLowerCase() === "use of force" ? (
                                         row?.ArrestID ? (
                                             effectiveScreenPermission ?
                                                 effectiveScreenPermission[0]?.Changeok ?
@@ -178,7 +173,7 @@ function DashboardAll({ isPreview }) {
             sortable: true,
 
             cell: row => {
-                const desc = row?.ReportTypeJson || row.NarrativeDescription?.toLowerCase();
+                const desc = row.NarrativeDescription?.toLowerCase();
 
                 let backgroundColor = 'transparent';
                 let color = 'inherit';
@@ -196,9 +191,9 @@ function DashboardAll({ isPreview }) {
                 else if (desc === 'press release') {
                     backgroundColor = '#f87171'; // red-400
                     color = 'inherit';
-                } else if (desc === 'Use Of Force') {
+                } else if (desc === 'use of force') {
                     backgroundColor = '#007bff'; // red-400
-                    color = '#ffff';
+                    color = 'inherit';
                 }
 
                 return (
@@ -212,7 +207,7 @@ function DashboardAll({ isPreview }) {
                             whiteSpace: "nowrap"
                         }}
                     >
-                        {row?.ReportTypeJson || row.NarrativeDescription}
+                        {row.NarrativeDescription}
                     </span>
                 );
             },
@@ -303,35 +298,16 @@ function DashboardAll({ isPreview }) {
         if (row.IncidentID) { }
     }
 
-    const getUseOfForceReport = (OfficerID, agencyId) => {
-        const val = {
-            'ApprovePinID': OfficerID,
-            'AgencyID': agencyId
-        }
-        if (OfficerID && agencyId) {
-            fetchPostData('CAD/UseOfForceReport/GetUseOfForceReport', val).then((res) => {
-                if (res) {
-                    console.log("res", res)
-                    setUseOfForceData(res);
-                } else {
-                    setUseOfForceData([]);
-                }
-            })
-        }
-    }
 
-    useEffect(() => {
-        setqueData([...useOfForceData, ...narrativeReportData]);
-    }, [useOfForceData, narrativeReportData]);
 
     const get_Data_Que_Report = (OfficerID, agencyId) => {
         const val = { 'OfficerID': OfficerID, 'AgencyID': agencyId }
         fetchPostData('/IncidentNarrativeReport/GetData_AllNarrativeReport', val).then((res) => {
             if (res) {
-                setNarrativeReportData(res);
+                setqueData(res);
                 setLoder(true);
             } else {
-                setNarrativeReportData([]);
+                setqueData([]);
                 setLoder(true);
             }
         })

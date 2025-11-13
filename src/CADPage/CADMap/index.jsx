@@ -216,7 +216,11 @@ const CADMap = () => {
                         className="incident-link"
                         data-toggle="modal"
                         data-target="#DispatcherModal"
-                        onClick={() => setOpenDispatcherModal(true)}
+                        onClick={() => {
+                          setOpenDispatcherModal(true);
+                          setIncidentID(location?.IncidentID);
+                          setCADIncidentNumber(location?.CADIncidentNumber);
+                        }}
                         style={{ cursor: 'pointer', color: '#007bff', textDecoration: 'underline' }}
                       >
                         <FontAwesomeIcon icon={faPlus} className="pl-1" />

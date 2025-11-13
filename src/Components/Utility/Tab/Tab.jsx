@@ -188,6 +188,7 @@ const Tab = () => {
         if (pathname.includes('nibrs-Home')) setCurrentTab('NIBRS');
         if (pathname.includes('NIBRSAudit-Home')) setCurrentTab('NIBRSAudit');
         if (pathname.includes('CloseHistory-Home')) setCurrentTab('CloseHistory');
+        if (pathname.includes('case-management')) setCurrentTab('case-management');
 
         // if (pathname.includes('Offvic-Home')) setCurrentTab('Arrest');
         // if (pathname.includes('Offvic-Home')) setCurrentTab('OffenderVicitm');
@@ -425,6 +426,25 @@ const Tab = () => {
                     </li>
                     <li className="nav-item">
                         <Link
+                            className={`nav-link ${active === `/Missing-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&MissPerID=${''}&MissPerSta=${false}&MissPerPg=home` ? 'active' : ''}${incidentStatus ? '' : 'disabled'} `}
+                            data-toggle={changesStatus ? "modal" : "pill"}
+                            data-target={changesStatus ? "#SaveModal" : ''}
+                            // style={{ color: currentTab === 'Arrest' ? 'Red' : '#130e0e', fontWeight: '500' }}
+                            // style={{ color: showPage === 'Arrest' ? 'Red' : incidentCount?.ArrestCount > 0 ? 'blue' : '#000' }}
+                            style={{ color: currentTab === 'Arrest' ? 'Red' : incidentCount[0]?.ArrestCount > 0 ? 'blue' : '#130e0e', fontWeight: '600' }}
+
+                            onClick={() => { if (!changesStatus) { setCurrentTab('MissingPerson'); } }}
+                            to={
+                                '' ? `/Missing-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&MissPerID=${''}&MissPerSta=${false}&MissPerPg=home`
+                                    : changesStatus
+                                        ? currentLocation
+                                        : `/Missing-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&MissPerID=${''}&MissPerSta=${false}&MissPerPg=home`
+                            }
+                        >Missing Person {`${incidentCount[0]?.MissingPersonCount > 0 ? '(' + incidentCount[0]?.MissingPersonCount + ')' : ''}`}
+                        </Link>
+                    </li>
+                    <li className="nav-item">
+                        <Link
                             className={`nav-link  ${active === `/Document-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&documentId=${documentID}&DocSta=${DocSta}` ? 'active' : ''} ${incidentStatus ? '' : 'disabled'}`}
                             to={changesStatus ? currentLocation : `/Document-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&documentId=${documentID}&DocSta=${DocSta}`}
                             data-toggle={changesStatus ? "modal" : "pill"}
@@ -500,6 +520,18 @@ const Tab = () => {
                             NLETS history
                         </Link>
                     </li>
+                    {localStoreData?.IsCaseManagementVisible && <li className="nav-item">
+                        <Link
+                            className={`nav-link  ${active === `/inc-case-management?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}` ? 'active' : ''} ${incidentStatus ? '' : 'disabled'}`}
+                            to={changesStatus ? currentLocation : `/inc-case-management?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}`}
+                            style={{ color: currentTab === 'case-management' ? 'Red' : '#130e0e', fontWeight: '600' }}
+                            data-toggle={changesStatus ? "modal" : "pill"}
+                            data-target={changesStatus ? "#SaveModal" : ''}
+                            onClick={() => { setCurrentTab('case-management') }}
+                        >
+                            Case Management
+                        </Link>
+                    </li>}
 
 
                     {/* <li className="list-inline-item">

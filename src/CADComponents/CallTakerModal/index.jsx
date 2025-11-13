@@ -35,6 +35,8 @@ import { getData_DropDown_Priority } from "../../CADRedux/actions/DropDownsData"
 import NCICModal from "../NCICModal";
 import { toastifyError } from "../../Components/Common/AlertMsg";
 import { fetchPostData } from "../../Components/hooks/Api";
+import img from '../../img/file.jpg';
+import ScreenPermissionServices from "../../CADServices/APIs/screenPermission";
 
 const CallTakerModal = (props) => {
   const { openCallTakerModal, setCallTakerModal, isIncidentDispatch, setIsIncidentDispatch, setIncNo, incNo, refetchQueueCall, isQueueCall
@@ -47,7 +49,7 @@ const CallTakerModal = (props) => {
   });
 
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
-  const { incidentRefetch, resourceRefetch } = useContext(IncidentContext);
+  const { incidentRefetch, resourceRefetch, unassignedIncidentListRefetch, assignedIncidentListRefetch } = useContext(IncidentContext);
   const { refreshQueueCallData, refreshQueueCallCount } = useQueueCall();
   //#region //! useState
   const stateList = useSelector((state) => state.DropDown.stateDrpData);
@@ -101,6 +103,15 @@ const CallTakerModal = (props) => {
   const [nameAlertData, setNameAlertData] = useState([]);
   const [vehicleAlertData, setVehicleAlertData] = useState([]);
   const [isNameCallTaker, setIsNameCallTaker] = useState(false);
+
+  // CallTaker Screen Permission States
+  const [CADCallTakerDispatch, setCADCallTakerDispatch] = useState(false);
+  const [CADCallTakerRoute, setCADCallTakerRoute] = useState(false);
+  const [CADCallTakerLocation, setCADCallTakerLocation] = useState(false);
+  const [CADCallTakerContact, setCADCallTakerContact] = useState(false);
+  const [CADCallTakerCloseCall, setCADCallTakerCloseCall] = useState(false);
+  const [CADCallTakerQueueCall, setCADCallTakerQueueCall] = useState(false);
+  const [CADCallTakerNCIC, setCADCallTakerNCIC] = useState(false);
 
   const handleMapLoad = (map) => {
     mapRef.current = map;
@@ -192,7 +203,7 @@ const CallTakerModal = (props) => {
   const [geoFormValues, setGEOFormValues] = useState(initialFormValues);
   const [isDispatchLoading, setIsDispatchLoading] = useState(false)
   const [isRouteLoading, setIsRouteLoading] = useState(false)
-
+  const [cfsImageData, setCfsImageData] = useState(null);
 
   const incidentInitialValues = {
     location: "",
@@ -236,6 +247,67 @@ const CallTakerModal = (props) => {
   const isVehicleCallTakerData = Object.values(vehicleCallTaker).some(
     (value) => value !== "" && value !== null && value !== undefined
   );
+
+  const getScreenPermissionKey = `/ScreenPermission/GetScreenPermissionByParentName`;
+  const { data: getScreenPermissionData, isSuccess: isFetchScreenPermission } = useQuery(
+    [getScreenPermissionKey, {
+      "PINID": localStoreData?.PINID,
+      AgencyID: localStoreData?.AgencyID,
+      ScreenCode: "I201"
+    },],
+    ScreenPermissionServices.getScreenPermissionByParentName,
+    {
+      refetchOnWindowFocus: false,
+      retry: 0,
+      enabled: !!localStoreData?.PINID
+    }
+  );
+
+  useEffect(() => {
+    if (getScreenPermissionData && isFetchScreenPermission) {
+      const data = JSON.parse(getScreenPermissionData?.data?.data)?.Table;
+
+      // Filter and set CallTaker screen permissions
+      if (data && Array.isArray(data)) {
+        // CAD-CallTaker-Dispatch (I202)
+        const dispatchPermission = data.find(item => item.ScreenCode === "I202 ");
+        setCADCallTakerDispatch(dispatchPermission ? dispatchPermission.AddOK === 1 : false);
+
+        // CAD-CallTaker-Route (I203) 
+        const routePermission = data.find(item => item.ScreenCode === "I203 ");
+        setCADCallTakerRoute(routePermission ? routePermission.AddOK === 1 : false);
+
+        // CAD-CallTaker-Location (I204)
+        const locationPermission = data.find(item => item.ScreenCode === "I204 ");
+        setCADCallTakerLocation(locationPermission ? locationPermission.AddOK === 1 : false);
+
+        // CAD-CallTaker-Contact (I205)
+        const contactPermission = data.find(item => item.ScreenCode === "I205 ");
+        setCADCallTakerContact(contactPermission ? contactPermission.AddOK === 1 : false);
+
+        // CAD-CallTaker-CloseCall (I206)
+        const closeCallPermission = data.find(item => item.ScreenCode === "I206 ");
+        setCADCallTakerCloseCall(closeCallPermission ? closeCallPermission.AddOK === 1 : false);
+
+        // CAD-CallTaker-QueueCall (I207)
+        const queueCallPermission = data.find(item => item.ScreenCode === "I207 ");
+        setCADCallTakerQueueCall(queueCallPermission ? queueCallPermission.AddOK === 1 : false);
+
+        // CAD-CallTaker-NCIC (I208)
+        const ncicPermission = data.find(item => item.ScreenCode === "I208 ");
+        setCADCallTakerNCIC(ncicPermission ? ncicPermission.AddOK === 1 : false);
+      }
+    } else {
+      // Reset all permissions to false
+      setCADCallTakerDispatch(false);
+      setCADCallTakerRoute(false);
+      setCADCallTakerLocation(false);
+      setCADCallTakerContact(false);
+      setCADCallTakerCloseCall(false);
+      setCADCallTakerQueueCall(false);
+      setCADCallTakerNCIC(false);
+    }
+  }, [getScreenPermissionData, isFetchScreenPermission])
 
   const isNameCallTakerData = Object.values(nameCallTaker).some(
     (value) =>
@@ -292,7 +364,7 @@ const CallTakerModal = (props) => {
     {
       refetchOnWindowFocus: false,
       retry: 0,
-      enabled: !!loginAgencyID && !!servicePayload,
+      enabled: !!loginAgencyID && !!servicePayload && openCallTakerModal,
     }
   );
 
@@ -432,7 +504,7 @@ const CallTakerModal = (props) => {
       }
     );
 
-  const CFSCodeKey = `/CAD/MasterCallforServiceCode/InsertCallforServiceCode`;
+  const CFSCodeKey = `/CAD/MasterCallforServiceCode/GetCallforServiceCode`;
   const { data: cfsData, isSuccess: isFetchCFSData } = useQuery(
     [
       CFSCodeKey,
@@ -829,6 +901,7 @@ const CallTakerModal = (props) => {
     clearDocCallTakerState()
     setOpenDuplicateCallModal(false)
     setIncidentFormValues(incidentInitialValues);
+    setCfsImageData();
   }
 
   const onCloseLocation = () => {
@@ -851,6 +924,7 @@ const CallTakerModal = (props) => {
     setSelectedButton([]);
     clearDocCallTakerState()
     setOpenDuplicateCallModal(false)
+    setCfsImageData();
   };
 
   const handleInputChangeIncident = (e) => {
@@ -879,6 +953,7 @@ const CallTakerModal = (props) => {
   };
 
   const handleSelectChangeIncidentCFS = (selectedOption, { name }) => {
+    setCfsImageData(selectedOption?.Path || null)
     setIsChangeFields(true);
     const updatedValues = { ...incidentFormValues };
 
@@ -1210,10 +1285,6 @@ const CallTakerModal = (props) => {
         });
 
         docFormData.append('Data', JSON.stringify(incidentDocuments));
-
-        for (let pair of docFormData.entries()) {
-          console.log(pair[0], pair[1]);
-        }
         await CallTakerServices.insertCallTakerDoc(docFormData);
       }
 
@@ -1270,6 +1341,8 @@ const CallTakerModal = (props) => {
       refetchQueueCall();
     }
     incidentRefetch();
+    unassignedIncidentListRefetch();
+    assignedIncidentListRefetch();
     resourceRefetch();
     setNameData([]);
     setVehicleData([]);
@@ -1391,6 +1464,8 @@ const CallTakerModal = (props) => {
     }
     setIsCallAPI(false);
     incidentRefetch();
+    unassignedIncidentListRefetch();
+    assignedIncidentListRefetch();
     resourceRefetch();
     setNameData([]);
     setVehicleData([]);
@@ -1452,6 +1527,31 @@ const CallTakerModal = (props) => {
 
     // ❌ REMOVE THIS LINE:
     // event.target.value = ""; 
+  };
+
+  const isImageFile = (fileName) => {
+    const imageExtensions = /\.(png|jpg|jpeg|jfif|bmp|gif|webp|tiff|tif|svg|ico|heif|heic)$/i;
+    return imageExtensions.test(fileName);
+  };
+
+
+  const handleFileClick = (file) => {
+    const fileType = file.name ? file.name : file;
+    if (isImageFile(fileType)) {
+      if (file.name) {
+        const url = URL.createObjectURL(file);
+        window.open(url, '_blank');
+      } else {
+        window.open(fileType, '_blank');
+      }
+    } else {
+      if (file.name) {
+        const url = URL.createObjectURL(file);
+        window.open(url, '_blank');
+      } else {
+        window.open(fileType, '_blank');
+      }
+    }
   };
 
   const day = new Date().getDate()
@@ -1748,6 +1848,14 @@ const CallTakerModal = (props) => {
                                   return inputValue;
                                 }}
                               />
+                              {cfsImageData &&
+                                <img
+                                  src={img}
+                                  alt="Document Icon"
+                                  onClick={() => handleFileClick(cfsImageData)}
+                                  style={{ width: '30px', height: '30px' }}
+                                />
+                              }
                             </div>{" "}
                             <div className="col-3 d-flex tab-form-row-gap">
                               <div className=" d-flex align-self-center justify-content-end">
@@ -2317,19 +2425,21 @@ const CallTakerModal = (props) => {
                             <i className="fa fa-search mr-2"></i>
                             <span>Search</span>
                           </button>
-                          <button
-                            className="btn btn-sm btn-border w-25"
-                            data-toggle="modal"
-                            data-target="#NCICModal"
-                            // style={{ width: "8%" }}
-                            onClick={() => {
-                              setOpenNCICModal(true);
-                              setIsNameCallTaker(true);
-                            }}
-                          // disabled={!isNameCallTakerData}
-                          >
-                            NCIC
-                          </button>
+                          {CADCallTakerNCIC && (
+                            <button
+                              className="btn btn-sm btn-border w-25"
+                              data-toggle="modal"
+                              data-target="#NCICModal"
+                              // style={{ width: "8%" }}
+                              onClick={() => {
+                                setOpenNCICModal(true);
+                                setIsNameCallTaker(true);
+                              }}
+                            // disabled={!isNameCallTakerData}
+                            >
+                              NCIC
+                            </button>
+                          )}
                         </div>
                       </div>
                       {nameAlertData?.length > 0 && <div className="col-10 d-flex tab-form-row-gap">
@@ -2466,18 +2576,20 @@ const CallTakerModal = (props) => {
                             <i className="fa fa-search mr-2"></i>
                             <span>Search</span>
                           </button>
-                          <button
-                            className="btn btn-sm btn-border w-25"
-                            data-toggle="modal"
-                            data-target="#NCICModal"
-                            // style={{ width: "8%" }}
-                            onClick={() => {
-                              setOpenNCICModal(true);
-                            }}
-                          // disabled={!isNameCallTakerData}
-                          >
-                            NCIC
-                          </button>
+                          {CADCallTakerNCIC && (
+                            <button
+                              className="btn btn-sm btn-border w-25"
+                              data-toggle="modal"
+                              data-target="#NCICModal"
+                              // style={{ width: "8%" }}
+                              onClick={() => {
+                                setOpenNCICModal(true);
+                              }}
+                            // disabled={!isNameCallTakerData}
+                            >
+                              NCIC
+                            </button>
+                          )}
                         </div>
                       </div>
                       {vehicleAlertData?.length > 0 && <div className="col-10 d-flex tab-form-row-gap">
@@ -2510,90 +2622,102 @@ const CallTakerModal = (props) => {
                 }}
               >
                 <div className="col-7 d-flex tab-form-row-gap justify-content-start ">
-                  <button type="button"
-                    className={`btn btn-sm w-25 bg-white btn-border`}
-                    disabled={isDispatchLoading}
-                    onClick={() => {
-                      handleOnSave(false);
-                    }}
-                  >
-                    <div style={{ display: "grid" }}>
-                      <span>Dispatch</span>
-                    </div>
-                  </button>
-                  <button type="button"
-                    className={`btn btn-sm w-25 bg-white btn-border`}
-                    disabled={isRouteLoading || incidentFormValues?.Resource1?.length !== 0}
-                    onClick={() => {
-                      handleOnSave(true);
-                    }}
-                  >
-                    <div style={{ display: "grid" }}>
-                      <span>Route</span>
-                    </div>
-                  </button>
-                  <button
-                    type="button"
-                    className={`btn btn-sm w-25 bg-white ${selectedButton.includes(3) ? 'btn-border-selected' : 'btn-border'}`}
-                    data-toggle="modal"
-                    data-target="#LocationInformationModal"
-                    onClick={() => {
-                      setSelectedButton(prevSelected =>
-                        prevSelected.includes(3)
-                          ? prevSelected.filter(item => item !== 3)
-                          : [...prevSelected, 3]
-                      );
-                      setOpenLocationInformationModal(true);
-                    }}
-                    disabled={!geoFormValues?.location}
-                  >
-                    <div style={{ display: "grid" }}>
-                      <span>Location</span>
-                    </div>
-                  </button>
-                  <button
-                    type="button"
-                    className={`btn btn-sm w-25 bg-white ${selectedButton.includes(5) ? 'btn-border-selected' : contactList?.length > 0 ? 'btn-border-contact' : 'btn-border'}`}
-                    data-toggle="modal"
-                    data-target="#ContactInfoModal"
-                    onClick={() => {
-                      setSelectedButton(prevSelected =>
-                        prevSelected.includes(5)
-                          ? prevSelected.filter(item => item !== 5)
-                          : [...prevSelected, 5]
-                      );
-                      setOpenContactInfoModal(true);
-                    }}
-                    disabled={!geoFormValues?.location}
-                  >
-                    <div style={{ display: "grid" }}>
-                      <span>Contact</span>
-                    </div>
-                  </button>
-                  <button
-                    type="button"
-                    className={`btn btn-sm w-25 bg-white ${selectedButton.includes(6) ? 'btn-border-selected' : 'btn-border'}`}
-                    data-toggle="modal"
-                    data-target="#CloseCallModal"
-                    onClick={() => handleOpenCloseCall()}
-                    disabled={isCallAPI}
-                  >
-                    <div style={{ display: "grid" }}>
-                      <span>Close Call</span>
-                    </div>
-                  </button>
-                  {!incNo && <button
-                    type="button"
-                    className={`btn btn-sm w-25 bg-white ${selectedButton.includes(7) ? 'btn-border-selected' : 'btn-border'}`}
-                    data-toggle="modal"
-                    data-target="#CloseCallModal"
-                    onClick={() => handleQueueCall()}
-                    disabled={!geoFormValues?.location || incidentFormValues?.Resource1?.length > 0 || isCallAPI}
-                  >
-                    <div style={{ display: "grid" }}>
-                      <span>Queue Call</span>
-                    </div>
-                  </button>}
+                  {CADCallTakerDispatch && (
+                    <button type="button"
+                      className={`btn btn-sm w-25 bg-white btn-border`}
+                      disabled={isDispatchLoading}
+                      onClick={() => {
+                        handleOnSave(false);
+                      }}
+                    >
+                      <div style={{ display: "grid" }}>
+                        <span>Dispatch</span>
+                      </div>
+                    </button>
+                  )}
+                  {CADCallTakerRoute && (
+                    <button type="button"
+                      className={`btn btn-sm w-25 bg-white btn-border`}
+                      disabled={isRouteLoading || incidentFormValues?.Resource1?.length !== 0}
+                      onClick={() => {
+                        handleOnSave(true);
+                      }}
+                    >
+                      <div style={{ display: "grid" }}>
+                        <span>Route</span>
+                      </div>
+                    </button>
+                  )}
+                  {CADCallTakerLocation && (
+                    <button
+                      type="button"
+                      className={`btn btn-sm w-25 bg-white ${selectedButton.includes(3) ? 'btn-border-selected' : 'btn-border'}`}
+                      data-toggle="modal"
+                      data-target="#LocationInformationModal"
+                      onClick={() => {
+                        setSelectedButton(prevSelected =>
+                          prevSelected.includes(3)
+                            ? prevSelected.filter(item => item !== 3)
+                            : [...prevSelected, 3]
+                        );
+                        setOpenLocationInformationModal(true);
+                      }}
+                      disabled={!geoFormValues?.location}
+                    >
+                      <div style={{ display: "grid" }}>
+                        <span>Location</span>
+                      </div>
+                    </button>
+                  )}
+                  {CADCallTakerContact && (
+                    <button
+                      type="button"
+                      className={`btn btn-sm w-25 bg-white ${selectedButton.includes(5) ? 'btn-border-selected' : contactList?.length > 0 ? 'btn-border-contact' : 'btn-border'}`}
+                      data-toggle="modal"
+                      data-target="#ContactInfoModal"
+                      onClick={() => {
+                        setSelectedButton(prevSelected =>
+                          prevSelected.includes(5)
+                            ? prevSelected.filter(item => item !== 5)
+                            : [...prevSelected, 5]
+                        );
+                        setOpenContactInfoModal(true);
+                      }}
+                      disabled={!geoFormValues?.location}
+                    >
+                      <div style={{ display: "grid" }}>
+                        <span>Contact</span>
+                      </div>
+                    </button>
+                  )}
+                  {CADCallTakerCloseCall && (
+                    <button
+                      type="button"
+                      className={`btn btn-sm w-25 bg-white ${selectedButton.includes(6) ? 'btn-border-selected' : 'btn-border'}`}
+                      data-toggle="modal"
+                      data-target="#CloseCallModal"
+                      onClick={() => handleOpenCloseCall()}
+                      disabled={isCallAPI}
+                    >
+                      <div style={{ display: "grid" }}>
+                        <span>Close Call</span>
+                      </div>
+                    </button>
+                  )}
+                  {!incNo && CADCallTakerQueueCall && (
+                    <button
+                      type="button"
+                      className={`btn btn-sm w-25 bg-white ${selectedButton.includes(7) ? 'btn-border-selected' : 'btn-border'}`}
+                      data-toggle="modal"
+                      data-target="#CloseCallModal"
+                      onClick={() => handleQueueCall()}
+                      disabled={!geoFormValues?.location || incidentFormValues?.Resource1?.length > 0 || isCallAPI}
+                    >
+                      <div style={{ display: "grid" }}>
+                        <span>Queue Call</span>
+                      </div>
+                    </button>
+                  )}
                   {/* <button type="button"
                     className={`btn btn-sm w-25 bg-white ${selectedButton.includes(6) ? 'btn-border-selected' : 'btn-border'}`}
                     onClick={() => {

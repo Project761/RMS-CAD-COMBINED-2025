@@ -219,7 +219,6 @@ const PasswordSetting = ({ allowMultipleLogin }) => {
     const getScreenPermision = (aId, pinId) => {
         try {
             ScreenPermision("A010", aId, pinId).then(res => {
-                console.log("🚀 ~ getScreenPermision ~ res:", res?.length)
                 if (res?.length > 0) {
                     setEffectiveScreenPermission(res)
                     setPermissionForAddPasswordSetting(res[0]?.AddOK);
@@ -241,10 +240,10 @@ const PasswordSetting = ({ allowMultipleLogin }) => {
             setaddUpdatePermission(false)
         }
     }
- 
+
     // onChange Hooks Function
     const handleInput = (e) => {
-        !addUpdatePermission &&   setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true)
+        !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true)
         const re = /^((?!(0)))[0-9\b]+$/;
         if (e.target.value === '' || re.test(e.target.value)) {
             setValue({

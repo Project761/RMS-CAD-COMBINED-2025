@@ -4,19 +4,22 @@ import { AgencyContext } from "../../Context/Agency/Index";
 import { toastifySuccess } from "../Common/AlertMsg";
 import ThemeSetting from "./ThemeSetting";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretDown, faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
+import { faCaretDown, faMoon, faSun, faBell } from '@fortawesome/free-solid-svg-icons';
 import defualtImage from '../../img/uploadImage.png';
 import { Decrypt_Id_Name, base64ToString, } from '../Common/Utility';
 import { useDispatch, useSelector } from 'react-redux';
 import { get_LocalStoreData } from '../../redux/actions/Agency';
 import TreeComponent from '../Pages/PropertyRoom/PropertyRoomTab/TreeComponent/TreeComponent';
-import { Master_Property_Status, Master_Vehicle_Status, PropertyMainModule_Data, } from '../../redux/actionTypes';
+import { Master_Property_Status, Master_Vehicle_Status, } from '../../redux/actionTypes';
 import GoogleAuthServices from '../../CADServices/APIs/googleAuth'
 import Nibrs_Report_Model from '../Pages/NIBRS_Report_Model/Nibrs_Report_Model';
 import Nibrs_File_Model from '../Pages/NIBRS_File_Model/Home/Nibrs_File_Model';
 import TibrsNoIncident from '../Pages/TIBRSNoIncident/TibrsNoIncident';
 import NCICModal from '../../CADComponents/NCICModal';
 import { ScreenPermision } from '../hooks/Api';
+import { useQuery } from 'react-query';
+import NotificationServices from '../../CADServices/APIs/notfication';
+import moment from 'moment';
 
 
 const labels = [
@@ -42,6 +45,97 @@ const Header = (props) => {
   const [tibrsReportPermission, setTibrsReportPermission] = useState(false);
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
+
+  // Notification state
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [activeNotificationTab, setActiveNotificationTab] = useState('today');
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
+
+  // Add animation state for smooth transitions
+  const [isAnimating, setIsAnimating] = useState(false);
+  // Add animation state for tab switching
+  const [isTabAnimating, setIsTabAnimating] = useState(false);
+
+  const getNotificationKey = `/Notification/GetNotification`;
+  const { data: getNotificationData, isSuccess: isFetchNotification, refetch, isError: isNoData } = useQuery(
+    [getNotificationKey, {
+      "PINID": localStoreData?.PINID,
+    },],
+    NotificationServices.getNotification,
+    {
+      refetchOnWindowFocus: false,
+      retry: 0,
+      enabled: !!localStoreData?.PINID
+    }
+  );
+
+  // Transform API data to match notification format
+  const transformApiNotifications = (apiData) => {
+    if (!apiData || !Array.isArray(apiData)) return [];
+
+    return apiData.map((notification, index) => {
+      const sentDate = new Date(notification.SentDate);
+      const dateString = moment(sentDate).format('YYYY-MM-DD');
+      const dateLabel = sentDate.toLocaleDateString('en-US', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      }).replace(/(\d+)(st|nd|rd|th)/, '$1');
+
+      // Create different colors for variety
+      const colors = ["#ffe6e6", "#fff2e6", "#fffacd", "#e6f3ff", "#f0f8f0", "#fff0f0"];
+      const colorIndex = index % colors.length;
+
+      return {
+        id: notification.UserNotificationStatusID,
+        title: notification.NotificationHeader || "Notification",
+        description: notification.NotificationContentTemplate ?
+          notification.NotificationContentTemplate.replace(/<[^>]*>/g, '') :
+          "Notification content",
+        isUnread: notification.IsRead,
+        color: colors[colorIndex],
+        date: dateString,
+        dateLabel: dateLabel
+      };
+    });
+  };
+
+  // Use real API data instead of hardcoded data
+  const allNotifications = transformApiNotifications(getNotificationData?.data || []);
+
+  // Group notifications by date
+  const groupNotificationsByDate = (notifications) => {
+    return notifications.reduce((groups, notification) => {
+      const date = notification.dateLabel;
+      if (!groups[date]) {
+        groups[date] = [];
+      }
+      groups[date].push(notification);
+      return groups;
+    }, {});
+  };
+
+  // Filter notifications based on active tab
+  const getFilteredNotifications = () => {
+    if (activeNotificationTab === 'today') {
+      const today = new Date().toISOString().split('T')[0];
+      return allNotifications.filter(notification => notification.date === today);
+    }
+    return allNotifications;
+  };
+
+  const filteredNotifications = getFilteredNotifications();
+
+  const groupedNotifications = groupNotificationsByDate(filteredNotifications);
+
+  const markNotificationAsRead = async (notificationId) => {
+    const response = await NotificationServices.markNotificationAsRead({ PINID: localStoreData?.PINID, NotificationID: notificationId });
+
+    if (response?.status === 200) {
+      toastifySuccess("Notification marked as read");
+      refetch();
+    }
+  }
 
   const signOut = async () => {
     if (localStoreData?.Is2FAEnabled) {
@@ -73,6 +167,30 @@ const Header = (props) => {
     document.body.classList.toggle('dark-mode');
   };
 
+  const toggleNotifications = () => {
+    if (showNotifications) {
+      // Start closing animation
+      setIsAnimating(true);
+      setTimeout(() => {
+        setShowNotifications(false);
+        setIsAnimating(false);
+      }, 200); // Match animation duration
+    } else {
+      setShowNotifications(true);
+      setIsAnimating(false);
+    }
+  };
+
+  const handleTabSwitch = (tab) => {
+    if (activeNotificationTab !== tab) {
+      setIsTabAnimating(true);
+      setTimeout(() => {
+        setActiveNotificationTab(tab);
+        setIsTabAnimating(false);
+      }, 150);
+    }
+  };
+
   // Effect to update body class on initial load
   useEffect(() => {
     if (isDarkMode) {
@@ -81,6 +199,20 @@ const Header = (props) => {
       document.body.classList.remove('dark-mode');
     }
   }, [isDarkMode]);
+
+  // Effect to handle click outside notification dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showNotifications && !event.target.closest('.notification-container')) {
+        setShowNotifications(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showNotifications]);
 
   const [userName, setUserName] = useState('');
 
@@ -150,7 +282,15 @@ const Header = (props) => {
   const handleModel = () => setShow(!show);
   const handleTibrsModel = () => setShowTibrsModel(!showTibrsModel);
 
-
+  // Check notification read status
+  useEffect(() => {
+    if (getNotificationData?.data && Array.isArray(getNotificationData.data)) {
+      const allNotificationsRead = getNotificationData.data.every(notification => notification.IsRead === true);
+      setHasUnreadNotifications(!allNotificationsRead);
+    } else {
+      setHasUnreadNotifications(false);
+    }
+  }, [getNotificationData?.data]);
 
   return (
     <>
@@ -184,7 +324,6 @@ const Header = (props) => {
                       className="dropdown-item" data-toggle={changesStatus ? "modal" : ""} data-target={changesStatus ? "#SaveModal" : ''}
                       onClick={() => {
                         dispatch({ type: Master_Property_Status, payload: true });
-                        dispatch({ type: PropertyMainModule_Data, payload: [] });
                       }}
                     >
                       Master Property
@@ -323,70 +462,232 @@ const Header = (props) => {
                     <Link className="dropdown-item" to={'/UnExpunge'} data-toggle={changesStatus ? "modal" : ""} data-target={changesStatus ? "#SaveModal" : ''} >
                       Unexpunge
                     </Link>
-                    <Link className="dropdown-item" to={'/citationTab'} data-toggle={changesStatus ? "modal" : ""} data-target={changesStatus ? "#SaveModal" : ''} >
+                    {/* <Link className="dropdown-item" to={'/citationTab'} data-toggle={changesStatus ? "modal" : ""} data-target={changesStatus ? "#SaveModal" : ''} >
                       Citation
-                    </Link>
+                    </Link> */}
                   </div>
                 </div>
                 <div
                   data-toggle="modal"
                   data-target="#NCICModal"
-                  style={{ width: "70px", cursor: 'pointer' }}
+                  className='ml-2'
+                  style={{ cursor: 'pointer' }}
                   onClick={() => {
                     setOpenNCICModal(true);
                   }}
                 >
                   NCIC
                 </div>
+                {/* {localStoreData?.IsCaseManagementVisible && <Link to='/case-management' className=" text-white  ml-5">
+                  <span>
+                    Case Management
+                  </span>
+                </Link>} */}
               </div>
             </div>
 
             <div className="right " >
               <div className="notification d-flex justify-content-between align-items-center px-3" >
-                <div className="position-relative" ref={dropdownRef}>
-                  {/* SVG icons */}
-                  <div className="d-flex" style={{ cursor: "pointer" }}>
-                    <div className="mr-3" onClick={() => setOpen(!open)}>
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width={20} height={20} fill="white">
-                        <path d="M320 144C254.8 144 201.2 173.6 160.1 211.7C121.6 247.5 95 290 81.4 320C95 350 121.6 392.5 160.1 428.3C201.2 466.4 254.8 496 320 496C385.2 496 438.8 466.4 479.9 428.3C518.4 392.5 545 350 558.6 320C545 290 518.4 247.5 479.9 211.7C438.8 173.6 385.2 144 320 144zM127.4 176.6C174.5 132.8 239.2 96 320 96C400.8 96 465.5 132.8 512.6 176.6C559.4 220.1 590.7 272 605.6 307.7C608.9 315.6 608.9 324.4 605.6 332.3C590.7 368 559.4 420 512.6 463.4C465.5 507.1 400.8 544 320 544C239.2 544 174.5 507.2 127.4 463.4C80.6 419.9 49.3 368 34.4 332.3C31.1 324.4 31.1 315.6 34.4 307.7C49.3 272 80.6 220 127.4 176.6zM320 400C364.2 400 400 364.2 400 320C400 290.4 383.9 264.5 360 250.7C358.6 310.4 310.4 358.6 250.7 360C264.5 383.9 290.4 400 320 400zM240.4 311.6C242.9 311.9 245.4 312 248 312C283.3 312 312 283.3 312 248C312 245.4 311.8 242.9 311.6 240.4C274.2 244.3 244.4 274.1 240.5 311.5zM286 196.6C296.8 193.6 308.2 192.1 319.9 192.1C328.7 192.1 337.4 193 345.7 194.7C346 194.8 346.2 194.8 346.5 194.9C404.4 207.1 447.9 258.6 447.9 320.1C447.9 390.8 390.6 448.1 319.9 448.1C258.3 448.1 206.9 404.6 194.7 346.7C192.9 338.1 191.9 329.2 191.9 320.1C191.9 309.1 193.3 298.3 195.9 288.1C196.1 287.4 196.2 286.8 196.4 286.2C208.3 242.8 242.5 208.6 285.9 196.7z" />
-                      </svg>
-                    </div>
-                  </div>
 
-                  {/* Dropdown menu */}
-                  {open && (
-                    <div className=" show color_dropdown-menu-right color_dropdown-menu-arrow" style={{ display: 'block' }}>
-                      <div className="field-identify-color text-center">
-                        <h6 className=" ">Field Color</h6>
-                        <div className="d-flex flex-column">
-                          {labels?.map(({ className, bgColor, text }) => (
-                            <div className="d-flex justify-content-center mt-2" key={text}>
-                              {/* <span className={`${className} mt-2`}></span> */}
-                              <span
-                                style={{
-                                  border: '1px solid',
-                                  backgroundColor: bgColor,
-                                  padding: '4px',
-                                  borderRadius: '4px',
-                                  display: 'inline-block',
-                                  transition: 'color 0.3s ease',
-                                  textAlign: 'center',
-                                  fontWeight: 600,
-                                  fontSize: '14px',
-                                  minWidth: '90px',
-                                }}
-                              >
-                                {text}
-                              </span>
+                {/* Notification Icon */}
+                <div className="position-relative notification-container ">
+                  <button
+                    onClick={toggleNotifications}
+                    className='dark-toogle'
+                  >
+                    <FontAwesomeIcon icon={faBell} />
+                    {hasUnreadNotifications && (
+                      <span
+                        style={{
+                          position: 'absolute',
+                          top: '-2px',
+                          right: '-2px',
+                          width: '8px',
+                          height: '8px',
+                          backgroundColor: '#007bff',
+                          borderRadius: '50%',
+                          border: '1px solid white'
+                        }}
+                      ></span>
+                    )}
+                  </button>
+
+                  {/* Notification Dropdown */}
+                  {showNotifications && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '100%',
+                        right: '-100px',
+                        width: '400px',
+                        backgroundColor: 'white',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                        zIndex: 1000,
+                        marginTop: '8px',
+                        // Animation styles
+                        opacity: isAnimating ? 0 : 1,
+                        transform: isAnimating
+                          ? 'translateX(20px) scale(0.95)'
+                          : 'translateX(0) scale(1)',
+                        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                        animation: !isAnimating ? 'slideInFromRight 0.3s ease-out' : 'none'
+                      }}
+                    >
+                      {/* Header */}
+                      <div style={{ padding: '20px 20px 10px 20px' }}>
+                        <h5 style={{
+                          margin: 0,
+                          fontSize: '18px',
+                          fontWeight: 'bold',
+                          color: '#333'
+                        }}>
+                          Notification
+                        </h5>
+
+                        {/* Tabs */}
+                        <div style={{
+                          display: 'flex',
+                          marginTop: '15px',
+                          borderBottom: '1px solid #eee'
+                        }}>
+                          <span
+                            onClick={() => handleTabSwitch('today')}
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              padding: '10px 0',
+                              marginRight: '20px',
+                              fontSize: '14px',
+                              color: activeNotificationTab === 'today' ? '#333' : '#666',
+                              borderBottom: activeNotificationTab === 'today' ? '2px solid #333' : '0px',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease'
+                            }}
+                          >
+                            Today's notification
+                          </span>
+                          <span
+                            onClick={() => handleTabSwitch('all')}
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              padding: '10px 0',
+                              fontSize: '14px',
+                              color: activeNotificationTab === 'all' ? '#333' : '#666',
+                              borderBottom: activeNotificationTab === 'all' ? '2px solid #333' : '0px',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease'
+                            }}
+                          >
+                            All notification
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Notification List */}
+                      <div style={{
+                        maxHeight: '400px',
+                        overflowY: 'auto',
+                        padding: '0 20px 20px 20px',
+                        opacity: isTabAnimating ? 0.5 : 1,
+                        transform: isTabAnimating ? 'translateY(20px)' : 'translateY(0)',
+                        transition: 'all 0.4s ease'
+                      }}>
+                        {Object.entries(groupedNotifications)?.length > 0 &&
+                          Object.entries(groupedNotifications)?.map(([date, notifications], dateIndex) => (
+                            <div
+                              key={date}
+                              style={{
+                                marginBottom: '20px',
+                                animation: !isAnimating && !isTabAnimating
+                                  ? `slideInUp 0.4s ease-out ${dateIndex * 0.1}s both`
+                                  : 'none',
+                                opacity: isTabAnimating ? 0 : 1,
+                                transform: isTabAnimating ? 'translateY(20px)' : 'translateY(0)',
+                                transition: 'all 0.4s ease'
+                              }}
+                            >
+                              {activeNotificationTab === 'all' && <h6 style={{
+                                margin: '0 0 10px 0',
+                                fontSize: '16px',
+                                fontWeight: 'bold',
+                                color: '#333'
+                              }}>
+                                {date}
+                              </h6>}
+                              {/* Date header remains the same */}
+                              {notifications.map((notification, index) => (
+                                <div
+                                  key={notification.id}
+                                  onClick={() => !notification.isUnread ? markNotificationAsRead(notification.id) : null}
+                                  style={{
+                                    backgroundColor: notification.color,
+                                    borderRadius: '8px',
+                                    padding: '15px',
+                                    marginTop: '10px',
+                                    position: 'relative',
+                                    border: '1px solid #f0f0f0',
+                                    cursor: !notification.isUnread ? 'pointer' : 'default',
+                                    transition: 'all 0.2s ease',
+                                    animation: !isAnimating
+                                      ? `slideInUp 0.3s ease-out ${(dateIndex * 0.01) + (index * 0.01)}s both`
+                                      : 'none',
+                                    transform: 'translateY(0)',
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    if (!isAnimating) {
+                                      e.currentTarget.style.transform = 'translateY(-2px)';
+                                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+                                    }
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    if (!isAnimating) {
+                                      e.currentTarget.style.transform = 'translateY(0)';
+                                      e.currentTarget.style.boxShadow = 'none';
+                                    }
+                                  }}
+                                >
+                                  {!notification.isUnread && (
+                                    <span
+                                      style={{
+                                        position: 'absolute',
+                                        top: '10px',
+                                        right: '10px',
+                                        width: '8px',
+                                        height: '8px',
+                                        backgroundColor: '#007bff',
+                                        borderRadius: '50%'
+                                      }}
+                                    ></span>
+                                  )}
+                                  {/* Notification content remains the same */}
+                                  <h6 style={{
+                                    margin: '0 0 8px 0',
+                                    fontSize: '14px',
+                                    fontWeight: 'bold',
+                                    color: '#333'
+                                  }}>
+                                    {notification.title}
+                                  </h6>
+                                  <p style={{
+                                    margin: 0,
+                                    fontSize: '12px',
+                                    color: '#666',
+                                    lineHeight: '1.4'
+                                  }}>
+                                    {notification.description}
+                                  </p>
+                                </div>
+                              ))}
                             </div>
                           ))}
-                        </div>
                       </div>
                     </div>
                   )}
                 </div>
 
-                <div>
+                <div className="ml-2">
                   <button onClick={toggleDarkMode} className='dark-toogle'>
                     <FontAwesomeIcon icon={isDarkMode ? faSun : faMoon} />
                   </button>
@@ -433,14 +734,49 @@ const Header = (props) => {
               </div>
             </div>
           </div>
-        </div >
-      </div >
+        </div>
+      </div>
       <TreeComponent />
       <ThemeSetting />
       <Nibrs_Report_Model show={show} setShow={setShow} handleModel={handleModel} />
       <Nibrs_File_Model show={show} setShow={setShow} handleModel={handleModel} />
       <TibrsNoIncident showTibrsModel={showTibrsModel} setShowTibrsModel={setShowTibrsModel} handleTibrsModel={handleTibrsModel} />
       <NCICModal {...{ openNCICModal, setOpenNCICModal }} />
+      {/* Add CSS animations */}
+      <style jsx>{`
+        @keyframes slideInFromRight {
+          from {
+            opacity: 0;
+            transform: translateX(100px) scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+          }
+        }
+        
+        @keyframes slideInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes tabSwitch {
+          from {
+            opacity: 0;
+            transform: translateY(10px) scale(0.98);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+      `}</style>
     </>
   )
 }

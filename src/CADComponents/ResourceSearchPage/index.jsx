@@ -17,13 +17,15 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { toastifyError } from '../../Components/Common/AlertMsg';
 import { filterPassedTimeZone, getShowingMonthDateYear } from '../../Components/Common/Utility';
 import { getData_DropDown_Operator, getData_DropDown_Zone } from '../../CADRedux/actions/DropDownsData';
+import { get_ScreenPermissions_Data } from '../../redux/actions/IncidentAction';
 
 function ResourceSearchPage() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
+    const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
     const { setResourceData, GetDataTimeZone, datezone } = useContext(AgencyContext);
-    const { resourceData } = useContext(IncidentContext);
+    const { allResourcesData } = useContext(IncidentContext);
     const [loginAgencyID, setLoginAgencyID] = useState("");
     const [resourceTypeListData, setResourceTypeListData] = useState([]);
     const [shiftDropDown, setShiftDropDown] = useState([])
@@ -113,7 +115,6 @@ function ResourceSearchPage() {
             enabled: !!loginAgencyID
         }
     );
-
 
     const aptSuiteNoPayload = {
         // PINID: 0,
@@ -224,6 +225,7 @@ function ResourceSearchPage() {
             setLoginAgencyID(localStoreData?.AgencyID);
             GetDataTimeZone(localStoreData?.AgencyID);
             dispatch(getData_DropDown_Operator(localStoreData?.AgencyID))
+            dispatch(get_ScreenPermissions_Data("CS103", localStoreData?.AgencyID, localStoreData?.PINID));
             if (ZoneDrpData?.length === 0 && localStoreData?.AgencyID) dispatch(getData_DropDown_Zone(localStoreData?.AgencyID))
         }
     }, [localStoreData]);
@@ -234,8 +236,6 @@ function ResourceSearchPage() {
             setCFSDropDown(data);
         }
     }, [isFetchCFSData, cfsData]);
-
-
 
     const startRef = useRef();
     const onKeyDown = (e) => {
@@ -334,14 +334,17 @@ function ResourceSearchPage() {
         }
     }
 
-
     const OnClose = () => {
         clearResourceState()
         navigate('/cad/dashboard-page');
     }
 
-    const filteredResources = resourceData.filter(
-        (res) => res.ResourceTypeID === resourceState?.resourceType?.ResourceTypeID
+
+    const filteredResources = allResourcesData.filter(
+        (res) =>
+            resourceState?.resourceType?.length > 0 ? resourceState?.resourceType?.some(
+                (type) => type.ResourceTypeID === res.ResourceTypeID
+            ) : []
     );
 
     return (
@@ -352,7 +355,7 @@ function ResourceSearchPage() {
                         <div className="card Agency ">
                             <div className="card-body pt-3 pb-2" >
                                 <div className="btn-box  text-right  mr-1 mb-1" >
-                                    <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => handleSearch()}>Search</button>
+                                    {effectiveScreenPermission?.[0]?.AddOK === 1 && <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => handleSearch()}>Search</button>}
                                     <button type="button" data-dismiss="modal" className="btn btn-sm btn-success mr-1 " onClick={() => { OnClose(); }}>Close</button>
                                 </div>
                                 <div className="row " style={{ marginTop: '-10px' }}>
@@ -543,7 +546,7 @@ function ResourceSearchPage() {
                                                         getOptionValue={(v) => v?.ResourceTypeID}
                                                         formatOptionLabel={(option, { context }) => {
                                                             return context === 'menu'
-                                                                ? `${option?.ResourceTypeCode} | ${option?.description}`
+                                                                ? `${option?.ResourceTypeCode} | ${option?.ResourceTypeDescription}`
                                                                 : option?.ResourceTypeCode;
                                                         }}
                                                         onInputChange={(inputValue, actionMeta) => {
@@ -612,7 +615,7 @@ function ResourceSearchPage() {
                                                         <Select
                                                             styles={customStylesWithOutColorArrow}
                                                             placeholder="Select"
-                                                            options={resourceState?.resourceType?.ResourceTypeID ? filteredResources : resourceData}
+                                                            options={resourceState?.resourceType?.length > 0 ? filteredResources : allResourcesData}
                                                             getOptionLabel={(v) => v?.ResourceNumber}
                                                             getOptionValue={(v) => v?.ResourceID}
                                                             isClearable
@@ -711,7 +714,7 @@ function ResourceSearchPage() {
                                                         <Select
                                                             styles={customStylesWithOutColorArrow}
                                                             placeholder="Select"
-                                                            options={resourceData}
+                                                            options={allResourcesData}
                                                             getOptionLabel={(v) => v?.ResourceNumber}
                                                             getOptionValue={(v) => v?.ResourceID}
                                                             isClearable

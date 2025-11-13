@@ -359,7 +359,7 @@ const GEOModal = (props) => {
     GeoServices.getGeoZone,
     {
       refetchOnWindowFocus: false,
-      enabled: openGEOModal
+      enabled: openGEOModal && !!loginAgencyID
     }
   );
 
@@ -1022,7 +1022,6 @@ const GEOModal = (props) => {
       mounted = false;
     };
   }, [unVerifiedSingleLocationsList, openGEOModal, geoZoneData, isFetchGeoZoneData]);
-
 
   return (
     <>

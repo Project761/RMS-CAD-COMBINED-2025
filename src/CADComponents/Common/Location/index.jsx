@@ -292,6 +292,8 @@ function Search({
                 isCoordinateY: false,
                 isUpdate: false,
                 id: "",
+                IsVerify: false,
+                jurisdiction:"",
             }));
             setIsGoogleLocation(true);
             setIsCheckGoogleLocation(false);
@@ -378,6 +380,8 @@ function Search({
             isCoordinateY: false,
             isUpdate: false,
             id: "",
+            IsVerify: false,
+            jurisdiction:"",
         }));
         setIsChangeData(true);
         setStatesChangeStatus(true);
@@ -614,6 +618,7 @@ const saveVerifyLocation = async ({ Location, set, val, col, locationID }) => {
             isCoordinateY: false,
             Id: "",
             IsVerify: false,
+            jurisdiction:"",
         }));
     };
 };
@@ -779,6 +784,7 @@ const buildLocationData = (extractedData, LocationGeoCode, stDirection, stDirect
         isCoordinateX: !!LocationGeoCode?.longitude,
         isCoordinateY: !!LocationGeoCode?.latitude,
         Id: "",
-        // IsVerify: false,
+        IsVerify: false,
+        jurisdiction:"",
     };
 };

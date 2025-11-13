@@ -7,6 +7,7 @@ import MonitorServices from '../../../../CADServices/APIs/monitor'
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import Tooltip from "../../../Common/Tooltip";
+import { ScreenPermision } from "../../../../Components/hooks/Api";
 
 const columns = [
   {
@@ -137,7 +138,7 @@ const ResourceHistoryTabSection = () => {
   const [listData, setListData] = useState([]);
   const [filterListData, setFilterListData] = useState([]);
   const [loginAgencyID, setLoginAgencyID] = useState('');
-
+  const [effectiveScreenPermission, setEffectiveScreenPermission] = useState(null);
   const useRouteQuery = () => {
     const params = new URLSearchParams(useLocation().search);
     return {
@@ -163,6 +164,7 @@ const ResourceHistoryTabSection = () => {
   useEffect(() => {
     if (localStoreData) {
       setLoginAgencyID(localStoreData?.AgencyID);
+      getScreenPermission(localStoreData?.AgencyID, localStoreData?.PINID)
     }
   }, [localStoreData]);
 
@@ -178,13 +180,28 @@ const ResourceHistoryTabSection = () => {
     }
   }, [isFetchResourceOnDutyHistoryList, resourceOnDutyHistoryList])
 
+  const getScreenPermission = (aId, pinID) => {
+
+    try {
+      ScreenPermision("CI105", aId, pinID).then(res => {
+        if (res) {
+          setEffectiveScreenPermission(res);
+        }
+      });
+    } catch (error) {
+      console.error('There was an error!', error);
+      setEffectiveScreenPermission(null);
+    }
+  }
+
   return (
     <>
       <div>
         <DataTable
           dense
           columns={columns}
-          data={filterListData}
+          data={effectiveScreenPermission ? effectiveScreenPermission?.[0]?.DisplayOK ? filterListData : '' : ''}
+          noDataComponent={effectiveScreenPermission ? effectiveScreenPermission?.[0]?.DisplayOK === 1 ? "There are no data to display" : "You don’t have permission to view data" : ''}
           persistTableHead={true}
           customStyles={tableCustomStyles}
           pagination // enable pagination

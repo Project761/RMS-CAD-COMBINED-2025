@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { Aes256Encrypt, colourStyles, Decrypt_Id_Name, filterPassedDateTime, filterPassedTime, getShowingDateText, getShowingMonthDateYear } from '../../../Common/Utility';
+import {  useNavigate, useLocation } from 'react-router-dom'
+import {Decrypt_Id_Name, filterPassedDateTime, filterPassedTime, getShowingDateText, getShowingMonthDateYear } from '../../../Common/Utility';
 import DatePicker from "react-datepicker";
 import Select from "react-select";
 import { fetchPostData } from '../../../hooks/Api';
@@ -14,9 +14,7 @@ import { useSelector } from 'react-redux';
 import { get_Eye_Color_Drp_Data, get_Hair_Color_Drp_Data, get_NIBRS_Drp_Data } from '../../../../redux/actions/DropDownsData';
 import SelectBox from '../../../Common/SelectBox';
 import { get_ScreenPermissions_Data } from '../../../../redux/actions/IncidentAction';
-import { colorLessStyle_Select } from '../../../../CADComponents/Utility/CustomStylesForReact';
 import { components } from "react-select";
-import { useQuery } from 'react-query';
 import Location from '../../../Location/Location';
 const os = require('os');
 

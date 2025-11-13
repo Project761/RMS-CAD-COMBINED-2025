@@ -9,7 +9,7 @@ import {
     Face_Color_Drp_Data, ComplexionType_Drp_Data, Hair_Style_Drp_Data, Facial_Hair_Type_Drp_Data, NameDistinct_Features_Drp_Data,
     Hair_Length_Drp_Data, FacialHair_Drp_Data, Hair_Shades_Drp_Data, Facial_Oddity_Drp_Data, Body_Build_Drp_Data, Speach_Codes_Drp_Data,
     Teeth_Codes_Drp_Data, Glasses_Type_Drp_Data, Name_Handedness_Drp_Data, Contact_Type_Drp_Data, Masters_Name_Drp_Data, Message_Key_Drp_Data, Possession_Owner_Name_Drp_Data,
-    Missing_Person_Drp_Data, Ever_DonatedBlood_Drp_Data, Circumstances_Drp_Data, Body_XRay_Drp_Data, Corrected_Vision_Drp_Data, Fingerprinted_Drp_Data,
+    Missing_Person_Drp_Data, Ever_DonatedBlood_Drp_Data, Circumstances_Drp_Data, Body_XRay_Drp_Data, Skin_Tone_Drp_Data, Missing_Person_Relationship_Drp_Data, Corrected_Vision_Drp_Data, Fingerprinted_Drp_Data,
     Missing_CMC_Drp_Data, Blood_Type_Drp_Data, Jwellery_Drp_Data, Vehicle_LossCode_Drp_Data, PlateID_Drp_Data, Classification_Drp_Data, StyleID_Drp_Data,
     MakeID_Drp_Data, ModalID_Drp_Data, VehicleColor_Drp_Data, VODID_Drp_Data, Circumcision_Drp_Data, ArrestType_DrData, get_Arresting_DrpData, Arresting_DrpData,
     ArrestJuvenileDis_DrpData, UCRClearID_Drp_Data, NIBRS_Drp_Data, ReceiveSource_Drp_Data, FBI_Codes_Drp_Data, CadCfsCode_Drp_Data, Rms_Disposition_Drp_Data,
@@ -35,7 +35,7 @@ const initialState = {
     faceColorDrpData: [], complexionTypeDrpData: [], hairStyleDrpData: [], facialHairTypeDrpData: [], nameDistinctFeaturesDrpData: [], hairLengthDrpData: [],
     facialHairDrpData: [], hairShadesDrpData: [], facialOddityDrpData: [], bodyBuildDrpData: [], speachCodesDrpData: [], teethCodesDrpData: [],
     glassesTypeDrpData: [], nameHandednessDrpData: [], contactTypeDrpData: [], mastersNameDrpData: [], messageKeyDrpData: [], missingPersonDrpData: [], donatedBloodDrpData: [],
-    circumstancesDrpData: [], bodyXRayDrpData: [], correctedVisionDrpData: [], fingerPrintedDrpData: [], missingCMCDrpData: [], bloodTypeDrpData: [], circumcisionDrpData: [],
+    circumstancesDrpData: [], bodyXRayDrpData: [], skinToneDrpData: [], missingPersonRelationshipDrpData: [], correctedVisionDrpData: [], fingerPrintedDrpData: [], missingCMCDrpData: [], bloodTypeDrpData: [], circumcisionDrpData: [],
     JwelleryDrpData: [], receiveSourceDrpData: [], fbiCodesDrpData: [], cadCfsCodeDrpData: [], rmsDispositionDrpData: [], cadDispositionDrpData: [], narrativeTypeDrpData: [],
     pictureTypeDrpData: [], pictureViewDrpData: [], topColorDrpData: [], bottomColorDrpData: [], eyeColorDrpData: [], hairColorDrpData: [], isPrimaryDrpData: [], isSecondaryDrpData: [], alertDrpData: [], arresteeNameVehicle: [],
 
@@ -203,6 +203,16 @@ const DropDownReducer = (state = initialState, action) => {
             return {
                 ...state,
                 bodyXRayDrpData: action.payload
+            }
+        case Skin_Tone_Drp_Data:
+            return {
+                ...state,
+                skinToneDrpData: action.payload
+            }
+        case Missing_Person_Relationship_Drp_Data:
+            return {
+                ...state,
+                missingPersonRelationshipDrpData: action.payload
             }
         case Circumstances_Drp_Data:
             return {

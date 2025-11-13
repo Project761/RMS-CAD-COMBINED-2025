@@ -17,12 +17,14 @@ import { AgencyContext } from '../../Context/Agency/Index';
 import { dropDownDataModelForAptNo, handleNumberTextKeyDown, handleTextKeyDown } from '../../CADUtils/functions/common';
 import { filterPassedTimeZone, getShowingMonthDateYear } from '../../Components/Common/Utility';
 import { getData_DropDown_Operator } from '../../CADRedux/actions/DropDownsData';
+import { get_ScreenPermissions_Data } from '../../redux/actions/IncidentAction';
 
 function EventSearchPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { setEventData, datezone, GetDataTimeZone } = useContext(AgencyContext);
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
+  const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
   const [loginAgencyID, setLoginAgencyID] = useState("");
   const [receiveSourceDropDown, setReceiveSourceDropDown] = useState([]);
   const [cfsDropDown, setCFSDropDown] = useState([]);
@@ -34,6 +36,7 @@ function EventSearchPage() {
   const [defaultAptSuite, setDefaultAptSuite] = useState(null);
   const [aptInputValue, setAptInputValue] = useState("");
   const OperatorDrpData = useSelector((state) => state.CADDropDown.OperatorDrpData);
+
   const [
     eventState,
     setEventState,
@@ -180,6 +183,7 @@ function EventSearchPage() {
       setLoginAgencyID(localStoreData?.AgencyID);
       GetDataTimeZone(localStoreData?.AgencyID);
       dispatch(getData_DropDown_Operator(localStoreData?.AgencyID))
+      dispatch(get_ScreenPermissions_Data("CS102", localStoreData?.AgencyID, localStoreData?.PINID));
     }
   }, [localStoreData]);
 
@@ -271,7 +275,7 @@ function EventSearchPage() {
     }
 
     const payload = {
-      AgencyID: agencyID,
+      AgencyID: loginAgencyID,
       SearchFlag: eventState?.isSelfAgency && !eventState?.isAllAgencies ? 0 : eventState?.isAllAgencies && !eventState?.isSelfAgency ? 1 : eventState?.isSelfAgency && eventState?.isAllAgencies ? 2 : null,
       "IncidentNumber": eventState?.RMSIncidentFrom,
       "IncidentNumberTo": eventState?.RMSIncidentTo,
@@ -344,7 +348,7 @@ function EventSearchPage() {
             <div className="card Agency">
               <div className="card-body pt-3 pb-2" >
                 <div className="btn-box  text-right  mr-1 mb-1" >
-                  <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => handleSearch()}>Search</button>
+                  {effectiveScreenPermission?.[0]?.AddOK === 1 && <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => handleSearch()}>Search</button>}
                   <button type="button" data-dismiss="modal" className="btn btn-sm btn-success mr-1 " onClick={() => { OnClose(); }}>Close</button>
                 </div>
                 <div className="row " style={{ marginTop: '-10px' }}>

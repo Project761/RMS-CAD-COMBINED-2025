@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useCallback } from 'react';
 import { getShowingDateText, stringToBase64 } from '../../../Components/Common/Utility';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
@@ -13,13 +13,16 @@ import { useQuery } from 'react-query';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { getData_DropDown_Priority } from '../../../CADRedux/actions/DropDownsData';
+import { get_ScreenPermissions_Data } from '../../../redux/actions/IncidentAction';
+import { ScreenPermision } from '../../../Components/hooks/Api';
 
 const IncidentTableSection = ({ isIncidentDispatch, incidentViewFilterStatus, incidentTableFilterIncId }) => {
-
   const dispatch = useDispatch();
   const { incidentData, assignedIncidentData, unassignedIncidentData } = useContext(IncidentContext);
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
   const PriorityDrpData = useSelector((state) => state.CADDropDown.PriorityDrpData);
+  const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
+  const [effectiveCommentsScreenPermission, setEffectiveCommentsScreenPermission] = useState(null);
   const [editValue, setEditValue] = useState("");
   const [incidentID, setIncidentID] = useState("");
   const [incidentNumber, setIncidentNumber] = useState("");
@@ -38,8 +41,26 @@ const IncidentTableSection = ({ isIncidentDispatch, incidentViewFilterStatus, in
       setLoginAgencyID(localStoreData?.AgencyID);
       setLoginPinID(localStoreData?.PINID)
       if (PriorityDrpData?.length === 0 && localStoreData?.AgencyID) dispatch(getData_DropDown_Priority(localStoreData?.AgencyID))
+      dispatch(get_ScreenPermissions_Data("CA102", localStoreData?.AgencyID, localStoreData?.PINID));
+      getCommentsScreenPermission(localStoreData?.AgencyID, localStoreData?.PINID);
     }
-  }, [localStoreData]);
+  }, [localStoreData, PriorityDrpData?.length, dispatch]);
+
+  const getCommentsScreenPermission = (aId, pinID) => {
+    try {
+      ScreenPermision("CA105", aId, pinID).then(res => {
+        if (res) {
+          setEffectiveCommentsScreenPermission(res);
+        }
+        else {
+          setEffectiveCommentsScreenPermission(null);
+        }
+      });
+    } catch (error) {
+      console.error('There was an error!', error);
+      setEffectiveCommentsScreenPermission(null);
+    }
+  }
 
   useEffect(() => {
     const handleResize = () => {
@@ -68,159 +89,164 @@ const IncidentTableSection = ({ isIncidentDispatch, incidentViewFilterStatus, in
     return cleaned.length > 0 ? cleaned : location;
   };
 
-  const initialCols = [
-    {
-      name: <p className='text-center' style={{ position: 'absolute', top: '7px' }} >Comments</p>,
-      selector: (row) => {
-        return (<><span
-          className="btn btn-sm text-white p-1 py-0 mr-2"
-          style={{ background: "#ddd", cursor: "pointer" }}
-        >
-          <button className="d-flex justify-content-end btn btn-sm px-1 py-0" data-toggle="modal"
-            data-target="#CommentModal" onClick={() => { setOpenCommentModal(true); setIncidentID(row?.IncidentID); setIncidentNumber(row?.CADIncidentNumber); navigate(`/cad/dashboard-page?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${row?.CADIncidentNumber}&isResourceView=false&IncSta=true`); }} >
-            <i className="fa fa-comment"></i>
-          </button>
-        </span>
-        </>
-        )
-      },
-      width: isSmallScreen ? "90px" : "90px",
-      sortable: false,
-    },
-    {
-      name: <p className='text-center' style={{ position: 'absolute', top: '7px' }} >View</p>,
-      selector: (row) => {
-        return (<><span
-          className="btn btn-sm text-white p-1 py-0"
-          style={{ background: "#ddd", cursor: "pointer" }}
-        >
-          <button className="d-flex justify-content-end btn btn-sm px-1 py-0" data-toggle="modal"
-            data-target="#CommentModal" onClick={() => navigate(`/cad/dispatcher?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${row?.CADIncidentNumber}&IncSta=true`)
-            } >
-            <i className="fa fa-eye"></i>
-          </button>
-        </span> </>)
-      },
-      width: isSmallScreen ? "60px" : "60px",
-      sortable: false,
-    },
-    {
-      name: 'CAD Event #',
-      selector: (row) => row?.CADIncidentNumber || '',
-      sortable: true,
-      sortFunction: (rowA, rowB) => compareStrings(rowA.CADIncidentNumber, rowB.CADIncidentNumber),
-      width: isSmallScreen ? "130px" : "130px",
-    },
-    {
-      name: 'RMS Incident #',
-      selector: (row) => row?.IncidentNumber || '',
-      sortable: true,
-      sortFunction: (rowA, rowB) => compareStrings(rowA.IncidentNumber, rowB.IncidentNumber),
-      width: isSmallScreen ? "130px" : "130px",
-    },
-    {
-      name: 'Location',
-      selector: (row) => removeStateAndCountry(row?.CrimeLocation || '') || '',
-      sortable: true,
-      sortFunction: (rowA, rowB) => compareStrings(rowA.CrimeLocation, rowB.CrimeLocation),
-      width: isSmallScreen ? "350px" : "350px",
-      cell: (row) => {
-        const cleanedLocation = removeStateAndCountry(row?.CrimeLocation || '');
-        return <Tooltip text={cleanedLocation} maxLength={45} />;
-      },
-    },
-    {
-      name: 'Apt#',
-      selector: (row) => row?.ApartmentNo || '',
-      sortable: true,
-      sortFunction: (rowA, rowB) => compareStrings(rowA.ApartmentNo, rowB.ApartmentNo),
-      width: isSmallScreen ? "105px" : undefined,
-    },
-    {
-      name: 'Incident Recvd DT&TM',
-      selector: (row) => row?.ReportedDate ? getShowingDateText(row?.ReportedDate) : '',
-      width: isSmallScreen ? "190px" : "190px",
-      sortable: true,
-      sortFunction: (rowA, rowB) => compareStrings(rowA.ReportedDate, rowB.ReportedDate),
-    },
-    {
-      name: 'CFS Code',
-      selector: (row) => row?.CFSCODE || '',
-      sortable: true,
-      sortFunction: (rowA, rowB) => compareStrings(rowA.CFSCODE, rowB.CFSCODE),
-      width: isSmallScreen ? "100px" : "100px",
-    },
-    {
-      name: 'CFS Description',
-      selector: (row) => row?.CFSCodeDescription ? row?.CFSCodeDescription : '',
-      sortable: true,
-      sortFunction: (rowA, rowB) => compareStrings(rowA.CFSCodeDescription, rowB.CFSCodeDescription),
-      width: isSmallScreen ? "140px" : "140px",
-      cell: (row) => (
-        <Tooltip text={row?.CFSCodeDescription || ''} maxLength={15} />
-      ),
-    },
-    {
-      name: 'Priority',
-      selector: (row) => row?.PriorityCode || '',
-      sortable: true,
-      sortFunction: (rowA, rowB) => compareStrings(rowA.PriorityCode, rowB.PriorityCode),
-      width: isSmallScreen ? "100px" : "100px",
-    },
-    {
-      name: 'Unit #',
-      // selector: (row) => {
-      //   const text = row?.Resources || '';
-      //   const truncatedText = text.length > 25 ? text.substring(0, 25) + '...' : text;
-      //   return (<div
-      //     style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-      //     title={text.length > 25 ? text : ''}
-      //   >
-      //     {truncatedText}
-      //   </div>)
-      // },
-      selector: (row) => row?.Resources || '',
-      sortable: true,
-      sortFunction: (rowA, rowB) => compareStrings(rowA.Resources, rowB.Resources),
-      width: isSmallScreen ? "190px" : "190px",
+  const getInitialCols = useCallback(() => {
+    const baseCols = [];
 
-    },
-    {
-      name: 'E Timer',
-      selector: (row) => row.ReportedDate ? <DateTimeCounter data={row.ReportedDate} /> : '',
-      sortable: true,
-      width: isSmallScreen ? "90px" : "90px",
-    },
-    {
-      name: 'Primary',
-      selector: (row) => row?.PrimaryResourceName || '',
-      sortable: true,
-      sortFunction: (rowA, rowB) => compareStrings(rowA.PrimaryResourceName, rowB.PrimaryResourceName),
-      width: isSmallScreen ? "145px" : "145px",
-    },
+    // Conditionally add Comments column based on permission
+    if (effectiveCommentsScreenPermission?.[0]?.DisplayOK === 1) {
+      baseCols.push({
+        name: <p className='text-center' style={{ position: 'absolute', top: '7px' }} >Comments</p>,
+        selector: (row) => {
+          return (<><span
+            className="btn btn-sm text-white p-1 py-0 mr-2"
+            style={{ background: "#ddd", cursor: "pointer" }}
+          >
+            <button className="d-flex justify-content-end btn btn-sm px-1 py-0" data-toggle="modal"
+              data-target="#CommentModal" onClick={() => { setOpenCommentModal(true); setIncidentID(row?.IncidentID); setIncidentNumber(row?.CADIncidentNumber); navigate(`/cad/dashboard-page?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${row?.CADIncidentNumber}&isResourceView=false&IncSta=true`); }} >
+              <i className="fa fa-comment"></i>
+            </button>
+          </span>
+          </>
+          )
+        },
+        width: isSmallScreen ? "90px" : "90px",
+        sortable: false,
+      });
+    }
 
-    {
-      name: 'Source',
-      selector: (row) => row?.Source || '',
-      sortable: true,
-      sortFunction: (rowA, rowB) => compareStrings(rowA.Source, rowB.Source),
-      width: isSmallScreen ? "85px" : undefined,
-    },
-    {
-      name: 'Operator',
-      selector: (row) => row?.OperatorName || '',
-      sortable: true,
-      sortFunction: (rowA, rowB) => compareStrings(rowA.OperatorName, rowB.OperatorName),
-      width: isSmallScreen ? "105px" : undefined,
-    },
-    {
-      name: 'Zone',
-      selector: (row) => row?.ZoneDescription || '',
-      sortable: true,
-      sortFunction: (rowA, rowB) => compareStrings(rowA.ZoneDescription, rowB.ZoneDescription),
-      width: isSmallScreen ? "105px" : undefined,
-    },
-  ]
+    // Conditionally add View column based on permission
+    if (effectiveScreenPermission?.[0]?.DisplayOK === 1) {
+      baseCols.push({
+        name: <p className='text-center' style={{ position: 'absolute', top: '7px' }} >View</p>,
+        selector: (row) => {
+          return (<><span
+            className="btn btn-sm text-white p-1 py-0"
+            style={{ background: "#ddd", cursor: "pointer" }}
+          >
+            <button className="d-flex justify-content-end btn btn-sm px-1 py-0" data-toggle="modal"
+              data-target="#CommentModal" onClick={() => navigate(`/cad/dispatcher?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${row?.CADIncidentNumber}&IncSta=true`)
+              } >
+              <i className="fa fa-eye"></i>
+            </button>
+          </span> </>)
+        },
+        width: isSmallScreen ? "60px" : "60px",
+        sortable: false,
+      });
+    }
+
+    // Add the rest of the columns
+    baseCols.push(
+      {
+        name: 'CAD Event #',
+        selector: (row) => row?.CADIncidentNumber || '',
+        sortable: true,
+        sortFunction: (rowA, rowB) => compareStrings(rowA.CADIncidentNumber, rowB.CADIncidentNumber),
+        width: isSmallScreen ? "130px" : "130px",
+      },
+      {
+        name: 'RMS Incident #',
+        selector: (row) => row?.IncidentNumber || '',
+        sortable: true,
+        sortFunction: (rowA, rowB) => compareStrings(rowA.IncidentNumber, rowB.IncidentNumber),
+        width: isSmallScreen ? "130px" : "130px",
+      },
+      {
+        name: 'Location',
+        selector: (row) => removeStateAndCountry(row?.CrimeLocation || '') || '',
+        sortable: true,
+        sortFunction: (rowA, rowB) => compareStrings(rowA.CrimeLocation, rowB.CrimeLocation),
+        width: isSmallScreen ? "350px" : "350px",
+        cell: (row) => {
+          const cleanedLocation = removeStateAndCountry(row?.CrimeLocation || '');
+          return <Tooltip text={cleanedLocation} maxLength={45} />;
+        },
+      },
+      {
+        name: 'Apt#',
+        selector: (row) => row?.ApartmentNo || '',
+        sortable: true,
+        sortFunction: (rowA, rowB) => compareStrings(rowA.ApartmentNo, rowB.ApartmentNo),
+        width: isSmallScreen ? "105px" : undefined,
+      },
+      {
+        name: 'Incident Recvd DT&TM',
+        selector: (row) => row?.ReportedDate ? getShowingDateText(row?.ReportedDate) : '',
+        width: isSmallScreen ? "190px" : "190px",
+        sortable: true,
+        sortFunction: (rowA, rowB) => compareStrings(rowA.ReportedDate, rowB.ReportedDate),
+      },
+      {
+        name: 'CFS Code',
+        selector: (row) => row?.CFSCODE || '',
+        sortable: true,
+        sortFunction: (rowA, rowB) => compareStrings(rowA.CFSCODE, rowB.CFSCODE),
+        width: isSmallScreen ? "100px" : "100px",
+      },
+      {
+        name: 'CFS Description',
+        selector: (row) => row?.CFSCodeDescription ? row?.CFSCodeDescription : '',
+        sortable: true,
+        sortFunction: (rowA, rowB) => compareStrings(rowA.CFSCodeDescription, rowB.CFSCodeDescription),
+        width: isSmallScreen ? "140px" : "140px",
+        cell: (row) => (
+          <Tooltip text={row?.CFSCodeDescription || ''} maxLength={15} />
+        ),
+      },
+      {
+        name: 'Priority',
+        selector: (row) => row?.PriorityCode || '',
+        sortable: true,
+        sortFunction: (rowA, rowB) => compareStrings(rowA.PriorityCode, rowB.PriorityCode),
+        width: isSmallScreen ? "100px" : "100px",
+      },
+      {
+        name: 'Unit #',
+        selector: (row) => row?.Resources || '',
+        sortable: true,
+        sortFunction: (rowA, rowB) => compareStrings(rowA.Resources, rowB.Resources),
+        width: isSmallScreen ? "190px" : "190px",
+      },
+      {
+        name: 'E Timer',
+        selector: (row) => row.ReportedDate ? <DateTimeCounter data={row.ReportedDate} /> : '',
+        sortable: true,
+        width: isSmallScreen ? "90px" : "90px",
+      },
+      {
+        name: 'Primary',
+        selector: (row) => row?.PrimaryResourceName || '',
+        sortable: true,
+        sortFunction: (rowA, rowB) => compareStrings(rowA.PrimaryResourceName, rowB.PrimaryResourceName),
+        width: isSmallScreen ? "145px" : "145px",
+      },
+      {
+        name: 'Source',
+        selector: (row) => row?.Source || '',
+        sortable: true,
+        sortFunction: (rowA, rowB) => compareStrings(rowA.Source, rowB.Source),
+        width: isSmallScreen ? "85px" : undefined,
+      },
+      {
+        name: 'Operator',
+        selector: (row) => row?.OperatorName || '',
+        sortable: true,
+        sortFunction: (rowA, rowB) => compareStrings(rowA.OperatorName, rowB.OperatorName),
+        width: isSmallScreen ? "105px" : undefined,
+      },
+      {
+        name: 'Zone',
+        selector: (row) => row?.ZoneDescription || '',
+        sortable: true,
+        sortFunction: (rowA, rowB) => compareStrings(rowA.ZoneDescription, rowB.ZoneDescription),
+        width: isSmallScreen ? "105px" : undefined,
+      }
+    );
+
+    return baseCols;
+  }, [isSmallScreen, effectiveScreenPermission, effectiveCommentsScreenPermission, navigate]);
+
+  const initialCols = getInitialCols();
 
   const onIncidentRowClick = (row) => {
     if (row?.IncidentID && row?.IncidentID !== incidentID) {
@@ -237,8 +263,6 @@ const IncidentTableSection = ({ isIncidentDispatch, incidentViewFilterStatus, in
   };
 
   const [columns, setColumns] = useState([]);
-  const [selectedColumnIndex, setSelectedColumnIndex] = useState(null);
-  const [draggingColumnIndex, setDraggingColumnIndex] = useState(null);
 
   const sanitizeColumns1 = (columns) => {
     return columns?.map((col) => ({
@@ -250,7 +274,7 @@ const IncidentTableSection = ({ isIncidentDispatch, incidentViewFilterStatus, in
   };
 
   // Restore columns from saved state
-  const restoreColumns = (savedColumns) => {
+  const restoreColumns = useCallback((savedColumns) => {
     //     // Input data
     let inputData = `${savedColumns}`;
 
@@ -299,7 +323,7 @@ const IncidentTableSection = ({ isIncidentDispatch, incidentViewFilterStatus, in
         cell: matchingColumn?.cell || col.cell,
       };
     });
-  };
+  }, [initialCols]);
 
   // Restore columns from localStorage or use initialCols
   const getUserTableKey = `/CAD/UsertableColumns_IS/GetData_UserTable/${loginPinID}`;
@@ -322,9 +346,10 @@ const IncidentTableSection = ({ isIncidentDispatch, incidentViewFilterStatus, in
       setColumns(
         restoreColumns(descriptionData));
     } else {
-      setColumns(initialCols);
+      setColumns(getInitialCols());
     }
-  }, [getDataUserTable, isFetchUserTable]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getDataUserTable, isFetchUserTable, isSmallScreen, effectiveScreenPermission]);
 
   useEffect(() => {
     const getFilteredData = () => {
@@ -354,11 +379,11 @@ const IncidentTableSection = ({ isIncidentDispatch, incidentViewFilterStatus, in
     ...column,
     name: (
       <div
-        className={selectedColumnIndex === index ? "selected-column" : ""}
+        className=""
         draggable
         style={{
           cursor: "move",
-          opacity: draggingColumnIndex === index ? 0.5 : 1,
+          opacity: 1,
         }}
       >
         {typeof column.name === "string" ? column.name : column.name.props?.children}
@@ -379,7 +404,7 @@ const IncidentTableSection = ({ isIncidentDispatch, incidentViewFilterStatus, in
       AgencyID: loginAgencyID,
       CreatedByUserFK: loginPinID
     }
-    const response = await MonitorServices.insertUserTable(data);
+    await MonitorServices.insertUserTable(data);
   };
 
   const createdClasses = new Set();

@@ -36,7 +36,7 @@ class ReportsServices {
   getResourceHistoryReport = async (payload) => {
     if (payload) {
       return await axios.post(
-        `/Report/ResourceMasterReport`,
+        `CAD/Report/ResourceMasterReport`,
         payload
       );
     }
