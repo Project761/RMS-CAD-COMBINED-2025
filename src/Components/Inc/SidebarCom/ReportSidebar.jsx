@@ -230,7 +230,7 @@ const ReportSidebar = () => {
                         )
                     }
 
-                </ul>  
+                </ul>
             </li>
 
             {/* Name */}
@@ -307,6 +307,17 @@ const ReportSidebar = () => {
                             <li className="ml-3 p-0">
                                 <Link to={`/arrest-summary?page=arrestSummaryReport`} style={{ cursor: 'pointer', background: openPage === 'arrestSummaryReport' ? '#EEE' : '' }}>
                                     <span className="">Arrest Summary Report</span>
+                                </Link>
+                            </li>
+                        )
+                    }
+
+                    {
+
+                        arrestSummaryReportPermission && (
+                            <li className="ml-3 p-0">
+                                <Link to={`/arrest-monthly?page=arrestMonthlyReport`} style={{ cursor: 'pointer', background: openPage === 'arrestMonthlyReport' ? '#EEE' : '' }}>
+                                    <span className="">Arrest Monthly Report</span>
                                 </Link>
                             </li>
                         )
