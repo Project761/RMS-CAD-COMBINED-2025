@@ -132,13 +132,14 @@ const Charges = (props) => {
   }, []);
 
 
- 
+
   useEffect(() => {
     if (localStoreData) {
       setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
       dispatch(get_ScreenPermissions_Data("C073", localStoreData?.AgencyID, localStoreData?.PINID)); get_Arrest_Count(DecArrestId);
       const storedVal = JSON.parse(localStorage.getItem('insertedArrestVal'));
-      let arresteeID = storedVal['ArresteeID'];
+      // let arresteeID = storedVal['ArresteeID'];
+      let arresteeID = storedVal?.ArresteeID
       if (!DecArrestId) { get_OffenseName_Data(arresteeID); }
     }
   }, [localStoreData]);
@@ -182,7 +183,10 @@ const Charges = (props) => {
       get_Property_DropDown(DecEIncID);
       if (UCRClearDrpData?.length === 0) { dispatch(get_UcrClear_Drp_Data(LoginAgencyID)); }
       // lawTitle
-      LawTitleIdDrpDwnVal(LoginAgencyID, null); get_CategoryId_Drp(LoginAgencyID)
+      LawTitleIdDrpDwnVal(LoginAgencyID, null);
+      // get category
+      //  get_CategoryId_Drp(LoginAgencyID)
+
       // nibrs code
       get_NIBRS_Drp_Data(LoginAgencyID, null);
       // charge code
@@ -203,6 +207,7 @@ const Charges = (props) => {
       get_Property_DropDown(DecEIncID);
     }
   }, [DecEIncID])
+
   useEffect(() => {
     if (NameId) {
       get_List(NameId);
@@ -261,10 +266,9 @@ const Charges = (props) => {
   }
 
 
-
   useEffect(() => {
     if (Editval) {
-    
+
       setValue({
         ...value, 'Count': Editval[0]?.Count ? Editval[0]?.Count : '', 'Name': Editval[0]?.Name, 'ChargeCodeID': Editval[0]?.ChargeCodeID || Editval?.ChargeCodeID,
         'NIBRSID': Editval[0]?.NIBRSID || Editval?.NIBRSCodeId, 'UCRClearID': Editval[0]?.UCRClearID, 'ChargeID': Editval[0]?.ChargeID, 'ModifiedByUserFK': LoginPinID,
@@ -274,13 +278,14 @@ const Charges = (props) => {
       });
       setArrestName(Editval[0]?.Name ? Editval[0]?.Name : '');
 
-      // lawTitle
+      // lawTitle 
       LawTitleIdDrpDwnVal(LoginAgencyID, null);
-
       // nibrs code
       get_NIBRS_Drp_Data(LoginAgencyID, null);
       // charge code
       get_ChargeCode_Drp_Data(LoginAgencyID, null, null);
+      // get category
+      get_CategoryId_Drp(LoginAgencyID, Editval[0]?.CategoryId)
     } else {
       setValue({
         ...value, 'Count': '', 'ChargeCodeID': '', 'NIBRSID': '', 'UCRClearID': '', 'ChargeID': '', 'Name': Name, 'IncidentNumber': IncNo, 'ArrestNumber': ArrNo, 'LawTitleId': '', 'AttemptComplete': '', 'CategoryId': '', 'OffenseDateTime': '',
@@ -301,7 +306,6 @@ const Charges = (props) => {
     get_ChargeCode_Drp_Data(LoginAgencyID, null, null);
 
   }
-
 
   const get_CategoryId_Drp = (LoginAgencyID) => {
     const val = { AgencyID: LoginAgencyID }
@@ -340,14 +344,15 @@ const Charges = (props) => {
     const val = { 'AgencyID': LoginAgencyID, 'FBIID': FBIID, 'LawTitleID': LawTitleID, }
     fetchPostData('ChargeCodes/GetDataDropDown_ChargeCodes', val).then((data) => {
       if (data) {
-        setChargeCodeDrp(Comman_changeArrayFormat(data, 'ChargeCodeID', 'Description'));
+        // setChargeCodeDrp(Comman_changeArrayFormat(data, "ChargeCodeID", "Description"));
+        setChargeCodeDrp(threeColArray(data, "ChargeCodeID", "Description", "CategoryID"));
       } else {
         setChargeCodeDrp([]);
       }
     })
   };
 
-  const getLawTitleNibrsByCharge = async (loginAgencyID, lawTitleID, chargeCodeId) => {
+  const getLawTitleNibrsByCharge = async (loginAgencyID, lawTitleID, chargeCodeId, categoryId) => {
     const lawTitleObj = { AgencyID: loginAgencyID, ChargeCodeID: chargeCodeId };
     const nibrsCodeObj = { AgencyID: loginAgencyID, LawTitleID: null, IncidentID: DecIncID, ChargeCodeID: chargeCodeId };
 
@@ -365,6 +370,7 @@ const Charges = (props) => {
         LawTitleId: lawTitleArr[0]?.value,
         NIBRSID: nibrsArr[0]?.value,
         ChargeCodeID: chargeCodeId,
+        CategoryId: categoryId,
       });
     } catch (error) {
       console.error('Error during data fetching:', error);
@@ -386,7 +392,11 @@ const Charges = (props) => {
         get_ChargeCode_Drp_Data(LoginAgencyID, value?.NIBRSID, e.value);
 
       } else if (name === 'ChargeCodeID') {
-        const res = await getLawTitleNibrsByCharge(LoginAgencyID, value?.LawTitleId, e.value);
+        // getCategory
+        setCategoryIdDrp([])
+        get_CategoryId_Drp(LoginAgencyID, e.id);
+
+        const res = await getLawTitleNibrsByCharge(LoginAgencyID, value?.LawTitleId, e.value, e.id);
 
       } else {
         setValue({ ...value, [name]: e.value });
@@ -405,7 +415,11 @@ const Charges = (props) => {
         get_ChargeCode_Drp_Data(LoginAgencyID, null, null);
 
       } else if (name === 'ChargeCodeID') {
-        setValue({ ...value, ['ChargeCodeID']: null });
+
+        setValue({ ...value, ['ChargeCodeID']: null, ['CategoryId']: null });
+        // getCategory
+        setCategoryIdDrp([])
+        // get_CategoryId_Drp(loginAgencyID, null);
 
       } else {
         setValue({ ...value, [name]: null });
@@ -474,10 +488,6 @@ const Charges = (props) => {
     }
   }
 
-
-
-
-
   const insert_Arrest_Data = async () => {
     const storedVal = JSON.parse(localStorage.getItem('insertedArrestVal'));
     AddDeleteUpadate('Arrest/Insert_Arrest', storedVal).then(async (res) => {
@@ -521,7 +531,7 @@ const Charges = (props) => {
     })
   }
 
- 
+
   const onChangeAttComplete = (e, name) => {
     !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
     if (e) {
@@ -601,7 +611,7 @@ const Charges = (props) => {
         }
 
       } else {
-       
+
         navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(row?.ArrestID)}&ChargeId=${stringToBase64(row.ChargeID)}&Name=${Name}&ArrNo=${ArrNo}&ArrestSta=${true}&ChargeSta=${true}&SideBarStatus=${false}`)
         if (row.OffenseID) {
           setEditval(row);
@@ -665,6 +675,7 @@ const Charges = (props) => {
       setMultiSelected(prevValues => { return { ...prevValues, ['ChargeWeaponTypeID']: typeOfSecurityEditVal } })
     }
   }, [typeOfSecurityEditVal])
+
   const MultiValue = props => (
     <components.MultiValue {...props}>
       <span>{props.data.label}</span>
@@ -674,7 +685,6 @@ const Charges = (props) => {
   const [multiSelected, setMultiSelected] = useState({
     ChargeWeaponTypeID: null,
   })
-
 
   useEffect(() => {
     if (typeOfSecurityEditVal) {
@@ -862,6 +872,7 @@ const Charges = (props) => {
       }
     })
   }
+
   const customStylesWithOutColorMulti = {
     control: base => ({
       ...base,

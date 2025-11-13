@@ -2196,7 +2196,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
               ) : null}
             </span>
           </div>
-          <div className="col-9 col-md-9 col-lg-3  ">
+          <div className="col-9 col-md-9 col-lg-3">
             <Select
               name="PrimaryOfficerID"
               styles={IncSta === true || IncSta === "true" ? diableColourStyles : Requiredcolour}

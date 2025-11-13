@@ -416,6 +416,8 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
         NIBRSCodeDrpDwnVal(loginAgencyID, editval[0]?.LawTitleId);
         // charge code / offence code name
         getChargeCodeIDDrp(loginAgencyID, editval[0]?.NIBRSCodeId, editval[0]?.LawTitleId);
+        // getCategory
+        CategoryDrpDwnVal(loginAgencyID, editval[0]?.CategoryId);
         setNibrsCode(Get_Nibrs_Code(editval, nibrsCodeDrp)); setPrimaryLocationCode(Get_PrimaryLocation_Code(editval, locationIdDrp));
       }
     } else {
@@ -646,7 +648,10 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
 
   useEffect(() => {
     if (openPage || loginAgencyID) {
-      OffenderLeftSceneDrpDwnVal(loginAgencyID); CategoryDrpDwnVal(loginAgencyID);
+      OffenderLeftSceneDrpDwnVal(loginAgencyID);
+      // get category 
+      // CategoryDrpDwnVal(loginAgencyID);
+
       LocationIdDrpDwnVal(loginAgencyID); getGangInfoDrp(loginAgencyID);
       // lawtitle dpr
       LawTitleIdDrpDwnVal(loginAgencyID, null);
@@ -708,10 +713,11 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     );
   };
 
-  const CategoryDrpDwnVal = (loginAgencyID) => {
-    const val = { AgencyID: loginAgencyID };
+  const CategoryDrpDwnVal = (loginAgencyID, CategoryID) => {
+    const val = { 'AgencyID': loginAgencyID, 'CategoryID': CategoryID };
     fetchPostData("ChargeCategory/GetDataDropDown_ChargeCategory", val).then(
       (data) => {
+        // console.log("🚀 ~ CategoryDrpDwnVal ~ data:", data)
         if (data) setCategoryIdDrp(Comman_changeArrayFormat(data, "ChargeCategoryID", "Description"));
         else setCategoryIdDrp([]);
       }
@@ -760,15 +766,18 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
       AgencyID: loginAgencyID, FBIID: NIBRSCodeId, LawTitleID: LawTitleID,
     };
     fetchPostData("ChargeCodes/GetDataDropDown_ChargeCodes", val).then((data) => {
+      // console.log("🚀 ~ getChargeCodeIDDrp ~ data:", data)
       if (data) {
-        setChargedata(data); setChargeCodeDrp(Comman_changeArrayFormat(data, "ChargeCodeID", "Description"));
+        setChargedata(data);
+        //  setChargeCodeDrp(Comman_changeArrayFormat(data, "ChargeCodeID", "Description"));
+        setChargeCodeDrp(threeColArray(data, "ChargeCodeID", "Description", "CategoryID"));
       }
       else
         setChargeCodeDrp([]);
     });
   };
 
-  const getLawTitleNibrsByCharge = async (loginAgencyID, lawTitleID, chargeCodeId) => {
+  const getLawTitleNibrsByCharge = async (loginAgencyID, lawTitleID, chargeCodeId, categoryId) => {
     const lawTitleObj = { AgencyID: loginAgencyID, ChargeCodeID: chargeCodeId };
     const nibrsCodeObj = { AgencyID: loginAgencyID, LawTitleID: null, IncidentID: mainIncidentID, ChargeCodeID: chargeCodeId };
     try {
@@ -781,7 +790,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
       setNibrsCodeDrp(nibrsArr);
       setValue({
         ...value,
-        LawTitleId: lawTitleArr[0]?.value, NIBRSCodeId: nibrsArr[0]?.value, ChargeCodeID: chargeCodeId,
+        LawTitleId: lawTitleArr[0]?.value, NIBRSCodeId: nibrsArr[0]?.value, ChargeCodeID: chargeCodeId, CategoryId: categoryId,
       });
       const isSingleEntry = lawTitleArr.length === 1 && nibrsArr.length === 1;
     } catch (error) {
@@ -790,6 +799,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   };
 
   const onChangeDrpLawTitle = async (e, name) => {
+    console.log("🚀 ~ onChangeDrpLawTitle ~ e:", e)
     !addUpdatePermission && setChangesStatus(true);
     !addUpdatePermission && setStatesChangeStatus(true);
     if (e) {
@@ -807,12 +817,18 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
         // charge code
         getChargeCodeIDDrp(loginAgencyID, value?.NIBRSCodeId, e.value);
       } else if (name === "ChargeCodeID") {
+        // getCategory
+        setCategoryIdDrp([])
+        CategoryDrpDwnVal(loginAgencyID, e.id);
+
         const filteredChargeData = Object.values(chargedata).filter((item) => item.ChargeCodeID === e.value);
         const panelCode = filteredChargeData.length > 0 ? filteredChargeData[0].PanelCode : null;
         setpanelCode(panelCode);
-        const res = await getLawTitleNibrsByCharge(loginAgencyID, value?.LawTitleId, e.value);
+        const res = await getLawTitleNibrsByCharge(loginAgencyID, value?.LawTitleId, e.value, e.id);
+
       } else {
         setValue({ ...value, [name]: e.value });
+
       }
     } else {
       if (name === "LawTitleId") {
@@ -831,9 +847,14 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
         //offence code
         getChargeCodeIDDrp(loginAgencyID, null, null);
       } else if (name === "ChargeCodeID") {
-        setValue({ ...value, ["ChargeCodeID"]: null });
+
+        setValue({ ...value, ["ChargeCodeID"]: null, ["CategoryId"]: null });
         // nibrs code
         NIBRSCodeDrpDwnVal(loginAgencyID, value?.LawTitleId);
+        // getCategory
+        setCategoryIdDrp([])
+        // CategoryDrpDwnVal(loginAgencyID, null);
+
       } else {
         setValue({ ...value, [name]: null });
       }
@@ -2357,9 +2378,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                 :
                 <></>
               }
-
-              {/* <div className="col-1"></div> */}
-
               <div className="custom-col-12 text-right" style={["220", "210", "120", "23D", "23F", "23H", "240", "26A", "26C", "26E", "26F", "26G", "270", "510"].includes(nibrsCode) ? { flex: "0 0 21.3%", minWidth: "21.3%" } : {}}>
                 <div className="d-flex flex-column align-items-end">
                   <span data-toggle="modal" onClick={() => { setOpenPage('Offender Suspected of Using') }} data-target="#ListModel" className='new-link px-0 '>
@@ -2392,10 +2410,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                 />
 
               </div>
-
-
-
-
               <div className={`text-right ${["220", "210", "120", "23D", "23F", "23H", "240", "26A", "26C", "26E", "26F", "26G", "270", "510"].includes(nibrsCode) ? "custom-col-12" : ""}`} style={!["220", "210", "120", "23D", "23F", "23H", "240", "26A", "26C", "26E", "26F", "26G", "270", "510"].includes(nibrsCode) ? { flex: "0 0 21.3%", minWidth: "21.3%" } : {}}>
 
                 <div className="d-flex flex-column align-items-end">
@@ -2520,10 +2534,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   placeholder='Select Criminal Activity From List'
                 />
               </div>
-
-
-
-
             </div>
           </div>
 
