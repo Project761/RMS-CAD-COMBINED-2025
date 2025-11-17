@@ -27,7 +27,7 @@ const Login = ({ login }) => {
     const encDecStatus = process.env.REACT_APP_ENC_DEC_STATUS;
     // var IsEncDec = encDecStatus == 'true' || encDecStatus == true
     const IsEncDec = encDecStatus == 'true' || encDecStatus === true;
-    
+
     const ipAddress = useSelector((state) => state.Ip.ipAddress);
     // Hooks initialize   
     const navigate = useNavigate();
@@ -181,6 +181,7 @@ const Login = ({ login }) => {
             'Agency_Name': data['Agency_Name'],
             'PINID': data['PINID'],
             'UserName': data['userName'],
+            'LoginUserName': data['LoginUserName'],
             'fullName': data['fullName'],
             'SessionTimeOut': data['SessionTimeOut'],
             'ORI': data['ORI'],

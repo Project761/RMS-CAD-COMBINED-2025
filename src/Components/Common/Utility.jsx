@@ -124,9 +124,11 @@ export const getShowingMonthDateYearNibReport = (dateStr, type) => {
 export const getShowingWithOutTime = (dateStr) => {
   return moment(dateStr).format("MM/DD/YYYY")
 }
+
 export const getShowingWithOutTimeNew = (dateStr) => {
   return moment(dateStr).format("MM-DD-YYYY")
 }
+
 export const getShowingWithMonthOnly = (dateStr) => {
   return moment(dateStr).format("MM/YYYY")
 }
@@ -162,7 +164,6 @@ export const filterPassedTime = (time) => {
 
 // ---- DS
 
-
 export const filterPassedDateTimeZone = (time, val, reportDate, datezone) => {
   const currentDate = new Date(datezone);
   const selectedDate = new Date(time);
@@ -176,7 +177,6 @@ export const filterPassedDateTimeZone = (time, val, reportDate, datezone) => {
     return currentDate.getTime() >= selectedDate.getTime();
   }
 };
-
 
 export const filterPassedTimeZonesCurrent = (time, occuredFromDate, reportedDate) => {
   const selectedDate = new Date(time);
@@ -198,7 +198,6 @@ export const filterPassedTimeZonesProperty = (time, occuredFromDate, datezone) =
   return false;
 };
 
-
 export const filterPassedTimeZone = (time, datezone) => {
 
   const currentDate = new Date();
@@ -206,7 +205,6 @@ export const filterPassedTimeZone = (time, datezone) => {
   const apiDate = new Date(datezone);
   return selectedDate.getTime() <= apiDate.getTime();
 };
-
 
 export const filterPassedTimeZoneException = (time, datezone, reportedDate) => {
   const selectedTime = new Date(time);
@@ -304,7 +302,6 @@ export const changeArrayFormat_WithFilter = (data, type, id) => {
   }
 }
 
-
 export const Requiredcolour = {
   control: (styles) => ({
     ...styles,
@@ -313,7 +310,6 @@ export const Requiredcolour = {
   }),
 };
 
-
 export const LockFildscolour = {
   control: (styles) => ({
     ...styles,
@@ -321,8 +317,6 @@ export const LockFildscolour = {
     height: 20, minHeight: 35, fontSize: 14, margintop: 2, boxShadow: 0,
   }),
 };
-
-
 
 export const nibrscolourStyles = {
   control: (styles) => ({
@@ -371,7 +365,6 @@ export const colourStylesRole = {
   }),
 };
 
-
 export const colourStyles = {
   control: (styles) => ({
     ...styles,
@@ -382,6 +375,7 @@ export const colourStyles = {
     boxShadow: 0,
   }),
 }
+
 export const Nibrs_ErrorStyle = {
   control: base => ({
     ...base,
@@ -392,6 +386,7 @@ export const Nibrs_ErrorStyle = {
     boxShadow: 0,
   }),
 };
+
 export const customStylesWithOutColor = {
   control: base => ({
     ...base,
@@ -469,7 +464,6 @@ export const tableMinCustomStyles = {
   },
 }
 
-
 export const getListFunction = (ListName, DrpDataFunctions) => {
   if (DrpDataFunctions?.length > 0) {
     const reqObj = DrpDataFunctions.filter((item) => item.ListName == ListName)
@@ -480,7 +474,6 @@ export const getListFunction = (ListName, DrpDataFunctions) => {
 }
 
 // --------------> Encryption // Decryption  <-------------------- //
-
 
 // const AESEnyDecKey = "8UHjPgXZzXCGkhxV2QCnooyJexUzvJrO";
 // const Iv = "zAvR2NI87bBx746n";
@@ -601,7 +594,6 @@ export function encryptAndEncodeToBase64(stringToEncrypt) {
   // return base64String;
 }
 
-
 export const Aes256Base64DecryptString = (Base64ToDecrypt) => {
   const decrypted = CryptoJS.AES.decrypt(Base64ToDecrypt, AESEnyDecKey, {
     iv: iv,
@@ -613,7 +605,6 @@ export const Aes256Base64DecryptString = (Base64ToDecrypt) => {
 
 };
 
-
 export const Aes256EncryptAndConvertBase64 = (StringToEncrypt) => {
   const encrypted = CryptoJS.AES.encrypt(StringToEncrypt, AESEnyDecKey, {
     iv: iv,
@@ -624,7 +615,6 @@ export const Aes256EncryptAndConvertBase64 = (StringToEncrypt) => {
   const encryptedBase64String = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(encryptedBase64))
   return encryptedBase64String;
 };
-
 
 export const Aes256Encrypt = async (data) => {
   const encrypted = CryptoJS.AES.encrypt(data, AESEnyDecKey, {
@@ -826,4 +816,14 @@ export const editorConfig = {
     isVisible: false
   },
   placeholder: 'Message'
+}
+
+
+// Lock Restrict Module
+
+export const isLockOrRestrictModule = (moduleType, fieldValue, isLock) => {
+  if (moduleType === "Lock" && isLock) {
+    return fieldValue ? true : false;
+  }
+  return false;
 }

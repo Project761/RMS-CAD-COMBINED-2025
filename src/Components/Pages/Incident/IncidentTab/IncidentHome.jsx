@@ -7,6 +7,7 @@ import {
   nibrscolourStyles,
   colourStyles,
   Requiredcolour,
+  isLockOrRestrictModule,
 } from "../../../Common/Utility";
 import { AddDeleteUpadate, fetchPostData } from "../../../hooks/Api";
 import { toastifyError, toastifySuccess } from "../../../Common/AlertMsg";
@@ -35,7 +36,8 @@ import NirbsAllModuleErrorShowModal from "../../../Common/NibrsAllModuleErrShowM
 
 
 
-const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncPage, isPreviewNormalReport, setIsPreviewNormalReport }) => {
+const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncPage, isPreviewNormalReport, setIsPreviewNormalReport, isLocked }) => {
+  // console.log("🚀 ~ IncidentHome ~ isLocked:", isLocked)
 
   let navigate = useNavigate();
   const dispatch = useDispatch();
@@ -1526,6 +1528,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
   const isValidZone = (zone) => zone && Object.keys(zone).length > 0;
   const isVerifyLocation = geoFormValues.isVerify && isValidZone(geoFormValues.patrolZone) && isValidZone(geoFormValues.emsZone) && isValidZone(geoFormValues.fireZone) && isValidZone(geoFormValues.otherZone);
 
+  // console.log("🚀 ~ IncidentHome ~ isLockOrRestrictModule:", isLockOrRestrictModule("Lock", value?.CaseStatusID, isLocked))
 
   return loder ? (
     <>
@@ -1601,7 +1604,9 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
           <div className="col-9 col-md-9 col-lg-3">
             <Select
               name="CaseStatusID"
-              styles={Requiredcolour}
+              // styles={Requiredcolour}
+              styles={isLockOrRestrictModule("Lock", editval[0]?.CaseStatusID, isLocked) ? diableColourStyles : Requiredcolour}
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.CaseStatusID, isLocked) ? true : false}
               value={incidentStatusDrpDwn?.filter((obj) => obj.value === value?.CaseStatusID)}
               isClearable
               options={incidentStatusDrpDwn}
@@ -1849,15 +1854,14 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
           <div className="col-9 col-md-9 col-lg-3">
             <Select
               name="ReceiveSourceID"
-              value={receiveSourceDrpData?.filter(
-                (obj) => obj.value === value?.ReceiveSourceID
-              )}
+              value={receiveSourceDrpData?.filter((obj) => obj.value === value?.ReceiveSourceID)}
               isClearable
               options={receiveSourceDrpData}
               menuPlacement="bottom"
               onChange={(e) => ChangeDropDown(e, "ReceiveSourceID")}
               placeholder="Select..."
-              styles={customStylesWithOutColor}
+              styles={isLockOrRestrictModule("Lock", editval[0]?.ReceiveSourceID, isLocked) ? diableColourStyles : customStylesWithOutColor}
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.ReceiveSourceID, isLocked) ? true : false}
             />
           </div>
           <div className="col-3 col-md-3 col-lg-2 ">
@@ -1980,9 +1984,12 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
               autoComplete="off"
               timeFormat="HH:mm"
               is24Hour={true}
-              className={` ${(nibrsSubmittedIncident === 1 && incidentID) || !value.ReportedDate ? "readonlyColor" : ""}`}
-              // className={nibrsSubmittedIncident === 1 ? "LockFildsColor" : incidentID || !value.ReportedDate ? "readonlyColor" : ""}
-              disabled={(nibrsSubmittedIncident === 1 && incidentID) || !value.ReportedDate}
+
+              className={isLockOrRestrictModule("Lock", editval[0]?.OccurredFrom, isLocked) ? "readonlyColor" : ` ${(nibrsSubmittedIncident === 1 && incidentID) || !value.ReportedDate ? "readonlyColor" : ""}`}
+              disabled={isLockOrRestrictModule("Lock", editval[0]?.OccurredFrom, isLocked) || (nibrsSubmittedIncident === 1 && incidentID) || !value.ReportedDate}
+
+            // className={` ${(nibrsSubmittedIncident === 1 && incidentID) || !value.ReportedDate ? "readonlyColor" : ""}`}
+            // disabled={(nibrsSubmittedIncident === 1 && incidentID) || !value.ReportedDate}
             />
           </div>
           <div className="col-3 col-md-3 col-lg-4  ">
@@ -2080,13 +2087,13 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
               }}
 
               dateFormat="MM/dd/yyyy HH:mm"
-              className={` ${(nibrsSubmittedIncident === 1 && incidentID) ? 'readonlyColor' : ''}`}
-              // className={`${(nibrsSubmittedIncident === 1 && incidentID) || !value?.OccurredFrom ? "readonlyColor" : ""}`}
-              // className={nibrsSubmittedIncident === 1 ? "LockFildsColor" : incidentID || !value.OccurredFrom ? "readonlyColor" : ""}
-              disabled={
-                (nibrsSubmittedIncident === 1 && incidentID) ||
-                (!value?.OccurredFrom && true)
-              }
+
+              className={isLockOrRestrictModule("Lock", editval[0]?.OccurredTo, isLocked) ? "readonlyColor" : ` ${(nibrsSubmittedIncident === 1 && incidentID) ? 'readonlyColor' : ''}`}
+              disabled={isLockOrRestrictModule("Lock", editval[0]?.OccurredTo, isLocked) || (nibrsSubmittedIncident === 1 && incidentID) || (!value?.OccurredFrom && true)}
+
+              // className={` ${(nibrsSubmittedIncident === 1 && incidentID) ? 'readonlyColor' : ''}`}
+              // disabled={ (nibrsSubmittedIncident === 1 && incidentID) ||(!value?.OccurredFrom && true) }
+
               timeInputLabel
               isClearable
               selected={value?.OccurredTo ? new Date(value.OccurredTo) : null}
@@ -2136,6 +2143,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
               check={true}
               verify={value.IsVerify}
               style={{ resize: "both" }}
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.CrimeLocation, isLocked)}
             />
           </div>
           <div className="col-2 col-md-2 col-lg-2 d-flex align-items-center">
@@ -2178,7 +2186,10 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
           <div className="col-9 col-md-9 col-lg-3 ">
             <Select
               name="OffenseId"
-              styles={Requiredcolour}
+              // styles={Requiredcolour}
+              styles={isLockOrRestrictModule("Lock", editval[0]?.OffenseTypeID, isLocked) ? diableColourStyles : Requiredcolour}
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.OffenseTypeID, isLocked) ? true : false}
+
               value={offenseIdDrp?.filter((obj) => obj.value === value?.OffenseTypeID)}
               isClearable
               options={offenseIdDrp}
@@ -2214,15 +2225,15 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
           <div className="col-9 col-md-9 col-lg-3">
             <Select
               name="CADCFSCodeID"
-              value={cadCfsCodeDrpData?.filter(
-                (obj) => obj.value === value?.CADCFSCodeID
-              )}
+              value={cadCfsCodeDrpData?.filter((obj) => obj.value === value?.CADCFSCodeID)}
               isClearable
               menuPlacement="bottom"
               options={cadCfsCodeDrpData}
               onChange={(e) => ChangeDropDown(e, "CADCFSCodeID")}
               placeholder="Select..."
-              styles={customStylesWithOutColor}
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.CADCFSCodeID, isLocked) ? true : false}
+              styles={isLockOrRestrictModule("Lock", editval[0]?.CADCFSCodeID, isLocked) ? diableColourStyles : customStylesWithOutColor}
+            // styles={customStylesWithOutColor}
             />
           </div>
           <div className="col-3 col-md-3 col-lg-4">
@@ -2237,7 +2248,9 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
               options={cadDispositionDrpData}
               onChange={(e) => ChangeDropDown(e, "CADDispositionId")}
               placeholder="Select..."
-              styles={customStylesWithOutColor}
+
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.CADDispositionId, isLocked) ? true : false}
+              styles={isLockOrRestrictModule("Lock", editval[0]?.CADDispositionId, isLocked) ? diableColourStyles : customStylesWithOutColor}
             />
           </div>
           <div className="col-3 col-md-3 col-lg-2 ">
@@ -2261,14 +2274,15 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
             <Select
               name="RMSDispositionId"
               value={rmsDispositionDrpData?.filter((obj) => obj.value === value?.RMSDispositionId)}
-              isDisabled={adultArrestStatus}
               // isDisabled={true}
-              styles={Requiredcolour}
               isClearable
               options={rmsDispositionDrpData}
               onChange={(e) => onChangeExceptionalClearance(e, "RMSDispositionId")}
               placeholder="Select..."
-            // styles={customStylesWithOutColor}
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.RMSDispositionId, isLocked) || adultArrestStatus ? true : false}
+              styles={isLockOrRestrictModule("Lock", editval[0]?.RMSDispositionId, isLocked) || adultArrestStatus ? diableColourStyles : customStylesWithOutColor}
+            // isDisabled={adultArrestStatus}
+            // styles={Requiredcolour}
             />
           </div>
           <div className="col-3 col-md-3 col-lg-4 ">
@@ -2277,7 +2291,10 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
           <div className="col-9 col-md-9 col-lg-3 ">
             <Select
               name='isPoliceForceApplied'
-              styles={customStylesWithOutColor}
+              // styles={customStylesWithOutColor}
+              styles={isLockOrRestrictModule("Lock", editval[0]?.isPoliceForceApplied, isLocked) ? diableColourStyles : customStylesWithOutColor}
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.isPoliceForceApplied, isLocked) ? true : false}
+
               value={policeForceDrpData?.filter((obj) => obj.value === value?.isPoliceForceApplied)}
               isClearable
               options={policeForceDrpData}
@@ -2482,7 +2499,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
               placeholderText={"Select.."}
               timeInputLabel
               isClearable={false}
-              disabled={true}
+              disabled={true} // date Disable
               peekNextMonth
               showMonthDropdown
               showYearDropdown
