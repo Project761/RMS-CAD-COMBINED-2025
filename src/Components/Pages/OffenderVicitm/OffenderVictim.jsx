@@ -12,11 +12,12 @@ import { AssaultInjuryComArrayFormat, Comman_changeArrayFormat, Comman_changeArr
 import { AddDeleteUpadate, fetchPostData } from '../../hooks/Api';
 import { useLocation } from 'react-router-dom';
 import { toastifyError, toastifySuccess } from '../../Common/AlertMsg';
-import { RequiredFieldIncident } from '../Utility/Personnel/Validation';
+import { RequiredFieldIncident, RequiredFieldIncidentOffender } from '../Utility/Personnel/Validation';
 import { AgencyContext } from '../../../Context/Agency/Index';
 import ChangesModal from '../../Common/ChangesModal';
 import MasterNameModel from '../MasterNameModel/MasterNameModel';
 import { get_ScreenPermissions_Data } from '../../../redux/actions/IncidentAction';
+import { checkCriminalActivityIsRequire, checkWeaponTypeIsRequire } from '../Offense/OffenceTab/ErrorNibrs';
 
 
 const OffenderVictim = () => {
@@ -79,6 +80,7 @@ const OffenderVictim = () => {
     const [nameModalStatus, setNameModalStatus] = useState(false);
     const [type, setType] = useState("Offender");
     const [expandedRows, setExpandedRows] = useState(null);
+    const [nibrsCode, setNibrsCode] = useState('');
     //  // permissions
     const [permissionForAdd, setPermissionForAdd] = useState(false);
     const [permissionForEdit, setPermissionForEdit] = useState(false);
@@ -416,7 +418,7 @@ const OffenderVictim = () => {
                 }
             }
         } else if (multiSelected.length > injuryTypeEditVal?.length) {
-            InSertBasicInfo(multiSelected[len].value, 'VictimInjuryID', 'InjuryVictim/Insert_VictimInjury');
+            // InSertBasicInfo(multiSelected[len].value, 'VictimInjuryID', 'InjuryVictim/Insert_VictimInjury');
         }
     };
 
@@ -433,7 +435,7 @@ const OffenderVictim = () => {
             DelSertBasicInfoOff(missing.value, 'NameOffenseID', 'NameOffense/Delete_NameOffense')
         } else {
             if (selectedValue) {
-                InSertBasicInfo(multiSelected[len].value, 'OffenseID', 'NameOffense/Insert_NameOffense')
+                // InSertBasicInfo(multiSelected[len].value, 'OffenseID', 'NameOffense/Insert_NameOffense')
             }
         }
     }
@@ -449,30 +451,30 @@ const OffenderVictim = () => {
         })
     }
 
-    const InSertBasicInfo = (id, col1, url) => {
-        setDisabled(true)
-        const val = {
-            'NameID': DrpNameID, 'VictimID': VictimID, 'CrimeID': CrimeID, 'AgencyID': loginAgencyID, [col1]: id, 'CreatedByUserFK': loginPinID,
-        }
-        AddDeleteUpadate(url, val).then((res) => {
-            if (res) {
-                setDisabled(false);
-                const parsedData = JSON.parse(res.data);
-                const message = parsedData.Table[0].Message;
-                toastifySuccess(message);
-                col1 === 'OffenseID' && get_OffenseName_Data(DrpNameID);
-                // col1 === 'NameEventInjuryID' && get_InjuryType_Data(VictimID);
-                col1 === 'VictimInjuryID' && get_InjuryType_Data(VictimID);
-                col1 === 'CrimeOffenderUseID' && get_Crime_OffenderUse_Data(CrimeID);
-                col1 === 'CrimeBiasCategoryID' && get_Crime_Bias_Category_Data(CrimeID);
-                col1 === 'WeaponTypeID' && get_Weapon_Data(CrimeID);
-            } else {
-                console.log("Somthing Wrong");
-            }
-        }).catch((error) => {
+    // const InSertBasicInfo = (id, col1, url) => {
+    //     setDisabled(true)
+    //     const val = {
+    //         'NameID': DrpNameID, 'VictimID': VictimID, 'CrimeID': CrimeID, 'AgencyID': loginAgencyID, [col1]: id, 'CreatedByUserFK': loginPinID,
+    //     }
+    //     AddDeleteUpadate(url, val).then((res) => {
+    //         if (res) {
+    //             setDisabled(false);
+    //             const parsedData = JSON.parse(res.data);
+    //             const message = parsedData.Table[0].Message;
+    //             toastifySuccess(message);
+    //             col1 === 'OffenseID' && get_OffenseName_Data(DrpNameID);
+    //             // col1 === 'NameEventInjuryID' && get_InjuryType_Data(VictimID);
+    //             col1 === 'VictimInjuryID' && get_InjuryType_Data(VictimID);
+    //             col1 === 'CrimeOffenderUseID' && get_Crime_OffenderUse_Data(CrimeID);
+    //             col1 === 'CrimeBiasCategoryID' && get_Crime_Bias_Category_Data(CrimeID);
+    //             col1 === 'WeaponTypeID' && get_Weapon_Data(CrimeID);
+    //         } else {
+    //             console.log("Somthing Wrong");
+    //         }
+    //     }).catch((error) => {
 
-        })
-    }
+    //     })
+    // }
 
     const DelSertBasicInfo = (victimOfficerID, col1, url) => {
         setDisabled(true)
@@ -657,31 +659,31 @@ const OffenderVictim = () => {
         // 'offenderusingErrors': '',
     })
 
-    const check_ValidationError = (e) => {
-        if (RequiredFieldIncident(values.PrimaryLocationId)) {
-            setError(prevValues => { return { ...prevValues, ['PrimaryLocationIdErrors']: RequiredFieldIncident(values.PrimaryLocationId) } })
-        }
-        // if (RequiredFieldIncident(values.CrimeOffenderUseID)) {
-        //     setError(prevValues => { return { ...prevValues, ['offenderusingErrors']: RequiredFieldIncident(values.CrimeOffenderUseID) } })
-        // }
-    }
+    // const check_ValidationError = (e) => {
+    //     if (RequiredFieldIncident(values.PrimaryLocationId)) {
+    //         setError(prevValues => { return { ...prevValues, ['PrimaryLocationIdErrors']: RequiredFieldIncident(values.PrimaryLocationId) } })
+    //     }
+    //     // if (RequiredFieldIncident(values.CrimeOffenderUseID)) {
+    //     //     setError(prevValues => { return { ...prevValues, ['offenderusingErrors']: RequiredFieldIncident(values.CrimeOffenderUseID) } })
+    //     // }
+    // }
 
     // Check All Field Format is True Then Submit 
-    const { PrimaryLocationIdErrors, } = error
+    // const { PrimaryLocationIdErrors, } = error
 
-    useEffect(() => {
-        if (PrimaryLocationIdErrors === 'true') {
-            if (statusOffrnce && CrimeID) { Update_Offence() }
-            else { save_Offrnce() }
-        }
-    }, [PrimaryLocationIdErrors])
+    // useEffect(() => {
+    //     if (PrimaryLocationIdErrors === 'true') {
+    //         if (statusOffrnce && CrimeID) { Update_Offence() }
+    //         else { save_Offrnce() }
+    //     }
+    // }, [PrimaryLocationIdErrors])
 
     const ChangeDropDownPrimary = (e, name) => {
         !addUpdatePermission && setStatesChangeStatus1(true); !addUpdatePermission && setChangesStatus(true);
         const updatedValue = e ? e.value : null;
         const updatedValues = { ...values, [name]: updatedValue };
         setValues(updatedValues);
-        Update_Offence(updatedValues)
+        // Update_Offence(updatedValues)
     };
 
     useEffect(() => {
@@ -847,7 +849,7 @@ const OffenderVictim = () => {
         const val = { 'CrimeID': CrimeID, }
         fetchPostData('OffenseWeapon/GetData_OffenseWeapon', val).then((res) => {
             if (res) {
-                setweaponEditVal(Comman_changeArrayFormatBasicInfo(res, 'WeaponID', 'Weapon_Description', 'PretendToBeID', 'CrimeID', 'WeaponCode'))
+                setweaponEditVal(Comman_changeArrayFormatBasicInfo(res, 'WeaponTypeID', 'Weapon_Description', 'PretendToBeID', 'WeaponID', 'WeaponCode'))
             } else {
                 setweaponEditVal([]);
             }
@@ -855,6 +857,7 @@ const OffenderVictim = () => {
     }
 
     const OffenderUsechange = (multiSelected) => {
+        !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
         setoffenderusing(multiSelected)
         const len = multiSelected.length - 1
         const selectedValues = len >= 0 ? multiSelected[len].value : null;
@@ -864,15 +867,16 @@ const OffenderVictim = () => {
             while (i) {
                 missing = (~multiSelected.indexOf(crimeOffenderUseEditVal[--i])) ? missing : crimeOffenderUseEditVal[i];
             }
-            DelSertBasicInfo(missing.id, 'OffenderUseID', 'OffenseOffenderUse/DeleteOffenseOffenderUse')
+            // DelSertBasicInfo(missing.id, 'OffenderUseID', 'OffenseOffenderUse/DeleteOffenseOffenderUse')
         } else {
             if (selectedValues) {
-                InSertBasicInfo(multiSelected[len].value, 'CrimeOffenderUseID', 'OffenseOffenderUse/InsertOffenseOffenderUse')
+                // InSertBasicInfo(multiSelected[len].value, 'CrimeOffenderUseID', 'OffenseOffenderUse/InsertOffenseOffenderUse')
             }
         }
     }
 
     const CrimeBiasCategorychange = (multiSelected) => {
+        !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
         setCrimeBiasCategory(multiSelected)
         const len = multiSelected.length - 1
         const selectedValues = len >= 0 ? multiSelected[len].value : null;
@@ -882,15 +886,16 @@ const OffenderVictim = () => {
             while (i) {
                 missing = (~multiSelected.indexOf(crimeBiasCategoryEditVal[--i])) ? missing : crimeBiasCategoryEditVal[i];
             }
-            DelSertBasicInfo(missing.id, 'BiasCategoryID', 'OffenseBiasCategory/DeleteOffenseBiasCategory')
+            // DelSertBasicInfo(missing.id, 'BiasCategoryID', 'OffenseBiasCategory/DeleteOffenseBiasCategory')
         } else {
             if (selectedValues) {
-                InSertBasicInfo(multiSelected[len].value, 'CrimeBiasCategoryID', 'OffenseBiasCategory/InsertOffenseBiasCategory')
+                // InSertBasicInfo(multiSelected[len].value, 'CrimeBiasCategoryID', 'OffenseBiasCategory/InsertOffenseBiasCategory')
             }
         }
     }
 
     const Weaponchange = (multiSelected) => {
+        !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
         setWeaponID(multiSelected)
         const len = multiSelected.length - 1
         if (multiSelected?.length < weaponEditVal?.length) {
@@ -899,9 +904,9 @@ const OffenderVictim = () => {
             while (i) {
                 missing = (~multiSelected.indexOf(weaponEditVal[--i])) ? missing : weaponEditVal[i];
             }
-            DelSertBasicInfo(missing.value, 'WeaponID', 'OffenseWeapon/Delete_OffenseWeapon')
+            // DelSertBasicInfo(missing.value, 'WeaponID', 'OffenseWeapon/Delete_OffenseWeapon')
         } else {
-            InSertBasicInfo(multiSelected[len].value, 'WeaponTypeID', 'OffenseWeapon/Insert_OffenseWeapon')
+            // InSertBasicInfo(multiSelected[len].value, 'WeaponTypeID', 'OffenseWeapon/Insert_OffenseWeapon')
         }
     }
 
@@ -937,11 +942,12 @@ const OffenderVictim = () => {
         })
     }
 
-    const Update_Offence = (values) => {
+    const Update_Offence = () => {
         AddDeleteUpadate('Crime/Update_Offense', values).then((res) => {
             const parsedData = JSON.parse(res.data);
             const message = parsedData.Table[0].Message;
-            toastifySuccess(message); setStatesChangeStatus1(false); setstatusOffrnce(true); setChangesStatus(false); get_Incident_Count(IncID, loginPinID);
+            toastifySuccess(message);
+            setStatesChangeStatus1(false); setstatusOffrnce(true); setChangesStatus(false); get_Incident_Count(IncID, loginPinID);
             get_Offence_Data(DrpNameID); setError({ ...error, 'PrimaryLocationIdErrors': '', });
         })
 
@@ -1068,6 +1074,80 @@ const OffenderVictim = () => {
         }
         return allOptions;
     }, [offenderusing, allOptions]);
+
+
+
+    const check_Validation_Error_Offense_Section = (e) => {
+        const WeaponTypeErr = isCrimeIDSelected ? validateFields(weaponID) : 'true';
+        const offenderusingErr = isCrimeIDSelected ? validateFields(offenderusing) : 'true';
+        const CrimeBiasCategoryErr = isCrimeIDSelected ? validateFields(crimeBiasCategory) : 'true';
+        const PrimaryLocationIdErr = isCrimeIDSelected ? RequiredFieldIncident(values.PrimaryLocationId) : 'true';
+        setErrors((pre) => {
+            return {
+                ...pre,
+                ['WeaponTypeError']: WeaponTypeErr || pre['WeaponTypeError'],
+                ['OffenderusingError']: offenderusingErr || pre['OffenderusingError'],
+                ['CrimeBiasCategoryError']: CrimeBiasCategoryErr || pre['CrimeBiasCategoryError'],
+                ['PrimaryLocationIdErrors']: PrimaryLocationIdErr || pre['PrimaryLocationIdErrors'],
+
+            };
+        });
+
+
+    };
+
+    // Check All Field Format is True Then Submit
+    const { WeaponTypeError, OffenderusingError, CrimeBiasCategoryError, PrimaryLocationIdErrors } = errors;
+
+    useEffect(() => {
+        if (WeaponTypeError === 'true' && OffenderusingError === 'true' && CrimeBiasCategoryError === 'true' && PrimaryLocationIdErrors === 'true') {
+            if (isCrimeIDSelected) {
+                InSertBasicInfo();
+                Update_Offence()
+            }
+
+        }
+    }, [WeaponTypeError, OffenderusingError, CrimeBiasCategoryError, PrimaryLocationIdErrors]);
+
+    const validateFields = (field) => {
+        if (field?.length == 0) {
+            return 'Required *';
+        } else {
+            return 'true'
+        }
+    };
+
+    const InSertBasicInfo = (crimeId) => {
+        const val = {
+            'CrimeID': CrimeID,
+            'CreatedByUserFK': loginPinID,
+            'CrimeOffenderUseID': offenderusing?.map((item) => item?.value),
+            'CrimeBiasCategoryID': crimeBiasCategory?.map((item) => item?.value),
+            'WeaponTypeID': weaponID?.map((item) => item?.value),
+
+        }
+        AddDeleteUpadate('Crime/Insert_OffenseInformation', val).then((res) => {
+            if (res) {
+                const parsedData = JSON.parse(res.data);
+                const message = parsedData.Table[0].Message;
+                // toastifySuccess(message);
+                // GetBasicInfoData();
+                // get_Criminal_Activity_Data(crimeId);
+                get_Crime_Bias_Category_Data(CrimeID);
+                get_Crime_OffenderUse_Data(CrimeID);
+                get_Weapon_Data(CrimeID);
+                setErrors({ ...errors, 'MethodOfEnrtyError': '', 'CriminalActivityError': '', 'WeaponTypeError': '', 'OffenderusingError': '', 'CrimeBiasCategoryError': '' })
+                setChangesStatus(false);
+            } else {
+                console.log("Somthing Wrong");
+                setErrors({ ...errors, 'MethodOfEnrtyError': '', 'CriminalActivityError': '', 'WeaponTypeError': '', 'OffenderusingError': '', 'CrimeBiasCategoryError': '' })
+            }
+        })
+
+    }
+
+
+
 
 
     return (
@@ -1236,7 +1316,10 @@ const OffenderVictim = () => {
                                                     required readOnly />
                                             </div>
                                             <div className="col-2 col-md-2 col-lg-1 mt-3">
-                                                <label htmlFor="" className='label-name '>Bias</label>
+                                                <label htmlFor="" className='label-name '>Bias <br />  {errors.CrimeBiasCategoryError !== "true" && (<span style={{
+                                                    color: "red", fontSize: "13px", marginTop: "4px", display: "inline-block", textAlign: "right",
+                                                }}> {errors.CrimeBiasCategoryError}</span>
+                                                )}</label>
                                             </div>
                                             <div className="col-4 col-md-4 col-lg-5 pt-1" >
                                                 <SelectBox
@@ -1257,11 +1340,18 @@ const OffenderVictim = () => {
                                                     placeholder='Select Bias From List'
                                                     // isDisabled={!isCrimeIDSelected}
                                                     isDisabled={!isCrimeIDSelected}
-                                                    styles={!isCrimeIDSelected ? customStylesWithColor : customStylesWithOutColor}
+                                                    styles={!isCrimeIDSelected ? customStylesWithColor : MultiSelectRequredColor}
                                                 />
                                             </div>
                                             <div className="col-2 col-md-2 col-lg-1 mt-3">
-                                                <label htmlFor="" className='label-name '>Offender&nbsp;Using </label>
+                                                <label htmlFor="" className='label-name '>Offender&nbsp;Using
+                                                    <br />
+                                                    {errors.OffenderusingError !== "true" && (
+                                                        <span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block", }}>{errors.OffenderusingError}</span>
+                                                    )} </label>
+
+
+
                                             </div>
                                             <div className="col-4 col-md-4 col-lg-5 pt-1" >
                                                 <SelectBox
@@ -1279,12 +1369,13 @@ const OffenderVictim = () => {
                                                     // value={offenderusing}
                                                     placeholder='Select Offender Using From List'
                                                     isDisabled={!isCrimeIDSelected}
-                                                    styles={!isCrimeIDSelected ? customStylesWithColor : customStylesWithOutColor}
+
+                                                    styles={!isCrimeIDSelected ? customStylesWithColor : MultiSelectRequredColor}
                                                 />
                                             </div>
                                             {/* //--weapon */}
                                             <div className="col-2 col-md-2 col-lg-1 mt-3">
-                                                <label htmlFor="" className='label-name '>Weapon
+                                                <label htmlFor="" className='label-name '>Weapon <br />  {errors.WeaponTypeError !== "true" ? (<span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block" }}>{errors.WeaponTypeError}</span>) : null}
                                                 </label>
                                             </div>
                                             <div className="col-4 col-md-4 col-lg-5 pt-1" >
@@ -1303,7 +1394,7 @@ const OffenderVictim = () => {
                                                     value={filterArray(weaponID, 'label')}
                                                     placeholder='Select Weapon Using From List'
                                                     isDisabled={!isCrimeIDSelected}
-                                                    styles={!isCrimeIDSelected ? customStylesWithColor : customStylesWithOutColor}
+                                                    styles={!isCrimeIDSelected ? customStylesWithColor : MultiSelectRequredColor}
                                                 />
                                             </div>
                                             <div className="col-2 col-md-2 col-lg-1 mt-3">
@@ -1324,6 +1415,9 @@ const OffenderVictim = () => {
                                                     menuPlacement='top'
                                                 />
                                             </div>
+                                        </div>
+                                        <div className='d-flex justify-content-end'>
+                                            <button type="button" className="btn btn-sm btn-success mr-1 " disabled={!statesChangeStatus} onClick={(e) => { check_Validation_Error_Offense_Section(); }}>Update</button> : <></>
                                         </div>
                                     </fieldset>
                                     <div className="col-12 col-md-12 col-lg-12 mt-2">
@@ -1429,7 +1523,7 @@ const OffenderVictim = () => {
                     </div>
                 </div >
             </div >
-            <ChangesModal func={(e) => { check_ValidationError(e); check_Validation_Error(e); }} />
+            <ChangesModal func={(e) => { check_Validation_Error(e); }} />
             <DeletePopUpModal func={!isProperty ? DeleteOffence : DeleteRelationship} />
             <MasterNameModel {...{ value, setValue, nameModalStatus, setNameModalStatus, loginPinID, loginAgencyID, type, possessionID, setPossessionID, possessionIDVictim, setPossessionIDVictim, possenSinglData, setPossenSinglData, GetSingleDataPassion, setStatesChangeStatus }} />
         </>
