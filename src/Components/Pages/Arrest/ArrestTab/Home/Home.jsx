@@ -1612,11 +1612,18 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
                                     placeholder="Select..."
                                 />
                             </div>
-                            <div className='col-2 col-md-2 col-lg-3'>
-                                <label className="form-check-label mb-0 ml-3 text-nowrap" htmlFor="flexCheckDefault">School Notified</label>
-                                <input className="form-check-input ml-2" type="checkbox" name="IsSchoolNotified" checked={value?.IsSchoolNotified} onChange={HandleChange} />
-                                <label className="form-check-label mb-0 ml-4 text-nowrap" htmlFor="flexCheckDefault">Y or N</label>
-                            </div>
+                            {
+                                value?.IsJuvenileArrest ?
+                                    <>
+                                        <div className='col-2 col-md-2 col-lg-3'>
+                                            <label className="form-check-label mb-0 ml-3 text-nowrap" htmlFor="flexCheckDefault">School Notified</label>
+                                            <input className="form-check-input ml-2" type="checkbox" name="IsSchoolNotified" checked={value?.IsSchoolNotified} onChange={HandleChange} />
+
+                                        </div>
+                                    </> :
+                                    <></>
+                            }
+
                         </div>
                     </div >
                     {
