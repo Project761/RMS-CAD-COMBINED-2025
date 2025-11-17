@@ -162,6 +162,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
     const [showOffenseTypeError, setShowOffenseTypeError] = useState(false);
     const [showJustifyHomicideError, setShowJustifyHomicideError] = useState(false);
     const [showCallTypeError, setShowCallTypeError] = useState(false);
+    const [showRelationshipError, setShowRelationshipError] = useState(false);
+
     const [victimCode, setVictimCode] = useState('');
 
     const [isSocietyName, setIsSocietyName] = useState(false);
@@ -2601,7 +2603,9 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                             toastifySuccess(message);
                             Get_Relationship_Data(DeNameID); setStatus(false); resetHooks(); get_NameVictim_Count(victimID)
                             get_Name_Count(DeNameID); setErrors1({ ...errors1, ['RelationshipTypeIDErrors']: '' });
-                            setStatesChangeStatus(false); setChangesStatus(false)
+                            setStatesChangeStatus(false); setChangesStatus(false);
+                            // Validate Name
+                            getNibrsErrorToolTip(DeNameID, mainIncidentID, IncNo);
                         }
                     } else {
                         toastifyError(data.Message)
@@ -2640,6 +2644,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                             ...errors1,
                             'RelationshipTypeIDErrors': '', ' VictimNameIDErrors': '',
                         });
+                        // Validate Name
+                        getNibrsErrorToolTip(DeNameID, mainIncidentID, IncNo);
                     } else {
                         toastifyError(data.Message)
                     }
@@ -2701,13 +2707,15 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                 const message = parsedData.Table[0].Message;
                 toastifySuccess(message);
 
-                setConfirmDeleteVictim(false)
+                setConfirmDeleteVictim(false);
                 setEditCount(editCount + 1)
                 Get_Relationship_Data(DeNameID);
                 setChangesStatus(false)
                 get_NameVictim_Count(victimID)
                 resetHooks();
-                setStatusFalse1()
+                setStatusFalse1();
+                // Validate Name
+                getNibrsErrorToolTip(DeNameID, mainIncidentID, IncNo);
             } else { toastifyError("Somthing Wrong"); }
         })
     }
@@ -2972,7 +2980,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                 if (data) {
 
                     const victimList = data?.Victim;
-                    // console.log("🚀 ~ ValidateIncNames ~ victimList:", victimList)
+                    console.log("🚀 ~ ValidateIncNames ~ victimList:", victimList)
                     if (Array.isArray(victimList) && victimList.length > 0 && isDefaultSelected) {
                         const row = victimList[0];
                         getNibrsErrorToolTip(row?.NameEventID, mainIncidentID, IncNo);
@@ -3012,10 +3020,11 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
         setShowOffenseTypeError(false);
         setShowJustifyHomicideError(false);
         setShowCallTypeError(false);
+        setShowRelationshipError(false);
         const val = {
             "gIncidentID": IncidentID,
             "IncidentNumber": IncNo,
-            "NameID": NameId,
+            "NameID": `${NameId}`,
             "gIntAgencyID": loginAgencyID,
         }
         if (NameId) {
@@ -3052,6 +3061,9 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                     if (victimError?.CallType) {
                         setShowCallTypeError(true);
 
+                    }
+                    if (victimError?.Relationship) {
+                        setShowRelationshipError(true);
                     }
                 } else {
                     setnibrsFieldError([]);
@@ -4127,9 +4139,16 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                                                     </Link>
                                                 </div>
                                                 <div className="col-4 col-md-4 col-lg-3 mt-2">
+                                                    {nibrsFieldError?.Relationship && showRelationshipError && (
+                                                        <div className="nibrs-tooltip-error" style={{ left: '-80px' }}>
+                                                            <div className="tooltip-arrow"></div>
+                                                            <div className="tooltip-content">
+                                                                <span className="text-danger">⚠️ {nibrsFieldError.RelationshipError || ''}</span>
+                                                            </div>
+                                                        </div>
+                                                    )}
                                                     <Select
                                                         name='RelationshipTypeID'
-
                                                         // styles={isCrimeAgainstPerson || has120RoberyOffense ? colourStyles1 : withOutColorStyle1}
                                                         styles={isCrimeAgainstPerson ? colourStyles1 : withOutColorStyle1}
                                                         isClearable
