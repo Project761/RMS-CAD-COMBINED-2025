@@ -1467,7 +1467,9 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                                 get_MasterName_Count(NameID, MasterNameID, MstPage === "MST-Name-Dash" ? true : false);
                                 dispatch(get_ArresteeNameMissingPerData(openPage, MasterNameID, mainIncidentID))
                                 GetSingleDataPassions(NameID, MasterNameID);
-
+                                if (type === "ArrestMod") {
+                                    dispatch(get_ArresteeName_Data('', 0, IncID, true));
+                                }
                             }
                         })
                     } else {
