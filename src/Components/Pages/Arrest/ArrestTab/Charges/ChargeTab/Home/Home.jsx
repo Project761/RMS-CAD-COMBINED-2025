@@ -89,7 +89,7 @@ const Charges = (props) => {
   const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
   const incReportedDate = useSelector((state) => state.Agency.incReportedDate);
 
-  const { get_Arrest_Count, arrestChargeData, datezone, NameId, setArrestName, get_OffenseName_Data, changesStatusCount, changesStatus, get_Data_Arrest_Charge, get_ArrestCharge_Count, setChangesStatus, updateCount, setUpdateCount, ArresteName } = useContext(AgencyContext);
+  const { get_Arrest_Count, arrestChargeData, datezone, NameId, setArrestName, get_OffenseName_Data, changesStatusCount, changesStatus, get_Incident_Count, get_Data_Arrest_Charge, get_ArrestCharge_Count, setChangesStatus, updateCount, setUpdateCount, ArresteName } = useContext(AgencyContext);
   const SelectedValue = useRef();
 
   const [chargeCodeDrp, setChargeCodeDrp] = useState([]);
@@ -496,6 +496,7 @@ const Charges = (props) => {
         toastifySuccess(res.Message);
         navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(res?.ArrestID)}&ArrNo=${res?.ArrestNumber}&Name=${ArresteName}&ArrestSta=${true}&ChargeSta=${false}`)
         Add_Charge_Data(res.ArrestID);
+        get_Incident_Count(DecEIncID);
       }
     });
   }

@@ -24,7 +24,7 @@ import CurrentArrestMasterReport from './CurrentArrestMasterReport';
 
 
 
-const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, setStatus, isEnabled, setIsEnabled, Agencystatus, setAgencystatus, arrestID, setArrestID, matchedAgency, setmatchedAgency, delChargeID, ChargeLocalArr, setChargeLocalArr, setDelChargeID, isChargeDel, setIsChargeDel, possessionID, setPossessionID, offenseNameID, setoffenseNameID, RestStatus, Editval, setEditval, incExceDate, setincExceDate, GetSingleData, get_List }) => {
+const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce, ResetErrors, DecArrestId, setStatus, isEnabled, setIsEnabled, Agencystatus, setAgencystatus, arrestID, setArrestID, matchedAgency, setmatchedAgency, delChargeID, ChargeLocalArr, setChargeLocalArr, setDelChargeID, isChargeDel, setIsChargeDel, possessionID, setPossessionID, offenseNameID, setoffenseNameID, RestStatus, Editval, setEditval, incExceDate, setincExceDate, GetSingleData, get_List }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -169,6 +169,18 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         }
     }, [NameId])
 
+    useEffect(() => {
+        if (ResetErrors) {
+            console.log('hello')
+            dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
+            setPossessionID('');
+            setResetErrors(false)
+            setIsEditvalProcessed(false);
+
+            setValue({ ...value, ['RaceID']: '', ['SexID']: '', ['AgeFrom']: '', ['AgeUnitID']: '', ['DateOfBirth']: '', ArrestNumber: '', IsJuvenileArrest: '', ArrestDtTm: '', ArrestingAgency: '', ArrestTypeID: '', SupervisorID: '', PoliceForceID: '', ArresteeID: '', RightsGivenID: '', JuvenileDispositionID: '', PhoneNo: '', GivenByID: '', PrimaryOfficerID: '', ModifiedByUserFK: '', IsMultipleArrestees: '', ArrestingAgencyID: '', 'IsSchoolNotified': '', 'Grade': '', 'LocationOfSchool': '', 'NameOfSchool': '', 'ParentPhone': '', 'ParentNameID': '', 'ResponseID': '', })
+        }
+    }, [ResetErrors]);
+
     const GetEditData = (incidentID) => {
         const val = { IncidentID: incidentID };
         fetchPostData('Incident/GetSingleData_Incident', val).then((res) => {
@@ -241,7 +253,9 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
     }, [DecEIncID, nameModalStatus, possessionID]);
 
     useEffect(() => {
+        console.log(possessionID, isEditvalProcessed, type)
         if (possessionID && (isEditvalProcessed === false) && type === "ArrestMod") {
+            console.log(possessionID)
             const newvalue = arresteeNameData?.filter((val) => val?.NameID == possessionID);
             setNameID(newvalue[0]?.NameID)
             setValue({
@@ -251,6 +265,8 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
             })
         }
     }, [arresteeNameData, nameModalStatus, isEditvalProcessed]);
+
+
 
     const checkSelectedName1 = (ArresteeID) => {
         if (ArresteeID) {
@@ -960,6 +976,8 @@ const Home = ({ setShowJuvinile, setShowPage, setShowPoliceForce, DecArrestId, s
         const d = new Date(date);
         return !isNaN(d.getTime()) ? d : null;
     };
+
+    console.log(possenSinglData, possessionID, value)
 
     return (
         <>
