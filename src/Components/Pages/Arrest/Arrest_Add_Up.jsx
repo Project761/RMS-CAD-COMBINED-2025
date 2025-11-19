@@ -762,7 +762,7 @@ const Arrest_Add_Up = () => {
                                                             if (!changesStatus) { setShowPage('MugShorts') }
                                                         }}>
 
-                                                        Mugshorts{`${tabCountArrest?.ArrestMugshots > 0 ? '(' + tabCountArrest?.ArrestMugshots + ')' : ''}`}
+                                                        Mugshot{`${tabCountArrest?.ArrestMugshots > 0 ? '(' + tabCountArrest?.ArrestMugshots + ')' : ''}`}
                                                     </span>
                                                     <span
                                                         className={`nav-item ${showPage === 'Fingerprint' ? 'active' : ''}${!status ? 'disabled' : ''}`}
