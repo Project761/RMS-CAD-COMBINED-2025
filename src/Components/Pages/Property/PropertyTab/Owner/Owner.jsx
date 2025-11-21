@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { useLocation } from 'react-router-dom'
-import { Decrypt_Id_Name, getShowingWithOutTime, tableCustomStyles } from '../../../../Common/Utility';
+import { Decrypt_Id_Name, getShowingWithOutTime, isLockOrRestrictModule, tableCustomStyles } from '../../../../Common/Utility';
 import { AddDeleteUpadate, fetchPostData } from '../../../../hooks/Api';
 import DataTable from 'react-data-table-component';
 import { toastifyError, toastifySuccess } from '../../../../Common/AlertMsg';
@@ -16,7 +16,7 @@ import MasterNameModel from '../../../MasterNameModel/MasterNameModel';
 
 const Owner = (props) => {
 
-  const { ListData, DecPropID, DecMPropID, DecIncID, isViewEventDetails = false, } = props
+  const { ListData, DecPropID, DecMPropID, DecIncID, isViewEventDetails = false, isLocked, setIsLocked } = props
   const { get_Property_Count, setChangesStatus } = useContext(AgencyContext);
   const dropdownRef = useRef(null);
 
@@ -94,8 +94,6 @@ const Owner = (props) => {
   useEffect(() => {
     if (DecPropID || DecMPropID) { get_Data_Owner(DecPropID, DecMPropID); }
   }, [DecPropID, DecIncID]);
-
-
 
   useEffect(() => {
     if (MstPage === "MST-Property-Dash") {
@@ -234,20 +232,26 @@ const Owner = (props) => {
         <div className="div" style={{ position: 'absolute', top: 4, right: 10 }}>
           {
             effectiveScreenPermission ?
-              effectiveScreenPermission[0]?.DeleteOK ?
+              effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", ownerData, isLocked, true) ?
                 <span onClick={() => { setDeleteStatus(true); setPropertyOwnerID(row.PropertyOwnerID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                   <i className="fa fa-trash"></i>
                 </span>
-                : <></>
+                :
+                <></>
               :
+
+              !isLockOrRestrictModule("Lock", ownerData, isLocked, true) &&
               <span onClick={() => { setDeleteStatus(true); setPropertyOwnerID(row.PropertyOwnerID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                 <i className="fa fa-trash"></i>
               </span>
+
+
           }
 
         </div>
     }
   ]
+
 
   const columns1 = [
     {
@@ -304,8 +308,6 @@ const Owner = (props) => {
     })
   }
 
-
-
   useEffect(() => {
     const handleEsc = (event) => {
       if (event.key === 'Escape') {
@@ -343,7 +345,6 @@ const Owner = (props) => {
                 setValue({ ...value, labal: e.target.value })
                 const result = ownerIdDrp?.filter((item) => {
                   return (item.Arrestee_Name.toLowerCase().includes(e.target.value.toLowerCase()))
-
                 })
                 setFilterData(result)
                 if (!typedValue) {
@@ -354,9 +355,7 @@ const Owner = (props) => {
                   }
                 }
               }}
-              onClick={() => {
-                document.getElementById('customSelectBox').style.display = 'block'
-              }}
+              onClick={() => { document.getElementById('customSelectBox').style.display = 'block' }}
             />
             <span className='offense-select' onClick={() => {
               document.getElementById('customSelectBox').style.display = 'none';
@@ -369,8 +368,10 @@ const Owner = (props) => {
 
               if (DecIncID && !MstPage) {
                 get_OwnerID_Drp(DecIncID);
+
               } else if (MstPage === "MST-Property-Dash") {
                 if (possessionID || DecPropID || DecMPropID) { get_Master_Owner_Drp(possessionID, DecMPropID, DecPropID,); }
+
               }
 
             }}>

@@ -78,7 +78,9 @@ const OffenceHomeTabs = () => {
     const [crimeId, setCrimeId] = useState("");
     const [ResetErrors, setResetErrors] = useState(false);
     const [clickCount, setClickCount] = useState(0);
-
+    // Lock Restrict
+    const [isLocked, setIsLocked] = useState(false);
+    const [permissionToUnlock, setPermissionToUnlock] = useState(false);
 
     const iconHome = <i className="fa fa-home" style={{ fontSize: '20px' }}></i>
     const navigate = useNavigate()
@@ -105,7 +107,7 @@ const OffenceHomeTabs = () => {
 
     useEffect(() => {
         if (IncID) {
-            get_Offence_Data(IncID); setMainIncidentID(IncID);
+            get_Offence_Data(IncID); setMainIncidentID(IncID); getPermissionLevelByLock(IncID, localStoreData?.PINID);
         }
     }, [IncID]);
 
@@ -146,6 +148,26 @@ const OffenceHomeTabs = () => {
                 setListData([]);
             }
         })
+    }
+
+    const getPermissionLevelByLock = async (IncidentID, OfficerID) => {
+        try {
+            const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { 'IncidentID': IncidentID, 'OfficerID': OfficerID, 'ModuleName': "Incident", 'ID': 0 });
+            console.log("🚀 ~ getPermissionLevelByLock ~ res:", res)
+            if (res?.length > 0) {
+                setIsLocked(res[0]?.IsLocked === true || res[0]?.IsLocked === 1 ? true : false);
+                setPermissionToUnlock(res[0]?.IsUnLockPermission === true || res[0]?.IsUnLockPermission === 1 ? true : false);
+
+            } else {
+                setPermissionToUnlock(false);
+                setIsLocked(false);
+
+            }
+        } catch (error) {
+            console.error('There was an error!', error);
+            setPermissionToUnlock(false);
+            setIsLocked(false);
+        }
     }
 
     const columns = [
@@ -348,7 +370,6 @@ const OffenceHomeTabs = () => {
             ),
         },
     ];
-
 
     const setEditValOffense = (row) => {
         setCrimeId(row.CrimeID);
@@ -664,7 +685,9 @@ const OffenceHomeTabs = () => {
                                         <div className="text-right ml-3">
                                             <div className="right-controls d-flex flex-column align-items-center gap-2">
                                                 <div className="view-toggle d-flex flex-column gap-2">
-                                                    <button className="btn btn-sm btn-success mb-2" onClick={() => { setStatusFalse(); setResetErrors(true); }}> New </button>
+                                                    <button className="btn btn-sm btn-success mb-2" onClick={() => {
+                                                        setStatusFalse(); setResetErrors(true); setIsLocked(false);
+                                                    }}> New </button>
                                                     {viewType === "card" && (<button className="btn btn-sm btn-success" onClick={() => setViewType("list")}  > Grid </button>)}
                                                     {viewType === "list" && (<button className="btn btn-sm btn-success" onClick={() => setViewType("card")} > Card  </button>)}
                                                 </div>
@@ -719,10 +742,10 @@ const OffenceHomeTabs = () => {
                                 }
                                 {
                                     showOffPage === 'home' ?
-                                        <Home {...{ status, setStatus, offenceID, ResetErrors, setResetErrors, setOffenceID, get_List, nibrsCode, setNibrsCode, setshowOffPage, clickCount }} />
+                                        <Home {...{ status, setStatus, offenceID, ResetErrors, setResetErrors, setOffenceID, get_List, nibrsCode, setNibrsCode, setshowOffPage, clickCount, isLocked }} />
                                         :
                                         showOffPage === 'CrimeInformation' ?
-                                            <BasicInformation {...{ ListData, loginPinID, loginAgencyID, offenceID, mainIncidentID, nibrsCode, setNibrsCode, }} />
+                                            <BasicInformation {...{ ListData, loginPinID, loginAgencyID, offenceID, mainIncidentID, nibrsCode, setNibrsCode, isLocked }} />
                                             :
                                             showOffPage === 'AuditLog' ?
                                                 <Log

@@ -7,7 +7,7 @@ import DeletePopUpModal from '../../../../Common/DeleteModal';
 import { AgencyContext } from '../../../../../Context/Agency/Index';
 import { RequiredFieldIncident } from '../../../Utility/Personnel/Validation';
 import { Comman_changeArrayFormat } from '../../../../Common/ChangeArrayFormat';
-import { Decrypt_Id_Name, DecryptedList, base64ToString, tableCustomStyles } from '../../../../Common/Utility';
+import { Decrypt_Id_Name, DecryptedList, base64ToString, isLockOrRestrictModule, tableCustomStyles } from '../../../../Common/Utility';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { get_LocalStoreData } from '../../../../../redux/actions/Agency';
@@ -18,7 +18,7 @@ import VehicleListing from '../../../ShowAllList/VehicleListing';
 
 const Offense = (props) => {
 
-  const { ListData, DecVehId, DecMVehId, IncID } = props
+  const { ListData, DecVehId, DecMVehId, IncID, isLocked, setIsLocked } = props
 
   const dispatch = useDispatch();
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -204,12 +204,14 @@ const Offense = (props) => {
         <div className="div" style={{ position: 'absolute', top: 4, right: 10 }}>
           {
             effectiveScreenPermission ?
-              effectiveScreenPermission[0]?.DeleteOK ?
+              effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", ownerData, isLocked, true) ?
                 <span onClick={() => { setDeleteStatus(true); setPropertyOffenseID(row.PropertyOffenseID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                   <i className="fa fa-trash"></i>
                 </span>
                 : <></>
-              : <span onClick={() => { setDeleteStatus(true); setPropertyOffenseID(row.PropertyOffenseID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
+              :
+              !isLockOrRestrictModule("Lock", ownerData, isLocked, true) &&
+              <span onClick={() => { setDeleteStatus(true); setPropertyOffenseID(row.PropertyOffenseID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                 <i className="fa fa-trash"></i>
               </span>
           }

@@ -11,7 +11,7 @@ import OffListing from '../../../ShowAllList/OffListing';
 import ListModal from '../../../Utility/ListManagementModel/ListModal';
 import { get_LocalStoreData } from '../../../../../redux/actions/Agency';
 import { useDispatch, useSelector } from 'react-redux';
-import { Decrypt_Id_Name, MultiSelectRequredColor, Nibrs_ErrorStyle } from '../../../../Common/Utility';
+import { Decrypt_Id_Name, isLockOrRestrictModule, MultiSelectLockedStyle, MultiSelectRequredColor, Nibrs_ErrorStyle } from '../../../../Common/Utility';
 import { RequiredFieldIncident, RequiredFieldIncidentOffender } from '../../../Utility/Personnel/Validation';
 import ChangesModal from '../../../../Common/ChangesModal';
 import { get_ScreenPermissions_Data } from '../../../../../redux/actions/IncidentAction';
@@ -37,7 +37,7 @@ const MultiValue = props => (
   </components.MultiValue>
 );
 
-const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => {
+const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, isLocked }) => {
 
   const { get_Offence_Count, nibrsSubmittedStatus, setnibrsSubmittedStatus, nibrsSubmittedOffenseMain, setnibrsSubmittedOffenseMain, PanelCode, changesStatus, setChangesStatus } = useContext(AgencyContext);
 
@@ -324,12 +324,12 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
   }, [editval])
 
   useEffect(() => {
-    if (pointExitEditVal) { setCrimePointOfExitID(pointExitEditVal) }
-  }, [pointExitEditVal])
-
-  useEffect(() => {
     if (pointEntryEditVal) { setCrimePointOfEntry(pointEntryEditVal) }
   }, [pointEntryEditVal])
+
+  useEffect(() => {
+    if (pointExitEditVal) { setCrimePointOfExitID(pointExitEditVal) }
+  }, [pointExitEditVal])
 
   useEffect(() => {
     if (crimeOffenderUseEditVal) { setCrimeOffenderUse(crimeOffenderUseEditVal) }
@@ -1169,17 +1169,18 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
                 <SelectBox
                   className="basic-multi-select"
                   options={pretentedDrp}
-                  styles={customStylesWithOutColor}
                   isClearable={false}
-
                   isMulti
                   closeMenuOnSelect={false}
                   hideSelectedOptions={true}
                   components={{ MultiValue, }}
                   onChange={(e) => Agencychange(e)}
-
                   value={filterArray(pretendToBeID, 'label')}
                   placeholder='Select Pretented To Be From List'
+                  // styles={customStylesWithOutColor}
+                  styles={isLockOrRestrictModule("Lock", editval, isLocked, true) ? MultiSelectLockedStyle : customStylesWithOutColor}
+                  isDisabled={isLockOrRestrictModule("Lock", editval, isLocked, true) ? true : false}
+
                 />
               </div>
               <div className="col-3 col-md-3 col-lg-3">
@@ -1193,24 +1194,22 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
               <div className="col-9 col-md-9 col-lg-9 ">
                 <SelectBox
                   className="basic-multi-select"
-                  styles={customStylesWithOutColor}
                   name='pointofentry'
                   options={pointEntryDrp}
                   isClearable={false}
-
                   isMulti
                   closeMenuOnSelect={false}
                   hideSelectedOptions={true}
                   components={{ MultiValue, }}
                   onChange={(e) => poinOfEntrychange(e)}
-
-                  value={filterArray(crimePointOfEntry, 'label')}
                   placeholder='Select Point Of Entry From List'
+                  value={filterArray(crimePointOfEntry, 'label')}
+                  // styles={customStylesWithOutColor}
+                  styles={isLockOrRestrictModule("Lock", pointEntryEditVal, isLocked, true) ? MultiSelectLockedStyle : customStylesWithOutColor}
+                  isDisabled={isLockOrRestrictModule("Lock", pointEntryEditVal, isLocked, true) ? true : false}
                 />
               </div>
-
               <div className="col-3 col-md-3 col-lg-3">
-
                 <span data-toggle="modal" onClick={() => { setOpenPage('Tools Use') }} data-target="#ListModel" className='new-link px-0'>
                   Tools
                 </span>
@@ -1218,20 +1217,20 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
               <div className="col-9 col-md-9 col-lg-9 ">
                 <SelectBox
                   className="basic-multi-select"
-                  styles={customStylesWithOutColor}
                   name='btoolsias'
                   options={toolsUseIDDrp}
                   isClearable={false}
-
                   isMulti
                   closeMenuOnSelect={false}
                   hideSelectedOptions={true}
                   components={{ MultiValue, }}
                   onChange={(e) => CrimeToolsUsechange(e)}
                   menuPlacement="top"
-
                   value={filterArray(crimeToolsUse, 'label')}
                   placeholder='Select Tools From List'
+                  // styles={customStylesWithOutColor}
+                  styles={isLockOrRestrictModule("Lock", crimeToolsUseEditVal, isLocked, true) ? MultiSelectLockedStyle : customStylesWithOutColor}
+                  isDisabled={isLockOrRestrictModule("Lock", crimeToolsUseEditVal, isLocked, true) ? true : false}
                 />
               </div>
               <div className="col-3 col-md-3 col-lg-3">
@@ -1243,26 +1242,24 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
               <div className="col-9 col-md-9 col-lg-9 ">
                 <SelectBox
                   className="basic-multi-select"
-                  styles={customStylesWithOutColor}
                   name='suspectaction'
                   options={crimeSuspectDrp}
                   isClearable={false}
-
                   isMulti
                   closeMenuOnSelect={false}
                   hideSelectedOptions={true}
                   components={{ MultiValue, }}
                   onChange={(e) => CrimeSuspectchange(e)}
                   menuPlacement="top"
-
                   value={filterArray(crimeSuspect, 'label')}
                   placeholder='Select Suspect Action From List'
+                  // styles={customStylesWithOutColor}
+                  styles={isLockOrRestrictModule("Lock", crimeSuspectEditVal, isLocked, true) ? MultiSelectLockedStyle : customStylesWithOutColor}
+                  isDisabled={isLockOrRestrictModule("Lock", crimeSuspectEditVal, isLocked, true) ? true : false}
                 />
               </div>
             </div>
           </div>
-
-
           <div className="col-12 col-md-12 col-lg-6">
             <div className="row align-items-center" style={{ rowGap: "8px" }}>
               <div className="col-3 col-md-3 col-lg-4">
@@ -1275,7 +1272,6 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
               <div className="col-9 col-md-9 col-lg-8  ">
                 <SelectBox
                   className="basic-multi-select"
-                  styles={customStylesWithOutColor}
                   name='pointofexit'
                   options={pointExitDrp}
                   isClearable={false}
@@ -1284,37 +1280,35 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
                   hideSelectedOptions={true}
                   components={{ MultiValue, }}
                   onChange={(e) => poinOfExitchange(e)}
-
                   value={filterArray(crimePointOfExitID, 'label')}
                   placeholder='Select Point Of Exit From List'
+                  // styles={customStylesWithOutColor}
+                  styles={isLockOrRestrictModule("Lock", pointExitEditVal, isLocked, true) ? MultiSelectLockedStyle : customStylesWithOutColor}
+                  isDisabled={isLockOrRestrictModule("Lock", pointExitEditVal, isLocked, true) ? true : false}
                 />
               </div>
-
-             
-        
               <div className="col-3 col-md-3 col-lg-4">
                 <span data-toggle="modal" onClick={() => { setOpenPage('Crime Target') }} data-target="#ListModel" className='new-link px-0'>
                   Target
                 </span>
               </div>
-
               <div className="col-9 col-md-9 col-lg-8 " >
                 <SelectBox
                   className="basic-multi-select"
                   name='target'
                   options={crimeTargetDrp}
-                  styles={customStylesWithOutColor}
                   isClearable={false}
-
                   isMulti
                   closeMenuOnSelect={false}
                   hideSelectedOptions={true}
                   components={{ MultiValue, }}
                   onChange={(e) => CrimeTargetchange(e)}
-
                   value={filterArray(crimeTarget, 'label')}
                   menuPlacement="top"
                   placeholder='Select Target From List'
+                  // styles={customStylesWithOutColor}
+                  styles={isLockOrRestrictModule("Lock", crimeTargeteEditVal, isLocked, true) ? MultiSelectLockedStyle : customStylesWithOutColor}
+                  isDisabled={isLockOrRestrictModule("Lock", crimeTargeteEditVal, isLocked, true) ? true : false}
                 />
               </div>
 
@@ -1332,7 +1326,6 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
                   name='SecurityViolated'
                   options={crimeSecurityviolatedDrp}
                   isClearable={false}
-                  styles={customStylesWithOutColor}
                   isMulti
                   closeMenuOnSelect={false}
                   hideSelectedOptions={true}
@@ -1341,10 +1334,11 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
                   menuPlacement="top"
                   value={filterArray(securityViolated, 'label')}
                   placeholder='Select Security Violated From List'
+                  // styles={customStylesWithOutColor}
+                  styles={isLockOrRestrictModule("Lock", securityViolatedEditVal, isLocked, true) ? MultiSelectLockedStyle : customStylesWithOutColor}
+                  isDisabled={isLockOrRestrictModule("Lock", securityViolatedEditVal, isLocked, true) ? true : false}
                 />
               </div>
-
-
               <div className="col-3 col-md-3 col-lg-4">
                 <span data-toggle="modal" onClick={() => { setOpenPage('Method Of Operation') }} data-target="#ListModel" className='new-link px-0'>
                   Method&nbsp;Of&nbsp;Operation   {methodOfOperationStatus && (
@@ -1355,7 +1349,6 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
               <div className="col-9 col-md-9 col-lg-8 ">
                 <SelectBox
                   className="basic-multi-select"
-                  styles={customStylesWithOutColor}
                   isMulti
                   isClearable={false}
                   hideSelectedOptions={true}
@@ -1364,16 +1357,15 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
                   options={methodOfOperationDrp}
                   components={{ MultiValue, }}
                   onChange={(e) => CrimeMethodOfOpeationchange(e)}
-
                   value={filterArray(methodOfOperation, 'label')}
                   placeholder='Select Method Of Operation From List'
-
+                  // styles={customStylesWithOutColor}
+                  styles={isLockOrRestrictModule("Lock", methodOfOperationEditVal, isLocked, true) ? MultiSelectLockedStyle : customStylesWithOutColor}
+                  isDisabled={isLockOrRestrictModule("Lock", methodOfOperationEditVal, isLocked, true) ? true : false}
                 />
               </div>
             </div>
           </div>
-
-
           <div className="col-12 text-right mt-3">
             {
               effectiveScreenPermission ? (
@@ -1388,7 +1380,6 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, }) => 
             }
             {/* <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => { check_Validation_Error() }}>Update</button> */}
           </div>
-
         </div>
       </div>
       <ListModal {...{ openPage, setOpenPage }} />

@@ -11,7 +11,7 @@ import axios from "axios";
 
 const LockRestrictModule = (props) => {
 
-    const { show, openModule, onClose, isLockOrRestrictUrl, isLockedOrRestrict, isLockOrRestrictLevel, isLockOrRestricPINID, isLockOrRestricDate, getPermissionLevelByLock, getPermissionLevelByRestrict } = props;
+    const { show, openModule, onClose, isLockOrRestrictUrl, isLockedOrRestrict, isLockOrRestrictLevel, isLockOrRestricPINID, isLockOrRestricDate, getPermissionLevelByLock = () => { }, getPermissionLevelByRestrict = () => { }, moduleName, id } = props;
 
     // console.log("🚀 ~ LockRestrictModule ~ isLockedOrRestrict:", isLockedOrRestrict)
 
@@ -171,7 +171,7 @@ const LockRestrictModule = (props) => {
                 fetchPostData(isLockOrRestrictUrl, formValues).then(res => {
                     if (res?.length > 0) {
                         toastifySuccess("Lock Status Updated Successfully");
-                        getPermissionLevelByLock(IncID, localStoreData?.PINID);
+                        getPermissionLevelByLock(IncID, localStoreData?.PINID, id || 0,);
                         getPermissionLevelByRestrict(IncID, localStoreData?.PINID);
                         onClose();
 
@@ -180,7 +180,6 @@ const LockRestrictModule = (props) => {
 
                     }
                 })
-
 
             } else {
                 login_Attempt(data.error_description);
@@ -213,6 +212,8 @@ const LockRestrictModule = (props) => {
                     ['IncidentID']: IncID,
                     ['ModifiedByUserFK']: '',
                     ['LockDate']: '',
+                    ['ModuleName']: moduleName || '',
+                    ['ID']: id || 0,
                 });
 
             } else {

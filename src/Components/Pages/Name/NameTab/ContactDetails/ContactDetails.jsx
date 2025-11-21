@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import DataTable from 'react-data-table-component';
 import { fetchPostData, AddDeleteUpadate, } from '../../../../hooks/Api';
-import { Decrypt_Id_Name, Requiredcolour, tableCustomStyles, } from '../../../../Common/Utility';
+import { Decrypt_Id_Name, isLockOrRestrictModule, LockFildscolour, Requiredcolour, tableCustomStyles, } from '../../../../Common/Utility';
 import { toastifyError, toastifySuccess } from '../../../../Common/AlertMsg';
 import DeletePopUpModal from '../../../../Common/DeleteModal';
 import { AgencyContext } from '../../../../../Context/Agency/Index';
@@ -19,7 +19,7 @@ import ChangesModal from '../../../../Common/ChangesModal';
 
 const ContactDetails = (props) => {
 
-  const { ListData, DecNameID, DecMasterNameID, isViewEventDetails = false } = props
+  const { ListData, DecNameID, DecMasterNameID, isViewEventDetails = false, isLocked } = props
   const { get_Name_Count, setChangesStatus } = useContext(AgencyContext)
 
   const dispatch = useDispatch();
@@ -158,7 +158,8 @@ const ContactDetails = (props) => {
     setNameContactID('');
     setStatesChangeStatus(false);
     setStatus('');
-    setContactTypeCode('')
+    setContactTypeCode('');
+    setEditval([])
   }
 
   const check_Validation_Error = (e) => {
@@ -176,6 +177,7 @@ const ContactDetails = (props) => {
     }
 
   }
+
   const { ContactTypeIDErrors, Phone_EmailErrors, } = errors
 
   useEffect(() => {
@@ -418,7 +420,6 @@ const ContactDetails = (props) => {
     })
   }
 
-
   const columns = [
     {
       name: 'Phone/Email',
@@ -502,16 +503,12 @@ const ContactDetails = (props) => {
   ];
 
 
-
-  
-
   return (
     <>
       <NameListing  {...{ ListData }} />
       <div className="col-md-12 mt-2">
         <div className="row">
           <div className="col-2 col-md-2 col-lg-2 mt-3 px-0">
-
             <span data-toggle="modal" onClick={() => {
               setOpenPage('Contact Phone Type')
             }} data-target="#ListModel" className='new-link'>
@@ -523,31 +520,50 @@ const ContactDetails = (props) => {
           <div className="col-3 col-md-4 col-lg-3  mt-2" >
             <Select
               name='ContactTypeID'
-              styles={Requiredcolour}
               value={contactType?.filter((obj) => obj.value === value?.ContactTypeID)}
               isClearable
               options={contactType}
               onChange={(e) => ChangeDropDown(e, 'ContactTypeID')}
               placeholder="Select..."
+              // styles={Requiredcolour}
+              styles={isLockOrRestrictModule("Lock", editval[0]?.ContactTypeID, isLocked) ? LockFildscolour : Requiredcolour}
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.ContactTypeID, isLocked)}
             />
           </div>
           <div className="col-2 col-md-2 col-lg-2 mt-3">
             <label htmlFor="" className='label-name '>Phone/Email
             </label>
-
           </div>
           <div className="col-3 col-md-3 col-lg-3 text-field mt-2" >
             {
               contactTypeCode === "E" ?
-                <input type="text" className={` ${value?.ContactTypeID ? 'requiredColor' : 'readonlyColor'}`} disabled={!value?.ContactTypeID} name='Phone_Email' value={value.Phone_Email} onChange={handleChange} required autoComplete='off' />
+                <input
+                  type="text"
+                  className={isLockOrRestrictModule("Lock", editval[0]?.Phone_Email, isLocked) ? 'LockFildsColor' : `${value?.ContactTypeID ? 'requiredColor' : 'readonlyColor'}`}
+                  disabled={isLockOrRestrictModule("Lock", editval[0]?.Phone_Email, isLocked) || !value?.ContactTypeID}
+                  name='Phone_Email'
+                  value={value.Phone_Email}
+                  onChange={handleChange}
+                  required
+                  autoComplete='off'
+                />
                 :
-                <input type="text" className={` ${value?.ContactTypeID ? 'requiredColor' : 'readonlyColor'}`} disabled={!value?.ContactTypeID} maxLength={10} name='Phone_Email' value={value.Phone_Email} onChange={handleChange} required autoComplete='off' />
+                <input
+                  type="text"
+                  className={isLockOrRestrictModule("Lock", editval[0]?.Phone_Email, isLocked) ? 'LockFildsColor' : `${value?.ContactTypeID ? 'requiredColor' : 'readonlyColor'}`}
+                  disabled={isLockOrRestrictModule("Lock", editval[0]?.Phone_Email, isLocked) || !value?.ContactTypeID}
+                  maxLength={10}
+                  name='Phone_Email'
+                  value={value.Phone_Email}
+                  onChange={handleChange}
+                  required
+                  autoComplete='off'
+                />
             }
             {errors.Phone_EmailErrors !== 'true' ? (
               <span style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px', }}>{errors.Phone_EmailErrors}</span>
             ) : null}
           </div>
-
         </div>
         <div className="col-12">
           {

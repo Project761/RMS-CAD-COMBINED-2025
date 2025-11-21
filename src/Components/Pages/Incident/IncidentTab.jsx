@@ -98,7 +98,7 @@ const IncidentTab = () => {
 
     const getPermissionLevelByLock = async (IncidentID, OfficerID) => {
         try {
-            const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { IncidentID, OfficerID });
+            const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { 'IncidentID': IncidentID, 'OfficerID': OfficerID, 'ModuleName': "Incident", 'ID': 0 });
             console.log("🚀 ~ getPermissionLevelByLock ~ res:", res)
             if (res?.length > 0) {
                 setIsLocked(res[0]?.IsLocked === true || res[0]?.IsLocked === 1 ? true : false);
@@ -118,7 +118,7 @@ const IncidentTab = () => {
 
     const getPermissionLevelByRestrict = async (IncidentID, OfficerID) => {
         try {
-            const res = await fetchPostData("Restricted/GetPermissionLevelBy_Restricted", { IncidentID, OfficerID });
+            const res = await fetchPostData("Restricted/GetPermissionLevelBy_Restricted", { IncidentID, OfficerID, 'ModuleName': "Incident", 'ID': 0 });
             console.log("🚀 ~ getPermissionLevelByRestrict ~ res:", res)
             if (res?.length > 0) {
                 setIsRestricted(res[0]?.IsRestricted === true || res[0]?.IsRestricted === 1 ? true : false);
@@ -178,7 +178,7 @@ const IncidentTab = () => {
                                         <ul className='nav nav-tabs'>
                                             <Link
                                                 className={`nav-item ${showIncPage === 'home' ? 'active' : ''} ${!status ? 'disabled' : ''}`}
-                                                to={`/Inc-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}`}
+                                                to={`/Inc-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&isIncLocked=${isLocked}&isIncRestricted=${isRestricted}`}
                                                 data-toggle={changesStatus ? "modal" : "pill"}
                                                 data-target={changesStatus ? "#SaveModal" : ''}
                                                 style={{ color: showIncPage === 'home' ? 'Red' : '#000', }}
@@ -234,37 +234,39 @@ const IncidentTab = () => {
                                             >
                                                 Audit Log
                                             </span>
-
                                             {
-                                                !isLocked &&
-                                                <li className="list-inline-item nav-item">
-                                                    <button
-                                                        className="btn py-1 d-flex align-items-center gap-2"
-                                                        style={{ columnGap: "5px", backgroundColor: "#E0E0E0" }}
-                                                        onClick={() => { setOpenModule('Lock'); setShowLockModal(true) }}
-                                                        data-toggle="modal"
-                                                        data-target="#NibrsAllModuleErrorShowModal"
-                                                    >
-                                                        <FontAwesomeIcon icon={faLock} /> Lock
-                                                    </button>
-                                                </li>
-                                            }
-                                            {
-                                                permissionToUnlock &&
-                                                <li className="list-inline-item nav-item">
-                                                    <button
-                                                        className="btn py-1 d-flex align-items-center gap-2"
-                                                        style={{ columnGap: "5px", backgroundColor: "#E0E0E0" }}
-                                                        onClick={() => { setOpenModule('Unlock'); setShowLockModal(true) }}
-                                                        data-toggle="modal"
-                                                        data-target="#NibrsAllModuleErrorShowModal"
-                                                    >
-                                                        <FontAwesomeIcon icon={faUnlock} /> Unlock
-                                                    </button>
-                                                </li>
-                                            }
+                                                status ?
+                                                    <>
+                                                        {
+                                                            !isLocked &&
+                                                            <li className="list-inline-item nav-item">
+                                                                <button
+                                                                    className="btn py-1 d-flex align-items-center gap-2"
+                                                                    style={{ columnGap: "5px", backgroundColor: "#E0E0E0" }}
+                                                                    onClick={() => { setOpenModule('Lock'); setShowLockModal(true) }}
+                                                                    data-toggle="modal"
+                                                                    data-target="#NibrsAllModuleErrorShowModal"
+                                                                >
+                                                                    <FontAwesomeIcon icon={faLock} /> Lock
+                                                                </button>
+                                                            </li>
+                                                        }
+                                                        {
+                                                            permissionToUnlock &&
+                                                            <li className="list-inline-item nav-item">
+                                                                <button
+                                                                    className="btn py-1 d-flex align-items-center gap-2"
+                                                                    style={{ columnGap: "5px", backgroundColor: "#E0E0E0" }}
+                                                                    onClick={() => { setOpenModule('Unlock'); setShowLockModal(true) }}
+                                                                    data-toggle="modal"
+                                                                    data-target="#NibrsAllModuleErrorShowModal"
+                                                                >
+                                                                    <FontAwesomeIcon icon={faUnlock} /> Unlock
+                                                                </button>
+                                                            </li>
+                                                        }
 
-                                            {/* <li className="list-inline-item nav-item">
+                                                        {/* <li className="list-inline-item nav-item">
                                                 {
                                                     !isRestricted &&
                                                     <button
@@ -293,6 +295,12 @@ const IncidentTab = () => {
                                                     </button>
                                                 }
                                             </li> */}
+                                                    </>
+                                                    :
+                                                    <></>
+                                            }
+
+
 
                                         </ul>
                                     </div>
@@ -303,7 +311,7 @@ const IncidentTab = () => {
                                         :
                                         showIncPage === 'Officer Activity' ?
                                             <div className='mt-2'>
-                                                <Pin {...{ incidentReportedDate }} />
+                                                <Pin {...{ incidentReportedDate, isLocked }} />
                                             </div>
                                             :
                                             // showIncPage === 'type of security' ?
@@ -336,6 +344,8 @@ const IncidentTab = () => {
                                 isLockOrRestricPINID={openModule === 'Unrestrict' || openModule === 'Restrict' ? 'RestrictPINID' : 'LockPINID'}
                                 isLockOrRestricDate={openModule === 'Unrestrict' || openModule === 'Restrict' ? 'RestrictDate' : 'LockDate'}
                                 isLockOrRestrictUrl={openModule === 'Unrestrict' || openModule === 'Restrict' ? 'Restricted/UpdateIncidentRestrictedStatus' : 'Restricted/UpdateIncidentLockStatus'}
+                                moduleName={'Incident'}
+                                id={0}
 
                                 getPermissionLevelByLock={getPermissionLevelByLock}
                                 getPermissionLevelByRestrict={getPermissionLevelByRestrict}

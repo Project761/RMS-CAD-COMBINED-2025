@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Decrypt_Id_Name, filterPassedTimeZonesProperty, getShowingMonthDateYear, Requiredcolour, tableCustomStyles } from '../../../../Common/Utility'
+import { Decrypt_Id_Name, filterPassedTimeZonesProperty, getShowingMonthDateYear, isLockOrRestrictModule, Requiredcolour, tableCustomStyles } from '../../../../Common/Utility'
 import { AddDeleteUpadate, fetchPostData } from '../../../../hooks/Api'
 import DataTable from 'react-data-table-component'
 import { toastifyError, toastifySuccess } from '../../../../Common/AlertMsg'
@@ -18,7 +18,7 @@ import { get_AgencyOfficer_Data, get_ScreenPermissions_Data } from '../../../../
 
 const RecoveredVehicle = (props) => {
     const dispatch = useDispatch();
-    const { ListData, DecVehId, DecMVehId, IncID, incidentReportedDate, isViewEventDetails = false } = props
+    const { ListData, DecVehId, DecMVehId, IncID, incidentReportedDate, isViewEventDetails = false, isLocked, setIsLocked } = props
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
     const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
@@ -441,12 +441,13 @@ const RecoveredVehicle = (props) => {
                 <div className="div" style={{ position: 'absolute', top: 4, right: 65 }}>
                     {
                         effectiveScreenPermission ?
-                            effectiveScreenPermission[0]?.DeleteOK ?
+                            effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", vehicleData, isLocked, true) ?
                                 <span onClick={() => { setVehRecDelID(row.VehicleRecoveredID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                                     <i className="fa fa-trash"></i>
                                 </span>
                                 : <></>
                             :
+                            !isLockOrRestrictModule("Lock", vehicleData, isLocked, true) &&
                             <span onClick={() => { setVehRecDelID(row.VehicleRecoveredID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                                 <i className="fa fa-trash"></i>
                             </span>

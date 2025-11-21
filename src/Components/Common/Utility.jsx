@@ -306,7 +306,23 @@ export const Requiredcolour = {
   control: (styles) => ({
     ...styles,
     backgroundColor: "#FFE2A8",
-    height: 20, minHeight: 35, fontSize: 14, margintop: 2, boxShadow: 0,
+    height: 20,
+    minHeight: 35,
+    fontSize: 14,
+    margintop: 2,
+    boxShadow: 0,
+  }),
+};
+
+export const selectBoxDiableColourStyles = {
+  control: (styles) => ({
+    ...styles,
+    backgroundColor: "#9d949436",
+    height: 20,
+    minHeight: 35,
+    fontSize: 14,
+    margintop: 2,
+    boxShadow: 0,
   }),
 };
 
@@ -314,7 +330,11 @@ export const LockFildscolour = {
   control: (styles) => ({
     ...styles,
     backgroundColor: "#D9E4F2",
-    height: 20, minHeight: 35, fontSize: 14, margintop: 2, boxShadow: 0,
+    height: 20,
+    minHeight: 35,
+    fontSize: 14,
+    margintop: 2,
+    boxShadow: 0,
   }),
 };
 
@@ -345,6 +365,38 @@ export const MultiSelectRequredColor = {
   control: base => ({
     ...base,
     backgroundColor: "#FFE2A8",
+    minHeight: 58,
+    fontSize: 14,
+    margintop: 2,
+    boxShadow: 0,
+  }),
+};
+
+export const MultiSelectDisableStyle = {
+  control: base => ({
+    ...base,
+    backgroundColor: "#9d949436",
+    minHeight: 58,
+    fontSize: 14,
+    margintop: 2,
+    boxShadow: 0,
+  }),
+};
+
+export const MultiSelectLockedStyle = {
+  control: base => ({
+    ...base,
+    backgroundColor: "#D9E4F2",
+    minHeight: 58,
+    fontSize: 14,
+    margintop: 2,
+    boxShadow: 0,
+  }),
+};
+
+export const MultiSelectWithOutColorStyle = {
+  control: base => ({
+    ...base,
     minHeight: 58,
     fontSize: 14,
     margintop: 2,
@@ -821,9 +873,15 @@ export const editorConfig = {
 
 // Lock Restrict Module
 
-export const isLockOrRestrictModule = (moduleType, fieldValue, isLock) => {
-  if (moduleType === "Lock" && isLock) {
+export const isLockOrRestrictModule = (moduleType, fieldValue, isLock, isMultiSelect = false) => {
+  // console.log(fieldValue);
+
+  if (moduleType === "Lock" && isLock && !isMultiSelect) {
     return fieldValue ? true : false;
+
+  } else if (moduleType === "Lock" && isLock && isMultiSelect) {
+    return fieldValue?.length > 0 ? true : false
+
   }
   return false;
 }

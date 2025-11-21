@@ -7,14 +7,14 @@ import { AgencyContext } from '../../../../../../../Context/Agency/Index';
 import { components } from "react-select";
 import { useDispatch, useSelector } from 'react-redux';
 import { get_LocalStoreData } from '../../../../../../../redux/api';
-import { Decrypt_Id_Name, nibrscolourStyles } from '../../../../../../Common/Utility';
+import { Decrypt_Id_Name, isLockOrRestrictModule, MultiSelectLockedStyle, nibrscolourStyles } from '../../../../../../Common/Utility';
 import NameListing from '../../../../../ShowAllList/NameListing';
 import ListModal from '../../../../../Utility/ListManagementModel/ListModal';
 import { assult_Type_Nibrs_Errors, check_injuryType_Nibrs, check_justifiy_Homicide, ErrorTooltipComp } from '../../../../NameNibrsErrors';
 
 const Home = (props) => {
 
-    const { DecNameID, DecMasterNameID, DecIncID, victimID, offenceCodes, victimCode, nibFieldStatusOrErr, isCrimeAgainsPerson } = props
+    const { DecNameID, DecMasterNameID, DecIncID, victimID, offenceCodes, victimCode, nibFieldStatusOrErr, isCrimeAgainsPerson, isLocked } = props
 
     const { get_NameVictim_Count, get_Name_Count, nibrsSubmittedName, } = useContext(AgencyContext);
 
@@ -104,12 +104,6 @@ const Home = (props) => {
     useEffect(() => {
         if (propertyEditVal) { setPropertyID(propertyEditVal) }
     }, [propertyEditVal])
-
-    useEffect(() => {
-        if (DecIncID || victimID) {
-
-        }
-    }, [victimID, DecIncID])
 
     const get_InjuryType_Data = (victimID) => {
         const val = { 'VictimID': victimID, }
@@ -379,7 +373,6 @@ const Home = (props) => {
         }),
     };
 
-
     return (
         <>
             <NameListing />
@@ -404,13 +397,14 @@ const Home = (props) => {
                             ref={SelectedValue}
                             className="basic-multi-select"
                             isMulti
-                            styles={customStylesWithOutColor}
                             components={{ MultiValue, }}
                             onChange={(e) => officerOnChange(e)}
+                            // styles={customStylesWithOutColor}
+                            styles={isLockOrRestrictModule("Lock", typeOfSecurityEditVal, isLocked, true) ? MultiSelectLockedStyle : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", typeOfSecurityEditVal, isLocked, true) ? true : false}
                         />
                     </div>
                     <div className="col-2 col-md-2 col-lg-2 mt-4">
-
                         <span data-toggle="modal" data-target="#ListModel" className='new-link'>
                             <span onClick={() => { setOpenPage('Justifiable Homicide') }}> Justifiable Homicide </span>
                             {
@@ -437,11 +431,13 @@ const Home = (props) => {
                             className="basic-multi-select"
                             isMulti
                             styles={
-                                loginAgencyState === 'TX' ?
-                                    check_justifiy_Homicide(assultCodeArr, justifiyID, offenceCodes, 'Color') ? check_justifiy_Homicide(assultCodeArr, justifiyID, offenceCodes, 'Color') : customStylesWithOutColor
-                                    :
-                                    customStylesWithOutColor
+                                isLockOrRestrictModule("Lock", justifiableHomiVal, isLocked, true) ? MultiSelectLockedStyle :
+                                    loginAgencyState === 'TX' ?
+                                        check_justifiy_Homicide(assultCodeArr, justifiyID, offenceCodes, 'Color') ? check_justifiy_Homicide(assultCodeArr, justifiyID, offenceCodes, 'Color') : customStylesWithOutColor
+                                        :
+                                        customStylesWithOutColor
                             }
+                            isDisabled={isLockOrRestrictModule("Lock", justifiableHomiVal, isLocked, true) ? true : false}
                         />
                     </div>
                     <div className="col-2 col-md-2 col-lg-2 mt-3">
@@ -462,13 +458,6 @@ const Home = (props) => {
                         <Select
                             name='VictimInjuryID'
                             value={victimInjuryID}
-                            styles={customStylesWithOutColor}
-                            // styles={
-                            //     loginAgencyState === 'TX' ?
-                            //         isCrimeAgainsPerson ? check_injuryType_Nibrs(offenceCodes, victimInjuryID, victimCode, 'Color') : customStylesWithOutColor
-                            //         :
-                            //         customStylesWithOutColor
-                            // }
                             isClearable={false}
                             options={injuryTypeDrp}
                             closeMenuOnSelect={false}
@@ -479,12 +468,14 @@ const Home = (props) => {
                             className="basic-multi-select"
                             isMulti
                             menuPlacement='top'
-                            isDisabled={nibrsSubmittedName === 1 && victimInjuryID?.length > 0}
+                            // styles={customStylesWithOutColor}
+                            // isDisabled={nibrsSubmittedName === 1 && victimInjuryID?.length > 0}
+                            styles={isLockOrRestrictModule("Lock", injuryTypeEditVal, isLocked, true) ? MultiSelectLockedStyle : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", injuryTypeEditVal, isLocked, true) || (nibrsSubmittedName === 1 && victimInjuryID?.length > 0)}
                         />
                     </div>
                     <div className="col-2 col-md-2 col-lg-2 mt-3">
                         <span data-toggle="modal" data-target="#ListModel" className='new-link'>
-
                             <span onClick={() => { setOpenPage('Assault Type') }}>Assault Type </span>
                             {
                                 loginAgencyState === 'TX' ?
@@ -502,22 +493,10 @@ const Home = (props) => {
                     <div className="col-4 col-md-4 col-lg-4  mt-2" >
                         <Select
                             name='AssaultID'
-
                             value={assaultID}
-
-                            styles={
-                                loginAgencyState === 'TX' ?
-                                    assultCodeArr?.includes("08") && offenceCodes?.length < 2 ? nibrscolourStyles
-                                        :
-                                        assult_Type_Nibrs_Errors(assultCodeArr, offenceCodes, 'Color') ? assult_Type_Nibrs_Errors(assultCodeArr, offenceCodes, 'Color') : customStylesWithOutColor
-
-                                    :
-                                    customStylesWithOutColor
-                            }
                             isClearable={false}
                             options={assaultDrp}
                             closeMenuOnSelect={false}
-
                             placeholder="Select.."
                             ref={SelectedValue}
                             className="basic-multi-select"
@@ -525,7 +504,17 @@ const Home = (props) => {
                             components={{ MultiValue, }}
                             onChange={(e) => assaultOnChange(e)}
                             menuPlacement='top'
-                            isDisabled={nibrsSubmittedName === 1 && victimInjuryID?.length > 0}
+                            // isDisabled={nibrsSubmittedName === 1 && victimInjuryID?.length > 0}
+                            styles={
+                                isLockOrRestrictModule("Lock", assaultEditVal, isLocked, true) ? MultiSelectLockedStyle :
+                                    loginAgencyState === 'TX' ?
+                                        assultCodeArr?.includes("08") && offenceCodes?.length < 2 ? nibrscolourStyles
+                                            :
+                                            assult_Type_Nibrs_Errors(assultCodeArr, offenceCodes, 'Color') ? assult_Type_Nibrs_Errors(assultCodeArr, offenceCodes, 'Color') : customStylesWithOutColor
+                                        :
+                                        customStylesWithOutColor
+                            }
+                            isDisabled={isLockOrRestrictModule("Lock", assaultEditVal, isLocked, true) || (nibrsSubmittedName === 1 && victimInjuryID?.length > 0)}
                         />
                     </div>
                     <div className="col-2 col-md-2 col-lg-2 mt-3">
@@ -534,7 +523,6 @@ const Home = (props) => {
                     <div className="col-6 col-md-6 col-lg-10 mt-2">
                         <Select
                             options={propertyDrp}
-
                             value={propertyID}
                             isClearable={false}
                             closeMenuOnSelect={false}
@@ -542,11 +530,13 @@ const Home = (props) => {
                             ref={SelectedValue}
                             className="basic-multi-select"
                             isMulti
-                            styles={customStylesWithOutColor}
                             components={{ MultiValue, }}
                             onChange={(e) => PropertyOnChange(e)}
                             name='PropertyID'
                             menuPlacement='top'
+                            // styles={customStylesWithOutColor}
+                            styles={isLockOrRestrictModule("Lock", propertyEditVal, isLocked, true) ? MultiSelectLockedStyle : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", propertyEditVal, isLocked, true)}
                         />
                     </div>
                 </div>

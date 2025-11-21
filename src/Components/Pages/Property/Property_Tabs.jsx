@@ -30,6 +30,10 @@ import { get_LocalStoreData } from '../../../redux/actions/Agency';
 import { toastifySuccess } from '../../Common/AlertMsg';
 import DeletePopUpModal from '../../Common/DeleteModal';
 import { get_ScreenPermissions_Data } from '../../../redux/actions/IncidentAction';
+import { faLock, faUnlock, faBan, } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import LockRestrictModule from '../../Common/LockRestrictModule';
+
 
 
 const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch = false }) => {
@@ -79,6 +83,11 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
     const [masterPropertyID, setMasterPropertyID] = useState('');
     const [propertystatus, setPropertyStatus] = useState('');
     const [IsNonPropertyRoomSelected, setIsNonPropertyRoomSelected] = useState(false);
+    // Lock Restrict
+    const [showLockModal, setShowLockModal] = useState(false);
+    const [openModule, setOpenModule] = useState('');
+    const [isLocked, setIsLocked] = useState(false);
+    const [permissionToUnlock, setPermissionToUnlock] = useState(false);
 
     useEffect(() => {
         if (ProSta === 'true' || ProSta === true) {
@@ -123,16 +132,11 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
     const [viewType, setViewType] = useState('card');
     const [delPropertyID, setDelPropertyID] = useState('');
     //   const [loginPinID, setLoginPinID,] = useState('');
+
     const propertyMainModuleData = useSelector((state) => state.Property.propertyMainModuleData);
     const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
     const loginPinID = localStoreData?.PINID || 0;
-
-    const deleteOK = effectiveScreenPermission && effectiveScreenPermission[0]?.DeleteOK;
-    const updateOK = effectiveScreenPermission && effectiveScreenPermission[0]?.UpdateOK;
-    const addOK = effectiveScreenPermission && effectiveScreenPermission[0]?.AddOK;
-    const viewOK = effectiveScreenPermission && effectiveScreenPermission[0]?.ViewOK;
-
 
 
     useEffect(() => {
@@ -144,7 +148,6 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
     useEffect(() => {
         if (localStoreData) {
             dispatch(get_ScreenPermissions_Data("P059", localStoreData?.AgencyID, localStoreData?.PINID));
-
         }
     }, [localStoreData]);
 
@@ -156,9 +159,6 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
             }
         ]
         setnibrsValidateData(arr);
-        // if (propertyValidateNibrsData?.Property) {
-        //     setnibrsValidateData(propertyValidateNibrsData?.Property);
-        // }
     }, [propertyValidateNibrsData]);
 
     useEffect(() => {
@@ -209,6 +209,8 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                 get_Property_Count(row?.PropertyID, row?.MasterPropertyID, MstPage === "MST-Property-Dash" ? true : false);
                 setMasterPropertyID(row?.MasterPropertyID); dispatch({ type: MasterProperty_ID, payload: row?.MasterPropertyID });
                 setPropertyID(row?.PropertyID); dispatch({ type: Property_ID, payload: row.PropertyID });
+                // Lock Restrict
+                getPermissionLevelByLock(DecIncID, localStoreData?.PINID, row?.PropertyID);
             }
         }
     }
@@ -317,6 +319,28 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
             return arr.length > 0 ? "#EB0101" : "#2DEB7A";
         }
     }
+
+    // LockRestrict
+    const getPermissionLevelByLock = async (IncidentID, OfficerID, PropertyID) => {
+        try {
+            const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { 'IncidentID': IncidentID, 'OfficerID': OfficerID, 'ModuleName': "Property", 'ID': PropertyID || 0 });
+            // console.log("🚀 ~ getPermissionLevelByLock ~ res:", res);
+            if (res?.length > 0) {
+                setIsLocked(res[0]?.IsLocked === true || res[0]?.IsLocked === 1 ? true : false);
+                setPermissionToUnlock(res[0]?.IsUnLockPermission === true || res[0]?.IsUnLockPermission === 1 ? true : false);
+
+            } else {
+                setPermissionToUnlock(false);
+                setIsLocked(false);
+
+            }
+        } catch (error) {
+            console.error('There was an error!', error);
+            setPermissionToUnlock(false);
+            setIsLocked(false);
+        }
+    }
+
 
     return (
         <div className="section-body  pt-1 p-1 bt" >
@@ -595,7 +619,9 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                                             <div className="right-controls d-flex flex-column align-items-center gap-2">
                                                 <div className="view-toggle d-flex flex-column gap-2">
                                                     <button className="btn btn-sm btn-success mb-2"
-                                                        onClick={() => { setStatusFalse(); }}
+                                                        onClick={() => {
+                                                            setStatusFalse(); setIsLocked(false);
+                                                        }}
                                                     >
                                                         New
                                                     </button>
@@ -754,6 +780,41 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                                                     >
                                                         {isCad ? "Change Log" : " Audit Log"}
                                                     </span>
+                                                    {
+                                                        status ?
+                                                            <>
+                                                                {
+                                                                    !isLocked &&
+                                                                    <li className="list-inline-item nav-item">
+                                                                        <button
+                                                                            className="btn py-1 d-flex align-items-center gap-2"
+                                                                            style={{ columnGap: "5px", backgroundColor: "#E0E0E0" }}
+                                                                            onClick={() => { setOpenModule('Lock'); setShowLockModal(true) }}
+                                                                            data-toggle="modal"
+                                                                            data-target="#NibrsAllModuleErrorShowModal"
+                                                                        >
+                                                                            <FontAwesomeIcon icon={faLock} /> Lock
+                                                                        </button>
+                                                                    </li>
+                                                                }
+                                                                {
+                                                                    permissionToUnlock &&
+                                                                    <li className="list-inline-item nav-item">
+                                                                        <button
+                                                                            className="btn py-1 d-flex align-items-center gap-2"
+                                                                            style={{ columnGap: "5px", backgroundColor: "#E0E0E0" }}
+                                                                            onClick={() => { setOpenModule('Unlock'); setShowLockModal(true) }}
+                                                                            data-toggle="modal"
+                                                                            data-target="#NibrsAllModuleErrorShowModal"
+                                                                        >
+                                                                            <FontAwesomeIcon icon={faUnlock} /> Unlock
+                                                                        </button>
+                                                                    </li>
+                                                                }
+                                                            </>
+                                                            :
+                                                            <></>
+                                                    }
                                                 </ul>
                                             </div>
                                         </div>
@@ -761,45 +822,48 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                                 }
                                 {
                                     showPage === 'home' ?
-                                        <Home {...{ showRecovered, setShowRecovered, get_List, showOtherTab, setShowOtherTab, setPropertyStatus, setShowPage, propertystatus, isCad, isViewEventDetails, isCADSearch, status, }} />
+                                        <Home {...{ showRecovered, setShowRecovered, get_List, showOtherTab, setShowOtherTab, setPropertyStatus, setShowPage, propertystatus, isCad, isViewEventDetails, isCADSearch, status, isLocked, setIsLocked }} />
                                         :
                                         showPage === 'Miscellaneous Information' ?
-                                            <MiscellaneousInformation {...{ ListData, setIsNonPropertyRoomSelected, DecPropID, DecMPropID, DecIncID, propertystatus, setPropertyStatus, isCad, isViewEventDetails, isCADSearch, }} />
+                                            <MiscellaneousInformation {...{ ListData, setIsNonPropertyRoomSelected, DecPropID, DecMPropID, DecIncID, propertystatus, setPropertyStatus, isCad, isViewEventDetails, isCADSearch, isLocked, setIsLocked }} />
                                             :
-                                            showPage === 'Document' ?
-                                                // <Document />
-                                                <DocumentModal
-                                                    {...{ ListData, DocName }}
-                                                    scrCode={'P060'}
-                                                    IncID={DecIncID}
-                                                    count={DecPropID}
-                                                    ParentId={DecPropID}
-                                                    parentTabMasterID={DecMPropID}
-                                                    rowIdName={'DocumentID'}
-                                                    masterIDColName={'MasterPropertyID'}
-                                                    TabIdColName={'PropertyID'}
-                                                    insertDataMasterUrl={''}
-                                                    deleteUrl={'PropertyDocument/Delete_PropertyDocument'}
-                                                    insertDataUrl={'PropertyDocument/Insert_PropertyDocument'}
-                                                    getDataUrl={'PropertyDocument/GetData_PropertyDocument'}
-                                                    getDataMasterUrl={'MainMasterPropertyDocument/GetData_MainMasterPropertyDocument'}
-                                                />
+                                            showPage === 'Owner' ?
+                                                <Owner {...{ ListData, DecPropID, DecMPropID, DecIncID, isViewEventDetails, isLocked, setIsLocked }} />
                                                 :
-                                                showPage === 'PropertyNotes' ?
-                                                    <PropertyNotes {...{ ListData, DecPropID, DecMPropID, DecIncID, isViewEventDetails }} />
+                                                showPage === 'Offense' ?
+                                                    <Offense {...{ ListData, DecPropID, DecMPropID, DecIncID, isViewEventDetails, isLocked, setIsLocked }} />
                                                     :
-                                                    showPage === 'Owner' ?
-                                                        <Owner {...{ ListData, DecPropID, DecMPropID, DecIncID, isViewEventDetails, }} />
+                                                    showPage === 'Recoveredproperty' ?
+                                                        <RecoveredProperty {...{ ListData, DecPropID, DecMPropID, DecIncID, isViewEventDetails, isLocked, setIsLocked }} />
                                                         :
-                                                        showPage === 'Offense' ?
-                                                            <Offense {...{ ListData, DecPropID, DecMPropID, DecIncID, isViewEventDetails, }} />
+                                                        showPage === 'other' ?
+                                                            <Other {...{ ListData, DecPropID, DecMPropID, DecIncID, isViewEventDetails, isLocked, setIsLocked }} />
                                                             :
-                                                            showPage === 'Recoveredproperty' ?
-                                                                <RecoveredProperty {...{ ListData, DecPropID, DecMPropID, DecIncID, isViewEventDetails, }} />
+                                                            showPage === 'Document' ?
+                                                                // <Document />
+                                                                <DocumentModal
+                                                                    {...{ ListData, DocName }}
+                                                                    scrCode={'P060'}
+                                                                    IncID={DecIncID}
+                                                                    count={DecPropID}
+                                                                    ParentId={DecPropID}
+                                                                    parentTabMasterID={DecMPropID}
+                                                                    rowIdName={'DocumentID'}
+                                                                    masterIDColName={'MasterPropertyID'}
+                                                                    TabIdColName={'PropertyID'}
+                                                                    insertDataMasterUrl={''}
+                                                                    deleteUrl={'PropertyDocument/Delete_PropertyDocument'}
+                                                                    insertDataUrl={'PropertyDocument/Insert_PropertyDocument'}
+                                                                    getDataUrl={'PropertyDocument/GetData_PropertyDocument'}
+                                                                    getDataMasterUrl={'MainMasterPropertyDocument/GetData_MainMasterPropertyDocument'}
+                                                                />
                                                                 :
-                                                                showPage === 'other' ?
-                                                                    <Other {...{ ListData, DecPropID, DecMPropID, DecIncID, isViewEventDetails, }} />
+                                                                showPage === 'PropertyNotes' ?
+                                                                    <PropertyNotes {...{ ListData, DecPropID, DecMPropID, DecIncID, isViewEventDetails }} />
                                                                     :
+
+
+
                                                                     showPage === 'PropertyManagement' ?
                                                                         <PropertyManagement {...{ DecPropID, DecMPropID, DecIncID, ProCategory, isViewEventDetails }} />
                                                                         :
@@ -836,13 +900,29 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                                                                                     <></>
                                 }
 
-
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <DeletePopUpModal func={Delete_Property} />
+            <LockRestrictModule
+                show={showLockModal}
+                openModule={openModule}
+                onClose={() => setShowLockModal(false)}
+
+                isLockedOrRestrict={openModule === 'Unrestrict' || openModule === 'Restrict' ? 'IsRestricted' : 'IsLocked'}
+                isLockOrRestrictLevel={openModule === 'Unrestrict' || openModule === 'Restrict' ? 'RestrictLevel' : 'LockLevel'}
+                isLockOrRestricPINID={openModule === 'Unrestrict' || openModule === 'Restrict' ? 'RestrictPINID' : 'LockPINID'}
+                isLockOrRestricDate={openModule === 'Unrestrict' || openModule === 'Restrict' ? 'RestrictDate' : 'LockDate'}
+                moduleName={'Property'}
+                id={DecPropID || 0}
+                isLockOrRestrictUrl={openModule === 'Unrestrict' || openModule === 'Restrict' ? 'Restricted/UpdateIncidentRestrictedStatus' : 'Restricted/UpdateIncidentLockStatus'}
+
+                getPermissionLevelByLock={getPermissionLevelByLock}
+            // getPermissionLevelByRestrict={getPermissionLevelByRestrict}
+
+            />
         </div>
     )
 }

@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom';
 import DataTable from 'react-data-table-component';
 import { fetchPostData } from '../../../../hooks/Api';
-import { Decrypt_Id_Name, Requiredcolour, base64ToString, getShowingDateText, tableCustomStyles } from '../../../../Common/Utility';
+import { Decrypt_Id_Name, Requiredcolour, selectBoxDiableColourStyles, base64ToString, getShowingDateText, tableCustomStyles, isLockOrRestrictModule } from '../../../../Common/Utility';
 import { useDispatch, useSelector } from 'react-redux';
 import { get_LocalStoreData } from '../../../../../redux/actions/Agency';
 import { get_AgencyOfficer_Data, get_Report_Approve_Officer_Data, get_ScreenPermissions_Data } from '../../../../../redux/actions/IncidentAction';
 import Select from "react-select";
 import { toastifySuccess } from '../../../../Common/AlertMsg';
 
-const Pin = () => {
+const Pin = ({ isLocked }) => {
 
   const dispatch = useDispatch()
   const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
@@ -32,6 +32,7 @@ const Pin = () => {
 
   const [pinData, setPinData] = useState([]);
   const [loginPinID, setLoginPinID] = useState('');
+  const [editValueObject, setEditValueObject] = useState({});
 
   const [value, setValue] = useState({
     OfficerID: '',
@@ -80,7 +81,6 @@ const Pin = () => {
       }
     })
   }
-
 
   const columns = [
     {
@@ -138,6 +138,7 @@ const Pin = () => {
   ]
 
   const setEditValue = (row) => {
+    setEditValueObject(row);
     setValue({ ...value, IncidentOfficerActivityID: row?.IncidentOfficerActivityID, OfficerID: row?.OfficerID, OfficerActivityComment: row?.OfficerActivityComment });
   }
 
@@ -170,6 +171,7 @@ const Pin = () => {
         get_Pin_Data(IncID);
         setValue({ ...value, IncidentOfficerActivityID: '', OfficerID: '', OfficerActivityComment: '' });
         setErrors({ ...errors, 'OfficerIDError': '', 'OfficerActivityCommentError': '' });
+        setEditValueObject({});
       }
     })
   }
@@ -194,7 +196,7 @@ const Pin = () => {
           <div className="row">
             <div className="col-3 col-md-3 col-lg-1 mt-2">
               <span className="new-label">
-                Primary Officer
+                Primary Officer5465465
                 {errors.OfficerIDError !== "true" ? (
                   <p style={{ color: "red", fontSize: "11px", margin: "0px", padding: "0px", }}>
                     {errors.OfficerIDError}
@@ -205,7 +207,10 @@ const Pin = () => {
             <div className="col-9  col-md-9 col-lg-4 mt-1">
               <Select
                 name="OfficerID"
-                styles={Requiredcolour}
+                // styles={Requiredcolour}
+                styles={isLockOrRestrictModule("Lock", editValueObject?.OfficerID, isLocked) ? selectBoxDiableColourStyles : Requiredcolour}
+                isDisabled={isLockOrRestrictModule("Lock", editValueObject?.OfficerID, isLocked) ? true : false}
+
                 value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.OfficerID)}
                 options={agencyOfficerDrpData}
                 isClearable={value?.OfficerID ? true : false}
@@ -226,14 +231,18 @@ const Pin = () => {
             <div className="col-9 col-md-9 col-lg-4  mt-1">
               <textarea
                 name="OfficerActivityComment"
-                className={`form-control requiredColor`}
+
+                className={`form-control ${isLockOrRestrictModule("Lock", editValueObject?.OfficerActivityComment, isLocked) ? "readonlyColor" : "requiredColor"}`}
+                disabled={isLockOrRestrictModule("Lock", editValueObject?.OfficerActivityComment, isLocked) ? true : false}
+
                 value={value.OfficerActivityComment}
                 onChange={(e) => setValue({ ...value, OfficerActivityComment: e.target.value })}
                 id=""
                 cols="30"
                 rows="1"
                 style={{ resize: "none" }}
-              ></textarea>
+              >
+              </textarea>
             </div>
             <div className="col-12 col-md-12 col-lg-2 mt-1 d-flex justify-content-end">
               {

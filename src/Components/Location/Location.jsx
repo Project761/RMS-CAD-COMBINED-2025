@@ -23,7 +23,8 @@ function Location({
     locationID,
     verify,
     setChangesStatus,
-    setStatesChangeStatus
+    setStatesChangeStatus,
+    isDisabled,
 }) {
 
 
@@ -70,6 +71,7 @@ function Location({
                 verify={verify}
                 setChangesStatus={setChangesStatus}
                 setStatesChangeStatus={setStatesChangeStatus}
+                isDisabled={isDisabled}
             />
         </div>
     );
@@ -92,7 +94,8 @@ function Search({
     check = { check },
     ref,
     locationID,
-    verify
+    verify,
+    isDisabled,
 }) {
 
     const { isLoaded } = useJsApiLoader({
@@ -195,11 +198,12 @@ function Search({
         <>
             <div className="search" style={{ pointerEvents: !verify && 'none' }}>
                 <Combobox onSelect={handleSelect}>
-                    <ComboboxInput maxLength={250} style={{ background: check ? '#FFE2A8' : '', }}
+                    {/* <ComboboxInput maxLength={250} style={{ background: check ? '#FFE2A8' : '', }} */}
+                    <ComboboxInput maxLength={250} style={{ background: isDisabled ? "#9d949436" : check ? "#FFE2A8" : "", zIndex: '200', }}
                         value={value}
                         // value={val[col] || ''}
                         onChange={handleInput}
-                        disabled={!ready}
+                        disabled={!ready || isDisabled}
                         placeholder="Search your location"
                     />
                     <ComboboxPopover >

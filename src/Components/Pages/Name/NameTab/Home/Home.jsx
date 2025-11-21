@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import Select, { components } from "react-select";
 import DatePicker from "react-datepicker";
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Decrypt_Id_Name, getShowingDateText, base64ToString, stringToBase64, getShowingWithOutTime, tableCustomStyles, Aes256Encrypt, Requiredcolour, colourStylesRole, customStylesWithOutColor, LockFildscolour, tableCustomStyle } from '../../../../Common/Utility';
+import { Decrypt_Id_Name, getShowingDateText, base64ToString, stringToBase64, getShowingWithOutTime, tableCustomStyles, Aes256Encrypt, Requiredcolour, colourStylesRole, customStylesWithOutColor, LockFildscolour, tableCustomStyle, isLockOrRestrictModule, selectBoxDiableColourStyles } from '../../../../Common/Utility';
 import { AddDeleteUpadate, AddDelete_Img, fetchPostData } from '../../../../hooks/Api';
 import { Comman_changeArrayFormat, Comman_changeArrayFormatReasonCode, Comman_changeArrayFormat_With_Name, changeArray, fourColArrayReasonCode, sixColArray, threeColArray } from '../../../../Common/ChangeArrayFormat';
 import { toastifyError, toastifySuccess } from '../../../../Common/AlertMsg';
@@ -39,7 +39,7 @@ const MultiValue = props => (
   </components.MultiValue>
 );
 
-const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender, setIsBusinessName, get_List, isCad = false, isCADSearch = false, isViewEventDetails = false, editval, setEditval, setNameSingleData, masterNameID, setMasterNameID, nameID, setNameID, GetSingleData, get_Data_Name, nibrsErrModalStatus, setNibrsErrModalStatus, ResetErrors, setResetErrors, nibrsErrStr, setNibrsErrStr, nibrsValidateNameData, setnibrsValidateNameData, addName, setAddName }) => {
+const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender, setIsBusinessName, get_List, isCad = false, isCADSearch = false, isViewEventDetails = false, editval, setEditval, setNameSingleData, masterNameID, setMasterNameID, nameID, setNameID, GetSingleData, get_Data_Name, nibrsErrModalStatus, setNibrsErrModalStatus, ResetErrors, setResetErrors, nibrsErrStr, setNibrsErrStr, nibrsValidateNameData, setnibrsValidateNameData, addName, setAddName, isLocked }) => {
 
 
   const carouselRef = useRef(null);
@@ -627,7 +627,9 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
           ) : '',
         });
         setMultiSelectedReason({ optionSelected: editval[0]?.Role ? makeRoleArr(editval[0]?.Role) : [], });
-        setShowOffender(editval[0]?.ReasonCode?.some(function (item) { return item.IsOffenderName })); setShowVictim(editval[0]?.ReasonCode?.some(function (item) { return item.IsVictimName })); setshowWarrant(editval[0]?.ReasonCode?.some(function (item) { return item.ReasonCode === "WAR" }));
+        setShowOffender(editval[0]?.ReasonCode?.some(function (item) { return item.IsOffenderName }));
+        setShowVictim(editval[0]?.ReasonCode?.some(function (item) { return item.IsVictimName }));
+        setshowWarrant(editval[0]?.ReasonCode?.some(function (item) { return item.ReasonCode === "WAR" }));
       }
     } else {
       if (!changesStatus) {
@@ -1246,7 +1248,9 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
       setglobalname(''); setglobalnameto(''); setLocationStatus(true); setUpdateStatus(updateStatus + 1); setNameTypeCode(Id[0].id); setIsBusinessName(false); setcountAppear(false); setcountStatus(false);
     }
     setNameMultiImg('');
-    setuploadImgFiles('')
+    setuploadImgFiles('');
+    // remove EditVal Object
+    setEditval([]);
   }
 
   const ResetSearch = () => {
@@ -1254,7 +1258,8 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
     setErrors({
       ...value, 'NameTypeIDError': '', 'LastNameError': '', 'FirstNameError': '', 'MiddleNameError': '', 'NameReasonCodeIDError': '', 'CertifiedByIDError': '', 'ContactError': 'true', 'WeightError': 'true', 'HeightError': 'true', 'AgeError': 'true', 'DateOfBirthError': '', 'RaceIDError': '', 'SexIDError': '', 'AddressError': 'true', 'SSN': '', 'DLError': 'true',
     })
-    setPhoneTypeCode(''); setMultiSelected({ optionSelected: [] });
+    setPhoneTypeCode('');
+    setMultiSelected({ optionSelected: [] });
     setMultiSelectedReason({ optionSelected: [], });
     const Id = nameTypeData?.filter((val) => { if (val.id === "I") return val })
     if (Id.length > 0) {
@@ -1264,7 +1269,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
       })
       setglobalname(''); setglobalnameto(''); setLocationStatus(true); setUpdateStatus(updateStatus + 1); setIsBusinessName(false); setIsSocietyName(false);
     }
-    setNameMultiImg(''); setuploadImgFiles('')
+    setNameMultiImg(''); setuploadImgFiles('');
   }
 
   const OnChangeSelectedReason = (data, name) => {
@@ -1985,6 +1990,11 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
     }
   };
 
+  // console.log("ReasonCode", editval[0]?.ReasonCode);
+  // console.log("Role", editval[0]?.Role);
+  // console.log("editval", editval);
+
+
   return (
     <>
       {((incidentCount[0]?.NameCount === 0 || incidentCount[0]?.NameCount === "0") || (NameStatus === true || NameStatus === 'true') || isNew === "true" || isNew === true) && (
@@ -2005,10 +2015,12 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                     value={nameTypeData?.filter((obj) => obj.value === value?.NameTypeID)}
                     options={nameTypeData}
                     onChange={(e) => ChangeNameType(e, 'NameTypeID')}
-
                     placeholder="Select..."
-                    styles={nibrsSubmittedName === 1 ? LockFildscolour : Requiredcolour}
-                    isDisabled={nameID || masterNameID || nibrsSubmittedName === 1 ? true : false}
+
+                    // styles={nibrsSubmittedName === 1 ? LockFildscolour : Requiredcolour}
+                    // isDisabled={nameID || masterNameID || nibrsSubmittedName === 1 ? true : false}
+                    styles={isLockOrRestrictModule("Lock", editval[0]?.NameTypeID, isLocked) || nibrsSubmittedName === 1 ? LockFildscolour : Requiredcolour}
+                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.NameTypeID, isLocked) || nameID || masterNameID || nibrsSubmittedName === 1 ? true : false}
                   />
                 </div>
                 <div className="col-2 col-md-2 col-lg-1">
@@ -2023,14 +2035,18 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                       !(nameTypeCode === "B") && (
                         value.DateOfBirth || value.AgeFrom ? (
                           <>
-                            <input className="form-check-input" type="checkbox" name="IsJuvenile" value={value?.IsJuvenile} checked={value?.IsJuvenile} id="flexCheckDefault" disabled={nameTypeCode === "B" || nibrsSubmittedName === 1} />
+                            <input className="form-check-input" type="checkbox" name="IsJuvenile" value={value?.IsJuvenile} checked={value?.IsJuvenile} id="flexCheckDefault"
+                              disabled={isLockOrRestrictModule("Lock", editval[0]?.IsJuvenile, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1}
+                            />
                             <label className="form-check-label" htmlFor="flexCheckDefault">
                               Juvenile
                             </label>
                           </>
                         ) : (
                           <>
-                            <input className="form-check-input" type="checkbox" name="IsJuvenile" value={value?.IsJuvenile} checked={false} id="flexCheckDefault" disabled={nameTypeCode === "B" || nibrsSubmittedName === 1} />
+                            <input className="form-check-input" type="checkbox" name="IsJuvenile" value={value?.IsJuvenile} checked={false} id="flexCheckDefault"
+                              disabled={isLockOrRestrictModule("Lock", editval[0]?.IsJuvenile, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1}
+                            />
                             <label className="form-check-label" htmlFor="flexCheckDefault">
                               Juvenile
                             </label>
@@ -2040,7 +2056,6 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                     }
                   </div>
                 </div>
-
                 <div className='col-5 mb-md-5 mb-sm-5 mb-lg-0'>
                   {
                     (!value.IsUnknown && ((masterNameID && MstPage === "MST-Name-Dash") || nameID)) ? (
@@ -2049,13 +2064,9 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                         masterPropertyID={masterNameID ? masterNameID : ''}
                         ProSta={NameStatus}
                       />
-
                     ) : null
                   }
                 </div>
-
-
-
                 {
                   nameTypeCode === "B" ?
                     <>
@@ -2066,12 +2077,17 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                           ) : null}</label>
                       </div>
                       <div className="col-2 col-md-2 col-lg-4 text-field mt-0">
-                        <input type="text" name='LastName'
-                          className={isSocietyName ? 'readonlyColor' : 'requiredColor'}
+                        <input
+                          type="text"
+                          name='LastName'
                           value={value?.LastName}
-                          disabled={isSocietyName}
                           onChange={HandleChange}
-                          required />
+                          required
+                          // className={isSocietyName ? 'readonlyColor' : 'requiredColor'}
+                          // disabled={isSocietyName}
+                          className={isLockOrRestrictModule("Lock", editval[0]?.LastName, isLocked) ? 'LockFildsColor' : isSocietyName ? 'readonlyColor' : 'requiredColor'}
+                          disabled={isSocietyName || isLockOrRestrictModule("Lock", editval[0]?.LastName, isLocked)}
+                        />
                       </div>
                       {
                         !nameID ?
@@ -2081,7 +2097,11 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                                 <button type="button" data-toggle="modal" data-target="#SearchModal" className="btn btn-sm btn-success" onClick={() => getNameSearch(loginAgencyID, value?.NameTypeID, value.LastName, value.FirstName, value.MiddleName, value.DateOfBirth, value.SSN, value.HeightFrom, value.HeightTo, value.WeightFrom, value.WeightTo, value.EthnicityID, value.RaceID, value.SexID, value.PhoneTypeID, value.Contact, true)}>Search</button>
                               </div>
                             </>
-                          ) : <><div className="col-12 col-md-3 col-lg-1 name-box mt-0 text-center " ></div></>
+                          )
+                          :
+                          <>
+                            <div className="col-12 col-md-3 col-lg-1 name-box mt-0 text-center " ></div>
+                          </>
 
                       }
                       <div className="col-1 col-md-1 col-lg-1">
@@ -2095,7 +2115,9 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                           onChange={(e) => ChangeDropDown(e, 'BusinessTypeID')}
                           isClearable
                           placeholder="Select..."
-                          styles={customStylesWithOutColor}
+                          // styles={customStylesWithOutColor}
+                          styles={isLockOrRestrictModule("Lock", editval[0]?.BusinessTypeID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                          isDisabled={isLockOrRestrictModule("Lock", editval[0]?.BusinessTypeID, isLocked) ? true : false}
                         />
                       </div>
 
@@ -2107,22 +2129,26 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                           MstPage === "MST-Name-Dash" ?
                             <Select
                               name='OwnerNameID'
-                              styles={customStylesWithOutColor}
                               options={mastersNameDrpData}
                               value={mastersNameDrpData?.filter((obj) => obj.value === value?.OwnerNameID)}
                               isClearable={value?.OwnerNameID ? true : false}
                               onChange={(e) => ChangeDropDown(e, 'OwnerNameID')}
                               placeholder="Select..."
+                              // styles={customStylesWithOutColor}
+                              styles={isLockOrRestrictModule("Lock", editval[0]?.OwnerNameID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.OwnerNameID, isLocked) ? true : false}
                             />
                             :
                             <Select
                               name='OwnerNameID'
-                              styles={customStylesWithOutColor}
                               options={ownerNameData}
                               value={ownerNameData?.filter((obj) => obj.value === value?.OwnerNameID)}
                               isClearable={value?.OwnerNameID ? true : false}
                               onChange={(e) => ChangeDropDown(e, 'OwnerNameID')}
                               placeholder="Select..."
+                              // styles={customStylesWithOutColor}
+                              styles={isLockOrRestrictModule("Lock", editval[0]?.OwnerNameID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.OwnerNameID, isLocked) ? true : false}
                             />
                         }
                       </div>
@@ -2132,12 +2158,12 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                             setTimeout(() => {
                               GetSingleDataPassion(possessionID);
                             }, [200])
-
                           }
                           setNameModalStatus(true);
-                        }} className=" btn btn-sm bg-green text-white py-1" >
-                          <i className="fa fa-plus" >
-                          </i>
+                        }}
+                          className=" btn btn-sm bg-green text-white py-1"
+                        >
+                          <i className="fa fa-plus" > </i>
                         </button>
                       </div>
                       <div className="col-1 col-md-1 col-lg-1">
@@ -2146,8 +2172,16 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                         ) : null}</label>
                       </div>
                       <div className="col-2 col-md-2 col-lg-2 text-field mt-0">
-                        <input type="text" name='OwnerPhoneNumber' maxLength={11} className={''} value={value?.OwnerPhoneNumber} onChange={HandleChange} required />
-
+                        <input
+                          type="text"
+                          name='OwnerPhoneNumber'
+                          maxLength={11}
+                          onChange={HandleChange}
+                          required
+                          value={value?.OwnerPhoneNumber}
+                          className={isLockOrRestrictModule("Lock", editval[0]?.OwnerPhoneNumber, isLocked) ? 'LockFildsColor' : ''}
+                          disabled={isLockOrRestrictModule("Lock", editval[0]?.OwnerPhoneNumber, isLocked) ? true : false}
+                        />
                       </div>
 
                       <div className="col-1 col-md-1 col-lg-2 ">
@@ -2156,12 +2190,18 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                         ) : null}</label>
                       </div>
                       <div className="col-2 col-md-2 col-lg-2 text-field mt-0">
-                        <input type="text" name='OwnerFaxNumber' className={''} value={value?.OwnerFaxNumber} onChange={HandleChange} required />
+                        <input
+                          type="text"
+                          name='OwnerFaxNumber'
+                          value={value?.OwnerFaxNumber}
+                          onChange={HandleChange}
+                          required
+                          className={isLockOrRestrictModule("Lock", editval[0]?.OwnerFaxNumber, isLocked) ? 'LockFildsColor' : ''}
+                          disabled={isLockOrRestrictModule("Lock", editval[0]?.OwnerFaxNumber, isLocked) ? true : false}
+                        />
                       </div>
                     </>
-
                     :
-
                     <>
                       <div className="col-2 col-md-2 col-lg-1">
                         <label htmlFor="" className='label-name mb-0'>Last Name
@@ -2170,7 +2210,19 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                           ) : null}</label>
                       </div>
                       <div className="col-10 col-md-10 col-lg-2 text-field mt-0">
-                        <input type="text" name='LastName' maxLength={100} onBlur={(e) => { e.relatedTarget !== saveButtonRef.current && e.relatedTarget !== closeButtonRef.current && LastFirstNameOnBlur(e) }} className={nameTypeCode === "B" || nibrsSubmittedName === 1 ? 'LockFildsColor' : 'requiredColor'} value={value?.LastName} onClick={() => { !addUpdatePermission && setChangesStatus(true); }} onChange={HandleChange} required disabled={nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false} readOnly={nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false} autoComplete='off' />
+                        <input
+                          type="text"
+                          name='LastName'
+                          maxLength={100}
+                          onBlur={(e) => { e.relatedTarget !== saveButtonRef.current && e.relatedTarget !== closeButtonRef.current && LastFirstNameOnBlur(e) }}
+                          onClick={() => { !addUpdatePermission && setChangesStatus(true); }}
+                          onChange={HandleChange}
+                          required
+                          autoComplete='off'
+                          className={isLockOrRestrictModule("Lock", editval[0]?.LastName, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1 ? 'LockFildsColor' : 'requiredColor'} value={value?.LastName}
+                          disabled={isLockOrRestrictModule("Lock", editval[0]?.LastName, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false}
+                          readOnly={isLockOrRestrictModule("Lock", editval[0]?.LastName, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false}
+                        />
                       </div>
                       <div className="col-2 col-md-2 col-lg-1">
                         <label htmlFor="" className='label-name mb-0'>First Name
@@ -2180,9 +2232,21 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                         </label>
                       </div>
                       <div className="col-2 col-md-4 col-lg-2 text-field mt-0">
-                        <input type="text" maxLength={50} ref={firstNameInputRef} name='FirstName'
+                        <input
+                          type="text"
+                          maxLength={50}
+                          ref={firstNameInputRef}
+                          name='FirstName'
                           onBlur={(e) => { e.relatedTarget !== saveButtonRef.current && LastFirstNameOnBlur(e) }}
-                          className={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? 'LockFildsColor' : ''} value={value?.FirstName} onChange={HandleChange} required disabled={nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false} readOnly={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? true : false} onClick={() => { !addUpdatePermission && setChangesStatus(true); }} autoComplete='off' />
+                          value={value?.FirstName}
+                          onChange={HandleChange}
+                          required
+                          onClick={() => { !addUpdatePermission && setChangesStatus(true); }}
+                          autoComplete='off'
+                          disabled={(isLockOrRestrictModule("Lock", editval[0]?.FirstName, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1) ? true : false}
+                          className={(isLockOrRestrictModule("Lock", editval[0]?.FirstName, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? 'LockFildsColor' : ''}
+                          readOnly={(isLockOrRestrictModule("Lock", editval[0]?.FirstName, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? true : false}
+                        />
                       </div>
                       <div className="col-2 col-md-2 col-lg-1">
                         <label htmlFor="" className='label-name mb-0 '>Middle Name
@@ -2192,7 +2256,19 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                         </label>
                       </div>
                       <div className="col-2 col-md-4 col-lg-2 text-field mt-0">
-                        <input type="text" name='MiddleName' maxLength={50} value={value?.MiddleName} className={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? 'LockFildsColor' : ''} onChange={HandleChange} required disabled={nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false} readOnly={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? true : false} onClick={() => { !addUpdatePermission && setChangesStatus(true); }} autoComplete='off' />
+                        <input
+                          type="text"
+                          name='MiddleName'
+                          maxLength={50}
+                          value={value?.MiddleName}
+                          onChange={HandleChange}
+                          required
+                          onClick={() => { !addUpdatePermission && setChangesStatus(true); }}
+                          autoComplete='off'
+                          className={(isLockOrRestrictModule("Lock", editval[0]?.MiddleName, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? 'LockFildsColor' : ''}
+                          disabled={isLockOrRestrictModule("Lock", editval[0]?.MiddleName, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false}
+                          readOnly={isLockOrRestrictModule("Lock", editval[0]?.MiddleName, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
+                        />
                       </div>
                       <div className="col-12 col-md-12 col-lg-3 d-flex align-items-center ">
                         <div className="col-2 col-md-2 col-lg-2 ml-4 ml-md-0">
@@ -2207,15 +2283,23 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                             isClearable
                             placeholder="Select..."
 
-                            isDisabled={nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false}
-
-                            styles={nibrsSubmittedName === 1 ? LockFildscolour : customStylesWithOutColor}
-
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.SuffixID, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false}
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.SuffixID, isLocked) || nibrsSubmittedName === 1 ? LockFildscolour : customStylesWithOutColor}
                           />
                         </div>
                         <div className="col-4 col-md-2 col-lg-4">
                           <div className="form-check">
-                            <input className="form-check-input " type="checkbox" name='IsUnknown' value={value?.IsUnknown} checked={value?.IsUnknown} onChange={HandleChange} id="flexCheckDefault1" disabled={nameTypeCode === "B" ? true : false} readOnly={nameTypeCode === "B" ? true : false} />
+                            <input
+                              className="form-check-input "
+                              type="checkbox"
+                              name='IsUnknown'
+                              value={value?.IsUnknown}
+                              checked={value?.IsUnknown}
+                              onChange={HandleChange}
+                              id="flexCheckDefault1"
+                              disabled={nameTypeCode === "B" ? true : false}
+                              readOnly={nameTypeCode === "B" ? true : false}
+                            />
                             <label className="form-check-label label-name  pr-md-2" htmlFor="flexCheckDefault1">
                               Unknown
                             </label>
@@ -2263,15 +2347,15 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                           dropdownMode="select"
                           autoComplete="off"
                           maxDate={maxAllowedDate}
-                          disabled={nameTypeCode === "B" || nibrsSubmittedName === 1}
-                          className={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? 'LockFildsColor' : '' ? 'requiredColor' : ''}
-                          readOnly={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1)}
+                          disabled={isLockOrRestrictModule("Lock", editval[0]?.DateOfBirth, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1}
+                          className={(isLockOrRestrictModule("Lock", editval[0]?.DateOfBirth, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? 'LockFildsColor' : '' ? 'requiredColor' : ''}
+                          readOnly={(isLockOrRestrictModule("Lock", editval[0]?.DateOfBirth, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1)}
                           // Disable time input if not allowed
                           timeInputLabel={allowTimeSelect ? "" : "Time Not Available"}
                           includeTimes={
-                            dobDate && isSameDate(dobDate, maxAllowedDate)
-                              ? getLimitedTimesUpTo(maxAllowedDate)
-                              : undefined
+                            dobDate && isSameDate(dobDate, maxAllowedDate) ? getLimitedTimesUpTo(maxAllowedDate)
+                              :
+                              undefined
                           }
                         />
                       </div>
@@ -2283,13 +2367,27 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                             ) : null}</label>
                           </div>
                           <div className="col-5 col-md-2 mt-0 text-field px-0" >
-                            <input type="text" name='AgeFrom' maxLength={3}
-                              // className={value.DateOfBirth || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? 'LockFildsColor' : victimTypeStatus || isAdult || IsOffender ? 'requiredColor' : ''}
+                            <input
+                              type="text"
+                              name='AgeFrom'
+                              maxLength={3}
+                              value={value?.AgeFrom}
+                              onBlur={(e) => AgeFromOnBlur(e)}
+                              onChange={HandleChange}
+                              required
+                              placeholder='From'
+                              autoComplete='off'
+                              disabled={(isLockOrRestrictModule("Lock", editval[0]?.AgeFrom, isLocked) || value.DateOfBirth ? true : false) || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
+                              readOnly={(isLockOrRestrictModule("Lock", editval[0]?.AgeFrom, isLocked) || value.DateOfBirth ? true : false) || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
                               className={
-                                nibrsSubmittedName === 1 ? 'LockFieldsColor' : value.DateOfBirth || value?.IsUnknown === 'true' || value?.IsUnknown === true ? 'readonlyColor'
-                                  : victimTypeStatus || isAdult || IsOffender ? 'requiredColor' : ''
+                                isLockOrRestrictModule("Lock", editval[0]?.AgeFrom, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1 ? 'LockFildsColor'
+                                  :
+                                  value.DateOfBirth || value?.IsUnknown === 'true' || value?.IsUnknown === true ? 'readonlyColor'
+                                    :
+                                    victimTypeStatus || isAdult || IsOffender ? 'requiredColor'
+                                      :
+                                      ''
                               }
-
                               style={{
                                 textAlign: 'center', ...(value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.AgeFrom ? {
                                   backgroundColor: 'rgb(255 202 194)',
@@ -2301,17 +2399,21 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                                 }
                                   : {}
                               }}
-                              value={value?.AgeFrom}
-                              onBlur={(e) => AgeFromOnBlur(e)}
-                              onChange={HandleChange} required
-                              disabled={(value.DateOfBirth ? true : false) || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
-                              readOnly={(value.DateOfBirth ? true : false) || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1} placeholder='From' autoComplete='off' />
+                            />
                           </div>
-                          <div className="col-1 text-center px-0" style={{marginTop:"-14px"}}>
+                          <div className="col-1 text-center px-0" style={{ marginTop: "-14px" }}>
                             <span className="dash-name">_</span>
                           </div>
                           <div className="col-5 col-md-2 mt-0 text-field px-0 " >
-                            <input type="text" name='AgeTo' maxLength={3}
+                            <input
+                              type="text"
+                              name='AgeTo'
+                              maxLength={3}
+                              value={value?.AgeTo}
+                              onChange={HandleChange}
+                              placeholder='To'
+                              autoComplete='off'
+                              required
                               style={{
                                 textAlign: 'center', ...(value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.AgeTo ? {
                                   backgroundColor: 'rgb(255 202 194)',
@@ -2323,13 +2425,17 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                                 }
                                   : {}
                               }}
-                              value={value?.AgeTo} onChange={HandleChange} required
-                              // className={value.DateOfBirth || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? 'LockFildsColor' : ''}
                               className={
-                                value.DateOfBirth || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true ? 'readonlyColor'
-                                  : nibrsSubmittedName === 1 ? 'LockFildscolour' : ''
+                                isLockOrRestrictModule("Lock", editval[0]?.AgeTo, isLocked) || nibrsSubmittedName === 1 ? 'LockFildsColor'
+                                  :
+                                  value.DateOfBirth || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true ? 'readonlyColor'
+                                    :
+                                    ''
                               }
-                              disabled={value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1} readOnly={value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1} placeholder='To' autoComplete='off' />
+                              disabled={isLockOrRestrictModule("Lock", editval[0]?.AgeTo, isLocked) || value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
+                              readOnly={isLockOrRestrictModule("Lock", editval[0]?.AgeTo, isLocked) || value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
+
+                            />
                           </div>
                           <div className="col-5 col-md-6" >
                             <Select
@@ -2339,15 +2445,14 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                               onChange={(e) => ChangeDropDown(e, 'AgeUnitID')}
                               isClearable
                               placeholder="Age Unit..."
-                              styles={value.AgeFrom ? Requiredcolour : customStylesWithOutColor}
-
-                              isDisabled={value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
+                              styles={isLockOrRestrictModule("Lock", editval[0]?.AgeUnitID, isLocked) ? LockFildscolour : value.AgeFrom ? Requiredcolour : customStylesWithOutColor}
+                              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.AgeUnitID, isLocked) || value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
 
                             />
                           </div>
                         </div>
 
-                        
+
                       </div>
                       <div className="col-2 col-md-2 col-lg-1">
                         <span data-toggle="modal" onClick={() => { setOpenPage('Gender') }} data-target="#ListModel" className='new-link px-0'>
@@ -2358,14 +2463,14 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                       </div>
                       <div className="col-10 col-md-10 col-lg-2 ">
                         <Select
-                          styles={nibrsSubmittedName === 1 ? LockFildscolour : (value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.SexID && value?.IsUnknown !== 'true' && value?.IsUnknown !== true && !isAdult ? colourStylesVictimCode : (isAdult || IsOffender || victimTypeStatus ? Requiredcolour : customStylesWithOutColor)}
                           name='SexID'
                           value={sexIdDrp?.filter((obj) => obj.value === value?.SexID)}
                           options={sexIdDrp}
                           onChange={(e) => ChangeDropDown(e, 'SexID')}
                           isClearable
                           placeholder="Select..."
-                          isDisabled={nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
+                          styles={isLockOrRestrictModule("Lock", editval[0]?.SexID, isLocked) || nibrsSubmittedName === 1 ? LockFildscolour : (value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.SexID && value?.IsUnknown !== 'true' && value?.IsUnknown !== true && !isAdult ? colourStylesVictimCode : (isAdult || IsOffender || victimTypeStatus ? Requiredcolour : customStylesWithOutColor)}
+                          isDisabled={isLockOrRestrictModule("Lock", editval[0]?.SexID, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
                         />
                       </div>
                       <div className="col-2 col-md-2 col-lg-1 px-0">
@@ -2383,8 +2488,8 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                           onChange={(e) => ChangeDropDown(e, 'RaceID')}
                           isClearable
                           placeholder="Select..."
-                          isDisabled={nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
-                          styles={nibrsSubmittedName === 1 ? LockFildscolour : (value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.RaceID && value?.IsUnknown !== 'true' && value?.IsUnknown !== true && !isAdult ? colourStylesVictimCode : (isAdult || IsOffender || victimTypeStatus ? Requiredcolour : customStylesWithOutColor)}
+                          isDisabled={isLockOrRestrictModule("Lock", editval[0]?.RaceID, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
+                          styles={isLockOrRestrictModule("Lock", editval[0]?.RaceID, isLocked) || nibrsSubmittedName === 1 ? LockFildscolour : (value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.RaceID && value?.IsUnknown !== 'true' && value?.IsUnknown !== true && !isAdult ? colourStylesVictimCode : (isAdult || IsOffender || victimTypeStatus ? Requiredcolour : customStylesWithOutColor)}
                         />
                       </div>
                       <div className="col-2 col-md-2 col-lg-1">
@@ -2403,8 +2508,8 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                           onChange={(e) => ChangeDropDown(e, 'EthnicityID')}
                           isClearable
                           placeholder="Select..."
-                          styles={nibrsSubmittedName === 1 ? LockFildscolour : (value?.IsUnknown === 'true' || value?.IsUnknown === true) ? customStylesWithOutColor : victimTypeStatus ? Requiredcolour : ''}
-                          isDisabled={value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
+                          styles={isLockOrRestrictModule("Lock", editval[0]?.EthnicityID, isLocked) || nibrsSubmittedName === 1 ? LockFildscolour : (value?.IsUnknown === 'true' || value?.IsUnknown === true) ? customStylesWithOutColor : victimTypeStatus ? Requiredcolour : ''}
+                          isDisabled={isLockOrRestrictModule("Lock", editval[0]?.EthnicityID, isLocked) || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
                         />
                       </div>
                       <div className='col-lg-3'>
@@ -2418,28 +2523,57 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                             </label>
                           </div>
                           <div className="col-5 col-md-4  text-field mt-0" >
-                            <input type="text" name='WeightFrom' ref={crossButtonRef} onBlur={(e) => {
-                              if (e.target.name === 'WeightFrom' &&
-                                e.relatedTarget !== crossButtonRef.current &&
-                                e.relatedTarget?.name !== 'HeightFrom' &&
-                                e.relatedTarget?.name !== 'HeightTo') {
-                                handleWeightFromBlur(e);
-                              }
-                            }} value={value?.WeightFrom} maxLength={3} onKeyDown={handleKeyDown} onChange={HandleChange} required disabled={nameTypeCode === "B" ? true : false} readOnly={nameTypeCode === "B" ? true : false} className={nameTypeCode === "B" ? 'readonlyColor' : ''} placeholder='From' autoComplete='off' />
+                            <input
+                              type="text"
+                              name='WeightFrom'
+                              ref={crossButtonRef}
+                              onBlur={(e) => {
+                                if (e.target.name === 'WeightFrom' &&
+                                  e.relatedTarget !== crossButtonRef.current &&
+                                  e.relatedTarget?.name !== 'HeightFrom' &&
+                                  e.relatedTarget?.name !== 'HeightTo') {
+                                  handleWeightFromBlur(e);
+                                }
+                              }}
+                              value={value?.WeightFrom}
+                              maxLength={3}
+                              onKeyDown={handleKeyDown}
+                              onChange={HandleChange}
+                              required
+                              disabled={isLockOrRestrictModule("Lock", editval[0]?.WeightFrom, isLocked) || nameTypeCode === "B" ? true : false}
+                              readOnly={isLockOrRestrictModule("Lock", editval[0]?.WeightFrom, isLocked) || nameTypeCode === "B" ? true : false}
+                              className={isLockOrRestrictModule("Lock", editval[0]?.WeightFrom, isLocked) ? 'LockFildsColor' : nameTypeCode === "B" ? 'readonlyColor' : ''}
+                              placeholder='From'
+                              autoComplete='off'
+                            />
                           </div>
-                          <div className="col-2 col-md-1 text-center" style={{marginTop:"-14px"}}>
+                          <div className="col-2 col-md-1 text-center" style={{ marginTop: "-14px" }}>
                             <span className="dash-name">_</span>
                           </div>
                           <div className="col-5 col-md-4 ">
                             <div className="text-field mt-0">
-                              <input type="text" name='WeightTo' ref={crossButtonRef} onBlur={(e) => {
-                                if (e.target.name === 'WeightTo' &&
-                                  e.relatedTarget !== crossButtonRef.current &&
-                                  e.relatedTarget?.name !== 'HeightFrom' &&
-                                  e.relatedTarget?.name !== 'HeightTo') {
-                                  handleWeightToBlur(e);
-                                }
-                              }} value={value?.WeightTo} maxLength={3} onChange={HandleChange} required className={(nameTypeCode === "B" || !value?.WeightFrom || value.WeightFrom === '0' || value.WeightFrom === '00' || value.WeightFrom === '000') ? 'readonlyColor' : ''} disabled={(nameTypeCode === "B" || !value?.WeightFrom || value.WeightFrom === '0' || value.WeightFrom === '00' || value.WeightFrom === '000') ? true : false} readOnly={nameTypeCode === "B" ? true : false} placeholder='To' autoComplete='off' />
+                              <input
+                                type="text"
+                                name='WeightTo'
+                                ref={crossButtonRef}
+                                onBlur={(e) => {
+                                  if (e.target.name === 'WeightTo' &&
+                                    e.relatedTarget !== crossButtonRef.current &&
+                                    e.relatedTarget?.name !== 'HeightFrom' &&
+                                    e.relatedTarget?.name !== 'HeightTo') {
+                                    handleWeightToBlur(e);
+                                  }
+                                }}
+                                value={value?.WeightTo}
+                                maxLength={3}
+                                onChange={HandleChange}
+                                required
+                                className={isLockOrRestrictModule("Lock", editval[0]?.WeightTo, isLocked) ? 'LockFildsColor' : (nameTypeCode === "B" || !value?.WeightFrom || value.WeightFrom === '0' || value.WeightFrom === '00' || value.WeightFrom === '000') ? 'readonlyColor' : ''}
+                                disabled={(isLockOrRestrictModule("Lock", editval[0]?.WeightTo, isLocked) || nameTypeCode === "B" || !value?.WeightFrom || value.WeightFrom === '0' || value.WeightFrom === '00' || value.WeightFrom === '000') ? true : false}
+                                readOnly={isLockOrRestrictModule("Lock", editval[0]?.WeightTo, isLocked) || nameTypeCode === "B" ? true : false}
+                                placeholder='To'
+                                autoComplete='off'
+                              />
                             </div>
                           </div>
                         </div>
@@ -2456,7 +2590,11 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                             </label>
                           </div>
                           <div className="col-5 col-md-4 text-field mt-0" >
-                            <input type="text" name='HeightFrom' maxLength={3} value={value?.HeightFrom}
+                            <input
+                              type="text"
+                              name='HeightFrom'
+                              maxLength={3}
+                              value={value?.HeightFrom}
                               onBlur={(e) => {
                                 if (e.target.name === 'HeightFrom' && e.relatedTarget !== crossButtonRef.current &&
                                   e.relatedTarget?.name !== 'WeightFrom' &&
@@ -2466,21 +2604,39 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                               }}
                               onChange={HandleChange}
                               required
-                              onKeyDown={handleKeyDown} disabled={nameTypeCode === "B" ? true : false} readOnly={nameTypeCode === "B" ? true : false} className={nameTypeCode === "B" ? 'readonlyColor' : ''} placeholder='From' autoComplete='off' />
+                              onKeyDown={handleKeyDown}
+                              disabled={isLockOrRestrictModule("Lock", editval[0]?.HeightFrom, isLocked) || nameTypeCode === "B" ? true : false}
+                              readOnly={isLockOrRestrictModule("Lock", editval[0]?.HeightFrom, isLocked) || nameTypeCode === "B" ? true : false}
+                              className={isLockOrRestrictModule("Lock", editval[0]?.HeightFrom, isLocked) ? 'LockFildsColor' : nameTypeCode === "B" ? 'readonlyColor' : ''}
+                              placeholder='From'
+                              autoComplete='off'
+                            />
                           </div>
-                          <div className="col-2 col-md-1 text-center" style={{marginTop:"-14px"}}>
+                          <div className="col-2 col-md-1 text-center" style={{ marginTop: "-14px" }}>
                             <span className="dash-name">_</span>
                           </div>
                           <div className="col-5 col-md-3 ">
                             <div className="text-field mt-0">
-                              <input type="text" name='HeightTo' maxLength={3} value={value?.HeightTo} onBlur={(e) => {
-                                if (e.target.name === 'HeightTo' && e.relatedTarget !== crossButtonRef.current &&
-                                  e.relatedTarget?.name !== 'WeightFrom' &&
-                                  e.relatedTarget?.name !== 'WeightTo') {
-                                  HeightOnChange(e);
-                                }
-                              }}
-                                onChange={HandleChange} required className={nameTypeCode === "B" || !value.HeightFrom ? 'readonlyColor' : ''} disabled={nameTypeCode === "B" || !value.HeightFrom ? true : false} readOnly={nameTypeCode === "B" ? true : false} placeholder='To' autoComplete='off' />
+                              <input
+                                type="text"
+                                name='HeightTo'
+                                maxLength={3}
+                                value={value?.HeightTo}
+                                onBlur={(e) => {
+                                  if (e.target.name === 'HeightTo' && e.relatedTarget !== crossButtonRef.current &&
+                                    e.relatedTarget?.name !== 'WeightFrom' &&
+                                    e.relatedTarget?.name !== 'WeightTo') {
+                                    HeightOnChange(e);
+                                  }
+                                }}
+                                onChange={HandleChange}
+                                required
+                                className={isLockOrRestrictModule("Lock", editval[0]?.HeightTo, isLocked) ? 'LockFildsColor' : nameTypeCode === "B" ? 'readonlyColor' : ''}
+                                disabled={isLockOrRestrictModule("Lock", editval[0]?.HeightTo, isLocked) || nameTypeCode === "B" ? true : false}
+                                readOnly={isLockOrRestrictModule("Lock", editval[0]?.HeightTo, isLocked) || nameTypeCode === "B" ? true : false}
+                                placeholder='To'
+                                autoComplete='off'
+                              />
                             </div>
                           </div>
                         </div>
@@ -2502,11 +2658,10 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                           isClearable
                           placeholder="Select..."
                           menuPlacement="bottom"
-                          styles={nibrsSubmittedName === 1 ? LockFildscolour : victimTypeStatus ? Requiredcolour : ''}
-                          isDisabled={nibrsSubmittedName === 1 ? true : false}
+                          styles={isLockOrRestrictModule("Lock", editval[0]?.ResidentID, isLocked) || nibrsSubmittedName === 1 ? LockFildscolour : victimTypeStatus ? Requiredcolour : ''}
+                          isDisabled={isLockOrRestrictModule("Lock", editval[0]?.ResidentID, isLocked) || nibrsSubmittedName === 1 ? true : false}
                         />
                       </div>
-
 
                       <div className='col-12 col-md-12 col-lg-12'>
                         <fieldset className='mt-0 pb-1' style={{ width: "100%" }}>
@@ -2521,10 +2676,19 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                           ) : null}</label>
                       </div>
                       <div className="col-3 col-md-3 col-lg-2 text-field mt-0" >
-                        <input style={{ height: "35px" }} type="text"
-                          readOnly={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? true : false}
-                          className={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? 'readonlyColor' : ''} maxLength={10} name='SSN' value={value?.SSN}
-                          onChange={HandleChange} required autoComplete='off' />
+                        <input
+                          style={{ height: "35px" }}
+                          type="text"
+                          className={isLockOrRestrictModule("Lock", editval[0]?.HeightTo, isLocked) ? 'LockFildsColor' : (nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? 'readonlyColor' : ''}
+                          readOnly={isLockOrRestrictModule("Lock", editval[0]?.HeightTo, isLocked) || (nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? true : false}
+                          disabled={isLockOrRestrictModule("Lock", editval[0]?.HeightTo, isLocked) || (nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? true : false}
+                          maxLength={10}
+                          name='SSN'
+                          value={value?.SSN}
+                          onChange={HandleChange}
+                          required
+                          autoComplete='off'
+                        />
                       </div>
                       <div className="col-3 col-md-6 col-lg-5 d-flex row align-items-center " >
                         <div className="col-2 col-md-2 col-lg-2 pl-2">
@@ -2538,9 +2702,10 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                             onChange={(e) => ChangeDropDown(e, 'DLStateID')}
                             isClearable
                             placeholder="State"
-                            styles={customStylesWithOutColor}
-                            className={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? 'readonlyColor' : ''}
-                            isDisabled={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? true : false}
+
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.DLStateID, isLocked) ? selectBoxDiableColourStyles : customStylesWithOutColor}
+                            className={isLockOrRestrictModule("Lock", editval[0]?.DLStateID, isLocked) ? 'LockFildsColor' : (nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? 'readonlyColor' : ''}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.DLStateID, isLocked) || (nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? true : false}
                           />
                         </div>
                         {/* <span className='dash-name' >
@@ -2551,15 +2716,15 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                         <div className="col-3 col-md-5 col-lg-4 text-field mt-0" >
                           <input
                             type="text"
-                            className={value?.DLStateID ? 'requiredColor' : 'readonlyColor'}
                             style={{ textTransform: "uppercase" }}
                             value={value?.DLNumber ? value.DLNumber.replace(/[^\w\s]/g, '') : ''}
                             maxLength={15}
-                            disabled={value?.DLStateID ? false : true}
                             onChange={HandleChange}
                             name="DLNumber"
                             required
                             autoComplete='off'
+                            className={isLockOrRestrictModule("Lock", editval[0]?.DLNumber, isLocked) ? 'LockFildsColor' : value?.DLStateID ? 'requiredColor' : 'readonlyColor'}
+                            disabled={isLockOrRestrictModule("Lock", editval[0]?.DLNumber, isLocked) || value?.DLStateID ? false : true}
                           />
                           {errors.DLError && errors.DLError !== 'true' && (
                             <div style={{ fontSize: '11px', color: 'red', marginTop: '2px' }}>
@@ -2582,8 +2747,11 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                             onChange={(e) => ChangeDropDown(e, 'VerifyID')}
                             isClearable
                             placeholder="Verify ID"
-                            styles={customStylesWithOutColor}
-                            isDisabled={!value?.DLStateID}
+
+                            // styles={customStylesWithOutColor}
+                            // isDisabled={!value?.DLStateID}
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.VerifyID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.VerifyID, isLocked) || !value?.DLStateID}
                           />
                         </div>
                       </div>
@@ -2629,8 +2797,9 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                       }
                       onChangeReaonsRole(selectedOptions, 'Role');
                     }}
-                    styles={nibrsSubmittedName === 1 || isSocietyName ? LockFildscolour : MstPage === "MST-Name-Dash" ? 'readonlyColor' : colourStylesRole}
-                    isDisabled={nibrsSubmittedName === 1 || isSocietyName || MstPage === "MST-Name-Dash"}
+
+                    styles={isLockOrRestrictModule("Lock", editval[0]?.Role, isLocked, true) || nibrsSubmittedName === 1 || isSocietyName ? LockFildscolour : MstPage === "MST-Name-Dash" ? 'readonlyColor' : colourStylesRole}
+                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.Role, isLocked, true) || nibrsSubmittedName === 1 || isSocietyName || MstPage === "MST-Name-Dash"}
                   />
                 </div>
                 <div className="col-2 col-md-2 col-lg-1">
@@ -2638,12 +2807,14 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                     Reason Code
                     {errors.NameReasonCodeIDError !== 'true' ? (
                       <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.NameReasonCodeIDError}</p>
-                    ) : null}</label>
+                    ) : null}
+                  </label>
                 </div>
                 <div className="col-10 col-md-10 col-lg-4" >
                   <SelectBox
-                    styles={nibrsSubmittedName === 1 || isSocietyName ? LockFildscolour : MstPage === "MST-Name-Dash" ? colourStylesMasterReason : colourStylesReason}
-                    isDisabled={nibrsSubmittedName === 1 || isSocietyName || isSecondDropdownDisabled && MstPage !== "MST-Name-Dash" ? true : false}
+                    styles={isLockOrRestrictModule("Lock", editval[0]?.ReasonCode, isLocked, true) || nibrsSubmittedName === 1 || isSocietyName ? LockFildscolour : MstPage === "MST-Name-Dash" ? colourStylesMasterReason : colourStylesReason}
+                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.ReasonCode, isLocked, true) || nibrsSubmittedName === 1 || isSocietyName || isSecondDropdownDisabled && MstPage !== "MST-Name-Dash" ? true : false}
+
                     options={reasonIdDrp ? getFiltredReasonCode(reasonIdDrp) : []}
                     menuPlacement="bottom"
                     isMulti
@@ -2720,13 +2891,12 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                           name='VictimTypeID'
                           value={victimTypeDrp?.filter((obj) => obj.value === value?.VictimTypeID)}
                           isClearable
-                          isDisabled={isSocietyName}
-
                           options={victimTypeDrp}
                           onChange={(e) => { ChangeDropDown(e, 'VictimTypeID'); }}
                           placeholder="Select.."
-                          styles={roleStatus ? colourStylesReason : ''}
 
+                          styles={isLockOrRestrictModule("Lock", editval[0]?.VictimTypeID, isLocked) ? LockFildscolour : roleStatus ? colourStylesReason : ''}
+                          isDisabled={isLockOrRestrictModule("Lock", editval[0]?.VictimTypeID, isLocked) || isSocietyName}
                         />
                       </div>
                     </>
@@ -2817,7 +2987,15 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                     ) : null}</label>
                 </div>
                 <div className="col-7  col-md-7 col-lg-9 mt-0 text-field" >
-                  <Location {...{ value, setValue, setChangesStatus, locationStatus, setLocationStatus, updateStatus, setOnSelectLocation, setStatesChangeStatus }} col='Address' locationID='NameLocationID' check={isAdult ? false : false} verify={value.IsVerify} page='Name' />
+                  <Location
+                    {...{ value, setValue, setChangesStatus, locationStatus, setLocationStatus, updateStatus, setOnSelectLocation, setStatesChangeStatus }}
+                    col='Address'
+                    locationID='NameLocationID'
+                    check={isAdult ? false : false}
+                    verify={value.IsVerify}
+                    page='Name'
+                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.NameLocationID, isLocked)}
+                  />
                 </div>
                 <div className="col-3 col-md-3 col-lg-2">
                   <div className="form-check ">
@@ -2845,8 +3023,9 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                     onChange={(e) => ChangePhoneType(e, 'PhoneTypeID')}
                     isClearable
                     placeholder="Select..."
-                    disabled={phoneTypeCode ? false : true}
-                    styles={customStylesWithOutColor}
+
+                    disabled={isLockOrRestrictModule("Lock", editval[0]?.PhoneTypeID, isLocked) || phoneTypeCode ? false : true}
+                    styles={isLockOrRestrictModule("Lock", editval[0]?.PhoneTypeID, isLocked) ? LockFildscolour : customStylesWithOutColor}
                   />
                 </div>
                 <div className="col-1 col-md-2 col-lg-1">
@@ -2854,9 +3033,17 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                   </label>
                 </div>
                 <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
-                  <input type="text"
-                    maxLength={phoneTypeCode !== 'E' ? 10 : ''} className={value?.PhoneTypeID ? 'requiredColor' : 'readonlyColor'}
-                    name='Contact' value={value?.Contact} onChange={HandleChange} required disabled={value?.PhoneTypeID ? false : true} autoComplete='off' />
+                  <input
+                    type="text"
+                    maxLength={phoneTypeCode !== 'E' ? 10 : ''}
+                    name='Contact'
+                    value={value?.Contact}
+                    onChange={HandleChange}
+                    required
+                    autoComplete='off'
+                    disabled={isLockOrRestrictModule("Lock", editval[0]?.Contact, isLocked) || value?.PhoneTypeID ? false : true}
+                    className={isLockOrRestrictModule("Lock", editval[0]?.Contact, isLocked) ? 'LockFildsColor' : value?.PhoneTypeID ? 'requiredColor' : 'readonlyColor'}
+                  />
                   {errors.ContactError !== 'true' ? (
                     <span style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ContactError}</span>
                   ) : null}
@@ -2898,7 +3085,6 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
             {!isViewEventDetails &&
               <div className="col-12 col-md-12 col-lg-12 text-right" >
                 <div className=" mt-1 text-md-right " >
-
 
                   {/* {
                   Don't Remove this code ----->  Devendra Kashyap
@@ -2955,7 +3141,6 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                           </>
                       )
                   }
-
                   {
                     MstPage === "MST-Name-Dash" &&
                     <button type="button" className="btn btn-sm btn-success mx-1" ref={closeButtonRef} onClick={onMasterPropClose} data-dismiss="modal">Close</button>

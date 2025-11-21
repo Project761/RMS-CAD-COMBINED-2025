@@ -31,6 +31,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { toastifySuccess } from '../../Common/AlertMsg';
 import DeleteNameModal from '../../Common/DeleteNameModel';
+import LockRestrictModule from '../../Common/LockRestrictModule';
+import { faLock, faUnlock, faBan, } from "@fortawesome/free-solid-svg-icons";
+
 
 const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = false }) => {
 
@@ -78,7 +81,6 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
     else IncID = parseInt(base64ToString(IncID));
 
     const { nameShowPage, changesStatus, auditCount, offenderCount, nameFilterData, victimCount, tabCount, NameTabCount, setNameShowPage, countStatus, countAppear, localStoreArray, get_LocalStorage, setNameSingleData, get_Data_Name, nibrsNameValidateArray, incidentCount } = useContext(AgencyContext);
-    // console.log("🚀 ~ NameTab ~ nibrsNameValidateArray:", nibrsNameValidateArray)
 
     const carouselRef = useRef(null);
     const navigate = useNavigate();
@@ -104,10 +106,14 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
     const [clickNibloder, setclickNibLoder] = useState(false);
     const [nibrsErrModalStatus, setNibrsErrModalStatus] = useState(false);
     const [nibrsErrStr, setNibrsErrStr] = useState('');
-    // const [nibrsValidateNameData, setnibrsValidateNameData] = useState([]);
     const [addName, setAddName] = useState(true); // 'card' or 'list'
     const [loginPinID, setLoginPinID] = useState(1);
     const [ResetErrors, setResetErrors] = useState(false); // 'card' or 'list'
+    // Lock Restrict
+    const [showLockModal, setShowLockModal] = useState(false);
+    const [openModule, setOpenModule] = useState('');
+    const [isLocked, setIsLocked] = useState(false);
+    const [permissionToUnlock, setPermissionToUnlock] = useState(false);
 
     useEffect(() => {
         if (localStoreData) {
@@ -131,6 +137,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
     useEffect(() => {
         if (IncID) {
             get_Data_Name(IncID);
+            // getPermissionLevelByLock(IncID, localStoreData?.OfficerID, 0);
         }
     }, [IncID]);
 
@@ -165,6 +172,26 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
         window.addEventListener('resize', checkOverflow);
         return () => window.removeEventListener('resize', checkOverflow);
     }, [nameFilterData]);
+
+    const getPermissionLevelByLock = async (IncidentID, OfficerID, NameID) => {
+        try {
+            const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { 'IncidentID': IncidentID, 'OfficerID': OfficerID, 'ModuleName': "Name", 'ID': NameID || 0 });
+            console.log("🚀 ~ getPermissionLevelByLock ~ res:", res);
+            if (res?.length > 0) {
+                setIsLocked(res[0]?.IsLocked === true || res[0]?.IsLocked === 1 ? true : false);
+                setPermissionToUnlock(res[0]?.IsUnLockPermission === true || res[0]?.IsUnLockPermission === 1 ? true : false);
+
+            } else {
+                setPermissionToUnlock(false);
+                setIsLocked(false);
+
+            }
+        } catch (error) {
+            console.error('There was an error!', error);
+            setPermissionToUnlock(false);
+            setIsLocked(false);
+        }
+    }
 
     const scrollCards = (direction) => {
         const carousel = carouselRef.current;
@@ -279,10 +306,10 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
             } else {
                 navigate(`/Name-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(row?.NameID)}&MasterNameID=${stringToBase64(row?.MasterNameID)}&NameStatus=${true}`)
             }
+            getPermissionLevelByLock(IncID, localStoreData?.PINID, row.NameID);
             setNameID(row.NameID); setMasterNameID(row?.MasterNameID);
         }
     }
-
 
     const setStatusFalse = () => {
         if (MstPage === "MST-Name-Dash") {
@@ -401,7 +428,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                             >
                                                                 {row.NameReasonCode || ""}
                                                             </p>
-                                                            
+
                                                         </div>
                                                         <div className="d-flex flex-column align-items-center gap-2 flex-shrink-0">
                                                             {/* Edit Button */}
@@ -756,7 +783,6 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                                 >
                                                                     History
                                                                 </span>
-
                                                             }
                                                         </>
                                                     )}
@@ -809,7 +835,41 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                     >
                                                         {isCad ? "Change Log" : " Audit Log"}
                                                     </span>
-
+                                                    {
+                                                        status ?
+                                                            <>
+                                                                {
+                                                                    !isLocked &&
+                                                                    <li className="list-inline-item nav-item">
+                                                                        <button
+                                                                            className="btn py-1 d-flex align-items-center gap-2"
+                                                                            style={{ columnGap: "5px", backgroundColor: "#E0E0E0" }}
+                                                                            onClick={() => { setOpenModule('Lock'); setShowLockModal(true) }}
+                                                                            data-toggle="modal"
+                                                                            data-target="#NibrsAllModuleErrorShowModal"
+                                                                        >
+                                                                            <FontAwesomeIcon icon={faLock} /> Lock
+                                                                        </button>
+                                                                    </li>
+                                                                }
+                                                                {
+                                                                    permissionToUnlock &&
+                                                                    <li className="list-inline-item nav-item">
+                                                                        <button
+                                                                            className="btn py-1 d-flex align-items-center gap-2"
+                                                                            style={{ columnGap: "5px", backgroundColor: "#E0E0E0" }}
+                                                                            onClick={() => { setOpenModule('Unlock'); setShowLockModal(true) }}
+                                                                            data-toggle="modal"
+                                                                            data-target="#NibrsAllModuleErrorShowModal"
+                                                                        >
+                                                                            <FontAwesomeIcon icon={faUnlock} /> Unlock
+                                                                        </button>
+                                                                    </li>
+                                                                }
+                                                            </>
+                                                            :
+                                                            <></>
+                                                    }
                                                 </ul>
                                             </div>
                                         </div>
@@ -820,55 +880,53 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                     nameShowPage === 'home' ?
                                         <Home {...{
                                             setStatus, status, showVictim, setShowVictim, setNameShowPage, setshowWarrant, setShowOffender, setIsBusinessName, get_List, isCad, isCADSearch, isViewEventDetails, editval, setEditval, setNameSingleData, masterNameID, setMasterNameID, nameID, setNameID, GetSingleData, get_Data_Name, nibrsErrModalStatus, setNibrsErrModalStatus, nibrsErrStr, setNibrsErrStr,
-                                            addName, setAddName, ResetErrors, setResetErrors,
+                                            addName, setAddName, ResetErrors, setResetErrors, isLocked
                                             // nibrsValidateNameData, setnibrsValidateNameData,
                                         }} />
                                         :
                                         nameShowPage === 'general' ?
-                                            <General {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
+                                            <General {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails, isLocked }} />
                                             :
-                                            nameShowPage === 'Contact_Details' ?
-                                                <ContactDetails {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
+                                            nameShowPage === 'Appearance' ?
+                                                <Appearance  {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails, isLocked }} />
                                                 :
-                                                nameShowPage === 'Appearance' ?
-                                                    <Appearance  {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
+                                                nameShowPage === 'aliases' ?
+                                                    <Aliases {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails, isLocked }} />
                                                     :
-                                                    nameShowPage === 'aliases' ?
-                                                        <Aliases {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
+                                                    nameShowPage === 'SMT' ?
+                                                        <Smt {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails, isLocked }} />
                                                         :
-                                                        nameShowPage === 'SMT' ?
-                                                            <Smt {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
+                                                        nameShowPage === 'Identification_Number' ?
+                                                            <IdentificationNumber {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails, isLocked }} />
                                                             :
-                                                            nameShowPage === 'Offender' && showOffender ?
-                                                                <AssaultInjuryCom  {...{ ListData, ListData, DecNameID, DecMasterNameID, DecIncID }} />
+                                                            nameShowPage === 'Contact_Details' ?
+                                                                <ContactDetails {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails, isLocked }} />
                                                                 :
-                                                                nameShowPage === 'Identification_Number' ?
-                                                                    <IdentificationNumber {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
+                                                                nameShowPage === 'Address' ?
+                                                                    <Address {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails, isLocked }} />
                                                                     :
-                                                                    nameShowPage === 'Victim' && showVictim ?
-                                                                        <Victim {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} showTabs={setNameShowPage} />
+                                                                    nameShowPage === 'Warrant' ?
+                                                                        <Warrant {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails, isLocked }} />
                                                                         :
-                                                                        nameShowPage === 'Gang' ?
-                                                                            <Gang {...{ DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
+                                                                        nameShowPage === 'Victim' && showVictim ?
+                                                                            <Victim {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails, isLocked }} showTabs={setNameShowPage} />
                                                                             :
-                                                                            nameShowPage === 'connections' ?
-                                                                                <Connection  {...{ ListData, DecNameID, DecMasterNameID, DecIncID }} />
+                                                                            nameShowPage === 'Offense' ?
+                                                                                <Offense {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails, isLocked }} />
                                                                                 :
-                                                                                nameShowPage === 'Address' ?
-                                                                                    <Address {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
+                                                                                nameShowPage === 'Offender' && showOffender ?
+                                                                                    <AssaultInjuryCom  {...{ ListData, ListData, DecNameID, DecMasterNameID, DecIncID }} />
                                                                                     :
-                                                                                    nameShowPage === 'Warrant' ?
-                                                                                        <Warrant {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
+                                                                                    nameShowPage === 'Gang' ?
+                                                                                        <Gang {...{ DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
                                                                                         :
-                                                                                        nameShowPage === 'Offense' ?
-                                                                                            // <></>
-                                                                                            <Offense {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
+                                                                                        nameShowPage === 'connections' ?
+                                                                                            <Connection  {...{ ListData, DecNameID, DecMasterNameID, DecIncID }} />
                                                                                             :
                                                                                             nameShowPage === 'History' ?
                                                                                                 <History {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
                                                                                                 :
                                                                                                 nameShowPage === 'TransactionLog' ?
-
                                                                                                     <Involvements
                                                                                                         idColName={'MasterNameID'}
                                                                                                         para={'NameID'}
@@ -887,7 +945,8 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                                                                     />
                                                                                                     :
                                                                                                     nameShowPage === 'AuditLog' ?
-                                                                                                        <Log ParentId={DecNameID}
+                                                                                                        <Log
+                                                                                                            ParentId={DecNameID}
                                                                                                             scrCode={'N056'}
                                                                                                             url={'Log/GetData_LogName'}
                                                                                                             para={'NameID'}
@@ -904,6 +963,23 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                 </div>
             </div>
             <DeleteNameModal func={DeleteContactDetail} setStatusFalse={setStatusFalse} setToReset={setToReset} />
+            <LockRestrictModule
+                show={showLockModal}
+                openModule={openModule}
+                onClose={() => setShowLockModal(false)}
+
+                isLockedOrRestrict={openModule === 'Unrestrict' || openModule === 'Restrict' ? 'IsRestricted' : 'IsLocked'}
+                isLockOrRestrictLevel={openModule === 'Unrestrict' || openModule === 'Restrict' ? 'RestrictLevel' : 'LockLevel'}
+                isLockOrRestricPINID={openModule === 'Unrestrict' || openModule === 'Restrict' ? 'RestrictPINID' : 'LockPINID'}
+                isLockOrRestricDate={openModule === 'Unrestrict' || openModule === 'Restrict' ? 'RestrictDate' : 'LockDate'}
+                moduleName={'Name'}
+                id={DecNameID || 0}
+                isLockOrRestrictUrl={openModule === 'Unrestrict' || openModule === 'Restrict' ? 'Restricted/UpdateIncidentRestrictedStatus' : 'Restricted/UpdateIncidentLockStatus'}
+
+                getPermissionLevelByLock={getPermissionLevelByLock}
+            // getPermissionLevelByRestrict={getPermissionLevelByRestrict}
+
+            />
         </div >
     )
 }
