@@ -200,10 +200,6 @@ import MissingPersonForm from './Components/Pages/MissingPerson/MissingPersonFor
 import ReportModule from './Components/Pages/ReportModule/ReportModule';
 import HomeCaseManagement from './CADPage/HomeCaseManagement';
 // import PropertyAuditTab from './Components/Pages/PropertyRoom/Audit/Home';
-
-
-
-
 function App() {
   const [otp, setOtp] = useState("");
   const [loginResData, setLoginResData] = useState([]);
@@ -221,7 +217,6 @@ function App() {
   const send_Otp = (otp, data) => {
     setOtp(otp); setLoginResData(data);
   };
-
 
   const [progressStatus, setProgressStatus] = useState(0);
 

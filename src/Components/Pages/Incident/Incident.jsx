@@ -25,7 +25,7 @@ const Incident = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { setShowIncPage, setTabCount, setCaseStatus, setIncidentCount, incidentRecentData, setIncidentRecentData, exceptionalClearID, GetDataExceptionalClearanceID, rmsDisposition, getRmsDispositionID, incidentSearchData, setIncidentSearchData, incAdvSearchData, setIncAdvSearchData, setPropertyCount, setVehicleCount, GetDataTimeZone, datezone, recentSearchData, setRecentSearchData, searchObject, setSearchObject } = useContext(AgencyContext);
+    const { setShowIncPage, setTabCount, setCaseStatus, setIncidentCount, incidentRecentData, setIncidentRecentData, exceptionalClearID, GetDataExceptionalClearanceID, rmsDisposition, getRmsDispositionID, incidentSearchData, setIncidentSearchData, incAdvSearchData, setIncAdvSearchData, setPropertyCount, setVehicleCount, GetDataTimeZone, datezone, recentSearchData, setRecentSearchData, searchObject, setSearchObject, setCaseManagementDataIncidentRecent } = useContext(AgencyContext);
 
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
 
@@ -224,6 +224,7 @@ const Incident = () => {
 
                                 setIncSummModal(true);
                                 setOtherColID(row?.IncidentID);
+                                setCaseManagementDataIncidentRecent([]);
                             }
                         }}
                     >
@@ -530,7 +531,10 @@ const Incident = () => {
     };
 
     const handleKeyPress = (e) => {
-        if (e.key === 'Enter') { getIncidentNoSearch(); }
+        if (e.key === 'Enter') {
+            setCaseManagementDataIncidentRecent([]);
+            getIncidentNoSearch();
+        }
     };
     const isValidDate = (d) => d && !isNaN(new Date(d).getTime());
 

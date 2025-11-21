@@ -762,7 +762,7 @@ const Arrest_Add_Up = () => {
                                                             if (!changesStatus) { setShowPage('MugShorts') }
                                                         }}>
 
-                                                        Mugshorts{`${tabCountArrest?.ArrestMugshots > 0 ? '(' + tabCountArrest?.ArrestMugshots + ')' : ''}`}
+                                                        Mugshot{`${tabCountArrest?.ArrestMugshots > 0 ? '(' + tabCountArrest?.ArrestMugshots + ')' : ''}`}
                                                     </span>
                                                     <span
                                                         className={`nav-item ${showPage === 'Fingerprint' ? 'active' : ''}${!status ? 'disabled' : ''}`}
@@ -859,7 +859,7 @@ const Arrest_Add_Up = () => {
                                 }
                                 {
                                     showPage === 'home' ?
-                                        <Home {...{ isEnabled, Editval, incExceDate, setincExceDate, GetSingleData, setEditval, RestStatus, setIsEnabled, setStatus, arrestID, matchedAgency, setmatchedAgency, setArrestID, showPage, Agencystatus, setAgencystatus, setShowPage, offenseNameID, setoffenseNameID, status, setEditArrestStatus, showJuvinile, EditArrestStatus, setShowJuvinile, setShowPoliceForce, DecIncID, DecArrestId, delChargeID, isChargeDel, setIsChargeDel, setDelChargeID, ChargeLocalArr, setChargeLocalArr, possessionID, setPossessionID, get_List }} />
+                                        <Home {...{ isEnabled, Editval, incExceDate, ResetErrors, setResetErrors, setincExceDate, GetSingleData, setEditval, RestStatus, setIsEnabled, setStatus, arrestID, matchedAgency, setmatchedAgency, setArrestID, showPage, Agencystatus, setAgencystatus, setShowPage, offenseNameID, setoffenseNameID, status, setEditArrestStatus, showJuvinile, EditArrestStatus, setShowJuvinile, setShowPoliceForce, DecIncID, DecArrestId, delChargeID, isChargeDel, setIsChargeDel, setDelChargeID, ChargeLocalArr, setChargeLocalArr, possessionID, setPossessionID, get_List }} />
                                         :
                                         showPage === 'Property' ?
                                             <Property {...{ DecArrestId, DecIncID, }} />

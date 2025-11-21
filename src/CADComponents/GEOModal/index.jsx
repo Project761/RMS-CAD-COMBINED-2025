@@ -542,17 +542,19 @@ const GEOModal = (props) => {
       ) {
         handleErrorGeo(field, true);
         isError = true;
-      } else if (field === "coordinateX" &&
-        (geoFormValues?.coordinateX === null || geoFormValues?.coordinateX === undefined || geoFormValues?.coordinateX === "")
-      ) {
-        handleErrorGeo(field, true);
-        isError = true;
-      } else if (field === "coordinateY" &&
-        (geoFormValues?.coordinateY === null || geoFormValues?.coordinateY === undefined || geoFormValues?.coordinateY === "")
-      ) {
-        handleErrorGeo(field, true);
-        isError = true;
-      } else if ((field === "fireZone" || field === "emsZone" || field === "otherZone" || field === "patrolZone") && isEmptyObject(geoFormValues[field])) {
+      }
+      //  else if (field === "coordinateX" &&
+      //   (geoFormValues?.coordinateX === null || geoFormValues?.coordinateX === undefined || geoFormValues?.coordinateX === "")
+      // ) {
+      //   handleErrorGeo(field, true);
+      //   isError = true;
+      // } else if (field === "coordinateY" &&
+      //   (geoFormValues?.coordinateY === null || geoFormValues?.coordinateY === undefined || geoFormValues?.coordinateY === "")
+      // ) {
+      //   handleErrorGeo(field, true);
+      //   isError = true;
+      // } 
+      else if ((field === "fireZone" || field === "emsZone" || field === "otherZone" || field === "patrolZone") && isEmptyObject(geoFormValues[field])) {
         handleErrorGeo(field, true);
         isError = true;
       }
@@ -1432,7 +1434,7 @@ const GEOModal = (props) => {
                                     </div>
                                     <input
                                       type="number"
-                                      className="form-control py-1 new-input requiredColor"
+                                      className="form-control py-1 new-input"
                                       name="coordinateX"
                                       value={geoFormValues.coordinateX}
                                       disabled={geoFormValues?.isCoordinateX}
@@ -1452,7 +1454,7 @@ const GEOModal = (props) => {
                                     )}</label>
                                     <input
                                       type="number"
-                                      className="form-control py-1 new-input requiredColor"
+                                      className="form-control py-1 new-input"
                                       name="coordinateY"
                                       value={geoFormValues.coordinateY}
                                       disabled={geoFormValues?.isCoordinateY}

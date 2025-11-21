@@ -55,6 +55,15 @@ class CaseManagementServices {
         return null;
     };
 
+    getSupervisorsByAgencyID = async ({ queryKey }) => {
+        const [_key, payload] = queryKey;
+        if (payload) {
+            return await axios.post(`/Personnel/GetSupervisorsByAgencyID`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.getSupervisorsByAgencyID");
+        return null;
+    };
+
     getOfficerActivityByID = async (payload) => {
         if (payload) {
             return await axios.post(`/CaseManagement/GetOfficerActivityByID`, payload);
@@ -100,6 +109,148 @@ class CaseManagementServices {
             return await axios.post(`/CaseManagement/DeleteCaseTeam`, payload);
         }
         console.warn("payload not provided, CaseManagementServices.deleteCaseTeam");
+        return null;
+    };
+
+    addCaseEffort = async (payload) => {
+        if (payload) {
+            return await axios.post(`/CaseManagement/AddCaseEffort`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.addCaseEffort");
+        return null;
+    };
+
+    updateCaseEffort = async (payload) => {
+        if (payload) {
+            return await axios.post(`/CaseManagement/UpdateCaseEffort`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.updateCaseEffort");
+        return null;
+    };
+
+    getAllCaseEfforts = async ({ queryKey }) => {
+        const [_key, payload] = queryKey;
+        if (payload) {
+            return await axios.post(`/CaseManagement/GetAllCaseEfforts`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.getAllCaseEfforts");
+        return null;
+    };
+
+    getPrimaryOfficerHistory = async ({ queryKey }) => {
+        const [_key, payload] = queryKey;
+        if (payload) {
+            return await axios.post(`/CaseManagement/GetPrimaryOfficerHistory`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.getPrimaryOfficerHistory");
+        return null;
+    };
+
+    getActiveTeamMembers = async ({ queryKey }) => {
+        const [_key, payload] = queryKey;
+        if (payload) {
+            return await axios.post(`/CaseManagement/GetActiveTeamMembers`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.getActiveTeamMembers");
+        return null;
+    };
+
+    insertDetectiveNote = async (payload) => {
+        if (payload) {
+            return await axios.post(`/CaseManagement/InsertDetective`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.insertDetectiveNote");
+        return null;
+    };
+
+    pinnedSourceType = async (payload) => {
+        if (payload) {
+            return await axios.post(`/CaseManagement/PinnedSourceType`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.pinnedSourceType");
+        return null;
+    };
+
+    getByID_Detective = async (payload) => {
+        if (payload) {
+            return await axios.post(`/CaseManagement/GetByID_Detective`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.getByID_Detective");
+        return null;
+    };
+
+    getAllDetectiveNotes = async ({ queryKey }) => {
+        const [_key, payload] = queryKey;
+        if (payload) {
+            return await axios.post(`/CaseManagement/GetAllDetective`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.getAllDetectiveNotes");
+        return null;
+    };
+
+    updateDetectiveNote = async (payload) => {
+        if (payload) {
+            return await axios.post(`/CaseManagement/UpdateDetective`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.updateDetectiveNote");
+        return null;
+    };
+
+    deleteDetectiveNote = async (payload) => {
+        if (payload) {
+            return await axios.post(`/CaseManagement/DeleteDetective`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.deleteDetectiveNote");
+        return null;
+    };
+
+    deleteDetectiveDocument = async (payload) => {
+        if (payload) {
+            return await axios.post(`/CaseManagement/DeleteDetectiveDocument`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.deleteDetectiveDocument");
+        return null;
+    };
+
+    addCaseClosure = async (payload) => {
+        if (payload) {
+            return await axios.post(`/CaseManagement/AddCaseClosure`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.addCaseClosure");
+        return null;
+    };
+
+    getCaseClosureByID = async ({ queryKey }) => {
+        const [_key, payload] = queryKey;
+        if (payload) {
+            return await axios.post(`/CaseManagement/GetCaseClosureByID`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.getCaseClosureByID");
+        return null;
+    };
+
+    addCaseNotification = async (payload) => {
+        if (payload) {
+            return await axios.post(`/CaseManagement/AddCaseNotification`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.addCaseNotification");
+        return null;
+    };
+
+    getCaseNotificationHistory = async ({ queryKey }) => {
+        const [_key, payload] = queryKey;
+        if (payload) {
+            return await axios.post(`/CaseManagement/GetCaseNotificationHistory`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.getCaseNotificationHistory");
+        return null;
+    };
+
+    getDetectiveNoteDoc = async (payload) => {
+        if (payload) {
+            return await axios.post(`/CaseManagement/GetDataDetectiveDocuments`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.getDetectiveNoteDoc");
         return null;
     };
 

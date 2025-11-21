@@ -20,7 +20,9 @@ import {
     Mode_Of_Training_Drp_Data,
     Training_Category_Drp_Data,
     Training_Course_Drp_Data,
-    Level_Clearance_Drp_Data
+    Level_Clearance_Drp_Data,
+    CaseTask_Drp_Data,
+    SourceType_Drp_Data
 
 
 } from "../actionTypes"
@@ -38,7 +40,7 @@ const initialState = {
     circumstancesDrpData: [], bodyXRayDrpData: [], skinToneDrpData: [], missingPersonRelationshipDrpData: [], correctedVisionDrpData: [], fingerPrintedDrpData: [], missingCMCDrpData: [], bloodTypeDrpData: [], circumcisionDrpData: [],
     JwelleryDrpData: [], receiveSourceDrpData: [], fbiCodesDrpData: [], cadCfsCodeDrpData: [], rmsDispositionDrpData: [], cadDispositionDrpData: [], narrativeTypeDrpData: [],
     pictureTypeDrpData: [], pictureViewDrpData: [], topColorDrpData: [], bottomColorDrpData: [], eyeColorDrpData: [], hairColorDrpData: [], isPrimaryDrpData: [], isSecondaryDrpData: [], alertDrpData: [], arresteeNameVehicle: [],
-
+    caseTaskDrpData: [], sourceTypeDrpData: [],
 
 
     //------------------------------------ArrestHome-----------------------------
@@ -103,6 +105,16 @@ const DropDownReducer = (state = initialState, action) => {
             return {
                 ...state,
                 narrativeTypeDrpData: action.payload
+            }
+        case CaseTask_Drp_Data:
+            return {
+                ...state,
+                caseTaskDrpData: action.payload
+            }
+        case SourceType_Drp_Data:
+            return {
+                ...state,
+                sourceTypeDrpData: action.payload
             }
         case Cad_Disposition_Drp_Data:
             return {

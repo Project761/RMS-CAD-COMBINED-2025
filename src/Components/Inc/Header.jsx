@@ -33,7 +33,7 @@ const labels = [
 const Header = (props) => {
 
   const { listManagementSideBar, agencySideBar, personnelSideBar } = props
-  const { setUpdateCount, updateCount, get_Name_Count, setIncidentStatus, setTabCount, setIncidentCount, setAgencyName, agnecyName, changesStatus, setIsLogout, setIncAdvSearchData, setIncidentSearchData, setPropertyCount, setVehicleCount, setRecentSearchData, setIncidentRecentData, setSearchObject } = useContext(AgencyContext)
+  const { setUpdateCount, updateCount, get_Name_Count, setIncidentStatus, setTabCount, setIncidentCount, setAgencyName, agnecyName, changesStatus, setIsLogout, setIncAdvSearchData, setIncidentSearchData, setPropertyCount, setVehicleCount, setRecentSearchData, setIncidentRecentData, setSearchObject, setCaseManagementDataIncidentRecent } = useContext(AgencyContext)
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -269,7 +269,7 @@ const Header = (props) => {
 
   const clickOnIncident = () => {
     setUpdateCount(updateCount + 1); setIncidentStatus(false); setIncAdvSearchData(false); setIncidentSearchData([]);
-    setIncidentCount([]); setTabCount([]); setPropertyCount([]); setVehicleCount([])
+    setIncidentCount([]); setTabCount([]); setPropertyCount([]); setVehicleCount([]); setCaseManagementDataIncidentRecent([]);
   }
 
   const clickOnMasterName = () => {

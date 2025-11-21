@@ -5,7 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { coloredStyle_Select, colorLessStyle_Select } from "../Utility/CustomStylesForReact";
 import useObjState from "../../CADHook/useObjState";
 import DataTable from "react-data-table-component";
-import { base64ToString, filterPassedTimeZonesProperty, tableCustomStyles } from "../../Components/Common/Utility";
+import { base64ToString, filterPassedTimeZonesProperty, getShowingDateText, tableCustomStyles } from "../../Components/Common/Utility";
 import { useDispatch, useSelector } from "react-redux";
 import { useQuery } from "react-query";
 import CaseManagementServices from "../../CADServices/APIs/caseManagement";
@@ -18,14 +18,21 @@ import { get_Inc_ReportedDate } from "../../redux/actions/Agency";
 import { toastifySuccess } from "../../Components/Common/AlertMsg";
 import { isEmpty, isEmptyObject } from "../../CADUtils/functions/common";
 
-function Home({ RMSCaseNumber = null, refetchCaseManagementCaseData = () => { }, caseData = null }) {
+function Home({ CaseId = null, RMSCaseNumber = null, refetchCaseManagementCaseData = () => { }, caseData = null }) {
     const dispatch = useDispatch();
     const agencyOfficerDrpData = useSelector((state) => state.DropDown.agencyOfficerDrpData);
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
     const incReportedDate = useSelector((state) => state.Agency.incReportedDate);
-    const { datezone } = useContext(AgencyContext);
+    const { datezone, caseManagementDataIncidentRecent, setCaseManagementDataIncidentRecent } = useContext(AgencyContext);
     const startRef = React.useRef();
     const [incidentList, setIncidentList] = useState([]);
+    const [chargeCodeDrp, setChargeCodeDrp] = useState([]);
+    const [categoryIdDrp, setCategoryIdDrp] = useState([]);
+    const [showPotentialIncidentsModal, setShowPotentialIncidentsModal] = useState(false);
+    const [showAttachIncidentModal, setShowAttachIncidentModal] = useState(false);
+    const [selectedIncident, setSelectedIncident] = useState(null);
+    const [supervisorsByAgencyID, setSupervisorsByAgencyID] = useState([]);
+    const [primaryOfficerHistory, setPrimaryOfficerHistory] = useState([]);
     const [
         caseFormState,
         setCaseFormState,
@@ -100,6 +107,50 @@ function Home({ RMSCaseNumber = null, refetchCaseManagementCaseData = () => { },
         }
     }, [isGetCaseManagementCaseDataSuccess, getCaseManagementCaseData])
 
+    const getSupervisorsByAgencyIDKey = `/Personnel/GetSupervisorsByAgencyID/${localStoreData?.AgencyID}`;
+    const { data: getSupervisorsByAgencyID, isSuccess: isGetSupervisorsByAgencyIDSuccess } = useQuery(
+        [getSupervisorsByAgencyIDKey, {
+            "AgencyID": localStoreData?.AgencyID,
+        },],
+        CaseManagementServices.getSupervisorsByAgencyID,
+        {
+            refetchOnWindowFocus: false,
+            retry: 0,
+            enabled: !!localStoreData?.AgencyID
+        }
+    );
+
+    const getPrimaryOfficerHistoryKey = `/CaseManagement/GetPrimaryOfficerHistory/${CaseId}`;
+    const { data: getPrimaryOfficerHistory, isSuccess: isGetPrimaryOfficerHistorySuccess } = useQuery(
+        [getPrimaryOfficerHistoryKey, {
+            "CaseID": CaseId,
+        },],
+        CaseManagementServices.getPrimaryOfficerHistory,
+        {
+            refetchOnWindowFocus: false,
+            retry: 0,
+            enabled: !!CaseId
+        }
+    );
+
+    useEffect(() => {
+        if (getPrimaryOfficerHistory && isGetPrimaryOfficerHistorySuccess) {
+            const data = JSON.parse(getPrimaryOfficerHistory?.data?.data)?.Table
+            setPrimaryOfficerHistory(data || [])
+        } else {
+            setPrimaryOfficerHistory([])
+        }
+    }, [getPrimaryOfficerHistory, isGetPrimaryOfficerHistorySuccess])
+
+    useEffect(() => {
+        if (isGetSupervisorsByAgencyIDSuccess && getSupervisorsByAgencyID) {
+            const data = Comman_changeArrayFormat(JSON.parse(getSupervisorsByAgencyID?.data?.data)?.Table, 'PINID', 'FullName')
+            setSupervisorsByAgencyID(data || []);
+        } else {
+            setSupervisorsByAgencyID([]);
+        }
+    }, [isGetSupervisorsByAgencyIDSuccess, getSupervisorsByAgencyID])
+
     useEffect(() => {
         if (caseData?.CaseID > 0) {
             const parseDateSafe = (value) => {
@@ -110,7 +161,7 @@ function Home({ RMSCaseNumber = null, refetchCaseManagementCaseData = () => { },
 
             setCaseFormState(prev => ({
                 ...prev,
-                reportedDateTime: parseDateSafe(caseData?.ReportedDateTime),
+                reportedDateTime: parseDateSafe(caseData?.CaseReportedDateTime),
                 assignedDateTime: parseDateSafe(caseData?.AssignedDateTime),
                 nextStatusReviewDue: parseDateSafe(caseData?.NextStatusReviewDue),
                 nextFormalReportDue: parseDateSafe(caseData?.NextFormalReportDue),
@@ -119,8 +170,12 @@ function Home({ RMSCaseNumber = null, refetchCaseManagementCaseData = () => { },
                 supervisor: agencyOfficerDrpData?.find(item => item?.value === caseData?.SupervisorID),
                 assignedProsecutor: agencyOfficerDrpData?.find(item => item?.value === caseData?.AssignedProsecutorID),
                 masterCaseNumber: "",
-                caseNotes: caseData?.CaseNotes
+                caseNotes: caseData?.CaseNotes,
+                crimeCode: chargeCodeDrp?.find(item => item?.value === caseData?.CrimeCodeID),
+                crimeClass: categoryIdDrp?.find(item => item?.value === caseData?.CrimeClassID)
             }))
+        } else {
+            clearCaseFormState();
         }
     }, [caseData, priorityDrpData, agencyOfficerDrpData, setCaseFormState])
 
@@ -131,7 +186,32 @@ function Home({ RMSCaseNumber = null, refetchCaseManagementCaseData = () => { },
         const defaultDate = datezone ? new Date(datezone) : null;
         handleCaseFormState("reportedDateTime", defaultDate);
         if (!incReportedDate) { dispatch(get_Inc_ReportedDate(IncID)) }
-    }, [localStoreData])
+        getChargeCodeIDDrp(localStoreData?.AgencyID, 0, 0);
+        CategoryDrpDwnVal(localStoreData?.AgencyID);
+    }, [localStoreData, IncID, datezone])
+
+    const CategoryDrpDwnVal = (loginAgencyID) => {
+        const val = { AgencyID: loginAgencyID };
+        fetchPostData("ChargeCategory/GetDataDropDown_ChargeCategory", val).then(
+            (data) => {
+                if (data) setCategoryIdDrp(Comman_changeArrayFormat(data, "ChargeCategoryID", "Description"));
+                else setCategoryIdDrp([]);
+            }
+        );
+    };
+
+    const getChargeCodeIDDrp = (loginAgencyID, NIBRSCodeId, LawTitleID) => {
+        const val = {
+            AgencyID: loginAgencyID, FBIID: NIBRSCodeId, LawTitleID: LawTitleID,
+        };
+        fetchPostData("ChargeCodes/GetDataDropDown_ChargeCodes", val).then((data) => {
+            if (data) {
+                setChargeCodeDrp(Comman_changeArrayFormat(data, "ChargeCodeID", "Description"));
+            }
+            else
+                setChargeCodeDrp([]);
+        });
+    };
 
     //-----------DrpDown_Data-------------------
     const get_priorityDrpData = (loginAgencyID) => {
@@ -146,45 +226,29 @@ function Home({ RMSCaseNumber = null, refetchCaseManagementCaseData = () => { },
     const tableColumns = [
         {
             name: "Investigator/Personnel",
-            selector: (row) => row.investigator,
+            selector: (row) => row.FullName,
             sortable: true,
         },
         {
             name: "Date Assigned",
-            selector: (row) => row.dateAssigned,
+            selector: (row) => row.CreatedDtTm ? getShowingDateText(row.CreatedDtTm) : "",
             sortable: true,
         },
         {
             name: "Date Removed",
-            selector: (row) => row.dateRemoved,
+            selector: (row) => row.DeletedDtTm ? getShowingDateText(row.DeletedDtTm) : "",
             sortable: true,
         },
         {
             name: "Primary Investigator",
-            selector: (row) => row.primaryInvestigator,
+            selector: (row) => row.IsPrimaryOfficer,
             cell: (row) => {
                 return (
-                    <span className={`badge ${row.primaryInvestigator ? 'bg-success' : 'bg-secondary'}`}>
-                        {row.primaryInvestigator ? 'Yes' : 'No'}
+                    <span className={`badge ${row.IsPrimaryOfficer ? 'bg-success' : 'bg-secondary'}`}>
+                        {row.IsPrimaryOfficer ? 'Yes' : 'No'}
                     </span>
                 );
             }
-        }
-    ];
-
-    // Table data for Personnel Assignment History
-    const tableData = [
-        {
-            investigator: "J. Smith",
-            dateAssigned: "06/27/2017 13:47",
-            dateRemoved: "06/27/2017 13:47",
-            primaryInvestigator: true
-        },
-        {
-            investigator: "L. Jones",
-            dateAssigned: "06/27/2017 00:00",
-            dateRemoved: "--",
-            primaryInvestigator: false
         }
     ];
 
@@ -195,10 +259,12 @@ function Home({ RMSCaseNumber = null, refetchCaseManagementCaseData = () => { },
             if (field === "reportedDateTime" && !(caseFormState[field])) {
                 handleErrorCaseFormState(field, true);
                 isError = true;
-            } else if (field === "assignedProsecutor" && isEmptyObject(caseFormState[field])) {
-                handleErrorCaseFormState(field, true);
-                isError = true;
-            } else if (field === "assignedDateTime" && !(caseFormState[field])) {
+            }
+            // else if (field === "assignedProsecutor" && isEmptyObject(caseFormState[field])) {
+            //     handleErrorCaseFormState(field, true);
+            //     isError = true;
+            // } 
+            else if (field === "assignedDateTime" && !(caseFormState[field])) {
                 handleErrorCaseFormState(field, true);
                 isError = true;
             } else if (field === "supervisor" && isEmptyObject(caseFormState[field])) {
@@ -219,10 +285,13 @@ function Home({ RMSCaseNumber = null, refetchCaseManagementCaseData = () => { },
 
     const handleSave = async () => {
         if (!validation()) return;
+        const isUpdate = CaseId ? true : false;
         const res = await CaseManagementServices.caseManagementCaseReviewWithAssign({
+            "CaseManagementID": isUpdate ? CaseId : undefined,
             "AgencyID": localStoreData?.AgencyID,
             "PINID": localStoreData?.PINID,
-            "CreatedByUserFK": localStoreData?.PINID,
+            "CreatedByUserFK": isUpdate ? undefined : localStoreData?.PINID,
+            "ModifiedByUserFK": isUpdate ? localStoreData?.PINID : undefined,
             "AssignedDateTime": caseFormState?.assignedDateTime,
             "NextStatusReviewDue": caseFormState?.nextStatusReviewDue,
             "NextFormalReportDue": caseFormState?.nextFormalReportDue,
@@ -232,15 +301,77 @@ function Home({ RMSCaseNumber = null, refetchCaseManagementCaseData = () => { },
             "IncidentID": IncID,
             "CasePriorityID": caseFormState?.casePriority?.value,
             "CaseComment": caseFormState?.caseNotes,
-            "MasterCaseLink": caseFormState?.masterCaseNumber
+            "MasterCaseLink": caseFormState?.masterCaseNumber,
+            "CrimeCodeID": caseFormState?.crimeCode?.value,
+            "CrimeClassID": caseFormState?.crimeClass?.value
         });
         if (res?.status === 200) {
-            toastifySuccess("Data Saved Successfully")
+            toastifySuccess(isUpdate ? "Data Updated Successfully" : "Data Saved Successfully")
             refetchCaseManagementCaseIDData();
             refetchCaseManagementCaseData();
             clearErrorCaseFormState();
         }
     }
+
+    const potentialIncidentsTableColumns = [
+        {
+            name: "Incident",
+            selector: (row) => row.Potentialincidents,
+            sortable: true,
+            cell: (row) => {
+                return (
+                    <button
+                        type="button"
+                        onClick={() => {
+                            // Preserve existing data and add new row data
+                            let newData = [...(caseManagementDataIncidentRecent || [])];
+                            // Check if item already exists (by Potentialincidents or IncidentID if available)
+                            const existingItem = newData.find((item) =>
+                                item?.Potentialincidents === row?.Potentialincidents ||
+                                (item?.IncidentID && row?.IncidentID && item?.IncidentID === row?.IncidentID)
+                            );
+                            if (!existingItem) {
+                                newData.push(row);
+                            }
+                            setCaseManagementDataIncidentRecent(newData);
+                        }}
+                        style={{
+                            color: '#007bff',
+                            textDecoration: 'underline',
+                            cursor: 'pointer',
+                            background: 'none',
+                            border: 'none',
+                            padding: 0,
+                            font: 'inherit'
+                        }}
+                    >
+                        {row.Potentialincidents}
+                    </button>
+                );
+            },
+        },
+        {
+            name: "Reason",
+            selector: (row) => row.Reason,
+            sortable: true,
+        },
+        {
+            name: "Attach",
+            selector: (row) => row.Attach,
+            sortable: true,
+            cell: (row) => {
+                return (
+                    <button className="btn btn-primary btn-sm" onClick={() => {
+                        setSelectedIncident(row?.Potentialincidents);
+                        setShowAttachIncidentModal(true);
+                    }}>
+                        <i className="fa fa-paperclip"></i>
+                    </button>
+                );
+            },
+            width: '90px',
+        },
+    ];
 
     return (
         <div className="container-fluid">
@@ -275,7 +406,7 @@ function Home({ RMSCaseNumber = null, refetchCaseManagementCaseData = () => { },
                                         showDisabledMonthNavigation
                                         minDate={new Date(incReportedDate)}
                                         maxDate={new Date(datezone)}
-                                        filterTime={(date) => filterPassedTimeZonesProperty(date, incReportedDate, datezone)}
+                                        filterTime={(date) => filterPassedTimeZonesProperty(date, caseFormState.reportedDateTime, incReportedDate)}
                                         dateFormat="MM/dd/yyyy HH:mm"
                                         className="form-control py-1 new-input requiredColor"
                                         placeholderText="Select Date/Time"
@@ -298,6 +429,8 @@ function Home({ RMSCaseNumber = null, refetchCaseManagementCaseData = () => { },
                                     <label className="form-label fw-bold text-nowrap">Crime Code & Description</label>
                                     <Select
                                         placeholder="Select"
+                                        options={chargeCodeDrp}
+                                        isClearable
                                         styles={colorLessStyle_Select}
                                         value={caseFormState.crimeCode}
                                         onChange={(selectedOption) => handleCaseFormState("crimeCode", selectedOption)}
@@ -307,6 +440,8 @@ function Home({ RMSCaseNumber = null, refetchCaseManagementCaseData = () => { },
                                     <label className="form-label fw-bold text-nowrap">Crime Class</label>
                                     <Select
                                         placeholder="Select"
+                                        options={categoryIdDrp}
+                                        isClearable
                                         styles={colorLessStyle_Select}
                                         value={caseFormState.crimeClass}
                                         onChange={(selectedOption) => handleCaseFormState("crimeClass", selectedOption)}
@@ -330,18 +465,13 @@ function Home({ RMSCaseNumber = null, refetchCaseManagementCaseData = () => { },
 
             {/* Potential Related Incidents */}
             <div className="row mb-4">
-                <div className="col-12">
-                    <div className="card" style={{ border: '1px solid #9ec9f5' }}>
-                        <div className="card-header" style={{ backgroundColor: '#f0f7ff', borderBottom: '1px solid #9ec9f5', color: '#003366' }}>
-                            <h6 className="mb-0 fw-bold">Potential Related Incidents ({caseFormState.incidentAddress})</h6>
-                        </div>
-                        <div className="card-body" style={{ backgroundColor: '#f0f7ff', }}>
-                            <div className="mb-2 d-flex align-items-center font-weight-bold" style={{ gap: '10px' }}>
-                                <span className="">{incidentList?.map(item => item?.Potentialincidents).join(', ')}</span>
-                            </div>
-                            <p className="text-muted mb-0">Review these incidents before assigning a Master Case #.</p>
-                        </div>
-                    </div>
+                <div className="col-12 d-flex justify-content-end">
+                    <button
+                        className="btn btn-success px-4 py-2"
+                        onClick={() => setShowPotentialIncidentsModal(true)}
+                    >
+                        Potential Related Incidents
+                    </button>
                 </div>
             </div>
 
@@ -378,7 +508,7 @@ function Home({ RMSCaseNumber = null, refetchCaseManagementCaseData = () => { },
                                     <Select
                                         placeholder="Select"
                                         styles={coloredStyle_Select}
-                                        options={agencyOfficerDrpData}
+                                        options={supervisorsByAgencyID}
                                         value={caseFormState.supervisor}
                                         isClearable
                                         onChange={(selectedOption) => handleCaseFormState("supervisor", selectedOption)}
@@ -399,20 +529,19 @@ function Home({ RMSCaseNumber = null, refetchCaseManagementCaseData = () => { },
                                         dateFormat="MM/dd/yyyy h:mm aa"
                                         minDate={new Date(incReportedDate)}
                                         maxDate={new Date(datezone)}
-                                        filterTime={(date) => filterPassedTimeZonesProperty(date, incReportedDate, datezone)}
+                                        filterTime={(date) => filterPassedTimeZonesProperty(date, caseFormState.assignedDateTime, incReportedDate)}
                                         className="form-control py-1 new-input requiredColor"
                                         placeholderText="Select Date/Time"
                                     />
                                 </div>
                                 <div className="col-md-4 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
                                     <label className="form-label"><span className="fw-bold text-nowrap">Assigned Prosecutor</span> {errorCaseFormState.assignedProsecutor && isEmptyObject(caseFormState.assignedProsecutor) ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
-                                    <Select
-                                        placeholder="Select"
-                                        styles={coloredStyle_Select}
-                                        value={caseFormState.assignedProsecutor}
-                                        options={agencyOfficerDrpData}
-                                        isClearable
-                                        onChange={(selectedOption) => handleCaseFormState("assignedProsecutor", selectedOption)}
+                                    <input
+                                        type="text"
+                                        className="form-control py-1 new-input requiredColor"
+                                        placeholder="Enter Prosecutor Name"
+                                        value={caseFormState.assignedProsecutorName}
+                                        onChange={(e) => handleCaseFormState("assignedProsecutorName", e.target.value)}
                                     />
                                 </div>
                                 <div className="col-md-4 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
@@ -488,20 +617,36 @@ function Home({ RMSCaseNumber = null, refetchCaseManagementCaseData = () => { },
                     </fieldset>
                 </div>
             </div>
+            {/* Action Buttons */}
+            <div className="row">
+                <div className="col-12">
+                    <div className="d-flex justify-content-end" style={{ gap: '10px' }}>
+                        <button
+                            className="cancel-button"
+                            onClick={() => { clearCaseFormState(); clearErrorCaseFormState(); }}
+                        >
+                            Clear
+                        </button>
+                        <button className="btn btn-success px-4 py-2" onClick={handleSave}>
+                            {CaseId ? 'Update' : 'Save'}
+                        </button>
+                    </div>
+                </div>
+            </div>
 
             {/* Personnel Assignment History */}
             <div className="row mb-4">
                 <div className="col-12">
                     <fieldset>
-                        <legend>Personnel Assignment History</legend>
+                        <legend>Primary Officer History</legend>
                         <div className="mt-3">
                             <div className="table-responsive">
                                 <DataTable
                                     dense
                                     columns={tableColumns}
-                                    data={tableData}
+                                    data={primaryOfficerHistory}
                                     customStyles={tableCustomStyles}
-                                    pagination
+                                    pagination={false}
                                     responsive
                                     noDataComponent={'There are no data to display'}
                                     striped
@@ -515,22 +660,98 @@ function Home({ RMSCaseNumber = null, refetchCaseManagementCaseData = () => { },
                 </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="row">
-                <div className="col-12">
-                    <div className="d-flex justify-content-end" style={{ gap: '10px' }}>
-                        <button
-                            className="cancel-button"
-                            onClick={() => { clearCaseFormState(); clearErrorCaseFormState(); }}
-                        >
-                            Clear
-                        </button>
-                        <button className="btn btn-success px-4 py-2" onClick={handleSave}>
-                            Save
-                        </button>
+            {/* Potential Related Incidents Modal */}
+            {showPotentialIncidentsModal && (
+                <div
+                    className="modal fade show"
+                    style={{ display: 'block', background: "rgba(0,0,0, 0.5)", zIndex: "9999" }}
+                    id="PotentialIncidentsModal"
+                    tabIndex="-1"
+                    aria-labelledby="potentialIncidentsModalLabel"
+                    aria-hidden="false"
+                    onClick={(e) => {
+                        if (e.target.id === 'PotentialIncidentsModal') {
+                            setShowPotentialIncidentsModal(false);
+                        }
+                    }}
+                >
+                    <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: "800px" }}>
+                        <div className="modal-content" style={{ borderRadius: "8px" }}>
+                            <div className="modal-header" style={{ borderBottom: "1px solid #dee2e6" }}>
+                                <h5 className="modal-title fw-bold" id="potentialIncidentsModalLabel">
+                                    Potential Related Incidents ({caseFormState.incidentAddress || 'N/A'})
+                                </h5>
+                            </div>
+                            <div className="modal-body p-4" style={{ backgroundColor: '#f0f7ff', }}>
+                                <div className="mb-2 d-flex align-items-center font-weight-bold" style={{ gap: '10px', flexWrap: 'wrap' }}>
+                                    <DataTable
+                                        dense
+                                        columns={potentialIncidentsTableColumns}
+                                        data={incidentList}
+                                        customStyles={tableCustomStyles}
+                                        pagination={false}
+                                        responsive
+                                        noDataComponent={'There are no data to display'}
+                                        striped
+                                        persistTableHead={true}
+                                        fixedHeaderScrollHeight='350px'
+                                        highlightOnHover
+                                        fixedHeader
+                                    />
+                                </div>
+                                <p className="text-muted mb-0">Review these incidents before assigning a Master Case #.</p>
+                            </div>
+                            <div className="modal-footer" style={{ borderTop: "1px solid #dee2e6" }}>
+                                <button
+                                    type="button"
+                                    className="btn text-white"
+                                    onClick={() => setShowPotentialIncidentsModal(false)}
+                                    style={{ backgroundColor: '#17a2b8', borderColor: '#17a2b8' }}
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
+
+            {/* Attach Incident Confirmation Modal */}
+            {showAttachIncidentModal && (
+                <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-body text-center py-5">
+                                <h5 className="modal-title mt-2">Are you sure you want to attach this Incident?</h5>
+                                <div className="btn-box mt-3">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            // Handle attach incident logic here
+                                            setShowAttachIncidentModal(false);
+                                            setSelectedIncident(null);
+                                        }}
+                                        className="btn btn-sm text-white"
+                                        style={{ background: "#ef233c" }}
+                                    >
+                                        Yes
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="btn btn-sm btn-secondary ml-2"
+                                        onClick={() => {
+                                            setShowAttachIncidentModal(false);
+                                            setSelectedIncident(null);
+                                        }}
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

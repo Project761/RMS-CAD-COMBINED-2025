@@ -80,7 +80,8 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
     if (!IncID) IncID = 0;
     else IncID = parseInt(base64ToString(IncID));
 
-    const { nameShowPage, changesStatus, auditCount, offenderCount, nameFilterData, victimCount, tabCount, NameTabCount, setNameShowPage, countStatus, countAppear, localStoreArray, get_LocalStorage, setNameSingleData, get_Data_Name, nibrsNameValidateArray, incidentCount } = useContext(AgencyContext);
+    const { nameShowPage, changesStatus, auditCount, offenderCount, nameFilterData, get_Incident_Count, victimCount, tabCount, NameTabCount, setNameShowPage, countStatus, countAppear, localStoreArray, get_LocalStorage, setNameSingleData, get_Data_Name, nibrsNameValidateArray, incidentCount } = useContext(AgencyContext);
+    // console.log("🚀 ~ NameTab ~ nibrsNameValidateArray:", nibrsNameValidateArray)
 
     const carouselRef = useRef(null);
     const navigate = useNavigate();
@@ -339,7 +340,9 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                 toastifySuccess(parseData?.Table[0].Message);
                 get_Data_Name(DecIncID, MstPage === "MST-Name-Dash" ? true : false);
                 // get_NameTypeData(loginAgencyID);
-                // setStatesChangeStatus(false); get_Incident_Count(mainIncidentID, loginPinID); Reset(); 
+                // setStatesChangeStatus(false); 
+                get_Incident_Count(DecIncID, loginPinID);
+                //  Reset(); 
                 setStatusFalse();
             } else { console.log("Somthing Wrong"); }
         })

@@ -47,10 +47,11 @@ const initialFormValues = {
     isApartmentNo: false,
     isCoordinateX: false,
     isCoordinateY: false,
+    jurisdiction: "",
 };
 
 const LocationInformationModal = (props) => {
-    const { openLocationInformationModal, setOpenLocationInformationModal, setSelectedButton = () => { }, geoFormValues, setGEOFormValues, isGoogleLocation = false, createLocationPayload, isVerifyLocation = false, geoLocationID, isCheckGoogleLocation, setIsVerifyReportedLocation = () => { }
+    const { openLocationInformationModal, setOpenLocationInformationModal, setSelectedButton = () => { }, geoFormValues, setGEOFormValues, isGoogleLocation = false, createLocationPayload, isVerifyLocation = false, geoLocationID, isCheckGoogleLocation, setIsVerifyReportedLocation = () => { }, jurisdictionDropDown = []
     } = props;
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
     const [premiseDropDown, setPremiseDropDown] = useState([]);
@@ -72,6 +73,7 @@ const LocationInformationModal = (props) => {
         fireZone: false,
         otherZone: false,
         coordinateX: false,
+        jurisdiction: false,
         coordinateY: false
     });
 
@@ -138,7 +140,6 @@ const LocationInformationModal = (props) => {
             enabled: openLocationInformationModal
         }
     );
-
     useEffect(() => {
         if (isFetchGeoZoneData && geoZoneData) {
             const data = JSON.parse(geoZoneData?.data?.data)?.Table || [];
@@ -160,17 +161,30 @@ const LocationInformationModal = (props) => {
         let isError = false;
         const keys = Object.keys(errorGeo);
         keys.forEach((field) => {
-            if (field === "coordinateX"
-                && isEmpty(locationInformation[field])
-            ) {
+            // if (field === "coordinateX"
+            //     && isEmpty(locationInformation[field])
+            // ) {
+            //     handleErrorGeo(field, true);
+            //     isError = true;
+            // } else if (field === "coordinateY" &&
+            //     isEmpty(locationInformation[field])
+            // ) {
+            //     handleErrorGeo(field, true);
+            //     isError = true;
+            // } 
+            if (field === "fireZone" && isEmptyObject(locationInformation[field])) {
                 handleErrorGeo(field, true);
                 isError = true;
-            } else if (field === "coordinateY" &&
-                isEmpty(locationInformation[field])
-            ) {
+            } else if (field === "otherZone" && isEmptyObject(locationInformation[field])) {
                 handleErrorGeo(field, true);
                 isError = true;
-            } else if ((field === "fireZone" || field === "emsZone" || field === "otherZone" || field === "patrolZone") && !isCheckGoogleLocation && isEmptyObject(locationInformation[field])) {
+            } else if (field === "emsZone" && isEmptyObject(locationInformation[field])) {
+                handleErrorGeo(field, true);
+                isError = true;
+            } else if (field === "patrolZone" && isEmptyObject(locationInformation[field])) {
+                handleErrorGeo(field, true);
+                isError = true;
+            } else if (field === "jurisdiction" && isEmptyObject(locationInformation[field])) {
                 handleErrorGeo(field, true);
                 isError = true;
             } else {
@@ -502,7 +516,7 @@ const LocationInformationModal = (props) => {
                                                     />
 
                                                 </div>
-                                                <div className="col-7 d-flex align-items-center justify-content-end ml-2">
+                                                <div className="col-5 d-flex align-items-center justify-content-end ml-2">
                                                     <label className="tab-form-label text-nowrap mr-2">
                                                         Intersection St/St
                                                     </label>
@@ -524,6 +538,42 @@ const LocationInformationModal = (props) => {
                                                         // onKeyDown={handleNumberTextKeyDown}
                                                         onChange={handleInputChange}
                                                         maxLength={50}
+                                                    />
+                                                </div>
+                                                <div className="col-1 d-flex align-items-center justify-content-end ml-1">
+                                                    <label className="tab-form-label text-nowrap" style={{ textAlign: "end" }}>
+                                                        Jurisdiction
+                                                        {errorGeo.jurisdiction && isEmptyObject(locationInformation.jurisdiction) && (
+                                                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>
+                                                                {"Select Jurisdiction"}
+                                                            </p>
+                                                        )}
+                                                    </label>
+                                                </div>
+                                                <div className="tab-form-row-gap d-flex" style={{ marginTop: "5px" }}>
+                                                    <Select
+                                                        name="jurisdiction"
+                                                        styles={colourStyles}
+                                                        isClearable
+                                                        options={jurisdictionDropDown}
+                                                        placeholder="Select..."
+                                                        className="w-100 ml-1"
+                                                        value={locationInformation.jurisdiction}
+                                                        getOptionLabel={(v) => `${v?.JurisdictionCode} | ${v?.Name}`}
+                                                        getOptionValue={(v) => v?.JurisdictionCode}
+                                                        formatOptionLabel={(option, { context }) => {
+                                                            return context === 'menu'
+                                                                ? `${option?.JurisdictionCode} | ${option?.Name}`
+                                                                : option?.JurisdictionCode;
+                                                        }}
+                                                        maxMenuHeight={100}
+                                                        onChange={handleSelectChange}
+                                                        onInputChange={(inputValue, actionMeta) => {
+                                                            if (inputValue.length > 12) {
+                                                                return inputValue.slice(0, 12);
+                                                            }
+                                                            return inputValue;
+                                                        }}
                                                     />
                                                 </div>
                                             </div>
@@ -693,28 +743,28 @@ export default memo(LocationInformationModal);
 
 // PropTypes definition
 LocationInformationModal.propTypes = {
-  openLocationInformationModal: PropTypes.bool.isRequired,
-  setOpenLocationInformationModal: PropTypes.func.isRequired,
-  setSelectedButton: PropTypes.func,
-  geoFormValues: PropTypes.object,
-  setGEOFormValues: PropTypes.func,
-  isGoogleLocation: PropTypes.bool,
-  createLocationPayload: PropTypes.func,
-  isVerifyLocation: PropTypes.bool,
-  geoLocationID: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  isCheckGoogleLocation: PropTypes.bool,
-  setIsVerifyReportedLocation: PropTypes.func
+    openLocationInformationModal: PropTypes.bool.isRequired,
+    setOpenLocationInformationModal: PropTypes.func.isRequired,
+    setSelectedButton: PropTypes.func,
+    geoFormValues: PropTypes.object,
+    setGEOFormValues: PropTypes.func,
+    isGoogleLocation: PropTypes.bool,
+    createLocationPayload: PropTypes.func,
+    isVerifyLocation: PropTypes.bool,
+    geoLocationID: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    isCheckGoogleLocation: PropTypes.bool,
+    setIsVerifyReportedLocation: PropTypes.func
 };
 
 // Default props
 LocationInformationModal.defaultProps = {
-  setSelectedButton: () => {},
-  geoFormValues: {},
-  setGEOFormValues: () => {},
-  isGoogleLocation: false,
-  createLocationPayload: () => {},
-  isVerifyLocation: false,
-  geoLocationID: null,
-  isCheckGoogleLocation: false,
-  setIsVerifyReportedLocation: () => {}
+    setSelectedButton: () => { },
+    geoFormValues: {},
+    setGEOFormValues: () => { },
+    isGoogleLocation: false,
+    createLocationPayload: () => { },
+    isVerifyLocation: false,
+    geoLocationID: null,
+    isCheckGoogleLocation: false,
+    setIsVerifyReportedLocation: () => { }
 };

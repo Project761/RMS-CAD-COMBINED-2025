@@ -317,7 +317,7 @@ const RIVSModal = (props) => {
                     const matchFIRE = selectedCFS.FIRE === null ? true : (selectedCFS.FIRE === true ? resource.FIRE === true : (resource.FIRE === false || resource.FIRE === null));
                     const matchEMERGENCY = selectedCFS.EMERGENCY === null ? true : (selectedCFS.EMERGENCY === true ? resource.EMERGENCY === true : (resource.EMERGENCY === false || resource.EMERGENCY === null));
                     const matchOTHER = selectedCFS.OTHER === null ? true : (selectedCFS.OTHER === true ? resource.OTHER === true : (resource.OTHER === false || resource.OTHER === null));
-                    
+
                     return matchLAW && matchFIRE && matchEMERGENCY && matchOTHER;
                 });
                 setFilteredResourceDropDown(filteredResources);
@@ -759,7 +759,23 @@ const RIVSModal = (props) => {
                                                     </div>
                                                     <div className="col-1 form-check d-flex align-items-center ml-3">
                                                         <input className="form-check-input mb-1" type="checkbox" value="vehicleStop" id="vehicleStop" checked={rIVSState?.vehicleStop} onChange={(e) => {
-                                                            handleRIVSState("vehicleStop", e.target.checked);
+                                                            const isChecked = e.target.checked;
+                                                            handleRIVSState("vehicleStop", isChecked);
+                                                            if (isChecked) {
+                                                                const trafficStopOption = filteredCFSDropDown?.find(
+                                                                    (opt) =>
+                                                                        (opt?.CFSCodeDescription || "").toLowerCase() === "traffic stop"
+                                                                    );
+                                                                if (trafficStopOption) {
+                                                                    handleRIVSState("CFSCodeID", trafficStopOption.CallforServiceID);
+                                                                    handleRIVSState("CFSLDesc", trafficStopOption.CallforServiceID);
+                                                                    handleRIVSState("PriorityID", trafficStopOption.PriorityID);
+                                                                }
+                                                            } else {
+                                                                handleRIVSState("CFSCodeID", "");
+                                                                handleRIVSState("CFSLDesc", "");
+                                                                handleRIVSState("PriorityID", "");
+                                                            }
                                                         }}
                                                             name="vehicleStop" />
                                                         <label className="tab-form-label" htmlFor="vehicleStop" for="vehicleStop">

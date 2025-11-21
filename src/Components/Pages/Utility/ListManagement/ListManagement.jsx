@@ -380,6 +380,28 @@ const ListManagement = () => {
                                                                                 upUrl='TableManagement/UpdateEmployeeType'
                                                                                 delUrl='TableManagement/DeleteEmployeeType'
                                                                               />
+                                                                               :
+                                                                            openPage === 'Case Task' ?
+                                                                              <AddUpList
+                                                                                {...{ openPage }} col4='IsEditable'
+                                                                                col1='Code' col2='Description' col3='ID'
+                                                                                getUrl='CaseTask/GetData_CaseTask'
+                                                                                addUrl='CaseTask/InsertCaseTask'
+                                                                                singleDataUrl='CaseTask/GetSingleData_CaseTask'
+                                                                                upUrl='CaseTask/UpdateCaseTask'
+                                                                                delUrl='CaseTask/DeleteCaseTask'
+                                                                              />
+                                                                              :
+                                                                              openPage === 'Source Type' ?
+                                                                              <AddUpList
+                                                                                {...{ openPage }} col4='IsEditable'
+                                                                                col1='SourceTypeCode' col2='Description' col3='SourceTypeID'
+                                                                                getUrl='CaseManagement/GetData_SourceType'
+                                                                                addUrl='CaseManagement/InsertSourceType'
+                                                                                singleDataUrl='CaseManagement/GetSingleData_SourceType'
+                                                                                upUrl='CaseManagement/UpdateSourceType'
+                                                                                delUrl='CaseManagement/DeleteSourceType'
+                                                                              />
                                                                               :
                                                                               openPage === 'Ethnicity' ?
                                                                                 <AddUpList
