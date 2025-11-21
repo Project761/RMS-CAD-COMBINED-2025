@@ -1417,7 +1417,7 @@ const OffenderVictim = () => {
                                             </div>
                                         </div>
                                         <div className='d-flex justify-content-end'>
-                                            <button type="button" className="btn btn-sm btn-success mr-1 " disabled={!statesChangeStatus} onClick={(e) => { check_Validation_Error_Offense_Section(); }}>Update</button> : <></>
+                                            <button type="button" className="btn btn-sm btn-success mr-1 " disabled={!statesChangeStatus} onClick={(e) => { check_Validation_Error_Offense_Section(); }}>Update</button>
                                         </div>
                                     </fieldset>
                                     <div className="col-12 col-md-12 col-lg-12 mt-2">

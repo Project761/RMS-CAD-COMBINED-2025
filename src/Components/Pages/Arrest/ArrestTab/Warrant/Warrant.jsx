@@ -432,7 +432,9 @@ const Warrant = (props) => {
                 const parseData = JSON.parse(res.data);
                 toastifySuccess(parseData?.Table[0].Message); setChangesStatus(false);
                 get_Name_Count(NameId, DecMasterNameID, MstPage === "MST-Name-Dash" ? true : false);
-                get_WarrentType_Data(NameId, DecMasterNameID); setStatus(false); reset(); get_Arrest_Count(DecArrestId);
+                get_WarrentType_Data(NameId, DecMasterNameID); setStatus(false);
+                get_Arrest_Count(DecArrestId);
+                reset();
             } else console.log("Somthing Wrong");
         })
     }
