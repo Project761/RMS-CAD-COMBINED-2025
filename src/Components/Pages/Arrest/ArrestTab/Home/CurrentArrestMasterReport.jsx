@@ -1266,7 +1266,7 @@ const CurrentArrestMasterReport = (props) => {
                                                                                 </div>
 
                                                                                 {/* Penalties-info */}
-                                                                                <div className="col-12  ">
+                                                                                {/* <div className="col-12  ">
                                                                                     {
                                                                                         JSON.parse(obj?.Charge)?.length > 0 ?
                                                                                             <>
@@ -1382,7 +1382,7 @@ const CurrentArrestMasterReport = (props) => {
                                                                                             :
                                                                                             <></>
                                                                                     }
-                                                                                </div>
+                                                                                </div> */}
 
 
                                                                                 {/* ChargeCourtDisposition  */}
