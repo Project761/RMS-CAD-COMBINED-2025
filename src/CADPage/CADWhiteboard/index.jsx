@@ -155,7 +155,6 @@ function CADWhiteboard() {
     async function handlePinWhiteboard(item) {
         GetDataTimeZone(localStoreData?.AgencyID);
         const data = {
-            "pinnedDate": getShowingMonthDateYear(new Date(datezone)),
             "WhiteboardID": item?.whiteBoardID,
             "IsPinned": !item?.isPinned
         }

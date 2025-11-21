@@ -200,6 +200,7 @@ const Login = ({ login }) => {
             'ReportApproval': data['ReportApproval'] === "1" ? "Single" : 'Multi',
             'IsLevel': data['IsLevel'],
             'IsCaseManagementVisible': data['IsCaseManagementVisible'] === "False" || data['IsCaseManagementVisible'] === "false" || data['IsCaseManagementVisible'] === false ? false : true,
+            'AgencyAddress': data['Agency_Address'],
         }
         // StateName
         // StateCode

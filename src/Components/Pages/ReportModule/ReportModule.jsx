@@ -30,12 +30,10 @@ import Tab from '../../Utility/Tab/Tab';
 import { isEmptyCheck } from '../../../CADUtils/functions/common';
 import { OverlayTrigger, Popover, Tooltip } from 'react-bootstrap';
 
-
-
 const ReportModule = (props) => {
     const navigate = useNavigate();
 
-    const { incidentReportedDate, isPreviewNormalReport, isCaseManagement = false } = props
+    const { incidentReportedDate, isPreviewNormalReport, isCaseManagement = false, CaseId = null } = props
     const useQuery = () => {
         const params = new URLSearchParams(useLocation().search);
         return {
@@ -62,7 +60,7 @@ const ReportModule = (props) => {
     const agencyOfficerFullNameDrpData = useSelector((state) => state.DropDown.agencyOfficerFullNameDrpData);
     const reportApproveOfficer = useSelector((state) => state.Incident.reportApproveOfficer);
     const narrativeTypeDrpData = useSelector((state) => state.DropDown.narrativeTypeDrpData);
-    console.log("narrativeTypeDrpData", narrativeTypeDrpData)
+
     const { get_IncidentTab_Count, get_Incident_Count, changesStatus, setChangesStatus, nibrsStatus, GetDataTimeZone, datezone, setassignedReportID, validate_IncSideBar } = useContext(AgencyContext);
 
     const [narrativeData, setNarrativeData] = useState([]);
@@ -107,11 +105,12 @@ const ReportModule = (props) => {
     const [IsSelfApproved, setIsSelfApproved] = useState(false);
     const [skipApproverAuthor, setskipApproverAuthor] = useState(false);
     const [showModalRecall, setshowModalRecall] = useState(false);
+    const [reportTemplateDropdownData, setReportTemplateDropdownData] = useState([]);
     const detectedWordsRef = useRef([]);
     const [value, setValue] = useState({
         'IncidentId': '', 'NarrativeID': '', 'ReportedByPINActivityID': null, 'NarrativeTypeID': null, 'AsOfDate': null,
         'CreatedByUserFK': '', 'ModifiedByUserFK': '', 'ApprovingSupervisorID': '', 'NarrativeAssignedID': '', 'WrittenForID': '',
-        'Comments': '', 'CommentsDoc': '',
+        'Comments': '', 'CommentsDoc': '', 'reportTemplateTypeId': null
     })
 
     const [errors, setErrors] = useState({
@@ -136,7 +135,15 @@ const ReportModule = (props) => {
             }
         }
     }, [localStoreData, IncID]);
-
+    // useEffect(() => {
+    //     if (localStoreData) {
+    //       setAgencyName(localStoreData?.Agency_Name);
+    //       setUserName(localStoreData?.fullName);
+    //       // setUserName(localStoreData?.UserName);
+    //       // setUserName(localStoreData?.UserName ? localStoreData?.UserName?.split(",")[0] : '');
+    //       getReportPermission(localStoreData?.AgencyID, localStoreData?.PINID)
+    //     }
+    //   }, [localStoreData]);
     const checkId = (id, obj) => {
         const status = obj?.filter((item) => item?.value == id)
         return status?.length > 0
@@ -245,7 +252,7 @@ const ReportModule = (props) => {
             setValue({
                 ...value,
                 'AsOfDate': editval[0]?.AsOfDate || editval[0]?.CreatedDtTm ? getShowingDateText(editval[0]?.AsOfDate || editval[0]?.CreatedDtTm) : null,
-                'NarrativeID': editval[0]?.NarrativeID, 'NarrativeTypeID': editval[0]?.NarrativeTypeID,
+                'NarrativeID': editval[0]?.NarrativeID, 'NarrativeTypeID': editval[0]?.NarrativeTypeID, 'reportTemplateTypeId': editval[0]?.reportTemplateTypeId,
                 'ReportedByPINActivityID': NarrativeAssignId && tabParam && assigned && !narrativeID ? loginPinID : editval[0]?.ReportedByPINActivityID,
                 'WrittenForID': NarrativeAssignId && tabParam && assigned ? (checkWrittenId(loginPinID, WrittenForDataDrp) ? loginPinID : loginPinID) : (narrativeTypeCode?.toLowerCase() === 'ni' ? primaryOfficer : editval[0]?.WrittenForID),
                 'ApprovingSupervisorID': editval[0]?.ApprovingSupervisorID1, 'Status': editval[0]?.Status, 'ModifiedByUserFK': loginPinID,
@@ -282,6 +289,24 @@ const ReportModule = (props) => {
         };
     }, [escFunction]);
 
+    useEffect(() => {
+        if (value?.NarrativeTypeID) {
+            const val = {
+                NarrativeTypeID: value?.NarrativeTypeID,
+                AgencyID: loginAgencyID
+            };
+            fetchPostData("ReportTemplate/NarrativeTypeIDReportTemplate", val).then((res) => {
+                if (res) {
+                    const data = res || [];
+                    setReportTemplateDropdownData(data);
+                } else {
+                    //    console.error("error") 
+                }
+            });
+
+        }
+    }, [value?.NarrativeTypeID])
+
     const ChangeDropDown = (e, name) => {
         !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
         if (e) {
@@ -295,12 +320,30 @@ const ReportModule = (props) => {
         !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
         if (e) {
             setnarrativeTypeCode(e.type);
-            setValue({ ...value, [name]: e.value });
+            setValue({ ...value, [name]: e.value, reportTemplateTypeId: '', CommentsDoc: '', Comments: '' });
             Get_WrittenForDataDrp(loginAgencyID, IncID);
         } else {
             setnarrativeTypeCode('');
-            setValue({ ...value, [name]: null });
+            setValue({ ...value, [name]: null, reportTemplateTypeId: '', CommentsDoc: '', Comments: '' });
 
+        }
+    }
+
+    const ChangeDropDownReportTemplateType = (e, name) => {
+        !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
+        const { Agency_Name, UserName, AgencyAddress, ORI } = localStoreData;
+
+        if (e) {
+
+            let updatedData = e?.templateContent
+                .replace("{{OfficerName}}", UserName || '')
+                .replace("{{AgencyName}}", Agency_Name || '')
+                .replace("{{AgencyAddress}}", AgencyAddress || '')
+                .replace("{{ORI}}", ORI || '')
+
+            setValue({ ...value, [name]: e.templateID, CommentsDoc: updatedData, Comments: updatedData });
+        } else {
+            setValue({ ...value, [name]: null, CommentsDoc: '', Comments: '' });
         }
     }
 
@@ -357,11 +400,12 @@ const ReportModule = (props) => {
         }
         if (hasError) return;
         const {
-            CommentsDoc, NarrativeID, Comments, ReportedByPINActivityID, NarrativeTypeID, AsOfDate, WrittenForID
+            CommentsDoc, NarrativeID, Comments, ReportedByPINActivityID, NarrativeTypeID, AsOfDate, WrittenForID, reportTemplateTypeId
         } = value;
         const val = {
             CommentsDoc, Comments, IncidentId: IncID, NarrativeID, ReportedByPINActivityID, NarrativeTypeID,
-            AsOfDate, NarrativeAssignedID: narrativeAssignId, WrittenForID, CreatedByUserFK: loginPinID, ApprovingSupervisorID: null, RedactedComment: CommentsDoc || ""
+            AsOfDate, NarrativeAssignedID: narrativeAssignId, WrittenForID, CreatedByUserFK: loginPinID, ApprovingSupervisorID: null, RedactedComment: CommentsDoc || "", reportTemplateTypeId: reportTemplateTypeId,
+            ...(isCaseManagement && { CaseID: CaseId, IsCase: true })
         };
         AddDeleteUpadate('Narrative/Insert_Narrative', val)
             .then((res) => {
@@ -404,10 +448,11 @@ const ReportModule = (props) => {
         //   setErrors({ ...errors, ['AsOfDateError']: '' });
         // }
         else {
-            const { CommentsDoc, NarrativeID, Comments, ReportedByPINActivityID, NarrativeTypeID, AsOfDate, WrittenForID, } = value;
+            const { CommentsDoc, NarrativeID, Comments, ReportedByPINActivityID, NarrativeTypeID, AsOfDate, WrittenForID, reportTemplateTypeId } = value;
             const val = {
                 CommentsDoc: CommentsDoc, IncidentId: IncID, NarrativeID: NarrativeID, Comments: Comments, ReportedByPINActivityID: ReportedByPINActivityID, NarrativeTypeID: NarrativeTypeID, AsOfDate: AsOfDate, ModifiedByUserFK: loginPinID, WrittenForID: WrittenForID,
-                ApprovingSupervisorID: null, RedactedComment: value.Status === 'Approved' ? redactedComment : CommentsDoc
+                ApprovingSupervisorID: null, RedactedComment: value.Status === 'Approved' ? redactedComment : CommentsDoc, reportTemplateTypeId: reportTemplateTypeId,
+                ...(isCaseManagement && { CaseID: CaseId, IsCase: true })
             };
             AddDeleteUpadate('Narrative/Update_Narrative', val)
                 .then((res) => {
@@ -426,10 +471,13 @@ const ReportModule = (props) => {
     }
 
     const reset = () => {
-        navigate(`/Inc-Report?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${true}&IsCadInc=${true}&narrativeAssignId=${stringToBase64('')}`)
+        if (!isCaseManagement) {
+            navigate(`/Inc-Report?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${true}&IsCadInc=${true}&narrativeAssignId=${stringToBase64('')}`)
+        }
         setValue({
             ...value,
             'NarrativeTypeID': '',
+            'reportTemplateTypeId': null,
             'NarrativeID': '', 'AsOfDate': null, 'IsReject': '', 'status': '', 'ApprovingSupervisorID': '', 'Status': '', 'IncidentId': '', 'NarrativeID': '',
             'ApprovingSupervisorType': '', 'ApprovingSupervisorID': '', 'IsApprove': '', 'CreatedByUserFK': '',
             'CommentsDoc': '', 'Comments': '',
@@ -470,7 +518,7 @@ const ReportModule = (props) => {
 
     const get_NarrativesData = (incidentID, loginPinID) => {
         const val = { IncidentId: incidentID, OfficerID: loginPinID }
-        fetchPostData('Narrative/GetData_Narrative', val).then(res => {
+        fetchPostData(isCaseManagement ? '/Narrative/GetData_CaseReport' : 'Narrative/GetData_Narrative', val).then(res => {
             if (res) {
                 setNarrativeData(res); setLoder(true)
             } else {
@@ -484,7 +532,6 @@ const ReportModule = (props) => {
 
         fetchPostData('IncidentNarrativeReport/GetData_ReportWorkLevelCheck', val).then(res => {
             if (res && res.length > 0) {
-                console.log(res);
 
                 const workflowData = res[0];
                 const approverAuthor = res[0];
@@ -676,7 +723,6 @@ const ReportModule = (props) => {
     ]
 
     const editNarratives = (row) => {
-        console.log('hello-1')
         if (changesStatus) {
             const modal = new window.bootstrap.Modal(document?.getElementById('SaveModal'));
             modal?.show();
@@ -747,7 +793,8 @@ const ReportModule = (props) => {
         let ApprovingSupervisorName = null;
         ApprovingSupervisorName = multiSelected?.optionSelected?.length > 0 ? getLabelsString(multiSelected.optionSelected) : null;
         const val = {
-            'IncidentId': incidentID, 'NarrativeID': narrativeID, 'ApprovingSupervisorType': documentAccess, 'ApprovingSupervisorID': ApprovingSupervisorID, 'IsApprove': '', 'CreatedByUserFK': loginPinID, 'IsReject': '', 'Comments': '', 'status': status, 'ApprovingSupervisorName': ApprovingSupervisorName
+            'IncidentId': incidentID, 'NarrativeID': narrativeID, 'ApprovingSupervisorType': documentAccess, 'ApprovingSupervisorID': ApprovingSupervisorID, 'IsApprove': '', 'CreatedByUserFK': loginPinID, 'IsReject': '', 'Comments': '', 'status': status, 'ApprovingSupervisorName': ApprovingSupervisorName,
+            ...(isCaseManagement && { CaseID: CaseId })
         };
         AddDeleteUpadate('IncidentNarrativeReport/Insert_IncidentNarrativeReport', val)
             .then((res) => {
@@ -1444,7 +1491,9 @@ const ReportModule = (props) => {
                                                             !(value.ReportedByPINActivityID === loginPinID || value.WrittenForID === loginPinID)) ? colourStylesUsers : Requiredcolour}
                                                         value={narrativeTypeDrpData?.filter((obj) => obj.value === value?.NarrativeTypeID)}
                                                         options={narrativeTypeDrpData?.filter((obj) => obj.value !== 6)}
-                                                        onChange={(e) => ChangeDropDownReportType(e, 'NarrativeTypeID', 'NarrativeTypeCode')}
+                                                        onChange={(e) => {
+                                                            ChangeDropDownReportType(e, 'NarrativeTypeID', 'NarrativeTypeCode');
+                                                        }}
                                                         placeholder="Select.."
                                                         menuPlacement="bottom"
                                                         isDisabled={value.Status === 'Pending Review' || value.Status === 'Approved' || (NarrativeAssignId && tabParam && assigned) || status || ((value.Status === 'Draft' || value.Status === 'Rejected') &&
@@ -1566,6 +1615,44 @@ const ReportModule = (props) => {
                                                     />
 
 
+                                                </div>
+                                                <div className="col-2 col-md-2 col-lg-1 mt-2 pt-2">
+                                                    <label htmlFor="" className='new-label'>Report Template</label>
+
+                                                </div>
+                                                <div className="col-4 col-md-4 col-lg-2 mt-2 ">
+                                                    <Select
+                                                        name='reportTemplateTypeId'
+                                                        isClearable
+                                                        styles={value.Status === 'Pending Review' || value.Status === 'Approved' || (NarrativeAssignId && tabParam && assigned) || status || ((value.Status === 'Draft' || value.Status === 'Rejected') &&
+                                                            !IsSuperadmin &&
+                                                            !(value.ReportedByPINActivityID === loginPinID || value.WrittenForID === loginPinID)) ? colourStylesUsers : Requiredcolour}
+
+                                                        onChange={(e) => ChangeDropDownReportTemplateType(e, 'reportTemplateTypeId')}
+                                                        value={value?.reportTemplateTypeId ? reportTemplateDropdownData?.find((obj) => obj.templateID === value?.reportTemplateTypeId) : ""}
+                                                        options={reportTemplateDropdownData}
+                                                        getOptionLabel={(v) => v?.templateName}
+                                                        getOptionValue={(v) => v?.templateID}
+                                                        placeholder="Select.."
+                                                        menuPlacement="bottom"
+                                                        isDisabled={!value?.NarrativeTypeID || value.Status === 'Pending Review' || value.Status === 'Approved' || (NarrativeAssignId && tabParam && assigned) || status || ((value.Status === 'Draft' || value.Status === 'Rejected') &&
+                                                            !IsSuperadmin &&
+                                                            !(value.ReportedByPINActivityID === loginPinID || value.WrittenForID === loginPinID))}
+                                                    />
+
+                                                    {/* <Select
+                                    id="IncidentID"
+                                    name="IncidentID"
+                                    styles={customStylesWithFixedHeight}
+                                    isClearable
+                                    options={incidentData}
+                                    value={boloState?.IncidentID ? incidentData?.find((i) => i?.IncidentID === boloState?.IncidentID) : ""}
+                                    getOptionLabel={(v) => v?.CADIncidentNumber}
+                                    getOptionValue={(v) => v?.IncidentID}
+                                    onChange={(e) => handleBoloState("IncidentID", e?.IncidentID)}
+                                    placeholder="Select..."
+                                    className="w-100"
+                                /> */}
                                                 </div>
                                             </div>
                                             {value.Status === "Rejected" &&
@@ -2369,7 +2456,6 @@ const ReportModule = (props) => {
                                                     customStyles={tableCustomStyles}
                                                     conditionalRowStyles={conditionalRowStyles}
                                                     onRowClicked={(row) => {
-                                                        console.log("row", row)
                                                         if (row?.NarrativeDescription === "Use Of Force") {
                                                             row?.ArrestID ? (
                                                                 navigate(`/Arrest-Home?IncId=${stringToBase64(row?.IncidentId)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&ArrestId=${stringToBase64(row?.ArrestID)}&ArrNo=${stringToBase64(row?.ArrestNumber)}&isFromDashboard=true`)
@@ -2436,7 +2522,6 @@ const NarrativeModal = (props) => {
     const { incidentID, nibrsStatus, loginPinID, setshowModal, showModalAssign, primaryOfficer, loginAgencyID, narrativeTypeCode } = props
     const dispatch = useDispatch()
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
-
     const useQuery = () => {
         const params = new URLSearchParams(useLocation().search);
         return {

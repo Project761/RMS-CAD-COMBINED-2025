@@ -1,11 +1,10 @@
 import React from 'react'
 import ReportModule from '../../Components/Pages/ReportModule/ReportModule'
 
-function CaseReport() {
-
-
+function CaseReport(props) {
+const { CaseId } = props;
     return (
-        <ReportModule isCaseManagement />
+        <ReportModule isCaseManagement CaseId={CaseId} />
     )
 }
 

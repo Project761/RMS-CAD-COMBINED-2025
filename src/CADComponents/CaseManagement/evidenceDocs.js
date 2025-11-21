@@ -39,6 +39,8 @@ function EvidenceDocs(props) {
         if (getAllCaseEntitiesData && isGetAllCaseEntitiesDataSuccess) {
             const data = JSON.parse(getAllCaseEntitiesData?.data?.data)?.Table;
             setEntitiesData(data)
+        } else {
+            setEntitiesData([])
         }
     }, [getAllCaseEntitiesData, isGetAllCaseEntitiesDataSuccess])
 
@@ -47,7 +49,7 @@ function EvidenceDocs(props) {
             name: "Type",
             selector: (row) => row?.Type,
             sortable: true,
-            width: "100px",
+            width: "80px",
         },
         {
             name: "Master Name",
@@ -81,12 +83,12 @@ function EvidenceDocs(props) {
                                 </span>
                                 {entities.length > 1 && (
                                     <span
-                                        className="px-2 py-1 rounded-pill"
+                                        className="px-1 py-1 rounded-pill"
                                         style={{
                                             border: "1px solid #d6b400",
                                             backgroundColor: "#fff8db",
                                             color: "#6b5800",
-                                            fontSize: "12px",
+                                            fontSize: "11px",
                                             fontWeight: "500",
                                         }}
                                     >
@@ -99,7 +101,7 @@ function EvidenceDocs(props) {
                 );
             },
             sortable: false,
-            width: "300px",
+            width: "200px",
         },
         {
             name: "Alerts",
@@ -113,12 +115,12 @@ function EvidenceDocs(props) {
                         {alerts.length > 0 && alerts.map((alert, index) => (
                             <span
                                 key={index}
-                                className="px-2 py-1 rounded-pill"
+                                className="px-1 py-1 rounded-pill"
                                 style={{
                                     border: "1px solid #dc3545",
                                     backgroundColor: "#fff5f5",
                                     color: "#dc3545",
-                                    fontSize: "12px",
+                                    fontSize: "11px",
                                     fontWeight: "500",
                                 }}
                             >
@@ -128,7 +130,7 @@ function EvidenceDocs(props) {
                     </div>
                 );
             },
-            width: "200px",
+            width: "160px",
         },
         {
             name: "Offense",
@@ -143,27 +145,33 @@ function EvidenceDocs(props) {
             name: "Linkage / Source ID",
             selector: (row) => row?.Linkage,
             sortable: true,
-            width: "150px",
+            width: "160px",
         },
         {
             name: "Date Added",
             selector: (row) => row?.DateAdded ? getShowingDateText(row?.DateAdded) : '',
             sortable: true,
-            width: "150px",
+            width: "140px",
         },
         {
             name: "Monitor",
             selector: (row) => row?.Monitor,
-            cell: (row) => (
-                <input
-                    type="checkbox"
-                    checked={row?.Monitor}
-                    onChange={() => { }}
-                    style={{ width: "16px", height: "16px" }}
-                />
-            ),
+            cell: (row) => {
+                const allowedTypes = ["Person", "Vehicle", "Property"];
+                if (!allowedTypes.includes(row?.Type)) {
+                    return null;
+                }
+                return (
+                    <input
+                        type="checkbox"
+                        checked={row?.Monitor}
+                        onChange={() => { }}
+                        style={{ width: "16px", height: "16px" }}
+                    />
+                );
+            },
             center: true,
-            width: "90px",
+            width: "80px",
         },
         {
             name: "Action",
@@ -190,7 +198,7 @@ function EvidenceDocs(props) {
                     View MS
                 </button>
             ),
-            width: "110px",
+            width: "100px",
         },
     ];
 
@@ -243,6 +251,7 @@ function EvidenceDocs(props) {
                         noDataComponent={'There are no data to display'}
                         striped
                         highlightOnHover
+                        fixedHeaderScrollHeight='450px'
                         fixedHeader
                     />
                 </div>
