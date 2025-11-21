@@ -30,6 +30,7 @@ import AuditLog from '../AgencyTab/AgencyLog/AuditLog';
 import NotificationManagement from '../AgencyTab/NotificationManagement/NotificationManagement';
 import Training from '../AgencyTab/Training/Training';
 import ReportWorkflow from '../../../../CADComponents/AgencyComponents/ReportWorkflow';
+import ReportTemplate from '../AgencyTab/ReportTemplate/ReportTemplate';
 
 const AgencyTab = ({ send_Notification }) => {
 
@@ -257,6 +258,16 @@ const AgencyTab = ({ send_Notification }) => {
                                                 Notification Management
                                             </span>
                                             <span
+                                                className={`nav-item ${showPage === 'ReportTemplate' ? 'active' : ''} ${!status ? 'disabled' : ''}`}
+                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                style={{ color: showPage === 'ReportTemplate' ? 'Red' : '#000' }}
+                                                aria-current="page"
+                                                onClick={() => { if (!changesStatus) setShowPage('ReportTemplate') }}
+                                            >
+                                                Report Template
+                                            </span>
+                                            <span
                                                 className={`nav-item ${showPage === 'AuditLog' ? 'active' : ''} ${!status ? 'disabled' : ''}`}
                                                 data-toggle={changesStatus ? "modal" : "pill"}
                                                 data-target={changesStatus ? "#SaveModal" : ''}
@@ -324,16 +335,18 @@ const AgencyTab = ({ send_Notification }) => {
                                                                                         <Ranks />
                                                                                         : showPage === 'NotificationManagement' ?
                                                                                             <NotificationManagement />
-                                                                                            :
-                                                                                            showPage === 'Training' ?
-                                                                                                <Training {...{}} />
+                                                                                            : showPage === 'ReportTemplate' ?
+                                                                                                <ReportTemplate />
                                                                                                 :
-                                                                                                showPage === 'AuditLog' ?
-                                                                                                    <AuditLog />
+                                                                                                showPage === 'Training' ?
+                                                                                                    <Training {...{}} />
                                                                                                     :
-                                                                                                    showPage === 'report-workFlow' ?
-                                                                                                        <ReportWorkflow />
-                                                                                                        : ''
+                                                                                                    showPage === 'AuditLog' ?
+                                                                                                        <AuditLog />
+                                                                                                        :
+                                                                                                        showPage === 'report-workFlow' ?
+                                                                                                            <ReportWorkflow />
+                                                                                                            : ''
                                 }
                             </div>
                         </div>

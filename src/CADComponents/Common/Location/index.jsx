@@ -292,8 +292,8 @@ function Search({
                 isCoordinateY: false,
                 isUpdate: false,
                 id: "",
-                // IsVerify: false,
-                jurisdiction:"",
+                IsVerify: false,
+                jurisdiction: "",
             }));
             setIsGoogleLocation(true);
             setIsCheckGoogleLocation(false);
@@ -380,8 +380,8 @@ function Search({
             isCoordinateY: false,
             isUpdate: false,
             id: "",
-            // IsVerify: false,
-            jurisdiction:"",
+            IsVerify: false,
+            jurisdiction: "",
         }));
         setIsChangeData(true);
         setStatesChangeStatus(true);
@@ -438,8 +438,6 @@ function Search({
                         ZipCodeID: "",
                         CityID: "",
                         CountryID: "",
-                        jurisdiction: jurisdictionDropDown?.find(
-                            (item) => item?.ID === data?.ID1) || {},
                         currentFlag: flagDropDown?.filter((item) =>
                             data?.CurrentFlage?.includes(item.label)
                         ),
@@ -458,7 +456,8 @@ function Search({
                         patrolZone: geoZoneDropDown?.find(
                             (item) => item?.label === data?.PatrolZone
                         ),
-
+                        jurisdiction: jurisdictionDropDown?.find(
+                            (item) => item?.ID === data?.JurisdictionID) || {},
                         isStreet: data?.Street ? true : false,
                         isCity: data?.City ? true : false,
                         isPremiseNo: data?.PremiseNo ? true : false,
@@ -617,8 +616,8 @@ const saveVerifyLocation = async ({ Location, set, val, col, locationID }) => {
             isCoordinateX: false,
             isCoordinateY: false,
             Id: "",
-            // IsVerify: false,
-            jurisdiction:"",
+            IsVerify: false,
+            jurisdiction: "",
         }));
     };
 };
@@ -784,7 +783,7 @@ const buildLocationData = (extractedData, LocationGeoCode, stDirection, stDirect
         isCoordinateX: !!LocationGeoCode?.longitude,
         isCoordinateY: !!LocationGeoCode?.latitude,
         Id: "",
-        // IsVerify: false,
-        jurisdiction:"",
+        IsVerify: false,
+        jurisdiction: "",
     };
 };

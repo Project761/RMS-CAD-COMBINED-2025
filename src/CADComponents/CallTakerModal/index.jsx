@@ -95,6 +95,7 @@ const CallTakerModal = (props) => {
   const [flagName, setFlagName] = useState("");
   const [selectedFlagData, setSelectedFlagData] = useState({});
   const [aptInputValue, setAptInputValue] = useState("");
+  const [jurisdictionDropDown, setJurisdictionDropDown] = useState([]);
   const [aptData, setAptData] = useState("");
   const [isVerifyReportedLocation, setIsVerifyReportedLocation] = useState(false);
   const [duplicateCallData, setDuplicateCallData] = useState([]);
@@ -262,6 +263,25 @@ const CallTakerModal = (props) => {
       enabled: !!localStoreData?.PINID
     }
   );
+
+  const jurisdictionDataKey = `/CAD/MasterJurisdiction/GetDataDropDownJurisdiction/${loginAgencyID}`;
+  const { data: getJurisdictionData, isSuccess: isFetchJurisdictionData } = useQuery(
+    [jurisdictionDataKey, { AgencyID: loginAgencyID }],
+    MasterTableListServices.getDataDropDownJurisdiction,
+    {
+      refetchOnWindowFocus: false,
+      enabled: openCallTakerModal && !!loginAgencyID
+    }
+  );
+
+  useEffect(() => {
+    if (getJurisdictionData && isFetchJurisdictionData) {
+      const data = JSON.parse(getJurisdictionData?.data?.data || []);
+      setJurisdictionDropDown(data?.Table);
+    } else {
+      setJurisdictionDropDown([])
+    }
+  }, [getJurisdictionData, isFetchJurisdictionData])
 
   useEffect(() => {
     if (getScreenPermissionData && isFetchScreenPermission) {
@@ -454,6 +474,8 @@ const CallTakerModal = (props) => {
               isCoordinateY: data?.Latitude ? true : false,
               isUpdate: true,
               isVerify: data?.IsVerified === 1 ? true : false,
+              jurisdiction: jurisdictionDropDown?.find(
+                (item) => item?.ID === data?.JurisdictionID) || {},
             });
             const CFScalltypes = parsedData?.CFScalltypes || ''; // e.g., "L,F,E,O"
             const typesArray = CFScalltypes.split(',');
@@ -1236,7 +1258,8 @@ const CallTakerModal = (props) => {
       premiseType = {}, coordinateX = "", coordinateY = "", mileMarker = "",
       AltStreet = "", intersection1 = "", intersection2 = "", patrolZone = {},
       emsZone = {}, fireZone = {}, otherZone = {}, IsVerify = "", location = "",
-      currentFlag = []
+      currentFlag = [],
+      jurisdiction = ""
     } = data || {};
 
     return {
@@ -1249,7 +1272,7 @@ const CallTakerModal = (props) => {
       "FireZone": fireZone?.label, "OtherZone": otherZone?.label, IsVerified: IsVerify,
       location, "CurrentFlage": currentFlag?.map(item => item?.label).join(", "),
       "GeoLocationContactsJson": JSON.stringify({ Contacts: contactList || [] }),
-      "CreatedByUserFK": loginPinID, "AgencyID": loginAgencyID
+      "CreatedByUserFK": loginPinID, "AgencyID": loginAgencyID, "JurisdictionID": jurisdiction?.ID || "",
     };
   };
 
@@ -1642,6 +1665,7 @@ const CallTakerModal = (props) => {
                                     setGeoLocationID,
                                     flagDropDown,
                                     premiseDropDown,
+                                    jurisdictionDropDown,
                                     setZoom,
                                     setIsSelectLocation,
                                     setIsChangeFields,
@@ -2026,6 +2050,44 @@ const CallTakerModal = (props) => {
                               </div>
                             </div>
                           </div>
+                          {/* Unit */}
+                          <div className="tab-form-row">
+                            <div className="col-5">
+                              <div
+                                className="col-12 d-flex align-items-center justify-content-start select-container mr-1"
+                                style={{ gap: "4.5px" }}
+                              >
+                                <div>
+                                  <label htmlFor="Unit" className="tab-form-label text-nowrap" style={{ textAlign: "end", marginRight: "5px", marginLeft: "20px" }}> Unit # {errorCallTaker.Resource1 && isEmptyObject(incidentFormValues.Resource1) && (
+                                    <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{"Select  Unit #"}</p>
+                                  )}</label>
+                                </div>
+                                <div className="w-auto" style={{ minWidth: "250px" }}>
+                                  <Select
+                                    isClearable
+                                    options={resourceDropDown}
+                                    placeholder="Select..."
+                                    name="Resource1"
+                                    value={incidentFormValues?.Resource1}
+                                    getOptionLabel={(v) => v?.ResourceNumber}
+                                    getOptionValue={(v) => v?.ResourceID}
+                                    isDisabled={!incidentFormValues.CallforServiceID}
+                                    onChange={handleSelectChangeIncident}
+                                    styles={customStylesWithOutColorArrow}
+                                    maxMenuHeight={145}
+                                    onInputChange={(inputValue, actionMeta) => {
+                                      if (inputValue.length > 12) {
+                                        return inputValue.slice(0, 12);
+                                      }
+                                      return inputValue;
+                                    }}
+                                    isMulti
+                                    isSearchable={true}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                           {/* Row 4 */}
                           <div className="tab-form-row">
                             <div className="col-1 d-flex justify-content-end">
@@ -2210,49 +2272,8 @@ const CallTakerModal = (props) => {
                       </div>
                     </fieldset>
                     <div className="row">
-                      {/* Unit */}
-                      <div className="col-4">
-                        <fieldset className="tab-form-container">
-                          <legend className="cad-legend">Unit</legend>
-                          <div className="tab-form-row">
-                            <div
-                              className="col-12 d-flex align-items-center justify-content-start select-container mr-1"
-                              style={{ gap: "4.5px" }}
-                            >
-                              <div>
-                                <label htmlFor="Unit" className="tab-form-label text-nowrap" style={{ textAlign: "end", marginRight: "15px", marginLeft: "20px" }}> Unit # {errorCallTaker.Resource1 && isEmptyObject(incidentFormValues.Resource1) && (
-                                  <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{"Select  Unit #"}</p>
-                                )}</label>
-                              </div>
-                              <div className="w-auto" style={{ minWidth: "250px" }}>
-                                <Select
-                                  isClearable
-                                  options={resourceDropDown}
-                                  placeholder="Select..."
-                                  name="Resource1"
-                                  value={incidentFormValues?.Resource1}
-                                  getOptionLabel={(v) => v?.ResourceNumber}
-                                  getOptionValue={(v) => v?.ResourceID}
-                                  isDisabled={!incidentFormValues.CallforServiceID}
-                                  onChange={handleSelectChangeIncident}
-                                  styles={customStylesWithOutColorArrow}
-                                  maxMenuHeight={145}
-                                  onInputChange={(inputValue, actionMeta) => {
-                                    if (inputValue.length > 12) {
-                                      return inputValue.slice(0, 12);
-                                    }
-                                    return inputValue;
-                                  }}
-                                  isMulti
-                                  isSearchable={true}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </fieldset>
-                      </div>
                       {/* Doc */}
-                      <div className="col-8">
+                      <div className="col-12">
                         <fieldset className="tab-form-container">
                           <legend className="cad-legend">Document</legend>
                           <div className="tab-form-row">
@@ -2762,7 +2783,7 @@ const CallTakerModal = (props) => {
       {openContactInfoModal && <ContactInfoModal {...{ openContactInfoModal, setOpenContactInfoModal, setSelectedButton, contactList, setContactList, isGoogleLocation }} />}
       {openFlagTableModal && <FlagTableModal {...{ openFlagTableModal, setOpenFlagTableModal, geoLocationID, flagName, aptData }} />}
       {openAddFlagModal && <FlagModal {...{ openAddFlagModal, setOpenAddFlagModal, isGoogleLocation, createLocationPayload, geoLocationID, setGeoLocationID, insertIncident, getFlagListRefetch, selectedFlagData, setSelectedFlagData, aptData, setAptData, refetchAptSuiteNoData }} />}
-      <LocationInformationModal {...{ openLocationInformationModal, setOpenLocationInformationModal, setSelectedButton, geoFormValues, setGEOFormValues, isGoogleLocation, createLocationPayload, isVerifyLocation, geoLocationID, isCheckGoogleLocation, setIsVerifyReportedLocation }} />
+      <LocationInformationModal {...{ openLocationInformationModal, setOpenLocationInformationModal, setSelectedButton, geoFormValues, setGEOFormValues, isGoogleLocation, createLocationPayload, isVerifyLocation, geoLocationID, isCheckGoogleLocation, setIsVerifyReportedLocation, jurisdictionDropDown }} />
       {openDuplicateCallModal && <DuplicateCallModal {...{ openDuplicateCallModal, setOpenDuplicateCallModal, duplicateCallData, getResourceValues, createPayload, isGoogleLocation, createLocationPayload, geoLocationID, setGeoLocationID, insertIncident, setNameData, setVehicleData, onCloseLocation, receiveSourceDropDown, incidentFormValues }} />}
 
       <NCICModal {...{ openNCICModal, setOpenNCICModal, isNameCallTaker, setIsNameCallTaker }} />

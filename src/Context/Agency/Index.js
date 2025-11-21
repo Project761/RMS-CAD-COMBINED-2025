@@ -15,6 +15,7 @@ const AgencyData = ({ children }) => {
     const [LoginAgencyID, setLoginAgencyID] = useState('');
     const [LoginPinID, setLoginPinID] = useState('');
     const [allowMultipleLogin, setAllowMultipleLogin] = useState(0);
+    const [caseManagementDataIncidentRecent, setCaseManagementDataIncidentRecent] = useState([]);
     const [updateCount, setUpdateCount] = useState(0);
     const [Is2FAEnabled, setIs2FAEnabled] = useState(false);
     // ------------>| password |<-------------------  
@@ -892,7 +893,7 @@ const AgencyData = ({ children }) => {
             OfficerApprovCount, setOfficerApprovCount,
             nibrsStatus, setnibrsStatus, nibrsSubmittedStatus, setnibrsSubmittedStatus, nibrsSubmittedAdministartive, setnibrsSubmittedAdministartive, nibrsSubmittedOffense, setnibrsSubmittedOffense, nibrsSubmittedOffender,
             setnibrsSubmittedOffender, nibrsSubmittedVictim, setnibrsSubmittedVictim, nibrsSubmittedProperty, setnibrsSubmittedProperty, nibrsSubmittedArrestee, setnibrsSubmittedArrestee, nibrsSubmittedVehicle, setnibrsSubmittedVehicle, nibrsSubmittedName, setnibrsSubmittedName, nibrsSubmittedIncident, setnibrsSubmittedIncident, nibrsSubmittedOffenseMain, setnibrsSubmittedOffenseMain, nibrsSubmittedPropertyMain,
-            setnibrsSubmittedPropertyMain, nibrsSubmittedvehicleMain, setnibrsSubmittedvehicleMain, nibrsSubmittedArrestMain, setnibrsSubmittedArrestMain,
+            setnibrsSubmittedPropertyMain, nibrsSubmittedvehicleMain, setnibrsSubmittedvehicleMain, nibrsSubmittedArrestMain, setnibrsSubmittedArrestMain, caseManagementDataIncidentRecent, setCaseManagementDataIncidentRecent,
             incidentStatus, setIncidentStatus, showIncPage, setShowIncPage, incidentNumber, setIncidentNumber, CaseStatus, setCaseStatus, crimeId, setCrimeId, incStatus, setIncStatus, updateCount, setUpdateCount, offenceData, get_Offence_Data, get_Data_Name, incidentRmsCfs, setIncidentRmsCfs, exceptionalClearID, setEceptionalClearID, GetDataExceptionalClearanceID, rmsDisposition, setRmsDisposition, getRmsDispositionID, incidentRecentData, setIncidentRecentData, GetDataTimeZone, setDatezone, datezone,
             // arrest
             ArresteeID, get_OffenseName_Data, setArresteeID, arrestData, get_Data_Arrest, setArrestChargeData, arrestChargeData, get_Data_Arrest_Charge, policeForceDrpData, get_Police_Force, get_Arrestee_Drp_Data, arresteeDrpData, setArresteeDrpData, EditArrestStatus, setEditArrestStatus, ArresteName, setArrestName, ArrestChargeStatus, setArrestChargeStatus, activeArrest, setActiveArrest,

@@ -20,6 +20,7 @@ function CaseTeam({ CaseId }) {
   const [removedDateTime, setRemovedDateTime] = useState(null)
   const [showModal, setShowModal] = useState(false)
   const [modalInvestigator, setModalInvestigator] = useState(null)
+  const [modalIsPrimaryOfficer, setModalIsPrimaryOfficer] = useState(false)
   const [modalDateTime, setModalDateTime] = useState(null)
   const [showEditModal, setShowEditModal] = useState(false)
   const [editRowData, setEditRowData] = useState(null)
@@ -85,6 +86,9 @@ function CaseTeam({ CaseId }) {
       const data1 = JSON.parse(getAllCaseTeamData?.data?.data)?.Table1
       setCaseTeamData(data)
       setCaseTeamOfficerCountData(data1)
+    } else {
+      setCaseTeamData([])
+      setCaseTeamOfficerCountData([])
     }
   }, [getAllCaseTeamData, isGetAllCaseTeamDataSuccess])
 
@@ -92,10 +96,12 @@ function CaseTeam({ CaseId }) {
     setShowModal(false)
     setModalInvestigator(null)
     setModalDateTime(null)
+    setModalIsPrimaryOfficer(false)
   }
 
   const handleNew = () => {
     setModalInvestigator(null)
+    setModalIsPrimaryOfficer(false)
     setModalDateTime(new Date())
   }
 
@@ -119,15 +125,28 @@ function CaseTeam({ CaseId }) {
   const handleSave = async () => {
     if (!validation()) return;
     if (CaseId) {
-      const res = await CaseManagementServices.addCaseTeam({
-        "CreatedByUserFK": loginPinID,
-        "CaseID": parseInt(CaseId),
-        "PrimaryOfficerID": modalInvestigator?.value,
-        "IsPrimaryOfficer": "false"
-      })
-      if (res?.status === 200) {
-        toastifySuccess("Data Saved Successfully")
-        refetchAllCaseTeamData()
+      if (modalIsPrimaryOfficer) {
+        const res = await CaseManagementServices.updateCaseTeam({
+          "DateAssigned": modalDateTime,
+          "CreatedByUserFK": parseInt(loginPinID),
+          "CaseID": parseInt(CaseId),
+          "NewPrimaryOfficerID": modalInvestigator?.value
+        })
+        if (res?.status === 200) {
+          toastifySuccess("Data Saved Successfully")
+          refetchAllCaseTeamData()
+        }
+      } else {
+        const res = await CaseManagementServices.addCaseTeam({
+          "CreatedByUserFK": loginPinID,
+          "CaseID": parseInt(CaseId),
+          "PrimaryOfficerID": modalInvestigator?.value,
+          "IsPrimaryOfficer": "false"
+        })
+        if (res?.status === 200) {
+          toastifySuccess("Data Saved Successfully")
+          refetchAllCaseTeamData()
+        }
       }
       handleCloseModal()
     }
@@ -216,7 +235,7 @@ function CaseTeam({ CaseId }) {
       width: "90px",
     },
     {
-      name: "Investigator",
+      name: "Case Team Member",
       selector: (row) => row.OfficerName,
       cell: (row) => (
         <div className="d-flex align-items-center" style={{ gap: "10px" }}>
@@ -274,16 +293,7 @@ function CaseTeam({ CaseId }) {
       selector: (row) => row.Action,
       cell: (row) => (
         <div className="d-flex align-items-center" style={{ gap: "10px" }}>
-          {row.IsPrimaryOfficer && !row.RemovedDateTime ? (
-            <div
-              style={{
-                color: "#0d6efd",
-                cursor: "pointer",
-                fontSize: "15px",
-              }}
-              onClick={() => handleOpenEditModal(row)}
-            ><i className="fa fa-edit fa-lg"></i></div>
-          ) : !row.RemovedDateTime && (
+          {!row.RemovedDateTime && !row.IsPrimaryOfficer && (
             <div
               style={{
                 color: "#dc3545",
@@ -407,7 +417,7 @@ function CaseTeam({ CaseId }) {
             <Select
               isClearable
               options={agencyOfficerDrpData}
-              placeholder="Investigator"
+              placeholder="Case Team Member"
               styles={colorLessStyle_Select}
               value={investigator}
               onChange={(e) => setInvestigator(e)}
@@ -453,7 +463,7 @@ function CaseTeam({ CaseId }) {
             <button className="btn btn-primary" onClick={() => {
               setModalDateTime(new Date())
               setShowModal(true)
-            }}>Add Investigator</button>
+            }}>Add Case Team Member</button>
           </div>
         </div>
 
@@ -480,7 +490,7 @@ function CaseTeam({ CaseId }) {
             <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: '800px' }}>
               <div className="modal-content">
                 <div className="modal-header">
-                  <h5 className="modal-title">Add Investigator</h5>
+                  <h5 className="modal-title">Add Case Team Member</h5>
                 </div>
                 <div className="modal-body">
                   <div className="row">
@@ -508,6 +518,14 @@ function CaseTeam({ CaseId }) {
                         className="form-control requiredColor"
                         isClearable
                       />
+                    </div>
+                    <div className="col-4 col-md-4 col-lg-3 mt-1 offset-1">
+                      <input type="checkbox" name="AddPrimaryOfficer" value={modalIsPrimaryOfficer}
+                        checked={modalIsPrimaryOfficer}
+                        onChange={() => { setModalIsPrimaryOfficer(!modalIsPrimaryOfficer) }}
+                        id="AddPrimaryOfficer"
+                      />
+                      <label className='ml-2' htmlFor="AddPrimaryOfficer">Add Primary Officer</label>
                     </div>
                   </div>
                 </div>

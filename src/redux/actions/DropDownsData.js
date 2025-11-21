@@ -1,6 +1,6 @@
 import { Comman_changeArrayFormat, Comman_changeArrayFormat_With_Name, Comman_changeArrayFormatNarrativeType, CommanchangeArrayFormat_WithFilter, fourColArray, fourColArrayAlert, fourColwithExtraCode, sixColArray, sixColArrayArrest, sixColArrayArrest1, sixColArrayArrestee, threeColArray, threeColArrayWithCode } from '../../Components/Common/ChangeArrayFormat';
 import { fetchData, fetchPostData } from '../../Components/hooks/Api';
-import { ArrestJuvenileDis_DrpData, ArrestType_DrData, Arresting_DrpData, Agency_OfficerDrp_Data, Arrestee_Name_DrpData, Blood_Type_Drp_Data, BoatModel_Drp_Data, Body_Build_Drp_Data, Body_XRay_Drp_Data, Circumcision_Drp_Data, Circumstances_Drp_Data, City_Drp_Data, Color_Drp_Data, ComplexionType_Drp_Data, Contact_Type_Drp_Data, Corrected_Vision_Drp_Data, Country_Drp_Data, DL_State_DrpData, DL_States_Drp_Data, DrugManufactured_Drp_Data, Ever_DonatedBlood_Drp_Data, Face_Color_Drp_Data, FacialHair_Drp_Data, Facial_Hair_Type_Drp_Data, Facial_Oddity_Drp_Data, Fingerprinted_Drp_Data, Glasses_Type_Drp_Data, Hair_Length_Drp_Data, Hair_Shades_Drp_Data, Hair_Style_Drp_Data, HowVerify_Drp_Data, Make_Drp_Data, Marital_Drp_Data, Masters_Name_Drp_Data, Material_Drp_Data, MeasureType_Drp_Data, Message_Key_Drp_Data, Missing_CMC_Drp_Data, Missing_Person_Drp_Data, NameDistinct_Features_Drp_Data, Name_Handedness_Drp_Data, PropertySourceDrug_Drp_Data, PropertyType_Data, Property_LossCode_Drp_Data, Propulusion_Drp_Data, Resident_Drp_Data, Speach_Codes_Drp_Data, State_DrpData, States_Drp_Data, SuspectedDrug_Drp_Data, Teeth_Codes_Drp_Data, TypeMarijuana_Drp_Data, VOD_Drp_Data, WeaponMake_Drp_Data, WeaponModel_Drp_Data, get_Arresting_DrpData, Jwellery_Drp_Data, Vehicle_LossCode_Drp_Data, PlateID_Drp_Data, Classification_Drp_Data, StyleID_Drp_Data, MakeID_Drp_Data, ModalID_Drp_Data, VehicleColor_Drp_Data, VODID_Drp_Data, UCRClearID_Drp_Data, NIBRS_Drp_Data, ReceiveSource_Drp_Data, FBI_Codes_Drp_Data, CadCfsCode_Drp_Data, Rms_Disposition_Drp_Data, Cad_Disposition_Drp_Data, Narrative_Type_Drp_Data, PictureType_Drp_Data, ImageView_Type_Drp_Data, Top_Color_Drp_Data, Bottom_Color_Drp_Data, Eye_Color_Drp_Data, Hair_Color_Drp_Data, IsPrimary_Color_Drp_Data, IsSecondary_Color_Drp_Data, FISuspectActivity_Drp_Data, FIContactType_Drp_Data, Alert_Drp_Data, Arrestee_Vehicle_DrpData, Arrestee_NameMissing_DrpData, Possession_Owner_Name_Drp_Data, Mode_Of_Training_Drp_Data, Level_Clearance_Drp_Data, Training_Category_Drp_Data, Training_Course_Drp_Data, Skin_Tone_Drp_Data, Missing_Person_Relationship_Drp_Data } from '../actionTypes';
+import { ArrestJuvenileDis_DrpData, ArrestType_DrData, Arresting_DrpData, Agency_OfficerDrp_Data, Arrestee_Name_DrpData, Blood_Type_Drp_Data, BoatModel_Drp_Data, Body_Build_Drp_Data, Body_XRay_Drp_Data, Circumcision_Drp_Data, Circumstances_Drp_Data, City_Drp_Data, Color_Drp_Data, ComplexionType_Drp_Data, Contact_Type_Drp_Data, Corrected_Vision_Drp_Data, Country_Drp_Data, DL_State_DrpData, DL_States_Drp_Data, DrugManufactured_Drp_Data, Ever_DonatedBlood_Drp_Data, Face_Color_Drp_Data, FacialHair_Drp_Data, Facial_Hair_Type_Drp_Data, Facial_Oddity_Drp_Data, Fingerprinted_Drp_Data, Glasses_Type_Drp_Data, Hair_Length_Drp_Data, Hair_Shades_Drp_Data, Hair_Style_Drp_Data, HowVerify_Drp_Data, Make_Drp_Data, Marital_Drp_Data, Masters_Name_Drp_Data, Material_Drp_Data, MeasureType_Drp_Data, Message_Key_Drp_Data, Missing_CMC_Drp_Data, Missing_Person_Drp_Data, NameDistinct_Features_Drp_Data, Name_Handedness_Drp_Data, PropertySourceDrug_Drp_Data, PropertyType_Data, Property_LossCode_Drp_Data, Propulusion_Drp_Data, Resident_Drp_Data, Speach_Codes_Drp_Data, State_DrpData, States_Drp_Data, SuspectedDrug_Drp_Data, Teeth_Codes_Drp_Data, TypeMarijuana_Drp_Data, VOD_Drp_Data, WeaponMake_Drp_Data, WeaponModel_Drp_Data, get_Arresting_DrpData, Jwellery_Drp_Data, Vehicle_LossCode_Drp_Data, PlateID_Drp_Data, Classification_Drp_Data, StyleID_Drp_Data, MakeID_Drp_Data, ModalID_Drp_Data, VehicleColor_Drp_Data, VODID_Drp_Data, UCRClearID_Drp_Data, NIBRS_Drp_Data, ReceiveSource_Drp_Data, FBI_Codes_Drp_Data, CadCfsCode_Drp_Data, Rms_Disposition_Drp_Data, Cad_Disposition_Drp_Data, Narrative_Type_Drp_Data, PictureType_Drp_Data, ImageView_Type_Drp_Data, Top_Color_Drp_Data, Bottom_Color_Drp_Data, Eye_Color_Drp_Data, Hair_Color_Drp_Data, IsPrimary_Color_Drp_Data, IsSecondary_Color_Drp_Data, FISuspectActivity_Drp_Data, FIContactType_Drp_Data, Alert_Drp_Data, Arrestee_Vehicle_DrpData, Arrestee_NameMissing_DrpData, Possession_Owner_Name_Drp_Data, Mode_Of_Training_Drp_Data, Level_Clearance_Drp_Data, Training_Category_Drp_Data, Training_Course_Drp_Data, Skin_Tone_Drp_Data, Missing_Person_Relationship_Drp_Data, CaseTask_Drp_Data, SourceType_Drp_Data } from '../actionTypes';
 
 import * as api from '../api'
 
@@ -929,6 +929,29 @@ export const get_Narrative_Type_Drp_Data = (LoginAgencyID) => async (dispatch) =
             dispatch({ type: Narrative_Type_Drp_Data, payload: Comman_changeArrayFormatNarrativeType(data, 'NarrativeTypeID', 'Description', 'NarrativeTypeCode') });
         } else {
             dispatch({ type: Narrative_Type_Drp_Data, payload: [] });
+        }
+    })
+}
+
+
+export const getData_DropDown_CaseTask = (LoginAgencyID) => async (dispatch) => {
+    const val = { AgencyID: LoginAgencyID }
+    fetchPostData('CaseTask/GetDataDropDown_CaseTask', val).then((data) => {
+        if (data) {
+            dispatch({ type: CaseTask_Drp_Data, payload: data });
+        } else {
+            dispatch({ type: CaseTask_Drp_Data, payload: [] });
+        }
+    })
+}
+
+export const getData_DropDown_SourceType = (LoginAgencyID) => async (dispatch) => {
+    const val = { AgencyID: LoginAgencyID }
+    fetchPostData('CaseManagement/GetDataDropDown_SourceType', val).then((data) => {
+        if (data) {
+            dispatch({ type: SourceType_Drp_Data, payload: data });
+        } else {
+            dispatch({ type: SourceType_Drp_Data, payload: [] });
         }
     })
 }

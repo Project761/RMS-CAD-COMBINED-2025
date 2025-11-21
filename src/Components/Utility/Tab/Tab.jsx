@@ -488,23 +488,6 @@ const Tab = () => {
                             TIBRS Audit
                         </Link>
                     </li>
-
-                    <li className="nav-item">
-                        <Link
-                            className={`nav-link  ${active === `/CloseHistory-Home?IncId=${IncID}&IncNo=${IncNo}&NameID=${NameID}&IncSta=${IncSta}` ? 'active' : ''} ${incidentStatus ? '' : 'disabled'}`}
-                            to={changesStatus ? currentLocation : `/CloseHistory-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}`}
-                            data-toggle={changesStatus ? "modal" : "pill"}
-                            // style={{ color: currentTab === 'NIBRSAudit' ? 'Red' : '#130e0e', fontWeight: '600' }}
-                            data-target={changesStatus ? "#SaveModal" : ''}
-                            tabIndex="-1"
-                            aria-disabled="true"
-                            style={{ color: currentTab === 'CloseHistory' ? 'Red' : incidentCount[0]?.IncidentCloseHistoryCount > 0 ? 'blue' : '#130e0e', fontWeight: '600' }}
-                            onClick={() => { if (!changesStatus) { setCurrentTab('CloseHistory') } }}
-                        >
-                            Case History
-                        </Link>
-                    </li>
-
                     <li className="nav-item">
                         <Link
                             className={`nav-link  ${active === `/NLETShistory-Home?IncId=${IncID}&IncNo=${IncNo}&NameID=${NameID}&IncSta=${IncSta}` ? 'active' : ''} ${incidentStatus ? '' : 'disabled'}`}

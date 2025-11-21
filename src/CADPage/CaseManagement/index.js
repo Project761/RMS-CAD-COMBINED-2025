@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Tab from '../../Components/Utility/Tab/Tab'
 import Home from '../../CADComponents/CaseManagement/home'
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import EvidenceDocs from '../../CADComponents/CaseManagement/evidenceDocs';
 import CaseEffort from '../../CADComponents/CaseManagement/caseEffort';
 import Prosecution from '../../CADComponents/CaseManagement/prosecution';
@@ -17,15 +17,18 @@ import CaseTimeline from '../../CADComponents/CaseManagement/CaseTimeline';
 import { useQuery } from 'react-query';
 import CaseManagementServices from '../../CADServices/APIs/caseManagement';
 import { base64ToString } from '../../Components/Common/Utility';
+import CloseHistory from '../../Components/Pages/CloseHistory/CloseHistory';
 
 function CaseManagement() {
+    const navigate = useNavigate();
+    const location = useLocation();
     const [caseManagementPage, setCaseManagementPage] = useState('home');
     const [caseID, setCaseID] = useState(null)
     const [caseData, setCaseData] = useState(null)
     const [RMSCaseNumber, setRMSCaseNumber] = useState(null)
     const iconHome = <i className="fa fa-home" style={{ fontSize: '20px' }}></i>
     const useRouterQuery = () => {
-        const params = new URLSearchParams(useLocation().search);
+        const params = new URLSearchParams(location.search);
         return {
             get: (param) => params.get(param)
         };
@@ -36,6 +39,9 @@ function CaseManagement() {
     let IncNo = query?.get("IncNo");
     let IncSta = query?.get("IncSta");
     let CaseId = query?.get("CaseId");
+
+    if (!IncID) IncID = 0;
+    else IncID = IncID;
 
     const getCaseManagementCaseDataKey = `/CaseManagement/GetAllCaseManagementCaseData/${IncID}`;
     const { data: getCaseManagementCaseData, isSuccess: isGetCaseManagementCaseDataSuccess, refetch: refetchCaseManagementCaseData } = useQuery(
@@ -61,13 +67,9 @@ function CaseManagement() {
             setCaseID(finalCaseID);
             setRMSCaseNumber(data?.[0]?.RMSCaseNumber);
 
-            if (apiCaseID > 0 && !CaseId) {
-                // Update URL with caseID from API if not already in URL
-                const newUrl = `/inc-case-management?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&CaseId=${apiCaseID}`;
-                window.history.replaceState({}, '', newUrl);
-            }
+
         }
-    }, [isGetCaseManagementCaseDataSuccess, getCaseManagementCaseData, IncID, IncNo, IncSta, CaseId])
+    }, [isGetCaseManagementCaseDataSuccess, getCaseManagementCaseData, IncID, IncNo, IncSta, CaseId,])
 
     return (
         <div className="section-body view_page_design pt-1 p-1 bt cad-css">
@@ -82,10 +84,11 @@ function CaseManagement() {
                                 <div className="row " style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
                                     <div className="col-12 name-tab">
                                         <ul className='nav nav-tabs'>
+                                            {/* Home tab - Updates URL with page=home parameter */}
                                             <Link
                                                 className={`nav-item ${caseManagementPage === 'home' ? 'active' : ''}`}
                                                 to={
-                                                    `/inc-case-management?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}${caseID ? `&CaseId=${caseID}` : ''}`
+                                                    `/inc-case-management?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}${caseID ? `&CaseId=${caseID}` : ''}&page=home`
                                                 }
                                                 style={{ color: caseManagementPage === 'home' ? 'Red' : '#000' }}
                                                 data-toggle={"pill"}
@@ -96,6 +99,7 @@ function CaseManagement() {
                                                 {iconHome}
                                             </Link>
                                             <>
+                                                {/* Navigation tabs - Each tab updates URL with corresponding page parameter */}
                                                 <span
                                                     className={`nav-item ${caseManagementPage === 'evidence' ? 'active' : ''}`}
                                                     data-toggle={"pill"}
@@ -186,6 +190,15 @@ function CaseManagement() {
                                                 >
                                                     Court Outcome
                                                 </span>
+                                                <span
+                                                    className={`nav-item ${caseManagementPage === 'caseHistory' ? 'active' : ''}`}
+                                                    data-toggle={"pill"}
+                                                    style={{ color: caseManagementPage === 'caseHistory' ? 'Red' : '#000', pointerEvents: caseID ? 'auto' : 'none', opacity: caseID ? 1 : 0.5, cursor: caseID ? 'pointer' : 'not-allowed' }}
+                                                    aria-current="page"
+                                                    onClick={() => { if (!caseID) return; setCaseManagementPage('caseHistory') }}
+                                                >
+                                                    Case History
+                                                </span>
                                             </>
                                             <span
                                                 className={`nav-item ${caseManagementPage === 'auditLog' ? 'active' : ''}`}
@@ -201,19 +214,19 @@ function CaseManagement() {
                                     </div>
                                 </div>
 
-                                {caseManagementPage === 'home' && <Home RMSCaseNumber={RMSCaseNumber} refetchCaseManagementCaseData={refetchCaseManagementCaseData} caseData={caseData} />}
+                                {caseManagementPage === 'home' && <Home CaseId={caseID} RMSCaseNumber={RMSCaseNumber} refetchCaseManagementCaseData={refetchCaseManagementCaseData} caseData={caseData} />}
                                 {caseManagementPage === 'evidence' && <EvidenceDocs CaseId={caseID} />}
                                 {caseManagementPage === 'caseTeam' && <CaseTeam CaseId={caseID} />}
-                                {caseManagementPage === 'caseEffort' && <CaseEffort />}
-                                {caseManagementPage === 'detectiveNotes' && <DetectiveNotes />}
+                                {caseManagementPage === 'caseEffort' && <CaseEffort CaseId={caseID} />}
+                                {caseManagementPage === 'detectiveNotes' && <DetectiveNotes CaseId={caseID} />}
                                 {caseManagementPage === 'propertyEvidence' && <PropertyEvidence />}
-                                {caseManagementPage === 'caseReport' && <CaseReport />}
+                                {caseManagementPage === 'caseReport' && <CaseReport CaseId={caseID} />}
                                 {caseManagementPage === 'caseTimeline' && <CaseTimeline />}
                                 {caseManagementPage === 'discovery' && <Discovery />}
-                                {caseManagementPage === 'caseClosure' && <CaseClosure />}
+                                {caseManagementPage === 'caseClosure' && <CaseClosure CaseId={caseID} />}
                                 {caseManagementPage === 'courtOutcome' && <CourtOutcome />}
                                 {caseManagementPage === 'auditLog' && <AuditLog />}
-
+                                {caseManagementPage === 'caseHistory' && <CloseHistory />}
                             </div>
                         </div>
                     </div>

@@ -60,9 +60,8 @@ const IncSidebar = () => {
 
     const { changesStatus, incidentCount, arrestData, updateCount, setUpdateCount, setIncStatus, get_Incident_Count, setActiveArrest, activeArrest, CaseStatus,
 
-        validate_IncSideBar, incidentErrorStatus, offenseErrorStatus, nameErrorStatus, NameRelationshipError, narrativeApprovedStatus, PropErrorStatus, nibrsSideBarLoading, setNibrsSideBarLoading
+        validate_IncSideBar, incidentErrorStatus, offenseErrorStatus, nameErrorStatus, NameRelationshipError, narrativeApprovedStatus, PropErrorStatus, nibrsSideBarLoading, setNibrsSideBarLoading, caseManagementDataIncidentRecent
     } = useContext(AgencyContext);
-
 
     const [plusMinus, setPlusMinus] = useState(false)
     const [expandList, setExpandList] = useState()
@@ -524,7 +523,23 @@ const IncSidebar = () => {
                                 </div>
                             </div>
                         </li>
-
+                        <ul className="recent">
+                            {
+                                caseManagementDataIncidentRecent?.slice(-5).map((val) => (
+                                    <li key={val.IncidentID}>
+                                        <Link style={{ display: 'flex', flexDirection: 'column' }}
+                                            to={`/Inc-Home?IncId=${stringToBase64(val?.IncidentID)}&IncNo=${val?.Potentialincidents}&IncSta=${true}`}
+                                            onClick={() => {
+                                                navigate(`/Inc-Home?IncId=${stringToBase64(val?.IncidentID)}&IncNo=${val?.Potentialincidents}&IncSta=${true}`);
+                                                setIncStatus(true);
+                                                setUpdateCount(updateCount + 1);
+                                            }}>
+                                            <span>Incident-{val.Potentialincidents}</span>
+                                        </Link>
+                                    </li>
+                                ))
+                            }
+                        </ul>
                         {
                             IncSta === true || IncSta === "true" ?
                                 <>
