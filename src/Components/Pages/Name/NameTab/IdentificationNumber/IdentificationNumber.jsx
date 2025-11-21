@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import DataTable from 'react-data-table-component';
 import { fetchPostData, AddDeleteUpadate, fetchData } from '../../../../hooks/Api';
-import { customStylesWithOutColor, Decrypt_Id_Name, getShowingWithOutTime, Requiredcolour, tableCustomStyles } from '../../../../Common/Utility';
+import { customStylesWithOutColor, Decrypt_Id_Name, getShowingWithOutTime, isLockOrRestrictModule, LockFildscolour, Requiredcolour, tableCustomStyles } from '../../../../Common/Utility';
 import { toastifyError, toastifySuccess } from '../../../../Common/AlertMsg';
 import DeletePopUpModal from '../../../../Common/DeleteModal';
 import { AgencyContext } from '../../../../../Context/Agency/Index';
@@ -20,7 +20,7 @@ import ChangesModal from '../../../../Common/ChangesModal';
 const Identification = (props) => {
 
 
-  const { ListData, DecNameID, DecMasterNameID, isViewEventDetails = false } = props
+  const { ListData, DecNameID, DecMasterNameID, isViewEventDetails = false, isLocked } = props
   const { get_Name_Count, setChangesStatus } = useContext(AgencyContext)
 
   const dispatch = useDispatch();
@@ -49,7 +49,7 @@ const Identification = (props) => {
   const [loginPinID, setLoginPinID,] = useState('');
 
   const [identification, setIdentification] = useState([]);
-  const [editval, setEditval] = useState();
+  const [editval, setEditval] = useState([]);
   const [identificationDate, setIdentificationDate] = useState();
   const [stateList, setStateList] = useState([]);
   const [countryList, setCountryList] = useState([]);
@@ -101,14 +101,12 @@ const Identification = (props) => {
     }
   }, [effectiveScreenPermission]);
 
-
-
   const GetSingleData = (identificationNumberID) => {
     const val = { 'IdentificationNumberID': identificationNumberID }
     fetchPostData('NameIdentificationNumber/GetSingleData_NameIdentificationNumber', val)
       .then((res) => {
         if (res) { setEditval(res) }
-        else { setEditval() }
+        else { setEditval([]) }
       })
   }
 
@@ -147,6 +145,7 @@ const Identification = (props) => {
       'IdentificationTypeIDErrors': '', 'IdentificationNumberErrors': '',
     })
     setIsTypeOne(false); setStatus(false);
+    setEditval([]);
   }
 
   const check_Validation_Error = () => {
@@ -307,9 +306,6 @@ const Identification = (props) => {
     }
   }
 
-
-
-
   const Get_IdentificationData = (DecNameID, DecMasterNameID) => {
     const val = { NameID: DecNameID, MasterNameID: DecMasterNameID, }
     const val2 = { MasterNameID: DecMasterNameID, NameID: 0, 'IsMaster': MstPage === "MST-Name-Dash" ? true : false, }
@@ -410,12 +406,14 @@ const Identification = (props) => {
           <div className="col-4 col-md-4 col-lg-3  mt-2" >
             <Select
               name='IdentificationTypeID'
-              styles={Requiredcolour}
               value={identification?.filter((obj) => obj.value === value?.IdentificationTypeID)}
               isClearable
               options={identification}
               onChange={(e) => { ChangeDropDown(e, 'IdentificationTypeID'); }}
               placeholder="Select..."
+              // styles={Requiredcolour}
+              styles={isLockOrRestrictModule("Lock", editval[0]?.IdentificationTypeID, isLocked) ? LockFildscolour : Requiredcolour}
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.IdentificationTypeID, isLocked)}
             />
           </div>
           <div className="col-3 col-md-3 col-lg-2 mt-3">
@@ -425,9 +423,18 @@ const Identification = (props) => {
             </label>
           </div>
           <div className="col-4 col-md-4 col-lg-2 text-field mt-2" >
-            <input type="text" style={{ textTransform: "uppercase" }} value={
-              value?.IdentificationNumber
-            } maxLength={maxIdNumberLength} onChange={handleChange} className='requiredColor' name='IdentificationNumber' required autoComplete='off' />
+            <input
+              type="text"
+              style={{ textTransform: "uppercase" }}
+              value={value?.IdentificationNumber}
+              maxLength={maxIdNumberLength}
+              onChange={handleChange}
+              name='IdentificationNumber'
+              required
+              autoComplete='off'
+              className={isLockOrRestrictModule("Lock", editval[0]?.IdentificationNumber, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.IdentificationNumber, isLocked)}
+            />
           </div>
           <div className="col-3 col-md-3 col-lg-1 mt-3">
             <label htmlFor="" className='label-name '>ID Expiry</label>
@@ -435,7 +442,6 @@ const Identification = (props) => {
           <div className="col-4 col-md-4 col-lg-2 " >
             <DatePicker
               ref={startRef}
-
               onKeyDown={(e) => {
                 if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
                   e.preventDefault();
@@ -452,11 +458,12 @@ const Identification = (props) => {
               autoComplete="off"
               showDisabledMonthNavigation
               dropdownMode="select"
-
               showYearDropdown
               placeholderText={value?.ExpiryDate ? value?.ExpiryDate : 'Select...'}
               selected={identificationDate}
               minDate={new Date(NameDateExpired)}
+              className={isLockOrRestrictModule("Lock", editval[0]?.ExpiryDate, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+              disabled={isLockOrRestrictModule("Lock", editval[0]?.ExpiryDate, isLocked)}
             />
           </div>
           <div className="col-3 col-md-3 col-lg-2 mt-3">
@@ -472,7 +479,8 @@ const Identification = (props) => {
               options={countryList}
               onChange={(e) => { ChangeDropDown(e, 'CountryID'); }}
               placeholder="Select..."
-              styles={isTypeOne ? Requiredcolour : customStylesWithOutColor}
+              styles={isLockOrRestrictModule("Lock", editval[0]?.CountryID, isLocked) ? LockFildscolour : isTypeOne ? Requiredcolour : customStylesWithOutColor}
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.CountryID, isLocked)}
             />
           </div>
           <div className="col-3 col-md-3 col-lg-2 mt-3">
@@ -488,15 +496,14 @@ const Identification = (props) => {
               options={stateList}
               onChange={(e) => { ChangeDropDown(e, 'StateID'); }}
               placeholder="Select..."
-
-              styles={isTypeOne && value?.CountryID ? Requiredcolour : customStylesWithOutColor}
-              isDisabled={value?.CountryID ? false : true}
+              styles={isLockOrRestrictModule("Lock", editval[0]?.StateID, isLocked) ? LockFildscolour : isTypeOne && value?.CountryID ? Requiredcolour : customStylesWithOutColor}
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.StateID, isLocked) ? true : value?.CountryID ? false : true}
             />
           </div>
         </div>
         {!isViewEventDetails &&
           <div className="btn-box text-right mt-3 mr-1 mb-2">
-            <button type="button" className="btn btn-sm btn-success mr-1 " onClick={() => { setStatusFalse(); conditionalRowStyles(''); setUpdateStatus(updateStatus + 1); }}>New</button>
+            <button type="button" className="btn btn-sm btn-success mr-1 " onClick={() => { setStatusFalse(); setUpdateStatus(updateStatus + 1); }}>New</button>
             {
               status ?
                 effectiveScreenPermission ?

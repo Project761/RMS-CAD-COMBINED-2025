@@ -2,7 +2,7 @@ import Select from "react-select";
 import { useLocation } from "react-router-dom";
 import { useContext, useEffect, useState } from 'react';
 import { AgencyContext } from "../../../../../Context/Agency/Index";
-import { customStylesWithOutColor, Decrypt_Id_Name, } from "../../../../Common/Utility";
+import { customStylesWithOutColor, Decrypt_Id_Name, isLockOrRestrictModule, LockFildscolour, } from "../../../../Common/Utility";
 import { AddDeleteUpadate, fetchPostData } from "../../../../hooks/Api";
 import { Comman_changeArrayFormat_With_Name } from "../../../../Common/ChangeArrayFormat";
 import { toastifySuccess } from "../../../../Common/AlertMsg";
@@ -15,43 +15,16 @@ import ListModal from '../../../Utility/ListManagementModel/ListModal';
 
 const Appearance = (props) => {
 
-  const { ListData, DecNameID, DecMasterNameID, isViewEventDetails = false } = props
+  const { ListData, DecNameID, DecMasterNameID, isViewEventDetails = false, isLocked } = props
 
   const { setChangesStatus, setcountAppear } = useContext(AgencyContext);
 
   const dispatch = useDispatch();
-  const localStoreData = useSelector((state) => state.Agency.localStoreData);
   const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
-  const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
-  const useQuery = () => {
-    const params = new URLSearchParams(useLocation().search);
-    return {
-      get: (param) => params.get(param)
-    };
-  };
 
-  const query = useQuery();
-  let MstPage = query?.get('page');
-
-
-  useEffect(() => {
-    if (localStoreData) {
-      setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
-      dispatch(get_ScreenPermissions_Data("N048", localStoreData?.AgencyID, localStoreData?.PINID));
-    }
-  }, [localStoreData]);
-
-  useEffect(() => {
-    if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
-      if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
-    }
-  }, []);
-
-
-  const { localStoreArray, get_LocalStorage, } = useContext(AgencyContext);
 
   const [loginAgencyID, setLoginAgencyID] = useState('');
-  const [editval, setEditval] = useState();
+  const [editval, setEditval] = useState([]);
   const [FaceColoIDDrp, setFaceColoIDDrp] = useState([]);
   const [ComplexionColoIDDrp, setComplexionColoIDDrp] = useState([]);
   const [HairStyleIDDrp, setHairStyleIDDrp] = useState([]);
@@ -76,36 +49,40 @@ const Appearance = (props) => {
   const [permissionForEdit, setPermissionForEdit] = useState(false);
   const [addUpdatePermission, setaddUpdatePermission] = useState();
 
+  const localStoreData = useSelector((state) => state.Agency.localStoreData);
+  const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
 
+
+  const useQuery = () => {
+    const params = new URLSearchParams(useLocation().search);
+    return {
+      get: (param) => params.get(param)
+    };
+  };
+
+  const query = useQuery();
+  let MstPage = query?.get('page');
+
+  useEffect(() => {
+    if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
+      if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (localStoreData) {
+      setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
+      dispatch(get_ScreenPermissions_Data("N048", localStoreData?.AgencyID, localStoreData?.PINID));
+    }
+  }, [localStoreData]);
 
   const [value, setValue] = useState({
-    //-------dropDown------//
     'MasterNameID': null, 'NameID': null, 'FaceShapeID': null, 'ComplexionID': null, 'HairStyleID': null,
     'FacialHairID1': null, 'FacialHairID2': null, 'DistinctFeatureID1': null, 'DistinctFeatureID2': null,
     'HairLengthID': null, 'HairShadeID': null, 'FacialOddityID1': null, 'FacialOddityID2': null, 'FacialOddityID3': null,
     'BodyBuildID': null, 'SpeechID': null, 'TeethID': null, 'GlassesID': null, 'Clothing': '', 'HandednessID': null, 'CreatedByUserFK': null, 'ModifiedByUserFK': null,
     'IsMaster': MstPage === "MST-Name-Dash" ? true : false,
   });
-
-  const localStore = {
-    Value: "",
-    UniqueId: sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '',
-    Key: JSON.stringify({ AgencyID: "", PINID: "", MasterNameID: '', NameID: '', Agency_Name: "", }),
-  }
-
-  useEffect(() => {
-    if (!localStoreArray.AgencyID || !localStoreArray.PINID) {
-      get_LocalStorage(localStore);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (localStoreArray) {
-      if (localStoreArray?.AgencyID && localStoreArray?.PINID) {
-        setLoginAgencyID(localStoreArray?.AgencyID); setLoginPinID(parseInt(localStoreArray?.PINID));
-      }
-    }
-  }, [localStoreArray])
 
   useEffect(() => {
     if (effectiveScreenPermission?.length > 0) {
@@ -116,8 +93,6 @@ const Appearance = (props) => {
       setaddUpdatePermission(false);
     }
   }, [effectiveScreenPermission]);
-
-
 
   useEffect(() => {
     if (DecNameID || DecMasterNameID) {
@@ -242,7 +217,6 @@ const Appearance = (props) => {
   }
 
   const resetState = () => {
-
     setStatesChangeStatus(false);
     setValue({
       ...value,
@@ -253,13 +227,13 @@ const Appearance = (props) => {
     })
   }
 
-
   const get_Single_Data = (DecNameID, DecMasterNameID) => {
     const val = { NameID: DecNameID, MasterNameID: DecMasterNameID, }
     const val2 = { MasterNameID: DecMasterNameID, NameID: 0, 'IsMaster': MstPage === "MST-Name-Dash" ? true : false, }
 
     fetchPostData('MasterName/GetSingleData_MasterName', MstPage ? val2 : val)
       .then((res) => {
+        // console.log("🚀 ~ get_Single_Data ~ res:", res)
         if (res) { setEditval(res); }
         else { setEditval([]) }
       })
@@ -306,7 +280,6 @@ const Appearance = (props) => {
   }
 
 
-
   return (
     <>
       <NameListing  {...{ ListData }} />
@@ -315,7 +288,6 @@ const Appearance = (props) => {
           <legend>Appearance</legend>
           <div className="row mt-2">
             <div className="col-2 col-md-2 col-lg-1 mt-2 pt-1">
-
               <span data-toggle="modal" onClick={() => {
                 setOpenPage('Facial Shape')
               }} data-target="#ListModel" className='new-link'>
@@ -325,13 +297,14 @@ const Appearance = (props) => {
             <div className="col-4 col-md-4 col-lg-3 mt-2 px-3" >
               <Select
                 name="Face Shape"
-                styles={customStylesWithOutColor}
                 value={FaceColoIDDrp?.filter((obj) => obj.value === value?.FaceShapeID)}
                 options={FaceColoIDDrp}
-
                 isClearable
                 onChange={(e) => ChangeDropDown(e, 'FaceShapeID')}
                 placeholder="Select Face Shape"
+                // styles={customStylesWithOutColor}
+                styles={isLockOrRestrictModule("Lock", editval[0]?.FaceShapeID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.FaceShapeID, isLocked) ? true : false}
               />
             </div>
             <div className="col-2 col-md-2 col-lg-1 mt-2 pt-1">
@@ -345,7 +318,9 @@ const Appearance = (props) => {
             <div className="col-4 col-md-4 col-lg-3 mt-2" >
               <Select
                 name="Complexion"
-                styles={customStylesWithOutColor}
+                styles={isLockOrRestrictModule("Lock", editval[0]?.ComplexionID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.ComplexionID, isLocked) ? true : false}
+
                 value={ComplexionColoIDDrp?.filter((obj) => obj.value === value?.ComplexionID)}
                 options={ComplexionColoIDDrp}
                 isClearable
@@ -364,7 +339,9 @@ const Appearance = (props) => {
             <div className="col-4 col-md-4 col-lg-3 mt-2" >
               <Select
                 name="HairStyle"
-                styles={customStylesWithOutColor}
+                styles={isLockOrRestrictModule("Lock", editval[0]?.HairStyleID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.HairStyleID, isLocked) ? true : false}
+
                 value={HairStyleIDDrp?.filter((obj) => obj.value === value?.HairStyleID)}
                 options={HairStyleIDDrp}
                 isClearable
@@ -383,7 +360,9 @@ const Appearance = (props) => {
             <div className="col-4 col-md-4 col-lg-3 mt-2 px-3" >
               <Select
                 name="FaceHair1"
-                styles={customStylesWithOutColor}
+                styles={isLockOrRestrictModule("Lock", editval[0]?.FacialHairID1, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.FacialHairID1, isLocked) ? true : false}
+
                 value={FacialHair1IDDrp?.filter((obj) => obj.value === value?.FacialHairID1)}
                 options={FacialHair1IDDrp}
                 isClearable
@@ -402,7 +381,9 @@ const Appearance = (props) => {
             <div className="col-4 col-md-4 col-lg-3 mt-2" >
               <Select
                 name="DistinctFeature1"
-                styles={customStylesWithOutColor}
+                styles={isLockOrRestrictModule("Lock", editval[0]?.DistinctFeatureID1, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.DistinctFeatureID1, isLocked) ? true : false}
+
                 value={DistinctFeature1IDDrp?.filter((obj) => obj.value === value?.DistinctFeatureID1)}
                 options={DistinctFeature1IDDrp}
                 isClearable
@@ -421,7 +402,9 @@ const Appearance = (props) => {
             <div className="col-4 col-md-4 col-lg-3 mt-2" >
               <Select
                 name="HairLength"
-                styles={customStylesWithOutColor}
+                styles={isLockOrRestrictModule("Lock", editval[0]?.HairLengthID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.HairLengthID, isLocked) ? true : false}
+
                 value={HairLengthIDDrp?.filter((obj) => obj.value === value?.HairLengthID)}
                 options={HairLengthIDDrp}
                 isClearable
@@ -440,11 +423,12 @@ const Appearance = (props) => {
             <div className="col-4 col-md-4 col-lg-3 mt-2 px-3" >
               <Select
                 name="FaceHair2"
-                styles={customStylesWithOutColor}
+                styles={isLockOrRestrictModule("Lock", editval[0]?.FacialHairID2, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.FacialHairID2, isLocked) || !value.FacialHairID1 ? true : false}
+
                 value={FacialHair2IDDrp?.filter((obj) => obj.value === value?.FacialHairID2)}
                 options={FacialHair2IDDrp}
                 isClearable
-                isDisabled={!value.FacialHairID1} // Enable only if FaceHair1 has a value
                 onChange={(e) => ChangeDropDown(e, 'FacialHairID2')}
                 placeholder="Select Facial Hair 2"
               />
@@ -460,11 +444,12 @@ const Appearance = (props) => {
             <div className="col-4 col-md-4 col-lg-3 mt-2" >
               <Select
                 name="DistinctFeature2"
-                styles={customStylesWithOutColor}
+                styles={isLockOrRestrictModule("Lock", editval[0]?.DistinctFeatureID2, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.DistinctFeatureID2, isLocked) || !value.DistinctFeatureID1 ? true : false}
+
                 value={DistinctFeature2IDDrp?.filter((obj) => obj.value === value?.DistinctFeatureID2)}
                 options={DistinctFeature2IDDrp}
                 isClearable
-                isDisabled={!value.DistinctFeatureID1}
                 onChange={(e) => ChangeDropDown(e, 'DistinctFeatureID2')}
                 placeholder="Select Distinct Feature 2"
               />
@@ -480,7 +465,9 @@ const Appearance = (props) => {
             <div className="col-4 col-md-4 col-lg-3 mt-2" >
               <Select
                 name="HairShade"
-                styles={customStylesWithOutColor}
+                styles={isLockOrRestrictModule("Lock", editval[0]?.HairShadeID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.HairShadeID, isLocked) ? true : false}
+
                 value={HairShadeIDDrp?.filter((obj) => obj.value === value?.HairShadeID)}
                 options={HairShadeIDDrp}
                 isClearable
@@ -499,7 +486,9 @@ const Appearance = (props) => {
             <div className="col-4 col-md-4 col-lg-3 mt-2 px-3" >
               <Select
                 name="FacialOddity1"
-                styles={customStylesWithOutColor}
+                styles={isLockOrRestrictModule("Lock", editval[0]?.FacialOddityID1, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.FacialOddityID1, isLocked) ? true : false}
+
                 value={FacialOddity1IDDrp?.filter((obj) => obj.value === value?.FacialOddityID1)}
                 options={FacialOddity1IDDrp}
                 isClearable
@@ -518,7 +507,9 @@ const Appearance = (props) => {
             <div className="col-4 col-md-4 col-lg-3 mt-2" >
               <Select
                 name="BodyBuild"
-                styles={customStylesWithOutColor}
+                styles={isLockOrRestrictModule("Lock", editval[0]?.BodyBuildID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.BodyBuildID, isLocked) ? true : false}
+
                 value={BodyBuildIDDrp?.filter((obj) => obj.value === value?.BodyBuildID)}
                 options={BodyBuildIDDrp}
                 isClearable
@@ -537,7 +528,9 @@ const Appearance = (props) => {
             <div className="col-4 col-md-4 col-lg-3 mt-2" >
               <Select
                 name="Speech"
-                styles={customStylesWithOutColor}
+                styles={isLockOrRestrictModule("Lock", editval[0]?.SpeechID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.SpeechID, isLocked) ? true : false}
+
                 value={SpeechIDDrp?.filter((obj) => obj.value === value?.SpeechID)}
                 options={SpeechIDDrp}
                 isClearable
@@ -556,11 +549,13 @@ const Appearance = (props) => {
             <div className="col-4 col-md-4 col-lg-3 mt-2 px-3" >
               <Select
                 name="FacialOddity2"
-                styles={customStylesWithOutColor}
+                styles={isLockOrRestrictModule("Lock", editval[0]?.FacialOddityID2, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.FacialOddityID2, isLocked) || !value.FacialOddityID1 ? true : false}
+
                 value={FacialOddity2IDDrp?.filter((obj) => obj.value === value?.FacialOddityID2)}
                 options={FacialOddity2IDDrp}
                 isClearable
-                isDisabled={!value.FacialOddityID1} // Disable if FacialOddityID1 is not selected
+                // isDisabled={!value.FacialOddityID1} // Disable if FacialOddityID1 is not selected
                 onChange={(e) => ChangeDropDown(e, 'FacialOddityID2')}
                 placeholder="Select Facial Oddity 2"
               />
@@ -576,7 +571,9 @@ const Appearance = (props) => {
             <div className="col-4 col-md-4 col-lg-3 mt-2" >
               <Select
                 name="Teeth"
-                styles={customStylesWithOutColor}
+                styles={isLockOrRestrictModule("Lock", editval[0]?.TeethID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.TeethID, isLocked) ? true : false}
+
                 value={TeethIDDrp?.filter((obj) => obj.value === value?.TeethID)}
                 options={TeethIDDrp}
                 isClearable
@@ -596,7 +593,9 @@ const Appearance = (props) => {
             <div className="col-4 col-md-4 col-lg-3 mt-2" >
               <Select
                 name="Glasses"
-                styles={customStylesWithOutColor}
+                styles={isLockOrRestrictModule("Lock", editval[0]?.GlassesID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.GlassesID, isLocked) ? true : false}
+
                 value={GlassesIDDrp?.filter((obj) => obj.value === value?.GlassesID)}
                 options={GlassesIDDrp}
                 isClearable
@@ -615,11 +614,13 @@ const Appearance = (props) => {
             <div className="col-4 col-md-4 col-lg-3 mt-2 px-3" >
               <Select
                 name="FacialOddity3"
-                styles={customStylesWithOutColor}
+                styles={isLockOrRestrictModule("Lock", editval[0]?.FacialOddityID3, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.FacialOddityID3, isLocked) || !value.FacialOddityID1 || !value.FacialOddityID2 ? true : false}
+
                 value={FacialOddity3IDDrp?.filter((obj) => obj.value === value?.FacialOddityID3)}
                 options={FacialOddity3IDDrp}
                 isClearable
-                isDisabled={!value.FacialOddityID1 || !value.FacialOddityID2} // Disable if either FacialOddityID1 or FacialOddityID2 is not selected
+                // isDisabled={!value.FacialOddityID1 || !value.FacialOddityID2} // Disable if either FacialOddityID1 or FacialOddityID2 is not selected
                 onChange={(e) => ChangeDropDown(e, 'FacialOddityID3')}
                 placeholder="Select Facial Oddity 3"
               />
@@ -641,7 +642,9 @@ const Appearance = (props) => {
             <div className="col-4 col-md-4 col-lg-3 mt-2" >
               <Select
                 name="Handedness"
-                styles={customStylesWithOutColor}
+                styles={isLockOrRestrictModule("Lock", editval[0]?.HandednessID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.HandednessID, isLocked) ? true : false}
+
                 value={HandednessIDDrp?.filter((obj) => obj.value === value?.HandednessID)}
                 options={HandednessIDDrp}
                 isClearable

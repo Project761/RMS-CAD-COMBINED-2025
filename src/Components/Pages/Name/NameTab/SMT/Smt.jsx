@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react'
 import { useLocation } from 'react-router-dom';
 import DataTable from 'react-data-table-component';
 import { fetchPostData, AddDelete_Img, AddDeleteUpadate } from '../../../../hooks/Api';
-import { Aes256Encrypt, Decrypt_Id_Name, Requiredcolour, tableCustomStyles } from '../../../../Common/Utility';
+import { Aes256Encrypt, Decrypt_Id_Name, isLockOrRestrictModule, LockFildscolour, Requiredcolour, tableCustomStyles } from '../../../../Common/Utility';
 import { toastifyError, toastifySuccess } from '../../../../Common/AlertMsg';
 import DeletePopUpModal from '../../../../Common/DeleteModal';
 import { AgencyContext } from '../../../../../Context/Agency/Index';
@@ -22,7 +22,7 @@ import { get_ScreenPermissions_Data } from '../../../../../redux/actions/Inciden
 
 const Smt = (props) => {
 
-    const { ListData, DecNameID, DecMasterNameID, isViewEventDetails = false } = props
+    const { ListData, DecNameID, DecMasterNameID, isViewEventDetails = false, isLocked } = props
 
     const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -31,20 +31,23 @@ const Smt = (props) => {
     const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
 
     useEffect(() => {
+        if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
+            if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
+        }
+    }, []);
+
+    useEffect(() => {
         if (localStoreData) {
             setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
             dispatch(get_ScreenPermissions_Data("N050", localStoreData?.AgencyID, localStoreData?.PINID));
         }
     }, [localStoreData]);
 
-    useEffect(() => {
-        if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
-            if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
-        }
-    }, []);
 
     const { get_Name_Count, localStoreArray, get_LocalStorage, setChangesStatus } = useContext(AgencyContext);
+
     const useQuery = () => new URLSearchParams(useLocation().search);
+
     let MstPage = useQuery().get('page');
     const [clickedRow, setClickedRow] = useState(null);
 
@@ -56,7 +59,7 @@ const Smt = (props) => {
     const [loginPinID, setLoginPinID,] = useState('');
     const [smtLocation, setSmtLocation] = useState([]);
     const [smtType, setSmtType] = useState([]);
-    const [editval, setEditval] = useState();
+    const [editval, setEditval] = useState([]);
     const [modalStatus, setModalStatus] = useState(false);
     const [openPage, setOpenPage] = useState('');
     const [uploadImgFiles, setuploadImgFiles] = useState([]);
@@ -82,7 +85,6 @@ const Smt = (props) => {
         'IsMaster': MstPage === "MST-Name-Dash" ? true : false,
     })
 
-
     const [imgData, setImgData] = useState({
         "PictureTypeID": '',
         "ImageViewID": '',
@@ -91,17 +93,6 @@ const Smt = (props) => {
         "Comments": '',
         "DocumentID": ''
     })
-    const localStore = {
-        Value: "",
-        UniqueId: sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '',
-        Key: JSON.stringify({ AgencyID: "", PINID: "", MasterNameID: '', NameID: '', Agency_Name: "", }),
-    }
-
-    useEffect(() => {
-        if (!localStoreArray.AgencyID || !localStoreArray.PINID) {
-            get_LocalStorage(localStore);
-        }
-    }, []);
 
     useEffect(() => {
         if (effectiveScreenPermission?.length > 0) {
@@ -122,7 +113,6 @@ const Smt = (props) => {
                 }
             });
         }
-
     }, [DecNameID, DecMasterNameID, loginPinID]);
 
     const [errors, setErrors] = useState({
@@ -144,7 +134,7 @@ const Smt = (props) => {
         fetchPostData('NameSMT/GetSingleData_NameSMT', val)
             .then((res) => {
                 if (res) { setEditval(res) }
-                else { setEditval() }
+                else { setEditval([]) }
             })
     }
 
@@ -201,6 +191,7 @@ const Smt = (props) => {
             'SMTTypeIDErrors': '', 'SMTLocationIDErrors': '', 'SMT_DescriptionErrors': ''
         });
         setArrestMultiImg([]); setSmtId(''); get_SMTLocationID(''); setStatesChangeStatus(false); setuploadImgFiles('');
+        setEditval([])
     }
 
     useEffect(() => {
@@ -285,8 +276,6 @@ const Smt = (props) => {
         }
     };
 
-
-
     const Add_Type = (e) => {
         const result = smtData?.find(item => {
             if (item.SMTTypeID === value.SMTTypeID && item.SMTLocationID === value.SMTLocationID) {
@@ -352,8 +341,6 @@ const Smt = (props) => {
         }
     }
 
-
-
     //---------------------------------------- Image ------------------------------------------------
     const get_Arrest_MultiImage = (smtId) => {
         fetchPostData('NameSMT/GetData_NameSMTPhoto', { 'SMTID': smtId })
@@ -382,7 +369,6 @@ const Smt = (props) => {
         })
 
     }
-
 
     const upload_Image_File = async (smtID) => {
         const formdata = new FormData();
@@ -521,7 +507,8 @@ const Smt = (props) => {
     const set_Edit_Value = (row) => {
         reset(); setStatus(true);
         setUpdateStatus(updateStatus + 1);
-        setSmtId(row.SMTID); GetSingleData(row.SMTID)
+        setSmtId(row.SMTID);
+        GetSingleData(row.SMTID)
         setuploadImgFiles('')
     }
 
@@ -555,7 +542,6 @@ const Smt = (props) => {
                     <div className="col-12 col-md-12 col-lg-10">
                         <div className="row">
                             <div className="col-3 col-md-3 col-lg-2 mt-3">
-
                                 <span data-toggle="modal" onClick={() => {
                                     setOpenPage('SMT Type')
                                 }} data-target="#ListModel" className='new-link'>
@@ -568,12 +554,14 @@ const Smt = (props) => {
                             <div className="col-3 col-md-3 col-lg-4  mt-2" >
                                 <Select
                                     name='SMTTypeID'
-                                    styles={Requiredcolour}
                                     value={smtType?.filter((obj) => obj.value === value?.SMTTypeID)}
                                     isClearable
                                     options={smtType}
                                     onChange={(e) => ChangeDropDown(e, 'SMTTypeID')}
                                     placeholder="Select..."
+                                    // styles={Requiredcolour}
+                                    styles={isLockOrRestrictModule("Lock", editval[0]?.SMTTypeID, isLocked) ? LockFildscolour : Requiredcolour}
+                                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.SMTTypeID, isLocked) ? true : false}
                                 />
                             </div>
                             <div className="col-3 col-md-3 col-lg-2 mt-3">
@@ -589,12 +577,13 @@ const Smt = (props) => {
                             <div className="col-3 col-md-3 col-lg-4  mt-2" >
                                 <Select
                                     name='SMTLocationID'
-                                    styles={value?.SMTTypeID === 39 ? notReqStyle : Requiredcolour}
                                     value={smtLocation?.filter((obj) => obj.value === value?.SMTLocationID)}
                                     isClearable
                                     options={smtLocation}
                                     onChange={(e) => ChangeDropDown(e, 'SMTLocationID')}
                                     placeholder="Select..."
+                                    // styles={value?.SMTTypeID === 39 ? notReqStyle : Requiredcolour}
+                                    styles={isLockOrRestrictModule("Lock", editval[0]?.SMTLocationID, isLocked) ? LockFildscolour : value?.SMTTypeID === 39 ? notReqStyle : Requiredcolour}
                                     isDisabled={!value?.SMTTypeID || value.SMTTypeID === 39}
 
                                 />
@@ -605,7 +594,20 @@ const Smt = (props) => {
                                 ) : null}</label>
                             </div>
                             <div className="col-9 col-md-9 col-lg-10 text-field mt-2" >
-                                <textarea name="SMT_Description" className='' onKeyDown={handleKeyDown} onChange={handleChange} id="SMT_Description" value={value.SMT_Description} cols="30" rows="4" required style={{ resize: 'none' }}></textarea>
+                                <textarea
+                                    name="SMT_Description"
+                                    className={isLockOrRestrictModule("Lock", editval[0]?.SMT_Description, isLocked) ? "LockFildsColor" : ''}
+                                    disabled={isLockOrRestrictModule("Lock", editval[0]?.SMT_Description, isLocked)}
+                                    onKeyDown={handleKeyDown}
+                                    onChange={handleChange}
+                                    id="SMT_Description"
+                                    value={value.SMT_Description}
+                                    cols="30"
+                                    rows="4"
+                                    required
+                                    style={{ resize: 'none' }}
+                                >
+                                </textarea>
                             </div>
                         </div>
                     </div>

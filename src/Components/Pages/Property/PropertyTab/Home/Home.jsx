@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import Select from "react-select";
 import DatePicker from "react-datepicker";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Aes256Encrypt, Decrypt_Id_Name, DecryptedList, EncryptedList, Encrypted_Id_Name, LockFildscolour, Requiredcolour, base64ToString, customStylesWithOutColor, encryptAndEncodeToBase64, filterPassedDateTime, filterPassedTime, filterPassedTimeZone, filterPassedTimeZonesCurrent, filterPassedTimeZonesProperty, getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime, getYearWithOutDateTime, stringToBase64, tableCustomStyle, tableCustomStyles } from '../../../../Common/Utility';
+import { Aes256Encrypt, Decrypt_Id_Name, DecryptedList, EncryptedList, Encrypted_Id_Name, LockFildscolour, Requiredcolour, base64ToString, customStylesWithOutColor, encryptAndEncodeToBase64, filterPassedDateTime, filterPassedTime, filterPassedTimeZone, filterPassedTimeZonesCurrent, filterPassedTimeZonesProperty, getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime, getYearWithOutDateTime, isLockOrRestrictModule, stringToBase64, tableCustomStyle, tableCustomStyles } from '../../../../Common/Utility';
 import { AddDeleteUpadate, AddDelete_Img, ScreenPermision, fetchData, fetchPostData, fetchPostDataNibrs } from '../../../../hooks/Api';
 import { Comman_changeArrayFormat, fourColwithExtraCode, threeColArray } from '../../../../Common/ChangeArrayFormat';
 import { toastifyError, toastifySuccess } from '../../../../Common/AlertMsg';
@@ -35,7 +35,7 @@ import CreatableSelect from 'react-select/creatable';
 import NCICModal from '../../../../../CADComponents/NCICModal';
 
 
-const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List, propertystatus, setPropertyStatus, isCad = false, isViewEventDetails = false, isCADSearch = false, }) => {
+const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List, propertystatus, setPropertyStatus, isCad = false, isViewEventDetails = false, isCADSearch = false, isLocked, setIsLocked }) => {
 
 
   const dispatch = useDispatch();
@@ -764,8 +764,9 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
     setMasterPropertyID(''); setPropertyID(''); setPorpRecType(''); setPorpCategoryCode('');
     dispatch({ type: MasterProperty_ID, payload: '' });
     dispatch({ type: Property_ID, payload: '' });
+
     setPossessionID('');
-    dispatch(get_Masters_Name_Drp_Data(''));
+    // dispatch(get_Masters_Name_Drp_Data(''));
 
 
     sessionStorage.removeItem('DrugLocalData', JSON.stringify([...drugLocalArr, value]));
@@ -781,6 +782,10 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
       setIsDrugOffense(false);
     }
     setPropertyStatus(false);
+
+    // Lock Restrict
+    // setIsLocked(false);
+
 
   }
 
@@ -1319,166 +1324,15 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
     })
   }
 
-  const columns1 = [
-    {
-      grow: 1, minwidth: "100px",
-      name: 'Property Number',
-      selector: (row) => row.PropertyNumber,
-      sortable: true
-    },
-    {
-      grow: 1,
-      minWidth: "100px",
-      name: 'Property Type',
-      selector: (row) => row.PropertyType_Description,
-      sortable: true
-    },
-    {
-      grow: 1,
-      minWidth: "100px",
-      name: 'Category',
-      selector: (row) => row.PropertyCategory_Description,
-      sortable: true
-
-    },
-    {
-      grow: 1,
-      minWidth: "100px",
-      name: 'Loss Code',
-      selector: (row) => row.PropertyLossCode_Description,
-      sortable: true
-    },
-    {
-      grow: 1,
-      minWidth: "100px",
-      name: 'Owner Name',
-      selector: (row) => row.Owner_Description,
-      sortable: true
-    },
-    // {
-    //   name: 'Evidence Flag',
-    //   selector: (row) => row.Evidence,
-    //   sortable: true
-    // },
-    {
-      grow: 1,
-      minWidth: "100px",
-      name: 'Evidence Flag',
-      selector: row => (
-        <input type="checkbox" checked={row.IsEvidence === true} disabled />
-      ),
-      sortable: true
-    },
-    // {  
-    //   grow: 0,
-    //   minWidth: "80px",
-    //   name: 'View',
-    //   cell: row =>
-    //     <div style={{ position: 'absolute', top: 4, right: 30 }}>
-    //       {
-    //         getNibrsError(row.PropertyID, nibrsValidateData) ?
-    //           <span
-    //             onClick={(e) => { setErrString(row.PropertyID, nibrsValidateData) }}
-    //             className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
-    //             data-toggle="modal"
-    //             data-target="#NibrsErrorShowModal"
-    //           >
-    //             <i className="fa fa-eye"></i>
-    //           </span>
-    //           :
-    //           <></>
-    //       }
-    //     </div>
-    // },
-    {
-      grow: 0,
-      minWidth: "100px",
-      name: <p className='text-end' style={{ position: 'absolute', top: '7px', right: 10 }}>Delete</p>,
-      cell: row =>
-        <div style={{ position: 'absolute', top: 4, right: 10 }}>
-          {
-            effectiveScreenPermission ?
-              effectiveScreenPermission[0]?.DeleteOK ?
-                <span onClick={(e) => { setDelPropertyID(row.PropertyID); dispatch({ type: Property_ID, payload: row.PropertyID }); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
-                  <i className="fa fa-trash"></i>
-                </span>
-                : <></>
-              :
-              <span onClick={(e) => { setDelPropertyID(row.PropertyID); dispatch({ type: Property_ID, payload: row.PropertyID }); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
-                <i className="fa fa-trash"></i>
-              </span>
-          }
-        </div>
-    }
-  ]
 
   const getNibrsError = (Id, nibrsValidateData) => {
     const arr = nibrsValidateData?.filter((item) => item?.PropertyID == Id);
     return arr?.[0]?.OnPageError;
   }
 
-  const setErrString = (ID, nibrsValidateData) => {
-    const arr = nibrsValidateData?.filter((item) => item?.PropertyID == ID);
-    setNibrsErrStr(arr[0]?.OnPageError);
-    setNibrsErrModalStatus(true);
-  }
-
   const getStatusColors = (ID, nibrsValidateData) => {
     return getNibrsError(ID, nibrsValidateData) ? { backgroundColor: "rgb(255 202 194)" } : {};
   };
-
-  const HideCol = React.useMemo(() => [
-    {
-      width: '250px',
-      name: 'Property Number',
-      selector: (row) => row.PropertyNumber,
-      sortable: true
-    },
-    {
-      name: 'Category',
-      selector: (row) => row.PropertyCategory_Description,
-      sortable: true
-    },
-    {
-      name: 'Loss Code',
-      selector: (row) => row.PropertyLossCode_Description,
-      sortable: true,
-      omit: hideDirector,
-    },
-    {
-      name: <p className='text-end' style={{ position: 'absolute', top: '7px', right: 10 }}>Delete</p>,
-      cell: row =>
-        <div style={{ position: 'absolute', top: 4, right: 10 }}>
-          <span onClick={(e) => { setHideDirector(!hideDirector); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1">
-            <i>Hide</i>
-          </span>
-        </div>
-    }
-  ], [hideDirector]);
-
-  const set_EditRow = (row) => {
-    if (changesStatus) {
-      const modal = new window.bootstrap.Modal(document?.getElementById('SaveModal'));
-      modal?.show();
-
-    } else {
-      setuploadImgFiles(''); setMultiImage([]); setStatesChangeStatus(false);
-      if (row.PropertyID || row.MasterPropertyID) {
-        if (isCad) {
-          navigate(`/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${stringToBase64(row?.PropertyID)}&MProId=${stringToBase64(row?.MasterPropertyID)}&ProSta=${true}&ProCategory=${row.PropertyType_Description}`)
-        } else {
-          navigate(`/Prop-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${stringToBase64(row?.PropertyID)}&MProId=${stringToBase64(row?.MasterPropertyID)}&ProSta=${true}&ProCategory=${row.PropertyType_Description}`)
-        }
-        Reset();
-        GetSingleData(row?.PropertyID, row?.MasterPropertyID);
-        get_Property_Count(row?.PropertyID, row?.MasterPropertyID, MstPage === "MST-Property-Dash" ? true : false);
-
-        setMasterPropertyID(row?.MasterPropertyID); dispatch({ type: MasterProperty_ID, payload: row?.MasterPropertyID });
-        setPropertyID(row?.PropertyID); dispatch({ type: Property_ID, payload: row.PropertyID });
-      }
-
-    }
-  }
 
   const Delete_Property = () => {
     const val = { 'PropertyID': delPropertyID, 'DeletedByUserFK': loginPinID, 'IsMaster': MstPage === "MST-Property-Dash" ? true : false, }
@@ -2007,37 +1861,12 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
     };
   }, [escFunction]);
 
-  const conditionalRowStyles = [
-    {
-      when: () => true,
-      style: (row) => ({
-        ...getStatusColors(row.PropertyID, nibrsValidateData),
-        ...(row.PropertyID === DecPropID ? {
-          backgroundColor: '#001f3fbd',
-          color: 'white',
-          cursor: 'pointer',
-        } : {})
-      }),
-    },
-  ];
-
   const conditionalRowStylesDrug = [
     {
       when: row => row.PropertyDrugID === propertyDrugID,
       style: { backgroundColor: '#001f3fbd', color: 'white', cursor: 'pointer', },
     },
   ];
-
-  const stylesNoColorSourceDrug = {
-    control: base => ({
-      ...base,
-      height: 20,
-      minHeight: 32,
-      fontSize: 14,
-      margintop: 2,
-      boxShadow: 0,
-    }),
-  };
 
   const GetSingleDataPassion = (nameID, masterNameID) => {
     const val = { 'NameID': nameID, 'MasterNameID': masterNameID }
@@ -2055,83 +1884,6 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
       navigate('/cad/dashboard-page');
     } else {
       navigate('/dashboard-page');
-    }
-  }
-
-  const filterMeasureTypeArray = (data) => {
-
-    if (drugTypecode === 'E') {
-      const filterArray = data?.filter((item) => { if (item?.id != "DU") return item });
-      return filterArray
-    } else if (drugTypecode === 'E' || drugTypecode === 'G' || drugTypecode === 'K') {
-      return data
-    } else {
-      const filterArray = data?.filter((item) => { if (item?.id != "NP") { return item } });
-      return filterArray
-    }
-  }
-
-  const getProLossType = (data, nibrsCodeArr) => {
-    const CodeArray = ['100', '35', '521', '522', '526', '26H'];
-    const CommanCodes = nibrsCodeArr?.filter(value => CodeArray.includes(value));
-
-    if (CommanCodes?.length > 0) {
-      const returnData = data?.filter((item) => { if (item?.id === "None") return item })
-      return returnData
-
-      // return data
-    } else if (nibrsCodeArr?.includes('280')) {
-      const returnData = data?.filter((item) => { if (item?.id === "None" || item?.id === "RECD") return item })
-      return returnData
-
-    } else {
-      return data
-
-    }
-  }
-
-  // useEffect(() => {
-  //   if (IncID) {
-  //     nibrsValidateProperty(IncID);
-  //   }
-  // }, [IncID]);
-
-  const nibrsValidateProperty = (incidentID) => {
-    setclickNibLoder(true);
-    try {
-      fetchPostDataNibrs('NIBRS/GetPropertyNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': IncNo, 'PropertyId': '', 'gIntAgencyID': loginAgencyID }).then((data) => {
-        if (data) {
-          if (data?.Properties?.length > 0) {
-            const propArr = data?.Properties?.filter((item) => item?.PropertyType !== 'V' && item?.PropertyType);
-
-
-            if (propArr?.length > 0) {
-              const propErrorArray = propArr || []
-
-              if (propErrorArray.every(item => item === null || item === undefined)) {
-                setnibrsValidateData([]); setclickNibLoder(false);
-
-              } else {
-                setnibrsValidateData(propArr || []); setclickNibLoder(false);
-
-              }
-            } else {
-              setnibrsValidateData([]); setclickNibLoder(false);
-
-            }
-
-          } else {
-            setnibrsValidateData([]); setclickNibLoder(false);
-
-          }
-
-        } else {
-          setnibrsValidateData([]); setclickNibLoder(false);
-
-        }
-      })
-    } catch (error) {
-      setnibrsValidateData([]); setclickNibLoder(false);
     }
   }
 
@@ -2216,17 +1968,17 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                     <Select
                       name='LossCodeID'
                       value={propertyLossCodeDrpData?.filter((obj) => obj.value === value?.LossCodeID)}
-
                       options={propertyLossCodeDrpData}
-
                       onChange={(e) => onChangeLossCode(e, 'LossCodeID')}
                       isClearable
                       placeholder="Select..."
-                      styles={nibrsSubmittedPropertyMain === 1 ? LockFildscolour : Requiredcolour}
-                      isDisabled={nibrsSubmittedPropertyMain === 1 ? true : false}
+
+                      // styles={nibrsSubmittedPropertyMain === 1 ? LockFildscolour : Requiredcolour}
+                      // isDisabled={nibrsSubmittedPropertyMain === 1 ? true : false}
+                      styles={isLockOrRestrictModule("Lock", editval[0]?.LossCodeID, isLocked) || nibrsSubmittedPropertyMain === 1 ? LockFildscolour : Requiredcolour}
+                      isDisabled={isLockOrRestrictModule("Lock", editval[0]?.LossCodeID, isLocked) || nibrsSubmittedPropertyMain === 1 ? true : false}
                     />
                   </div>
-
                   <div className="col-3 col-md-3 col-lg-2 mt-2">
                     <label htmlFor="" className='new-label'>Reported Date/Time</label>
                   </div>
@@ -2237,8 +1989,6 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                           id='ReportedDtTm'
                           name='ReportedDtTm'
                           ref={startRef}
-
-
                           onKeyDown={(e) => {
                             if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
                               e?.preventDefault();
@@ -2247,7 +1997,6 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                             }
                           }}
                           dateFormat="MM/dd/yyyy HH:mm"
-
                           isClearable={false}
                           onChange={(date) => {
                             !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
@@ -2264,9 +2013,6 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                             }
                           }}
                           selected={value?.ReportedDtTm && new Date(value?.ReportedDtTm)}
-
-                          disabled={nibrsSubmittedPropertyMain === 1}
-                          className={nibrsSubmittedPropertyMain === 1 ? 'LockFildsColour' : 'requiredColor'}
                           autoComplete="Off"
                           placeholderText={'Select...'}
                           timeInputLabel
@@ -2281,14 +2027,15 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                           timeFormat="HH:mm "
                           is24Hour
 
+                          disabled={isLockOrRestrictModule("Lock", editval[0]?.ReportedDtTm, isLocked) || nibrsSubmittedPropertyMain === 1}
+                          className={isLockOrRestrictModule("Lock", editval[0]?.ReportedDtTm, isLocked) || nibrsSubmittedPropertyMain === 1 ? 'LockFildsColour' : 'requiredColor'}
+
                         />
                         :
                         <DatePicker
                           id='ReportedDtTm'
                           name='ReportedDtTm'
-
                           ref={startRef}
-
                           onKeyDown={(e) => {
                             if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
                               e?.preventDefault();
@@ -2314,9 +2061,6 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                             }
                           }}
                           autoComplete="Off"
-
-                          disabled={nibrsSubmittedPropertyMain === 1}
-                          className={nibrsSubmittedPropertyMain === 1 ? 'LockFildsColour' : 'requiredColor'}
                           timeInputLabel
                           showTimeSelect
                           timeIntervals={1}
@@ -2327,11 +2071,12 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                           minDate={new Date(incReportedDate)}
                           maxDate={new Date(datezone)}
                           showDisabledMonthNavigation
-
                           timeFormat="HH:mm "
                           is24Hour
-
                           filterTime={(date) => filterPassedTimeZonesProperty(date, incReportedDate, datezone)}
+
+                          disabled={isLockOrRestrictModule("Lock", editval[0]?.ReportedDtTm, isLocked) || nibrsSubmittedPropertyMain === 1}
+                          className={isLockOrRestrictModule("Lock", editval[0]?.ReportedDtTm, isLocked) || nibrsSubmittedPropertyMain === 1 ? 'LockFildsColour' : 'requiredColor'}
                         />
                     }
                   </div>
@@ -2347,14 +2092,18 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                   </div>
                   <div className="col-3 col-md-3 col-lg-3 mt-1">
                     <Select
-                      styles={nibrsSubmittedPropertyMain === 1 ? LockFildscolour : propertyID || masterPropertyID ? customStylesWithOutColor : Requiredcolour}
                       name='PropertyTypeID'
                       value={propertyTypeData?.filter((obj) => obj.value === value?.PropertyTypeID)}
                       options={propertyTypeData}
                       onChange={(e) => ChangeDropDown(e, 'PropertyTypeID')}
                       isClearable
                       placeholder="Select..."
-                      isDisabled={propertyID || masterPropertyID || isDrugOffense || nibrsSubmittedPropertyMain === 1 ? true : false}
+
+                      // styles={nibrsSubmittedPropertyMain === 1 ? LockFildscolour : propertyID || masterPropertyID ? customStylesWithOutColor : Requiredcolour}
+                      // isDisabled={propertyID || masterPropertyID || isDrugOffense || nibrsSubmittedPropertyMain === 1 ? true : false}
+
+                      styles={isLockOrRestrictModule("Lock", editval[0]?.PropertyTypeID, isLocked) || nibrsSubmittedPropertyMain === 1 ? LockFildscolour : propertyID || masterPropertyID ? customStylesWithOutColor : Requiredcolour}
+                      isDisabled={isLockOrRestrictModule("Lock", editval[0]?.PropertyTypeID, isLocked) || propertyID || masterPropertyID || isDrugOffense || nibrsSubmittedPropertyMain === 1 ? true : false}
                     />
                   </div>
                   <div className="col-3 col-md-3 col-lg-1 mt-2">
@@ -2379,8 +2128,14 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                     <Select
                       name='CategoryID'
                       id='CategoryID'
+                      value={propertyCategoryData?.filter((obj) => obj.value === value?.CategoryID)}
+                      options={propertyCategoryData}
+                      onChange={(e) => ChangeDropDown(e, 'CategoryID')}
+                      isClearable
+                      placeholder="Select..."
+
                       styles={
-                        nibrsSubmittedPropertyMain === 1 ? LockFildscolour :
+                        isLockOrRestrictModule("Lock", editval[0]?.CategoryID, isLocked) || nibrsSubmittedPropertyMain === 1 ? LockFildscolour :
                           loginAgencyState === 'TX' ?
                             check_Category_Nibrs(nibrsCodeArr, propRecType, propCategoryCode, 'Color')
                               ?
@@ -2390,13 +2145,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                             :
                             Requiredcolour
                       }
-
-                      value={propertyCategoryData?.filter((obj) => obj.value === value?.CategoryID)}
-                      options={propertyCategoryData}
-                      onChange={(e) => ChangeDropDown(e, 'CategoryID')}
-                      isClearable
-                      placeholder="Select..."
-                      isDisabled={nibrsSubmittedPropertyMain === 1 ? true : false}
+                      isDisabled={isLockOrRestrictModule("Lock", editval[0]?.CategoryID, isLocked) || nibrsSubmittedPropertyMain === 1 ? true : false}
                     />
                   </div>
 
@@ -2405,14 +2154,15 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                   </div>
                   <div className="col-9 col-md-9 col-lg-2 mt-1">
                     <Select
-                      styles={nibrsSubmittedPropertyMain === 1 ? LockFildscolour : customStylesWithOutColor}
                       name='ClassificationID'
                       value={propertyClassificationData?.filter((obj) => obj.value === value?.ClassificationID)}
                       options={propertyClassificationData}
                       onChange={(e) => ChangeDropDown(e, 'ClassificationID')}
                       isClearable
                       placeholder="Select..."
-                      isDisabled={nibrsSubmittedPropertyMain === 1 ? true : false}
+
+                      styles={isLockOrRestrictModule("Lock", editval[0]?.ClassificationID, isLocked) || nibrsSubmittedPropertyMain === 1 ? LockFildscolour : customStylesWithOutColor}
+                      isDisabled={isLockOrRestrictModule("Lock", editval[0]?.ClassificationID, isLocked) || nibrsSubmittedPropertyMain === 1 ? true : false}
                     />
                   </div>
                   <div className="col-3 col-md-3 col-lg-1 mt-2 px-0">
@@ -2423,22 +2173,26 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                       MstPage === "MST-Property-Dash" ?
                         <Select
                           name='PossessionOfID'
-                          styles={customStylesWithOutColor}
                           value={mastersNameDrpData?.filter((obj) => obj.value === value?.PossessionOfID)}
                           isClearable
                           options={mastersNameDrpData}
                           onChange={(e) => { ChangeDropDown(e, 'PossessionOfID') }}
                           placeholder="Select..."
+
+                          styles={isLockOrRestrictModule("Lock", editval[0]?.PossessionOfID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                          isDisabled={isLockOrRestrictModule("Lock", editval[0]?.PossessionOfID, isLocked) ? true : false}
                         />
                         :
                         <Select
                           name='PossessionOfID'
-                          styles={customStylesWithOutColor}
                           value={arresteeNameData?.filter((obj) => obj.value === value?.PossessionOfID)}
                           isClearable
                           options={arresteeNameData}
                           onChange={(e) => { ChangeDropDown(e, 'PossessionOfID') }}
                           placeholder="Select..."
+
+                          styles={isLockOrRestrictModule("Lock", editval[0]?.PossessionOfID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                          isDisabled={isLockOrRestrictModule("Lock", editval[0]?.PossessionOfID, isLocked) ? true : false}
                         />
                     }
                   </div>
@@ -2461,12 +2215,14 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                   <div className="col-3 col-md-3 col-lg-3 mt-1">
                     <Select
                       name='OfficerID'
-                      styles={customStylesWithOutColor}
                       value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.OfficerID)}
                       isClearable
                       options={agencyOfficerDrpData}
                       onChange={(e) => ChangeDropDown(e, 'OfficerID')}
                       placeholder="Select..."
+
+                      styles={isLockOrRestrictModule("Lock", editval[0]?.OfficerID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                      isDisabled={isLockOrRestrictModule("Lock", editval[0]?.OfficerID, isLocked) ? true : false}
                     />
                   </div>
 
@@ -2483,18 +2239,17 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                       type="text"
                       name="Value"
                       id="Value"
-
-                      // className={nibrsSubmittedPropertyMain === 1 || !value?.CategoryID ? 'readonlyColor' : lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD' ? 'requiredColor' : ''}
-                      className={nibrsSubmittedPropertyMain === 1 ? 'LockFildsColour' : !value?.CategoryID ? 'readonlyColor' : lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD'
-                        ? 'requiredColor'
-                        : ''
-                      }
-                      maxLength={9}
-                      disabled={nibrsSubmittedPropertyMain === 1 || !value?.CategoryID ? true : propCategoryCode === '09' || propCategoryCode === '22' || propCategoryCode === '65' || propCategoryCode === '66' || propCategoryCode === '88' || propCategoryCode === '10' || propCategoryCode === '10' || propCategoryCode === '48'}
                       value={`$${value?.Value}`}
                       onChange={HandleChanges}
                       required
                       autoComplete='off'
+                      maxLength={9}
+
+                      className={isLockOrRestrictModule("Lock", editval[0]?.Value, isLocked) || nibrsSubmittedPropertyMain === 1 ? 'LockFildsColor' : !value?.CategoryID ? 'readonlyColor' : lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD'
+                        ? 'requiredColor'
+                        : ''
+                      }
+                      disabled={isLockOrRestrictModule("Lock", editval[0]?.Value, isLocked) || nibrsSubmittedPropertyMain === 1 || !value?.CategoryID ? true : propCategoryCode === '09' || propCategoryCode === '22' || propCategoryCode === '65' || propCategoryCode === '66' || propCategoryCode === '88' || propCategoryCode === '10' || propCategoryCode === '10' || propCategoryCode === '48'}
                     />
                   </div>
 
@@ -2561,16 +2316,37 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                           <label htmlFor="" className='new-label'>Serial Id</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
-                          <input type="text" name='SerialID' id='SerialID' autoComplete='off' value={value?.SerialID} onChange={HandleChanges} className='' required />
+                          <input
+                            type="text"
+                            name='SerialID'
+                            id='SerialID'
+                            autoComplete='off'
+                            value={value?.SerialID}
+                            onChange={HandleChanges}
+                            required
+
+                            className={isLockOrRestrictModule("Lock", propertyArticle[0]?.SerialID, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", propertyArticle[0]?.SerialID, isLocked) ? true : false}
+                          />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2">
                           <label htmlFor="" className='new-label'>Model Id</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
-                          <input type="text" name='ModelID' id='ModelID' value={value?.ModelID} onChange={HandleChanges} className='' required autoComplete='off' />
+                          <input
+                            type="text"
+                            name='ModelID'
+                            id='ModelID'
+                            value={value?.ModelID}
+                            onChange={HandleChanges}
+                            required
+                            autoComplete='off'
+
+                            className={isLockOrRestrictModule("Lock", propertyArticle[0]?.ModelID, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", propertyArticle[0]?.ModelID, isLocked) ? true : false}
+                          />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2">
-
                           <span data-toggle="modal" onClick={() => {
                             setOpenPage('Color')
                           }} data-target="#ListModel" className='new-link'>
@@ -2582,10 +2358,12 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                             name='TopColorID'
                             value={topColorDrpData?.filter((obj) => obj.value === value?.TopColorID)}
                             options={topColorDrpData}
-                            styles={customStylesWithOutColor}
                             onChange={(e) => ChangeDropDown(e, 'TopColorID')}
                             isClearable
                             placeholder="Select..."
+
+                            styles={isLockOrRestrictModule("Lock", propertyArticle[0]?.TopColorID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", propertyArticle[0]?.TopColorID, isLocked) ? true : false}
                           />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  px-0 mt-2 ">
@@ -2600,29 +2378,67 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                             name='BottomColorID'
                             value={bottomColorDrpData?.filter((obj) => obj.value === value?.BottomColorID)}
                             options={bottomColorDrpData}
-                            styles={customStylesWithOutColor}
                             onChange={(e) => ChangeDropDown(e, 'BottomColorID')}
                             isClearable
                             placeholder="Select..."
+
+                            styles={isLockOrRestrictModule("Lock", propertyArticle[0]?.BottomColorID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", propertyArticle[0]?.BottomColorID, isLocked) ? true : false}
                           />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2 ">
                           <label htmlFor="" className='new-label'>OAN</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2  mt-1 text-field">
-                          <input type="text" name='OAN' id='OAN' maxLength={20} value={value?.OAN} onChange={HandleChanges} className='' required autoComplete='off' />
+                          <input
+                            type="text"
+                            name='OAN'
+                            id='OAN'
+                            maxLength={20}
+                            value={value?.OAN}
+                            onChange={HandleChanges}
+                            required
+                            autoComplete='off'
+
+                            className={isLockOrRestrictModule("Lock", propertyArticle[0]?.OAN, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", propertyArticle[0]?.OAN, isLocked) ? true : false}
+                          />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2 ">
                           <label htmlFor="" className='new-label'>Quantity</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2  mt-1 text-field">
-                          <input type="text" name='Quantity' id='Quantity' maxLength={20} value={value?.Quantity} onChange={HandleChanges} className='' required autoComplete='off' />
+                          <input
+                            type="text"
+                            name='Quantity'
+                            id='Quantity'
+                            maxLength={20}
+                            value={value?.Quantity}
+                            onChange={HandleChanges}
+                            required
+                            autoComplete='off'
+
+                            className={isLockOrRestrictModule("Lock", propertyArticle[0]?.Quantity, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", propertyArticle[0]?.Quantity, isLocked) ? true : false}
+                          />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2 ">
                           <label htmlFor="" className='new-label'>Brand</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2  mt-1 text-field">
-                          <input type="text" name='Brand' id='Brand' maxLength={20} value={value?.Brand} onChange={HandleChanges} className='' required autoComplete='off' />
+                          <input
+                            type="text"
+                            name='Brand'
+                            id='Brand'
+                            maxLength={20}
+                            value={value?.Brand}
+                            onChange={HandleChanges}
+                            required
+                            autoComplete='off'
+
+                            className={isLockOrRestrictModule("Lock", propertyArticle[0]?.Brand, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", propertyArticle[0]?.Brand, isLocked) ? true : false}
+                          />
                         </div>
                         <div className="col-12  col-md-12 col-lg-3 mt-md-1 " >
                           {
@@ -2660,13 +2476,35 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                           <label htmlFor="" className='new-label'>Brand</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
-                          <input type="text" name='Brand' id='Brand' value={value?.Brand} onChange={HandleChanges} className='' required autoComplete='off' />
+                          <input
+                            type="text"
+                            name='Brand'
+                            id='Brand'
+                            value={value?.Brand}
+                            onChange={HandleChanges}
+                            required
+                            autoComplete='off'
+
+                            className={isLockOrRestrictModule("Lock", propertOther[0]?.Brand, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", propertOther[0]?.Brand, isLocked) ? true : false}
+                          />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2">
                           <label htmlFor="" className='new-label'>Serial Id</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
-                          <input type="text" name='SerialID' id='SerialID' value={value?.SerialID} onChange={HandleChanges} className='' required autoComplete='off' />
+                          <input
+                            type="text"
+                            name='SerialID'
+                            id='SerialID'
+                            value={value?.SerialID}
+                            onChange={HandleChanges}
+                            required
+                            autoComplete='off'
+
+                            className={isLockOrRestrictModule("Lock", propertOther[0]?.SerialID, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", propertOther[0]?.SerialID, isLocked) ? true : false}
+                          />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2">
                           <span data-toggle="modal" onClick={() => {
@@ -2680,10 +2518,12 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                             name='TopColorID'
                             value={topColorDrpData?.filter((obj) => obj.value === value?.TopColorID)}
                             options={topColorDrpData}
-                            styles={customStylesWithOutColor}
                             onChange={(e) => ChangeDropDown(e, 'TopColorID')}
                             isClearable
                             placeholder="Select..."
+
+                            styles={isLockOrRestrictModule("Lock", propertOther[0]?.TopColorID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", propertOther[0]?.TopColorID, isLocked) ? true : false}
                           />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1 px-0  mt-2">
@@ -2698,10 +2538,12 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                             name='BottomColorID'
                             value={bottomColorDrpData?.filter((obj) => obj.value === value?.BottomColorID)}
                             options={bottomColorDrpData}
-                            styles={customStylesWithOutColor}
                             onChange={(e) => ChangeDropDown(e, 'BottomColorID')}
                             isClearable
                             placeholder="Select..."
+
+                            styles={isLockOrRestrictModule("Lock", propertOther[0]?.BottomColorID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", propertOther[0]?.BottomColorID, isLocked) ? true : false}
                           />
                         </div>
                       </div>
@@ -2710,14 +2552,36 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                           <label htmlFor="" className='new-label'>Model Id</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 text-field  mt-1">
-                          <input type="text" name='ModelID' id='ModelID' value={value?.ModelID} onChange={HandleChanges} className='' required autoComplete='off' />
+                          <input
+                            type="text"
+                            name='ModelID'
+                            id='ModelID'
+                            value={value?.ModelID}
+                            onChange={HandleChanges}
+                            required
+                            autoComplete='off'
+
+                            className={isLockOrRestrictModule("Lock", propertOther[0]?.ModelID, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", propertOther[0]?.ModelID, isLocked) ? true : false}
+                          />
                         </div>
 
                         <div className="col-3 col-md-3 col-lg-1  mt-2">
                           <label htmlFor="" className='new-label'>Quantity</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
-                          <input type="text" name='Quantity' id='Quantity' value={value?.Quantity} onChange={HandleChanges} className='' required autoComplete='off' />
+                          <input
+                            type="text"
+                            name='Quantity'
+                            id='Quantity'
+                            value={value?.Quantity}
+                            onChange={HandleChanges}
+                            required
+                            autoComplete='off'
+
+                            className={isLockOrRestrictModule("Lock", propertOther[0]?.Quantity, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", propertOther[0]?.Quantity, isLocked) ? true : false}
+                          />
                         </div>
 
                         <div className="col-3 col-md-3 col-lg-1 px-0 mt-2">
@@ -2725,13 +2589,15 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                         </div>
                         <div className="col-3 col-md-3 col-lg-2  mt-1">
                           <Select
-                            styles={customStylesWithOutColor}
                             name='QuantityUnitID'
                             value={measureTypeDrpData?.filter((obj) => obj.value === value?.QuantityUnitID)}
-                            options={measureTypeDrpData}
                             onChange={(e) => ChangeDropDown(e, 'QuantityUnitID')}
                             isClearable
                             placeholder="Select..."
+                            options={measureTypeDrpData}
+
+                            styles={isLockOrRestrictModule("Lock", propertOther[0]?.QuantityUnitID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", propertOther[0]?.QuantityUnitID, isLocked) ? true : false}
                           />
                         </div>
                         <div className="col-12  col-md-12 col-lg-3   mt-md-1" >
@@ -2768,13 +2634,36 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                           <label htmlFor="" className='new-label'>Denomination</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
-                          <input type="text" name='Denomination' maxLength={16} id='Denomination' value={value?.Denomination} onChange={HandleChanges} className='' required autoComplete='off' />
+                          <input
+                            type="text"
+                            name='Denomination'
+                            maxLength={16}
+                            id='Denomination'
+                            value={value?.Denomination}
+                            onChange={HandleChanges}
+                            required
+                            autoComplete='off'
+
+                            className={isLockOrRestrictModule("Lock", propertySecurity[0]?.Denomination, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", propertySecurity[0]?.Denomination, isLocked) ? true : false}
+                          />
                         </div>
                         <div className="col-3 col-md-3 col-lg-2  mt-2">
                           <label htmlFor="" className='new-label'>Issuing Agency</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
-                          <input type="text" name='IssuingAgency' id='IssuingAgency' value={value?.IssuingAgency} onChange={HandleChanges} className='' required autoComplete='off' />
+                          <input
+                            type="text"
+                            name='IssuingAgency'
+                            id='IssuingAgency'
+                            value={value?.IssuingAgency}
+                            onChange={HandleChanges}
+                            required
+                            autoComplete='off'
+
+                            className={isLockOrRestrictModule("Lock", propertySecurity[0]?.IssuingAgency, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", propertySecurity[0]?.IssuingAgency, isLocked) ? true : false}
+                          />
                         </div>
                         <div className="col-3 col-md-3 col-lg-2  mt-2">
                           <label htmlFor="" className='new-label'>Measure Type</label>
@@ -2782,14 +2671,14 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                         <div className="col-3 col-md-3 col-lg-2  mt-1">
                           <Select
                             name='MeasureTypeID'
-
                             value={measureTypeDrpData?.filter((obj) => obj.value === value?.MeasureTypeID)}
-                            styles={value?.Denomination ? customStylesWithOutColor : 'readonlyColor'}
                             options={measureTypeDrpData}
                             onChange={(e) => ChangeDropDown(e, 'MeasureTypeID')}
                             isClearable
                             placeholder="Select..."
-                            isDisabled={value?.Denomination ? false : true}
+
+                            styles={isLockOrRestrictModule("Lock", propertySecurity[0]?.MeasureTypeID, isLocked) ? LockFildscolour : value?.Denomination ? customStylesWithOutColor : 'readonlyColor'}
+                            isDisabled={isLockOrRestrictModule("Lock", propertySecurity[0]?.MeasureTypeID, isLocked) ? true : value?.Denomination ? false : true}
                           />
                         </div>
                         <div className="col-3 col-md-3 col-lg-2  mt-2">
@@ -2800,7 +2689,6 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                             id='SecurityDtTm'
                             name='SecurityDtTm'
                             ref={startRef1}
-
                             onKeyDown={(e) => {
                               if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
                                 e?.preventDefault();
@@ -2809,7 +2697,6 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                               }
                             }}
                             onChange={(date) => { setStatesChangeStatus(true); setSecurityDate(date); setValue({ ...value, ['SecurityDtTm']: date ? getShowingWithOutTime(date) : null }) }}
-                            className=''
                             dateFormat="MM/dd/yyyy"
                             isClearable={value?.SecurityDtTm ? true : false}
                             selected={securityDate}
@@ -2820,13 +2707,27 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                             showMonthDropdown
                             dropdownMode="select"
                             filterTime={filterPassedTime}
+
+                            className={isLockOrRestrictModule("Lock", propertySecurity[0]?.SecurityDtTm, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", propertySecurity[0]?.SecurityDtTm, isLocked) ? true : false}
                           />
                         </div>
                         <div className="col-3 col-md-3 col-lg-2  mt-2">
                           <label htmlFor="" className='new-label'>Serial Id</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 text-field  mt-1">
-                          <input type="text" name='SerialID' id='SerialID' value={value?.SerialID} onChange={HandleChanges} className='' required autoComplete='off' />
+                          <input
+                            type="text"
+                            name='SerialID'
+                            id='SerialID'
+                            value={value?.SerialID}
+                            onChange={HandleChanges}
+                            required
+                            autoComplete='off'
+
+                            className={isLockOrRestrictModule("Lock", propertySecurity[0]?.SerialID, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", propertySecurity[0]?.SerialID, isLocked) ? true : false}
+                          />
                         </div>
                         <div className="col-12  col-md-12 col-lg-4   mt-md-1" >
                           {
@@ -2864,32 +2765,88 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                           <label htmlFor="" className='new-label'>Style</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 text-field  mt-1">
-                          <input type="text" name='Style' id='Style' value={value?.Style} onChange={HandleChanges} className='' required autoComplete='off' />
+                          <input
+                            type="text"
+                            name='Style'
+                            id='Style'
+                            value={value?.Style}
+                            onChange={HandleChanges}
+                            required
+                            autoComplete='off'
+
+                            className={isLockOrRestrictModule("Lock", propertyWeapon[0]?.Style, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", propertyWeapon[0]?.Style, isLocked) ? true : false}
+                          />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2">
                           <label htmlFor="" className='new-label'>Finish</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 text-field  mt-1">
-                          <input type="text" name='Finish' id='Finish' value={value?.Finish} onChange={HandleChanges} className='' required autoComplete='off' />
+                          <input
+                            type="text"
+                            name='Finish'
+                            id='Finish'
+                            value={value?.Finish}
+                            onChange={HandleChanges}
+                            required
+                            autoComplete='off'
+
+                            className={isLockOrRestrictModule("Lock", propertyWeapon[0]?.Finish, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", propertyWeapon[0]?.Finish, isLocked) ? true : false}
+                          />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2">
                           <label htmlFor="" className='new-label'>Caliber</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 text-field  mt-1">
-                          <input type="text" name='Caliber' maxLength={10} id='Caliber' value={value?.Caliber} onChange={HandleChanges} className='' required autoComplete='off' />
+                          <input
+                            type="text"
+                            name='Caliber'
+                            maxLength={10}
+                            id='Caliber'
+                            value={value?.Caliber}
+                            onChange={HandleChanges}
+                            required
+                            autoComplete='off'
+
+                            className={isLockOrRestrictModule("Lock", propertyWeapon[0]?.Caliber, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", propertyWeapon[0]?.Caliber, isLocked) ? true : false}
+                          />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2">
                           <label htmlFor="" className='new-label'>Handle</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 text-field  mt-1">
-                          <input type="text" name='Handle' id='Handle' value={value?.Handle} onChange={HandleChanges} className='' required autoComplete='off' />
+                          <input
+                            type="text"
+                            name='Handle'
+                            id='Handle'
+                            value={value?.Handle}
+                            onChange={HandleChanges}
+                            required
+                            autoComplete='off'
+
+                            className={isLockOrRestrictModule("Lock", propertyWeapon[0]?.Handle, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", propertyWeapon[0]?.Handle, isLocked) ? true : false}
+                          />
                         </div>
 
                         <div className="col-3 col-md-3 col-lg-1  mt-2">
                           <label htmlFor="" className='new-label'>Serial Id</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 text-field  mt-1">
-                          <input type="text" name='SerialID' id='SerialID' value={value?.SerialID} onChange={HandleChanges} className='' required autoComplete='off' />
+                          <input
+                            type="text"
+                            name='SerialID'
+                            id='SerialID'
+                            value={value?.SerialID}
+                            onChange={HandleChanges}
+                            required
+                            autoComplete='off'
+
+                            className={isLockOrRestrictModule("Lock", propertyWeapon[0]?.SerialID, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", propertyWeapon[0]?.SerialID, isLocked) ? true : false}
+                          />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2">
                           <label htmlFor="" className='new-label'>Make</label>
@@ -2898,31 +2855,29 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                           <Select
                             name='MakeID'
                             value={weaponMakeDrpData?.filter((obj) => obj.value === value?.MakeID)}
-                            styles={customStylesWithOutColor}
                             options={weaponMakeDrpData}
                             onChange={(e) => ChangeDropDown(e, 'MakeID')}
                             isClearable
                             placeholder="Select..."
+
+                            styles={isLockOrRestrictModule("Lock", propertyWeapon[0]?.MakeID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", propertyWeapon[0]?.MakeID, isLocked) ? true : false}
                           />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2">
                           <label htmlFor="" className='new-label'>Model</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2   mt-1">
-
                           <CreatableSelect
                             name="WeaponModelID"
                             isClearable
                             options={weaponModelDrpData}
-                            styles={customStylesWithOutColor}
                             placeholder="Select or type..."
-                            value={
-                              // First, try to match existing dropdown option
-                              weaponModelDrpData?.find((obj) => obj.value?.toString() === value?.WeaponModelID?.toString())
-                              // If not matched, fallback to custom typed value
-                              || (value?.ModelName ? { label: value.ModelName, value: value.ModelName } : null)
-                            }
+                            value={weaponModelDrpData?.find((obj) => obj.value?.toString() === value?.WeaponModelID?.toString()) || (value?.ModelName ? { label: value.ModelName, value: value.ModelName } : null)}
                             onChange={(e) => ChangeDropDown(e, "WeaponModelID")}
+
+                            styles={isLockOrRestrictModule("Lock", propertyWeapon[0]?.WeaponModelID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", propertyWeapon[0]?.WeaponModelID, isLocked) ? true : false}
                           />
                         </div>
                         <div className="col-3 col-md-4 col-lg-3 mt-2">
@@ -2952,13 +2907,28 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                             showMonthDropdown
                             dropdownMode="select"
                             maxDate={new Date()}
+
+                            className={isLockOrRestrictModule("Lock", propertyWeapon[0]?.ManufactureYear, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", propertyWeapon[0]?.ManufactureYear, isLocked) ? true : false}
                           />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2 px-0">
                           <label htmlFor="" className='new-label px-0'>Barrel&nbsp;Length</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 text-field  mt-1">
-                          <input type="text" name='BarrelLength' value={value?.BarrelLength} id='BarrelLength' maxLength={10} onChange={HandleChanges} className='' required autoComplete='off' />
+                          <input
+                            type="text"
+                            name='BarrelLength'
+                            value={value?.BarrelLength}
+                            id='BarrelLength'
+                            maxLength={10}
+                            onChange={HandleChanges}
+                            required
+                            autoComplete='off'
+
+                            className={isLockOrRestrictModule("Lock", propertyWeapon[0]?.BarrelLength, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", propertyWeapon[0]?.BarrelLength, isLocked) ? true : false}
+                          />
                         </div>
                         <div className="col-12  col-md-12 col-lg-6   mt-md-1" >
                           {
@@ -3012,13 +2982,28 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                             showMonthDropdown
                             dropdownMode="select"
                             maxDate={new Date()}
+
+                            className={isLockOrRestrictModule("Lock", propertyBoat[0]?.ManufactureYear, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", propertyBoat[0]?.ManufactureYear, isLocked) ? true : false}
                           />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2">
                           <label htmlFor="" className='new-label'>Length</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-1 text-field mt-1 ">
-                          <input type="text" name='Length' id='Length' maxLength={9} value={value?.Length} onChange={HandleChanges} className='' required autoComplete='off' />
+                          <input
+                            type="text"
+                            name='Length'
+                            id='Length'
+                            maxLength={9}
+                            value={value?.Length}
+                            onChange={HandleChanges}
+                            required
+                            autoComplete='off'
+
+                            className={isLockOrRestrictModule("Lock", propertyBoat[0]?.Length, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", propertyBoat[0]?.Length, isLocked) ? true : false}
+                          />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2">
                           <label htmlFor="" className='new-label'>HIN  {errors.HINError !== 'true' ? (
@@ -3026,7 +3011,19 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                           ) : null}</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-1 text-field  mt-1">
-                          <input type="text" name='HIN' value={value?.HIN} maxLength={21} onChange={HandleChanges} className='requiredColor' required autoComplete='off' />
+                          <input
+                            type="text"
+                            name='HIN'
+                            value={value?.HIN}
+                            maxLength={21}
+                            onChange={HandleChanges}
+                            required
+                            autoComplete='off'
+
+                            // className='requiredColor'
+                            className={isLockOrRestrictModule("Lock", propertyBoat[0]?.HIN, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+                            disabled={isLockOrRestrictModule("Lock", propertyBoat[0]?.HIN, isLocked) ? true : false}
+                          />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2">
                           <label htmlFor="" className='new-label'>Reg. Expiry</label>
@@ -3036,17 +3033,18 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                             id='RegistrationExpiryDtTm'
                             name='RegistrationExpiryDtTm'
                             ref={startRef}
-
                             isClearable
                             onKeyDown={onKeyDown}
                             dateFormat="MM/yyyy"
                             selected={value?.RegistrationExpiryDtTm && new Date(value?.RegistrationExpiryDtTm)}
-
                             onChange={(date) => { setStatesChangeStatus(true); setValue({ ...value, ['RegistrationExpiryDtTm']: date ? getShowingMonthDateYear(date) : null }) }}
                             showMonthYearPicker
                             autoComplete="Off"
-                            className=''
                             placeholderText={'Select...'}
+
+
+                            className={isLockOrRestrictModule("Lock", propertyBoat[0]?.RegistrationExpiryDtTm, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", propertyBoat[0]?.RegistrationExpiryDtTm, isLocked) ? true : false}
                           />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2">
@@ -3061,11 +3059,13 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                           <Select
                             name='VODID'
                             value={vodDrpData?.filter((obj) => obj.value === value?.VODID)}
-                            styles={customStylesWithOutColor}
                             options={vodDrpData}
                             onChange={(e) => ChangeDropDown(e, 'VODID')}
                             isClearable
                             placeholder="Select..."
+
+                            styles={isLockOrRestrictModule("Lock", propertyBoat[0]?.VODID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", propertyBoat[0]?.VODID, isLocked) ? true : false}
                           />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2 ">
@@ -3077,12 +3077,14 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                         <div className="col-3 col-md-3 col-lg-2  mt-1 ">
                           <Select
                             name='RegistrationStateID'
-                            styles={Requiredcolour}
                             value={stateDrpData?.filter((obj) => obj.value === value?.RegistrationStateID)}
                             options={stateDrpData}
                             onChange={(e) => ChangeDropDown(e, 'RegistrationStateID')}
                             isClearable
                             placeholder="Select..."
+
+                            styles={isLockOrRestrictModule("Lock", propertyBoat[0]?.RegistrationStateID, isLocked) ? LockFildscolour : Requiredcolour}
+                            isDisabled={isLockOrRestrictModule("Lock", propertyBoat[0]?.RegistrationStateID, isLocked) ? true : false}
                           />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2">
@@ -3092,7 +3094,20 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
 
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
-                          <input type="text" name='RegistrationNumber' id='RegistrationNumber' value={value?.RegistrationNumber} maxLength={10} onChange={HandleChanges} className='requiredColor' required autoComplete='off' />
+                          <input
+                            type="text"
+                            name='RegistrationNumber'
+                            id='RegistrationNumber'
+                            value={value?.RegistrationNumber}
+                            maxLength={10}
+                            onChange={HandleChanges}
+                            required
+                            autoComplete='off'
+
+                            // className='requiredColor'
+                            className={isLockOrRestrictModule("Lock", propertyBoat[0]?.RegistrationNumber, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+                            disabled={isLockOrRestrictModule("Lock", propertyBoat[0]?.RegistrationNumber, isLocked) ? true : false}
+                          />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1 mt-2">
 
@@ -3107,10 +3122,12 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                             name='MaterialID'
                             value={materialDrpData?.filter((obj) => obj.value === value?.MaterialID)}
                             options={materialDrpData}
-                            styles={customStylesWithOutColor}
                             onChange={(e) => ChangeDropDown(e, 'MaterialID')}
                             isClearable
                             placeholder="Select..."
+
+                            styles={isLockOrRestrictModule("Lock", propertyBoat[0]?.MaterialID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", propertyBoat[0]?.MaterialID, isLocked) ? true : false}
                           />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2">
@@ -3125,11 +3142,13 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                           <Select
                             name='MakeID'
                             value={makeDrpData?.filter((obj) => obj.value === value?.MakeID)}
-                            styles={customStylesWithOutColor}
                             options={makeDrpData}
                             onChange={(e) => ChangeDropDown(e, 'MakeID')}
                             isClearable
                             placeholder="Select..."
+
+                            styles={isLockOrRestrictModule("Lock", propertyBoat[0]?.MakeID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", propertyBoat[0]?.MakeID, isLocked) ? true : false}
                           />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2">
@@ -3145,20 +3164,13 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                             name="ModelID"
                             isClearable
                             options={boatModelDrpData}
-                            styles={customStylesWithOutColor}
                             placeholder="Select or type..."
-                            value={
-                              // First, try to match existing dropdown option
-                              boatModelDrpData?.find((obj) => obj.value?.toString() === value?.ModelID?.toString())
-                              // If not matched, fallback to custom typed value
-                              || (value?.ModelName ? { label: value.ModelName, value: value.ModelName } : null)
-                            }
+                            value={boatModelDrpData?.find((obj) => obj.value?.toString() === value?.ModelID?.toString()) || (value?.ModelName ? { label: value.ModelName, value: value.ModelName } : null)}
                             onChange={(e) => ChangeDropDown(e, "ModelID")}
+
+                            styles={isLockOrRestrictModule("Lock", propertyBoat[0]?.ModelID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", propertyBoat[0]?.ModelID, isLocked) ? true : false}
                           />
-
-
-
-
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2">
                           <label htmlFor="" className='new-label'>Top Color</label>
@@ -3168,11 +3180,13 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                             name='TopColorID'
                             value={topColorDrpData?.filter((obj) => obj.value === value?.TopColorID)}
                             options={topColorDrpData}
-                            styles={customStylesWithOutColor}
                             onChange={(e) => ChangeDropDown(e, 'TopColorID')}
                             isClearable
                             placeholder="Select..."
                             menuPlacement='top'
+
+                            styles={isLockOrRestrictModule("Lock", propertyBoat[0]?.TopColorID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", propertyBoat[0]?.TopColorID, isLocked) ? true : false}
                           />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1 px-0 mt-2">
@@ -3183,11 +3197,13 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                             name='BottomColorID'
                             value={bottomColorDrpData?.filter((obj) => obj.value === value?.BottomColorID)}
                             options={bottomColorDrpData}
-                            styles={customStylesWithOutColor}
                             onChange={(e) => ChangeDropDown(e, 'BottomColorID')}
                             isClearable
                             placeholder="Select..."
                             menuPlacement='top'
+
+                            styles={isLockOrRestrictModule("Lock", propertyBoat[0]?.BottomColorID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", propertyBoat[0]?.BottomColorID, isLocked) ? true : false}
                           />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2">
@@ -3201,19 +3217,33 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                           <Select
                             name='PropulusionID'
                             value={propulusionDrpData?.filter((obj) => obj.value === value?.PropulusionID)}
-                            styles={customStylesWithOutColor}
                             options={propulusionDrpData}
                             onChange={(e) => ChangeDropDown(e, 'PropulusionID')}
                             isClearable
                             placeholder="Select..."
                             menuPlacement='top'
+
+                            styles={isLockOrRestrictModule("Lock", propertyBoat[0]?.PropulusionID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", propertyBoat[0]?.PropulusionID, isLocked) ? true : false}
                           />
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2">
                           <label htmlFor="" className='new-label'>Comments</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-6  mt-1">
-                          <textarea name='Comments' id="Comments" value={value?.Comments} onChange={HandleChanges} cols="30" rows='1' className="form-control" style={{ resize: 'none' }}>
+                          <textarea
+                            name='Comments'
+                            id="Comments"
+                            value={value?.Comments}
+                            onChange={HandleChanges}
+                            cols="30"
+                            rows='1'
+                            style={{ resize: 'none' }}
+
+
+                            className={isLockOrRestrictModule("Lock", propertyBoat[0]?.Comments, isLocked) ? "form-control LockFildsColor" : "form-control"}
+                            disabled={isLockOrRestrictModule("Lock", propertyBoat[0]?.Comments, isLocked) ? true : false}
+                          >
                           </textarea>
                         </div>
                         <div className="col-12  col-md-12 col-lg-1 text-right mt-md-1 " >
@@ -3257,12 +3287,14 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                                 <Select
                                   inputId="SuspectedDrugTypeID"
                                   name="SuspectedDrugTypeID"
-                                  styles={Requiredcolour}
                                   value={suspectedDrugDrpData?.filter(obj => obj.value === value?.SuspectedDrugTypeID)}
                                   isClearable
                                   options={suspectedDrugDrpData}
                                   onChange={(e) => onChangeDrugType(e, 'SuspectedDrugTypeID')}
                                   placeholder="Select..."
+
+                                  styles={isLockOrRestrictModule("Lock", drugEditData?.SuspectedDrugTypeID, isLocked) ? LockFildscolour : Requiredcolour}
+                                  isDisabled={isLockOrRestrictModule("Lock", drugEditData?.SuspectedDrugTypeID, isLocked) ? true : false}
                                 />
                                 {drugErrors.SuspectedDrugTypeIDError !== 'true' ? (
                                   <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{drugErrors.SuspectedDrugTypeIDError}</p>
@@ -3277,12 +3309,14 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                               <div>
                                 <Select
                                   name='MeasurementUnitID'
-                                  styles={Requiredcolour}
                                   value={drugMeasureUnitData?.filter((obj) => obj.value === value?.MeasurementUnitID)}
                                   options={drugMeasureUnitData}
                                   onChange={(e) => onChangeDrugType(e, 'MeasurementUnitID')}
                                   placeholder="Select..."
                                   isClearable
+
+                                  styles={isLockOrRestrictModule("Lock", drugEditData?.MeasurementUnitID, isLocked) ? LockFildscolour : Requiredcolour}
+                                  isDisabled={isLockOrRestrictModule("Lock", drugEditData?.MeasurementUnitID, isLocked) ? true : false}
                                 />
                                 {drugErrors.MeasurementUnitIDError !== 'true' ? (
                                   <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{drugErrors.MeasurementUnitIDError}</p>
@@ -3297,12 +3331,14 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                               <div >
                                 <Select
                                   name='MeasurementTypeID'
-                                  styles={Requiredcolour}
                                   options={drugMeasureTypeData}
                                   value={drugMeasureTypeData?.filter((obj) => obj.value === value?.MeasurementTypeID)}
                                   onChange={(e) => onChangeDrugType(e, 'MeasurementTypeID')}
                                   isClearable
                                   placeholder="Select..."
+
+                                  styles={isLockOrRestrictModule("Lock", drugEditData?.MeasurementTypeID, isLocked) ? LockFildscolour : Requiredcolour}
+                                  isDisabled={isLockOrRestrictModule("Lock", drugEditData?.MeasurementTypeID, isLocked) ? true : false}
                                 />
                                 {drugErrors.MeasurementTypeIDError !== 'true' ? (
                                   <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{drugErrors.MeasurementTypeIDError}</p>
@@ -3319,7 +3355,6 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                                   type="number"
                                   name='EstimatedDrugQty'
                                   id='EstimatedDrugQty'
-                                  className={'requiredColor'}
                                   autoComplete='off'
                                   maxLength={12}
                                   step="0.001"
@@ -3338,38 +3373,16 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                                     }
                                     setValue({ ...value, EstimatedDrugQty: val });
                                   }}
+
+                                  className={isLockOrRestrictModule("Lock", drugEditData?.EstimatedDrugQty, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+                                  disabled={isLockOrRestrictModule("Lock", drugEditData?.EstimatedDrugQty, isLocked) ? true : false}
                                 />
                               </div>
                               {drugErrors.EstimatedDrugQtyError !== 'true' ? (
                                 <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{drugErrors.EstimatedDrugQtyError}</p>
                               ) : null}
                             </div>
-                            {/* <div className="col-5 col-md-5 col-lg-6 text-right " >
-                          {
-                            (!propertyID || !masterPropertyID) && (ProSta != 'true' || ProSta != true) && (value.PropertyCategoryCode === 'D') &&
-                            <button
-                              type="button"
-                              id='Drugbtn'
-                              className="btn btn-sm btn-success"
-                              data-toggle="modal"
-                              data-target="#PropertyModal"
-                              onClick={() => {
-                                dispatch(get_Property_Drug_Search_Data(value?.LossCodeID,
-                                  value?.Value,
-                                  value?.PropertyTypeID,
-                                  value?.PropertyCategoryCode,
-                                  value?.CategoryID,
-                                  value?.ClassificationID,
-                                  value?.OfficerID,
-                                  loginAgencyID,
-                                  setSearchModalState,))
-                                setSearchModalState(true);
-                              }}
-                            >
-                              Search
-                            </button>
-                          }
-                        </div> */}
+
                             <div className="btn-box text-right col-3 col-md-3 mt-4  pt-2" >
                               {
                                 (!propertyID || !masterPropertyID) && (ProSta != 'true' || ProSta != true) && (value.PropertyCategoryCode === 'D') &&
@@ -3463,7 +3476,13 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                       <button
                         type="button"
                         className="btn btn-sm btn-success mx-1"
-                        onClick={newProperty}
+                        onClick={() => {
+                          console.log("New button clicked");
+                          // Add your new property logic here
+                          newProperty();
+                          setIsLocked(false);
+                        }}
+                        // onClick={newProperty}
                         {...(!isCad && { "data-dismiss": "modal" })}
                       >
                         New

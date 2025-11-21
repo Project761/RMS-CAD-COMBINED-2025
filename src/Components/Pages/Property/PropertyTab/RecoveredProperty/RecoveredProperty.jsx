@@ -6,7 +6,7 @@ import { toastifyError, toastifySuccess } from '../../../../Common/AlertMsg'
 import DeletePopUpModal from '../../../../Common/DeleteModal'
 import { AgencyContext } from '../../../../../Context/Agency/Index'
 import { RequiredFieldIncident, RequiredFieldOnConditon, } from '../../../Utility/Personnel/Validation'
-import { Decrypt_Id_Name, Requiredcolour, base64ToString, filterPassedTimeZonesProperty, getShowingMonthDateYear, tableCustomStyles } from '../../../../Common/Utility'
+import { Decrypt_Id_Name, Requiredcolour, base64ToString, filterPassedTimeZonesProperty, getShowingMonthDateYear, isLockOrRestrictModule, tableCustomStyles } from '../../../../Common/Utility'
 import { Comman_changeArrayFormat, threeColArray } from '../../../../Common/ChangeArrayFormat'
 import Select from "react-select";
 import DatePicker from "react-datepicker";
@@ -18,7 +18,7 @@ import { get_ScreenPermissions_Data } from '../../../../../redux/actions/Inciden
 
 const RecoveredProperty = (props) => {
 
-    const { ListData, DecPropID, DecMPropID, isViewEventDetails = false } = props
+    const { ListData, DecPropID, DecMPropID, isViewEventDetails = false, isLocked, setIsLocked } = props
 
     const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -338,8 +338,6 @@ const RecoveredProperty = (props) => {
         reset(); setRecoveredPropertyID(); setRecoverTypeCode()
     }
 
-
-
     const startRef = React.useRef();
     const startRef1 = React.useRef();
     const startRef2 = React.useRef();
@@ -397,12 +395,14 @@ const RecoveredProperty = (props) => {
                 <div className="div" style={{ position: 'absolute', top: 4, right: 30 }}>
                     {
                         effectiveScreenPermission ?
-                            effectiveScreenPermission[0]?.DeleteOK ?
+                            effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", propertyData, isLocked, true) ?
                                 <span onClick={() => { setRecoveredPropertyID(row.RecoveredPropertyID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                                     <i className="fa fa-trash"></i>
                                 </span>
                                 : <></>
-                            : <span onClick={() => { setRecoveredPropertyID(row.RecoveredPropertyID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
+                            :
+                            !isLockOrRestrictModule("Lock", propertyData, isLocked, true) &&
+                            <span onClick={() => { setRecoveredPropertyID(row.RecoveredPropertyID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                                 <i className="fa fa-trash"></i>
                             </span>
                     }

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useLocation } from "react-router-dom";
 import Select from "react-select";
 import DatePicker from "react-datepicker";
-import { customStylesWithOutColor, Decrypt_Id_Name, getShowingWithOutTime } from "../../../../Common/Utility";
+import { customStylesWithOutColor, Decrypt_Id_Name, getShowingWithOutTime, isLockOrRestrictModule, LockFildscolour } from "../../../../Common/Utility";
 import { Comman_changeArrayFormat_With_Name } from "../../../../Common/ChangeArrayFormat";
 import { AddDeleteUpadate, fetchPostData } from "../../../../hooks/Api";
 import { toastifySuccess } from "../../../../Common/AlertMsg";
@@ -17,7 +17,7 @@ import { get_Eye_Color_Drp_Data, get_Hair_Color_Drp_Data } from '../../../../../
 
 const General = (props) => {
 
-  const { ListData, DecNameID, DecMasterNameID, isViewEventDetails = false } = props
+  const { ListData, DecNameID, DecMasterNameID, isViewEventDetails = false, isLocked } = props
   const { setChangesStatus, get_Name_Count, setcountStatus, setNameSingleData } = useContext(AgencyContext);
 
   const dispatch = useDispatch();
@@ -259,8 +259,6 @@ const General = (props) => {
     });
   };
 
-
-
   const selectHandleChange = (e, name) => {
     !addUpdatePermission && setStatesChangeStatus(true);
     if (e) {
@@ -392,7 +390,6 @@ const General = (props) => {
     });
   }
 
-
   const resetState = () => {
     setStatesChangeStatus(false);
     setValue({
@@ -403,8 +400,6 @@ const General = (props) => {
     })
 
   }
-
-
 
   const customWithOutColor = {
     control: base => ({
@@ -454,12 +449,14 @@ const General = (props) => {
                   <div className="col-4 col-md-4 col-lg-8  mt-1 " >
                     <Select
                       name="BICountryID"
-                      styles={customStylesWithOutColor}
                       value={biCountryIDList?.filter((obj) => obj.value === value?.BICountryID)}
                       isClearable
                       options={biCountryIDList}
                       onChange={(e) => selectHandleChange(e, 'BICountryID')}
                       placeholder="Select..."
+                      // styles={customStylesWithOutColor}
+                      styles={isLockOrRestrictModule("Lock", editval[0]?.BICountryID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                      isDisabled={isLockOrRestrictModule("Lock", editval[0]?.BICountryID, isLocked) ? true : false}
                     />
                   </div>
                   <div className="col-2 col-md-2 col-lg-3 mt-3">
@@ -468,14 +465,14 @@ const General = (props) => {
                   <div className="col-4 col-md-4 col-lg-8  mt-1" >
                     <Select
                       name="BIStateID"
-                      styles={customStylesWithOutColor}
                       value={biStateList?.filter((obj) => obj.value === value?.BIStateID)}
                       isClearable
                       options={biStateList}
                       onChange={(e) => selectHandleChange(e, 'BIStateID')}
-
-                      isDisabled={!value?.BICountryID || value.BICountryID > 20003}
                       placeholder="Select..."
+
+                      styles={isLockOrRestrictModule("Lock", editval[0]?.BIStateID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                      isDisabled={!value?.BICountryID || value.BICountryID > 20003 || isLockOrRestrictModule("Lock", editval[0]?.BIStateID, isLocked) ? true : false}
                     />
                   </div>
                   <div className="col-2 col-md-2 col-lg-3 mt-2">
@@ -484,27 +481,47 @@ const General = (props) => {
                   <div className="col-4 col-md-4 col-lg-8  mt-1" >
                     <Select
                       name="BICityID"
-                      styles={customStylesWithOutColor}
                       value={cityList?.filter((obj) => obj.value === value?.BICityID)}
                       isClearable
                       options={cityList}
                       onChange={(e) => selectHandleChange(e, 'BICityID')}
                       placeholder="Select..."
 
-                      isDisabled={!value?.BIStateID || value.BICountryID > 20003}
+                      styles={isLockOrRestrictModule("Lock", editval[0]?.BICityID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                      isDisabled={!value?.BIStateID || value.BICountryID > 20003 || isLockOrRestrictModule("Lock", editval[0]?.BICityID, isLocked) ? true : false}
                     />
                   </div>
                   <div className="col-2 col-md-2 col-lg-3 mt-3 px-1">
                     <label htmlFor="" className='label-name '>Place Of Birth</label>
                   </div>
                   <div className="col-4 col-md-4 col-lg-8 text-field mt-2" >
-                    <input type="text" className="" value={value?.BirthPlace ? value.BirthPlace.match(/[a-zA-Z\s]*/) : ''} onChange={HandleChange} name="BirthPlace" required autoComplete='off' />
+                    <input
+                      type="text"
+                      className={isLockOrRestrictModule("Lock", editval[0]?.BirthPlace, isLocked) ? "LockFildsColor" : ""}
+                      disabled={isLockOrRestrictModule("Lock", editval[0]?.BirthPlace, isLocked) ? true : false}
+
+                      value={value?.BirthPlace ? value.BirthPlace.match(/[a-zA-Z\s]*/) : ''}
+                      onChange={HandleChange}
+                      name="BirthPlace"
+                      required
+                      autoComplete='off'
+                    />
                   </div>
                   <div className="col-2 col-md-2 col-lg-3 mt-2">
                     <label htmlFor="" className='label-name '>Nationality</label>
                   </div>
                   <div className="col-4 col-md-4 col-lg-8 text-field mt-1" >
-                    <input type="text" className="" value={value?.BINationality ? value.BINationality.match(/[a-zA-Z\s]*/) : ''} onChange={HandleChange} name="BINationality" required autoComplete='off' />
+                    <input
+                      type="text"
+                      className={isLockOrRestrictModule("Lock", editval[0]?.BINationality, isLocked) ? "LockFildsColor" : ""}
+                      disabled={isLockOrRestrictModule("Lock", editval[0]?.BINationality, isLocked) ? true : false}
+
+                      value={value?.BINationality ? value.BINationality.match(/[a-zA-Z\s]*/) : ''}
+                      onChange={HandleChange}
+                      name="BINationality"
+                      required
+                      autoComplete='off'
+                    />
                   </div>
                   <div className="col-2 col-md-2 col-lg-3 mt-3">
 
@@ -515,12 +532,14 @@ const General = (props) => {
                   <div className="col-4 col-md-4 col-lg-8 mt-1 pt-1" >
                     <Select
                       name="BIVerifyID"
-                      styles={customStylesWithOutColor}
                       value={biVerifyIDDrp?.filter((obj) => obj.value === value?.BIVerifyID)}
                       options={biVerifyIDDrp}
                       onChange={(e) => selectHandleChange(e, 'BIVerifyID')}
                       isClearable
                       placeholder="Select..."
+
+                      styles={isLockOrRestrictModule("Lock", editval[0]?.BIVerifyID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                      isDisabled={isLockOrRestrictModule("Lock", editval[0]?.BIVerifyID, isLocked) ? true : false}
                     />
                   </div>
                 </div>
@@ -537,12 +556,13 @@ const General = (props) => {
                 <div className="col-4 col-md-4 col-lg-9 mt-2" >
                   <Select
                     name="DLCountryID"
-                    styles={customStylesWithOutColor}
                     value={dlCountryIDList?.filter((obj) => obj.value === value?.DLCountryID)}
                     isClearable
                     options={dlCountryIDList}
                     onChange={(e) => selectHandleChange(e, 'DLCountryID')}
                     placeholder="Select..."
+                    styles={isLockOrRestrictModule("Lock", editval[0]?.DLCountryID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.DLCountryID, isLocked) ? true : false}
                   />
                 </div>
                 <div className="col-2 col-md-2 col-lg-3 mt-3">
@@ -551,13 +571,13 @@ const General = (props) => {
                 <div className="col-4 col-md-4 col-lg-9 mt-2" >
                   <Select
                     name="DLStateID"
-                    styles={customStylesWithOutColor}
                     value={stateList?.find(obj => obj.value === value.DLStateID)}
                     isClearable
                     options={stateList}
                     onChange={(e) => selectHandleChange(e, 'DLStateID')}
                     placeholder="Select..."
-                    isDisabled={!value.DLCountryID}
+                    styles={isLockOrRestrictModule("Lock", editval[0]?.DLStateID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                    isDisabled={!value.DLCountryID || isLockOrRestrictModule("Lock", editval[0]?.DLStateID, isLocked) ? true : false}
 
                   />
                 </div>
@@ -576,8 +596,8 @@ const General = (props) => {
                     name="DLNumber"
                     required
                     autoComplete='off'
-                    disabled={!value?.DLStateID}
-                    className={!value?.DLStateID ? 'readonlyColor' : 'requiredColor'}
+                    className={isLockOrRestrictModule("Lock", editval[0]?.DLNumber, isLocked) ? 'LockFildsColor' : !value?.DLStateID ? 'readonlyColor' : 'requiredColor'}
+                    disabled={!value?.DLStateID || isLockOrRestrictModule("Lock", editval[0]?.DLNumber, isLocked) ? true : false}
 
                   />
                 </div>
@@ -607,7 +627,8 @@ const General = (props) => {
                     showMonthDropdown
                     showDisabledMonthNavigation
                     showYearDropdown
-
+                    className={isLockOrRestrictModule("Lock", editval[0]?.DLExpiryDate, isLocked) ? 'LockFildsColor' : ''}
+                    disabled={isLockOrRestrictModule("Lock", editval[0]?.DLExpiryDate, isLocked) ? true : false}
                     minDate={new Date(NameDateExpired)}
                   />
                 </div>
@@ -619,12 +640,14 @@ const General = (props) => {
                 <div className="col-4 col-md-4 col-lg-9  mt-1" >
                   <Select
                     name="DLVerifyID"
-                    styles={customStylesWithOutColor}
                     value={verifyIdDrp?.filter((obj) => obj.value === value?.DLVerifyID)}
                     options={verifyIdDrp}
                     onChange={(e) => selectHandleChange(e, 'DLVerifyID')}
                     isClearable
                     placeholder="Select..."
+
+                    styles={isLockOrRestrictModule("Lock", editval[0]?.DLVerifyID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.DLVerifyID, isLocked) ? true : false}
                   />
                 </div>
               </div>
@@ -645,13 +668,14 @@ const General = (props) => {
                 <div className="col-4 col-md-4 col-lg-8  mt-2" >
                   <Select
                     name="EyeColorID"
-                    styles={customStylesWithOutColor}
                     value={eyeColorDrpData?.filter((obj) => obj.value === value?.EyeColorID)}
                     options={eyeColorDrpData}
                     onChange={(e) => selectHandleChange(e, 'EyeColorID')}
                     isClearable
                     placeholder="Select..."
                     menuPlacement="bottom"
+                    styles={isLockOrRestrictModule("Lock", editval[0]?.EyeColorID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.EyeColorID, isLocked) ? true : false}
                   />
                 </div>
                 <div className="col-2 col-md-2 col-lg-3 mt-3">
@@ -662,18 +686,18 @@ const General = (props) => {
                 <div className="col-4 col-md-4 col-lg-8  mt-2" >
                   <Select
                     name="HairColorID"
-                    styles={customStylesWithOutColor}
                     value={hairColorDrpData?.filter((obj) => obj.value === value?.HairColorID)}
                     options={hairColorDrpData}
                     onChange={(e) => selectHandleChange(e, 'HairColorID')}
                     isClearable
                     placeholder="Select..."
                     menuPlacement="bottom"
+                    styles={isLockOrRestrictModule("Lock", editval[0]?.HairColorID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.HairColorID, isLocked) ? true : false}
                   />
                 </div>
 
                 <div className="col-2 col-md-2 col-lg-3 mt-3 ">
-
                   <span data-toggle="modal" onClick={() => { setOpenPage('Marital Status') }} data-target="#ListModel" className='new-link '>
                     Marital&nbsp;Status
                   </span>
@@ -681,13 +705,14 @@ const General = (props) => {
                 <div className="col-4 col-md-4 col-lg-8  mt-2" >
                   <Select
                     name="MaritalStatusID"
-                    styles={customStylesWithOutColor}
                     value={maritalStatusIDDrp?.filter((obj) => obj.value === value?.MaritalStatusID)}
                     options={maritalStatusIDDrp}
                     onChange={(e) => selectHandleChange(e, 'MaritalStatusID')}
                     isClearable
                     placeholder="Select..."
                     menuPlacement="top"
+                    styles={isLockOrRestrictModule("Lock", editval[0]?.MaritalStatusID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.MaritalStatusID, isLocked) ? true : false}
                   />
                 </div>
               </div>
@@ -696,8 +721,6 @@ const General = (props) => {
         </div>
         {!isViewEventDetails &&
           <div className="col-12  text-right mt-3 p-0">
-
-
             {
               effectiveScreenPermission ?
                 effectiveScreenPermission[0]?.Changeok ?

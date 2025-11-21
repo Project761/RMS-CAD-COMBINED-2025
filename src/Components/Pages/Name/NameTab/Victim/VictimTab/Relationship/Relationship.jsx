@@ -7,7 +7,7 @@ import { AgencyContext } from '../../../../../../../Context/Agency/Index';
 import Select from "react-select";
 import { RequiredFieldIncident } from '../../../../../Utility/Personnel/Validation';
 import { Comman_changeArrayFormat, threeColArray } from '../../../../../../Common/ChangeArrayFormat';
-import { nibrscolourStyles, Requiredcolour, tableCustomStyles } from '../../../../../../Common/Utility';
+import { isLockOrRestrictModule, LockFildscolour, nibrscolourStyles, Requiredcolour, tableCustomStyles } from '../../../../../../Common/Utility';
 import { useDispatch, useSelector } from 'react-redux';
 import { get_LocalStoreData } from '../../../../../../../redux/api';
 import { Decrypt_Id_Name } from '../../../../../../Common/Utility';
@@ -18,7 +18,7 @@ import { get_ScreenPermissions_Data } from '../../../../../../../redux/actions/I
 
 const Relationship = (props) => {
 
-  const { DecNameID, victimID, DecIncID, nameSingleData, isCrimeAgainsPerson } = props
+  const { DecNameID, victimID, DecIncID, nameSingleData, isCrimeAgainsPerson, isLocked } = props
 
   const dispatch = useDispatch();
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -111,7 +111,6 @@ const Relationship = (props) => {
       dispatch(get_ScreenPermissions_Data("N136", localStoreData?.AgencyID, localStoreData?.PINID));
     }
   }, [localStoreData]);
-
 
   // Check All Field Format is True Then Submit 
   const { RelationshipTypeIDErrors, VictimNameIDErrors } = errors
@@ -290,6 +289,7 @@ const Relationship = (props) => {
     setStatesChangeStatus(false); setChangesStatus(false); setRelationshipID(''); setStatus(false);
     setErrors({ ...errors, 'RelationshipTypeIDErrors': '', ' VictimNameIDErrors': '', });
     setSelectedNameData([]); setRelationTypeCode('');
+    // setSingleData([]);
   }
 
   const Get_Relationship_Data = (nameID) => {
@@ -353,8 +353,6 @@ const Relationship = (props) => {
     })
   }
 
-
-
   const withoutcolourStyles = {
     control: (styles) => ({
       ...styles,
@@ -365,8 +363,6 @@ const Relationship = (props) => {
       boxShadow: 0,
     }),
   }
-
-
 
   const conditionalRowStyles = [
     {
@@ -389,7 +385,9 @@ const Relationship = (props) => {
   }
 
   const setStatusFalse = (e) => {
-    setClickedRow(null); resetHooks();
+    setSingleData([]);
+    setClickedRow(null);
+    resetHooks();
     setStatus(false)
     setStatesChangeStatus(false);
     setUpdateStatus(updateStatus + 1);
@@ -441,11 +439,13 @@ const Relationship = (props) => {
             <Select
               name='OffenderNameID'
               styles={
-                loginAgencyState === 'TX' ?
-                  isCrimeAgainsPerson ? getRelationNibrsError(relationTypeCode, 'Color') ? getRelationNibrsError(relationTypeCode, 'Color') : Requiredcolour : withoutcolourStyles
-                  :
-                  Requiredcolour
+                isLockOrRestrictModule("Lock", singleData[0]?.OffenderNameID, isLocked) ? LockFildscolour :
+                  loginAgencyState === 'TX' ?
+                    isCrimeAgainsPerson ? getRelationNibrsError(relationTypeCode, 'Color') ? getRelationNibrsError(relationTypeCode, 'Color') : Requiredcolour : withoutcolourStyles
+                    :
+                    Requiredcolour
               }
+              isDisabled={isLockOrRestrictModule("Lock", singleData[0]?.OffenderNameID, isLocked)}
               isClearable
               value={name?.filter((obj) => obj.value === value.OffenderNameID)}
               options={name}
@@ -471,11 +471,13 @@ const Relationship = (props) => {
             <Select
               name='RelationshipTypeID'
               styles={
-                loginAgencyState === 'TX' ?
-                  isCrimeAgainsPerson ? checkOffenderIsUnknown(relationTypeCode, selectedNameData, 'Color') : withoutcolourStyles
-                  :
-                  Requiredcolour
+                isLockOrRestrictModule("Lock", singleData[0]?.RelationshipTypeID, isLocked) ? LockFildscolour :
+                  loginAgencyState === 'TX' ?
+                    isCrimeAgainsPerson ? checkOffenderIsUnknown(relationTypeCode, selectedNameData, 'Color') : withoutcolourStyles
+                    :
+                    Requiredcolour
               }
+              isDisabled={isLockOrRestrictModule("Lock", singleData[0]?.RelationshipTypeID, isLocked)}
               isClearable
               value={relationShipDrp?.filter((obj) => obj.value === value.RelationshipTypeID)}
               options={relationShipDrp}

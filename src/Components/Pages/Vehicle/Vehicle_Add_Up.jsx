@@ -26,6 +26,11 @@ import { Vehicle_ID } from '../../../redux/actionTypes';
 import DataTable from 'react-data-table-component';
 import DeletePopUpModal from '../../Common/DeleteModal';
 import { toastifySuccess } from '../../Common/AlertMsg';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLock, faUnlock, faBan, } from "@fortawesome/free-solid-svg-icons";
+import LockRestrictModule from '../../Common/LockRestrictModule';
+
+
 
 
 
@@ -38,6 +43,11 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
     const [propertystatus, setPropertyStatus] = useState('');
     const [IsNonPropertyRoomSelected, setIsNonPropertyRoomSelected] = useState(false);
     const [clickCount, setClickCount] = useState(0);
+    // Lock Restrict
+    const [showLockModal, setShowLockModal] = useState(false);
+    const [openModule, setOpenModule] = useState('');
+    const [isLocked, setIsLocked] = useState(false);
+    const [permissionToUnlock, setPermissionToUnlock] = useState(false);
 
     const useQuery = () => {
         const params = new URLSearchParams(useLocation().search);
@@ -95,7 +105,6 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
 
     useEffect(() => {
         if (IncID) {
-            // setMainIncidentID(IncID); 
             get_Data_Vehicle(IncID);
             setMainIncidentID(IncID);
         }
@@ -113,7 +122,6 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
             setnibrsValidateData(propertyValidateNibrsData?.Property);
         }
     }, [propertyValidateNibrsData]);
-
 
     useEffect(() => {
         if (VehSta === 'true' || VehSta === true) {
@@ -143,26 +151,17 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
             const modal = new window.bootstrap.Modal(document?.getElementById('SaveModal'));
             modal?.show();
         } else {
-            // setVehicleMultiImg([]); setStatesChangeStatus(false);
-            // setuploadImgFiles([]);
-            if (row.VehicleID || row.MasterPropertyID) {
+            if (row.PropertyID || row.MasterPropertyID) {
                 if (isCad) {
                     navigate(`/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${stringToBase64(row?.PropertyID)}&MVehId=${stringToBase64(row?.MasterPropertyID)}&VehSta=${true}&isNew=${true}`)
                 } else {
                     navigate(`/Vehicle-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${stringToBase64(row?.PropertyID)}&MVehId=${stringToBase64(row?.MasterPropertyID)}&VehSta=${true}&isNew=${true}`)
                     setResetErrors(true);
                     setClickCount(clickCount + 1);
+                    getPermissionLevelByLock(IncID, localStoreData?.PINID, row?.PropertyID)
                 }
-
-                // setMasterPropertyID(row.MasterPropertyID); dispatch({ type: MasterVehicle_ID, payload: row?.MasterPropertyID });
-                // setVehicleID(row?.PropertyID); dispatch({ type: Vehicle_ID, payload: row.PropertyID });
-                // setVehicleStatus(true); dispatch({ type: Master_Property_Status, payload: true });
-                // setUpdateCount(updateCount + 1); setErrors([])
-                // GetSingleData(row?.PropertyID, row?.MasterPropertyID);
-                // get_vehicle_Count(row?.PropertyID, 0);
             }
         }
-
     }
 
     const columns = [
@@ -181,11 +180,6 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
             selector: (row) => row.PlateState,
             sortable: true
         },
-        // {
-        //     name: ' Make/Model ',
-        //     selector: (row) => row.Model_Description || row.Make_Description,
-        //     sortable: true
-        // },
         {
             name: 'Make/Model',
             selector: (row) => {
@@ -195,11 +189,6 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
             },
             sortable: true
         },
-        // {
-        //     name: 'Primary Color',
-        //     selector: (row) => row.PrimaryColor_Description,
-        //     sortable: true
-        // },
         {
             name: 'Primary Color',
             selector: (row) => (
@@ -215,10 +204,8 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
             selector: (row) => row.Owner_Description,
             sortable: true
         },
-
         {
             name: 'Plate Expirestion',
-            // selector: (row) => row.InspectionExpiresDtTm,
             selector: (row) => row.PlateExpireDtTm,
             sortable: true
         },
@@ -227,11 +214,6 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
             selector: (row) => row.ManufactureYear,
             sortable: true
         },
-        // {
-        //     name: 'Evidence Flag ',
-        //     selector: (row) => row.Evidence,
-        //     sortable: true
-        // },
         {
             name: 'Evidence Flag',
             selector: row => (
@@ -239,26 +221,6 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
             ),
             sortable: true
         },
-        // {
-        //     width: '100px',
-        //     name: 'View',
-        //     cell: row =>
-        //         <div style={{ position: 'absolute', top: 4, right: 30 }}>
-        //             {
-        //                 getNibrsError(row.PropertyID, nibrsValidateData) ?
-        //                     <span
-        //                         onClick={(e) => { setErrString(row.PropertyID, nibrsValidateData) }}
-        //                         className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
-        //                         data-toggle="modal"
-        //                         data-target="#NibrsErrorShowModal"
-        //                     >
-        //                         <i className="fa fa-eye"></i>
-        //                     </span>
-        //                     :
-        //                     <></>
-        //             }
-        //         </div>
-        // },
         {
             name: <p className='text-end' style={{ position: 'absolute', top: '7px', right: 10 }}>Delete</p>,
             cell: row =>
@@ -289,7 +251,6 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
         return getNibrsError(ID, nibrsValidateData) ? { backgroundColor: "rgb(255 202 194)" } : {};
     };
 
-
     const conditionalRowStyles = [
         {
             when: () => true,
@@ -315,9 +276,6 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
             } else {
                 navigate(`/Vehicle-Home?page=MST-Vehicle-Dash&?VehId=${0}&?MVehId=${0}&ModNo=${''}&VehSta=${false}`)
             }
-
-
-            // dispatch({ type: Master_Vehicle_Status, payload: false });
 
         } else {
             if (isCad) {
@@ -349,6 +307,27 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
         });
     }
 
+    // LockRestrict
+    const getPermissionLevelByLock = async (IncidentID, OfficerID, VehicleID) => {
+        try {
+            const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { 'IncidentID': IncidentID, 'OfficerID': OfficerID, 'ModuleName': "Property", 'ID': VehicleID || 0 });
+            console.log("🚀 ~ getPermissionLevelByLock ~ res:", res);
+            if (res?.length > 0) {
+                setIsLocked(res[0]?.IsLocked === true || res[0]?.IsLocked === 1 ? true : false);
+                setPermissionToUnlock(res[0]?.IsUnLockPermission === true || res[0]?.IsUnLockPermission === 1 ? true : false);
+
+            } else {
+                setPermissionToUnlock(false);
+                setIsLocked(false);
+
+            }
+        } catch (error) {
+            console.error('There was an error!', error);
+            setPermissionToUnlock(false);
+            setIsLocked(false);
+
+        }
+    }
 
 
     return (
@@ -654,7 +633,9 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                         <div className="text-right ml-3">
                                             <div className="right-controls d-flex flex-column align-items-center gap-2">
                                                 <div className="view-toggle d-flex flex-column gap-2">
-                                                    <button className="btn btn-sm btn-success mb-2" onClick={() => { setStatusFalse(); setResetErrors(true); }}> New </button>
+                                                    <button className="btn btn-sm btn-success mb-2" onClick={() => {
+                                                        setStatusFalse(); setResetErrors(true); setIsLocked(false);
+                                                    }}> New </button>
                                                     {viewType === "card" && (<button className="btn btn-sm btn-success" onClick={() => setViewType("list")}  > Grid </button>)}
                                                     {viewType === "list" && (<button className="btn btn-sm btn-success" onClick={() => setViewType("card")} > Card  </button>)}
                                                 </div>
@@ -783,6 +764,41 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                                     >
                                                         {isCad ? "Change Log" : " Audit Log"}
                                                     </span>
+                                                    {
+                                                        status ?
+                                                            <>
+                                                                {
+                                                                    !isLocked &&
+                                                                    <li className="list-inline-item nav-item">
+                                                                        <button
+                                                                            className="btn py-1 d-flex align-items-center gap-2"
+                                                                            style={{ columnGap: "5px", backgroundColor: "#E0E0E0" }}
+                                                                            onClick={() => { setOpenModule('Lock'); setShowLockModal(true) }}
+                                                                            data-toggle="modal"
+                                                                            data-target="#NibrsAllModuleErrorShowModal"
+                                                                        >
+                                                                            <FontAwesomeIcon icon={faLock} /> Lock
+                                                                        </button>
+                                                                    </li>
+                                                                }
+                                                                {
+                                                                    permissionToUnlock &&
+                                                                    <li className="list-inline-item nav-item">
+                                                                        <button
+                                                                            className="btn py-1 d-flex align-items-center gap-2"
+                                                                            style={{ columnGap: "5px", backgroundColor: "#E0E0E0" }}
+                                                                            onClick={() => { setOpenModule('Unlock'); setShowLockModal(true) }}
+                                                                            data-toggle="modal"
+                                                                            data-target="#NibrsAllModuleErrorShowModal"
+                                                                        >
+                                                                            <FontAwesomeIcon icon={faUnlock} /> Unlock
+                                                                        </button>
+                                                                    </li>
+                                                                }
+                                                            </>
+                                                            :
+                                                            <></>
+                                                    }
                                                 </ul>
                                             </div>
                                         </div>
@@ -791,53 +807,56 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
 
                                 {
                                     showPage === 'home' ?
-                                        <Home {...{ setStatus, setaddUpdatePermission, ResetErrors, setResetErrors, newStatus, status, setShowVehicleRecovered, showVehicleRecovered, get_List, setPropertyStatus, isCad, isViewEventDetails, isCADSearch, clickCount }} />
+                                        <Home {...{ setStatus, setaddUpdatePermission, ResetErrors, setResetErrors, newStatus, status, setShowVehicleRecovered, showVehicleRecovered, get_List, setPropertyStatus, isCad, isViewEventDetails, isCADSearch, clickCount, isLocked, setIsLocked }} />
                                         :
-                                        // showPage === 'VehicleNotes' ?
-                                        //     <VehicleNotes  {...{ ListData, DecVehId, DecMVehId, IncID, isViewEventDetails }} />
-                                        //     :
-                                        showPage === 'Document' ?
-                                            <DocumentModal
-                                                {...{ ListData, DocName, isViewEventDetails }}
-                                                ParentId={DecVehId}
-                                                Vichile={'VehicleDoc'}
-                                                scrCode={'V083'}
-                                                count={DecVehId}
-                                                parentTabMasterID={DecMVehId}
-                                                rowIdName={'DocumentID'}
-                                                masterIDColName={'MasterPropertyID'}
-                                                TabIdColName={'PropertyID'}
-                                                insertDataMasterUrl={''}
-                                                deleteUrl={'VehicleDocument/Delete_VehicleDocument'}
-                                                insertDataUrl={'VehicleDocument/Insert_VehicleDocument'}
-                                                getDataUrl={'VehicleDocument/GetData_VehicleDocument'}
-                                            />
+                                        showPage === 'AdditionalInformation' ?
+                                            <AddInformation   {...{ ListData, DecVehId, setIsNonPropertyRoomSelected, DecMVehId, IncID, propertystatus, setPropertyStatus, isViewEventDetails }} />
                                             :
-                                            showPage === 'RecoveredVehicle' ?
-                                                <RecoveredVehicle  {...{ ListData, DecVehId, DecMVehId, IncID, isViewEventDetails }} />
+                                            showPage === 'Offense' ?
+                                                <Offense {...{ ListData, DecVehId, DecMVehId, IncID, isLocked, setIsLocked }} />
                                                 :
-                                                showPage === 'pawnvehicle' ?
-                                                    <VehiclePawnProperty  {...{ ListData, DecVehId, DecMVehId, IncID }} />
+                                                showPage === 'RecoveredVehicle' ?
+                                                    <RecoveredVehicle  {...{ ListData, DecVehId, DecMVehId, IncID, isViewEventDetails, isLocked, setIsLocked }} />
                                                     :
-                                                    showPage === 'Offense' ?
-                                                        <Offense {...{ ListData, DecVehId, DecMVehId, IncID, }} />
+                                                    // showPage === 'VehicleNotes' ?
+                                                    //     <VehicleNotes  {...{ ListData, DecVehId, DecMVehId, IncID, isViewEventDetails }} />
+                                                    //     :
+                                                    showPage === 'Document' ?
+                                                        <DocumentModal
+                                                            {...{ ListData, DocName, isViewEventDetails }}
+                                                            ParentId={DecVehId}
+                                                            Vichile={'VehicleDoc'}
+                                                            scrCode={'V083'}
+                                                            count={DecVehId}
+                                                            parentTabMasterID={DecMVehId}
+                                                            rowIdName={'DocumentID'}
+                                                            masterIDColName={'MasterPropertyID'}
+                                                            TabIdColName={'PropertyID'}
+                                                            insertDataMasterUrl={''}
+                                                            deleteUrl={'VehicleDocument/Delete_VehicleDocument'}
+                                                            insertDataUrl={'VehicleDocument/Insert_VehicleDocument'}
+                                                            getDataUrl={'VehicleDocument/GetData_VehicleDocument'}
+                                                        />
                                                         :
-                                                        showPage === 'VehicleTransactionLog' ?
-                                                            <VehicleInvolvement
-                                                                idColName={'PropertyID'}
-                                                                url={''}
-                                                                IncNo={IncNo}
-                                                                IncSta={IncSta}
-                                                                incId={IncID}
-                                                                scrCode={'V085'}
-                                                                tabID={DecVehId}
-                                                                masterID={DecMVehId}
-                                                                IsMaster={openPage === "MST-Vehicle-Dash" ? true : false}
-                                                            />
+
+                                                        showPage === 'pawnvehicle' ?
+                                                            <VehiclePawnProperty  {...{ ListData, DecVehId, DecMVehId, IncID }} />
                                                             :
-                                                            showPage === 'AdditionalInformation' ?
-                                                                <AddInformation   {...{ ListData, DecVehId, setIsNonPropertyRoomSelected, DecMVehId, IncID, propertystatus, setPropertyStatus, isViewEventDetails }} />
+
+                                                            showPage === 'VehicleTransactionLog' ?
+                                                                <VehicleInvolvement
+                                                                    idColName={'PropertyID'}
+                                                                    url={''}
+                                                                    IncNo={IncNo}
+                                                                    IncSta={IncSta}
+                                                                    incId={IncID}
+                                                                    scrCode={'V085'}
+                                                                    tabID={DecVehId}
+                                                                    masterID={DecMVehId}
+                                                                    IsMaster={openPage === "MST-Vehicle-Dash" ? true : false}
+                                                                />
                                                                 :
+
                                                                 showPage === 'PropertyManagement' ?
                                                                     <VehicleManagement {...{ DecVehId, DecMVehId, IncID, VicCategory, isViewEventDetails }} />
                                                                     :
@@ -864,6 +883,23 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                 </div>
             </div>
             <DeletePopUpModal func={delete_Vehicle_Property} />
+            <LockRestrictModule
+                show={showLockModal}
+                openModule={openModule}
+                onClose={() => setShowLockModal(false)}
+
+                isLockedOrRestrict={openModule === 'Unrestrict' || openModule === 'Restrict' ? 'IsRestricted' : 'IsLocked'}
+                isLockOrRestrictLevel={openModule === 'Unrestrict' || openModule === 'Restrict' ? 'RestrictLevel' : 'LockLevel'}
+                isLockOrRestricPINID={openModule === 'Unrestrict' || openModule === 'Restrict' ? 'RestrictPINID' : 'LockPINID'}
+                isLockOrRestricDate={openModule === 'Unrestrict' || openModule === 'Restrict' ? 'RestrictDate' : 'LockDate'}
+                moduleName={'Property'}
+                id={DecVehId || 0}
+                isLockOrRestrictUrl={openModule === 'Unrestrict' || openModule === 'Restrict' ? 'Restricted/UpdateIncidentRestrictedStatus' : 'Restricted/UpdateIncidentLockStatus'}
+
+                getPermissionLevelByLock={getPermissionLevelByLock}
+            // getPermissionLevelByRestrict={getPermissionLevelByRestrict}
+
+            />
         </div>
     )
 }

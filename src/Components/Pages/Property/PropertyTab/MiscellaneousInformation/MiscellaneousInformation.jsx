@@ -6,7 +6,7 @@ import SelectBox from "../../../../Common/SelectBox";
 import DatePicker from "react-datepicker";
 import DataTable from "react-data-table-component";
 import {
-  Decrypt_Id_Name, DecryptedList, Requiredcolour, base64ToString, changeArrayFormat, changeArrayFormat_WithFilter, decryptBase64, getShowingMonthDateYear, getShowingWithOutTime, tableCustomStyles,
+  Decrypt_Id_Name, DecryptedList, LockFildscolour, Requiredcolour, base64ToString, changeArrayFormat, changeArrayFormat_WithFilter, decryptBase64, getShowingMonthDateYear, getShowingWithOutTime, isLockOrRestrictModule, tableCustomStyles,
 } from "../../../../Common/Utility";
 import { Link, useLocation } from "react-router-dom";
 import { AddDeleteUpadate, AddDelete_Img, PropertyRoomInsert, ScreenPermision, fetchPostData, } from "../../../../hooks/Api";
@@ -30,7 +30,8 @@ const MultiValue = (props) => (
 );
 
 const MiscellaneousInformation = (props) => {
-  const { ListData, DecPropID, DecMPropID, DecIncID, setIsNonPropertyRoomSelected, propertystatus, setPropertyStatus, isViewEventDetails = false, } = props;
+
+  const { ListData, DecPropID, DecMPropID, DecIncID, setIsNonPropertyRoomSelected, propertystatus, setPropertyStatus, isViewEventDetails = false, isLocked, setIsLocked } = props;
 
   const { setChangesStatus, get_Incident_Count, incidentCount, datezone, GetDataTimeZone, incidentReportedDate, } = useContext(AgencyContext);
   const reportApproveOfficer = useSelector((state) => state.Incident.reportApproveOfficer);
@@ -152,8 +153,6 @@ const MiscellaneousInformation = (props) => {
     });
   };
 
-  console.log(PropertyRoomStatus)
-
   const GetDataDocument = (propertyID, masterPropertyID, loginPinID) => {
     const val = {
       PropertyID: propertyID,
@@ -205,8 +204,6 @@ const MiscellaneousInformation = (props) => {
     }
   };
 
-
-
   const Get_SendTask_DrpVal = (PropertyID, MasterPropertyID) => {
     const val = {
       PropertyID: PropertyID, MasterPropertyID: MasterPropertyID, AgencyID: localStoreData?.AgencyID,
@@ -224,21 +221,6 @@ const MiscellaneousInformation = (props) => {
       });
   };
 
-  // const Get_SendTask_Data = (PropertyID, MasterPropertyID) => {
-  //   const val = { PropertyID: PropertyID, MasterPropertyID: MasterPropertyID };
-  //   fetchPostData("TaskList/GetData_TaskList", val)
-  //     .then((res) => {
-  //       if (res) {
-  //         setTask(res[res.length - 1]?.Task);
-  //       } else {
-  //         setTask("");
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //       toastifyError(err?.message);
-  //     });
-  // };
   const Get_SendTask_Data = (PropertyID, MasterPropertyID) => {
     const val = { PropertyID, MasterPropertyID };
     fetchPostData("TaskList/GetData_TaskList", val)
@@ -256,7 +238,6 @@ const MiscellaneousInformation = (props) => {
       });
   };
 
-  console.log(selectedFiles)
 
   const Get_TaskList_Status = (PropertyID) => {
     const val = { PropertyID: PropertyID, AgencyID: localStoreData?.AgencyID };
@@ -333,32 +314,6 @@ const MiscellaneousInformation = (props) => {
   }, [
     CollectionDtTmError, CollectingOfficerError, ReasonError, DispatchError, DispatchingOfficerError, ReceipientError,
   ]);
-
-  // const Update_Name = () => {
-  //   const { MasterPropertyID, MProId, PropertyID, ProId, AgencyID, IncidentID, IncID, DestroyDtTm, PropertyTag, NICB, Description, IsSendToPropertyRoom, ModifiedByUserFK, IsMaster, IsSendToTaskList, CollectingOfficer, LocationOfCollection, EvidenceDescription, CollectionDtTm, IsNonPropertyRoom, IsEvidence, Task, Reason, DispatchDtTm, ExpectedDtTm, DispatchingOfficer, Comments, Recipient, ModOfTransport, Destination, PackagingDetails, FileAttachment, TestPerformed, LabName, LabLocation, Summary, FileAttachment1,
-  //   } = value;
-  //   const val = {
-  //     CreatedByUserFK: loginPinID, MasterPropertyID: MasterPropertyID, PropertyID: PropertyID, AgencyID: loginAgencyID, IsMaster: IsMaster, IncidentID: IncidentID, IsSendToPropertyRoom: IsSendToPropertyRoom, ModifiedByUserFK: loginPinID, DestroyDtTm: DestroyDtTm, PropertyTag: PropertyTag, NICB: NICB, Description: Description, CollectingOfficer: CollectingOfficer, LocationOfCollection: LocationOfCollection, EvidenceDescription: EvidenceDescription, CollectionDtTm: CollectionDtTm, IsNonPropertyRoom: IsNonPropertyRoom, IsEvidence: IsEvidence, Task: Task, IsSendToTaskList: IsSendToTaskList, Reason: Reason, DispatchDtTm: DispatchDtTm, ExpectedDtTm: ExpectedDtTm, DispatchingOfficer: DispatchingOfficer, Summary: Summary, LabLocation: LabLocation, LabName: LabName, TestPerformed: TestPerformed, PackagingDetails: PackagingDetails, Destination: Destination, ModOfTransport: ModOfTransport, Recipient: Recipient, DispatchingOfficer: DispatchingOfficer, Comments: Comments,
-  //   };
-  //   AddDeleteUpadate("Property/Update_MiscellaneousInformation", val)
-  //     .then((res) => {
-  //       if (res?.success) {
-  //         const parsedData = JSON.parse(res.data);
-  //         const message = parsedData.Table[0].Message;
-  //         toastifySuccess(message);
-  //         Update_Name_Document();
-  //         GetSingleData(PropertyID, MasterPropertyID, loginPinID);
-  //         Get_TaskList_Status(PropertyID);
-  //         setChangesStatus(false);
-  //         setStatesChangeStatus(false);
-  //         Reset();
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //       toastifyError(err?.message);
-  //     });
-  // };
 
   const uploadNonPropertyRoomDocuments = async (PropertyID, MasterPropertyID, CreatedByUserFK, files) => {
     if (!files || files.length === 0) return;
@@ -491,9 +446,6 @@ const MiscellaneousInformation = (props) => {
       });
   };
 
-
-
-
   useEffect(() => {
     if (taskEditVal) {
       setSendTaskId(taskEditVal);
@@ -502,25 +454,21 @@ const MiscellaneousInformation = (props) => {
 
   useEffect(() => {
     if (editval?.length > 0) {
-      const IsSendToPropertyRoom =
-        editval[0].IsSendToPropertyRoom === false &&
-          editval[0].CollectionDtTm === null &&
-          editval[0].CollectingOfficer === null
-          ? true
-          : editval[0]?.IsSendToPropertyRoom;
+      const IsSendToPropertyRoom = editval[0].IsSendToPropertyRoom === false && editval[0].CollectionDtTm === null && editval[0].CollectingOfficer === null ? true : editval[0]?.IsSendToPropertyRoom;
+
       let tempTasklistStatus = null;
       if (!editval[0]?.IsNonPropertyRoom) {
         tempTasklistStatus = true;
+
       } else {
         tempTasklistStatus = editval[0]?.IsSendToTaskList;
+
       }
       setValue({
         ...value,
         MasterPropertyID: DecMPropID,
         PropertyID: DecPropID,
-        DestroyDtTm: editval[0]?.DestroyDtTm
-          ? getShowingWithOutTime(editval[0]?.DestroyDtTm)
-          : null,
+        DestroyDtTm: editval[0]?.DestroyDtTm ? getShowingWithOutTime(editval[0]?.DestroyDtTm) : null,
         Description: editval[0]?.Description,
         NICB: editval[0]?.NICB,
         PropertyTag: editval[0]?.PropertyTag,
@@ -549,19 +497,16 @@ const MiscellaneousInformation = (props) => {
       });
 
       setIsEvidenceStatus(editval[0]?.IsEvidence);
-      setCollectiondate(
-        editval[0]?.CollectionDtTm ? new Date(editval[0]?.CollectionDtTm) : ""
-      );
-      setdisPatchdate(
-        editval[0]?.DispatchDtTm ? new Date(editval[0]?.DispatchDtTm) : ""
-      );
-      setexpectedArrival(
-        editval[0]?.ExpectedDtTm ? new Date(editval[0]?.ExpectedDtTm) : ""
-      );
+      setCollectiondate(editval[0]?.CollectionDtTm ? new Date(editval[0]?.CollectionDtTm) : "");
+      setdisPatchdate(editval[0]?.DispatchDtTm ? new Date(editval[0]?.DispatchDtTm) : "");
+      setexpectedArrival(editval[0]?.ExpectedDtTm ? new Date(editval[0]?.ExpectedDtTm) : "");
+
       if (editval[0]?.IsSendToPropertyRoom) {
         setPropertyStatus(true);
+
       } else {
         setPropertyStatus(false);
+
       }
     }
   }, [editval, updateCount]);
@@ -686,29 +631,9 @@ const MiscellaneousInformation = (props) => {
     if (editval[0]?.Description?.length > 0) {
       setUpdateCount(updateCount + 1);
     }
+
+    // setIsLocked(false);
   };
-
-  // const ChangeDropDown = (e, name) => {
-  //   !addUpdatePermission && setStatesChangeStatus(true);
-  //   !addUpdatePermission && setChangesStatus(true);
-
-  //   // When user selects a task
-  //   if ((e && name === "Task") || (e === null && name === "Task")) {
-  //     setTaskToSend(e ? e.label : "");
-  //     setIsSendButtonDisabled(false);
-  //     if (e) TaskListvalidation(e.label); // Validate selected task
-  //   } else if (e) {
-  //     setValue({
-  //       ...value,
-  //       [name]: e.value,
-  //     });
-  //   } else {
-  //     setValue({
-  //       ...value,
-  //       [name]: null,
-  //     });
-  //   }
-  // };
 
   const ChangeDropDown = (e, name) => {
     !addUpdatePermission && setStatesChangeStatus(true);
@@ -732,8 +657,6 @@ const MiscellaneousInformation = (props) => {
       });
     }
   };
-
-
 
   const TaskListvalidation = (selectedStatus) => {
     setTaskListStatus("");
@@ -802,8 +725,6 @@ const MiscellaneousInformation = (props) => {
       setIsSendButtonDisabled(false);
     }
   };
-
-
 
   const TaskListDataChange = (multiSelected) => {
     setSendTaskId(multiSelected);
@@ -937,6 +858,7 @@ const MiscellaneousInformation = (props) => {
     { value: "5", label: "Transfer Location" },
     { value: "6", label: "Update" },
   ];
+
   const HandleStatusOption = () => {
     let arr = [];
     if (PropertyRoomStatus) {
@@ -957,7 +879,6 @@ const MiscellaneousInformation = (props) => {
       return arr;
     }
   };
-  console.log(PropertyRoomStatus);
 
   const filterTime = (time) => {
     const occuredFromDate = new Date(value?.ReportedDtTm);
@@ -1093,8 +1014,6 @@ const MiscellaneousInformation = (props) => {
     }
   }, [loginAgencyID]);
 
-  console.log(task, LastTask)
-
   return (
     <>
       <PropListng {...{ ListData }} />
@@ -1116,9 +1035,10 @@ const MiscellaneousInformation = (props) => {
                     id="NICB"
                     value={value?.NICB}
                     onChange={HandleChanges}
-                    className="readonlyColor"
                     required
                     readOnly
+                    className={isLockOrRestrictModule("Lock", editval[0]?.NICB, isLocked) ? "LockFildsColor" : "readonlyColor"}
+                    disabled={isLockOrRestrictModule("Lock", editval[0]?.NICB, isLocked) ? true : false}
                   />
                 </div>
                 <div className="col-2 col-md-2 col-lg-3  mt-3">
@@ -1130,7 +1050,6 @@ const MiscellaneousInformation = (props) => {
                   <DatePicker
                     id="DestroyDtTm"
                     name="DestroyDtTm"
-                    className="readonlyColor"
                     onChange={(date) => {
                       setValue({
                         ...value,
@@ -1157,6 +1076,9 @@ const MiscellaneousInformation = (props) => {
                     showYearDropdown
                     showMonthDropdown
                     dropdownMode="select"
+
+                    className={isLockOrRestrictModule("Lock", editval[0]?.DestroyDtTm, isLocked) ? "LockFildsColor" : "readonlyColor"}
+                    disabled={isLockOrRestrictModule("Lock", editval[0]?.DestroyDtTm, isLocked) ? true : false}
                   />
                 </div>
               </div>
@@ -1172,11 +1094,15 @@ const MiscellaneousInformation = (props) => {
                     id="Description"
                     value={value?.Description}
                     onChange={HandleChanges}
-                    className="form-control"
                     cols={30}
                     rows={1}
                     maxLength={250}
-                  ></textarea>
+
+                    className={isLockOrRestrictModule("Lock", editval[0]?.Description, isLocked) ? "LockFildsColor form-control" : "form-control"}
+                    disabled={isLockOrRestrictModule("Lock", editval[0]?.Description, isLocked) ? true : false}
+                  >
+
+                  </textarea>
                 </div>
               </div>
             </fieldset>
@@ -1186,14 +1112,16 @@ const MiscellaneousInformation = (props) => {
                   <div className="mb-4">
                     <div className="form-check">
                       <input
-                        className="form-check-input"
                         type="checkbox"
                         id="evidence"
                         name="IsEvidence"
                         value={value?.IsEvidence}
                         checked={value?.IsEvidence}
-                        disabled={IsEvidenceStatus}
                         onChange={HandleChanges}
+
+
+                        className={isLockOrRestrictModule("Lock", editval[0]?.IsEvidence, isLocked) ? "form-check-input LockFildsColor" : "form-check-input"}
+                        disabled={isLockOrRestrictModule("Lock", editval[0]?.IsEvidence, isLocked) || IsEvidenceStatus ? true : false}
                       />
                       <label className="form-check-label" htmlFor="evidence">
                         Evidence
@@ -1204,12 +1132,13 @@ const MiscellaneousInformation = (props) => {
                         <div className="ms-4 mt-2">
                           <div className="form-check">
                             <input
-                              className="form-check-input"
                               type="radio"
                               name="IsSendToPropertyRoom"
                               id="IsSendToPropertyRoom"
                               checked={value.IsSendToPropertyRoom}
                               onChange={HandleChanges}
+
+                              className="form-check-input"
                               disabled={IsNonPropertyStatus === 'true' || IsNonPropertyStatus === true}
                             />
                             <label
@@ -1223,12 +1152,13 @@ const MiscellaneousInformation = (props) => {
                         <div className="ms-4 mt-2 ml-5">
                           <div className="form-check">
                             <input
-                              className="form-check-input"
                               type="radio"
                               name="IsNonPropertyRoom"
                               id="IsNonPropertyRoom"
                               checked={value.IsNonPropertyRoom}
                               onChange={HandleChanges}
+
+                              className="form-check-input"
                               disabled={SendToPropertyRoomStatus === 'true' || SendToPropertyRoomStatus === true}
                             />
                             <label
@@ -1264,90 +1194,6 @@ const MiscellaneousInformation = (props) => {
                         </label>
                       </div>
                       <div className="col-3 col-md-3 col-lg-2 ">
-
-                        {/* <DatePicker
-                          id="ReportedDate"
-                          name="ReportedDate"
-                          dateFormat="MM/dd/yyyy HH:mm"
-                          onChange={(date) => {
-                            !addUpdatePermission && setStatesChangeStatus(true);
-                            !addUpdatePermission && setChangesStatus(true);
-
-                            if (date) {
-                              console.log(
-                                "occurred from date entered true::",
-                                date
-                              );
-
-                              let occurredFromTimestamp = new Date(
-                                value?.ReportedDtTm
-                              );
-                              let selectedDate = new Date(date);
-
-                              // If selected date is before or equal to ReportedDtTm, push it by 1 minute
-                              if (
-                                selectedDate.getTime() <=
-                                occurredFromTimestamp.getTime()
-                              ) {
-                                selectedDate = new Date(
-                                  occurredFromTimestamp.getTime() + 60000
-                                ); // 1 min after
-                              }
-
-                              setCollectiondate(selectedDate);
-                              setValue({
-                                ...value,
-                                ["CollectionDtTm"]:
-                                  getShowingMonthDateYear(selectedDate),
-                              });
-                            } else {
-                              console.log(
-                                "occurred from date entered false::",
-                                date
-                              );
-                              setCollectiondate(date);
-                              setValue({
-                                ...value,
-                                ["CollectionDtTm"]: null,
-                              });
-                            }
-                          }}
-                          selected={collectiondate}
-                          placeholderText={"Select..."}
-                          className="requiredColor"
-                          timeInputLabel
-                          showTimeSelect
-                          timeIntervals={1}
-                          timeCaption="Time"
-                          showMonthDropdown
-                          isClearable={false}
-                          showYearDropdown
-                          dropdownMode="select"
-                          showDisabledMonthNavigation
-                          autoComplete="off"
-                          timeFormat="HH:mm"
-                          is24Hour
-                          minDate={new Date(value?.ReportedDtTm)} // ✅ Only after ReportedDtTm allowed
-                          maxDate={new Date(datezone)}
-                          filterTime={(time) => {
-                            // Optional: If selected date is same day as ReportedDtTm, restrict time
-                            const reported = new Date(value?.ReportedDtTm);
-                            const selectedDateOnly = new Date(collectiondate);
-                            selectedDateOnly.setHours(0, 0, 0, 0);
-                            reported.setHours(0, 0, 0, 0);
-
-                            if (
-                              selectedDateOnly.getTime() === reported.getTime()
-                            ) {
-                              return (
-                                time.getTime() >
-                                new Date(value?.ReportedDtTm).getTime()
-                              );
-                            }
-                            return true;
-                          }}
-                        /> */}
-
                         <DatePicker
                           name='CollectionDtTm'
                           id='CollectionDtTm'
@@ -1387,8 +1233,12 @@ const MiscellaneousInformation = (props) => {
                             const maxTime = new Date(datezone).getTime();
                             return timeValue > minTime && timeValue <= maxTime;
                           }}
-                          disabled={selectedOption === null || selectedOption === ''}
-                          className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+
+
+                          // disabled={selectedOption === null || selectedOption === ''}
+                          // className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                          className={isLockOrRestrictModule("Lock", editval[0]?.CollectionDtTm, isLocked) ? "LockFildsColor" : selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                          disabled={isLockOrRestrictModule("Lock", editval[0]?.CollectionDtTm, isLocked) || selectedOption === null || selectedOption === ''}
                         />
                       </div>
 
@@ -1404,13 +1254,13 @@ const MiscellaneousInformation = (props) => {
                             type="text"
                             name="LocationOfCollection"
                             value={value.LocationOfCollection}
-                            onChange={(e) => {
-                              handleChange(e);
-                            }}
+                            onChange={(e) => { handleChange(e); }}
+
+                            disabled={isLockOrRestrictModule("Lock", editval[0]?.LocationOfCollection, isLocked) ? true : false}
+                            className={isLockOrRestrictModule("Lock", editval[0]?.LocationOfCollection, isLocked) ? "LockFildsColor" : ''}
                           />
                         </div>
                       </div>
-
                       <div className="col-3 col-md-2 col-lg-2 mt-2">
                         <label htmlFor="" className="new-label">
                           Collecting Officer
@@ -1441,7 +1291,10 @@ const MiscellaneousInformation = (props) => {
                           placeholder="Select.."
                           menuPlacement="bottom"
                           isClearable
-                          styles={Requiredcolour}
+
+                          styles={isLockOrRestrictModule("Lock", editval[0]?.CollectingOfficer, isLocked) ? LockFildscolour : Requiredcolour}
+                          isDisabled={isLockOrRestrictModule("Lock", editval[0]?.CollectingOfficer, isLocked) ? true : false}
+                        // isDisabled={''}
                         />
                       </div>
                     </div>
@@ -1459,9 +1312,10 @@ const MiscellaneousInformation = (props) => {
                             type="text"
                             name="EvidenceDescription"
                             value={value.EvidenceDescription}
-                            onChange={(e) => {
-                              handleChange(e);
-                            }}
+                            onChange={(e) => { handleChange(e); }}
+
+                            className={isLockOrRestrictModule("Lock", editval[0]?.EvidenceDescription, isLocked) ? "LockFildsColor" : ''}
+                            disabled={isLockOrRestrictModule("Lock", editval[0]?.EvidenceDescription, isLocked) ? true : false}
                           />
                         </div>
                       </div>
@@ -1473,13 +1327,13 @@ const MiscellaneousInformation = (props) => {
                         <div className="col-12 col-md-12 col-lg-2 ">
                           <div className="form-check">
                             <input
-                              className="form-check-input"
                               name="IsSendToTaskList"
                               value={value?.IsSendToTaskList}
                               onChange={HandleChanges}
                               checked={value?.IsSendToTaskList}
                               type="checkbox"
                               id="flexCheckDefault"
+                              className="form-check-input"
                             />
                             <label
                               className="form-check-label mb-0"
@@ -1489,11 +1343,8 @@ const MiscellaneousInformation = (props) => {
                             </label>
                           </div>
                         </div>
-
-
                         {
                           value?.IsSendToTaskList ?
-
                             <>
                               <div className="col-1 col-md-1 col-lg-1 ">
                                 <label
@@ -1503,7 +1354,6 @@ const MiscellaneousInformation = (props) => {
                                   Assignee
                                 </label>
                               </div>
-
                               <div className="col-3 col-md-3 col-lg-5 g-1 row align-items-center">
                                 <>
                                   <div className="col-6 col-md-6 col-lg-3 ">
@@ -1545,24 +1395,6 @@ const MiscellaneousInformation = (props) => {
                                   <>
                                     {selectedOption === "Individual" ? (
                                       <>
-                                        {/* <div className="col-2 col-md-2 col-lg-2">
-                                      <span className="label-name">
-                                        {errors.ApprovingOfficerError !==
-                                          "true" && (
-                                            <p
-                                              style={{
-                                                color: "red",
-                                                fontSize: "13px",
-                                                margin: "0px",
-                                                padding: "0px",
-                                                fontWeight: "400",
-                                              }}
-                                            >
-                                              {errors.ApprovingOfficerError}
-                                            </p>
-                                          )}
-                                      </span>
-                                    </div> */}
                                         <div className="col-4 col-md-12 col-lg-6 dropdown__box mt-0">
                                           <SelectBox
                                             className="custom-multiselect"
@@ -1571,37 +1403,18 @@ const MiscellaneousInformation = (props) => {
                                             isMulti
                                             required
                                             menuPlacement="top"
-                                            styles={colourStylesUsers}
-                                            // isDisabled={value.Status === "Pending Review" || value.Status === "Approved"}
                                             closeMenuOnSelect={false}
-                                            // menuPlacement="top"
-                                            // hideSelectedOptions={true}
                                             onChange={Agencychange}
-                                            // allowSelectAll={true}
                                             value={multiSelected.optionSelected}
+
+                                            styles={colourStylesUsers} // original style
+                                          // styles={isLockOrRestrictModule("Lock", editval[0]?.CollectingOfficer, isLocked) ? LockFildscolour : colourStylesUsers}
+                                          // isDisabled={isLockOrRestrictModule("Lock", editval[0]?.CollectingOfficer, isLocked) ? true : false}
                                           />
                                         </div>
                                       </>
                                     ) : (
                                       <>
-                                        {/* <div className="col-2 col-md-2 col-lg-2 ">
-                                      <span className="label-name">
-                                        {errors.ApprovingOfficerError !==
-                                          "true" && (
-                                            <p
-                                              style={{
-                                                color: "red",
-                                                fontSize: "13px",
-                                                margin: "0px",
-                                                padding: "0px",
-                                                fontWeight: "400",
-                                              }}
-                                            >
-                                              {errors.ApprovingOfficerError}
-                                            </p>
-                                          )}
-                                      </span>
-                                    </div> */}
                                         <div className="col-4 col-md-12 col-lg-6 dropdown__box mt-0">
                                           <SelectBox
                                             className="custom-multiselect"
@@ -1609,12 +1422,14 @@ const MiscellaneousInformation = (props) => {
                                             options={groupList}
                                             menuPlacement="top"
                                             isMulti
-                                            styles={colourStylesUsers}
                                             closeMenuOnSelect={false}
                                             hideSelectedOptions={true}
                                             onChange={Agencychange}
-                                            // allowSelectAll={true}
                                             value={multiSelected.optionSelected}
+
+                                            styles={colourStylesUsers} // original style
+                                          // styles={isLockOrRestrictModule("Lock", editval[0]?.CollectingOfficer, isLocked) ? LockFildscolour : colourStylesUsers}
+                                          // isDisabled={isLockOrRestrictModule("Lock", editval[0]?.CollectingOfficer, isLocked) ? true : false}
                                           />
                                         </div>
                                       </>
@@ -1632,20 +1447,12 @@ const MiscellaneousInformation = (props) => {
                                     color: "#fff",
                                   }}
                                   onClick={() => {
-                                    // InSertBasicInfo(
-                                    //   value?.CollectingOfficer,
-                                    //   "OfficerID",
-                                    //   "TaskList/Insert_TaskList",
-                                    //   taskToSend
-                                    // );
-                                    // setTaskToSend("");
                                     if (value.IsSendToPropertyRoom || value.IsNonPropertyRoom && value.IsSendToTaskList) {
                                       setShowModal(true);
                                     }
                                     else {
                                       check_Validation_Error()
                                     }
-                                    // check_Validation_Error();
                                   }}
                                   disabled={!value.OfficerID || IsNonPropertyStatus === true}
                                 >
@@ -1654,122 +1461,6 @@ const MiscellaneousInformation = (props) => {
                               </div>
                             </> : <></>
                         }
-
-
-
-                        {/* {value?.IsSendToTaskList ?
-                                                <>
-                                                    <div className='col-1 col-md-1 col-lg-1 mt-2'>
-                                                        <label className="form-check-label" htmlFor="sendToPropertyRoom">
-                                                            Assignee
-                                                        </label>
-                                                    </div>
-
-                                                    <div className='col-3 col-md-3 col-lg-5 g-1 d-flex mt-2   '>
-
-                                                        <>
-                                                            <div className="col-6 col-md-6 col-lg-3 ">
-                                                                <div className="form-check ml-2">
-                                                                    <input
-                                                                        type="radio"
-                                                                        name="approverType"
-                                                                        value="Individual"
-                                                                        className="form-check-input"
-                                                                        checked={selectedOption === "Individual"}
-                                                                        onChange={handleRadioChangeArrestForward}
-                                                                    />
-                                                                    <label className="form-check-label" htmlFor="Individual">
-                                                                        By User
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-6 col-md-6 col-lg-3 ">
-                                                                <div className="form-check ml-2">
-                                                                    <input
-                                                                        type="radio"
-                                                                        name="approverType"
-                                                                        value="Group"
-                                                                        className="form-check-input"
-                                                                        checked={selectedOption === "Group"}
-                                                                        onChange={handleRadioChangeArrestForward}
-                                                                    />
-                                                                    <label className="form-check-label" htmlFor="Group">
-                                                                        By Group
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                            <>
-                                                                {selectedOption === "Individual" ? (
-                                                                    <>
-                                                                        <div className="col-2 col-md-2 col-lg-2">
-                                                                            <span className="label-name">
-                                                                                User
-                                                                                {errors.ApprovingOfficerError !== 'true' && (
-                                                                                    <p style={{ color: "red", fontSize: "13px", margin: "0px", padding: "0px", fontWeight: "400" }}>
-                                                                                        {errors.ApprovingOfficerError}
-                                                                                    </p>
-                                                                                )}
-                                                                            </span>
-                                                                        </div>
-                                                                        <div className="col-4 col-md-12 col-lg-4 dropdown__box mt-0">
-                                                                            <SelectBox
-                                                                                className="custom-multiselect"
-                                                                                classNamePrefix="custom"
-                                                                                options={reportApproveOfficer}
-                                                                                isMulti
-                                                                                required
-                                                                                menuPlacement="top"
-                                                                                styles={colourStylesUsers}
-                                                                                // isDisabled={value.Status === "Pending Review" || value.Status === "Approved"}
-                                                                                closeMenuOnSelect={false}
-                                                                                // menuPlacement="top"
-                                                                                // hideSelectedOptions={true}
-                                                                                onChange={Agencychange}
-                                                                                // allowSelectAll={true}
-                                                                                value={multiSelected.optionSelected}
-                                                                            />
-                                                                        </div>
-                                                                    </>
-                                                                ) : (
-                                                                    <>
-                                                                        <div className="col-2 col-md-2 col-lg-2 ">
-                                                                            <span className="label-name">
-                                                                                 Group
-                                                                                {errors.ApprovingOfficerError !== 'true' && (
-                                                                                    <p style={{ color: "red", fontSize: "13px", margin: "0px", padding: "0px", fontWeight: "400" }}>
-                                                                                        {errors.ApprovingOfficerError}
-                                                                                    </p>
-                                                                                )}
-                                                                            </span>
-                                                                        </div>
-                                                                        <div className="col-4 col-md-12 col-lg-4 dropdown__box mt-0">
-                                                                            <SelectBox
-                                                                                className="custom-multiselect"
-                                                                                classNamePrefix="custom"
-                                                                                options={groupList}
-                                                                                menuPlacement="top"
-                                                                                isMulti
-                                                                                styles={colourStylesUsers}
-                                                                                closeMenuOnSelect={false}
-                                                                                hideSelectedOptions={true}
-                                                                                onChange={Agencychange}
-                                                                                // allowSelectAll={true}
-                                                                                value={multiSelected.optionSelected}
-                                                                            />
-                                                                        </div>
-                                                                    </>
-                                                                )}
-                                                            </>
-                                                        </>
-
-
-
-                                                    </div>
-
-
-                                                   
-                                                </> : null}  */}
-
                         {value.IsNonPropertyRoom &&
                           !value?.IsSendToTaskList && (
                             <>
@@ -1793,16 +1484,18 @@ const MiscellaneousInformation = (props) => {
                                       ) : null}
                                     </label>
                                   </div>
-
                                   <div className="col-4 col-md-3 col-lg-2">
                                     <div className="text-field mt-1">
                                       <input
                                         type="text"
                                         name="Reason"
                                         value={value.Reason}
-                                        className="requiredColor"
                                         onChange={(e) => handleChange(e)}
                                         styles={Requiredcolour}
+
+                                        // className="requiredColor"
+                                        className={isLockOrRestrictModule("Lock", editval[0]?.Reason, isLocked) ? "LockFildsColor" : "requiredColor"}
+                                        disabled={isLockOrRestrictModule("Lock", editval[0]?.Reason, isLocked) ? true : false}
                                       />
                                     </div>
                                   </div>
@@ -1825,57 +1518,6 @@ const MiscellaneousInformation = (props) => {
                                     </label>
                                   </div>
                                   <div className="col-3 col-md-3 col-lg-2 ">
-                                    {/* <DatePicker
-                                                                        id="DispatchDtTm"
-                                                                        name='DispatchDtTm'
-                                                                        dateFormat="MM/dd/yyyy HH:mm"
-                                                                        onChange={(date) => {
-                                                                            !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-                                                                            if (date) {
-                                                                                console.log("occured frpm date entered true::", date);
-                                                                                let maxTimestamp = new Date();
-                                                                                let occurredFromTimestamp = new Date(value?.ReportedDtTm);
-
-                                                                                let selectedDate = new Date(date);
-                                                                                if (selectedDate?.getTime() <= occurredFromTimestamp.getTime()) {
-                                                                                    selectedDate = new Date(occurredFromTimestamp.getTime() + 60000);
-                                                                                }
-                                                                                if (selectedDate?.getTime() >= maxTimestamp.getTime()) {
-                                                                                    selectedDate = maxTimestamp;
-                                                                                }
-                                                                                setdisPatchdate(selectedDate);
-                                                                                setValue({
-                                                                                    ...value,
-                                                                                    ['DispatchDtTm']: getShowingMonthDateYear(selectedDate),
-                                                                                });
-                                                                            }
-                                                                            else {
-                                                                                console.log("occured from date entered false::", date);
-                                                                                setdisPatchdate(date);
-                                                                                setValue({
-                                                                                    ...value,
-                                                                                    ['DispatchDtTm']: date ? getShowingMonthDateYear(date) : null,
-                                                                                });
-                                                                            }
-                                                                        }}
-                                                                        maxDate={new Date()}
-                                                                        filterTime={filterTime}
-                                                                        selected={dispatchdate}
-                                                                        className='requiredColor'
-                                                                        timeInputLabel
-                                                                        showTimeSelect
-                                                                        timeIntervals={1}
-                                                                        timeCaption="Time"
-                                                                        showMonthDropdown
-                                                                        showYearDropdown
-                                                                        dropdownMode="select"
-                                                                        showDisabledMonthNavigation
-                                                                        autoComplete='off'
-                                                                        timeFormat="HH:mm "
-                                                                        is24Hour
-                                                                        minDate={new Date(value?.ReportedDtTm)}
-                                                                    /> */}
-
                                     <DatePicker
                                       id="DispatchDtTm"
                                       name="DispatchDtTm"
@@ -1929,7 +1571,7 @@ const MiscellaneousInformation = (props) => {
                                         }
                                       }}
                                       selected={dispatchdate}
-                                      className="requiredColor"
+
                                       timeInputLabel
                                       showTimeSelect
                                       timeIntervals={1}
@@ -1943,7 +1585,7 @@ const MiscellaneousInformation = (props) => {
                                       placeholderText={"Select..."}
                                       timeFormat="HH:mm"
                                       is24Hour
-                                      minDate={new Date(collectiondate)} // ✅ Only after ReportedDtTm allowed
+                                      minDate={new Date(collectiondate)}
                                       filterTime={(time) => {
                                         // Optional: If selected date is same day as ReportedDtTm, restrict time
                                         const reported = new Date(
@@ -1967,6 +1609,9 @@ const MiscellaneousInformation = (props) => {
                                         }
                                         return true;
                                       }}
+
+                                      className={isLockOrRestrictModule("Lock", editval[0]?.DispatchDtTm, isLocked) ? "LockFildsColor" : "requiredColor"}
+                                      disabled={isLockOrRestrictModule("Lock", editval[0]?.DispatchDtTm, isLocked) ? true : false}
                                     />
                                   </div>
 
@@ -1976,73 +1621,14 @@ const MiscellaneousInformation = (props) => {
                                     </label>
                                   </div>
                                   <div className="col-3 col-md-3 col-lg-2 ">
-                                    {/* <DatePicker
-                                                                        id="ExpectedDtTm"
-                                                                        name='ExpectedDtTm'
-                                                                        dateFormat="MM/dd/yyyy HH:mm"
-                                                                        onChange={(date) => {
-                                                                            !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-                                                                            if (date) {
-                                                                                console.log("occured frpm date entered true::", date);
-                                                                                let maxTimestamp = new Date();
-                                                                                let occurredFromTimestamp = new Date(value?.ReportedDtTm);
-
-                                                                                let selectedDate = new Date(date);
-                                                                                if (selectedDate?.getTime() <= occurredFromTimestamp.getTime()) {
-                                                                                    selectedDate = new Date(occurredFromTimestamp.getTime() + 60000);
-                                                                                }
-                                                                                if (selectedDate?.getTime() >= maxTimestamp.getTime()) {
-                                                                                    selectedDate = maxTimestamp;
-                                                                                }
-                                                                                setexpectedArrival(selectedDate);
-                                                                                setValue({
-                                                                                    ...value,
-                                                                                    ['ExpectedDtTm']: getShowingMonthDateYear(selectedDate),
-                                                                                });
-                                                                            }
-                                                                            else {
-                                                                                console.log("occured frpm date entered false::", date);
-                                                                                setexpectedArrival(date);
-                                                                                setValue({
-                                                                                    ...value,
-                                                                                    ['ExpectedDtTm']: date ? getShowingMonthDateYear(date) : null,
-                                                                                });
-                                                                            }
-                                                                        }}
-                                                                        maxDate={new Date()}
-                                                                        filterTime={filterTime}
-                                                                        selected={expectedArrival}
-
-                                                                        timeInputLabel
-                                                                        showTimeSelect
-                                                                        timeIntervals={1}
-                                                                        timeCaption="Time"
-                                                                        showMonthDropdown
-                                                                        showYearDropdown
-                                                                        dropdownMode="select"
-                                                                        showDisabledMonthNavigation
-                                                                        autoComplete='off'
-                                                                        timeFormat="HH:mm "
-                                                                        is24Hour
-                                                                        minDate={new Date(value?.ReportedDtTm)}
-                                                                    /> */}
-
                                     <DatePicker
                                       id="ExpectedDtTm"
                                       name="ExpectedDtTm"
                                       dateFormat="MM/dd/yyyy HH:mm"
                                       onChange={(date) => {
-                                        !addUpdatePermission &&
-                                          setStatesChangeStatus(true);
-                                        !addUpdatePermission &&
-                                          setChangesStatus(true);
+                                        !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
 
                                         if (date) {
-                                          console.log(
-                                            "occurred from date entered true::",
-                                            date
-                                          );
-
                                           let occurredFromTimestamp = new Date(
                                             value?.ReportedDate
                                           );
@@ -2068,10 +1654,6 @@ const MiscellaneousInformation = (props) => {
                                               ),
                                           });
                                         } else {
-                                          console.log(
-                                            "occurred from date entered false::",
-                                            date
-                                          );
                                           setexpectedArrival(date);
                                           setValue({
                                             ...value,
@@ -2080,7 +1662,6 @@ const MiscellaneousInformation = (props) => {
                                         }
                                       }}
                                       selected={expectedArrival}
-                                      // className='requiredColor'
                                       timeInputLabel
                                       showTimeSelect
                                       timeIntervals={1}
@@ -2118,6 +1699,9 @@ const MiscellaneousInformation = (props) => {
                                         }
                                         return true;
                                       }}
+
+                                      className={isLockOrRestrictModule("Lock", editval[0]?.DispatchDtTm, isLocked) ? "LockFildsColor" : ""}
+                                      disabled={isLockOrRestrictModule("Lock", editval[0]?.DispatchDtTm, isLocked) ? true : false}
                                     />
                                   </div>
 
@@ -2154,7 +1738,10 @@ const MiscellaneousInformation = (props) => {
                                       menuPlacement="bottom"
                                       className="requiredColor"
                                       isClearable
-                                      styles={Requiredcolour}
+
+                                      // styles={Requiredcolour}
+                                      styles={isLockOrRestrictModule("Lock", editval[0]?.DispatchingOfficer, isLocked) ? LockFildscolour : Requiredcolour}
+                                      isDisabled={isLockOrRestrictModule("Lock", editval[0]?.DispatchingOfficer, isLocked) ? true : false}
                                     />
                                   </div>
 
@@ -2181,8 +1768,15 @@ const MiscellaneousInformation = (props) => {
                                   </div>
                                   <div className="col-4 col-md-3 col-lg-2">
                                     <div className="text-field mt-1">
-                                      <input type="text" name="Recipient" value={value.Recipient} onChange={(e) => handleChange(e)}
-                                        styles={Requiredcolour} className="requiredColor"
+                                      <input
+                                        type="text"
+                                        name="Recipient"
+                                        value={value.Recipient}
+                                        onChange={(e) => handleChange(e)}
+                                        // styles={Requiredcolour}
+
+                                        className={isLockOrRestrictModule("Lock", editval[0]?.Recipient, isLocked) ? "LockFildsColor" : "requiredColor"}
+                                        disabled={isLockOrRestrictModule("Lock", editval[0]?.Recipient, isLocked) ? true : false}
                                       />
                                     </div>
                                   </div>
@@ -2195,13 +1789,17 @@ const MiscellaneousInformation = (props) => {
                                       </p>) : null}
                                     </label>
                                   </div>
-                                  {/* <div className="col-4 col-md-3 col-lg-2 mt-1">
-                                    <input type="text" name="ModOfTransport" value={value.ModOfTransport} onChange={(e) => handleChange(e)} styles={Requiredcolour}
-                                    />
-                                  </div> */}
                                   <div className="col-4 col-md-3 col-lg-2">
                                     <div className="text-field mt-1">
-                                      <input type="text" name="ModOfTransport" value={value.ModOfTransport} onChange={(e) => handleChange(e)}
+                                      <input
+                                        type="text"
+                                        name="ModOfTransport"
+                                        value={value.ModOfTransport}
+                                        onChange={(e) => handleChange(e)}
+
+                                        // className=""
+                                        className={isLockOrRestrictModule("Lock", editval[0]?.ModOfTransport, isLocked) ? "LockFildsColor" : ""}
+                                        disabled={isLockOrRestrictModule("Lock", editval[0]?.ModOfTransport, isLocked) ? true : false}
                                       />
                                     </div>
                                   </div>
@@ -2218,6 +1816,10 @@ const MiscellaneousInformation = (props) => {
                                         name="Destination"
                                         value={value.Destination}
                                         onChange={(e) => handleChange(e)}
+
+                                        // className=""
+                                        className={isLockOrRestrictModule("Lock", editval[0]?.Destination, isLocked) ? "LockFildsColor" : ""}
+                                        disabled={isLockOrRestrictModule("Lock", editval[0]?.Destination, isLocked) ? true : false}
                                       />
                                     </div>
                                   </div>
@@ -2234,6 +1836,9 @@ const MiscellaneousInformation = (props) => {
                                         name="PackagingDetails"
                                         value={value.PackagingDetails}
                                         onChange={(e) => handleChange(e)}
+
+                                        className={isLockOrRestrictModule("Lock", editval[0]?.PackagingDetails, isLocked) ? "LockFildsColor" : ""}
+                                        disabled={isLockOrRestrictModule("Lock", editval[0]?.PackagingDetails, isLocked) ? true : false}
                                       />
                                     </div>
                                   </div>
@@ -2247,7 +1852,6 @@ const MiscellaneousInformation = (props) => {
                                     <textarea
                                       type="text"
                                       rows="1"
-                                      className="form-control  py-1 new-input"
                                       style={{
                                         height: "auto",
                                         overflowY: "scroll",
@@ -2256,31 +1860,14 @@ const MiscellaneousInformation = (props) => {
                                       placeholder="Comment"
                                       name="Comments"
                                       value={value.Comments}
-                                      onChange={(e) => {
-                                        handleChange(e);
-                                      }}
+                                      onChange={(e) => { handleChange(e); }}
+
+
+                                      // className="form-control  py-1 new-input"
+                                      className={isLockOrRestrictModule("Lock", editval[0]?.Comments, isLocked) ? "form-control  py-1 new-input LockFildsColor" : "form-control  py-1 new-input"}
+                                      disabled={isLockOrRestrictModule("Lock", editval[0]?.Comments, isLocked) ? true : false}
                                     />
                                   </div>
-                                  {/* <div className="row">
-                                    <div className="col-2 col-md-2 col-lg-2  mt-2">
-                                      <label htmlFor="" className="new-label">
-                                        Description
-                                      </label>
-                                    </div>
-                                    <div className="col-10 d-flex align-items-center justify-content-end mt-1">
-                                      <textarea
-                                        name="Description"
-                                        id="Description"
-                                        value={value?.Description}
-                                        onChange={HandleChanges}
-                                        className="form-control"
-                                        cols={30}
-                                        rows={1}
-                                        maxLength={250}
-                                      ></textarea>
-                                    </div>
-                                  </div> */}
-
                                   <div className="col-2 col-md-12 col-lg-2 mt-2">
                                     <label
                                       htmlFor=""
@@ -2387,10 +1974,7 @@ const MiscellaneousInformation = (props) => {
                                       )}
                                     </div>
                                   </div>
-
-
                                 </div>
-
                                 <fieldset>
                                   <legend>Results</legend>
                                 </fieldset>
@@ -2410,7 +1994,9 @@ const MiscellaneousInformation = (props) => {
                                         name="TestPerformed"
                                         value={value.TestPerformed}
                                         onChange={(e) => handleChange(e)}
-                                        styles={Requiredcolour}
+
+                                        className={isLockOrRestrictModule("Lock", editval[0]?.TestPerformed, isLocked) ? "LockFildsColor" : "requiredColor"}
+                                        disabled={isLockOrRestrictModule("Lock", editval[0]?.TestPerformed, isLocked) ? true : false}
                                       />
                                     </div>
                                   </div>
@@ -2430,11 +2016,12 @@ const MiscellaneousInformation = (props) => {
                                         name="LabName"
                                         value={value.LabName}
                                         onChange={(e) => handleChange(e)}
-                                        styles={Requiredcolour}
+
+                                        className={isLockOrRestrictModule("Lock", editval[0]?.LabName, isLocked) ? "LockFildsColor" : " requiredColor"}
+                                        disabled={isLockOrRestrictModule("Lock", editval[0]?.LabName, isLocked) ? true : false}
                                       />
                                     </div>
                                   </div>
-
                                   <div className="col-3 col-md-2 col-lg-2 ">
                                     <label
                                       htmlFor=""
@@ -2450,7 +2037,10 @@ const MiscellaneousInformation = (props) => {
                                         name="LabLocation"
                                         value={value.LabLocation}
                                         onChange={(e) => handleChange(e)}
-                                        styles={Requiredcolour}
+
+                                        // className="" 
+                                        className={isLockOrRestrictModule("Lock", editval[0]?.LabLocation, isLocked) ? "LockFildsColor" : " requiredColor"}
+                                        disabled={isLockOrRestrictModule("Lock", editval[0]?.LabLocation, isLocked) ? true : false}
                                       />
                                     </div>
                                   </div>
@@ -2460,7 +2050,6 @@ const MiscellaneousInformation = (props) => {
                                       Summary
                                     </label>
                                   </div>
-
                                   <div className="col-12 col-md-10 col-lg-10 mt-1">
                                     <textarea
                                       type="text"
@@ -2468,15 +2057,17 @@ const MiscellaneousInformation = (props) => {
                                       value={value.Summary}
                                       onChange={(e) => handleChange(e)}
                                       rows="1"
-                                      className="form-control py-1 new-input"
                                       style={{
                                         height: "auto",
                                         overflowY: "scroll",
                                       }}
                                       placeholder="Summary"
+
+                                      // className="form-control py-1 new-input"
+                                      className={isLockOrRestrictModule("Lock", editval[0]?.Summary, isLocked) ? "form-control py-1 new-input LockFildsColor" : "form-control py-1 new-input"}
+                                      disabled={isLockOrRestrictModule("Lock", editval[0]?.Summary, isLocked) ? true : false}
                                     />
                                   </div>
-
                                   <div className="col-2 col-md-12 col-lg-2 mt-2">
                                     <label
                                       htmlFor=""
@@ -2617,33 +2208,16 @@ const MiscellaneousInformation = (props) => {
                                 gap: "8px",
                               }}
                             >
-                              {/* <Select
-                                onChange={(e) => ChangeDropDown(e, "Task")}
-                                options={HandleStatusOption()}
-                                isClearable
-                                menuPlacement="top"
-                                placeholder="Select..."
-                                value={
-                                  StatusOption.find(
-                                    (option) => option.label === taskToSend
-                                  ) || null
-                                }
-                                styles={{
-                                  container: (base) => ({ ...base, flex: 1 }),
-                                }}
-                              /> */}
                               <Select
                                 onChange={(e) => ChangeDropDown(e, "Task")}
                                 options={HandleStatusOption()}
                                 isClearable
                                 menuPlacement="top"
                                 placeholder="Select..."
-                                value={
-                                  StatusOption.find((option) => option.label === taskToSend) || null
-                                }
-                                styles={{
-                                  container: (base) => ({ ...base, flex: 1 }),
-                                }}
+                                value={StatusOption.find((option) => option.label === taskToSend) || null}
+
+                                styles={isLockOrRestrictModule("Lock", editval[0]?.Task, isLocked) ? LockFildscolour : { container: (base) => ({ ...base, flex: 1 }), }}
+                                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.Task, isLocked) ? true : false}
                               />
                             </div>
                           </div>
@@ -2658,7 +2232,7 @@ const MiscellaneousInformation = (props) => {
                               </label>
                             </div>
 
-                            <div className="col-3 col-md-3 col-lg-6 g-1 d-flex align-items-center   ">
+                            <div className="col-3 col-md-3 col-lg-6 g-1 d-flex align-items-center">
                               <>
                                 <div className="col-6 col-md-6 col-lg-3 ">
                                   <div className="form-check ml-2">
@@ -2699,24 +2273,6 @@ const MiscellaneousInformation = (props) => {
                                 <>
                                   {selectedOption === "Individual" ? (
                                     <>
-                                      {/* <div className="col-2 col-md-2 col-lg-2">
-                                        <span className="label-name">
-                                          {errors.ApprovingOfficerError !==
-                                            "true" && (
-                                              <p
-                                                style={{
-                                                  color: "red",
-                                                  fontSize: "13px",
-                                                  margin: "0px",
-                                                  padding: "0px",
-                                                  fontWeight: "400",
-                                                }}
-                                              >
-                                                {errors.ApprovingOfficerError}
-                                              </p>
-                                            )}
-                                        </span>
-                                      </div> */}
                                       <div className="col-4 col-md-12 col-lg-6 dropdown__box mt-0">
                                         <SelectBox
                                           className="custom-multiselect"
@@ -2725,37 +2281,17 @@ const MiscellaneousInformation = (props) => {
                                           isMulti
                                           required
                                           menuPlacement="top"
-                                          styles={colourStylesUsers}
-                                          // isDisabled={value.Status === "Pending Review" || value.Status === "Approved"}
                                           closeMenuOnSelect={false}
-                                          // menuPlacement="top"
-                                          // hideSelectedOptions={true}
                                           onChange={Agencychange}
-                                          // allowSelectAll={true}
                                           value={multiSelected.optionSelected}
+
+                                          styles={colourStylesUsers}
+                                        // isDisabled={}
                                         />
                                       </div>
                                     </>
                                   ) : (
                                     <>
-                                      {/* <div className="col-2 col-md-2 col-lg-2 ">
-                                        <span className="label-name">
-                                          {errors.ApprovingOfficerError !==
-                                            "true" && (
-                                              <p
-                                                style={{
-                                                  color: "red",
-                                                  fontSize: "13px",
-                                                  margin: "0px",
-                                                  padding: "0px",
-                                                  fontWeight: "400",
-                                                }}
-                                              >
-                                                {errors.ApprovingOfficerError}
-                                              </p>
-                                            )}
-                                        </span>
-                                      </div> */}
                                       <div className="col-4 col-md-12 col-lg-6 dropdown__box mt-0">
                                         <SelectBox
                                           className="custom-multiselect"
@@ -2763,12 +2299,13 @@ const MiscellaneousInformation = (props) => {
                                           options={groupList}
                                           menuPlacement="top"
                                           isMulti
-                                          styles={colourStylesUsers}
                                           closeMenuOnSelect={false}
                                           hideSelectedOptions={true}
                                           onChange={Agencychange}
-                                          // allowSelectAll={true}
                                           value={multiSelected.optionSelected}
+
+                                          styles={colourStylesUsers}
+                                        // isDisabled={}
                                         />
                                       </div>
                                     </>
@@ -2788,13 +2325,6 @@ const MiscellaneousInformation = (props) => {
                                 color: "#fff",
                               }}
                               onClick={() => {
-                                // check_Validation_Error();
-                                // InSertBasicInfo(
-                                //   value?.CollectingOfficer,
-                                //   "OfficerID",
-                                //   "TaskList/Insert_TaskList",
-                                //   taskToSend
-                                // );
                                 if (value.IsSendToPropertyRoom || value.IsNonPropertyRoom && value.IsSendToTaskList) {
                                   setShowModal(true);
                                 }
@@ -2812,10 +2342,7 @@ const MiscellaneousInformation = (props) => {
                               Send
                             </button>
                           </div>
-
                         </div>
-
-
                         <div className="row">
                           <div className="col-lg-2"></div>
                           {taskListStatus && (
@@ -2850,14 +2377,12 @@ const MiscellaneousInformation = (props) => {
                       disabled={!statesChangeStatus || taskToSend}
                       className="btn btn-md py-1 btn-success "
                       onClick={(e) => {
-                        // check_Validation_Error();
                         if (value.IsSendToPropertyRoom || value.IsNonPropertyRoom && value.IsSendToTaskList) {
                           setShowModal(true);
                         }
                         else {
                           check_Validation_Error()
                         }
-
                       }}
                     >
                       Update
@@ -2872,7 +2397,6 @@ const MiscellaneousInformation = (props) => {
                     disabled={!statesChangeStatus || taskToSend}
                     className="btn btn-md py-1 btn-success "
                     onClick={(e) => {
-                      // check_Validation_Error();
                       if (value.IsSendToPropertyRoom || value.IsNonPropertyRoom && value.IsSendToTaskList) {
                         setShowModal(true);
                       }

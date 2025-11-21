@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import Select from "react-select";
 import DatePicker from "react-datepicker";
-import { Aes256Encrypt, Decrypt_Id_Name, Encrypted_Id_Name, LockFildscolour, Requiredcolour, base64ToString, filterPassedDateTime, filterPassedTime, filterPassedTimeZone, filterPassedTimeZonesProperty, filterPastDate, getMonthWithOutDateTime, getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime, getYearWithOutDateTime, stringToBase64, tableCustomStyle, tableCustomStyles } from '../../../../Common/Utility';
+import { Aes256Encrypt, Decrypt_Id_Name, Encrypted_Id_Name, LockFildscolour, Requiredcolour, base64ToString, filterPassedDateTime, filterPassedTime, filterPassedTimeZone, filterPassedTimeZonesProperty, filterPastDate, getMonthWithOutDateTime, getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime, getYearWithOutDateTime, isLockOrRestrictModule, stringToBase64, tableCustomStyle, tableCustomStyles } from '../../../../Common/Utility';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AddDeleteUpadate, fetchPostData, fetchData, AddDelete_Img, fetchPostDataNibrs } from '../../../../hooks/Api';
 import { Comman_changeArrayFormat, threeColArray } from '../../../../Common/ChangeArrayFormat';
@@ -34,7 +34,7 @@ import CreatableSelect from 'react-select/creatable';
 import NCICModal from '../../../../../CADComponents/NCICModal';
 
 
-const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setResetErrors, showVehicleRecovered, get_List, setPropertyStatus, isCad = false, isViewEventDetails = false, isCADSearch = false, clickCount }) => {
+const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setResetErrors, showVehicleRecovered, get_List, setPropertyStatus, isCad = false, isViewEventDetails = false, isCADSearch = false, clickCount, isLocked, setIsLocked }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -99,7 +99,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
     const [modalStatus, setModalStatus] = useState(false);
     const [nameModalStatus, setNameModalStatus] = useState(false);
     const [masterPropertyID, setMasterPropertyID] = useState('');
-    const [editval, setEditval] = useState();
+    const [editval, setEditval] = useState([]);
     const [vehicleMultiImg, setVehicleMultiImg] = useState([])
     const [imageId, setImageId] = useState('');
     const [mainIncidentID, setMainIncidentID] = useState('');
@@ -175,9 +175,6 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
         }
     }, [ResetErrors]);
 
-    // useEffect(() => {
-    //     if (isNew === true) { newVehicle(); }
-    // }, [isNew]);
 
     useEffect(() => {
         if (localStoreData) {
@@ -1076,11 +1073,6 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
         })
     }
 
-    // useEffect(() => {
-    //     if (IncID) {
-    //         nibrsValidateProperty(IncID);
-    //     }
-    // }, [IncID]);
 
     const nibrsValidateProperty = (incidentID) => {
         setclickNibLoder(true);
@@ -1142,6 +1134,8 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
         return !isNaN(d.getTime()) ? d : null;
     };
 
+
+
     return (
         <>
             {((incidentCount[0]?.VehicleCount === 0 || incidentCount[0]?.VehicleCount === "0") || (VehSta === true || VehSta === 'true') || isNew === "true" || isNew === true) && (
@@ -1164,12 +1158,12 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                     <Select
                                         name='LossCodeID'
                                         value={propertyLossCodeData?.filter((obj) => obj.value === value?.LossCodeID)}
-                                        styles={nibrsSubmittedvehicleMain === 1 ? LockFildscolour : Requiredcolour}
                                         options={propertyLossCodeData}
                                         onChange={(e) => ChangePhoneType(e, 'LossCodeID')}
                                         isClearable
                                         placeholder="Select..."
-                                        isDisabled={nibrsSubmittedvehicleMain === 1 ? true : false}
+                                        styles={nibrsSubmittedvehicleMain === 1 || isLockOrRestrictModule("Lock", editval[0]?.LossCodeID, isLocked) ? LockFildscolour : Requiredcolour}
+                                        isDisabled={nibrsSubmittedvehicleMain === 1 || isLockOrRestrictModule("Lock", editval[0]?.LossCodeID, isLocked) ? true : false}
                                     />
                                 </div>
                                 <div className="col-2 col-md-2 col-lg-2">
@@ -1222,8 +1216,9 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                                 timeCaption="Time"
                                                 maxDate={new Date(datezone)}
                                                 filterTime={(date) => filterPassedTimeZone(date, datezone)}
-                                                disabled={nibrsSubmittedvehicleMain === 1}
-                                                className={nibrsSubmittedvehicleMain === 1 ? 'LockFildsColor' : 'requiredColor'}
+
+                                                className={nibrsSubmittedvehicleMain === 1 || isLockOrRestrictModule("Lock", editval[0]?.ReportedDtTm, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+                                                disabled={nibrsSubmittedvehicleMain === 1 || isLockOrRestrictModule("Lock", editval[0]?.ReportedDtTm, isLocked)}
                                             />
                                             :
                                             <DatePicker
@@ -1269,8 +1264,11 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                                 maxDate={new Date(datezone)}
                                                 showDisabledMonthNavigation
                                                 filterTime={(date) => filterPassedTimeZonesProperty(date, incReportedDate, datezone)}
-                                                disabled={nibrsSubmittedvehicleMain === 1}
-                                                className={nibrsSubmittedvehicleMain === 1 ? 'LockFildsColor' : 'requiredColor'}
+
+                                                // className={nibrsSubmittedvehicleMain === 1 ? 'LockFildsColor' : 'requiredColor'}
+                                                // disabled={nibrsSubmittedvehicleMain === 1}
+                                                className={nibrsSubmittedvehicleMain === 1 || isLockOrRestrictModule("Lock", editval[0]?.ReportedDtTm, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+                                                disabled={nibrsSubmittedvehicleMain === 1 || isLockOrRestrictModule("Lock", editval[0]?.ReportedDtTm, isLocked)}
                                             />
                                     }
                                 </div>
@@ -1283,29 +1281,15 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                     <Select
                                         name='CategoryID'
                                         value={categoryIdDrp?.filter((obj) => obj.value === value?.CategoryID)}
-                                        styles={nibrsSubmittedvehicleMain === 1 ? LockFildscolour : Requiredcolour}
                                         options={categoryIdDrp}
                                         onChange={(e) => ChangeDropDown(e, 'CategoryID')}
                                         isClearable
                                         placeholder="Select..."
-                                        isDisabled={nibrsSubmittedvehicleMain === 1 ? true : false}
+
+                                        styles={nibrsSubmittedvehicleMain === 1 || isLockOrRestrictModule("Lock", editval[0]?.CategoryID, isLocked) ? LockFildscolour : Requiredcolour}
+                                        isDisabled={nibrsSubmittedvehicleMain === 1 || isLockOrRestrictModule("Lock", editval[0]?.CategoryID, isLocked) ? true : false}
                                     />
                                 </div>
-                                {/* <div className="col-2 col-md-2 col-lg-2 mt-2 ">
-                            <label htmlFor="" className='new-label'> Classification</label>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-3 mt-1">
-                            <Select
-                                name='ClassificationID'
-                                value={classificationID?.filter((obj) => obj.value === value?.ClassificationID)}
-                                styles={nibrsSubmittedvehicleMain === 1 ? LockFildscolour : customStylesWithOutColor}
-                                isDisabled={!value?.CategoryID || nibrsSubmittedvehicleMain === 1 ? true : false}
-                                options={classificationID}
-                                onChange={(e) => ChangeDropDown(e, 'ClassificationID')}
-                                isClearable
-                                placeholder="Select..."
-                            />
-                        </div> */}
                                 <div className="col-2 col-md-2 col-lg-2">
                                     <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Property Vehicle Plate Type') }}>
                                         Plate Type{errors.PlateTypeIDError !== 'true' ? (
@@ -1317,12 +1301,12 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                     <Select
                                         name='PlateTypeID'
                                         value={plateTypeIdDrp?.filter((obj) => obj.value === value?.PlateTypeID)}
-                                        styles={nibrsSubmittedvehicleMain === 1 ? LockFildscolour : Requiredcolour}
-                                        isDisabled={nibrsSubmittedvehicleMain === 1 ? true : false}
                                         options={plateTypeIdDrp ? getPlateTypeOption(plateTypeIdDrp) : []}
                                         onChange={(e) => ChangeDropDown(e, 'PlateTypeID')}
                                         isClearable
                                         placeholder="Select..."
+                                        styles={nibrsSubmittedvehicleMain === 1 || isLockOrRestrictModule("Lock", editval[0]?.PlateTypeID, isLocked) ? LockFildscolour : Requiredcolour}
+                                        isDisabled={nibrsSubmittedvehicleMain === 1 || isLockOrRestrictModule("Lock", editval[0]?.PlateTypeID, isLocked) ? true : false}
                                     />
                                 </div>
                                 <div className="col-12 col-md-12 col-lg-4 d-flex align-items-center">
@@ -1338,10 +1322,6 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                         <Select
                                             name='PlateID'
                                             value={stateList?.filter((obj) => obj.value === value?.PlateID)}
-                                            styles={
-                                                nibrsSubmittedvehicleMain === 1 ? LockFildscolour : getPlateStateStyle()
-                                            }
-                                            isDisabled={nibrsSubmittedvehicleMain === 1 ? true : false}
                                             options={stateList}
                                             onChange={(e) => {
                                                 ChangeDropDown(e, 'PlateID');
@@ -1351,21 +1331,29 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                             }}
                                             isClearable
                                             placeholder="Select..."
+
+                                            styles={nibrsSubmittedvehicleMain === 1 || isLockOrRestrictModule("Lock", editval[0]?.PlateID, isLocked) ? LockFildscolour : getPlateStateStyle()}
+                                            isDisabled={nibrsSubmittedvehicleMain === 1 || isLockOrRestrictModule("Lock", editval[0]?.PlateID, isLocked) ? true : false}
                                         />
                                     </div>
 
                                     <span className='' >
                                         <div className="text-field col-12 col-md-12 col-lg-12 mt-0 ">
                                             <input
-                                                // className={`${value.PlateID ? "requiredColor" : ''} ${!value?.PlateID || nibrsSubmittedvehicleMain === 1 ? 'readonlyColor' : ''}`}
-                                                className={
-                                                    nibrsSubmittedvehicleMain === 1 ? 'LockFildsColour' : `${value.PlateID ? "requiredColor" : ""} ${!value?.PlateID ? "readonlyColor" : ""}`.trim()
-                                                }
+                                                className={nibrsSubmittedvehicleMain === 1 || isLockOrRestrictModule("Lock", editval[0]?.VehicleNo, isLocked) ? 'LockFildsColor' : `${value.PlateID ? "requiredColor" : ""} ${!value?.PlateID ? "readonlyColor" : ""}`.trim()}
+                                                disabled={!value?.PlateID || nibrsSubmittedvehicleMain === 1 || isLockOrRestrictModule("Lock", editval[0]?.VehicleNo, isLocked)}
 
-                                                disabled={!value?.PlateID || nibrsSubmittedvehicleMain === 1}
-                                                type="text" name='VehicleNo' id='VehicleNo' maxLength={8}
-                                                isDisabled={!value?.PlateID}
-                                                value={value?.VehicleNo} onChange={HandleChangesPlate} required placeholder='Number..' autoComplete='off' style={{ padding: "5px" }} />
+                                                type="text"
+                                                name='VehicleNo'
+                                                id='VehicleNo'
+                                                maxLength={8}
+                                                value={value?.VehicleNo}
+                                                onChange={HandleChangesPlate}
+                                                required
+                                                placeholder='Number..'
+                                                autoComplete='off'
+                                                style={{ padding: "5px" }}
+                                            />
                                         </div>
                                         {errors.VehicleNoError !== 'true' && value.PlateID ? (
                                             <p style={{ color: 'red', fontSize: '11px', margin: '0px', paddingLeft: '7px' }}>{errors.VehicleNoError}</p>
@@ -1379,33 +1367,15 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                     <Select
                                         name='ClassificationID'
                                         value={classificationID?.filter((obj) => obj.value === value?.ClassificationID)}
-                                        styles={nibrsSubmittedvehicleMain === 1 ? LockFildscolour : customStylesWithOutColor}
-                                        isDisabled={!value?.CategoryID || nibrsSubmittedvehicleMain === 1 ? true : false}
                                         options={classificationID}
                                         onChange={(e) => ChangeDropDown(e, 'ClassificationID')}
                                         isClearable
                                         placeholder="Select..."
+
+                                        styles={nibrsSubmittedvehicleMain === 1 || isLockOrRestrictModule("Lock", editval[0]?.ClassificationID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                        isDisabled={!value?.CategoryID || nibrsSubmittedvehicleMain === 1 || isLockOrRestrictModule("Lock", editval[0]?.ClassificationID, isLocked) ? true : false}
                                     />
                                 </div>
-                                {/* <div className="col-2 col-md-2 col-lg-1 mt-2 ">
-                            <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Property Vehicle Plate Type') }}>
-                                Plate Type{errors.PlateTypeIDError !== 'true' ? (
-                                    <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.PlateTypeIDError}</p>
-                                ) : null}
-                            </span>
-                        </div>
-                        <div className="col-4 col-md-4 col-lg-2 mt-1 ">
-                            <Select
-                                name='PlateTypeID'
-                                value={plateTypeIdDrp?.filter((obj) => obj.value === value?.PlateTypeID)}
-                                styles={nibrsSubmittedvehicleMain === 1 ? LockFildscolour : Requiredcolour}
-                                isDisabled={nibrsSubmittedvehicleMain === 1 ? true : false}
-                                options={plateTypeIdDrp ? getPlateTypeOption(plateTypeIdDrp) : []}
-                                onChange={(e) => ChangeDropDown(e, 'PlateTypeID')}
-                                isClearable
-                                placeholder="Select..."
-                            />
-                        </div> */}
                                 <div className="col-2 col-md-2 col-lg-2">
                                     <label htmlFor="" className='new-label mb-0'>VIN {errors.vinLengthError !== 'true' ? (
                                         <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.vinLengthError}</p>
@@ -1449,11 +1419,12 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                     <Select
                                         name='VODID'
                                         value={vodIdData?.filter((obj) => obj.value === value?.VODID)}
-                                        styles={customStylesWithOutColor}
                                         options={vodIdData}
                                         onChange={(e) => ChangeDropDown(e, 'VODID')}
                                         isClearable
                                         placeholder="Select..."
+                                        styles={isLockOrRestrictModule("Lock", editval[0]?.VODID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                        isDisabled={isLockOrRestrictModule("Lock", editval[0]?.VODID, isLocked)}
                                     />
                                 </div>
                                 <div className="col-2 col-md-2 col-lg-1">
@@ -1482,9 +1453,9 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                         maxDate={new Date(2023, 11)}
                                         isClearable
                                         renderCustomHeader={() => null}
+                                        className={isLockOrRestrictModule("Lock", editval[0]?.PlateExpirationMonth, isLocked) ? 'LockFildsColor' : ''}
+                                        disabled={isLockOrRestrictModule("Lock", editval[0]?.PlateExpirationMonth, isLocked)}
                                     />
-
-
                                     -
                                     <DatePicker
                                         selected={value?.PlateExpirationYear ? new Date(value.PlateExpirationYear, (value?.PlateExpirationMonth ? value.PlateExpirationMonth - 1 : 0)) : null}
@@ -1505,6 +1476,9 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                         autoComplete="off"
                                         showYearPicker
                                         isClearable
+
+                                        className={isLockOrRestrictModule("Lock", editval[0]?.PlateExpirationYear, isLocked) ? 'LockFildsColor' : ''}
+                                        disabled={isLockOrRestrictModule("Lock", editval[0]?.PlateExpirationYear, isLocked)}
                                     />
 
                                 </div>
@@ -1512,7 +1486,20 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                     <label htmlFor="" className='new-label mb-0'>OAN Id</label>
                                 </div>
                                 <div className="col-4 col-md-4 col-lg-3 mt-0 text-field ">
-                                    <input style={{ padding: '5px 9px 7px 8px' }} type="text" name='OANID' id='OANID' value={value?.OANID} onChange={HandleChanges} className='h-100' required maxLength={20} autoComplete='off' />
+                                    <input
+                                        style={{ padding: '5px 9px 7px 8px' }}
+                                        type="text"
+                                        name='OANID'
+                                        id='OANID'
+                                        value={value?.OANID}
+                                        onChange={HandleChanges}
+                                        required
+                                        maxLength={20}
+                                        autoComplete='off'
+
+                                        className={isLockOrRestrictModule("Lock", editval[0]?.OANID, isLocked) ? 'LockFildsColor h-100 ' : ''}
+                                        disabled={isLockOrRestrictModule("Lock", editval[0]?.OANID, isLocked) ? true : false}
+                                    />
                                 </div>
                                 <div className="col-2 col-md-2 col-lg-1">
                                     <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Property Vehicle Style') }}>
@@ -1523,13 +1510,15 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                     <Select
                                         name='StyleID'
                                         value={styleDrp?.filter((obj) => obj.value === value?.StyleID)}
-                                        styles={customStylesWithOutColor}
                                         options={styleDrp}
                                         onChange={(e) => ChangeDropDown(e, 'StyleID')}
                                         isClearable
-                                        isDisabled={value?.CategoryID ? false : true}
                                         className={!value?.CategoryID ? 'readonlyColor' : ''}
                                         placeholder="Select..."
+
+                                        styles={isLockOrRestrictModule("Lock", editval[0]?.StyleID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                        isDisabled={isLockOrRestrictModule("Lock", editval[0]?.StyleID, isLocked) || value?.CategoryID || isLockOrRestrictModule("Lock", editval[0]?.VODID, isLocked) ? false : true}
+
                                     />
                                 </div>
                                 <div className="col-2 col-md-2 col-lg-1">
@@ -1542,11 +1531,12 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                                 <Select
                                                     name='OwnerID'
                                                     value={mastersNameDrpData?.filter((obj) => obj.value === value?.OwnerID)}
-                                                    styles={customStylesWithOutColor}
                                                     options={mastersNameDrpData}
                                                     onChange={(e) => { onInProfessionChange(e, 'OwnerID') }}
                                                     isClearable
                                                     placeholder="Select..."
+                                                    styles={isLockOrRestrictModule("Lock", editval[0]?.OwnerID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.OwnerID, isLocked)}
                                                 />
                                             </>
                                             :
@@ -1554,11 +1544,12 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                                 <Select
                                                     name='OwnerID'
                                                     value={arresteeNameVehicle?.filter((obj) => obj.value === value?.OwnerID)}
-                                                    styles={customStylesWithOutColor}
                                                     options={arresteeNameVehicle}
                                                     onChange={(e) => { onInProfessionChange(e, 'OwnerID') }}
                                                     isClearable
                                                     placeholder="Select..."
+                                                    styles={isLockOrRestrictModule("Lock", editval[0]?.OwnerID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.OwnerID, isLocked)}
                                                 />
                                             </>
                                     }
@@ -1588,13 +1579,15 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                     <Select
                                         name='MakeID'
                                         value={vehMakeDrpData?.filter((obj) => obj.value === value?.MakeID)}
-                                        styles={customStylesWithOutColor}
                                         options={vehMakeDrpData}
                                         onChange={(e) => ChangeDropDown(e, 'MakeID')}
                                         isClearable
-                                        isDisabled={value?.CategoryID ? false : true}
                                         className={!value?.CategoryID ? 'readonlyColor' : ''}
                                         placeholder="Select..."
+                                        // styles={customStylesWithOutColor}
+                                        // isDisabled={isLockOrRestrictModule("Lock", editval[0]?.OwnerID, isLocked)} D
+                                        styles={isLockOrRestrictModule("Lock", editval[0]?.MakeID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                        isDisabled={isLockOrRestrictModule("Lock", editval[0]?.MakeID, isLocked) ? true : value?.CategoryID ? false : true}
                                     />
                                 </div>
                                 <div className="col-2 col-md-2 col-lg-1">
@@ -1605,9 +1598,12 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                         name="ModelID"
                                         isClearable
                                         options={modalIdDrp}
-                                        styles={customStylesWithOutColor}
+                                        // styles={customStylesWithOutColor}
+                                        // isDisabled={!value?.MakeID}
+                                        styles={isLockOrRestrictModule("Lock", editval[0]?.ModelID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                        isDisabled={isLockOrRestrictModule("Lock", editval[0]?.ModelID, isLocked) || !value?.MakeID}
+
                                         placeholder="Select or type..."
-                                        isDisabled={!value?.MakeID}
                                         className={!value?.CategoryID ? 'readonlyColor' : ''}
                                         value={
                                             modalIdDrp?.find((obj) => obj.value?.toString() === value?.ModelID?.toString())
@@ -1626,11 +1622,13 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                     <Select
                                         name='PrimaryColorID'
                                         value={isPrimaryDrpData?.filter((obj) => obj.value === value?.PrimaryColorID)}
-                                        styles={customStylesWithOutColor}
                                         options={isPrimaryDrpData}
                                         onChange={(e) => ChangeDropDown(e, 'PrimaryColorID')}
                                         isClearable
                                         placeholder="Select..."
+
+                                        styles={isLockOrRestrictModule("Lock", editval[0]?.PrimaryColorID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                        isDisabled={isLockOrRestrictModule("Lock", editval[0]?.PrimaryColorID, isLocked)}
                                     />
                                 </div>
                                 <div className="col-2 col-md-2 col-lg-2">
@@ -1642,18 +1640,34 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                     <Select
                                         name='SecondaryColorID'
                                         value={isSecondaryDrpData?.filter((obj) => obj.value === value?.SecondaryColorID)}
-                                        styles={customStylesWithOutColor}
                                         options={isSecondaryDrpData}
                                         onChange={(e) => ChangeDropDown(e, 'SecondaryColorID')}
                                         isClearable
                                         placeholder="Select..."
+
+                                        styles={isLockOrRestrictModule("Lock", editval[0]?.SecondaryColorID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                        isDisabled={isLockOrRestrictModule("Lock", editval[0]?.SecondaryColorID, isLocked)}
                                     />
                                 </div>
                                 <div className="col-2 col-md-2 col-lg-1">
                                     <label htmlFor="" className='new-label mb-0'>Weight</label>
                                 </div>
                                 <div className="col-4 col-md-4 col-lg-3 mt-0 text-field">
-                                    <input style={{ padding: '5px 9px 7px 8px' }} type="text" name='Weight' id='Weight' maxLength={4} value={value?.Weight} onChange={HandleChanges} className='h-100' required autoComplete='off' />
+                                    <input
+                                        style={{ padding: '5px 9px 7px 8px' }}
+                                        type="text"
+                                        name='Weight'
+                                        id='Weight'
+                                        maxLength={4}
+                                        value={value?.Weight}
+                                        onChange={HandleChanges}
+                                        required
+                                        autoComplete='off'
+
+
+                                        className={isLockOrRestrictModule("Lock", editval[0]?.Weight, isLocked) ? 'h-100 LockFildsColor' : 'h-100'}
+                                        disabled={isLockOrRestrictModule("Lock", editval[0]?.Weight, isLocked) ? true : false}
+                                    />
                                 </div>
                                 <div className="col-2 col-md-2 col-lg-1">
                                     <label htmlFor="" className='new-label mb-0'>Value
@@ -1668,12 +1682,10 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                         type="text"
                                         name="Value"
                                         id="Value"
-                                        // className={nibrsSubmittedvehicleMain === 1 ? 'readonlyColor' : lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD' ? 'requiredColor' : ''}
-                                        // className={nibrsSubmittedvehicleMain === 1 || !value?.CategoryID ? 'readonlyColor' : lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD' ? 'requiredColor' : ''}
-                                        className={`h-100 ${nibrsSubmittedvehicleMain === 1 ? 'LockFildscolour' : !value?.CategoryID ? 'readonlyColor' : (lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD') ? 'requiredColor' : ''}`}
+                                        className={`h-100 ${nibrsSubmittedvehicleMain === 1 || isLockOrRestrictModule("Lock", editval[0]?.Value, isLocked) ? 'LockFildsColor' : !value?.CategoryID ? 'readonlyColor' : (lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD') ? 'requiredColor' : ''}`}
 
+                                        disabled={nibrsSubmittedvehicleMain === 1 || !value?.CategoryID || isLockOrRestrictModule("Lock", editval[0]?.Value, isLocked) ? true : false}
 
-                                        disabled={nibrsSubmittedvehicleMain === 1 || !value?.CategoryID ? true : false}
                                         maxLength={9}
                                         value={`$ ${value?.Value}`}
                                         onChange={HandleChanges}
@@ -1736,9 +1748,12 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                         showYearDropdown
                                         showMonthDropdown
                                         dropdownMode="select"
+
+                                        className={isLockOrRestrictModule("Lock", editval[0]?.InspectionExpiresDtTm, isLocked) ? 'LockFildsColor' : ''}
+                                        disabled={isLockOrRestrictModule("Lock", editval[0]?.InspectionExpiresDtTm, isLocked)}
+
                                     />
                                 </div>
-
 
 
                                 <div className="col-2 col-md-2 col-lg-1">
@@ -1748,11 +1763,13 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                     <Select
                                         name='PrimaryOfficerID'
                                         value={primaryOfficerID?.filter((obj) => obj.value == value?.PrimaryOfficerID)}
-                                        styles={customStylesWithOutColor}
                                         options={primaryOfficerID}
                                         onChange={(e) => ChangeDropDown(e, 'PrimaryOfficerID')}
                                         isClearable
                                         placeholder="Select..."
+
+                                        styles={isLockOrRestrictModule("Lock", editval[0]?.PrimaryOfficerID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                        isDisabled={isLockOrRestrictModule("Lock", editval[0]?.PrimaryOfficerID, isLocked)}
                                     />
                                 </div>
                                 <div className="col-2 col-md-2 col-lg-2">
@@ -1765,11 +1782,12 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                                 <Select
                                                     name='InProfessionOf'
                                                     value={ownerPossessionDrpData?.filter((obj) => obj.value == value?.InProfessionOf)}
-                                                    styles={customStylesWithOutColor}
                                                     options={ownerPossessionDrpData}
                                                     onChange={(e) => { onInProfessionChange(e, 'InProfessionOf') }}
                                                     isClearable
                                                     placeholder="Select..."
+                                                    styles={isLockOrRestrictModule("Lock", editval[0]?.InProfessionOf, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.InProfessionOf, isLocked)}
                                                 />
                                             </>
                                             :
@@ -1777,11 +1795,12 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                                 <Select
                                                     name='InProfessionOf'
                                                     value={inProfessionOf?.filter((obj) => obj.value == value?.InProfessionOf)}
-                                                    styles={customStylesWithOutColor}
                                                     options={inProfessionOf}
                                                     onChange={(e) => { onInProfessionChange(e, 'InProfessionOf') }}
                                                     isClearable
                                                     placeholder="Select..."
+                                                    styles={isLockOrRestrictModule("Lock", editval[0]?.InProfessionOf, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.InProfessionOf, isLocked)}
                                                 />
                                             </>
                                     }
@@ -1828,6 +1847,9 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                         dropdownMode="select"
                                         maxDate={new Date()}
                                         minDate={new Date(1900, 0, 1)}
+
+                                        className={isLockOrRestrictModule("Lock", editval[0]?.ManufactureYear, isLocked) ? 'LockFildsColor' : ''}
+                                        disabled={isLockOrRestrictModule("Lock", editval[0]?.ManufactureYear, isLocked)}
                                     />
                                 </div>
 
@@ -1896,7 +1918,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                             {/* <button type="button" className="btn btn-sm btn-success mr-1" onClick={newVehicle}>New</button> */}
                                             {
                                                 MstVehicle === "MST-Vehicle-Dash" &&
-                                                <button type="button" className="btn btn-sm btn-success mr-1" onClick={newVehicle}>New</button>
+                                                <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => { newVehicle(); setIsLocked(false) }}>New</button>
                                             }
 
                                             {
