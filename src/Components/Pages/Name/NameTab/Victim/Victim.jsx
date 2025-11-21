@@ -9,7 +9,7 @@ import JustifiableHomicide from './VictimTab/JustifiableHomicide/JustifiableHomi
 import AssaultType from './VictimTab/AssaultType/AssaultType';
 import Property from './VictimTab/Property/Property';
 import Officer from './VictimTab/Officer/Officer';
-import { customStylesWithOutColor, Decrypt_Id_Name, nibrscolourStyles, Requiredcolour } from '../../../../Common/Utility';
+import { customStylesWithOutColor, Decrypt_Id_Name, isLockOrRestrictModule, LockFildscolour, nibrscolourStyles, Requiredcolour } from '../../../../Common/Utility';
 import { AddDeleteUpadate, fetchPostData } from '../../../../hooks/Api';
 import { Comman_changeArrayFormat, threeColArray } from '../../../../Common/ChangeArrayFormat';
 import { toastifySuccess } from '../../../../Common/AlertMsg';
@@ -31,7 +31,7 @@ import { ORIValidatorVictim } from '../../../Agency/AgencyValidation/validators'
 
 const Victim = (props) => {
 
-    const { ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails = false } = props
+    const { ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails = false, isLocked } = props
 
     const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -49,7 +49,7 @@ const Victim = (props) => {
     const [callTypeDrp, setCallTypeDrp] = useState([]);
     const [additionalJustiDrp, setAdditionalJustiDrp] = useState([]);
     const [assignmentTypeDrp, setAssignmentTypeDrp] = useState([]);
-    const [editval, setEditval] = useState();
+    const [editval, setEditval] = useState([]);
     const [victimStatus, setVictimStatus] = useState(false);
     const [updateCount, setUpdateCount] = useState(0);
     const [victimID, setVictimID] = useState();
@@ -333,6 +333,7 @@ const Victim = (props) => {
                 setNameVictimCount('');
                 setVictimCount(false);
                 setNameShowPage('home');
+                setEditval([]);
             } else console.log("Somthing Wrong");
         })
     }
@@ -351,19 +352,6 @@ const Victim = (props) => {
         setStatesChangeStatus(false);
         setVictimStatus(false)
     }
-
-
-    // const ErrorColorStyle = {
-    //     control: base => ({
-    //         ...base,
-    //         backgroundColor: "rgb(255 202 194)",
-    //         height: 20,
-    //         minHeight: 35,
-    //         fontSize: 14,
-    //         margintop: 2,
-    //         boxShadow: 0,
-    //     }),
-    // };
 
     const check_StatutoryRape = (offenceCodes, type, nameSingleData) => {
         // StatutoryRape
@@ -387,7 +375,6 @@ const Victim = (props) => {
 
         }
     }
-
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -452,27 +439,29 @@ const Victim = (props) => {
                         <Select
                             name='VictimTypeID'
                             value={victimTypeDrp?.filter((obj) => obj.value === value?.VictimTypeID)}
-                            styles={value.VictimTypeID && victimStatus ? 'readOnly' :
-                                loginAgencyState === 'TX' ?
-                                    raceSexAgeStatus && value?.VictemTypeCode === 'L' ? nibrscolourStyles
-                                        :
-                                        check_StatutoryRape(offenceCodes, 'Color', nameSingleData) ? check_StatutoryRape(offenceCodes, 'Color', nameSingleData)
-                                            :
-                                            victimNibrsErrors(value?.VictemTypeCode, offenceCodes, 'Color', isCrimeAgainsPerson, isCrimeAgainstProperty, isCrimeAgainstSociety, nameSingleData)
-                                    :
-                                    Requiredcolour
-                            }
-                            isClearable
 
+                            isClearable
                             options={victimTypeDrp}
                             onChange={(e) => { ChangeDropDown(e, 'VictimTypeID'); }}
                             placeholder="Select.."
                             ref={SelectedValue}
-                            isDisabled={value.VictimTypeID && victimStatus ? 'true' : false}
+                            styles={
+                                isLockOrRestrictModule("Lock", editval[0]?.VictimTypeID, isLocked) ? LockFildscolour :
+                                    value.VictimTypeID && victimStatus ? 'readOnly' :
+                                        loginAgencyState === 'TX' ?
+                                            raceSexAgeStatus && value?.VictemTypeCode === 'L' ? nibrscolourStyles
+                                                :
+                                                check_StatutoryRape(offenceCodes, 'Color', nameSingleData) ? check_StatutoryRape(offenceCodes, 'Color', nameSingleData)
+                                                    :
+                                                    victimNibrsErrors(value?.VictemTypeCode, offenceCodes, 'Color', isCrimeAgainsPerson, isCrimeAgainstProperty, isCrimeAgainstSociety, nameSingleData)
+                                            :
+                                            Requiredcolour
+                            }
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.VictimTypeID, isLocked) || (value.VictimTypeID && victimStatus) ? true : false}
+                        // isDisabled={value.VictimTypeID && victimStatus ? 'true' : false}
                         />
                     </div>
                     <div className="col-3 col-md-3 col-lg-2 mt-3">
-
                         <span data-toggle="modal" data-target="#ListModel" className='new-link ' onClick={() => { setOpenPage('Body Armor') }}>
                             Body Armor
                         </span>
@@ -481,13 +470,15 @@ const Victim = (props) => {
                         <Select
                             name='BodyArmorID'
                             value={bodyArmorDrp?.filter((obj) => obj.value === value?.BodyArmorID)}
-
                             isClearable
                             options={bodyArmorDrp}
                             onChange={(e) => { ChangeDropDown(e, 'BodyArmorID'); }}
                             placeholder="Select.."
-                            styles={(value?.VictemTypeCode !== 'L') ? customStylesWithOutColor : ''}
-                            isDisabled={value?.VictemTypeCode === 'L' ? false : true}
+
+                            // styles={(value?.VictemTypeCode !== 'L') ? customStylesWithOutColor : ''}
+                            // isDisabled={value?.VictemTypeCode === 'L' ? false : true}
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.BodyArmorID, isLocked) ? LockFildscolour : (value?.VictemTypeCode !== 'L') ? customStylesWithOutColor : ''}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.BodyArmorID, isLocked) ? true : (value?.VictemTypeCode === 'L' ? false : true)}
                         />
                     </div>
                     <div className="col-3 col-md-3 col-lg-2 mt-3">
@@ -506,17 +497,19 @@ const Victim = (props) => {
                             name='CallTypeID'
                             value={callTypeDrp?.filter((obj) => obj.value === value?.CallTypeID)}
                             styles={
-                                loginAgencyState === 'TX'
-                                    ?
-                                    value?.VictemTypeCode === 'L' ? Requiredcolour : customStylesWithOutColor
-                                    :
-                                    customStylesWithOutColor
+                                isLockOrRestrictModule("Lock", editval[0]?.CallTypeID, isLocked) ? LockFildscolour :
+                                    loginAgencyState === 'TX'
+                                        ?
+                                        value?.VictemTypeCode === 'L' ? Requiredcolour : customStylesWithOutColor
+                                        :
+                                        customStylesWithOutColor
                             }
                             isDisabled={
-                                loginAgencyState === 'TX' ?
-                                    value?.VictemTypeCode === 'L' ? false : true
-                                    :
-                                    false
+                                isLockOrRestrictModule("Lock", editval[0]?.CallTypeID, isLocked) ? true :
+                                    loginAgencyState === 'TX' ?
+                                        value?.VictemTypeCode === 'L' ? false : true
+                                        :
+                                        false
                             }
                             isClearable
                             options={callTypeDrp}
@@ -534,11 +527,13 @@ const Victim = (props) => {
                         <Select
                             name='AdditionalJustificationID'
                             value={additionalJustiDrp?.filter((obj) => obj.value === value?.AdditionalJustificationID)}
-                            styles={customStylesWithOutColor}
                             isClearable
                             options={additionalJustiDrp}
                             onChange={(e) => { ChangeDropDown(e, 'AdditionalJustificationID'); }}
                             placeholder="Select.."
+                            // styles={customStylesWithOutColor}
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.AdditionalJustificationID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.AdditionalJustificationID, isLocked) ? true : false}
                         />
                     </div>
                     <div className="col-3 col-md-3 col-lg-2 mt-3">
@@ -557,16 +552,18 @@ const Victim = (props) => {
                             name='AssignmentTypeID'
                             value={assignmentTypeDrp?.filter((obj) => obj.value === value?.AssignmentTypeID)}
                             styles={
-                                loginAgencyState === 'TX' ?
-                                    value?.VictemTypeCode === 'L' ? Requiredcolour : customStylesWithOutColor
-                                    :
-                                    customStylesWithOutColor
+                                isLockOrRestrictModule("Lock", editval[0]?.AssignmentTypeID, isLocked) ? LockFildscolour :
+                                    loginAgencyState === 'TX' ?
+                                        value?.VictemTypeCode === 'L' ? Requiredcolour : customStylesWithOutColor
+                                        :
+                                        customStylesWithOutColor
                             }
                             isDisabled={
-                                loginAgencyState === 'TX' ?
-                                    value?.VictemTypeCode === 'L' ? false : true
-                                    :
-                                    false
+                                isLockOrRestrictModule("Lock", editval[0]?.AssignmentTypeID, isLocked) ? true :
+                                    loginAgencyState === 'TX' ?
+                                        value?.VictemTypeCode === 'L' ? false : true
+                                        :
+                                        false
                             }
                             isClearable
                             options={assignmentTypeDrp}
@@ -596,11 +593,11 @@ const Victim = (props) => {
                         <div style={{ display: "block" }}>
                             <input
                                 type="text"
-                                className={`form-control ${value?.VictemTypeCode === 'L' ? '' : 'readonlyColor'}`}
+                                className={`form-control ${isLockOrRestrictModule("Lock", editval[0]?.ORI, isLocked) ? 'LockFildsColor' : value?.VictemTypeCode === 'L' ? '' : 'readonlyColor'}`}
+                                disabled={isLockOrRestrictModule("Lock", editval[0]?.ORI, isLocked) ? true : value?.VictemTypeCode === 'L' ? false : true}
                                 name="ORI"
                                 value={value?.ORI}
-                                disabled={value?.VictemTypeCode === 'L' ? false : true}
-
+                                // disabled={value?.VictemTypeCode === 'L' ? false : true}
                                 maxLength={9}
                                 onChange={handleChange}
                                 required
@@ -635,8 +632,6 @@ const Victim = (props) => {
                                             </>
                                         :
                                         <>
-
-
                                             <button type="button" className="btn btn-sm btn-success mr-1" disabled={!statesChangeStatus} onClick={(e) => { check_Validation_Error(); }}>Update</button>
                                             {
                                                 effectiveScreenPermission ?
@@ -669,13 +664,14 @@ const Victim = (props) => {
             </div>
             {
                 showPage === 'home' && victimStatus ?
-                    <Home {...{ victimID, DecNameID, loginPinID, DecIncID, loginAgencyID, offenceCodes, nibFieldStatusOrErr, isCrimeAgainsPerson }} victimCode={value?.VictemTypeCode} />
+                    <Home {...{ victimID, DecNameID, loginPinID, DecIncID, loginAgencyID, offenceCodes, nibFieldStatusOrErr, isCrimeAgainsPerson, isLocked }} victimCode={value?.VictemTypeCode} />
                     :
-                    showPage === 'offense' && victimStatus ?
-                        <Offense {...{ victimID, DecNameID, loginPinID, DecIncID, loginAgencyID }} />
+                    showPage === 'relationship' ?
+                        <Relationship {...{ victimID, DecNameID, loginPinID, DecIncID, loginAgencyID, nameSingleData, isCrimeAgainsPerson, isLocked }} />
                         :
-                        showPage === 'relationship' ?
-                            <Relationship {...{ victimID, DecNameID, loginPinID, DecIncID, loginAgencyID, nameSingleData, isCrimeAgainsPerson }} />
+                        // not is use
+                        showPage === 'offense' && victimStatus ?
+                            <Offense {...{ victimID, DecNameID, loginPinID, DecIncID, loginAgencyID }} />
                             :
                             showPage === 'InjuryType' && victimStatus ?
                                 <InjuryType {...{ victimID, nameID, loginPinID, incidentID, loginAgencyID, }} />

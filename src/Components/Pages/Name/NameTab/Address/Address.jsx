@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import DataTable from 'react-data-table-component';
 import { AddDeleteUpadate, fetchPostData } from '../../../../hooks/Api';
-import { Decrypt_Id_Name, getShowingMonthDateYear, getShowingWithOutTime, tableCustomStyles } from '../../../../Common/Utility';
+import { Decrypt_Id_Name, getShowingMonthDateYear, getShowingWithOutTime, isLockOrRestrictModule, LockFildscolour, tableCustomStyles } from '../../../../Common/Utility';
 import DeletePopUpModal from '../../../../Common/DeleteModal';
 import { toastifyError, toastifySuccess } from '../../../../Common/AlertMsg';
 import { AgencyContext } from '../../../../../Context/Agency/Index';
@@ -20,7 +20,7 @@ import ChangesModal from '../../../../Common/ChangesModal';
 
 const Address = (props) => {
 
-    const { ListData, DecNameID, DecMasterNameID, isViewEventDetails = false } = props
+    const { ListData, DecNameID, DecMasterNameID, isViewEventDetails = false, isLocked } = props
 
     const { get_Name_Count, setChangesStatus, GetDataTimeZone, datezone } = useContext(AgencyContext);
 
@@ -61,7 +61,7 @@ const Address = (props) => {
         'IsMaster': MstPage === "MST-Name-Dash" ? true : false,
     })
 
-    const [errors, setErrors] = useState({ 'AddressError': '', 'DateFromError': '', 'DateToError': '' })
+    const [errors, setErrors] = useState({ 'AddressError': '', 'DateFromError': '', 'DateToError': '' });
 
     useEffect(() => {
         if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
@@ -204,6 +204,7 @@ const Address = (props) => {
         setValue({ ...value, Address: '', DateFrom: '', DateTo: '', IsVerify: true, IsCurrent: true, AddressFlags: 'Permanent', });
         setErrors({ ...errors, 'AddressError': '', 'DateFromError': '', 'DateToError': '' });
         setNameAddressID('');
+        setEditval([]);
     }
 
     const escFunction = useCallback((event) => {
@@ -219,8 +220,6 @@ const Address = (props) => {
             document.removeEventListener("keydown", escFunction, false);
         };
     }, [escFunction]);
-
-
 
     const Add_Address = (e) => {
         const result = addressData?.find(item => {
@@ -439,7 +438,14 @@ const Address = (props) => {
                         </label>
                     </div>
                     <div className="col-4 col-md-7 col-lg-6 text-field mt-0" >
-                        <Location {...{ value, setValue, locationStatus, setLocationStatus, updateStatus, setStatesChangeStatus, setChangesStatus }} col='Address' locationID='LocationID' check={true} verify={value.IsVerify} />
+                        <Location
+                            {...{ value, setValue, locationStatus, setLocationStatus, updateStatus, setStatesChangeStatus, setChangesStatus }}
+                            col='Address'
+                            locationID='LocationID'
+                            check={true}
+                            verify={value.IsVerify}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.Address, isLocked)}
+                        />
 
                     </div>
                     <div className="col-5 col-md-3 col-lg-2 pl-2">
@@ -470,10 +476,11 @@ const Address = (props) => {
                                 setValue({ ...value, ['AddressFlags']: selectedOption ? selectedOption.label : '' });
                                 !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
                             }}
-
                             placeholder="Select..."
                             options={AddType}
-                            styles={customStylesWithOutColor}
+                            // styles={customStylesWithOutColor}
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.AddressFlags, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.AddressFlags, isLocked)}
                         />
                     </div>
 
@@ -488,7 +495,6 @@ const Address = (props) => {
                             id='DateFrom'
                             name='DateFrom'
                             ref={startRef}
-
                             onKeyDown={(e) => {
                                 if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
                                     e.preventDefault();
@@ -505,7 +511,9 @@ const Address = (props) => {
                                 });
                                 !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
                             }}
-                            className='requiredColor'
+                            className={isLockOrRestrictModule("Lock", editval[0]?.DateFrom, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+                            disabled={isLockOrRestrictModule("Lock", editval[0]?.DateFrom, isLocked)}
+                            // className='requiredColor'
                             dateFormat="MM/dd/yyyy"
                             isClearable={value?.DateFrom ? true : false}
                             selected={value?.DateFrom && new Date(value?.DateFrom)}
@@ -539,7 +547,8 @@ const Address = (props) => {
                                         }
                                     }}
                                     onChange={(date) => { setValue({ ...value, ['DateTo']: date ? getShowingMonthDateYear(date) : null }); !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true); }}
-                                    className='requiredColor'
+                                    className={isLockOrRestrictModule("Lock", editval[0]?.DateTo, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+                                    disabled={isLockOrRestrictModule("Lock", editval[0]?.DateTo, isLocked)}
                                     dateFormat="MM/dd/yyyy"
                                     isClearable={value?.DateTo ? true : false}
 
@@ -565,14 +574,11 @@ const Address = (props) => {
                             </label>
                         </div>
                     </div>
-
                 </div>
-
-
                 {
                     !isViewEventDetails &&
                     <div className="btn-box text-right  mr-1 mb-2">
-                        <button type="button" className="btn btn-sm btn-success mr-1 " onClick={() => { setStatusFalse(); conditionalRowStyles(''); }}>New</button>
+                        <button type="button" className="btn btn-sm btn-success mr-1 " onClick={() => { setStatusFalse(); }}>New</button>
 
                         {
                             status && nameAddressID ?

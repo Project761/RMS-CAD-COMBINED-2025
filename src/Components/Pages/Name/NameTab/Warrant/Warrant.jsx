@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component';
-import { Decrypt_Id_Name, getShowingDateText, getShowingMonthDateYear, Requiredcolour, tableCustomStyles } from '../../../../Common/Utility';
+import { Decrypt_Id_Name, getShowingDateText, getShowingMonthDateYear, isLockOrRestrictModule, LockFildscolour, Requiredcolour, tableCustomStyles } from '../../../../Common/Utility';
 import NameListing from '../../../ShowAllList/NameListing';
 import Select from "react-select";
 import DatePicker from "react-datepicker";
@@ -20,8 +20,8 @@ import CreatableSelect from 'react-select/creatable';
 import { get_ScreenPermissions_Data } from '../../../../../redux/actions/IncidentAction';
 
 const Warrant = (props) => {
-  
-    const { ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails = false } = props
+
+    const { ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails = false, isLocked } = props
 
     const { get_Name_Count, setChangesStatus, GetDataTimeZone, datezone } = useContext(AgencyContext)
 
@@ -44,12 +44,11 @@ const Warrant = (props) => {
     const [warrentTypeData, setWarrentTypeData] = useState([])
     const [DateTimeIssued, setDateTimeIssued] = useState(new Date());
     const [DateExpired, setDateExpired] = useState(false);
-    const [editval, setEditval] = useState();
+    const [editval, setEditval] = useState([]);
     const [openPage, setOpenPage] = useState('');
     const [permissionForAdd, setPermissionForAdd] = useState(false);
     const [permissionForEdit, setPermissionForEdit] = useState(false);
     const [addUpdatePermission, setaddUpdatePermission] = useState();
-
 
     const useQuery = () => {
         const params = new URLSearchParams(useLocation().search);
@@ -71,6 +70,22 @@ const Warrant = (props) => {
         'WarrantTypeIDErrors': '', 'WarrantNumberErrors': '', 'DateTimeIssuedErrors': '', 'DateExpiredErrors': '', 'IssuingAgencyIDErrors': '',
     })
 
+
+
+    useEffect(() => {
+        if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
+            if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
+        }
+    }, []);
+
+    useEffect(() => {
+        if (localStoreData) {
+            setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
+            GetDataTimeZone(localStoreData?.AgencyID);
+        }
+
+    }, [localStoreData]);
+
     useEffect(() => {
         if (localStoreData) {
             setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
@@ -87,24 +102,6 @@ const Warrant = (props) => {
             setaddUpdatePermission(false);
         }
     }, [effectiveScreenPermission]);
-
-    const reset = () => {
-        setValue({
-            ...value,
-            'WarrantNumber': '', 'WarrantTypeID': '', 'WarrantStatusID': '', 'AssignedOfficerID': '', 'WarrantIssuingAgency': '',
-            'IssuingAgencyID': '', 'WarrantIssuingAgency': '', 'DateTimeIssued': '', 'DateExpired': '',
-        }); setErrors({ ...errors, 'WarrantTypeIDErrors': '', 'WarrantNumberErrors': '', 'DateTimeIssuedErrors': '', 'DateExpiredErrors': '', 'IssuingAgencyIDErrors': '', }); setDateTimeIssued(''); setDateExpired('')
-    }
-
-    const GetSingleData = (warrantID) => {
-        const val = { WarrantID: warrantID, }
-        fetchPostData('NameWarrant/GetSingleData_NameWarrant', val)
-            .then((res) => {
-                if (res) setEditval(res)
-                else setEditval()
-            }
-            )
-    }
 
     useEffect(() => {
         if (status) {
@@ -129,24 +126,9 @@ const Warrant = (props) => {
         }
     }, [editval])
 
-
-    useEffect(() => {
-        if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
-            if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
-        }
-    }, []);
-
-    useEffect(() => {
-        if (localStoreData) {
-            setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
-            GetDataTimeZone(localStoreData?.AgencyID);
-        }
-    }, [localStoreData]);
-
     useEffect(() => {
         if (loginAgencyID) {
-
-            dispatch(get_AgencyOfficer_Data(localStoreData?.AgencyID, DecIncID))
+            dispatch(get_AgencyOfficer_Data(localStoreData?.AgencyID, DecIncID));
         }
     }, [loginAgencyID]);
 
@@ -157,6 +139,27 @@ const Warrant = (props) => {
         }
     }, [DecNameID, DecMasterNameID, loginPinID]);
 
+    const reset = () => {
+        setValue({
+            ...value,
+            'WarrantNumber': '', 'WarrantTypeID': '', 'WarrantStatusID': '', 'AssignedOfficerID': '', 'WarrantIssuingAgency': '',
+            'IssuingAgencyID': '', 'WarrantIssuingAgency': '', 'DateTimeIssued': '', 'DateExpired': '',
+        });
+        setErrors({ ...errors, 'WarrantTypeIDErrors': '', 'WarrantNumberErrors': '', 'DateTimeIssuedErrors': '', 'DateExpiredErrors': '', 'IssuingAgencyIDErrors': '', });
+        setDateTimeIssued('');
+        setDateExpired('');
+        setEditval([]);
+    }
+
+    const GetSingleData = (warrantID) => {
+        const val = { WarrantID: warrantID, }
+        fetchPostData('NameWarrant/GetSingleData_NameWarrant', val)
+            .then((res) => {
+                if (res) setEditval(res)
+                else setEditval([])
+            }
+            )
+    }
 
     const get_WarrentType_Data = (DecNameID, DecMasterNameID) => {
         const val = { NameID: DecNameID, MasterNameID: DecMasterNameID, }
@@ -189,6 +192,7 @@ const Warrant = (props) => {
             }
         });
     }
+
     const { WarrantTypeIDErrors, IssuingAgencyIDErrors, DateExpiredErrors, DateTimeIssuedErrors, WarrantNumberErrors } = errors
 
     useEffect(() => {
@@ -216,6 +220,7 @@ const Warrant = (props) => {
             }
         }
     }
+
     const ChangeDropDown = (e, name) => {
         !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true)
         if (e) {
@@ -438,8 +443,6 @@ const Warrant = (props) => {
         },
     ];
 
-
-
     const customStylesWithOutColor = {
         control: base => ({
             ...base, height: 20, minHeight: 33, fontSize: 14, margintop: 2, boxShadow: 0,
@@ -471,14 +474,24 @@ const Warrant = (props) => {
         <>
             <NameListing  {...{ ListData }} />
             <div className="col-md-12 mt-1">
-                <div className="row align-items-center" style={{rowGap:"8px"}}>
+                <div className="row align-items-center" style={{ rowGap: "8px" }}>
                     <div className="col-3 col-md-3 col-lg-1">
                         <label htmlFor="" className='label-name mb-0 '>Warrant No.{errors.WarrantNumberErrors !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.WarrantNumberErrors}</p>
                         ) : null}</label>
                     </div>
                     <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
-                        <input type="text" className='requiredColor' maxLength={10} value={value?.WarrantNumber} onChange={handleChange} name='WarrantNumber' required />
+                        <input
+                            type="text"
+                            // className='requiredColor'
+                            className={isLockOrRestrictModule("Lock", editval[0]?.WarrantNumber, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+                            disabled={isLockOrRestrictModule("Lock", editval[0]?.WarrantNumber, isLocked)}
+                            maxLength={10}
+                            value={value?.WarrantNumber}
+                            onChange={handleChange}
+                            name='WarrantNumber'
+                            required
+                        />
                     </div>
                     <div className="col-3 col-md-3 col-lg-2">
                         <span data-toggle="modal" onClick={() => {
@@ -493,7 +506,10 @@ const Warrant = (props) => {
                     <div className="col-3 col-md-3 col-lg-3" >
                         <Select
                             name='WarrantTypeID'
-                            styles={Requiredcolour}
+                            // styles={Requiredcolour}
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.WarrantTypeID, isLocked) ? LockFildscolour : Requiredcolour}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.WarrantTypeID, isLocked)}
+
                             value={WarrentTypeDrp?.filter((obj) => obj.value === value?.WarrantTypeID)}
                             isClearable
                             options={WarrentTypeDrp}
@@ -507,7 +523,9 @@ const Warrant = (props) => {
                     <div className="col-3 col-md-3 col-lg-2" >
                         <Select
                             name='AssignedOfficerID'
-                            styles={customStylesWithOutColor}
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.AssignedOfficerID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.AssignedOfficerID, isLocked)}
+
                             value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.AssignedOfficerID)}
                             isClearable
                             options={agencyOfficerDrpData}
@@ -526,7 +544,8 @@ const Warrant = (props) => {
                     <div className="col-3 col-md-3 col-lg-2">
                         <Select
                             name='WarrantStatusID'
-                            styles={customStylesWithOutColor}
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.WarrantStatusID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.WarrantStatusID, isLocked)}
                             value={warrantStatus?.filter((obj) => obj.value === value?.WarrantStatusID)}
                             isClearable
                             options={warrantStatus}
@@ -544,7 +563,10 @@ const Warrant = (props) => {
                             id='DateTimeIssued'
                             name='DateTimeIssued'
                             ref={startRef1}
-                            className='requiredColor'
+                            // className='requiredColor'
+                            className={isLockOrRestrictModule("Lock", editval[0]?.DateTimeIssued, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+                            disabled={isLockOrRestrictModule("Lock", editval[0]?.DateTimeIssued, isLocked)}
+
                             dateFormat="MM/dd/yyyy HH:mm"
                             selected={value?.DateTimeIssued ? new Date(value?.DateTimeIssued) : null}
                             isClearable={Boolean(value?.DateTimeIssued)}
@@ -641,18 +663,16 @@ const Warrant = (props) => {
                             timeFormat="HH:mm "
                             is24Hour
                             showTimeSelect
-                            className='requiredColor'
+                            // className='requiredColor'
+                            // disabled={value?.DateTimeIssued ? false : true}
+                            className={isLockOrRestrictModule("Lock", editval[0]?.DateExpired, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+                            disabled={isLockOrRestrictModule("Lock", editval[0]?.DateExpired, isLocked) ? true : value?.DateTimeIssued ? false : true}
                             timeCaption="Time"
-                            // isDisabled={!value?.DateTimeIssued}
                             timeIntervals={1}
                             minDate={new Date(DateTimeIssued)}
-                            disabled={value?.DateTimeIssued ? false : true}
-                        // className={!value?.DateOfBirthFrom && 'readonlyColor'}
 
                         />
                     </div>
-
-
                     <div className="col-3 col-md-3 col-lg-1">
                         <span data-toggle="modal" onClick={() => {
                             setOpenPage('Warrant Issuing Agency')
@@ -668,7 +688,6 @@ const Warrant = (props) => {
                             name="IssuingAgencyID"
                             isClearable
                             options={agencyData}
-                            styles={Requiredcolour}
                             placeholder="Select or type..."
                             value={
                                 agencyData?.find((obj) => obj.value?.toString() === value?.IssuingAgencyID?.toString())
@@ -676,6 +695,9 @@ const Warrant = (props) => {
                                     ? { label: value.WarrantIssuingAgency, value: value.WarrantIssuingAgency } : null)
                             }
                             onChange={(e) => DropDownIssuingAgency(e, "WarrantIssuingAgencyID")}
+                            // styles={Requiredcolour}
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.IssuingAgencyID, isLocked) ? LockFildscolour : Requiredcolour}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.IssuingAgencyID, isLocked) ? true : false}
                         />
                     </div>
 

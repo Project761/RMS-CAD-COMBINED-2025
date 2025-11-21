@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import DataTable from 'react-data-table-component';
 import { fetchPostData, AddDeleteUpadate } from '../../../../hooks/Api';
-import { customStylesWithOutColor, Decrypt_Id_Name, getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime, tableCustomStyles } from '../../../../Common/Utility';
+import { customStylesWithOutColor, Decrypt_Id_Name, getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime, isLockOrRestrictModule, LockFildscolour, tableCustomStyles } from '../../../../Common/Utility';
 import { toastifySuccess } from '../../../../Common/AlertMsg';
 import DeletePopUpModal from '../../../../Common/DeleteModal';
 import { SSN_Field, } from '../../../PersonnelCom/Validation/PersonnelValidation';
@@ -20,7 +20,7 @@ import { AgencyContext } from '../../../../../Context/Agency/Index';
 
 const Aliases = (props) => {
 
-  const { ListData, DecNameID, DecMasterNameID, isViewEventDetails = false } = props
+  const { ListData, DecNameID, DecMasterNameID, isViewEventDetails = false, isLocked } = props
   const { get_Name_Count, setChangesStatus, GetDataTimeZone, datezone } = useContext(AgencyContext);
 
   const dispatch = useDispatch();
@@ -36,7 +36,7 @@ const Aliases = (props) => {
   //screen permission 
   const [loginAgencyID, setLoginAgencyID] = useState('');
   const [loginPinID, setLoginPinID,] = useState('');
-  const [editval, setEditval] = useState();
+  const [editval, setEditval] = useState([]);
   const [suffixIdDrp, setSuffixIdDrp] = useState([])
   const [dob, setDob] = useState();
   const [openPage, setOpenPage] = useState('');
@@ -103,8 +103,9 @@ const Aliases = (props) => {
   const GetSingleData = (nameAliasesID) => {
     fetchPostData('NameAliases/GetSingleData_NameAliases', { 'NameAliasesID': nameAliasesID })
       .then((res) => {
+        console.log("🚀 ~ GetSingleData ~ res:", res)
         if (res) setEditval(res)
-        else setEditval()
+        else setEditval([])
       }
       )
   }
@@ -154,7 +155,8 @@ const Aliases = (props) => {
     setErrors({
       ...errors,
       'LastNameErrors': '', 'FirstNameError': '', 'MiddleNameError': '', 'AliasSSNError': ''
-    })
+    });
+    setEditval([])
   }
 
   const check_Validation_Error = (e) => {
@@ -296,10 +298,6 @@ const Aliases = (props) => {
     }
   };
 
-
-
-
-
   const get_Aliases_Data = (DecNameID, DecMasterNameID) => {
     const val = { NameID: DecNameID, MasterNameID: DecMasterNameID, }
     const val2 = { MasterNameID: DecMasterNameID, NameID: 0, 'IsMaster': MstPage === "MST-Name-Dash" ? true : false, }
@@ -406,7 +404,8 @@ const Aliases = (props) => {
     },
   ];
 
-
+  console.log("isLocked", isLocked);
+  console.log("editval", editval);
 
   return (
     <>
@@ -419,7 +418,17 @@ const Aliases = (props) => {
             ) : null}</label>
           </div>
           <div className="col-3 col-md-3 col-lg-3 text-field mt-2" >
-            <input type="text" className='requiredColor' maxLength={100} name='LastName' value={value?.LastName} onChange={handleChange} required autoComplete='off' />
+            <input
+              type="text"
+              className={isLockOrRestrictModule("Lock", editval[0]?.LastName, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+              disabled={isLockOrRestrictModule("Lock", editval[0]?.LastName, isLocked)}
+              maxLength={100}
+              name='LastName'
+              value={value?.LastName}
+              onChange={handleChange}
+              required
+              autoComplete='off'
+            />
           </div>
           <div className="col-2 col-md-2 col-lg-1 mt-3">
             <label htmlFor="" className='label-name '>First Name{errors.FirstNameError !== 'true' ? (
@@ -427,7 +436,17 @@ const Aliases = (props) => {
             ) : null}</label>
           </div>
           <div className="col-3 col-md-3 col-lg-3 text-field mt-2" >
-            <input type="text" name='FirstName' maxLength={50} value={value?.FirstName} onChange={handleChange} required autoComplete='off' />
+            <input
+              type="text"
+              className={isLockOrRestrictModule("Lock", editval[0]?.FirstName, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+              disabled={isLockOrRestrictModule("Lock", editval[0]?.FirstName, isLocked)}
+              name='FirstName'
+              maxLength={50}
+              value={value?.FirstName}
+              onChange={handleChange}
+              required
+              autoComplete='off'
+            />
           </div>
           <div className="col-2 col-md-2 col-lg-1 mt-3">
             <label htmlFor="" className='label-name '>Middle Name{errors.MiddleNameError !== 'true' ? (
@@ -435,7 +454,17 @@ const Aliases = (props) => {
             ) : null}</label>
           </div>
           <div className="col-3 col-md-3 col-lg-3 text-field mt-2" >
-            <input type="text" name='MiddleName' maxLength={50} value={value?.MiddleName} onChange={handleChange} required autoComplete='off' />
+            <input
+              type="text"
+              className={isLockOrRestrictModule("Lock", editval[0]?.MiddleName, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+              disabled={isLockOrRestrictModule("Lock", editval[0]?.MiddleName, isLocked)}
+              name='MiddleName'
+              maxLength={50}
+              value={value?.MiddleName}
+              onChange={handleChange}
+              required
+              autoComplete='off'
+            />
           </div>
           <div className="col-2 col-md-2 col-lg-1 mt-3">
             <label htmlFor="" className='label-name '>Alias SSN {errors.AliasSSNError !== 'true' ? (
@@ -443,10 +472,19 @@ const Aliases = (props) => {
             ) : null}</label>
           </div>
           <div className="col-3 col-md-3 col-lg-3 text-field mt-2" >
-            <input type="text" name='AliasSSN' value={value.AliasSSN} maxLength={9} onChange={handleChange} required autoComplete='off' />
+            <input
+              type="text"
+              className={isLockOrRestrictModule("Lock", editval[0]?.AliasSSN, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+              disabled={isLockOrRestrictModule("Lock", editval[0]?.AliasSSN, isLocked)}
+              name='AliasSSN'
+              value={value.AliasSSN}
+              maxLength={9}
+              onChange={handleChange}
+              required
+              autoComplete='off'
+            />
           </div>
           <div className="col-2 col-md-2 col-lg-1 mt-3">
-
             <span data-toggle="modal" onClick={() => {
               setOpenPage('Suffix')
             }} data-target="#ListModel" className='new-link'>
@@ -456,8 +494,10 @@ const Aliases = (props) => {
           <div className="col-3 col-md-3 col-lg-3  mt-1" >
             <Select
               name='SuffixID'
-              className='requiredColor'
-              styles={customStylesWithOutColor}
+              className={isLockOrRestrictModule("Lock", editval[0]?.SuffixID, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+              disabled={isLockOrRestrictModule("Lock", editval[0]?.SuffixID, isLocked)}
+              // styles={customStylesWithOutColor}
+              styles={isLockOrRestrictModule("Lock", editval[0]?.SuffixID, isLocked) ? LockFildscolour : customStylesWithOutColor}
               value={suffixIdDrp?.filter((obj) => obj.value === value?.SuffixID)}
               isClearable
               options={suffixIdDrp}
@@ -472,9 +512,9 @@ const Aliases = (props) => {
             <DatePicker
               id='DOB'
               name='DOB'
-              className=''
+              className={isLockOrRestrictModule("Lock", editval[0]?.DOB, isLocked) ? 'LockFildsColor' : ''}
+              disabled={isLockOrRestrictModule("Lock", editval[0]?.DOB, isLocked)}
               ref={startRef}
-
               onKeyDown={(e) => {
                 if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
                   e.preventDefault();
@@ -499,7 +539,7 @@ const Aliases = (props) => {
         </div>
         {!isViewEventDetails &&
           <div className="btn-box text-right  mr-1 mb-2">
-            <button type="button" className="btn btn-sm btn-success mr-1 " onClick={() => { setStatusFalse(); conditionalRowStyles(''); setUpdateStatus(updateStatus + 1); }}>New</button>
+            <button type="button" className="btn btn-sm btn-success mr-1 " onClick={() => { setStatusFalse(); setUpdateStatus(updateStatus + 1); }}>New</button>
 
             {
               nameAliasesID && status ?

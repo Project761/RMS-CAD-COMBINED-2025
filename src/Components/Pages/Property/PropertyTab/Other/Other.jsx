@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import Select from "react-select";
-import { Decrypt_Id_Name, Requiredcolour } from '../../../../Common/Utility';
+import { Decrypt_Id_Name, isLockOrRestrictModule, LockFildscolour, Requiredcolour } from '../../../../Common/Utility';
 import { get_DrugManufactured_Drp_Data, get_PropertyLossCode_Drp_Data, get_TypeMarijuana_Drp_Data } from '../../../../../redux/actions/DropDownsData';
 import { AgencyContext } from '../../../../../Context/Agency/Index';
 import PropListng from '../../../ShowAllList/PropListng';
@@ -16,7 +16,7 @@ import { RequiredFieldIncident } from '../../../Utility/Personnel/Validation';
 
 const Other = (props) => {
 
-    const { ListData, DecPropID, DecMPropID, DecIncID, isViewEventDetails = false } = props
+    const { ListData, DecPropID, DecMPropID, DecIncID, isViewEventDetails = false, isLocked, setIsLocked } = props
     const { setChangesStatus, changesStatus, } = useContext(AgencyContext);
 
     const useQuery = () => {
@@ -38,7 +38,7 @@ const Other = (props) => {
 
     const [loginAgencyID, setLoginAgencyID] = useState('');
     const [loginPinID, setLoginPinID,] = useState('');
-    const [editval, setEditval] = useState();
+    const [editval, setEditval] = useState([]);
     const [statesChangeStatus, setStatesChangeStatus] = useState(false);
     const [DrugMarijuraNPStatus, setDrugMarijuraNPStatus] = useState(false);
     const [permissionForAdd, setPermissionForAdd] = useState(false);
@@ -231,8 +231,6 @@ const Other = (props) => {
         }),
     };
 
-  
-
     return (
         <>
             <PropListng {...{ ListData }} />
@@ -250,11 +248,12 @@ const Other = (props) => {
                         <Select
                             name='MarijuanaType'
                             value={typeMarijuanaDrpData?.filter((obj) => obj.value === value?.MarijuanaType)}
-                            styles={DrugMarijuraNPStatus ? Requiredcolour : customStylesWithOutColor}
                             options={typeMarijuanaDrpData}
                             onChange={(e) => ChangeDropDown(e, 'MarijuanaType')}
                             isClearable
                             placeholder="Select..."
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.MarijuanaType, isLocked) ? LockFildscolour : DrugMarijuraNPStatus ? Requiredcolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.MarijuanaType, isLocked) ? true : false}
                         />
                     </div>
 
@@ -265,11 +264,13 @@ const Other = (props) => {
                         <Select
                             name='DrugType'
                             value={drugManufacturedDrpData?.filter((obj) => obj.value === value?.DrugType)}
-                            styles={customStylesWithOutColor}
                             options={drugManufacturedDrpData}
                             onChange={(e) => ChangeDropDown(e, 'DrugType')}
                             isClearable
                             placeholder="Select..."
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.DrugType, isLocked) ? LockFildscolour : customStylesWithOutColor}
+
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.DrugType, isLocked) ? true : false}
                         />
                     </div>
                     <div className="col-4 col-md-4 col-lg-3  mt-3">
@@ -284,10 +285,10 @@ const Other = (props) => {
                         <input
                             type="text" name='NumFields' id='NumFields'
                             maxLength={1} value={value?.NumFields} onChange={HandleChanges}
-                            className={value?.MarijuanaType ? 'requiredColor' : 'readonlyColor'}
-                            disabled={value?.MarijuanaType ? false : true}
                             required
                             autoComplete='off'
+                            className={isLockOrRestrictModule("Lock", editval[0]?.NumFields, isLocked) ? "LockFildsColor" : value?.MarijuanaType ? 'requiredColor' : 'readonlyColor'}
+                            disabled={isLockOrRestrictModule("Lock", editval[0]?.NumFields, isLocked) ? true : value?.MarijuanaType ? false : true}
                         />
                     </div>
 
@@ -304,13 +305,14 @@ const Other = (props) => {
                             type="text" name='NumLabs' id='NumLabs'
                             maxLength={1}
                             value={value?.NumLabs}
-                            className={value?.DrugType ? 'requiredColor' : 'readonlyColor'}
-                            disabled={value?.DrugType ? false : true}
+                            className={isLockOrRestrictModule("Lock", editval[0]?.NumLabs, isLocked) ? "LockFildsColor" : value?.DrugType ? 'requiredColor' : 'readonlyColor'}
+                            disabled={isLockOrRestrictModule("Lock", editval[0]?.NumLabs, isLocked) ? true : value?.DrugType ? false : true}
                             onChange={HandleChanges}
                             required autoComplete='off' />
                     </div>
                 </div>
-                {!isViewEventDetails &&
+
+                {/* {!isViewEventDetails && */}
                     <div className="col-12 col-md-12 col-lg-12 mt-2 mb-1 text-right">
                         {
                             effectiveScreenPermission ?
@@ -323,7 +325,8 @@ const Other = (props) => {
                                 <button type="button" disabled={!statesChangeStatus} className="btn btn-md py-1 btn-success" onClick={() => { check_Validation_Error() }}>Update</button>
                         }
                     </div>
-                }
+                {/* } */}
+
             </div>
             <ChangesModal func={updateMarijuna} setToReset={Reset} />
         </>
