@@ -21,6 +21,8 @@ import ListModal from '../../../Utility/ListManagementModel/ListModal';
 import { PhoneField } from '../../../Agency/AgencyValidation/validators';
 import { ErrorTooltip } from '../../ArrestNibrsErrors';
 import CurrentArrestMasterReport from './CurrentArrestMasterReport';
+import Location from '../../../../../CADComponents/Common/Location';
+
 
 
 
@@ -121,6 +123,9 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
     const [type, setType] = useState("ArrestMod");
     const [ArrestparentID, setArrestParentID] = useState('');
     const [isEditvalProcessed, setIsEditvalProcessed] = useState(false);
+    const [locationStatus, setLocationStatus] = useState(false);
+    const [updateStatus, setUpdateStatus] = useState(0);
+    const [onSelectLocation, setOnSelectLocation] = useState(false);
 
 
     const [value, setValue] = useState({
@@ -1136,8 +1141,8 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                     maxDate={new Date(datezone)}
                                     showDisabledMonthNavigation
                                     filterTime={(date) => filterPassedTimeZonesProperty(date, incReportedDate, datezone)}
-                                    disabled={nibrsSubmittedArrestMain === 1}
-                                    className={nibrsSubmittedArrestMain === 1 ? 'LockFildsColor' : 'requiredColor'}
+                                    disabled={nibrsSubmittedArrestMain === 1 || arrestID}
+                                    className={nibrsSubmittedArrestMain === 1 ? 'LockFildsColor' : arrestID ? "readonlyColor" : 'requiredColor'}
                                 />
                             </div>
 
@@ -1595,12 +1600,21 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                 <label htmlFor="" className='new-label mb-0'>Location Of School</label>
                             </div>
 
-                            <div className="col-4 col-md-4 col-lg-11">
-                                <input type="text" name="LocationOfSchool"
+                            <div className="col-4 col-md-4 col-lg-11 mt-0 text-field">
+                                <Location
+                                    {...{ value, setValue, locationStatus, setLocationStatus, updateStatus, setOnSelectLocation, setChangesStatus, setStatesChangeStatus }}
+                                    col='LocationOfSchool'
+                                    locationID='LocationOfSchool'
+                                    check={false}
+                                    verify={true}
+                                    style={{ resize: 'both' }}
+                                    isDisabled={value?.IsJuvenileArrest ? false : true}
+                                />
+                                {/* <input type="text" name="LocationOfSchool"
                                     value={value?.LocationOfSchool}
                                     disabled={value?.IsJuvenileArrest ? false : true} onChange={HandleChange}
                                     styles={value?.IsJuvenileArrest === 'true' ? Requiredcolour : customStylesWithOutColor}
-                                    className=" form-control" id="LocationOfSchool" />
+                                    className=" form-control" id="LocationOfSchool" /> */}
                             </div>
                             <div className="col-2 col-md-2 col-lg-1">
                                 <label htmlFor="" className='new-label mb-0'>Grade</label>
