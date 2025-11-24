@@ -386,7 +386,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                     <div className="col-12 col-sm-12">
                         <div className={`card Agency ${isCad ? 'CAD-incident-card' : 'incident-card'}`}>
                             <div className="card-body " style={{ paddingTop: "2px" }} >
-                                {nameFilterData && nameFilterData.length > 0 && (
+                                {nameFilterData && nameFilterData.length > 0 && MstPage !== "MST-Name-Dash" && (
                                     <div className="card-carousel-container position-relative mb-3">
                                         {/* Cards Wrapper */}
                                         {viewType === "card" ? (
