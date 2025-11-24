@@ -529,7 +529,8 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
             'IsSchoolNotified': IsSchoolNotified, 'Grade': Grade, 'LocationOfSchool': LocationOfSchool, 'NameOfSchool': NameOfSchool, 'ParentPhone': ParentPhone, 'ParentNameID': ParentNameID, 'ResponseID': ResponseID,
         }
         localStorage.setItem('insertedArrestVal', JSON.stringify(val));
-        setShowPage('Charges'); setStatus(true)
+        setShowPage('Charges');
+        //  setStatus(true)
         // navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(res?.ArrestID)}&ArrNo=${res?.ArrestNumber}&Name=${ArresteName}&ArrestSta=${true}&ChargeSta=${false}`)
         // AddDeleteUpadate('Arrest/Insert_Arrest', val).then(async (res) => {
         //     if (res.success) {
