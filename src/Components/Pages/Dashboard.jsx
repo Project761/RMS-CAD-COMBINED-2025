@@ -99,7 +99,7 @@ const Dashboard = () => {
                 <div className="col-3">
                   <div className="topBtn-wrapDashboard">
                     <Link
-                      to={`/Name-Home?page=MST-Name-Dash&IncId=${0}&IncNo=${0}&IncSta=${0}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}`}
+                      to={`/Name-Home?page=MST-Name-Dash&IncId=${0}&IncNo=${0}&IncSta=${0}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}&isNew=${true}`}
                       className="topBtn d-flex align-items-center justify-content-center"
                     >
                       <span className="mt-1">
@@ -130,7 +130,7 @@ const Dashboard = () => {
                 <div className="col-3">
                   <div className="topBtn-wrapVehicle">
                     <Link
-                      to={`/Vehicle-Home?page=MST-Vehicle-Dash&?VehId=${0}&?MVehId=${0}`}
+                      to={`/Vehicle-Home?page=MST-Vehicle-Dash&?VehId=${0}&?MVehId=${0}&isNew=${true}`}
                       className="topBtn d-flex align-items-center justify-content-center"
                     >
                       <span className="mt-1">

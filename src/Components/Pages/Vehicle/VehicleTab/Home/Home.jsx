@@ -1012,10 +1012,10 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                 if (isCADSearch) {
                     navigate(`/cad/vehicle_search?page=MST-Vehicle-Dash&?VehId=${0}&?MVehId=${0}&ModNo=${''}`);
                 } else {
-                    navigate(`/cad/dispatcher?page=MST-Vehicle-Dash&?VehId=${0}&?MVehId=${0}&ModNo=${''}`)
+                    navigate(`/cad/dispatcher?page=MST-Vehicle-Dash&?VehId=${0}&?MVehId=${0}&ModNo=${''}&isNew=${true}`)
                 }
             } else {
-                navigate(`/Vehicle-Home?page=MST-Vehicle-Dash&?VehId=${0}&?MVehId=${0}&ModNo=${''}&VehSta=${false}`)
+                navigate(`/Vehicle-Home?page=MST-Vehicle-Dash&?VehId=${0}&?MVehId=${0}&ModNo=${''}&VehSta=${false}&isNew=${true}`)
             }
             reset(); setPossessionID(''); setOwnerOfID(''); setPossenSinglData([]);
             setClickedRow(null); setVehicleStatus(false);
@@ -1027,9 +1027,9 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
 
         } else {
             if (isCad) {
-                navigate(`/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${0}&MVehId=${0}&VehSta=${false}`)
+                navigate(`/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${0}&MVehId=${0}&VehSta=${false}&isNew=${true}`)
             } else {
-                navigate(`/Vehicle-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${0}&MVehId=${0}&VehSta=${false}`)
+                navigate(`/Vehicle-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${0}&MVehId=${0}&VehSta=${false}&isNew=${true}`)
             }
             reset(); setPossessionID(''); setOwnerOfID(''); setPossenSinglData([]);
             setClickedRow(null); setVehicleStatus(false);

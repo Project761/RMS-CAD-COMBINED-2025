@@ -316,7 +316,7 @@ const Header = (props) => {
                     <Link className="dropdown-item" to={`/Inc-Home?IncId=${0}&IncNo=${''}&IncSta=${false}`} onClick={clickOnIncident} data-toggle={changesStatus ? "modal" : ""} data-target={changesStatus ? "#SaveModal" : ''} >
                       Incident
                     </Link>
-                    <Link to={`/Name-Home?page=MST-Name-Dash&IncNo=${0}&IncSta=${0}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}`} onClick={clickOnMasterName} className="dropdown-item" data-toggle={changesStatus ? "modal" : ""} data-target={changesStatus ? "#SaveModal" : ''} >
+                    <Link to={`/Name-Home?page=MST-Name-Dash&IncNo=${0}&IncSta=${0}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}&isNew=${true}`} onClick={clickOnMasterName} className="dropdown-item" data-toggle={changesStatus ? "modal" : ""} data-target={changesStatus ? "#SaveModal" : ''} >
                       Master Name
                     </Link>
                     <Link
