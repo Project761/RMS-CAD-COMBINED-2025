@@ -2358,7 +2358,8 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
               options={exceptionalClearID}
               onChange={(e) => onChangeExceptionalClearanceCode(e, "NIBRSClearanceID")}
               placeholder="Select..."
-              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.NIBRSClearanceID, isLocked) || clsDrpCode === "01" ? true : false}
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.NIBRSClearanceID, isLocked) || clsDrpCode === "02" ? true : false}
+              // isDisabled={isLockOrRestrictModule("Lock", editval[0]?.NIBRSClearanceID, isLocked) || clsDrpCode === "01" ? true : false}
               styles={isLockOrRestrictModule("Lock", editval[0]?.NIBRSClearanceID, isLocked) ? LockFildscolour : getExceptionColorCode(clsDrpCode, value?.NIBRSClearanceID)}
             />
           </div>
