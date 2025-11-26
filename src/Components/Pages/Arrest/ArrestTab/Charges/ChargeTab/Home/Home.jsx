@@ -545,7 +545,7 @@ const Charges = (props) => {
   const update_Arrest_Charge = () => {
     const { Count, ChargeCodeID, NIBRSID, UCRClearID, Name, LawTitleId, AttemptComplete, CategoryId, OffenseDateTime } = value;
     const val = {
-      'IncidentID': DecEIncID, 'ArrestID': DecArrestId, 'ChargeID': DecChargeId, 'ModifiedByUserFK': LoginPinID, 'AgencyID': LoginAgencyID, 'Name': Name, 'IncidentNumber': IncNo, 'ArrestNumber': ArrNo, 'UCRClearID': UCRClearID, 'ChargeCodeID': ChargeCodeID, 'NIBRSID': NIBRSID, 'Count': Count,
+      'IncidentID': DecEIncID, 'ArrestID': DecArrestId, 'ChargeID': ChargeID, 'ModifiedByUserFK': LoginPinID, 'AgencyID': LoginAgencyID, 'Name': Name, 'IncidentNumber': IncNo, 'ArrestNumber': ArrNo, 'UCRClearID': UCRClearID, 'ChargeCodeID': ChargeCodeID, 'NIBRSID': NIBRSID, 'Count': Count,
       'LawTitleId': LawTitleId, 'AttemptComplete': AttemptComplete, 'CategoryId': CategoryId, 'OffenseDateTime': OffenseDateTime
     }
     AddDeleteUpadate('ArrestCharge/Update_ArrestCharge', val).then((res) => {
@@ -637,7 +637,7 @@ const Charges = (props) => {
       setErrors(''); setChargeID('');
       Reset();
     } else {
-      navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(ArrestID)}&Name=${Name}&ArrNo=${ArrNo}&ArrestSta=${true}&ChargeId=${('')}&ChargeSta=${false}&SideBarStatus=${false}`)
+      navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(ArrestID)}&Name=${Name}&ArrNo=${ArrNo}&ChargeId=${('')}&ChargeSta=${false}&SideBarStatus=${false}`)
       setErrors(''); setChargeID(''); Reset();
     }
   }
