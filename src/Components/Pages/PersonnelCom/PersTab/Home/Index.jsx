@@ -129,7 +129,7 @@ const Home = (props) => {
         'PIN': '', 'AgencyID': aId, 'AllowMultipleLogins': true, 'FirstName': '', 'MiddleName': '', 'LastName': '', 'UserName': '', 'Password': '', 'DivisionId': '', 'RankID': '',
         'EmployeeTypeID': '', 'Email': '', 'ShiftID': '', 'ReEnterPassword': '', 'ModifiedByUserFK': '', 'PINID': '', 'IsSuperadmin': '', 'IsAllowLogin': '', 'ShiftName': '',
         "RankName": '', 'DivisionName': '', 'DateOfBirth': '', 'NCICLoginId': '', 'NCICLoginPassword': '', 'NCICLoginTerminalID': '', 'NCICORI': '', 'ScheduleId': '', 'MaxLockLevel': '', 'MaxRestrictLevel': '', 'IsJuvenileCleared': '',
-        'IsActive': true, 'SexID': '', 'IsSupervisor': '', IsSupervisorPersonnel: '', 'photoId': '', 'GenderName': '', 'EmployeeName': '', 'CreatedByUserFK': personnelID, Is2FAEnabled: false,
+        'IsActive': true, 'SexID': '', 'IsSupervisor': '', IsSupervisorPersonnel: '', IsProsecutor: '', 'photoId': '', 'GenderName': '', 'EmployeeName': '', 'CreatedByUserFK': personnelID, Is2FAEnabled: false,
         'IsIncidentEditable': ''
     })
 
@@ -199,7 +199,7 @@ const Home = (props) => {
                 'NCICLoginPassword': personnelEditList[0]?.NCICLoginPassword ? Aes256Base64DecryptString(personnelEditList[0]?.NCICLoginPassword) : '',
                 // 'NCICLoginPassword': personnelEditList[0]?.NCICLoginPassword ? DecryptedList(personnelEditList[0]?.NCICLoginPassword) : '',
                 'NCICLoginTerminalID': personnelEditList[0]?.NCICLoginTerminalID,
-                'IsSuperadmin': personnelEditList[0]?.IsSuperadmin, 'IsActive': personnelEditList[0]?.IsActive, 'IsSupervisor': personnelEditList[0]?.IsSupervisor, 'IsSupervisorPersonnel': personnelEditList[0]?.IsSupervisorPersonnel,
+                'IsSuperadmin': personnelEditList[0]?.IsSuperadmin, 'IsActive': personnelEditList[0]?.IsActive, 'IsSupervisor': personnelEditList[0]?.IsSupervisor, 'IsSupervisorPersonnel': personnelEditList[0]?.IsSupervisorPersonnel, IsProsecutor: personnelEditList[0]?.IsProsecutor,
                 'IsAllowLogin': personnelEditList[0]?.IsAllowLogin, 'DateOfBirth': getShowingWithOutTime(personnelEditList[0]?.DateOfBirth) === 'Invalid date' ? '' : getShowingWithOutTime(personnelEditList[0]?.DateOfBirth), 'NCICORI': personnelEditList[0]?.NCICORI, 'IsJuvenileCleared': personnelEditList[0]?.IsJuvenileCleared,
                 'DivisionName': changeArrayFormat_WithFilter(personnelEditList, 'division'), 'ShiftName': changeArrayFormat_WithFilter(personnelEditList, 'shift'), 'RankName': changeArrayFormat_WithFilter(personnelEditList, 'rank'),
                 'EmployeeName': changeArrayFormat_WithFilter(personnelEditList, 'EmployeeName'),
@@ -398,7 +398,7 @@ const Home = (props) => {
             setErrors({ ...errors, ['PINError']: '' });
         } else {
             const {
-                PIN, AgencyID, AllowMultipleLogins, FirstName, MiddleName, LastName, UserName, Password, DivisionId, RankID, EmployeeTypeID, Email, ShiftID, ReEnterPassword, ModifiedByUserFK, PINID, IsSuperadmin, IsAllowLogin, ShiftName, RankName, DivisionName, DateOfBirth, NCICLoginId, NCICLoginPassword, NCICLoginTerminalID, NCICORI, ScheduleId, MaxLockLevel, MaxRestrictLevel, IsJuvenileCleared, IsActive, SexID, IsSupervisor, IsSupervisorPersonnel, photoId, GenderName, EmployeeName,
+                PIN, AgencyID, AllowMultipleLogins, FirstName, MiddleName, LastName, UserName, Password, DivisionId, RankID, EmployeeTypeID, Email, ShiftID, ReEnterPassword, ModifiedByUserFK, PINID, IsSuperadmin, IsAllowLogin, ShiftName, RankName, DivisionName, DateOfBirth, NCICLoginId, NCICLoginPassword, NCICLoginTerminalID, NCICORI, ScheduleId, MaxLockLevel, MaxRestrictLevel, IsJuvenileCleared, IsActive, SexID, IsSupervisor, IsSupervisorPersonnel, IsProsecutor, photoId, GenderName, EmployeeName,
                 IsIncidentEditable,
                 CreatedByUserFK,
             } = value
@@ -409,7 +409,7 @@ const Home = (props) => {
                 'NCICLoginPassword': encryptAndEncodeToBase64(NCICLoginPassword),
                 'DivisionId': DivisionId, 'RankID': RankID, 'EmployeeTypeID': EmployeeTypeID, 'Email': Email, 'ShiftID': ShiftID,
                 'ModifiedByUserFK': ModifiedByUserFK, 'PINID': PINID, 'IsSuperadmin': IsSuperadmin, 'IsAllowLogin': IsAllowLogin, 'ShiftName': ShiftName, "RankName": RankName, 'DivisionName': DivisionName, 'DateOfBirth': DateOfBirth, 'NCICLoginId': NCICLoginId,
-                'NCICLoginTerminalID': NCICLoginTerminalID, 'NCICORI': NCICORI, 'ScheduleId': ScheduleId, 'MaxLockLevel': MaxLockLevel, 'MaxRestrictLevel': MaxRestrictLevel, 'IsJuvenileCleared': IsJuvenileCleared, 'IsActive': IsActive, 'SexID': SexID, 'IsSupervisor': IsSupervisor, IsSupervisorPersonnel: IsSupervisorPersonnel, 'photoId': photoId, 'GenderName': GenderName, 'EmployeeName': EmployeeName,
+                'NCICLoginTerminalID': NCICLoginTerminalID, 'NCICORI': NCICORI, 'ScheduleId': ScheduleId, 'MaxLockLevel': MaxLockLevel, 'MaxRestrictLevel': MaxRestrictLevel, 'IsJuvenileCleared': IsJuvenileCleared, 'IsActive': IsActive, 'SexID': SexID, 'IsSupervisor': IsSupervisor, IsSupervisorPersonnel: IsSupervisorPersonnel, IsProsecutor: IsProsecutor, 'photoId': photoId, 'GenderName': GenderName, 'EmployeeName': EmployeeName,
                 'IsIncidentEditable': IsIncidentEditable,
                 'CreatedByUserFK': loginPinID,
             }
@@ -445,7 +445,7 @@ const Home = (props) => {
             setErrors({ ...errors, ['PINError']: '' });
         } else {
             const {
-                PIN, AgencyID, AllowMultipleLogins, FirstName, MiddleName, LastName, UserName, Password, DivisionId, RankID, EmployeeTypeID, Email, ShiftID, ReEnterPassword, ModifiedByUserFK, PINID, IsSuperadmin, IsAllowLogin, ShiftName, RankName, DivisionName, DateOfBirth, NCICLoginId, NCICLoginPassword, NCICLoginTerminalID, NCICORI, ScheduleId, MaxLockLevel, MaxRestrictLevel, IsJuvenileCleared, IsActive, SexID, IsSupervisor, IsSupervisorPersonnel, photoId, GenderName, EmployeeName,
+                PIN, AgencyID, AllowMultipleLogins, FirstName, MiddleName, LastName, UserName, Password, DivisionId, RankID, EmployeeTypeID, Email, ShiftID, ReEnterPassword, ModifiedByUserFK, PINID, IsSuperadmin, IsAllowLogin, ShiftName, RankName, DivisionName, DateOfBirth, NCICLoginId, NCICLoginPassword, NCICLoginTerminalID, NCICORI, ScheduleId, MaxLockLevel, MaxRestrictLevel, IsJuvenileCleared, IsActive, SexID, IsSupervisor, IsSupervisorPersonnel, IsProsecutor, photoId, GenderName, EmployeeName,
                 IsIncidentEditable,
                 CreatedByUserFK,
             } = value
@@ -457,7 +457,7 @@ const Home = (props) => {
                 'NCICLoginPassword': encryptAndEncodeToBase64(NCICLoginPassword), 'NCICLoginTerminalID': NCICLoginTerminalID,
                 'DivisionId': DivisionId, 'RankID': RankID, 'EmployeeTypeID': EmployeeTypeID, 'Email': Email, 'ShiftID': ShiftID,
                 'ModifiedByUserFK': ModifiedByUserFK, 'PINID': PINID, 'IsSuperadmin': IsSuperadmin, 'IsAllowLogin': IsAllowLogin, 'ShiftName': ShiftName, "RankName": RankName, 'DivisionName': DivisionName, 'DateOfBirth': DateOfBirth, 'NCICLoginId': NCICLoginId,
-                'NCICORI': NCICORI, 'ScheduleId': ScheduleId, 'MaxLockLevel': MaxLockLevel, 'MaxRestrictLevel': MaxRestrictLevel, 'IsJuvenileCleared': IsJuvenileCleared, 'IsActive': IsActive, 'SexID': SexID, 'IsSupervisor': IsSupervisor, IsSupervisorPersonnel: IsSupervisorPersonnel, 'photoId': photoId, 'GenderName': GenderName, 'EmployeeName': EmployeeName,
+                'NCICORI': NCICORI, 'ScheduleId': ScheduleId, 'MaxLockLevel': MaxLockLevel, 'MaxRestrictLevel': MaxRestrictLevel, 'IsJuvenileCleared': IsJuvenileCleared, 'IsActive': IsActive, 'SexID': SexID, 'IsSupervisor': IsSupervisor, IsSupervisorPersonnel: IsSupervisorPersonnel, IsProsecutor: IsProsecutor, 'photoId': photoId, 'GenderName': GenderName, 'EmployeeName': EmployeeName,
                 'IsIncidentEditable': IsIncidentEditable,
                 'CreatedByUserFK': CreatedByUserFK,
             }
@@ -886,7 +886,7 @@ const Home = (props) => {
     const rest_Value = () => {
         setValue({
             ...value,
-            'PIN': '', 'AgencyID': aId, 'FirstName': '', 'MiddleName': '', 'LastName': '', 'UserName': '', 'Password': '', 'DivisionId': '', 'RankID': '', 'EmployeeTypeID': '', 'Email': '', 'ShiftID': '', 'ReEnterPassword': '', 'ModifiedByUserFK': '', 'PINID': '', 'IsSuperadmin': '', 'IsAllowLogin': '', 'ShiftName': '', "RankName": '', 'DivisionName': '', 'DateOfBirth': '', 'NCICLoginId': '', 'NCICORI': '', 'ScheduleId': '', 'MaxLockLevel': '', 'MaxRestrictLevel': '', 'IsJuvenileCleared': '', 'IsActive': true, 'SexID': '', 'IsSupervisor': '', IsSupervisorPersonnel: '', 'photoId': '', 'GenderName': '', 'EmployeeName': '', 'IsIncidentEditable': '', 'NCICLoginId': '', 'NCICLoginPassword': '', 'NCICLoginTerminalID': '',
+            'PIN': '', 'AgencyID': aId, 'FirstName': '', 'MiddleName': '', 'LastName': '', 'UserName': '', 'Password': '', 'DivisionId': '', 'RankID': '', 'EmployeeTypeID': '', 'Email': '', 'ShiftID': '', 'ReEnterPassword': '', 'ModifiedByUserFK': '', 'PINID': '', 'IsSuperadmin': '', 'IsAllowLogin': '', 'ShiftName': '', "RankName": '', 'DivisionName': '', 'DateOfBirth': '', 'NCICLoginId': '', 'NCICORI': '', 'ScheduleId': '', 'MaxLockLevel': '', 'MaxRestrictLevel': '', 'IsJuvenileCleared': '', 'IsActive': true, 'SexID': '', 'IsSupervisor': '', IsSupervisorPersonnel: '', IsProsecutor: '', 'photoId': '', 'GenderName': '', 'EmployeeName': '', 'IsIncidentEditable': '', 'NCICLoginId': '', 'NCICLoginPassword': '', 'NCICLoginTerminalID': '',
         });
         setshowPassword(false);
         setErrors({
@@ -1299,7 +1299,7 @@ const Home = (props) => {
                                         />
                                         <label className='ml-2' >Active</label>
                                     </div>
-                                    <div className="col-4 col-md-4 col-lg-3 mt-1 ">
+                                    <div className="col-4 col-md-4 col-lg-2 mt-1 ">
                                         <input type="checkbox" name="IsJuvenileCleared" value={value.IsJuvenileCleared}
                                             checked={value.IsJuvenileCleared}
                                             onChange={() => { setValue({ ...value, ['IsJuvenileCleared']: !value?.IsJuvenileCleared }); setStatesChangeStatus(true); }}
@@ -1307,7 +1307,7 @@ const Home = (props) => {
                                         />
                                         <label className='ml-2' htmlFor="IsJuvenileCleared">Juvenile Cleared</label>
                                     </div>
-                                    <div className="col-4 col-md-4 col-lg-3 mt-1 ">
+                                    <div className="col-4 col-md-4 col-lg-2 mt-1 ">
                                         <input type="checkbox" name="IsSupervisor" value={value?.IsSupervisor}
                                             checked={value?.IsSupervisor}
                                             onChange={() => { setValue({ ...value, ['IsSupervisor']: !value?.IsSupervisor }); setStatesChangeStatus(true); }}
@@ -1315,7 +1315,7 @@ const Home = (props) => {
                                         />
                                         <label className='ml-2' htmlFor="IsSupervisor">Report Approver</label>
                                     </div>
-                                    <div className="col-4 col-md-4 col-lg-3 mt-1 ">
+                                    <div className="col-4 col-md-4 col-lg-2 mt-1 ">
                                         <input type="checkbox" name="IsSupervisorPersonnel" value={value?.IsSupervisorPersonnel}
                                             checked={value?.IsSupervisorPersonnel}
                                             onChange={() => { setValue({ ...value, ['IsSupervisorPersonnel']: !value?.IsSupervisorPersonnel }); setStatesChangeStatus(true); }}
@@ -1324,7 +1324,16 @@ const Home = (props) => {
                                         <label className='ml-2' htmlFor="IsSupervisorPersonnel">Is Supervisor</label>
                                     </div>
 
-                                    <div className="col-4 col-md-4 col-lg-3 mt-1 ">
+                                    <div className="col-4 col-md-4 col-lg-2 mt-1 ">
+                                        <input type="checkbox" name="IsProsecutor" value={value?.IsProsecutor}
+                                            checked={value?.IsProsecutor}
+                                            onChange={() => { setValue({ ...value, ['IsProsecutor']: !value?.IsProsecutor }); setStatesChangeStatus(true); }}
+                                            id="IsProsecutor"
+                                        />
+                                        <label className='ml-2' htmlFor="IsProsecutor">Is Prosecutor</label>
+                                    </div>
+
+                                    <div className="col-4 col-md-4 col-lg-2 mt-1 ">
                                         <input type="checkbox" name="IsIncidentEditable" value={value.IsIncidentEditable}
                                             checked={value.IsIncidentEditable}
                                             onChange={() => { setValue({ ...value, ['IsIncidentEditable']: !value?.IsIncidentEditable }); setStatesChangeStatus(true); }}

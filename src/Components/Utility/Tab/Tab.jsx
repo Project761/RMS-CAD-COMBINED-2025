@@ -13,7 +13,7 @@ import { fetchPostData, fetchPostDataNibrs } from '../../hooks/Api';
 
 const Tab = () => {
 
-    const { changesStatus, get_Name_Count, tabCount, incidentCount, setVehicleStatus, ArresteName, incidentNumber, } = useContext(AgencyContext)
+    const { changesStatus, get_Name_Count, tabCount, incidentCount, setVehicleStatus, ArresteName, incidentNumber, get_IncidentTab_Count } = useContext(AgencyContext)
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
     const dispatch = useDispatch();
     const statusRef = useRef(null);
@@ -116,6 +116,8 @@ const Tab = () => {
 
     var ChargeId = query?.get('ChargeId');
     let DecArrestId = 0, DecIncID = 0, DecChargeId = 0
+    var NarrativeAutoSaveID = query?.get("narrativeAutoSaveId");
+    if (!NarrativeAutoSaveID) NarrativeAutoSaveID = null;
 
     // if (!ArrestId) ArrestId = 0;
     // else DecArrestId = parseInt(base64ToString(ArrestId));
@@ -198,6 +200,7 @@ const Tab = () => {
     useEffect(() => {
         if (showStatus && DecIncID && IncNo && loginAgencyID) {
             nibrsValidateInc(DecIncID, IncNo, loginAgencyID);
+            get_IncidentTab_Count(DecIncID, localStoreData?.PINID);
         }
     }, [showStatus, DecIncID, IncNo, loginAgencyID]);
 
@@ -299,7 +302,7 @@ const Tab = () => {
 
             setLoading(false);
         } catch (error) {
-            console.log("🚀 ~ ValidateProperty ~ error:", error);
+            console.error("🚀 ~ ValidateProperty ~ error:", error);
             setLoading(false);
             setIncidentErrorStatus(false);
         }
@@ -313,7 +316,7 @@ const Tab = () => {
                     <li className="nav-item">
                         <Link
                             className={`nav-link  ${active === `/Inc-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}` ? 'active' : ''}`}
-                            to={changesStatus ? currentLocation : `/Inc-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}`}
+                            to={changesStatus ? currentLocation : `/Inc-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}${NarrativeAutoSaveID ? `&narrativeAutoSaveId=${NarrativeAutoSaveID}` : ''}`}
                             style={{ color: currentTab === 'Incident' ? 'Red' : '#130e0e', fontWeight: '600' }}
                             data-toggle={changesStatus ? "modal" : "pill"}
                             data-target={changesStatus ? "#SaveModal" : ''}
@@ -325,7 +328,7 @@ const Tab = () => {
                     <li className="nav-item" >
                         <Link
                             className={`nav-link${active === `/Off-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${OffId}&OffSta=${OffSta}` ? 'active' : ''} ${incidentStatus ? '' : 'disabled'}`}
-                            to={changesStatus ? currentLocation : `/Off-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${OffId}&OffSta=${OffSta}`}
+                            to={changesStatus ? currentLocation : `/Off-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${OffId}&OffSta=${OffSta}${NarrativeAutoSaveID ? `&narrativeAutoSaveId=${NarrativeAutoSaveID}` : ''}`}
                             style={{ color: currentTab === 'Offense' ? 'Red' : incidentCount[0]?.OffenseCount > 0 ? 'blue' : '#130e0e', fontWeight: '600' }}
                             data-toggle={changesStatus ? "modal" : "pill"}
                             data-target={changesStatus ? "#SaveModal" : ''}
@@ -337,7 +340,7 @@ const Tab = () => {
                     <li className="nav-item" >
                         <Link
                             className={`nav-link${active === `/Inc-Report?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}` ? 'active' : ''} ${incidentStatus ? '' : 'disabled'}`}
-                            to={changesStatus ? currentLocation : `/Inc-Report?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}`}
+                            to={changesStatus ? currentLocation : `/Inc-Report?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}${NarrativeAutoSaveID ? `&narrativeAutoSaveId=${NarrativeAutoSaveID}` : ''}`}
                             style={{ color: currentTab === 'Report' ? 'Red' : tabCount?.NarrativeCount > 0 ? 'blue' : '#130e0e', fontWeight: '600' }}
                             data-toggle={changesStatus ? "modal" : "pill"}
                             data-target={changesStatus ? "#SaveModal" : ''}
@@ -349,7 +352,7 @@ const Tab = () => {
                     <li className="nav-item">
                         <Link
                             className={`nav-link  ${active === `/Name-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${NameID}&MasterNameID=${MasterNameID}&NameStatus=${NameStatus}` ? 'active' : ''} ${incidentStatus ? '' : 'disabled'} `}
-                            to={changesStatus ? currentLocation : `/Name-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${NameID}&MasterNameID=${MasterNameID}&NameStatus=${NameStatus}`}
+                            to={changesStatus ? currentLocation : `/Name-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${NameID}&MasterNameID=${MasterNameID}&NameStatus=${NameStatus}${NarrativeAutoSaveID ? `&narrativeAutoSaveId=${NarrativeAutoSaveID}` : ''}`}
                             style={{ color: currentTab === 'Name' ? 'Red' : incidentCount[0]?.NameCount > 0 ? 'blue' : '#130e0e', fontWeight: '600' }}
                             data-toggle={changesStatus ? "modal" : "pill"}
                             data-target={changesStatus ? "#SaveModal" : ''}
@@ -364,7 +367,7 @@ const Tab = () => {
                         <Link
                             className={`nav-link  ${active === `/Prop-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${ProId}&MProId=${MProId}&ProSta=${ProSta}` ? 'active' : ''} ${incidentStatus ? '' : 'disabled'}`}
                             to={changesStatus ? currentLocation :
-                                `/Prop-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${ProId}&MProId=${MProId}&ProSta=${ProSta}`
+                                `/Prop-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${ProId}&MProId=${MProId}&ProSta=${ProSta}${NarrativeAutoSaveID ? `&narrativeAutoSaveId=${NarrativeAutoSaveID}` : ''}`
                             }
                             data-toggle={changesStatus ? "modal" : "pill"}
                             style={{ color: currentTab === 'Property' ? 'Red' : incidentCount[0]?.PropertyCount > 0 ? 'blue' : '#130e0e', fontWeight: '600' }}
@@ -379,7 +382,7 @@ const Tab = () => {
                     <li className="nav-item">
                         <Link
                             className={`nav-link  ${active === `/Vehicle-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${VehId}&MVehId=${MVehId}&VehSta=${VehSta}` ? 'active' : ''} ${incidentStatus ? '' : 'disabled'}`}
-                            to={changesStatus ? currentLocation : `/Vehicle-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${VehId}&MVehId=${MVehId}&VehSta=${VehSta}`}
+                            to={changesStatus ? currentLocation : `/Vehicle-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${VehId}&MVehId=${MVehId}&VehSta=${VehSta}${NarrativeAutoSaveID ? `&narrativeAutoSaveId=${NarrativeAutoSaveID}` : ''}`}
                             data-toggle={changesStatus ? "modal" : "pill"}
                             style={{ color: currentTab === 'Vehicle' ? 'Red' : incidentCount[0]?.VehicleCount > 0 ? 'blue' : '#130e0e', fontWeight: '600' }}
                             data-target={changesStatus ? "#SaveModal" : ''}
@@ -393,7 +396,7 @@ const Tab = () => {
                     <li className="nav-item">
                         <Link
                             className={`nav-link  ${active === `/Offvic-Home?IncId=${IncID}&IncNo=${IncNo}&NameID=${NameID}&IncSta=${IncSta}` ? 'active' : ''} ${incidentStatus ? '' : 'disabled'}`}
-                            to={changesStatus ? currentLocation : `/Offvic-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}`}
+                            to={changesStatus ? currentLocation : `/Offvic-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}${NarrativeAutoSaveID ? `&narrativeAutoSaveId=${NarrativeAutoSaveID}` : ''}`}
                             data-toggle={changesStatus ? "modal" : "pill"}
                             style={{ color: currentTab === 'OffenderVicitm' ? 'Red' : '#130e0e', fontWeight: '600' }}
                             data-target={changesStatus ? "#SaveModal" : ''}
@@ -438,7 +441,7 @@ const Tab = () => {
                                 '' ? `/Missing-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&MissPerID=${''}&MissPerSta=${false}&MissPerPg=home`
                                     : changesStatus
                                         ? currentLocation
-                                        : `/Missing-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&MissPerID=${''}&MissPerSta=${false}&MissPerPg=home`
+                                        : `/Missing-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&MissPerID=${''}&MissPerSta=${false}&MissPerPg=home${NarrativeAutoSaveID ? `&narrativeAutoSaveId=${NarrativeAutoSaveID}` : ''}`
                             }
                         >Missing Person {`${incidentCount[0]?.MissingPersonCount > 0 ? '(' + incidentCount[0]?.MissingPersonCount + ')' : ''}`}
                         </Link>
@@ -446,7 +449,7 @@ const Tab = () => {
                     <li className="nav-item">
                         <Link
                             className={`nav-link  ${active === `/Document-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&documentId=${documentID}&DocSta=${DocSta}` ? 'active' : ''} ${incidentStatus ? '' : 'disabled'}`}
-                            to={changesStatus ? currentLocation : `/Document-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&documentId=${documentID}&DocSta=${DocSta}`}
+                            to={changesStatus ? currentLocation : `/Document-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&documentId=${documentID}&DocSta=${DocSta}${NarrativeAutoSaveID ? `&narrativeAutoSaveId=${NarrativeAutoSaveID}` : ''}`}
                             data-toggle={changesStatus ? "modal" : "pill"}
                             style={{ color: currentTab === 'Document' ? 'Red' : incidentCount[0]?.DocumentManagementCount > 0 ? 'blue' : '#130e0e', fontWeight: '600' }}
                             data-target={changesStatus ? "#SaveModal" : ''}
@@ -462,7 +465,7 @@ const Tab = () => {
                     <li className="nav-item">
                         <Link
                             className={`nav-link  ${active === `/nibrs-Home?IncId=${IncID}&IncNo=${IncNo}&NameID=${NameID}&IncSta=${IncSta}` ? 'active' : ''} ${incidentStatus ? '' : 'disabled'}`}
-                            to={changesStatus ? currentLocation : `/nibrs-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}`}
+                            to={changesStatus ? currentLocation : `/nibrs-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}${NarrativeAutoSaveID ? `&narrativeAutoSaveId=${NarrativeAutoSaveID}` : ''}`}
                             data-toggle={changesStatus ? "modal" : "pill"}
                             style={{ color: currentTab === 'NIBRS' ? 'Red' : '#130e0e', fontWeight: '600' }}
                             data-target={changesStatus ? "#SaveModal" : ''}
@@ -476,7 +479,7 @@ const Tab = () => {
                     <li className="nav-item">
                         <Link
                             className={`nav-link  ${active === `/NIBRSAudit-Home?IncId=${IncID}&IncNo=${IncNo}&NameID=${NameID}&IncSta=${IncSta}` ? 'active' : ''} ${incidentStatus ? '' : 'disabled'}`}
-                            to={changesStatus ? currentLocation : `/NIBRSAudit-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}`}
+                            to={changesStatus ? currentLocation : `/NIBRSAudit-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}${NarrativeAutoSaveID ? `&narrativeAutoSaveId=${NarrativeAutoSaveID}` : ''}`}
                             data-toggle={changesStatus ? "modal" : "pill"}
                             // style={{ color: currentTab === 'NIBRSAudit' ? 'Red' : '#130e0e', fontWeight: '600' }}
                             data-target={changesStatus ? "#SaveModal" : ''}
@@ -491,7 +494,7 @@ const Tab = () => {
                     <li className="nav-item">
                         <Link
                             className={`nav-link  ${active === `/NLETShistory-Home?IncId=${IncID}&IncNo=${IncNo}&NameID=${NameID}&IncSta=${IncSta}` ? 'active' : ''} ${incidentStatus ? '' : 'disabled'}`}
-                            to={changesStatus ? currentLocation : `/NLETShistory-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}`}
+                            to={changesStatus ? currentLocation : `/NLETShistory-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}${NarrativeAutoSaveID ? `&narrativeAutoSaveId=${NarrativeAutoSaveID}` : ''}`}
                             data-toggle={changesStatus ? "modal" : "pill"}
                             // style={{ color: currentTab === 'NIBRSAudit' ? 'Red' : '#130e0e', fontWeight: '600' }}
                             data-target={changesStatus ? "#SaveModal" : ''}
@@ -506,7 +509,7 @@ const Tab = () => {
                     {localStoreData?.IsCaseManagementVisible && <li className="nav-item">
                         <Link
                             className={`nav-link  ${active === `/inc-case-management?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}` ? 'active' : ''} ${incidentStatus ? '' : 'disabled'}`}
-                            to={changesStatus ? currentLocation : `/inc-case-management?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}`}
+                            to={changesStatus ? currentLocation : `/inc-case-management?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}${NarrativeAutoSaveID ? `&narrativeAutoSaveId=${NarrativeAutoSaveID}` : ''}`}
                             style={{ color: currentTab === 'case-management' ? 'Red' : '#130e0e', fontWeight: '600' }}
                             data-toggle={changesStatus ? "modal" : "pill"}
                             data-target={changesStatus ? "#SaveModal" : ''}

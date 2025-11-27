@@ -35,7 +35,8 @@ const ReportTemplate = ({ aId }) => {
     const [tags, setTags] = useState([{ value: "OfficerName", label: "Officer Name" },
     { value: "AgencyName", label: "Agency Name" },
     { value: "AgencyAddress", label: "Agency Address" },
-    { value: "ORI", label: "ORI" }]);
+    { value: "ORI", label: "ORI" },
+    { value: "Offenses", label: "Offenses" }]);
 
     const [
         reportTemplateState,

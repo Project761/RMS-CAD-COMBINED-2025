@@ -1569,6 +1569,7 @@ const QueueReportsModal = (props) => {
                                 required
                                 menuPlacement="bottom"
                                 styles={colourStylesUsers}
+                                allowSelectAll={reportApproveOfficer.length > 0 ? true : false}
                                 // isDisabled={value.Status === "Pending Review" || value.Status === "Approved"}
                                 closeMenuOnSelect={false}
                                 // menuPlacement="top"
@@ -1601,6 +1602,7 @@ const QueueReportsModal = (props) => {
                                 styles={colourStylesUsers}
                                 closeMenuOnSelect={false}
                                 hideSelectedOptions={true}
+                                allowSelectAll={groupList.length > 0 ? true : false}
                                 onChange={Agencychange}
                                 // allowSelectAll={true}
                                 value={multiSelected.optionSelected}

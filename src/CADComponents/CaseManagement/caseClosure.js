@@ -7,7 +7,7 @@ import useObjState from '../../CADHook/useObjState';
 import { isEmpty, isEmptyObject } from '../../CADUtils/functions/common';
 import { fetchPostData } from '../../Components/hooks/Api';
 import { Comman_changeArrayVictim, threeColArray } from '../../Components/Common/ChangeArrayFormat';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { AgencyContext } from '../../Context/Agency/Index';
 import CaseManagementServices from '../../CADServices/APIs/caseManagement';
 import { toastifyError, toastifySuccess } from '../../Components/Common/AlertMsg';
@@ -15,11 +15,14 @@ import { useQuery } from 'react-query';
 import { useLocation } from 'react-router-dom';
 import { base64ToString, tableCustomStyles } from '../../Components/Common/Utility';
 import DataTable from "react-data-table-component";
+import { getDropDownReasonCase } from '../../redux/actions/DropDownsData';
 
 function CaseClosure(props) {
     const { CaseId } = props;
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
+    const reasonCaseDrpData = useSelector((state) => state.DropDown.reasonCaseDrpData);
     const { datezone } = useContext(AgencyContext);
+    const dispatch = useDispatch();
     const useRouterQuery = () => {
         const params = new URLSearchParams(useLocation().search);
         return {
@@ -83,7 +86,9 @@ function CaseClosure(props) {
         dateTime: null,
         requesterNote: "",
         officer: "",
-        attachment: null
+        attachment: null,
+        ManualPurgeId: null,
+        Status: ""
     });
     const [purgeErrorState, setPurgeErrorState, handlePurgeErrorState, clearPurgeErrorState] = useObjState({
         reason: false,
@@ -144,6 +149,33 @@ function CaseClosure(props) {
             setClosureID(null);
         }
     }, [isGetCaseClosureByIDSuccess, getCaseClosureByIDData, incidentStatusDrpDwn])
+
+    const getManualPurgeByCaseIDKey = `/CaseManagement/GetManualPurgeByCaseID/${CaseId}`;
+    const { data: getManualPurgeByCaseIDData, isSuccess: isGetManualPurgeByCaseIDSuccess, refetch: refetchManualPurgeByCaseID } = useQuery(
+        [getManualPurgeByCaseIDKey, {
+            "CaseID": CaseId,
+        },],
+        CaseManagementServices.getManualPurgeByCaseID, {
+        refetchOnWindowFocus: false,
+        retry: 0,
+        enabled: !!CaseId
+    }
+    );
+
+    useEffect(() => {
+        if (isGetManualPurgeByCaseIDSuccess) {
+            const data = JSON.parse(getManualPurgeByCaseIDData?.data?.data)?.Table?.[0]
+            setPurgeForm({
+                ManualPurgeId: data?.ManualPurgeId,
+                reason: reasonCaseDrpData?.find(item => item.ReasonID === data?.ReasonID),
+                dateTime: data?.ManualDateTime ? new Date(data?.ManualDateTime) : null,
+                requesterNote: data?.RequesterNote,
+                officer: localStoreData?.fullName,
+                attachment: data?.Attachment,
+                Status: data?.Status
+            })
+        }
+    }, [isGetManualPurgeByCaseIDSuccess, getManualPurgeByCaseIDData])
 
     const handleSendNotification = () => {
         setShowNotificationModal(true);
@@ -237,6 +269,8 @@ function CaseClosure(props) {
             getIncidentStatus(localStoreData?.AgencyID);
             setAgencyID(localStoreData?.AgencyID);
             setPinID(localStoreData?.PINID);
+            handlePurgeFormChange('officer', localStoreData?.fullName);
+            if (reasonCaseDrpData?.length === 0) dispatch(getDropDownReasonCase(localStoreData?.AgencyID))
         }
         const defaultDate = datezone ? new Date(datezone) : null;
         setDispositionDate(defaultDate);
@@ -330,10 +364,27 @@ function CaseClosure(props) {
         return !isError;
     };
 
-    const handleSavePurge = () => {
+    const handleSavePurge = async () => {
         if (!validatePurgeForm()) return;
-        // TODO: Implement save purge request logic
-        console.log("Purge form data:", purgeForm);
+        const isUpdate = purgeForm?.ManualPurgeId ? true : false;
+        const payload = {
+            "ManualPurgeId": isUpdate ? purgeForm?.ManualPurgeId : undefined,
+            "AgencyID": agencyID,
+            "ReasonID": purgeForm.reason?.ReasonID,
+            "ManualDateTime": purgeForm?.dateTime,
+            "RequesterNote": purgeForm?.requesterNote,
+            "OfficerID": pinID,
+            "CaseID": CaseId,
+            "CreatedByUserFK": isUpdate ? undefined : pinID,
+            "ModifiedByUserFK": isUpdate ? pinID : undefined
+        }
+        const response = isUpdate ? await CaseManagementServices.updateManualPurge(payload) : await CaseManagementServices.addManualPurge(payload);
+        if (response) {
+            toastifySuccess(isUpdate ? "Purge request updated successfully" : "Purge request saved successfully");
+            refetchManualPurgeByCaseID();
+        } else {
+            toastifyError("Failed to save purge request");
+        }
         clearPurgeForm();
         clearPurgeErrorState();
         handleClosePurgeModal();
@@ -423,6 +474,13 @@ function CaseClosure(props) {
             refetchCaseClosureByID();
         }
     };
+
+    const ReasonList = [
+        { label: "Case Closed", value: 1 },
+        { label: "Retention Period Expired", value: 2 },
+        { label: "Legal Requirement", value: 3 },
+        { label: "Other", value: 4 }
+    ]
 
     return (
         <div className="py-3">
@@ -869,9 +927,10 @@ function CaseClosure(props) {
                     <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: "800px" }}>
                         <div className="modal-content" style={{ borderRadius: "8px" }}>
                             <div className="modal-header" style={{ borderBottom: "1px solid #dee2e6" }}>
-                                <h5 className="modal-title fw-bold" id="requestManualPurgeModalLabel">
+                                <h5 className="modal-title fw-bold d-flex justify-content-between align-items-center" id="requestManualPurgeModalLabel">
                                     Request Manual Purge
                                 </h5>
+                                <h6 className="modal-title fw-bold">{purgeForm.Status}</h6>
                             </div>
                             <div className="modal-body p-4">
                                 <div className="row mb-3">
@@ -881,15 +940,17 @@ function CaseClosure(props) {
                                         </label>
                                         <Select
                                             isClearable
-                                            options={[
-                                                { label: "Case Closed", value: "case_closed" },
-                                                { label: "Retention Period Expired", value: "retention_expired" },
-                                                { label: "Legal Requirement", value: "legal_requirement" },
-                                                { label: "Other", value: "other" }
-                                            ]}
+                                            options={reasonCaseDrpData}
                                             placeholder="Select"
                                             className="w-100"
                                             styles={coloredStyle_Select}
+                                            getOptionLabel={(v) => `${v?.ReasonCode} | ${v?.Description}`}
+                                            getOptionValue={(v) => v?.ReasonCode}
+                                            formatOptionLabel={(option, { context }) => {
+                                                return context === 'menu'
+                                                    ? `${option?.ReasonCode} | ${option?.Description}`
+                                                    : option?.ReasonCode;
+                                            }}
                                             value={purgeForm.reason}
                                             onChange={(e) => handlePurgeFormChange('reason', e)}
                                         />

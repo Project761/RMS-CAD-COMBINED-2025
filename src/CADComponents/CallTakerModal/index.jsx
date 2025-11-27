@@ -392,6 +392,8 @@ const CallTakerModal = (props) => {
     if (isFetchResourcesData && getResourcesData) {
       const data = JSON.parse(getResourcesData?.data?.data);
       setResourceDropDown(data?.Table || [])
+    } else {
+      setResourceDropDown([]);
     }
   }, [isFetchResourcesData, getResourcesData])
 
@@ -747,6 +749,8 @@ const CallTakerModal = (props) => {
       setGeoZoneDropDown(
         dropDownDataModel(data, "ZoneID", "ZoneCode")
       );
+    } else {
+      setGeoZoneDropDown([]);
     }
   }, [isFetchGeoZoneData, geoZoneData]);
 
@@ -769,6 +773,8 @@ const CallTakerModal = (props) => {
     if (isFetchReceiveSourceData && receiveSourceData) {
       const data = JSON.parse(receiveSourceData?.data?.data);
       setReceiveSourceDropDown(data?.Table || []);
+    } else {
+      setReceiveSourceDropDown([]);
     }
   }, [isFetchReceiveSourceData, receiveSourceData]);
 
@@ -778,6 +784,8 @@ const CallTakerModal = (props) => {
       setReasonCodeDropDown(
         dropDownDataModel(data?.Table, "NameReasonCodeID", "Description")
       );
+    } else {
+      setReasonCodeDropDown([]);
     }
   }, [isFetchNameReasonCodeData, nameReasonCodeData]);
 
@@ -786,6 +794,9 @@ const CallTakerModal = (props) => {
       const data = JSON.parse(cfsData?.data?.data)?.Table;
       setCFSDropDown(data);
       setCFSDescDropDown(data);
+    } else {
+      setCFSDropDown([]);
+      setCFSDescDropDown([]);
     }
   }, [isFetchCFSData, cfsData]);
 
@@ -793,6 +804,8 @@ const CallTakerModal = (props) => {
     if (isFetchPremiseData && premiseData) {
       const data = JSON.parse(premiseData?.data?.data);
       setPremiseDropDown(dropDownDataModel(data?.Table, "ID", "PremiseType"));
+    } else {
+      setPremiseDropDown([]);
     }
   }, [isFetchPremiseData, premiseData]);
 
@@ -800,6 +813,8 @@ const CallTakerModal = (props) => {
     if (isFetchTagYearData && tagYearData) {
       const data = JSON.parse(tagYearData?.data?.data);
       setTagYearDropDown(dropDownDataModel(data?.Table, "TagYear", "TagYear"));
+    } else {
+      setTagYearDropDown([]);
     }
   }, [isFetchTagYearData, tagYearData]);
 
@@ -808,8 +823,8 @@ const CallTakerModal = (props) => {
       const parsedData = JSON.parse(aptSuiteNoData.data.data || "{}");
       setAptSuiteNoDropDown(parsedData?.Table?.length ? dropDownDataModelForAptNo(parsedData.Table, "Description", "Description", "AptID") : []);
     } else {
-      setAptInputValue("");
       setAptSuiteNoDropDown([]);
+      setAptInputValue("");
     }
   }, [isFetchAptSuiteNoData, aptSuiteNoData, geoLocationID, geoFormValues?.location]);
 
@@ -852,6 +867,8 @@ const CallTakerModal = (props) => {
     if (isFetchFlagData && flagData) {
       const data = JSON.parse(flagData?.data?.data);
       setFlagDropDown(dropDownDataModel(data?.Table, "ID", "CurrentFlag"));
+    } else {
+      setFlagDropDown([]);
     }
   }, [isFetchFlagData, flagData]);
 
@@ -877,6 +894,7 @@ const CallTakerModal = (props) => {
           setContactList(contactInfo);
         } catch (error) {
           console.error("Error parsing contact data:", error);
+          setContactList([]);
         }
       }
     }
@@ -889,6 +907,8 @@ const CallTakerModal = (props) => {
   useEffect(() => {
     if (!aptData?.value && !aptData?.label && defaultOption) {
       setAptData({ value: '', label: '', aptId: defaultOption.aptId });
+    } else {
+      setAptData({ value: '', label: '', aptId: '' });
     }
   }, [aptSuiteNoDropDown, defaultOption]);
 

@@ -462,9 +462,9 @@ const Header = (props) => {
                     <Link className="dropdown-item" to={'/UnExpunge'} data-toggle={changesStatus ? "modal" : ""} data-target={changesStatus ? "#SaveModal" : ''} >
                       Unexpunge
                     </Link>
-                    {/* <Link className="dropdown-item" to={'/citationTab'} data-toggle={changesStatus ? "modal" : ""} data-target={changesStatus ? "#SaveModal" : ''} >
+                    <Link className="dropdown-item" to={'/citationTab'} data-toggle={changesStatus ? "modal" : ""} data-target={changesStatus ? "#SaveModal" : ''} >
                       Citation
-                    </Link> */}
+                    </Link>
                   </div>
                 </div>
                 <div

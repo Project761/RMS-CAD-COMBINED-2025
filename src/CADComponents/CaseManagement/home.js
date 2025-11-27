@@ -11,12 +11,12 @@ import { useQuery } from "react-query";
 import CaseManagementServices from "../../CADServices/APIs/caseManagement";
 import { useLocation } from "react-router-dom";
 import { fetchPostData } from "../../Components/hooks/Api";
-import { Comman_changeArrayFormat, threeColArray } from "../../Components/Common/ChangeArrayFormat";
+import { Comman_changeArrayFormat } from "../../Components/Common/ChangeArrayFormat";
 import { get_AgencyOfficer_Data } from "../../redux/actions/DropDownsData";
 import { AgencyContext } from "../../Context/Agency/Index";
 import { get_Inc_ReportedDate } from "../../redux/actions/Agency";
 import { toastifySuccess } from "../../Components/Common/AlertMsg";
-import { isEmpty, isEmptyObject } from "../../CADUtils/functions/common";
+import { isEmptyObject } from "../../CADUtils/functions/common";
 
 function Home({ CaseId = null, RMSCaseNumber = null, refetchCaseManagementCaseData = () => { }, caseData = null }) {
     const dispatch = useDispatch();
@@ -32,6 +32,7 @@ function Home({ CaseId = null, RMSCaseNumber = null, refetchCaseManagementCaseDa
     const [showAttachIncidentModal, setShowAttachIncidentModal] = useState(false);
     const [selectedIncident, setSelectedIncident] = useState(null);
     const [supervisorsByAgencyID, setSupervisorsByAgencyID] = useState([]);
+    const [prosecutor, setProsecutor] = useState([]);
     const [primaryOfficerHistory, setPrimaryOfficerHistory] = useState([]);
     const [
         caseFormState,
@@ -120,6 +121,19 @@ function Home({ CaseId = null, RMSCaseNumber = null, refetchCaseManagementCaseDa
         }
     );
 
+    const getProsecutorByAgencyIDKey = `/Personnel/GetProsecutorByAgencyID/${localStoreData?.AgencyID}`;
+    const { data: getProsecutorByAgencyID, isSuccess: isGetProsecutorByAgencyIDSuccess } = useQuery(
+        [getProsecutorByAgencyIDKey, {
+            "AgencyID": localStoreData?.AgencyID,
+        },],
+        CaseManagementServices.getProsecutorByAgencyID,
+        {
+            refetchOnWindowFocus: false,
+            retry: 0,
+            enabled: !!localStoreData?.AgencyID
+        }
+    );
+
     const getPrimaryOfficerHistoryKey = `/CaseManagement/GetPrimaryOfficerHistory/${CaseId}`;
     const { data: getPrimaryOfficerHistory, isSuccess: isGetPrimaryOfficerHistorySuccess } = useQuery(
         [getPrimaryOfficerHistoryKey, {
@@ -150,6 +164,15 @@ function Home({ CaseId = null, RMSCaseNumber = null, refetchCaseManagementCaseDa
             setSupervisorsByAgencyID([]);
         }
     }, [isGetSupervisorsByAgencyIDSuccess, getSupervisorsByAgencyID])
+
+    useEffect(() => {
+        if (isGetProsecutorByAgencyIDSuccess && getProsecutorByAgencyID) {
+            const data = Comman_changeArrayFormat(JSON.parse(getProsecutorByAgencyID?.data?.data)?.Table, 'PINID', 'FullName')
+            setProsecutor(data || []);
+        } else {
+            setProsecutor([]);
+        }
+    }, [isGetProsecutorByAgencyIDSuccess, getProsecutorByAgencyID])
 
     useEffect(() => {
         if (caseData?.CaseID > 0) {
@@ -260,10 +283,10 @@ function Home({ CaseId = null, RMSCaseNumber = null, refetchCaseManagementCaseDa
                 handleErrorCaseFormState(field, true);
                 isError = true;
             }
-            // else if (field === "assignedProsecutor" && isEmptyObject(caseFormState[field])) {
-            //     handleErrorCaseFormState(field, true);
-            //     isError = true;
-            // } 
+            else if (field === "assignedProsecutor" && isEmptyObject(caseFormState[field])) {
+                handleErrorCaseFormState(field, true);
+                isError = true;
+            }
             else if (field === "assignedDateTime" && !(caseFormState[field])) {
                 handleErrorCaseFormState(field, true);
                 isError = true;
@@ -536,12 +559,14 @@ function Home({ CaseId = null, RMSCaseNumber = null, refetchCaseManagementCaseDa
                                 </div>
                                 <div className="col-md-4 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
                                     <label className="form-label"><span className="fw-bold text-nowrap">Assigned Prosecutor</span> {errorCaseFormState.assignedProsecutor && isEmptyObject(caseFormState.assignedProsecutor) ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
-                                    <input
-                                        type="text"
-                                        className="form-control py-1 new-input requiredColor"
-                                        placeholder="Enter Prosecutor Name"
-                                        value={caseFormState.assignedProsecutorName}
-                                        onChange={(e) => handleCaseFormState("assignedProsecutorName", e.target.value)}
+                                    <Select
+                                        placeholder="Select"
+                                        styles={coloredStyle_Select}
+                                        options={prosecutor}
+                                        value={caseFormState.assignedProsecutor}
+                                        isClearable
+                                        onChange={(selectedOption) => handleCaseFormState("assignedProsecutor", selectedOption)}
+                                        name="assignedProsecutor"
                                     />
                                 </div>
                                 <div className="col-md-4 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>

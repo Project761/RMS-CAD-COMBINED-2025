@@ -18,6 +18,9 @@ import { useQuery } from 'react-query';
 import CaseManagementServices from '../../CADServices/APIs/caseManagement';
 import { base64ToString } from '../../Components/Common/Utility';
 import CloseHistory from '../../Components/Pages/CloseHistory/CloseHistory';
+import ChargingProsecution from '../../CADComponents/CaseManagement/chargingProsecution';
+import LegalOrder from '../../CADComponents/CaseManagement/legalOrder';
+import VictimWitness from '../../CADComponents/CaseManagement/victimWitness';
 
 function CaseManagement() {
     const navigate = useNavigate();
@@ -67,9 +70,13 @@ function CaseManagement() {
             setCaseID(finalCaseID);
             setRMSCaseNumber(data?.[0]?.RMSCaseNumber);
 
-
+            if (finalCaseID && (!CaseId || parseInt(CaseId) !== finalCaseID)) {
+                const params = new URLSearchParams(location.search);
+                params.set("CaseId", finalCaseID);
+                navigate(`${location.pathname}?${params.toString()}`, { replace: true });
+            }
         }
-    }, [isGetCaseManagementCaseDataSuccess, getCaseManagementCaseData, IncID, IncNo, IncSta, CaseId,])
+    }, [isGetCaseManagementCaseDataSuccess, getCaseManagementCaseData, IncID, IncNo, IncSta, CaseId, location.pathname, location.search, navigate])
 
     return (
         <div className="section-body view_page_design pt-1 p-1 bt cad-css">
@@ -88,7 +95,7 @@ function CaseManagement() {
                                             <Link
                                                 className={`nav-item ${caseManagementPage === 'home' ? 'active' : ''}`}
                                                 to={
-                                                    `/inc-case-management?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}${caseID ? `&CaseId=${caseID}` : ''}&page=home`
+                                                    `/inc-case-management?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}${caseID ? `&CaseId=${caseID}` : ''}`
                                                 }
                                                 style={{ color: caseManagementPage === 'home' ? 'Red' : '#000' }}
                                                 data-toggle={"pill"}
@@ -146,6 +153,24 @@ function CaseManagement() {
                                                     Property and Evidence
                                                 </span>
                                                 <span
+                                                    className={`nav-item ${caseManagementPage === 'legalOrder' ? 'active' : ''}`}
+                                                    data-toggle={"pill"}
+                                                    style={{ color: caseManagementPage === 'legalOrder' ? 'Red' : '#000', pointerEvents: caseID ? 'auto' : 'none', opacity: caseID ? 1 : 0.5, cursor: caseID ? 'pointer' : 'not-allowed' }}
+                                                    aria-current="page"
+                                                    onClick={() => { if (!caseID) return; setCaseManagementPage('legalOrder') }}
+                                                >
+                                                    Legal Orders
+                                                </span>
+                                                <span
+                                                    className={`nav-item ${caseManagementPage === 'victimWitness' ? 'active' : ''}`}
+                                                    data-toggle={"pill"}
+                                                    style={{ color: caseManagementPage === 'victimWitness' ? 'Red' : '#000', pointerEvents: caseID ? 'auto' : 'none', opacity: caseID ? 1 : 0.5, cursor: caseID ? 'pointer' : 'not-allowed' }}
+                                                    aria-current="page"
+                                                    onClick={() => { if (!caseID) return; setCaseManagementPage('victimWitness') }}
+                                                >
+                                                    Victim & Witness Management
+                                                </span>
+                                                <span
                                                     className={`nav-item ${caseManagementPage === 'caseReport' ? 'active' : ''}`}
                                                     data-toggle={"pill"}
                                                     style={{ color: caseManagementPage === 'caseReport' ? 'Red' : '#000', pointerEvents: caseID ? 'auto' : 'none', opacity: caseID ? 1 : 0.5, cursor: caseID ? 'pointer' : 'not-allowed' }}
@@ -162,6 +187,15 @@ function CaseManagement() {
                                                     onClick={() => { if (!caseID) return; setCaseManagementPage('caseTimeline') }}
                                                 >
                                                     Case Timeline
+                                                </span>
+                                                <span
+                                                    className={`nav-item ${caseManagementPage === 'chargingProsecution' ? 'active' : ''}`}
+                                                    data-toggle={"pill"}
+                                                    style={{ color: caseManagementPage === 'chargingProsecution' ? 'Red' : '#000', pointerEvents: caseID ? 'auto' : 'none', opacity: caseID ? 1 : 0.5, cursor: caseID ? 'pointer' : 'not-allowed' }}
+                                                    aria-current="page"
+                                                    onClick={() => { if (!caseID) return; setCaseManagementPage('chargingProsecution') }}
+                                                >
+                                                    Charging & Prosecution
                                                 </span>
                                                 <span
                                                     className={`nav-item ${caseManagementPage === 'discovery' ? 'active' : ''}`}
@@ -220,8 +254,11 @@ function CaseManagement() {
                                 {caseManagementPage === 'caseEffort' && <CaseEffort CaseId={caseID} />}
                                 {caseManagementPage === 'detectiveNotes' && <DetectiveNotes CaseId={caseID} />}
                                 {caseManagementPage === 'propertyEvidence' && <PropertyEvidence />}
+                                {caseManagementPage === 'legalOrder' && <LegalOrder />}
+                                {caseManagementPage === 'victimWitness' && <VictimWitness />}
                                 {caseManagementPage === 'caseReport' && <CaseReport CaseId={caseID} />}
                                 {caseManagementPage === 'caseTimeline' && <CaseTimeline />}
+                                {caseManagementPage === 'chargingProsecution' && <ChargingProsecution CaseId={caseID} />}
                                 {caseManagementPage === 'discovery' && <Discovery />}
                                 {caseManagementPage === 'caseClosure' && <CaseClosure CaseId={caseID} />}
                                 {caseManagementPage === 'courtOutcome' && <CourtOutcome />}

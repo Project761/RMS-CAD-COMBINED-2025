@@ -64,6 +64,15 @@ class CaseManagementServices {
         return null;
     };
 
+    getProsecutorByAgencyID = async ({ queryKey }) => {
+        const [_key, payload] = queryKey;
+        if (payload) {
+            return await axios.post(`/Personnel/GetProsecutorByAgencyID`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.getProsecutorByAgencyID");
+        return null;
+    };
+
     getOfficerActivityByID = async (payload) => {
         if (payload) {
             return await axios.post(`/CaseManagement/GetOfficerActivityByID`, payload);
@@ -251,6 +260,31 @@ class CaseManagementServices {
             return await axios.post(`/CaseManagement/GetDataDetectiveDocuments`, payload);
         }
         console.warn("payload not provided, CaseManagementServices.getDetectiveNoteDoc");
+        return null;
+    };
+
+    addManualPurge = async (payload) => {
+        if (payload) {
+            return await axios.post(`/CaseManagement/AddManualPurge`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.addManualPurge");
+        return null;
+    };
+
+    updateManualPurge = async (payload) => {
+        if (payload) {
+            return await axios.post(`/CaseManagement/UpdateManualPurge`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.updateManualPurge");
+        return null;
+    };
+
+    getManualPurgeByCaseID = async ({ queryKey }) => {
+        const [_key, payload] = queryKey;
+        if (payload) {
+            return await axios.post(`/CaseManagement/GetManualPurgeByCaseID`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.getManualPurgeByCaseID");
         return null;
     };
 
