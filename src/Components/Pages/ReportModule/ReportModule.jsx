@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Decrypt_Id_Name, Requiredcolour, base64ToString, changeArrayFormat, changeArrayFormat_WithFilter, editorConfig, filterPassedDateTimeZone, getShowingDateText, getShowingMonthDateYear, stringToBase64, tableCustomStyles } from '../../Common/Utility';
-import { fetchPostData, AddDeleteUpadate, ScreenPermision, fetchPostDataNew } from '../../hooks/Api';
+import { fetchPostData, AddDeleteUpadate, ScreenPermision, fetchPostDataNew, fetch_Post_Data } from '../../hooks/Api';
 import DataTable from 'react-data-table-component';
 import { toastifyError, toastifySuccess } from '../../Common/AlertMsg';
 import DeletePopUpModal from '../../Common/DeleteModal';
@@ -9,13 +9,13 @@ import Loader from '../../Common/Loader';
 import { AgencyContext } from '../../../Context/Agency/Index';
 import Select from "react-select";
 import DatePicker from 'react-datepicker';
-import { changeArrayFormat_Active_InActive } from '../../Common/ChangeArrayFormat';
+import { changeArrayFormat_Active_InActive, Comman_changeArrayFormat, Comman_changeArrayFormat_With_Name, Comman_changeArrayFormatReasonCode, threeColArray } from '../../Common/ChangeArrayFormat';
 import { RequiredFieldIncident } from '../Utility/Personnel/Validation';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { get_LocalStoreData } from '../../../redux/actions/Agency';
 import { get_AgencyOfficer_Data, get_Report_Approve_Officer_Data } from '../../../redux/actions/IncidentAction';
-import { get_Narrative_Type_Drp_Data } from '../../../redux/actions/DropDownsData';
+import { get_Narrative_Type_Drp_Data, get_PlateType_Drp_Data, get_PropertyTypeData, get_State_Drp_Data, get_VehicleLossCode_Drp_Data } from '../../../redux/actions/DropDownsData';
 import ChangesModal from '../../Common/ChangesModal';
 import SelectBox from '../../Common/SelectBox';
 
@@ -45,10 +45,13 @@ const ReportModule = (props) => {
     var IncID = query?.get("IncId");
     var NarrativeAssignId = query?.get("narrativeAssignId");
     var IncNo = query?.get("IncNo");
+    var NarrativeAutoSaveID = query?.get("narrativeAutoSaveId");
     if (!IncID) IncID = 0;
     else IncID = parseInt(base64ToString(IncID));
     if (!NarrativeAssignId) NarrativeAssignId = 0;
     else NarrativeAssignId = parseInt(base64ToString(NarrativeAssignId));
+    if (!NarrativeAutoSaveID) NarrativeAutoSaveID = null;
+    else NarrativeAutoSaveID = base64ToString(NarrativeAutoSaveID);
 
     const tabParam = query.get("tab");
     const assigned = query.get("Assigned");
@@ -60,8 +63,12 @@ const ReportModule = (props) => {
     const agencyOfficerFullNameDrpData = useSelector((state) => state.DropDown.agencyOfficerFullNameDrpData);
     const reportApproveOfficer = useSelector((state) => state.Incident.reportApproveOfficer);
     const narrativeTypeDrpData = useSelector((state) => state.DropDown.narrativeTypeDrpData);
+    const vehicleLossCodeDrpData = useSelector((state) => state.DropDown.vehicleLossCodeDrpData);
+    const plateTypeIdDrp = useSelector((state) => state.DropDown.vehiclePlateIdDrpData)
+    const stateList = useSelector((state) => state.DropDown.stateDrpData);
+    const propertyTypeData = useSelector((state) => state.DropDown.propertyTypeData);
 
-    const { get_IncidentTab_Count, get_Incident_Count, changesStatus, setChangesStatus, nibrsStatus, GetDataTimeZone, datezone, setassignedReportID, validate_IncSideBar } = useContext(AgencyContext);
+    const { get_IncidentTab_Count, get_Incident_Count, changesStatus, setChangesStatus, nibrsStatus, GetDataTimeZone, datezone, setassignedReportID, validate_IncSideBar, offenceFillterData, get_Offence_Data } = useContext(AgencyContext);
 
     const [narrativeData, setNarrativeData] = useState([]);
     const [upDateCount, setUpDateCount] = useState(0);
@@ -107,11 +114,79 @@ const ReportModule = (props) => {
     const [showModalRecall, setshowModalRecall] = useState(false);
     const [reportTemplateDropdownData, setReportTemplateDropdownData] = useState([]);
     const detectedWordsRef = useRef([]);
+    const quillEditorRef = useRef(null);
+    const [autocompleteSuggestions, setAutocompleteSuggestions] = useState([]);
+    const [autocompletePosition, setAutocompletePosition] = useState({ top: 0, left: 0, show: false });
+    const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
+    const [currentKeyword, setCurrentKeyword] = useState(''); // Store the keyword (Gender, DOB, Race)
+    const [fieldDropdown, setFieldDropdown] = useState({ show: false, field: '', position: { top: 0, left: 0 }, startIndex: 0, endIndex: 0, requiresParen: false, hasClosingParen: false });
+    const [sexIdDrp, setSexIdDrp] = useState([]);
+    const [raceIdDrp, setRaceIdDrp] = useState([]);
+    const [ethinicityDrpData, setEthinicityDrpData] = useState([]);
+    const [residentIDDrp, setResidentIDDrp] = useState([]);
+    // const [reasonIdDrp, setReasonIdDrp] = useState([]);
+    const [victimIdDrp, setVictimIdDrp] = useState([]);
+    const [offenderIdDrp, setOffenderIdDrp] = useState([]);
+    const [otherIdDrp, setOtherIdDrp] = useState([]);
+    const [dataList, setDataList] = useState();
+    const [categoryIdDrp, setCategoryIdDrp] = useState([]);
+    const [degreeDrpDwnVal, setDegreeDrpDwnVal] = useState([]);
+    const [vehicleCategoryIdDrp, setVehicleCategoryIdDrp] = useState([]);
+    const [propertyCategoryData, setPropertyCategoryData] = useState([]);
+    const [propertyLossCodeData, setPropertyLossCodeData] = useState([]);
+
+    // Define keyword-based suggestions (using useMemo to avoid recreating on each render)
+    const [narrativeAutoSaveID, setNarrativeAutoSaveID] = useState(NarrativeAutoSaveID);
+    const autosaveIntervalRef = useRef(null);
+    const valueRef = useRef(null);
+    const narrativeAutoSaveIDRef = useRef(null);
+    const isLoadingAutoSaveRef = useRef(false);
+
+    const keywordSuggestions = useMemo(() => ({
+        // 'Gender': ['Male', 'Female'],
+        'DOB': ['1999', '2000', '2001'],
+        'Race': [
+            { value: "American Indian or Alaska Native", label: "American Indian or Alaska Native" },
+            { value: "Asian", label: "Asian" },
+            { value: "Black or African American", label: "Black or African American" },
+            { value: "Native Hawaiian or Other Pacific Islander", label: "Native Hawaiian or Other Pacific Islander" },
+            { value: "Unknown", label: "Unknown" },
+            { value: "White", label: "White" }
+        ]
+    }), []);
+
+    // Field dropdown options
+    const fieldOptions = useMemo(() => ({
+        'Gender': sexIdDrp.map(item => item.label),
+        'Race': raceIdDrp.map(item => item.label),
+        // 'DOB': ['1999', '2000', '2001'], // DOB will be handled differently if needed
+        'Ethnicity': ethinicityDrpData.map(item => item.label),
+        'Resident': residentIDDrp.map(item => item.label),
+        'Victim': victimIdDrp.map(item => item.Description),
+        'Offender': offenderIdDrp.map(item => item.Description),
+        'Other': otherIdDrp.map(item => item.Description),
+        'Vehicle Category': vehicleCategoryIdDrp.map(item => item.label),
+        'Vehicle Loss Code': vehicleLossCodeDrpData.map(item => item.label),
+        'Plate Type': plateTypeIdDrp.map(item => item.label),
+        'Plate State': stateList.map(item => item.label),
+        'Property Type': propertyTypeData.map(item => item.label),
+        'Property Loss Code': propertyLossCodeData.map(item => item.Description),
+        'Property Category': propertyCategoryData.map(item => item.Description),
+    }), [sexIdDrp, raceIdDrp, ethinicityDrpData, residentIDDrp, victimIdDrp, offenderIdDrp, otherIdDrp, vehicleCategoryIdDrp, vehicleLossCodeDrpData, plateTypeIdDrp, stateList, propertyTypeData, propertyLossCodeData, propertyCategoryData]);
+    console.log("@@fieldOptions", fieldOptions)
     const [value, setValue] = useState({
         'IncidentId': '', 'NarrativeID': '', 'ReportedByPINActivityID': null, 'NarrativeTypeID': null, 'AsOfDate': null,
         'CreatedByUserFK': '', 'ModifiedByUserFK': '', 'ApprovingSupervisorID': '', 'NarrativeAssignedID': '', 'WrittenForID': '',
         'Comments': '', 'CommentsDoc': '', 'reportTemplateTypeId': null
     })
+
+    // Initialize refs after value state is defined
+    if (valueRef.current === null) {
+        valueRef.current = value;
+    }
+    if (narrativeAutoSaveIDRef.current === null) {
+        narrativeAutoSaveIDRef.current = narrativeAutoSaveID;
+    }
 
     const [errors, setErrors] = useState({
         'ReportedByPinError': '', 'AsOfDateError': '', 'NarrativeIDError': '', 'CommentsError': '', 'WrittenForIDError': '',
@@ -133,8 +208,167 @@ const ReportModule = (props) => {
             else if (NarrativeAssignId && tabParam && assigned) {
                 GetSingleDataOfficers(NarrativeAssignId);
             }
+            get_Offence_Data(IncID);
         }
     }, [localStoreData, IncID]);
+
+    // Keep refs in sync with state
+    useEffect(() => {
+        valueRef.current = value;
+    }, [value]);
+
+    useEffect(() => {
+        narrativeAutoSaveIDRef.current = narrativeAutoSaveID;
+    }, [narrativeAutoSaveID]);
+
+    // Sync narrativeAutoSaveID from URL to state on mount
+    useEffect(() => {
+        if (NarrativeAutoSaveID && !narrativeAutoSaveID) {
+            setNarrativeAutoSaveID(NarrativeAutoSaveID);
+        }
+    }, [NarrativeAutoSaveID, narrativeAutoSaveID]);
+
+    // Load autosave data when narrativeAutoSaveId exists in URL and user navigates to Report tab
+    useEffect(() => {
+        if (NarrativeAutoSaveID && loginAgencyID && !narrativeID && !status && !NarrativeAssignId) {
+            GetAutoSaveData(loginAgencyID, NarrativeAutoSaveID);
+        }
+    }, [NarrativeAutoSaveID, loginAgencyID, narrativeID, status, NarrativeAssignId]);
+
+    // Helper function to update URL with or without narrativeAutoSaveId
+    const updateURLWithAutoSaveID = useCallback((autoSaveID) => {
+        if (!isCaseManagement) {
+            const params = new URLSearchParams(window.location.search);
+            if (autoSaveID) {
+                params.set('narrativeAutoSaveId', stringToBase64(autoSaveID));
+            } else {
+                params.delete('narrativeAutoSaveId');
+            }
+            const newURL = `${window.location.pathname}?${params.toString()}`;
+            navigate(newURL, { replace: true });
+        }
+    }, [isCaseManagement, navigate]);
+
+    // Autosave function - only called by interval, not on typing
+    // Using refs to access current values without causing re-renders
+    const handleNarrativeAutoSave = useCallback(() => {
+        // Access current values from refs to avoid dependency issues
+        const currentValue = valueRef.current;
+        const currentAutoSaveID = narrativeAutoSaveIDRef.current;
+
+        // Only autosave if:
+        // 1. Report is not saved (narrativeID is empty)
+        // 2. Not in edit mode (status is false)
+        // 3. Has required data
+        if (!narrativeID && !status && loginAgencyID && loginPinID && IncID && currentValue.Comments) {
+            const val = {
+                AgencyID: loginAgencyID,
+                CreatedByUserFK: loginPinID,
+                IncidentId: IncID,
+                ReportedByPINActivityID: currentValue.ReportedByPINActivityID || 0,
+                NarrativeTypeID: currentValue.NarrativeTypeID || 0,
+                Comments: currentValue.Comments || '',
+                AsOfDate: currentValue.AsOfDate ? new Date(currentValue.AsOfDate).toISOString() : new Date().toISOString(),
+                ReportTemplateID: currentValue.reportTemplateTypeId ? String(currentValue.reportTemplateTypeId) : '',
+                WrittenForID: currentValue.WrittenForID ? String(currentValue.WrittenForID) : ''
+            };
+
+            // If narrativeAutoSaveID exists, use Update API, otherwise use Insert API
+            if (currentAutoSaveID) {
+                // Update existing autosave record
+                val.NarrativeID = parseInt(currentAutoSaveID);
+                AddDeleteUpadate('Narrative/Update_NarrativeAutoSave', val)
+                    .then((res) => {
+                        // Update successful, no need to update URL as ID remains the same
+                        if (res && res.success) {
+                            // Optionally handle success response
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Autosave update error:', error);
+                    });
+            } else {
+                // Insert new autosave record (first time only)
+                AddDeleteUpadate('Narrative/Insert_NarrativeAutoSave', val)
+                    .then((res) => {
+                        const data = JSON.parse(res?.data)?.Table;
+                        setNarrativeAutoSaveID(data?.[0]?.NarrativeAutoSaveID);
+                        updateURLWithAutoSaveID(data?.[0]?.NarrativeAutoSaveID);
+                    })
+                    .catch((error) => {
+                        console.error('Autosave insert error:', error);
+                    });
+            }
+        }
+    }, [narrativeID, status, loginAgencyID, loginPinID, IncID, updateURLWithAutoSaveID]);
+
+    // Autosave useEffect - runs every 10 seconds for new, unsaved reports (NOT on typing)
+    useEffect(() => {
+        // Clear any existing interval
+        if (autosaveIntervalRef.current) {
+            clearInterval(autosaveIntervalRef.current);
+            autosaveIntervalRef.current = null;
+        }
+
+        // Only set up autosave if:
+        // 1. Report is not saved (narrativeID is empty)
+        // 2. Not in edit mode (status is false)
+        // 3. Has login data
+        if (!narrativeID && !status && loginAgencyID && loginPinID && IncID) {
+            // Set interval to call autosave every 10 seconds (NOT immediately)
+            autosaveIntervalRef.current = setInterval(() => {
+                handleNarrativeAutoSave();
+            }, 10000); // 10 seconds
+        }
+
+        // Cleanup interval on unmount or when conditions change
+        return () => {
+            if (autosaveIntervalRef.current) {
+                clearInterval(autosaveIntervalRef.current);
+                autosaveIntervalRef.current = null;
+            }
+        };
+    }, [narrativeID, status, loginAgencyID, loginPinID, IncID, handleNarrativeAutoSave]);
+
+    const get_Name_Drp_Data = (loginAgencyID) => {
+        const val = { AgencyID: loginAgencyID, }
+        fetchPostData('MasterName/GetNameDropDown', val).then((data) => {
+            if (data) {
+                // setAgeUnitDrpData(threeColArray(data[0]?.AgeUnit, 'AgeUnitID', 'Description', 'AgeUnitCode'));
+                setEthinicityDrpData(Comman_changeArrayFormat(data[0]?.Ethnicity, 'EthnicityID', 'Description'));
+                setSexIdDrp(Comman_changeArrayFormat(data[0]?.Gender, 'SexCodeID', 'Description'));
+                setRaceIdDrp(Comman_changeArrayFormat(data[0]?.Race, 'RaceTypeID', 'Description'));
+
+                // setVerifyIdDrp(Comman_changeArrayFormat(data[0]?.HowVerify, 'VerifyID', 'Description'));
+                // setRaceIdDrp(Comman_changeArrayFormat(data[0]?.Race, 'RaceTypeID', 'Description'));
+                // setStateList(Comman_changeArrayFormat(data[0]?.State, "StateID", "State"));
+                // setSuffixIdDrp(Comman_changeArrayFormat(data[0]?.Suffix, 'SuffixID', 'Description'));
+                // setPhoneTypeIdDrp(threeColArray(data[0]?.ContactType, 'ContactPhoneTypeID', 'Description', 'ContactPhoneTypeCode'))
+            } else {
+                // setAgeUnitDrpData([]);
+                setEthinicityDrpData([]);
+                setSexIdDrp([]);
+                //   setVerifyIdDrp([]);
+                setRaceIdDrp([]);
+                //  setStateList([]); setSuffixIdDrp([]);
+                // setPhoneTypeIdDrp([]);
+            }
+        })
+    };
+
+    const get_General_Drp_Data = (loginAgencyID) => {
+        const val = { AgencyID: loginAgencyID, }
+        fetchPostData('MasterName/GetGeneralDropDown', val).then((data) => {
+            if (data) {
+                setResidentIDDrp(
+                    Comman_changeArrayFormat_With_Name(data[0]?.Resident, "ResidentID", "Description", "ResidentID")
+                );
+            } else {
+                setResidentIDDrp([]);
+            }
+        })
+    };
+
     // useEffect(() => {
     //     if (localStoreData) {
     //       setAgencyName(localStoreData?.Agency_Name);
@@ -160,6 +394,145 @@ const ReportModule = (props) => {
         }
     }, [IncID,]);
 
+
+    const GetReasonIdDrp = (loginAgencyID) => {
+        const val = { AgencyID: loginAgencyID, CategoryID: 1, Role: [1, 2, 3] }
+        fetchPostData('NameReasonCode/GetDataDropDown_NameReasonCode', val).then((data) => {
+            if (data) {
+                // setReasonIdDrp(data);
+                setVictimIdDrp(data?.filter((item) => item?.IsVictimName === true));
+                setOffenderIdDrp(data?.filter((item) => item?.IsOffenderName === true));
+                setOtherIdDrp(data?.filter((item) => item?.IsOther === true));
+            } else {
+                // setReasonIdDrp([]);
+                setVictimIdDrp([]);
+                setOffenderIdDrp([]);
+                setOtherIdDrp([]);
+            }
+        })
+    }
+
+    const fetchData = async () => {
+        try {
+            const res = await fetch_Post_Data("ChargeCodes/GetData_ChargeCodes", {
+                PageCount: '',
+                PageRecord: '',
+                AgencyID: loginAgencyID,
+                ChargeCode: "",
+                Description: "",
+                FBIDescriptionCode: "",
+                IsActive: '1',
+                IsSuperAdmin: '1',
+                PINID: '1',
+                OrderTypeDescription: '',
+                OrderTypeCode: 'Asc',
+                Ispagination: false
+            });
+
+            if (res) {
+                setDataList(changeArrayFormatNew(res?.Data));
+
+            } else {
+                setDataList([]);
+
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            setDataList([]);
+
+        }
+    };
+
+    const GetDataPropertytypeWithLossCode = async (loginAgencyID) => {
+        try {
+            const res = await fetchPostDataNew("PropertytypeWithLossCode/GetData_PropertytypeWithLossCode", {
+                "AgencyID": loginAgencyID,
+                IsArticleReason: true,
+                IsBoatReason: true,
+                IsGunReason: true,
+                IsSecurityReason: true,
+                IsOtherReason: true,
+                IsDrugReason: true
+            });
+            if (res) {
+                setPropertyLossCodeData(res?.Table);
+            } else {
+                setPropertyLossCodeData([]);
+
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            setPropertyLossCodeData([]);
+        }
+    };
+
+    const GetData_PropertytypeWithCategory = async (loginAgencyID) => {
+        try {
+            const res = await fetchPostDataNew("PropertytypeWithLossCode/GetData_PropertytypeWithCategory", {
+                "AgencyID": loginAgencyID,
+
+            });
+            if (res) {
+                setPropertyCategoryData(res?.Table);
+            } else {
+                setPropertyCategoryData([]);
+
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            setPropertyCategoryData([]);
+        }
+    };
+
+    const CategoryDrpDwnVal = (loginAgencyID,) => {
+
+        const val = { 'AgencyID': loginAgencyID, };
+        fetchPostData("ChargeCategory/GetDataDropDown_ChargeCategory", val).then(
+            (data) => {
+                // console.log("🚀 ~ CategoryDrpDwnVal ~ data:", data)
+                if (data) setCategoryIdDrp(Comman_changeArrayFormat(data, "ChargeCategoryID", "Description"));
+                else setCategoryIdDrp([]);
+            }
+        );
+    };
+
+    const getDegreeDropVal = (loginAgencyID) => {
+        const val = {
+            AgencyID: loginAgencyID,
+        }
+        fetchPostData("ChargeDegree/GetDataDropDown_ChargeDegree", val).then((data) => {
+            if (data) {
+                setDegreeDrpDwnVal(data)
+            } else {
+                setDegreeDrpDwnVal();
+            }
+        })
+    }
+
+    const PropertyType = (loginAgencyID) => {
+        const val = { AgencyID: loginAgencyID }
+        fetchPostData('PropertyCategory/GetDataDropDown_PropertyCategory', val).then((data) => {
+            if (data) {
+                const res = data?.filter((val) => {
+                    if (val.PropertyCategoryCode === "V") return val
+                })
+                if (res.length > 0) {
+                    get_CategoryId_Drp(res[0]?.PropertyCategoryID)
+                }
+            }
+        })
+    }
+
+    const get_CategoryId_Drp = (CategoryID) => {
+        const val = { CategoryID: CategoryID }
+        fetchPostData('Property/GetDataDropDown_PropertyType', val).then((data) => {
+            if (data) {
+                setVehicleCategoryIdDrp(threeColArray(data, 'PropertyDescID', 'Description', 'PropDescCode'))
+            } else {
+                setVehicleCategoryIdDrp([]);
+            }
+        })
+    }
     useEffect(() => {
 
         if (loginAgencyID) {
@@ -168,9 +541,26 @@ const ReportModule = (props) => {
             Get_AgencyWiseRedactingReport(loginAgencyID, IncID);
             dispatch(get_Report_Approve_Officer_Data(loginAgencyID, loginPinID, narrativeID));
             if (narrativeTypeDrpData?.length === 0) { dispatch(get_Narrative_Type_Drp_Data(loginAgencyID)) }
-            get_Group_List(loginAgencyID, loginPinID, narrativeID); get_IncidentTab_Count(IncID, loginPinID);
+            if (narrativeID) get_Group_List(loginAgencyID, loginPinID, narrativeID);
+            get_IncidentTab_Count(IncID, loginPinID);
+            get_Name_Drp_Data(loginAgencyID)
+            get_General_Drp_Data(loginAgencyID)
+            GetReasonIdDrp(loginAgencyID);
+            fetchData();
+            CategoryDrpDwnVal(loginAgencyID);
+            getDegreeDropVal(loginAgencyID);
+            PropertyType(loginAgencyID);
+            GetDataPropertytypeWithLossCode(loginAgencyID);
+            GetData_PropertytypeWithCategory(loginAgencyID);
+            if (vehicleLossCodeDrpData?.length === 0) { dispatch(get_VehicleLossCode_Drp_Data(loginAgencyID)) };
+            if (plateTypeIdDrp?.length === 0) { dispatch(get_PlateType_Drp_Data(loginAgencyID)) };
+            if (stateList?.length === 0) { dispatch(get_State_Drp_Data()) };
+            if (propertyTypeData?.length === 0) { dispatch(get_PropertyTypeData(loginAgencyID)) };
         }
+
     }, [loginAgencyID])
+
+
 
     const GetSingleData = (NarrativeID) => {
         const val = { 'NarrativeID': NarrativeID }
@@ -186,10 +576,54 @@ const ReportModule = (props) => {
             })
     }
 
+    // Get autosave data when narrativeAutoSaveId exists in URL
+    const GetAutoSaveData = useCallback((AgencyID, NarrativeAutoSaveID) => {
+        if (!AgencyID || !NarrativeAutoSaveID) return;
+
+        const val = {
+            'AgencyID': AgencyID,
+            'NarrativeID': parseInt(NarrativeAutoSaveID)
+        };
+
+        isLoadingAutoSaveRef.current = true;
+        fetchPostData('Narrative/GetByID_NarrativeAutoSave', val)
+            .then((res) => {
+                if (res && res.length > 0) {
+                    const autoSaveData = res[0];
+                    // Set form values from autosave data using functional update to preserve existing fields
+                    setValue((prevValue) => {
+                        const updatedValue = {
+                            ...prevValue,
+                            'IncidentId': autoSaveData?.IncidentID ? String(autoSaveData.IncidentID) : prevValue.IncidentId,
+                            'AsOfDate': autoSaveData?.CreatedDtTm ? getShowingDateText(autoSaveData.CreatedDtTm) : null,
+                            'NarrativeTypeID': autoSaveData?.NarrativeTypeID || null,
+                            'reportTemplateTypeId': autoSaveData?.ReportTemplateTypeID || null,
+                            'ReportedByPINActivityID': autoSaveData?.PreparedByID || loginPinID,
+                            'WrittenForID': autoSaveData?.WrittenForID || '',
+                            'Comments': autoSaveData?.ReportText ? autoSaveData.ReportText.trim() : '',
+                            'CommentsDoc': autoSaveData?.ReportText ? autoSaveData.ReportText.trim() : '',
+                        };
+                        // Update ref immediately
+                        valueRef.current = updatedValue;
+                        return updatedValue;
+                    });
+                    // Reset flag after a short delay to allow state to update
+                    setTimeout(() => {
+                        isLoadingAutoSaveRef.current = false;
+                    }, 500);
+                } else {
+                    isLoadingAutoSaveRef.current = false;
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching autosave data:', error);
+                isLoadingAutoSaveRef.current = false;
+            });
+    }, [loginPinID]);
+
     const Get_WrittenForDataDrp = async (loginAgencyID) => {
         const val = { AgencyID: loginAgencyID, }
         await fetchPostData('Narrative/GetData_WrittenForOfficer', val).then((data) => {
-            console.log("🚀 ~ Get_WrittenForDataDrp ~ data:", data)
             if (data) {
                 setWrittenForDataDrp(changeArrayFormat_Active_InActive(data, 'PINID', 'HeadOfAgency', 'IsActive'));
             } else {
@@ -246,7 +680,10 @@ const ReportModule = (props) => {
     }, [IncID, localStoreData]);
 
     useEffect(() => {
-        if (editval?.length > 0) {
+        // Don't reset value if we're currently loading autosave data
+        // if (isLoadingAutoSaveRef.current) return;
+
+        if (editval?.length > 0 && !narrativeAutoSaveID) {
 
             const accessIDs = editval[0]?.ApprovingSupervisorID1?.split(',').map(id => parseInt(id));
             setValue({
@@ -265,15 +702,17 @@ const ReportModule = (props) => {
             setIsUpdated(true)
             setRedactedComment(editval[0]?.RedactedComment)
         } else {
-            setValue({
-                ...value,
-                'ReportedByPINActivityID': checkId(loginPinID, agencyOfficerFullNameDrpData) ? loginPinID : loginPinID,
-                'WrittenForID': narrativeTypeCode?.toLowerCase() === 'ni' ? primaryOfficer : checkWrittenId(loginPinID, WrittenForDataDrp) ? loginPinID : loginPinID,
-            });
-            setRedactedComment("")
+            // Only reset if we're not loading autosave data and not in edit mode
+            if (!narrativeAutoSaveID && !status) {
+                setValue({
+                    ...value,
+                    'ReportedByPINActivityID': checkId(loginPinID, agencyOfficerFullNameDrpData) ? loginPinID : loginPinID,
+                    'WrittenForID': narrativeTypeCode?.toLowerCase() === 'ni' ? primaryOfficer : checkWrittenId(loginPinID, WrittenForDataDrp) ? loginPinID : loginPinID,
+                });
+                setRedactedComment("")
+            }
         }
     }, [editval, groupList, reportApproveOfficer, primaryOfficer])
-
 
     const escFunction = useCallback((event) => {
         if (event.key === "Escape") {
@@ -333,6 +772,10 @@ const ReportModule = (props) => {
         !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
         const { Agency_Name, UserName, AgencyAddress, ORI } = localStoreData;
 
+        // const Offenses = `<p><br/>100 - ALCOHOLIC BEVERAGE CODE VIOLATION- Felonry - Completed - 2nd Degree<br/>102 - ALCOHOLIC BEVERAGE CODE VIOLATION- Felonry - Completed - 2nd Degree</p>`
+        const Offenses = offenceFillterData?.map(offense => {
+            return `<p><br/>${offense?.OffenseName_Description} - ${categoryIdDrp?.find(category => category.value === offense?.CategoryId)?.label} - ${offense?.AttemptComplete}</p>`;
+        });
         if (e) {
 
             let updatedData = e?.templateContent
@@ -340,7 +783,7 @@ const ReportModule = (props) => {
                 .replace("{{AgencyName}}", Agency_Name || '')
                 .replace("{{AgencyAddress}}", AgencyAddress || '')
                 .replace("{{ORI}}", ORI || '')
-
+                .replace("{{Offenses}}", Offenses || '')
             setValue({ ...value, [name]: e.templateID, CommentsDoc: updatedData, Comments: updatedData });
         } else {
             setValue({ ...value, [name]: null, CommentsDoc: '', Comments: '' });
@@ -410,9 +853,25 @@ const ReportModule = (props) => {
         AddDeleteUpadate('Narrative/Insert_Narrative', val)
             .then((res) => {
                 if (res.success) {
+                    // Clear autosave interval and remove autosave ID from URL when report is saved
+                    if (autosaveIntervalRef.current) {
+                        clearInterval(autosaveIntervalRef.current);
+                        autosaveIntervalRef.current = null;
+                    }
+                    // Remove narrativeAutoSaveId from URL and state
+                    setNarrativeAutoSaveID(null);
+                    if (!isCaseManagement) {
+                        const params = new URLSearchParams(window.location.search);
+                        params.delete('narrativeAutoSaveId');
+                        const newURL = `${window.location.pathname}?${params.toString()}`;
+                        navigate(newURL, { replace: true });
+                    }
+
                     toastifySuccess(res?.Message); get_NarrativesData(incidentID, loginPinID);
                     GetData_ReportWorkLevelCheck(localStoreData?.AgencyID, res?.NarrativeID);
-                    get_IncidentTab_Count(incidentID, loginPinID); setNarrativeID(res?.NarrativeID);
+                    get_IncidentTab_Count(incidentID, loginPinID);
+                    get_Incident_Count(incidentID, loginPinID);
+                    setNarrativeID(res?.NarrativeID);
                     GetSingleData(res?.NarrativeID); setStatesChangeStatus(false);
                     setChangesStatus(false); setErrors(prev => ({ ...prev, AsOfDateError: '' }));
                     // validateIncSideBar
@@ -471,8 +930,23 @@ const ReportModule = (props) => {
     }
 
     const reset = () => {
+        // Clear autosave interval and remove autosave ID from URL when clicking NEW
+        if (autosaveIntervalRef.current) {
+            clearInterval(autosaveIntervalRef.current);
+            autosaveIntervalRef.current = null;
+        }
+        // Remove narrativeAutoSaveId from URL and state
+        setNarrativeAutoSaveID(null);
+
         if (!isCaseManagement) {
-            navigate(`/Inc-Report?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${true}&IsCadInc=${true}&narrativeAssignId=${stringToBase64('')}`)
+            // Build URL without narrativeAutoSaveId parameter
+            const params = new URLSearchParams();
+            params.set('IncId', stringToBase64(IncID));
+            params.set('IncNo', IncNo);
+            params.set('IncSta', true);
+            params.set('IsCadInc', true);
+            params.set('narrativeAssignId', stringToBase64(''));
+            navigate(`/Inc-Report?${params.toString()}`);
         }
         setValue({
             ...value,
@@ -729,10 +1203,24 @@ const ReportModule = (props) => {
 
         } else {
             if (row) {
+                // Clear autosave interval and remove autosave ID from URL when editing
+                if (autosaveIntervalRef.current) {
+                    clearInterval(autosaveIntervalRef.current);
+                    autosaveIntervalRef.current = null;
+                }
+                // Remove narrativeAutoSaveId from URL and state
+                setNarrativeAutoSaveID(null);
+                if (!isCaseManagement) {
+                    const params = new URLSearchParams(window.location.search);
+                    params.delete('narrativeAutoSaveId');
+                    const newURL = `${window.location.pathname}?${params.toString()}`;
+                    navigate(newURL, { replace: true });
+                }
+
                 setNarrativeID(row?.NarrativeID);
                 GetSingleData(row?.NarrativeID);
                 GetData_ReportWorkLevelCheck(loginAgencyID, row?.NarrativeID);
-                get_Group_List(loginAgencyID, loginPinID, row?.NarrativeID);
+                if (row?.NarrativeID) get_Group_List(loginAgencyID, loginPinID, row?.NarrativeID);
                 setUpDateCount(upDateCount + 1); dispatch(get_Report_Approve_Officer_Data(loginAgencyID, loginPinID, row?.NarrativeID));
                 setStatus(true);
                 setErrors({ ...errors, 'ReportedByPinError': '', 'AsOfDateError': '', 'NarrativeIDError': '', 'CommentsError': '', 'WrittenForIDError': '', }); setStatesChangeStatus(false);
@@ -752,7 +1240,7 @@ const ReportModule = (props) => {
                 const message = parsedData.Table[0].Message;
                 toastifySuccess(message);
                 get_IncidentTab_Count(incidentID, loginPinID); reset();
-            } else { console.log("Somthing Wrong"); }
+            } else { console.error("Somthing Wrong"); }
             get_NarrativesData(incidentID, loginPinID);
             // GetData_ReportWorkLevelCheck(loginAgencyID ,narrativeID);
         })
@@ -806,9 +1294,9 @@ const ReportModule = (props) => {
                     // GetData_ReportWorkLevelCheck(loginAgencyID ,narrativeID);
                     resets(); reset()
                 } else {
-                    console.log("something Wrong");
+                    console.error("something Wrong");
                 }
-            }).catch(err => console.log(err));
+            }).catch(err => console.warn(err));
     }
 
     const Agencychange = (multiSelected) => {
@@ -1039,25 +1527,173 @@ const ReportModule = (props) => {
         detectedWordsRef.current = Array.isArray(detectedWords) ? detectedWords : [];
     }, [detectedWords]);
 
+    // const onChangeComments = (value) => {
+    //     setChangesStatus(true);
+    //     setStatesChangeStatus(true);
+    //     setRedactedComment(value)
+    //     const data = value;
+    //     console.log("@@111 @@>>>  ", value)
+    //     if (data?.length > 0) {
+    //         const val = {
+    //             text: data,
+    //             IncidentID: incidentID,
+    //             AgencyID: loginAgencyID
+    //         };
+    //         AddDeleteUpadate('/suggestion/MissingFiled', val)
+    //             .then((res) => {
+    //                 console.log("@@222 @@>>>  ", res?.ReportText)
+    //                 setMissingField(res);
+    //                 setValue((prevValue) => ({
+    //                     ...prevValue,
+    //                     CommentsDoc: res?.ReportText,
+    //                 }));
+    //             })
+    //             .catch(err => setMissingField({}));
+    //     } else {
+    //         setMissingField({});
+    //     }
+    // }
+
+    // Debounce timer ref for MissingFiled API call
+    const missingFieldDebounceRef = useRef(null);
+    // Ref to track if update is coming from API response (to prevent infinite loop)
+    const isUpdatingFromAPI = useRef(false);
+    // Ref to store the last value sent to API (to prevent duplicate calls)
+    const lastAPICallValue = useRef('');
+    // Ref to store the text that was sent to API (to preserve user-added text)
+    const textSentToAPI = useRef('');
+
     useEffect(() => {
-        const data = value?.Comments?.replace(/\n/g, '');
+        const data = value?.CommentsDoc;
 
-        if (data?.length > 0) {
-            const val = {
-                text: data,
-                IncidentID: incidentID,
-                AgencyID: loginAgencyID
-            };
-            AddDeleteUpadate('/suggestion/MissingFiled', val)
-                .then((res) => {
-                    setMissingField(res);
-                })
-                .catch(err => setMissingField({}));
-        } else {
-            setMissingField({});
+        // Skip if this update is from API response
+        if (isUpdatingFromAPI.current) {
+            isUpdatingFromAPI.current = false;
+            return;
         }
-    }, [value.Comments]);
 
+        // Skip if the value hasn't changed from last API call
+        if (data === lastAPICallValue.current) {
+            return;
+        }
+
+        // Clear previous timeout
+        if (missingFieldDebounceRef.current) {
+            clearTimeout(missingFieldDebounceRef.current);
+        }
+
+        // Set new timeout for debouncing (3 seconds delay)
+        missingFieldDebounceRef.current = setTimeout(() => {
+            if (data?.length > 0) {
+                // Store the value we're about to send to API
+                lastAPICallValue.current = data;
+                // Store the text sent to API to preserve user-added text later
+                textSentToAPI.current = data;
+
+                const val = {
+                    text: data,
+                    IncidentID: incidentID,
+                    AgencyID: loginAgencyID
+                };
+                AddDeleteUpadate('/suggestion/MissingFiled', val)
+                    .then((res) => {
+                        setMissingField(res);
+                        // Update CommentsDoc with the modified HTML from ReportText
+                        const reportText = res?.ReportText || res?.data?.ReportText || res?.data?.Table?.[0]?.ReportText;
+                        if (reportText) {
+                            // Get current editor content to check if user has added text
+                            let currentEditorContent = '';
+                            if (narrativeQuillRef.current) {
+                                const quillInstance = narrativeQuillRef.current.getEditor();
+                                currentEditorContent = quillInstance.root.innerHTML;
+                            } else {
+                                currentEditorContent = value?.CommentsDoc || '';
+                            }
+
+                            // Only update if the current content still matches what we sent to API
+                            // This preserves user-added text that was typed after the API call was made
+                            const textSentToAPIValue = textSentToAPI.current;
+
+                            // Compare plain text (without HTML tags) to check if content has changed
+                            const stripHtml = (html) => {
+                                const tmp = document.createElement('DIV');
+                                tmp.innerHTML = html;
+                                return tmp.textContent || tmp.innerText || '';
+                            };
+
+                            const currentPlainText = stripHtml(currentEditorContent).trim();
+                            const sentPlainText = stripHtml(textSentToAPIValue).trim();
+
+                            // Only update if current content exactly matches what was sent (user hasn't added new text)
+                            // This prevents overwriting user-added text like "bhasvin" that might not be in span tags
+                            if (currentPlainText === sentPlainText) {
+                                // Set flag to prevent useEffect and onChange from triggering
+                                isUpdatingFromAPI.current = true;
+
+                                // Update the last API call value to the new reportText
+                                lastAPICallValue.current = reportText;
+
+                                // Update ReactQuill editor directly using 'api' source to prevent onChange
+                                if (narrativeQuillRef.current) {
+                                    const quillInstance = narrativeQuillRef.current.getEditor();
+
+                                    // Save current cursor position before updating (only if editor has focus)
+                                    const selection = quillInstance.getSelection(true);
+                                    const cursorIndex = selection && selection.index !== null ? selection.index : null;
+
+                                    // Get the length of current content
+                                    const length = quillInstance.getLength();
+
+                                    // Delete all content first, then insert new content using 'api' source
+                                    quillInstance.deleteText(0, length, 'api');
+                                    quillInstance.clipboard.dangerouslyPasteHTML(0, reportText, 'api');
+
+                                    // Restore cursor position after update (only if we had a valid cursor position)
+                                    if (cursorIndex !== null) {
+                                        // Use setTimeout to ensure the paste operation is complete before setting selection
+                                        setTimeout(() => {
+                                            const newLength = quillInstance.getLength();
+                                            // Ensure cursor position doesn't exceed new content length
+                                            const restoredIndex = Math.min(cursorIndex, Math.max(0, newLength - 1));
+                                            quillInstance.setSelection(restoredIndex, 'api');
+                                        }, 0);
+                                    }
+                                }
+
+                                // Update state (this will update the value prop, but onChange will be skipped due to flag)
+                                setValue((prevValue) => ({
+                                    ...prevValue,
+                                    CommentsDoc: reportText,
+                                    Comments: reportText,
+                                }));
+
+                                // Clear the flag after a short delay to allow React to process the update
+                                setTimeout(() => {
+                                    isUpdatingFromAPI.current = false;
+                                }, 100);
+                            }
+                        }
+                    })
+                    .catch(err => {
+                        setMissingField({});
+                        // Reset lastAPICallValue on error so we can retry
+                        lastAPICallValue.current = '';
+                        textSentToAPI.current = '';
+                    });
+            } else {
+                setMissingField({});
+                lastAPICallValue.current = '';
+                textSentToAPI.current = '';
+            }
+        }, 3000); // 3 seconds debounce delay
+
+        // Cleanup function to clear timeout on unmount or dependency change
+        return () => {
+            if (missingFieldDebounceRef.current) {
+                clearTimeout(missingFieldDebounceRef.current);
+            }
+        };
+    }, [value.CommentsDoc, incidentID, loginAgencyID]);
     const autoRedact = (quill, detectedWordsData) => {
         if (!quill || !Array.isArray(detectedWordsData) || detectedWordsData.length === 0) return;
 
@@ -1412,26 +2048,344 @@ const ReportModule = (props) => {
         "image",
     ];
 
-    const quillRef = useRef(null); // Reference for the Quill editor instance
+    const narrativeQuillRef = useRef(null); // Reference for the main narrative Quill editor instance
+    const redactQuillRef = useRef(null); // Reference for the redacted comment Quill editor instance
+
+
+    // Function to insert suggestion into editor
+    const insertSuggestion = useCallback((suggestion) => {
+        if (!narrativeQuillRef.current) return;
+
+        const quill = narrativeQuillRef.current.getEditor();
+        const selection = quill.getSelection(true);
+        if (!selection) return;
+
+        // Get current word boundaries
+        const text = quill.getText();
+        let start = selection.index;
+        let end = selection.index;
+
+        // Find word start
+        while (start > 0 && /\S/.test(text[start - 1])) {
+            start--;
+        }
+
+        // Find word end
+        while (end < text.length && /\S/.test(text[end])) {
+            end++;
+        }
+
+        // Format the insertion based on keyword
+        let textToInsert = '';
+        if (currentKeyword) {
+            // Format as "Keyword Suggestion" (e.g., "Gender Male")
+            textToInsert = `${currentKeyword} ${suggestion}`;
+        } else {
+            textToInsert = suggestion;
+        }
+
+        // Replace the word with formatted suggestion
+        quill.deleteText(start, end - start, 'user');
+        quill.insertText(start, textToInsert, 'user');
+        quill.setSelection(start + textToInsert.length, 'user');
+
+        // Hide autocomplete and reset
+        setAutocompletePosition(prev => ({ ...prev, show: false }));
+        setAutocompleteSuggestions([]);
+        setSelectedSuggestionIndex(-1);
+        setCurrentKeyword('');
+    }, [currentKeyword]);
+
+    // Handle keyboard navigation for autocomplete
+    const handleAutocompleteKeyDown = useCallback((e) => {
+        if (!autocompletePosition.show || autocompleteSuggestions.length === 0) return;
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            setSelectedSuggestionIndex(prev =>
+                prev < autocompleteSuggestions.length - 1 ? prev + 1 : prev
+            );
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            setSelectedSuggestionIndex(prev => prev > 0 ? prev - 1 : 0);
+        } else if (e.key === 'Enter' && selectedSuggestionIndex >= 0) {
+            e.preventDefault();
+            insertSuggestion(autocompleteSuggestions[selectedSuggestionIndex]);
+        } else if (e.key === 'Escape') {
+            e.preventDefault();
+            setAutocompletePosition(prev => ({ ...prev, show: false }));
+            setSelectedSuggestionIndex(-1);
+        }
+    }, [autocompletePosition.show, autocompleteSuggestions, selectedSuggestionIndex, insertSuggestion]);
+
     // Disable keyboard typing if status is "Approved"
     const handleKeyDown = (e) => {
         if (value?.Status === "Approved") {
             e.preventDefault(); // Prevent keyboard input when status is approved
+            return;
         }
+
+        // Handle autocomplete navigation
+        handleAutocompleteKeyDown(e);
     };
 
-    // Effect to initialize the Quill instance when the component mounts
+    const evaluateFieldTrigger = useCallback((quillInstance) => {
+        if (!quillInstance || value?.Status === 'Approved') {
+            setFieldDropdown(prev => prev.show ? { ...prev, show: false } : prev);
+            return false;
+        }
+
+        const selection = quillInstance.getSelection(true);
+        if (!selection) {
+            setFieldDropdown(prev => prev.show ? { ...prev, show: false } : prev);
+            return false;
+        }
+
+        const text = quillInstance.getText();
+        const cursorIndex = selection.index;
+        const textLower = text.toLowerCase();
+
+        // Field names to check (case insensitive)
+        const fieldNames = [
+            { name: 'gender', field: 'Gender' },
+            { name: 'race', field: 'Race' },
+            { name: 'ethnicity', field: 'Ethnicity' },
+            { name: 'resident', field: 'Resident' },
+            { name: 'victim', field: 'Victim' },
+            { name: 'offender', field: 'Offender' },
+            { name: 'other', field: 'Other' },
+            { name: 'vehiclecategory', field: 'Vehicle Category' },
+            { name: 'vehiclelosscode', field: 'Vehicle Loss Code' },
+            { name: 'platetype', field: 'Plate Type' },
+            { name: 'platestate', field: 'Plate State' },
+            { name: 'propertytype', field: 'Property Type' },
+            { name: 'propertylosscode', field: 'Property Loss Code' },
+            { name: 'propertycategory', field: 'Property Category' },
+        ];
+
+        for (const { name, field: fieldName } of fieldNames) {
+            // Look for "fieldname:" pattern (case insensitive), optionally preceded by "("
+            // We'll search backwards from cursor to find the pattern
+            const searchText = textLower.substring(0, cursorIndex);
+
+            // Try to find the field name followed by colon
+            const fieldPattern = name + ':';
+            let patternIndex = searchText.lastIndexOf(fieldPattern);
+
+            if (patternIndex === -1) continue;
+
+            const colonIndex = patternIndex + fieldPattern.length;
+
+            // Cursor must be at or after the colon
+            if (cursorIndex < colonIndex) continue;
+
+            // Only show dropdown when cursor is immediately after colon (or with whitespace only)
+            // This ensures dropdown only appears right after typing the colon, not later
+            const between = text.substring(colonIndex, cursorIndex);
+
+            // Allow only whitespace between colon and cursor (max 1 space for better UX)
+            if (!/^\s{0,1}$/.test(between)) continue;
+
+            // Find the end of any existing text after colon (for deletion purposes)
+            let endIndex = cursorIndex;
+            while (endIndex < text.length && text[endIndex] && text[endIndex] !== ' ' && text[endIndex] !== ')' && text[endIndex] !== '\n') {
+                endIndex++;
+            }
+
+            // Special handling for Property Loss Code and Property Category - filter based on Property Type
+            let filteredOptions = fieldOptions[fieldName];
+            if (fieldName === 'Property Loss Code' || fieldName === 'Property Category') {
+                // Search backwards from the current field position for Property Type
+                const textBeforeCurrentField = text.substring(0, patternIndex);
+                const propertyTypePattern = 'propertytype:';
+                const propertyTypeIndex = textBeforeCurrentField.toLowerCase().lastIndexOf(propertyTypePattern);
+
+                if (propertyTypeIndex !== -1) {
+                    // Found Property Type before current field
+                    const propertyTypeColonIndex = propertyTypeIndex + propertyTypePattern.length;
+                    // Extract the Property Type value (text after colon until space, closing paren, or newline)
+                    let propertyTypeEndIndex = propertyTypeColonIndex;
+                    while (propertyTypeEndIndex < textBeforeCurrentField.length &&
+                        textBeforeCurrentField[propertyTypeEndIndex] &&
+                        textBeforeCurrentField[propertyTypeEndIndex] !== ' ' &&
+                        textBeforeCurrentField[propertyTypeEndIndex] !== ')' &&
+                        textBeforeCurrentField[propertyTypeEndIndex] !== '\n') {
+                        propertyTypeEndIndex++;
+                    }
+                    const propertyTypeValue = textBeforeCurrentField.substring(propertyTypeColonIndex, propertyTypeEndIndex).trim();
+
+                    if (propertyTypeValue) {
+                        // Find the matching PropertyTypeIDs from propertyTypeData
+                        const matchedPropertyType = propertyTypeData?.find(item =>
+                            item.label?.toLowerCase() === propertyTypeValue.toLowerCase()
+                        );
+
+                        if (matchedPropertyType?.value) {
+                            // Filter based on field type
+                            // PropertyTypeIDs is now an array, check if it includes the selected property type's value
+                            const propertyTypeValueStr = String(matchedPropertyType.value);
+                            if (fieldName === 'Property Loss Code') {
+                                const filteredLossCodes = propertyLossCodeData?.filter(item => {
+                                    // Handle both array and string formats for backward compatibility
+                                    if (Array.isArray(item.PropertyTypeIDs)) {
+                                        return item.PropertyTypeIDs.includes(propertyTypeValueStr);
+                                    }
+                                    return item.PropertyTypeIDs === propertyTypeValueStr;
+                                });
+                                filteredOptions = filteredLossCodes?.map(item => item.Description) || [];
+                            } else if (fieldName === 'Property Category') {
+                                const filteredCategories = propertyCategoryData?.filter(item => {
+                                    // Handle both array and string formats for backward compatibility
+                                    if (Array.isArray(item.PropertyTypeIDs)) {
+                                        return item.PropertyTypeIDs.includes(propertyTypeValueStr);
+                                    }
+                                    return item.PropertyTypeIDs === propertyTypeValueStr;
+                                });
+                                filteredOptions = filteredCategories?.map(item => item.Description) || [];
+                            }
+                        } else {
+                            // Property Type not found, don't show dropdown
+                            continue;
+                        }
+                    } else {
+                        // Property Type value is empty, don't show dropdown
+                        continue;
+                    }
+                } else {
+                    // Property Type not found before current field, don't show dropdown
+                    continue;
+                }
+            }
+
+            if (!filteredOptions || filteredOptions.length === 0) {
+                continue;
+            }
+
+            const bounds = quillInstance.getBounds(cursorIndex);
+            const editorContainer = narrativeQuillRef.current?.editor?.container;
+            const containerRect = editorContainer?.getBoundingClientRect();
+
+            setFieldDropdown({
+                show: true,
+                field: fieldName,
+                position: {
+                    top: bounds.top + bounds.height + 5 + (containerRect?.top || 0) + window.scrollY,
+                    left: bounds.left + (containerRect?.left || 0) + window.scrollX,
+                },
+                startIndex: colonIndex,
+                endIndex,
+                requiresParen: false, // Not used anymore but keeping for compatibility
+                hasClosingParen: false, // Not used anymore but keeping for compatibility
+                filteredOptions: (fieldName === 'Property Loss Code' || fieldName === 'Property Category') ? filteredOptions : null, // Store filtered options for Property Loss Code and Property Category
+            });
+            return true;
+        }
+
+        setFieldDropdown(prev => prev.show ? { ...prev, show: false } : prev);
+        return false;
+    }, [fieldOptions, value?.Status, propertyLossCodeData, propertyCategoryData, propertyTypeData]);
+
+    // Function to insert field value
+    const insertFieldValue = useCallback((fieldValue) => {
+        if (!narrativeQuillRef.current || !fieldDropdown.show) return;
+
+        const quill = narrativeQuillRef.current.getEditor();
+        const { startIndex, endIndex } = fieldDropdown;
+
+        // Delete existing text after colon (if any)
+        const textToDelete = endIndex - startIndex;
+        if (textToDelete > 0) {
+            quill.deleteText(startIndex, textToDelete, 'user');
+        }
+
+        // Insert the selected value
+        quill.insertText(startIndex, fieldValue, 'user');
+
+        // Set cursor position after the inserted value (don't auto-add closing parenthesis)
+        let cursorPos = startIndex + fieldValue.length;
+        quill.setSelection(cursorPos, 'user');
+
+        // Hide dropdown
+        setFieldDropdown(prev => ({ ...prev, show: false }));
+    }, [fieldDropdown]);
+
+    // Effect to initialize the Quill instance when the component mounts and handle field triggers
     useEffect(() => {
-        if (quillRef.current) {
-            const quillInstance = quillRef.current.getEditor();
+        if (narrativeQuillRef.current) {
+            const quillInstance = narrativeQuillRef.current.getEditor();
+            quillEditorRef.current = quillInstance;
+
             // Enable mouse interactions
             if (value?.Status === "Approved") {
                 quillInstance.disable(); // Disable typing
             } else {
                 quillInstance.enable(); // Allow typing
             }
+
+            const triggerFieldDropdown = () => {
+                if (quillInstance.hasFocus()) {
+                    evaluateFieldTrigger(quillInstance);
+                }
+            };
+
+            const handleSelectionChange = (range, oldRange, source) => {
+                if (source === 'user') {
+                    triggerFieldDropdown();
+                }
+            };
+
+            const handleTextChange = (delta, oldDelta, source) => {
+                if (source === 'user') {
+                    triggerFieldDropdown();
+                }
+            };
+
+
+            quillInstance.on('selection-change', handleSelectionChange);
+            quillInstance.on('text-change', handleTextChange);
+
+            triggerFieldDropdown();
+
+            return () => {
+                quillInstance.off('selection-change', handleSelectionChange);
+                quillInstance.off('text-change', handleTextChange);
+            };
         }
-    }, [value?.Status]);
+    }, [evaluateFieldTrigger, value?.Status]);
+
+    // Close autocomplete when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (autocompletePosition.show) {
+                const quillContainer = narrativeQuillRef.current?.editor?.container;
+                const autocompleteElement = document.querySelector('[data-autocomplete-dropdown]');
+
+                if (quillContainer && !quillContainer.contains(event.target) &&
+                    autocompleteElement && !autocompleteElement.contains(event.target)) {
+                    setAutocompletePosition(prev => ({ ...prev, show: false }));
+                    setSelectedSuggestionIndex(-1);
+                }
+            }
+
+            // Close field dropdown when clicking outside
+            if (fieldDropdown.show) {
+                const quillContainer = narrativeQuillRef.current?.editor?.container;
+                const fieldDropdownElement = document.querySelector('[data-field-dropdown]');
+
+                if (quillContainer && !quillContainer.contains(event.target) &&
+                    fieldDropdownElement && !fieldDropdownElement.contains(event.target)) {
+                    setFieldDropdown(prev => ({ ...prev, show: false }));
+                }
+            }
+        };
+
+        if (autocompletePosition.show || fieldDropdown.show) {
+            document.addEventListener('mousedown', handleClickOutside);
+            return () => {
+                document.removeEventListener('mousedown', handleClickOutside);
+            };
+        }
+    }, [autocompletePosition.show, fieldDropdown.show]);
 
 
     const Add_Type_Comments = () => {
@@ -1769,7 +2723,8 @@ const ReportModule = (props) => {
                                                         missingField.PropertySuggestions ||
                                                         missingField.VehicleSuggestions ||
                                                         missingField?.MissingFields?.length > 0 ||
-                                                        missingField.ReasonCodeSuggestions
+                                                        missingField.ReasonCodeSuggestions ||
+                                                        missingField.ChargeCodeSuggestions
                                                     ) &&
                                                         <div className='mx-2'>
                                                             <label htmlFor="" className='new-summary' style={{ fontSize: "18px" }}>NIBRS Missing Information</label>
@@ -1811,6 +2766,23 @@ const ReportModule = (props) => {
                                                                         </div>
                                                                     </div>
                                                                 }
+                                                                {/* {missingField.ChargeCodeSuggestions &&
+                                                                    <div class="badge-bar px-2 py-2 mx-1 my-1">
+                                                                        <div class="d-flex align-items-center justify-content-between">
+                                                                            <div class="d-flex align-items-center">
+                                                                                <span class="badge-pill mr-2"><i class="fa fa-times"></i></span>
+                                                                                <span class="badge-title">Charge Code</span>
+                                                                            </div>
+
+                                                                        </div>
+                                                                        <div className="d-flex align-items-center flex-wrap mt-0">
+                                                                            <span>
+                                                                                <span className="bullet"></span>
+                                                                                <span className="meta">Please Enter Charge Code</span>
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                } */}
 
                                                                 {/* For other missing field  */}
                                                                 {missingField?.MissingFields?.length > 0 &&
@@ -1997,8 +2969,8 @@ const ReportModule = (props) => {
                                                                                         <span className="bullet"></span>
                                                                                         <span
                                                                                             className="meta"
-                                                                                            style={{ color: 'white', cursor: 'pointer', textDecoration: 'underline' }}
-                                                                                            onClick={() => { navigate(`/Off-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${true}&IsCadInc=${true}&narrativeAssignId=${stringToBase64('')}`) }}
+                                                                                        // style={{ color: 'white', cursor: 'pointer', textDecoration: 'underline' }}
+                                                                                        // onClick={() => { navigate(`/Off-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${true}&IsCadInc=${true}&narrativeAssignId=${stringToBase64('')}`) }}
                                                                                         >
                                                                                             {formatted}
                                                                                         </span>
@@ -2014,37 +2986,138 @@ const ReportModule = (props) => {
                                                         </div>
                                                     }
 
-                                                    <ReactQuill
-                                                        className={`editor-class ${value.Status === 'Pending Review' || value.Status === 'Approved' || ((value.Status === 'Draft' || value.Status === 'Rejected') && !IsSuperadmin && !(value.ReportedByPINActivityID === loginPinID || value.WrittenForID === loginPinID)) ? 'readonly' : ''}`}
-                                                        disabled={value.Status === 'Pending Review' || value.Status === 'Approved' || ((value.Status === 'Draft' || value.Status === 'Rejected') &&
-                                                            !IsSuperadmin &&
-                                                            !(value.ReportedByPINActivityID === loginPinID || value.WrittenForID === loginPinID))}
+                                                    <div style={{ position: 'relative' }}>
+                                                        <ReactQuill
+                                                            ref={narrativeQuillRef}
+                                                            className={`editor-class ${value.Status === 'Pending Review' || value.Status === 'Approved' || ((value.Status === 'Draft' || value.Status === 'Rejected') && !IsSuperadmin && !(value.ReportedByPINActivityID === loginPinID || value.WrittenForID === loginPinID)) ? 'readonly' : ''}`}
+                                                            disabled={value.Status === 'Pending Review' || value.Status === 'Approved' || ((value.Status === 'Draft' || value.Status === 'Rejected') &&
+                                                                !IsSuperadmin &&
+                                                                !(value.ReportedByPINActivityID === loginPinID || value.WrittenForID === loginPinID))}
 
-                                                        readOnly={value.Status === 'Pending Review' || value.Status === 'Approved' || ((value.Status === 'Draft' || value.Status === 'Rejected') && !IsSuperadmin && !(value.ReportedByPINActivityID === loginPinID || value.WrittenForID === loginPinID))}
-                                                        value={value.CommentsDoc}
-                                                        onChange={(value, delta, source, editor) => {
-                                                            const text = editor?.getText();
-                                                            // setChangesStatus(true); 
-                                                            setStatesChangeStatus(true);
+                                                            readOnly={value.Status === 'Pending Review' || value.Status === 'Approved' || ((value.Status === 'Draft' || value.Status === 'Rejected') && !IsSuperadmin && !(value.ReportedByPINActivityID === loginPinID || value.WrittenForID === loginPinID))}
+                                                            value={value.CommentsDoc}
+                                                            onChange={(value, delta, source, editor) => {
+                                                                // Skip if this update is from API response (to prevent infinite loop)
+                                                                if (isUpdatingFromAPI.current || source === 'api' || source === 'silent') {
+                                                                    return;
+                                                                }
 
-                                                            setValue((prevValue) => ({
-                                                                ...prevValue,
-                                                                Comments: text,
-                                                                CommentsDoc: value,
-                                                            }));
+                                                                // Check and show autocomplete when user types
+                                                                // if (source === 'user') {
+                                                                //     checkAndShowAutocomplete();
+                                                                // }
 
-                                                        }}
-                                                        modules={modules}
-                                                        formats={formats}
-                                                        editorProps={{ spellCheck: true }}
-                                                        theme="snow"
-                                                        placeholder="Write something..."
-                                                        style={{
-                                                            minHeight: 'auto',
-                                                            maxHeight: 'auto',
-                                                            overflowY: 'auto',
-                                                        }}
-                                                    />
+                                                                const text = editor?.getText();
+                                                                // setChangesStatus(true); 
+                                                                setStatesChangeStatus(true);
+
+                                                                setValue((prevValue) => ({
+                                                                    ...prevValue,
+                                                                    Comments: text,
+                                                                    CommentsDoc: value,
+                                                                }));
+
+                                                            }}
+                                                            onKeyDown={handleKeyDown}
+                                                            modules={modules}
+                                                            formats={formats}
+                                                            editorProps={{ spellCheck: true }}
+                                                            theme="snow"
+                                                            placeholder="Write something..."
+                                                            style={{
+                                                                minHeight: 'auto',
+                                                                maxHeight: 'auto',
+                                                                overflowY: 'auto',
+                                                            }}
+                                                        />
+
+                                                        {/* Autocomplete Dropdown */}
+                                                        {autocompletePosition.show && autocompleteSuggestions.length > 0 && (
+                                                            <div
+                                                                data-autocomplete-dropdown
+                                                                style={{
+                                                                    position: 'absolute',
+                                                                    top: `${autocompletePosition.top}px`,
+                                                                    left: `${autocompletePosition.left}px`,
+                                                                    zIndex: 9999,
+                                                                    backgroundColor: 'white',
+                                                                    border: '1px solid #ccc',
+                                                                    borderRadius: '4px',
+                                                                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                                                                    maxHeight: '200px',
+                                                                    overflowY: 'auto',
+                                                                    minWidth: '200px',
+                                                                    maxWidth: '400px',
+                                                                }}
+                                                                onClick={(e) => e.stopPropagation()}
+                                                            >
+                                                                {autocompleteSuggestions.map((suggestion, index) => (
+                                                                    <div
+                                                                        key={index}
+                                                                        onClick={() => insertSuggestion(suggestion)}
+                                                                        onMouseEnter={() => setSelectedSuggestionIndex(index)}
+                                                                        style={{
+                                                                            padding: '8px 12px',
+                                                                            cursor: 'pointer',
+                                                                            backgroundColor: index === selectedSuggestionIndex ? '#007bff' : 'transparent',
+                                                                            color: index === selectedSuggestionIndex ? 'white' : 'black',
+                                                                            borderBottom: index < autocompleteSuggestions.length - 1 ? '1px solid #eee' : 'none',
+                                                                        }}
+                                                                        onMouseDown={(e) => e.preventDefault()}
+                                                                    >
+                                                                        <label>{suggestion}</label>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        )}
+
+                                                        {/* Field Dropdown (Gender, Race, DOB) */}
+                                                        {fieldDropdown.show && ((fieldDropdown.filteredOptions && fieldDropdown.filteredOptions.length > 0) || (fieldOptions[fieldDropdown.field] && fieldOptions[fieldDropdown.field].length > 0)) && (
+                                                            <div
+                                                                data-field-dropdown
+                                                                style={{
+                                                                    position: 'fixed',
+                                                                    top: `${fieldDropdown.position.top}px`,
+                                                                    left: `${fieldDropdown.position.left}px`,
+                                                                    zIndex: 10000,
+                                                                    backgroundColor: 'white',
+                                                                    border: '1px solid #ccc',
+                                                                    borderRadius: '4px',
+                                                                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                                                                    maxHeight: '200px',
+                                                                    overflowY: 'auto',
+                                                                    minWidth: '200px',
+                                                                    maxWidth: '400px',
+                                                                }}
+                                                                onClick={(e) => e.stopPropagation()}
+                                                            >
+                                                                {(fieldDropdown.filteredOptions || fieldOptions[fieldDropdown.field] || []).map((option, index, arr) => (
+                                                                    <div
+                                                                        key={index}
+                                                                        onClick={() => insertFieldValue(option)}
+                                                                        style={{
+                                                                            padding: '8px 12px',
+                                                                            cursor: 'pointer',
+                                                                            backgroundColor: 'transparent',
+                                                                            color: 'black',
+                                                                            borderBottom: index < arr.length - 1 ? '1px solid #eee' : 'none',
+                                                                        }}
+                                                                        onMouseEnter={(e) => {
+                                                                            e.target.style.backgroundColor = '#007bff';
+                                                                            e.target.style.color = 'white';
+                                                                        }}
+                                                                        onMouseLeave={(e) => {
+                                                                            e.target.style.backgroundColor = 'transparent';
+                                                                            e.target.style.color = 'black';
+                                                                        }}
+                                                                        onMouseDown={(e) => e.preventDefault()}
+                                                                    >
+                                                                        <label style={{ cursor: 'pointer', margin: 0 }}>{option}</label>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        )}
+                                                    </div>
 
                                                     {errors.CommentsError !== 'true' ? (
                                                         <span style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.CommentsError}</span>
@@ -2081,7 +3154,7 @@ const ReportModule = (props) => {
                                                         </div>
                                                     }
                                                     <ReactQuill
-                                                        ref={quillRef}
+                                                        ref={redactQuillRef}
                                                         className="editor-class"
                                                         value={redactedComment}
                                                         onChange={(value) => {
@@ -2898,9 +3971,9 @@ const RecallNarrativeModal = (props) => {
                     resetRecall();
                     // resets(); reset()
                 } else {
-                    console.log("something Wrong");
+                    console.error("something Wrong");
                 }
-            }).catch(err => console.log(err));
+            }).catch(err => console.warn(err));
     }
 
 
@@ -2970,3 +4043,19 @@ const RecallNarrativeModal = (props) => {
 
 
 
+const changeArrayFormatNew = (data) => {
+    if (!data || !Array.isArray(data)) {
+        return [];
+    }
+
+    return data.map((item) => ({
+        Code: item.ChargeCode,
+        AgencyCode: item.AgencyCode || '',
+        Description: item.Description || '',
+        FBIID: item.FBIDescription || '',
+        MultiAgency_Name: item.MultiAgency_Name,
+        IsEditable: item.IsEditable,
+        ChargeCodeID: item.ChargeCodeID || '',
+        IsActive: item.IsActive
+    }));
+};

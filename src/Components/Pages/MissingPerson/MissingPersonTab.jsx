@@ -70,8 +70,7 @@ const MissingPersonTab = () => {
     const [status, setStatus] = useState();
     const [showIncPage, setShowIncPage] = useState('home');
     const iconHome = <i className="fa fa-home" style={{ fontSize: '20px' }}></i>
-    console.log('changesStatus', changesStatus);
-    console.log('showIncPage', showIncPage);
+
     useEffect(() => {
         if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
             if (uniqueId) dispatch(get_LocalStoreData(uniqueId));

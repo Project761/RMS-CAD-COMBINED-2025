@@ -202,6 +202,7 @@ export const Narrative_Type_Drp_Data = 'Narrative_Type_Drp_Data';
 export const CaseTask_Drp_Data = 'CaseTask_Drp_Data';
 export const Report_App_Officer_Drp_Data = 'Report_App_Officer_Drp_Data';
 export const SourceType_Drp_Data = 'SourceType_Drp_Data';
+export const ReasonCase_Drp_Data = 'ReasonCase_Drp_Data';
 
 
 

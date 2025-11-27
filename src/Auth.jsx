@@ -135,39 +135,39 @@ const Auth = (props) => {
   // const timeout = 1800000;
   const timeout = 14400000;
   const sessionTimeOut = sessionStorage.getItem("SessionTimeOut");
-  const resetTimer = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-    timerRef.current = setTimeout(logout, parseInt(sessionTimeOut) * 60 * 1000);
-  };
+  // const resetTimer = () => {
+  //   if (timerRef.current) {
+  //     clearTimeout(timerRef.current);
+  //   }
+  //   timerRef.current = setTimeout(logout, parseInt(sessionTimeOut) * 60 * 1000);
+  // };
 
   const logout = async () => {
-    const ConnectionID = localStorage.getItem("connectionId");
-    if (localStoreData?.PINID && ConnectionID) {
-      await GoogleAuthServices.logOutSingleDevices({ UserPINID: localStoreData?.PINID.toString(), ConnectionID: base64ToString(ConnectionID) });
-    }
-    navigate("/");
+    // const ConnectionID = localStorage.getItem("connectionId");
+    // if (localStoreData?.PINID && ConnectionID) {
+    //   await GoogleAuthServices.logOutSingleDevices({ UserPINID: localStoreData?.PINID.toString(), ConnectionID: base64ToString(ConnectionID) });
+    // }
+    // navigate("/");
   };
 
-  useEffect(() => {
-    resetTimer();
-    const events = ['mousemove', 'mousedown', 'keypress', 'scroll', 'touchstart', 'load', 'click', 'resize'];
-    const handleActivity = () => {
-      resetTimer();
-    };
+  // useEffect(() => {
+  //   resetTimer();
+  //   const events = ['mousemove', 'mousedown', 'keypress', 'scroll', 'touchstart', 'load', 'click', 'resize'];
+  //   const handleActivity = () => {
+  //     resetTimer();
+  //   };
 
-    events.forEach(event => {
-      window.addEventListener(event, handleActivity);
-    });
+  //   events.forEach(event => {
+  //     window.addEventListener(event, handleActivity);
+  //   });
 
-    return () => {
-      clearTimeout(timerRef.current);
-      events.forEach(event => {
-        window.removeEventListener(event, handleActivity);
-      });
-    };
-  }, [sessionTimeOut]);
+  //   return () => {
+  //     clearTimeout(timerRef.current);
+  //     events.forEach(event => {
+  //       window.removeEventListener(event, handleActivity);
+  //     });
+  //   };
+  // }, [sessionTimeOut]);
 
   return (
     <>

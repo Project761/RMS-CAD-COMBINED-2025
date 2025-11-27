@@ -3763,7 +3763,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, }) => {
                                         placeholder="Select.."
                                         styles={!isSocietyName && roleStatus ? Requiredcolour : ''}
 
-                                        isDisabled={isSocietyName || (masterNameID && MstPage === "MST-Name-Dash") || (nameID)}
+                                        isDisabled={isSocietyName || (masterNameID && MstPage === "MST-Name-Dash") || (nameID && editval[0]?.VictimTypeID)}
 
                                     />
                                 </div>

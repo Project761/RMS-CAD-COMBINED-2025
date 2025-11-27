@@ -22,7 +22,8 @@ import {
     Training_Course_Drp_Data,
     Level_Clearance_Drp_Data,
     CaseTask_Drp_Data,
-    SourceType_Drp_Data
+    SourceType_Drp_Data,
+    ReasonCase_Drp_Data
 
 
 } from "../actionTypes"
@@ -40,7 +41,7 @@ const initialState = {
     circumstancesDrpData: [], bodyXRayDrpData: [], skinToneDrpData: [], missingPersonRelationshipDrpData: [], correctedVisionDrpData: [], fingerPrintedDrpData: [], missingCMCDrpData: [], bloodTypeDrpData: [], circumcisionDrpData: [],
     JwelleryDrpData: [], receiveSourceDrpData: [], fbiCodesDrpData: [], cadCfsCodeDrpData: [], rmsDispositionDrpData: [], cadDispositionDrpData: [], narrativeTypeDrpData: [],
     pictureTypeDrpData: [], pictureViewDrpData: [], topColorDrpData: [], bottomColorDrpData: [], eyeColorDrpData: [], hairColorDrpData: [], isPrimaryDrpData: [], isSecondaryDrpData: [], alertDrpData: [], arresteeNameVehicle: [],
-    caseTaskDrpData: [], sourceTypeDrpData: [],
+    caseTaskDrpData: [], sourceTypeDrpData: [], reasonCaseDrpData: [],
 
 
     //------------------------------------ArrestHome-----------------------------
@@ -537,6 +538,11 @@ const DropDownReducer = (state = initialState, action) => {
             return {
                 ...state,
                 LevelClearanceDrpData: action.payload
+            }
+        case ReasonCase_Drp_Data:
+            return {
+                ...state,
+                reasonCaseDrpData: action.payload
             }
         default: return state
     }

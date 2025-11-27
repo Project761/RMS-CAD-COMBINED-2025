@@ -30,7 +30,7 @@ const QueueCallProvider = ({ children }) => {
     }
   }, [localStoreData]);
 
-  const getQueueCallKey = `/CAD/Monitor/MasterBoloDispositionGet/${queueCall === 'myQueueCall' ? loginPinID : 0}`;
+  const getQueueCallKey = `/CAD/CallTakerIncident/GetQueueCall/${queueCall === 'myQueueCall' ? loginPinID : 0}`;
 
   const {
     data,
@@ -46,7 +46,7 @@ const QueueCallProvider = ({ children }) => {
     {
       refetchOnWindowFocus: false,
       retry: 0,
-      enabled: window.location.pathname.includes('/cad/') && !!loginAgencyID && !!loginPinID,
+      enabled: !!loginAgencyID && !!loginPinID,
       onSuccess: (res) => {
         if (res?.data?.Data?.length === 0) {
           setQueueCallData([]);
@@ -79,7 +79,7 @@ const QueueCallProvider = ({ children }) => {
     MonitorServices.getQueueCallCount,
     {
       refetchOnWindowFocus: false,
-      enabled: window.location.pathname.includes('/cad/') && !!loginAgencyID,
+      enabled: !!loginAgencyID,
       onSuccess: (res) => {
         const parsedData = JSON.parse(res?.data?.data)?.Table || [];
         setQueueCallCount(parsedData?.[0]?.QueueCallCount || 0);

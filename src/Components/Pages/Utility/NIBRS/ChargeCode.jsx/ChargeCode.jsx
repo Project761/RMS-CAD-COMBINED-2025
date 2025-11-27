@@ -83,7 +83,9 @@ const ChargeCode = () => {
                 IsSuperAdmin: '1',
                 PINID: '1',
                 OrderTypeDescription: activeColumn === 'Description' ? orderTypeDescription : '',
-                OrderTypeCode: activeColumn === 'Code' ? orderTypeCode : ''
+                OrderTypeCode: activeColumn === 'Code' ? orderTypeCode : '',
+                Ispagination: true
+
             });
 
             if (res) {
@@ -138,11 +140,12 @@ const ChargeCode = () => {
             IsSuperAdmin: IsSuperAdmin,
             PINID: loginPinID,
             OrderTypeDescription: activeColumn === 'Description' ? orderTypeDescription : '',
-            OrderTypeCode: activeColumn === 'Code' ? orderTypeCode : ''
+            OrderTypeCode: activeColumn === 'Code' ? orderTypeCode : '',
+            Ispagination: true
         };
         fetch_Post_Data(getUrl, val).then((res) => {
             if (res) {
-                console.log(res)
+
                 setFillterListData(changeArrayFormat(res?.Data));
                 setEffectiveScreenPermission(res?.Permision);
                 setTotalRows(res?.Data[0]?.Count || 0);

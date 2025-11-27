@@ -58,7 +58,8 @@ function DetectiveNotes({ CaseId }) {
     const [filterState, , handleFilterState, clearFilterState] = useObjState({
         filterText: '',
         filterNoteBy: null,
-        filterConfidence: null
+        filterConfidence: null,
+        hasDocuments: false,
     })
 
     useEffect(() => {
@@ -80,6 +81,7 @@ function DetectiveNotes({ CaseId }) {
             "NoteByID": filterState?.filterNoteBy?.value,
             "ConfidenceID": filterState?.filterConfidence?.PriorityID,
             "IntelligenceText": filterState?.filterText,
+            "HasDocuments": filterState?.hasDocuments,
         },],
         CaseManagementServices.getAllDetectiveNotes,
         {
@@ -383,6 +385,7 @@ function DetectiveNotes({ CaseId }) {
             </div>
         )
     };
+
     const NoteCard = ({ note, index, showPinAction = true }) => {
         const image = JSON.parse(note?.Documents)
         return (
@@ -662,7 +665,7 @@ function DetectiveNotes({ CaseId }) {
                             options={agencyOfficerDrpData}
                             placeholder="Select"
                             styles={colorLessStyle_Select}
-                            value={filterState.filterNoteBy}
+                            value={filterState?.filterNoteBy}
                             onChange={(e) => handleFilterState('filterNoteBy', e)}
                         />
                     </div>
@@ -673,7 +676,7 @@ function DetectiveNotes({ CaseId }) {
                             options={PriorityDrpData}
                             placeholder="Select"
                             styles={colorLessStyle_Select}
-                            value={filterState.filterConfidence}
+                            value={filterState?.filterConfidence}
                             getOptionLabel={(v) => `${v?.PriorityCode} | ${v?.Description}`}
                             getOptionValue={(v) => v?.PriorityCode}
                             formatOptionLabel={(option, { context }) => {
@@ -684,14 +687,13 @@ function DetectiveNotes({ CaseId }) {
                             onChange={(e) => handleFilterState('filterConfidence', e)}
                         />
                     </div>
-                    <div className="col-md-2">
-                        <button
-                            type="button"
-                            className="btn btn-success px-4 py-2"
-                            onClick={handleApplyFilter}
-                        >
-                            Apply Filter
-                        </button>
+                    <div className="col-md-2 mb-2 d-flex align-items-center" style={{ gap: "10px" }}>
+                        <label className="form-label text-nowrap">Has Documents</label>
+                        <input
+                            type="checkbox"
+                            checked={filterState?.hasDocuments || false}
+                            onChange={(e) => handleFilterState('hasDocuments', e.target.checked)}
+                        />
                     </div>
                 </div>
             </fieldset>

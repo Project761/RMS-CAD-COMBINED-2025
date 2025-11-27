@@ -398,7 +398,7 @@ const AgencySetting = () => {
                                     <div className="col-4 col-md-4 col-lg-2 mt-1 text-field">
                                         <input type="text" name='MaxAgeForJuvenileByFederal_UCR_NIBRS' value={value?.MaxAgeForJuvenileByFederal_UCR_NIBRS} onChange={HandleChanges} maxLength={2} required />
                                     </div>
-                                    <div className="col-8 col-md-8 col-lg-3 mt-2 pt-1">
+                                    {/* <div className="col-8 col-md-8 col-lg-3 mt-2 pt-1">
                                         <label htmlFor="" className='new-label'>Session Time Out</label>
                                     </div>
                                     <div className="col-4 col-md-4 col-lg-3 mt-1 text-field">
@@ -411,7 +411,7 @@ const AgencySetting = () => {
                                             max={15}
                                             required
                                         />
-                                    </div>
+                                    </div> */}
                                     <div className='col-12 col-md-12 col-lg-12'>
                                         <div className='row align-items-center'>
                                             <div className="col-8 col-md-8 col-lg-4">
