@@ -1012,7 +1012,8 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                         onChange={HandleChange}
 
                                         className={"form-check-input"}
-                                        disabled={isLockOrRestrictModule("Lock", Editval[0]?.IsJuvenileArrest, isLocked) ? true : false}
+                                        disabled={true}
+                                    // disabled={isLockOrRestrictModule("Lock", Editval[0]?.IsJuvenileArrest, isLocked) ? true : false}
                                     />
                                     <label className="form-check-label mb-0 text-nowrap" htmlFor="flexCheckDefault">Juvenile Arrest</label>
                                 </div>

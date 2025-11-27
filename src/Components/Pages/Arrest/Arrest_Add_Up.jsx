@@ -839,7 +839,7 @@ const Arrest_Add_Up = () => {
                                                                     <CriminalActivity {...{ DecArrestId, DecIncID, ListData, get_List, isLocked, setIsLocked }} />
                                                                     :
                                                                     showPage === 'CourtInformation' ?
-                                                                        <CourtInformation {...{ DecArrestId, DecIncID, ListData, get_List, isLocked, setIsLocked }} />
+                                                                        <CourtInformation {...{ DecArrestId, DecIncID, Editval, ListData, get_List, isLocked, setIsLocked }} />
                                                                         :
                                                                         showPage === 'PoliceForce' && showPoliceForce ?
                                                                             <PoliceForce {...{ DecArrestId, DecIncID, ListData, isLocked, setIsLocked }} />
