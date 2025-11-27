@@ -307,32 +307,29 @@ const Warrant = (props) => {
             selector: (row) => row.DateTimeIssued ? getShowingDateText(row.DateTimeIssued) : " ",
             sortable: true
         },
-
         {
             name: 'Expired Date/Time',
             selector: (row) => row.DateExpired ? getShowingDateText(row.DateExpired) : " ",
             sortable: true
         },
-
-
         {
             name: <p className='text-end' style={{ position: 'absolute', top: 8, right: 10 }}>Delete</p>,
             cell: row =>
                 <div className="div" style={{ position: 'absolute', top: 4, right: 10 }}>
                     {
                         effectiveScreenPermission ?
-                            effectiveScreenPermission[0]?.DeleteOK ?
+                            effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", warrentTypeData, isLocked, true) ?
                                 <span onClick={() => { setWarrantID(row.WarrantID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                                     <i className="fa fa-trash"></i>
                                 </span>
                                 : <></>
-                            : <span onClick={() => { setWarrantID(row.WarrantID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
+                            :
+                            !isLockOrRestrictModule("Lock", warrentTypeData, isLocked, true) &&
+                            <span onClick={() => { setWarrantID(row.WarrantID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                                 <i className="fa fa-trash"></i>
                             </span>
                     }
-
                 </div>
-
         }
     ]
 

@@ -514,14 +514,12 @@ const Arrest_Add_Up = () => {
                                                                         </div>
                                                                     </>
                                                             }
-
-
                                                             {/* Delete Button */}
                                                             {
                                                                 effectiveScreenPermission ?
                                                                     <>
                                                                         {
-                                                                            effectiveScreenPermission[0]?.DeleteOK ?
+                                                                            effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", arrestFilterData, isLocked, true) ?
                                                                                 <>
                                                                                     <div
                                                                                         style={{
@@ -551,26 +549,29 @@ const Arrest_Add_Up = () => {
                                                                     </>
                                                                     :
                                                                     <>
-                                                                        <div
-                                                                            style={{
-                                                                                backgroundColor: "#001f3f",
-                                                                                color: "white",
-                                                                                width: "36px",
-                                                                                height: "36px",
-                                                                                borderRadius: "50%",
-                                                                                display: "flex",
-                                                                                alignItems: "center",
-                                                                                justifyContent: "center",
-                                                                                cursor: "pointer",
-                                                                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                                                            }}
-                                                                            data-toggle="modal"
-                                                                            data-target="#DeleteModal"
-                                                                            onClick={() => { setArrestID(row.ArrestID); }}
-                                                                            title="Delete"
-                                                                        >
-                                                                            <i className="fa fa-trash"></i>
-                                                                        </div>
+                                                                        {
+                                                                            !isLockOrRestrictModule("Lock", arrestFilterData, isLocked, true) &&
+                                                                            <div
+                                                                                style={{
+                                                                                    backgroundColor: "#001f3f",
+                                                                                    color: "white",
+                                                                                    width: "36px",
+                                                                                    height: "36px",
+                                                                                    borderRadius: "50%",
+                                                                                    display: "flex",
+                                                                                    alignItems: "center",
+                                                                                    justifyContent: "center",
+                                                                                    cursor: "pointer",
+                                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                                }}
+                                                                                data-toggle="modal"
+                                                                                data-target="#DeleteModal"
+                                                                                onClick={() => { setArrestID(row.ArrestID); }}
+                                                                                title="Delete"
+                                                                            >
+                                                                                <i className="fa fa-trash"></i>
+                                                                            </div>
+                                                                        }
                                                                     </>
                                                             }
                                                             {/* <div
