@@ -35,7 +35,7 @@ const Arrest_Add_Up = () => {
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
     const arresteeNameData = useSelector((state) => state.DropDown.arresteeNameData);
 
-    const { updateCount, EditArrestStatus, incidentCount, setEditArrestStatus, tabCountArrest, get_OffenseName_Data, get_Data_Arrest_Charge, get_Arrest_Count, changesStatus, arrestFilterData, get_Data_Arrest } = useContext(AgencyContext)
+    const { updateCount, EditArrestStatus, incidentCount, offenseChargeCount, setoffenseChargeCount, arrestChargeData, setEditArrestStatus, tabCountArrest, get_OffenseName_Data, get_Data_Arrest_Charge, get_Arrest_Count, changesStatus, arrestFilterData, get_Data_Arrest } = useContext(AgencyContext)
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -114,10 +114,19 @@ const Arrest_Add_Up = () => {
 
     useEffect(() => {
         if (localStoreData) {
+
             setloginAgencyID(localStoreData?.AgencyID); setloginPinID(localStoreData?.PINID);
             dispatch(get_ScreenPermissions_Data("A067", localStoreData?.AgencyID, localStoreData?.PINID));
         }
     }, [localStoreData]);
+
+    useEffect(() => {
+        setoffenseChargeCount(arrestChargeData?.length)
+    }, [arrestChargeData])
+
+
+
+
 
     useEffect(() => {
         if (ArresteeID) {
@@ -673,7 +682,7 @@ const Arrest_Add_Up = () => {
                                                             if (!changesStatus) { setShowPage('Charges') }
                                                         }}>
 
-                                                        Charge{`${tabCountArrest?.ChargeCount > 0 ? '(' + tabCountArrest?.ChargeCount + ')' : ''}`}
+                                                        Charge{`${tabCountArrest?.ChargeCount > 0 ? '(' + tabCountArrest?.ChargeCount + ')' : offenseChargeCount > 0 && showPage === 'Charges' ? '(' + offenseChargeCount + ')' : ''}`}
                                                     </span>
 
                                                     <span
