@@ -181,10 +181,10 @@ const Reports = (props) => {
             {/* Button Actions */}
             <div className="btn-box text-right mr-1 mb-2 mt-2">
                 <button type="button" className="btn btn-sm btn-success mr-1">
-                    Export Reconciliation CSV
+                 Print
                 </button>
                 <button type="button" className="btn btn-sm btn-success mr-1">
-                    Finalize & Build Report
+                    Export Exceptions CSV
                 </button>
             </div>
         </div>
