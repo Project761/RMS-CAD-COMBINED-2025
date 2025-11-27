@@ -23,6 +23,7 @@ import { useReactToPrint } from 'react-to-print';
 import Loader from '../../../../Common/Loader';
 
 const PoliceForce = (props) => {
+
   const { incidentReportedDate } = props
   const deleteSelectedRef = useRef(null);
   const clearAllRef = useRef(null);

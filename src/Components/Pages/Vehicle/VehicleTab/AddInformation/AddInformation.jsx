@@ -4,7 +4,7 @@ import DatePicker from "react-datepicker";
 import { AgencyContext } from "../../../../../Context/Agency/Index";
 import { Link, useLocation } from "react-router-dom";
 import {
-  base64ToString, changeArrayFormat, changeArrayFormat_WithFilter, customStylesWithOutColor, Decrypt_Id_Name, getShowingMonthDateYear, getShowingWithOutTime, Requiredcolour,
+  base64ToString, changeArrayFormat, changeArrayFormat_WithFilter, customStylesWithOutColor, Decrypt_Id_Name, getShowingMonthDateYear, getShowingWithOutTime, isLockOrRestrictModule, LockFildscolour, Requiredcolour,
 } from "../../../../Common/Utility";
 import { useSelector, useDispatch } from "react-redux";
 import { get_LocalStoreData } from "../../../../../redux/actions/Agency";
@@ -21,7 +21,7 @@ import SendPropertyConfirmModel from "../../../../Common/SendPropertyConfirmMode
 
 const AddInformation = (props) => {
 
-  const { ListData, DecVehId, DecMVehId,  propertystatus, setIsNonPropertyRoomSelected, setPropertyStatus, isViewEventDetails = false, } = props;
+  const { ListData, DecVehId, DecMVehId, propertystatus, setIsNonPropertyRoomSelected, setPropertyStatus, isViewEventDetails = false, isLocked, setIsLocked } = props;
   const dispatch = useDispatch();
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
   const uniqueId = sessionStorage.getItem("UniqueUserID") ? Decrypt_Id_Name(sessionStorage.getItem("UniqueUserID"), "UForUniqueUserID") : "";
@@ -51,7 +51,7 @@ const AddInformation = (props) => {
   const [loginAgencyID, setLoginAgencyID] = useState("");
   const [loginPinID, setLoginPinID] = useState("");
   const [mainIncidentID, setMainIncidentID] = useState("");
-  const [editval, setEditval] = useState();
+  const [editval, setEditval] = useState([]);
   const [vehicleId, setVehicleId] = useState("");
   const [statesChangeStatus, setStatesChangeStatus] = useState(false);
   const [masterPropertyID, setMasterPropertyID] = useState("");
@@ -171,8 +171,8 @@ const AddInformation = (props) => {
   useEffect(() => {
     if (editval) {
       // const IsSendToPropertyRoom = editval[0].IsSendToPropertyRoom === false && editval[0].CollectionDtTm === null && editval[0].CollectingOfficer === null ? true : editval[0]?.IsSendToPropertyRoom;
-      const IsSendToPropertyRoom = editval[0].IsSendToPropertyRoom === false && (editval[0].CollectionDtTm === null || editval[0].CollectionDtTm === undefined) &&
-        (editval[0].CollectingOfficer === null || editval[0].CollectingOfficer === undefined)
+      const IsSendToPropertyRoom = editval[0]?.IsSendToPropertyRoom === false && (editval[0]?.CollectionDtTm === null || editval[0]?.CollectionDtTm === undefined) &&
+        (editval[0]?.CollectingOfficer === null || editval[0]?.CollectingOfficer === undefined)
         ? true
         : editval[0]?.IsSendToPropertyRoom;
 
@@ -316,7 +316,6 @@ const AddInformation = (props) => {
     }
   };
 
-
   const Delete_Document = (fileToDelete) => {
     setSelectedFiles((prev) => prev.filter((file) => file.documentID !== fileToDelete.documentID && file.name !== fileToDelete.name));
     if (fileToDelete.isFromAPI) {
@@ -450,7 +449,6 @@ const AddInformation = (props) => {
     }
   };
 
-
   const ChangeDropDown = (e, name) => {
     !addUpdatePermission && setStatesChangeStatus(true);
     !addUpdatePermission && setChangesStatus(true);
@@ -564,7 +562,6 @@ const AddInformation = (props) => {
       });
   };
 
-
   const Get_SendTask_Data = (PropertyID, MasterPropertyID) => {
     const val = { PropertyID: PropertyID, MasterPropertyID: MasterPropertyID };
     fetchPostData("TaskList/GetData_TaskList", val)
@@ -629,6 +626,7 @@ const AddInformation = (props) => {
     });
   };
 
+
   useEffect(() => {
     if (loginAgencyID) {
       dispatch(get_Report_Approve_Officer_Data(loginAgencyID, loginPinID));
@@ -660,9 +658,10 @@ const AddInformation = (props) => {
                 id="TagID"
                 value={value?.TagID}
                 onChange={HandleChanges1}
-                className="readonlyColor"
                 required
                 readOnly
+                className={isLockOrRestrictModule("Lock", editval[0]?.TagID, isLocked) ? "LockFildsColor" : "readonlyColor"}
+                disabled={isLockOrRestrictModule("Lock", editval[0]?.TagID, isLocked) ? true : false}
               />
             </div>
             <div className="col-2 col-md-2 col-lg-3 mt-2 ">
@@ -677,9 +676,11 @@ const AddInformation = (props) => {
                 id="NICBIDID"
                 value={value?.NICBIDID}
                 onChange={HandleChanges}
-                className="readonlyColor"
                 required
                 readOnly
+
+                className={isLockOrRestrictModule("Lock", editval[0]?.NICBIDID, isLocked) ? "LockFildsColor" : "readonlyColor"}
+                disabled={isLockOrRestrictModule("Lock", editval[0]?.NICBIDID, isLocked) ? true : false}
               />
             </div>
           </div>
@@ -693,7 +694,6 @@ const AddInformation = (props) => {
               <DatePicker
                 id="DestroyDtTm"
                 name="DestroyDtTm"
-                className="readonlyColor"
                 onChange={(date) => {
                   !addUpdatePermission && setStatesChangeStatus(true);
                   !addUpdatePermission && setChangesStatus(true);
@@ -720,9 +720,12 @@ const AddInformation = (props) => {
                 showYearDropdown
                 showMonthDropdown
                 dropdownMode="select"
+
+                className={isLockOrRestrictModule("Lock", editval[0]?.DestroyDtTm, isLocked) ? "LockFildsColor" : "readonlyColor"}
+                disabled={isLockOrRestrictModule("Lock", editval[0]?.DestroyDtTm, isLocked) ? true : false}
               />
             </div>
-            <div className="col-2 col-md-2 col-lg-3 mt-2 ">
+            <div className="col-2 col-md-2 col-lg-3 mt-2">
               <label htmlFor="" className="new-label">
                 Description
               </label>
@@ -736,7 +739,10 @@ const AddInformation = (props) => {
                 onChange={HandleChanges1}
                 cols="30"
                 rows="1"
-                className="form-control  "
+                // className="form-control"
+
+                className={isLockOrRestrictModule("Lock", editval[0]?.Description, isLocked) ? "form-control LockFildsColor" : "form-control"}
+                disabled={isLockOrRestrictModule("Lock", editval[0]?.Description, isLocked) ? true : false}
               ></textarea>
             </div>
           </div>
@@ -744,13 +750,16 @@ const AddInformation = (props) => {
             <div className="col-5 col-md-4 col-lg-4 mt-2">
               <div className="form-check ">
                 <input
-                  className="form-check-input"
                   name="IsImmobalizationDevice"
                   value={value?.IsImmobalizationDevice}
                   checked={value?.IsImmobalizationDevice}
                   onChange={HandleChanges1}
                   type="checkbox"
                   id="flexCheckDefault2"
+                  className="form-check-input" // on Checkboxes class is not needed for lockColor
+                // className={isLockOrRestrictModule("Lock", editval[0]?.IsImmobalizationDevice, isLocked) ? "form-check-input LockFildsColor" : "form-check-input"}
+
+                // disabled={isLockOrRestrictModule("Lock", editval[0]?.IsImmobalizationDevice, isLocked) ? true : false}
                 />
                 <label className="form-check-label" htmlFor="flexCheckDefault2">
                   Immobilization Device
@@ -760,27 +769,22 @@ const AddInformation = (props) => {
             <div className="col-5 col-md-4 col-lg-4 mt-2">
               <div className="form-check ">
                 <input
-                  className="form-check-input"
                   name="IsEligibleForImmobalization"
                   value={value?.IsEligibleForImmobalization}
                   checked={value?.IsEligibleForImmobalization}
                   onChange={HandleChanges1}
                   type="checkbox"
                   id="flexCheckDefault3"
+                  className="form-check-input"
+                // className={isLockOrRestrictModule("Lock", editval[0]?.IsEligibleForImmobalization, isLocked) ? "form-check-input LockFildsColor" : "form-check-input"}
+
+                // disabled={isLockOrRestrictModule("Lock", editval[0]?.IsEligibleForImmobalization, isLocked) ? true : false}
                 />
                 <label className="form-check-label" htmlFor="flexCheckDefault3">
                   Eligible For Immobilization
                 </label>
               </div>
             </div>
-            {/* <div className="col-5 col-md-4 col-lg-4 mt-2">
-                            <div className="form-check ">
-                                <input className="form-check-input" name='IsSendToPropertyRoom' value={value?.IsSendToPropertyRoom} onChange={HandleChanges1} checked={value?.IsSendToPropertyRoom} type="checkbox" id="flexCheckDefault" />
-                                <label className="form-check-label" htmlFor="flexCheckDefault">
-                                    Send To Property Room
-                                </label>
-                            </div>
-                        </div> */}
           </div>
         </fieldset>
 
@@ -790,14 +794,16 @@ const AddInformation = (props) => {
               <div className="mb-4">
                 <div className="form-check">
                   <input
-                    className="form-check-input"
                     type="checkbox"
                     id="evidence"
                     name="IsEvidence"
                     value={value?.IsEvidence}
                     checked={value?.IsEvidence}
-                    disabled={IsEvidenceStatus}
                     onChange={HandleChanges}
+                    className="form-check-input"
+                    disabled={IsEvidenceStatus}
+                  // className={isLockOrRestrictModule("Lock", editval[0]?.IsEvidence, isLocked) ? "form-check-input LockFildsColor" : "form-check-input"}
+                  // disabled={isLockOrRestrictModule("Lock", editval[0]?.IsEvidence, isLocked) || IsEvidenceStatus ? true : false}
                   />
                   <label className="form-check-label" htmlFor="evidence">
                     Evidence
@@ -814,7 +820,8 @@ const AddInformation = (props) => {
                           id="IsSendToPropertyRoom"
                           checked={value.IsSendToPropertyRoom}
                           onChange={HandleChanges}
-                          disabled={IsNonPropertyStatus === 'true' || IsNonPropertyStatus === true}
+
+                        // disabled={IsNonPropertyStatus === 'true' || IsNonPropertyStatus === true || isLockOrRestrictModule("Lock", editval[0]?.IsSendToPropertyRoom, isLocked)}
                         />
                         <label
                           className="form-check-label"
@@ -833,7 +840,8 @@ const AddInformation = (props) => {
                           id="IsNonPropertyRoom"
                           checked={value.IsNonPropertyRoom}
                           onChange={HandleChanges}
-                          disabled={SendToPropertyRoomStatus === 'true' || SendToPropertyRoomStatus === true}
+
+                        // disabled={SendToPropertyRoomStatus === 'true' || SendToPropertyRoomStatus === true || isLockOrRestrictModule("Lock", editval[0]?.IsNonPropertyRoom, isLocked)}
                         />
                         <label
                           className="form-check-label"
@@ -907,7 +915,10 @@ const AddInformation = (props) => {
                           });
                         }
                       }}
-                      className="requiredColor"
+
+                      className={isLockOrRestrictModule("Lock", editval[0]?.CollectionDtTm, isLocked) ? "LockFildsColor" : "requiredColor"}
+                      disabled={isLockOrRestrictModule("Lock", editval[0]?.CollectionDtTm, isLocked) ? true : false}
+
                       timeInputLabel
                       showTimeSelect
                       timeIntervals={1}
@@ -952,6 +963,7 @@ const AddInformation = (props) => {
 
                         return time.getTime() <= now.getTime();
                       }}
+
                     />
 
                   </div>
@@ -967,9 +979,10 @@ const AddInformation = (props) => {
                         type="text"
                         name="LocationOfCollection"
                         value={value.LocationOfCollection}
-                        onChange={(e) => {
-                          HandleChanges1(e);
-                        }}
+                        onChange={(e) => { HandleChanges1(e); }}
+
+                        className={isLockOrRestrictModule("Lock", editval[0]?.LocationOfCollection, isLocked) ? "LockFildsColor" : "requiredColor"}
+                        disabled={isLockOrRestrictModule("Lock", editval[0]?.LocationOfCollection, isLocked) ? true : false}
                       />
                     </div>
                   </div>
@@ -1001,7 +1014,9 @@ const AddInformation = (props) => {
                       placeholder="Select.."
                       menuPlacement="bottom"
                       isClearable
-                      styles={Requiredcolour}
+
+                      styles={isLockOrRestrictModule("Lock", editval[0]?.CollectingOfficer, isLocked) ? LockFildscolour : Requiredcolour}
+                      isDisabled={isLockOrRestrictModule("Lock", editval[0]?.CollectingOfficer, isLocked) ? true : false}
                     />
                   </div>
                 </div>
@@ -1019,9 +1034,10 @@ const AddInformation = (props) => {
                         type="text"
                         name="EvidenceDescription"
                         value={value.EvidenceDescription}
-                        onChange={(e) => {
-                          HandleChanges1(e);
-                        }}
+                        onChange={(e) => { HandleChanges1(e); }}
+
+                        className={isLockOrRestrictModule("Lock", editval[0]?.EvidenceDescription, isLocked) ? "LockFildsColor" : ""}
+                        disabled={isLockOrRestrictModule("Lock", editval[0]?.EvidenceDescription, isLocked) ? true : false}
                       />
                     </div>
                   </div>
@@ -1036,10 +1052,12 @@ const AddInformation = (props) => {
                           className="form-check-input"
                           name="IsSendToTaskList"
                           value={value?.IsSendToTaskList}
-                          onChange={HandleChanges}
                           checked={value?.IsSendToTaskList}
+                          onChange={HandleChanges}
                           type="checkbox"
                           id="flexCheckDefault"
+
+                        // disabled={isLockOrRestrictModule("Lock", editval[0]?.IsSendToTaskList, isLocked) ? true : false}
                         />
                         <label
                           className="form-check-label"
@@ -1073,6 +1091,8 @@ const AddInformation = (props) => {
                                     className="form-check-input"
                                     checked={selectedOption === "Individual"}
                                     onChange={handleRadioChangeArrestForward}
+
+                                  // disabled={isLockOrRestrictModule("Lock", editval[0]?.IsSendToTaskList, isLocked) ? true : false}
                                   />
                                   <label
                                     className="form-check-label mb-0"
@@ -1091,6 +1111,8 @@ const AddInformation = (props) => {
                                     className="form-check-input"
                                     checked={selectedOption === "Group"}
                                     onChange={handleRadioChangeArrestForward}
+
+                                  // disabled={isLockOrRestrictModule("Lock", editval[0]?.IsSendToTaskList, isLocked) ? true : false}
                                   />
                                   <label
                                     className="form-check-label mb-0"
@@ -1103,24 +1125,7 @@ const AddInformation = (props) => {
                               <>
                                 {selectedOption === "Individual" ? (
                                   <>
-                                    {/* <div className="col-2 col-md-2 col-lg-2">
-                                                         <span className="label-name">
-                                                           {errors.ApprovingOfficerError !==
-                                                             "true" && (
-                                                               <p
-                                                                 style={{
-                                                                   color: "red",
-                                                                   fontSize: "13px",
-                                                                   margin: "0px",
-                                                                   padding: "0px",
-                                                                   fontWeight: "400",
-                                                                 }}
-                                                               >
-                                                                 {errors.ApprovingOfficerError}
-                                                               </p>
-                                                             )}
-                                                         </span>
-                                                       </div> */}
+
                                     <div className="col-4 col-md-12 col-lg-6 dropdown__box mt-0">
                                       <SelectBox
                                         className="custom-multiselect"
@@ -1129,37 +1134,19 @@ const AddInformation = (props) => {
                                         isMulti
                                         required
                                         menuPlacement="top"
-                                        styles={colourStylesUsers}
-                                        // isDisabled={value.Status === "Pending Review" || value.Status === "Approved"}
                                         closeMenuOnSelect={false}
+                                        onChange={Agencychange}
+                                        value={multiSelected.optionSelected}
                                         // menuPlacement="top"
                                         // hideSelectedOptions={true}
-                                        onChange={Agencychange}
                                         // allowSelectAll={true}
-                                        value={multiSelected.optionSelected}
+                                        styles={colourStylesUsers}
+                                      // isDisabled={isLockOrRestrictModule("Lock", editval[0]?.NameTypeID, isLocked, true) ? true : false}
                                       />
                                     </div>
                                   </>
                                 ) : (
                                   <>
-                                    {/* <div className="col-2 col-md-2 col-lg-2 ">
-                                                         <span className="label-name">
-                                                           {errors.ApprovingOfficerError !==
-                                                             "true" && (
-                                                               <p
-                                                                 style={{
-                                                                   color: "red",
-                                                                   fontSize: "13px",
-                                                                   margin: "0px",
-                                                                   padding: "0px",
-                                                                   fontWeight: "400",
-                                                                 }}
-                                                               >
-                                                                 {errors.ApprovingOfficerError}
-                                                               </p>
-                                                             )}
-                                                         </span>
-                                                       </div> */}
                                     <div className="col-4 col-md-12 col-lg-6 dropdown__box mt-0">
                                       <SelectBox
                                         className="custom-multiselect"
@@ -1167,12 +1154,13 @@ const AddInformation = (props) => {
                                         options={groupList}
                                         menuPlacement="top"
                                         isMulti
-                                        styles={colourStylesUsers}
                                         closeMenuOnSelect={false}
                                         hideSelectedOptions={true}
                                         onChange={Agencychange}
                                         // allowSelectAll={true}
                                         value={multiSelected.optionSelected}
+
+                                        styles={colourStylesUsers}
                                       />
                                     </div>
                                   </>
@@ -1184,26 +1172,18 @@ const AddInformation = (props) => {
                             <button
                               type="button"
                               className="btn btn-sm mb-2 mt-1"
-                               data-toggle="modal" data-target="#myModal"
+                              data-toggle="modal" data-target="#myModal"
                               style={{
                                 backgroundColor: "#001f3f",
                                 color: "#fff",
                               }}
                               onClick={() => {
-                                // InSertBasicInfo(
-                                //   value?.CollectingOfficer,
-                                //   "OfficerID",
-                                //   "TaskList/Insert_TaskList",
-                                //   taskToSend
-                                // );
-                                // setTaskToSend("");
                                 if (value.IsSendToPropertyRoom || value.IsNonPropertyRoom && value.IsSendToTaskList) {
                                   setShowModal(true);
                                 }
                                 else {
                                   check_Validation_Error()
                                 }
-                                // check_Validation_Error();
                               }}
                               disabled={!value.OfficerID || IsNonPropertyStatus === true}
                             >
@@ -1235,16 +1215,17 @@ const AddInformation = (props) => {
                                 ) : null}
                               </label>
                             </div>
-
                             <div className="col-4 col-md-3 col-lg-2">
                               <div className="text-field mt-1">
                                 <input
                                   type="text"
                                   name="Reason"
                                   value={value.Reason}
-                                  className="requiredColor"
                                   onChange={(e) => HandleChanges1(e)}
-                                  styles={Requiredcolour}
+                                  // className="requiredColor"
+
+                                  className={isLockOrRestrictModule("Lock", editval[0]?.Reason, isLocked) ? "LockFildsColor" : "requiredColor"}
+                                  disabled={isLockOrRestrictModule("Lock", editval[0]?.Reason, isLocked) ? true : false}
                                 />
                               </div>
                             </div>
@@ -1267,57 +1248,6 @@ const AddInformation = (props) => {
                               </label>
                             </div>
                             <div className="col-3 col-md-3 col-lg-2 ">
-                              {/* <DatePicker
-                                                                id="DispatchDtTm"
-                                                                name='DispatchDtTm'
-                                                                dateFormat="MM/dd/yyyy HH:mm"
-                                                                onChange={(date) => {
-                                                                    !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-                                                                    if (date) {
-                                                                        console.log("occured frpm date entered true::", date);
-                                                                        let maxTimestamp = new Date();
-                                                                        let occurredFromTimestamp = new Date(value?.ReportedDate);
-
-                                                                        let selectedDate = new Date(date);
-                                                                        if (selectedDate?.getTime() <= occurredFromTimestamp.getTime()) {
-                                                                            selectedDate = new Date(occurredFromTimestamp.getTime() + 60000);
-                                                                        }
-                                                                        if (selectedDate?.getTime() >= maxTimestamp.getTime()) {
-                                                                            selectedDate = maxTimestamp;
-                                                                        }
-                                                                        setdisPatchdate(selectedDate);
-                                                                        setValue({
-                                                                            ...value,
-                                                                            ['DispatchDtTm']: getShowingMonthDateYear(selectedDate),
-                                                                        });
-                                                                    }
-                                                                    else {
-                                                                        console.log("occured from date entered false::", date);
-                                                                        setdisPatchdate(date);
-                                                                        setValue({
-                                                                            ...value,
-                                                                            ['DispatchDtTm']: date ? getShowingMonthDateYear(date) : null,
-                                                                        });
-                                                                    }
-                                                                }}
-                                                                // maxDate={new Date()}
-                                                                filterTime={filterTime}
-                                                                selected={dispatchdate}
-                                                                className='requiredColor'
-                                                                timeInputLabel
-                                                                showTimeSelect
-                                                                timeIntervals={1}
-                                                                timeCaption="Time"
-                                                                showMonthDropdown
-                                                                showYearDropdown
-                                                                dropdownMode="select"
-                                                                showDisabledMonthNavigation
-                                                                autoComplete='off'
-                                                                timeFormat="HH:mm "
-                                                                is24Hour
-                                                                minDate={new Date(collectiondate)}
-                                                            /> */}
-
                               <DatePicker
                                 id="DispatchDtTm"
                                 name="DispatchDtTm"
@@ -1329,10 +1259,10 @@ const AddInformation = (props) => {
                                     setChangesStatus(true);
 
                                   if (date) {
-                                    console.log(
-                                      "occurred from date entered true::",
-                                      date
-                                    );
+                                    // console.log(
+                                    //   "occurred from date entered true::",
+                                    //   date
+                                    // );
 
                                     let occurredFromTimestamp = new Date(
                                       value?.ReportedDate
@@ -1356,10 +1286,10 @@ const AddInformation = (props) => {
                                         getShowingMonthDateYear(selectedDate),
                                     });
                                   } else {
-                                    console.log(
-                                      "occurred from date entered false::",
-                                      date
-                                    );
+                                    // console.log(
+                                    //   "occurred from date entered false::",
+                                    //   date
+                                    // );
                                     setdisPatchdate(date);
                                     setValue({
                                       ...value,
@@ -1368,7 +1298,7 @@ const AddInformation = (props) => {
                                   }
                                 }}
                                 selected={dispatchdate}
-                                className="requiredColor"
+                                // className="requiredColor"
                                 timeInputLabel
                                 showTimeSelect
                                 timeIntervals={1}
@@ -1404,6 +1334,9 @@ const AddInformation = (props) => {
                                   }
                                   return true;
                                 }}
+
+                                className={isLockOrRestrictModule("Lock", editval[0]?.DispatchDtTm, isLocked) ? "LockFildsColor" : "requiredColor"}
+                                disabled={isLockOrRestrictModule("Lock", editval[0]?.DispatchDtTm, isLocked) ? true : false}
                               />
                             </div>
 
@@ -1413,56 +1346,6 @@ const AddInformation = (props) => {
                               </label>
                             </div>
                             <div className="col-3 col-md-3 col-lg-2 ">
-                              {/* <DatePicker
-                                                                id="ExpectedDtTm"
-                                                                name='ExpectedDtTm'
-                                                                dateFormat="MM/dd/yyyy HH:mm"
-                                                                onChange={(date) => {
-                                                                    !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-                                                                    if (date) {
-                                                                        console.log("occured frpm date entered true::", date);
-                                                                        let maxTimestamp = new Date();
-                                                                        let occurredFromTimestamp = new Date(value?.DispatchDtTm);
-
-                                                                        let selectedDate = new Date(date);
-                                                                        if (selectedDate?.getTime() <= occurredFromTimestamp.getTime()) {
-                                                                            selectedDate = new Date(occurredFromTimestamp.getTime() + 60000);
-                                                                        }
-                                                                        if (selectedDate?.getTime() >= maxTimestamp.getTime()) {
-                                                                            selectedDate = maxTimestamp;
-                                                                        }
-                                                                        setexpectedArrival(selectedDate);
-                                                                        setValue({
-                                                                            ...value,
-                                                                            ['ExpectedDtTm']: getShowingMonthDateYear(selectedDate),
-                                                                        });
-                                                                    }
-                                                                    else {
-                                                                        console.log("occured frpm date entered false::", date);
-                                                                        setexpectedArrival(date);
-                                                                        setValue({
-                                                                            ...value,
-                                                                            ['ExpectedDtTm']: date ? getShowingMonthDateYear(date) : null,
-                                                                        });
-                                                                    }
-                                                                }}
-                                                                maxDate={new Date()}
-                                                                filterTime={filterTime}
-                                                                selected={expectedArrival}
-                                                                timeInputLabel
-                                                                showTimeSelect
-                                                                timeIntervals={1}
-                                                                timeCaption="Time"
-                                                                showMonthDropdown
-                                                                showYearDropdown
-                                                                dropdownMode="select"
-                                                                showDisabledMonthNavigation
-                                                                autoComplete='off'
-                                                                timeFormat="HH:mm "
-                                                                is24Hour
-                                                                minDate={new Date(value?.DispatchDtTm)}
-                                                            /> */}
-
                               <DatePicker
                                 id="ExpectedDtTm"
                                 name="ExpectedDtTm"
@@ -1474,10 +1357,10 @@ const AddInformation = (props) => {
                                     setChangesStatus(true);
 
                                   if (date) {
-                                    console.log(
-                                      "occurred from date entered true::",
-                                      date
-                                    );
+                                    // console.log(
+                                    //   "occurred from date entered true::",
+                                    //   date
+                                    // );
 
                                     let occurredFromTimestamp = new Date(
                                       value?.ReportedDate
@@ -1501,10 +1384,7 @@ const AddInformation = (props) => {
                                         getShowingMonthDateYear(selectedDate),
                                     });
                                   } else {
-                                    console.log(
-                                      "occurred from date entered false::",
-                                      date
-                                    );
+                                    // console.log("occurred from date entered false::", date);
                                     setexpectedArrival(date);
                                     setValue({
                                       ...value,
@@ -1528,6 +1408,7 @@ const AddInformation = (props) => {
                                 timeFormat="HH:mm"
                                 is24Hour
                                 minDate={new Date(dispatchdate)} // ✅ Only after ReportedDtTm allowed
+
                                 filterTime={(time) => {
                                   // Optional: If selected date is same day as ReportedDtTm, restrict time
                                   const reported = new Date(
@@ -1549,6 +1430,9 @@ const AddInformation = (props) => {
                                   }
                                   return true;
                                 }}
+
+                                className={isLockOrRestrictModule("Lock", editval[0]?.ExpectedDtTm, isLocked) ? "LockFildsColor" : "requiredColor"}
+                                disabled={isLockOrRestrictModule("Lock", editval[0]?.ExpectedDtTm, isLocked) ? true : false}
                               />
                             </div>
 
@@ -1584,7 +1468,10 @@ const AddInformation = (props) => {
                                 menuPlacement="bottom"
                                 className="requiredColor"
                                 isClearable
-                                styles={Requiredcolour}
+
+                                // styles={Requiredcolour}
+                                styles={isLockOrRestrictModule("Lock", editval[0]?.DispatchingOfficer, isLocked) ? LockFildscolour : Requiredcolour}
+                                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.DispatchingOfficer, isLocked) ? true : false}
                               />
                             </div>
 
@@ -1616,28 +1503,14 @@ const AddInformation = (props) => {
                                   name="Recipient"
                                   value={value.Recipient}
                                   onChange={(e) => HandleChanges1(e)}
-                                  styles={Requiredcolour}
-                                  className="requiredColor"
+
+                                  // className="requiredColor"
+
+                                  className={isLockOrRestrictModule("Lock", editval[0]?.Recipient, isLocked) ? "LockFildsColor" : "requiredColor"}
+                                  disabled={isLockOrRestrictModule("Lock", editval[0]?.Recipient, isLocked) ? true : false}
                                 />
                               </div>
                             </div>
-                            {/* <div className="col-3 col-md-2 col-lg-2 mt-2 text-field">
-                              <label htmlFor="" className="new-label">
-                                Mode Of transport
-                                {errors.ModOfTransportError !== "true" ? (
-                                  <p
-                                    style={{
-                                      color: "red",
-                                      fontSize: "11px",
-                                      margin: "0px",
-                                      padding: "0px",
-                                    }}
-                                  >
-                                    {errors.ModOfTransportError}
-                                  </p>
-                                ) : null}
-                              </label>
-                            </div> */}
                             <div className="col-3 col-md-2 col-lg-2 mt-2">
                               <label htmlFor="" className="new-label">
                                 {" "}
@@ -1648,7 +1521,15 @@ const AddInformation = (props) => {
                             </div>
                             <div className="col-4 col-md-3 col-lg-2">
                               <div className="text-field mt-1">
-                                <input type="text" name="ModOfTransport" value={value.ModOfTransport} onChange={(e) => HandleChanges1(e)}
+                                <input
+                                  type="text"
+                                  name="ModOfTransport"
+                                  value={value.ModOfTransport}
+                                  onChange={(e) => HandleChanges1(e)}
+
+
+                                  className={isLockOrRestrictModule("Lock", editval[0]?.ModOfTransport, isLocked) ? "LockFildsColor" : ""}
+                                  disabled={isLockOrRestrictModule("Lock", editval[0]?.ModOfTransport, isLocked) ? true : false}
                                 />
                               </div>
                             </div>
@@ -1664,6 +1545,9 @@ const AddInformation = (props) => {
                                   name="Destination"
                                   value={value.Destination}
                                   onChange={(e) => HandleChanges1(e)}
+
+                                  className={isLockOrRestrictModule("Lock", editval[0]?.Destination, isLocked) ? "LockFildsColor" : ""}
+                                  disabled={isLockOrRestrictModule("Lock", editval[0]?.Destination, isLocked) ? true : false}
                                 />
                               </div>
                             </div>
@@ -1680,6 +1564,9 @@ const AddInformation = (props) => {
                                   name="PackagingDetails"
                                   value={value.PackagingDetails}
                                   onChange={(e) => HandleChanges1(e)}
+
+                                  className={isLockOrRestrictModule("Lock", editval[0]?.PackagingDetails, isLocked) ? "LockFildsColor" : ""}
+                                  disabled={isLockOrRestrictModule("Lock", editval[0]?.PackagingDetails, isLocked) ? true : false}
                                 />
                               </div>
                             </div>
@@ -1692,7 +1579,7 @@ const AddInformation = (props) => {
                               <textarea
                                 type="text"
                                 rows="1"
-                                className="form-control  py-1 new-input"
+                                // className="form-control  py-1 new-input"
                                 style={{ height: "auto", overflowY: "scroll" }}
                                 placeholder="Comment"
                                 name="Comments"
@@ -1700,6 +1587,9 @@ const AddInformation = (props) => {
                                 onChange={(e) => {
                                   HandleChanges1(e);
                                 }}
+
+                                className={isLockOrRestrictModule("Lock", editval[0]?.Comments, isLocked) ? "LockFildsColor form-control  py-1 new-input" : "form-control  py-1 new-input"}
+                                disabled={isLockOrRestrictModule("Lock", editval[0]?.Comments, isLocked) ? true : false}
                               />
                             </div>
 
@@ -1739,12 +1629,8 @@ const AddInformation = (props) => {
                                   transition: "background 0.3s",
                                   whiteSpace: "nowrap",
                                 }}
-                                onMouseOver={(e) =>
-                                  (e.target.style.backgroundColor = "#e9e9e9")
-                                }
-                                onMouseOut={(e) =>
-                                  (e.target.style.backgroundColor = "#e9e9e9")
-                                }
+                                onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
                               >
                                 Choose File
                               </label>
@@ -1806,9 +1692,7 @@ const AddInformation = (props) => {
                                     </div>
                                   ))
                                 ) : (
-                                  <span
-                                    style={{ color: "#777", fontSize: "13px" }}
-                                  >
+                                  <span style={{ color: "#777", fontSize: "13px" }} >
                                     No files selected
                                   </span>
                                 )}
@@ -1832,7 +1716,10 @@ const AddInformation = (props) => {
                                   name="TestPerformed"
                                   value={value.TestPerformed}
                                   onChange={(e) => HandleChanges1(e)}
-                                  styles={Requiredcolour}
+                                  // styles={Requiredcolour}
+
+                                  className={isLockOrRestrictModule("Lock", editval[0]?.TestPerformed, isLocked) ? "LockFildsColor" : "requiredColor"}
+                                  disabled={isLockOrRestrictModule("Lock", editval[0]?.TestPerformed, isLocked) ? true : false}
                                 />
                               </div>
                             </div>
@@ -1849,7 +1736,9 @@ const AddInformation = (props) => {
                                   name="LabName"
                                   value={value.LabName}
                                   onChange={(e) => HandleChanges1(e)}
-                                  styles={Requiredcolour}
+                                  // styles={Requiredcolour}
+                                  className={isLockOrRestrictModule("Lock", editval[0]?.LabName, isLocked) ? "LockFildsColor" : "requiredColor"}
+                                  disabled={isLockOrRestrictModule("Lock", editval[0]?.LabName, isLocked) ? true : false}
                                 />
                               </div>
                             </div>
@@ -1866,7 +1755,9 @@ const AddInformation = (props) => {
                                   name="LabLocation"
                                   value={value.LabLocation}
                                   onChange={(e) => HandleChanges1(e)}
-                                  styles={Requiredcolour}
+                                  // styles={Requiredcolour}
+                                  className={isLockOrRestrictModule("Lock", editval[0]?.LabLocation, isLocked) ? "LockFildsColor" : "requiredColor"}
+                                  disabled={isLockOrRestrictModule("Lock", editval[0]?.LabLocation, isLocked) ? true : false}
                                 />
                               </div>
                             </div>
@@ -1882,9 +1773,11 @@ const AddInformation = (props) => {
                                 value={value.Summary}
                                 onChange={(e) => HandleChanges1(e)}
                                 rows="1"
-                                className="form-control  py-1 new-input"
+                                // className="form-control  py-1 new-input"
                                 style={{ height: "auto", overflowY: "scroll" }}
                                 placeholder="Summary"
+                                className={isLockOrRestrictModule("Lock", editval[0]?.Summary, isLocked) ? "form-control  py-1 new-input LockFildsColor " : "form-control  py-1 new-input requiredColor"}
+                                disabled={isLockOrRestrictModule("Lock", editval[0]?.Summary, isLocked) ? true : false}
                               />
                             </div>
 
@@ -2041,14 +1934,11 @@ const AddInformation = (props) => {
                             isClearable
                             menuPlacement="top"
                             placeholder="Select..."
-                            value={
-                              StatusOption.find(
-                                (option) => option.label === taskToSend
-                              ) || null
-                            }
+                            value={StatusOption.find((option) => option.label === taskToSend) || null}
                             styles={{
                               container: (base) => ({ ...base, flex: 1 }), // Makes Select grow inside flex
                             }}
+                          //  isDisabled={isLockOrRestrictModule("Lock", editval[0]?.NameTypeID, isLocked) ? true : false}
                           />
                         </div>
                       </div>
@@ -2130,14 +2020,15 @@ const AddInformation = (props) => {
                                       isMulti
                                       required
                                       menuPlacement="top"
-                                      styles={colourStylesUsers}
-                                      // isDisabled={value.Status === "Pending Review" || value.Status === "Approved"}
                                       closeMenuOnSelect={false}
                                       // menuPlacement="top"
                                       // hideSelectedOptions={true}
-                                      onChange={Agencychange}
                                       // allowSelectAll={true}
+                                      onChange={Agencychange}
                                       value={multiSelected.optionSelected}
+
+                                      styles={colourStylesUsers}
+                                    // isDisabled={value.Status === "Pending Review" || value.Status === "Approved"}
                                     />
                                   </div>
                                 </>
@@ -2196,13 +2087,6 @@ const AddInformation = (props) => {
                             else {
                               check_Validation_Error()
                             }
-                            // InSertBasicInfo(
-                            //   value?.CollectingOfficer,
-                            //   "OfficerID",
-                            //   "TaskList/Insert_TaskList",
-                            //   taskToSend
-                            // );
-                            // setTaskToSend("");
                           }}
                           disabled={
                             isSendButtonDisabled         // ✅ primary check
@@ -2216,22 +2100,7 @@ const AddInformation = (props) => {
                       </div>
 
                       <div className="col-12 col-md-12 col-lg-12 mt-2">
-                        {/* <DataTable
-                                                                            dense
-                                                                            fixedHeader
-                                                                            persistTableHead={true}
-                                                                            customStyles={tableCustomStyles}
-                                                                            columns={columns1}
-                                                                            selectableRowsHighlight
-                                                                            highlightOnHover
-                                                                            responsive
-                
-                                                                            fxedHeaderScrollHeight='90px'
-                                                                            pagination
-                                                                            paginationPerPage={'100'}
-                                                                            paginationRowsPerPageOptions={[100, 150, 200, 500]}
-                
-                                                                        /> */}
+
                       </div>
                     </div>
 

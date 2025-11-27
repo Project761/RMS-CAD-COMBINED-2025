@@ -11,7 +11,7 @@ import { get_LocalStoreData } from '../../../../../redux/actions/Agency';
 
 const CriminalActivity = (props) => {
 
-  const { DecArrestId, } = props
+  const { DecArrestId, isLocked, setIsLocked } = props
   const dispatch = useDispatch();
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
   const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
@@ -39,7 +39,6 @@ const CriminalActivity = (props) => {
     CriminalID: null,
   })
 
-
   useEffect(() => {
     if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
       if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
@@ -62,7 +61,6 @@ const CriminalActivity = (props) => {
       get_Security_Data(DecArrestId); setArrestID(DecArrestId);
     }
   }, [DecArrestId]);
-
 
   useEffect(() => {
     if (arrestID) { get_Security_Data(arrestID); }

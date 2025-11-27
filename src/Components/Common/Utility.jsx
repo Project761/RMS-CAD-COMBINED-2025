@@ -872,7 +872,6 @@ export const editorConfig = {
 
 
 // Lock Restrict Module
-
 export const isLockOrRestrictModule = (moduleType, fieldValue, isLock, isMultiSelect = false) => {
   // console.log(fieldValue);
 

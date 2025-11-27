@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { Decrypt_Id_Name, editorConfig, filterPassedDateTime, getShowingDateText, getShowingMonthDateYear, Requiredcolour, tableCustomStyles } from '../../../../Common/Utility';
+import { Decrypt_Id_Name, editorConfig, filterPassedDateTime, getShowingDateText, getShowingMonthDateYear, isLockOrRestrictModule, LockFildscolour, Requiredcolour, tableCustomStyles } from '../../../../Common/Utility';
 import { fetchPostData, AddDeleteUpadate } from '../../../../hooks/Api';
 import DataTable from 'react-data-table-component';
 import { toastifyError, toastifySuccess } from '../../../../Common/AlertMsg';
@@ -22,7 +22,7 @@ import ArresList from '../../../ShowAllList/ArrestList';
 
 const Narrative = (props) => {
 
-  const { DecArrestId, DecIncID, ListData, get_List } = props
+  const { DecArrestId, DecIncID, ListData, get_List, isLocked, setIsLocked } = props
   const dispatch = useDispatch();
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
   const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
@@ -36,12 +36,12 @@ const Narrative = (props) => {
   const [upDateCount, setUpDateCount] = useState(0)
   const [status, setStatus] = useState(false)
   const [arrestNarrativeID, setArrestNarrativeID] = useState('')
-  //screen permission 
+
 
   const [arrestID, setArrestID] = useState('');
   const [loginAgencyID, setLoginAgencyID] = useState('');
   const [loginPinID, setLoginPinID,] = useState('');
-  const [editval, setEditval] = useState();
+  const [editval, setEditval] = useState([]);
   const [narrativeDtTm, setNarrativeDtTm] = useState()
   const [narrativeTypeList, setNarrativeTypeList] = useState([])
   const [statesChangeStatus, setStatesChangeStatus] = useState(false);
@@ -145,12 +145,15 @@ const Narrative = (props) => {
         <div style={{ position: 'absolute', top: 4, right: 5 }}>
 
           {
-            effectiveScreenPermission ? effectiveScreenPermission[0]?.DeleteOK ?
+            effectiveScreenPermission ? effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", narrativeData, isLocked, true) ?
               <span to={`#`} onClick={(e) => setArrestNarrativeID(row.ArrestNarrativeID)} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                 <i className="fa fa-trash"></i>
               </span>
-              : <></>
-              : <span to={`#`} onClick={(e) => setArrestNarrativeID(row.ArrestNarrativeID)} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
+              :
+              <></>
+              :
+              !isLockOrRestrictModule("Lock", narrativeData, isLocked, true) &&
+              <span to={`#`} onClick={(e) => setArrestNarrativeID(row.ArrestNarrativeID)} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                 <i className="fa fa-trash"></i>
               </span>
           }
@@ -167,7 +170,7 @@ const Narrative = (props) => {
     const val = { 'ArrestNarrativeID': arrestNarrativeID }
     fetchPostData('ArrestNarrative/GetSingleData_ArrestNarrative', val).then((res) => {
       if (res) { setEditval(res) }
-      else { setEditval() }
+      else { setEditval([]) }
     })
   }
 
@@ -220,7 +223,6 @@ const Narrative = (props) => {
   }
 
   const reset = () => {
-    console.log('hello-reset -2')
     setChangesStatus(false)
     setValue({
       ...value, 'NarrativeTypeID': '', 'NarrativeComments': '', 'NarrativeDtTm': '', 'CommentsDoc': '', 'ModifiedByUserFK': '', 'ArrestNarrativeID': '',
@@ -231,12 +233,14 @@ const Narrative = (props) => {
       'ReportedByPinError': '', 'NarrativeDtTmError': '', 'ArrestNarrativeIDError': '', 'NarrativeCommentsError': '', 'ReportedByIDError': '',
     });
     setNarrativeDtTm('');
+    setEditval([])
   }
 
   const checkId = (id, obj) => {
     const status = obj?.filter((item) => item?.value == id)
     return status?.length > 0
   }
+
   const check_Validation_Error = (e) => {
     if (RequiredFieldIncident(value.NarrativeDtTm)) {
       setErrors(prevValues => { return { ...prevValues, ['NarrativeDtTmError']: RequiredFieldIncident(value.NarrativeDtTm) } })
@@ -341,14 +345,11 @@ const Narrative = (props) => {
     }
   };
 
-
   const setStatusFalse = () => {
     setClickedRow(null); setStatus(false); reset(); setChangesStatus(false)
   }
 
   const editNarratives = (row) => {
-    console.log('hello-reset -3')
-
     if (changesStatus) {
       const modal = new window.bootstrap.Modal(document.getElementById('SaveModal'));
       modal.show();
@@ -371,6 +372,7 @@ const Narrative = (props) => {
       },
     },
   ];
+
   const setToReset = () => {
   }
 
@@ -382,9 +384,7 @@ const Narrative = (props) => {
 
   return (
     <>
-
       <ArresList {...{ ListData }} />
-
       <div className="row mb-3">
         <div className="col-2 col-md-2 col-lg-1 mt-2 pt-2">
           <span className='new-label'>
@@ -397,17 +397,16 @@ const Narrative = (props) => {
           <Select
             name='ReportedByID'
             isClearable
-            styles={Requiredcolour}
             value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ReportedByID)}
             options={agencyOfficerDrpData}
             onChange={(e) => ChangeDropDown(e, 'ReportedByID')}
             placeholder="Select.."
             menuPlacement="bottom"
+            // styles={Requiredcolour}
+            styles={isLockOrRestrictModule("Lock", editval[0]?.ReportedByID, isLocked) ? LockFildscolour : Requiredcolour}
+            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.ReportedByID, isLocked)}
           />
-
-
         </div>
-
         <div className="col-4 col-md-4 col-lg-1 mt-2 pt-2">
           <label htmlFor="" className='new-label'>Report Type {errors.ArrestNarrativeIDError !== 'true' ? (
             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ArrestNarrativeIDError}</p>
@@ -417,15 +416,16 @@ const Narrative = (props) => {
           <Select
             name='NarrativeTypeID'
             isClearable
-            styles={Requiredcolour}
             value={narrativeTypeList?.filter((obj) => obj.value === value?.NarrativeTypeID)}
             options={narrativeTypeList}
             onChange={(e) => ChangeDropDown(e, 'NarrativeTypeID')}
             placeholder="Select.."
             menuPlacement="bottom"
+            // styles={Requiredcolour}
+            styles={isLockOrRestrictModule("Lock", editval[0]?.NarrativeTypeID, isLocked) ? LockFildscolour : Requiredcolour}
+            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.NarrativeTypeID, isLocked)}
           />
         </div>
-
         <div className="col-2 col-md-2 col-lg-1 mt-2 pt-2">
           <label htmlFor="" className='new-label'>Date/Time{errors.NarrativeDtTmError !== 'true' ? (
             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.NarrativeDtTmError}</p>
@@ -444,7 +444,9 @@ const Narrative = (props) => {
             is24Hour
             timeInputLabel
             isClearable
-            className='requiredColor'
+            // className='requiredColor'
+            className={isLockOrRestrictModule("Lock", editval[0]?.NarrativeDtTm, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+            disabled={isLockOrRestrictModule("Lock", editval[0]?.NarrativeDtTm, isLocked)}
             name='NarrativeDtTm'
             id='NarrativeDtTm'
             onChange={(date) => {
@@ -489,29 +491,24 @@ const Narrative = (props) => {
           />
         </div>
 
-
-
-
       </div>
 
       <div className="row mt-1">
         <div className="col-12 col-md-12 col-lg-12 px-0 pl-0">
 
           <ReactQuill
-            className={`editor-class`}
+            className={isLockOrRestrictModule("Lock", editval[0]?.CommentsDoc, isLocked) ? "editor-class-Lock" : `editor-class`}
             // disabled={value.Status === 'Pending Review' || value.Status === 'Approved' || ((value.Status === 'Draft' || value.Status === 'Rejected') &&
             //   !IsSuperadmin &&
             //   !(value.ReportedByPINActivityID === loginPinID || value.WrittenForID === loginPinID))}
 
             // readOnly={value.Status === 'Pending Review' || value.Status === 'Approved' || ((value.Status === 'Draft' || value.Status === 'Rejected') && !IsSuperadmin && !(value.ReportedByPINActivityID === loginPinID || value.WrittenForID === loginPinID))}
-
+            disabled={isLockOrRestrictModule("Lock", editval[0]?.CommentsDoc, isLocked) ? true : false}
+            readOnly={isLockOrRestrictModule("Lock", editval[0]?.CommentsDoc, isLocked)}
             value={value.CommentsDoc}
             onChange={(value, delta, source, editor) => {
               const text = editor?.getText();
-              // console.log(text, "text");
-              // console.log(value, "value");
               setStatesChangeStatus(true);
-
               setValue((prevValue) => ({
                 ...prevValue,
                 NarrativeComments: text,
@@ -554,8 +551,6 @@ const Narrative = (props) => {
           ) : null}
         </div>
       </div>
-
-
 
       <div className="col-12 text-right mt-3 ">
         <button type="button" className="btn btn-sm btn-success mr-1 " onClick={() => { setStatusFalse(); }}>New</button>

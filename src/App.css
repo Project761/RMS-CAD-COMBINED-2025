@@ -2476,6 +2476,10 @@ input.nibrs-reopened:disabled {
   background-color: #ffe2a8;
 }
 
+.editor-class-Lock .ql-editor {
+  background-color: #D9E4F2;
+}
+
 .editor-class.readonly .ql-editor {
   background-color: #f0f0f0 !important;
   color: #888888 !important;

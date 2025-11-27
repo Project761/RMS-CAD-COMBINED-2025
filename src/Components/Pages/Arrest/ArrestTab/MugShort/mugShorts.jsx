@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component';
 import Select from "react-select";
 import { useLocation } from 'react-router-dom';
-import { Decrypt_Id_Name, Requiredcolour, tableCustomStyles } from '../../../../Common/Utility';
+import { Decrypt_Id_Name, isLockOrRestrictModule, LockFildscolour, Requiredcolour, tableCustomStyles } from '../../../../Common/Utility';
 import { useDispatch, useSelector } from 'react-redux';
 import { get_LocalStoreData } from '../../../../../redux/actions/Agency';
 import { AgencyContext } from '../../../../../Context/Agency/Index';
@@ -19,7 +19,7 @@ import ArresList from '../../../ShowAllList/ArrestList';
 
 const MugShorts = (props) => {
 
-    const { DecArrestId, DecMasterNameID, DecIncID, isViewEventDetails = false, get_List, ListData } = props
+    const { DecArrestId, DecMasterNameID, DecIncID, isViewEventDetails = false, get_List, ListData, isLocked, setIsLocked } = props
 
     const { setChangesStatus, get_Arrest_Count, NameId } = useContext(AgencyContext)
 
@@ -37,7 +37,7 @@ const MugShorts = (props) => {
     const [loginPinID, setLoginPinID,] = useState('');
     const [updateStatus, setUpdateStatus] = useState(0)
     const [warrentTypeData, setWarrentTypeData] = useState([])
-    const [editval, setEditval] = useState();
+    const [editval, setEditval] = useState([]);
     const [openPage, setOpenPage] = useState('');
     const [addUpdatePermission, setaddUpdatePermission] = useState();
     const [ComplexionColoIDDrp, setComplexionColoIDDrp] = useState([]);
@@ -78,6 +78,7 @@ const MugShorts = (props) => {
             get_List(NameId);
         }
     }, [NameId])
+
     useEffect(() => {
         if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
             if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
@@ -114,13 +115,12 @@ const MugShorts = (props) => {
         }
     }, [DecArrestId]);
 
-
     const GetSingleData = (MugshotID) => {
         const val = { MugshotID: MugshotID, }
         fetchPostData('Mugshots/GetSingleData_Mugshots', val)
             .then((res) => {
                 if (res) setEditval(res)
-                else { setEditval() }
+                else { setEditval([]) }
             })
     }
 
@@ -163,6 +163,7 @@ const MugShorts = (props) => {
             }
         })
     }
+
     const GetData_Mugshots_Data_Image = (ArrestID) => {
         const val = { MugshotID: ArrestID }
         fetchPostData('Mugshots/GetData_MugshotsPhoto', val).then((res) => {
@@ -198,9 +199,6 @@ const MugShorts = (props) => {
         return 'true';
     };
 
-
-
-
     const check_Validation_Error = (e) => {
         const EyeColorIDErrors = RequiredFieldIncident(value.EyeColorID);
         const WeightErrors = RequiredFieldIncident(value.Weight);
@@ -216,6 +214,7 @@ const MugShorts = (props) => {
             }
         });
     }
+
     const { EyeColorIDErrors, HairColorIDErrors, HeightErrors, WeightErrors } = errors
 
     useEffect(() => {
@@ -298,7 +297,6 @@ const MugShorts = (props) => {
         }));
     };
 
-
     const formatHeight = (rawValue) => {
         let digits = rawValue.replace(/[^0-9]/g, '');
         if (digits.length >= 1) {
@@ -342,9 +340,12 @@ const MugShorts = (props) => {
                                 <i className="fa fa-trash"></i>
                             </span>
                     } */}
-                    <span onClick={() => { setMugshotID(row.MugshotID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
-                        <i className="fa fa-trash"></i>
-                    </span>
+                    {
+                        !isLockOrRestrictModule("Lock", warrentTypeData, isLocked, true) &&
+                        <span onClick={() => { setMugshotID(row.MugshotID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
+                            <i className="fa fa-trash"></i>
+                        </span>
+                    }
                 </div>
         }
     ]
@@ -353,12 +354,14 @@ const MugShorts = (props) => {
         reset(); setStatesChangeStatus(false); setChangesStatus(false); setStatus(false);
         setUpdateStatus(updateStatus + 1); setClickedRow(null); setMugshotID([])
     }
+
     const reset = () => {
         setValue({
             ...value, 'EyeColorID': '', 'Weight': '', 'Height': '', 'HairColorID': '', 'HairStyleID': '', 'HairLengthID': '', 'HairShadeID': '', 'BodyBuildTypeID': '', 'Complexion': '', 'FrontImage': '', 'LeftImage': '', 'RightImage': '', 'EnterImage': '', FrontMugshot: null, LeftMugshot: null, RightMugshot: null, EnterMugshot: null
         }); setErrors({ ...errors, 'EyeColorIDErrors': '', 'WeightErrors': '', 'HeightErrors': '', 'HairColorIDErrors': '', });
         setMugshotID([]);
         setMugshots([]);
+        setEditval([])
     }
 
     const set_Edit_Value = (row) => {
@@ -403,7 +406,6 @@ const MugShorts = (props) => {
         });
     };
 
-
     const update_MugShorts = () => {
         const formdata = new FormData();
 
@@ -445,7 +447,6 @@ const MugShorts = (props) => {
         });
     }
 
-
     const Delete_MugShorts = (ImageName) => {
         const val = {
             'MugshotID': MugshotID, 'DeletedByUserFK': loginPinID, 'ImageName': '',
@@ -461,7 +462,6 @@ const MugShorts = (props) => {
             } else { console.log("Somthing Wrong"); }
         }).catch(() => { })
     }
-
 
     const Delete_MugShorts_Enter_Image = (ImageName) => {
         const val = {
@@ -489,7 +489,6 @@ const MugShorts = (props) => {
                 console.error("Error during deletion:", error);
             });
     };
-
 
     const conditionalRowStyles = [
         {
@@ -554,7 +553,6 @@ const MugShorts = (props) => {
         setMugshots([...mugshots, newMugshot]);
     };
 
-    console.log(mugshots)
 
     return (
         <>
@@ -573,13 +571,15 @@ const MugShorts = (props) => {
                     <div className="col-3 col-md-3 col-lg-3 " >
                         <Select
                             name="EyeColorID"
-                            styles={Requiredcolour}
                             value={eyeColorDrpData?.filter((obj) => obj.value === value?.EyeColorID)}
                             options={eyeColorDrpData}
                             onChange={(e) => ChangeDropDown(e, 'EyeColorID')}
                             isClearable
                             placeholder="Select..."
                             menuPlacement="bottom"
+                            // styles={Requiredcolour}
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.EyeColorID, isLocked) ? LockFildscolour : Requiredcolour}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.EyeColorID, isLocked)}
                         />
                     </div>
 
@@ -589,8 +589,20 @@ const MugShorts = (props) => {
                         ) : null}</label>
                     </div>
                     <div className="col-3 col-md-3 col-lg-3 text-field mt-0">
-                        <input type="text" placeholder="Enter Weight" className='requiredColor' maxLength={3} value={value?.Weight} onChange={handleChange} name='Weight' required />
+                        <input
+                            type="text"
+                            placeholder="Enter Weight"
+                            maxLength={3}
+                            value={value?.Weight}
+                            onChange={handleChange}
+                            name='Weight'
+                            required
+                            // className='requiredColor'
+                            className={isLockOrRestrictModule("Lock", editval[0]?.Weight, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+                            disabled={isLockOrRestrictModule("Lock", editval[0]?.Weight, isLocked)}
+                        />
                     </div>
+
 
                     <div className="col-3 col-md-3 col-lg-1">
                         <label htmlFor="" className='label-name mb-0 '>Height{errors.HeightErrors !== 'true' ? (
@@ -598,11 +610,19 @@ const MugShorts = (props) => {
                         ) : null}</label>
                     </div>
                     <div className="col-3 col-md-3 col-lg-3 text-field mt-0">
-                        <input type="text" placeholder="Enter Height" onBlur={(e) => {
-
-                            HeightFromOnBlur(e);
-
-                        }} className='requiredColor' maxLength={3} value={value?.Height} onChange={handleChange} name='Height' required />
+                        <input
+                            type="text"
+                            placeholder="Enter Height"
+                            onBlur={(e) => { HeightFromOnBlur(e); }}
+                            maxLength={3}
+                            value={value?.Height}
+                            onChange={handleChange}
+                            name='Height'
+                            required
+                            // className='requiredColor'
+                            className={isLockOrRestrictModule("Lock", editval[0]?.Height, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+                            disabled={isLockOrRestrictModule("Lock", editval[0]?.Height, isLocked)}
+                        />
                     </div>
 
                     <div className="col-3 col-md-3 col-lg-1">
@@ -617,13 +637,15 @@ const MugShorts = (props) => {
                     <div className="col-3 col-md-3 col-lg-3" >
                         <Select
                             name="HairColorID"
-                            styles={Requiredcolour}
                             value={hairColorDrpData?.filter((obj) => obj.value === value?.HairColorID)}
                             options={hairColorDrpData}
                             onChange={(e) => ChangeDropDown(e, 'HairColorID')}
                             isClearable
                             placeholder="Select..."
                             menuPlacement="bottom"
+                            // styles={Requiredcolour}
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.HairColorID, isLocked) ? LockFildscolour : Requiredcolour}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.HairColorID, isLocked)}
                         />
                     </div>
 
@@ -637,12 +659,14 @@ const MugShorts = (props) => {
                     <div className="col-3 col-md-3 col-lg-3" >
                         <Select
                             name="Complexion"
-                            styles={customStylesWithOutColor}
                             value={ComplexionColoIDDrp?.filter((obj) => obj.value === value?.Complexion)}
                             options={ComplexionColoIDDrp}
                             isClearable
                             onChange={(e) => ChangeDropDown(e, 'Complexion')}
                             placeholder="Select Complexion"
+                            // styles={customStylesWithOutColor}
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.Complexion, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.Complexion, isLocked)}
                         />
                     </div>
 
@@ -656,12 +680,13 @@ const MugShorts = (props) => {
                     <div className="col-3 col-md-3 col-lg-3 " >
                         <Select
                             name="HairStyleID"
-                            styles={customStylesWithOutColor}
                             value={HairStyleIDDrp?.filter((obj) => obj.value === value?.HairStyleID)}
                             options={HairStyleIDDrp}
                             isClearable
                             onChange={(e) => ChangeDropDown(e, 'HairStyleID')}
                             placeholder="Select Hair Style"
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.HairStyleID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.HairStyleID, isLocked)}
                         />
                     </div>
 
@@ -675,12 +700,13 @@ const MugShorts = (props) => {
                     <div className="col-3 col-md-3 col-lg-3" >
                         <Select
                             name="HairShadeID"
-                            styles={customStylesWithOutColor}
                             value={HairShadeIDDrp?.filter((obj) => obj.value === value?.HairShadeID)}
                             options={HairShadeIDDrp}
                             isClearable
                             onChange={(e) => ChangeDropDown(e, 'HairShadeID')}
                             placeholder="Select Hair Shade"
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.HairShadeID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.HairShadeID, isLocked)}
                         />
                     </div>
 
@@ -694,12 +720,13 @@ const MugShorts = (props) => {
                     <div className="col-3 col-md-3 col-lg-3 mt-1" >
                         <Select
                             name="HairLengthID"
-                            styles={customStylesWithOutColor}
                             value={HairLengthIDDrp?.filter((obj) => obj.value === value?.HairLengthID)}
                             options={HairLengthIDDrp}
                             isClearable
                             onChange={(e) => ChangeDropDown(e, 'HairLengthID')}
                             placeholder="Select Hair Length"
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.HairLengthID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.HairLengthID, isLocked)}
                         />
                     </div>
 
@@ -713,12 +740,13 @@ const MugShorts = (props) => {
                     <div className="col-3 col-md-3 col-lg-3" >
                         <Select
                             name="BodyBuildTypeID"
-                            styles={customStylesWithOutColor}
                             value={BodyBuildIDDrp?.filter((obj) => obj.value === value?.BodyBuildTypeID)}
                             options={BodyBuildIDDrp}
                             isClearable
                             onChange={(e) => ChangeDropDown(e, 'BodyBuildTypeID')}
                             placeholder="Select Body Build"
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.BodyBuildTypeID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.BodyBuildTypeID, isLocked)}
                         />
                     </div>
                 </div>

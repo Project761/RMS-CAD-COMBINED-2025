@@ -159,6 +159,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                     setResetErrors(true);
                     setClickCount(clickCount + 1);
                     getPermissionLevelByLock(IncID, localStoreData?.PINID, row?.PropertyID)
+                    setShowPage('home')
                 }
             }
         }
@@ -810,7 +811,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                         <Home {...{ setStatus, setaddUpdatePermission, ResetErrors, setResetErrors, newStatus, status, setShowVehicleRecovered, showVehicleRecovered, get_List, setPropertyStatus, isCad, isViewEventDetails, isCADSearch, clickCount, isLocked, setIsLocked }} />
                                         :
                                         showPage === 'AdditionalInformation' ?
-                                            <AddInformation   {...{ ListData, DecVehId, setIsNonPropertyRoomSelected, DecMVehId, IncID, propertystatus, setPropertyStatus, isViewEventDetails }} />
+                                            <AddInformation   {...{ ListData, DecVehId, setIsNonPropertyRoomSelected, DecMVehId, IncID, propertystatus, setPropertyStatus, isViewEventDetails, isLocked, setIsLocked }} />
                                             :
                                             showPage === 'Offense' ?
                                                 <Offense {...{ ListData, DecVehId, DecMVehId, IncID, isLocked, setIsLocked }} />
