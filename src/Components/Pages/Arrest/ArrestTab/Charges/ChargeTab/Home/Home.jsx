@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useContext, useRef } from 'react'
 import Select from "react-select";
-import { Decrypt_Id_Name, MultiSelectRequredColor, Requiredcolour, base64ToString, customStylesWithOutColor, filterPassedTimeZonesProperty, getShowingDateText, nibrscolourStyles, stringToBase64, tableCustomStyles } from '../../../../../../Common/Utility';
+import { Decrypt_Id_Name, LockFildscolour, MultiSelectLockedStyle, MultiSelectRequredColor, Requiredcolour, base64ToString, customStylesWithOutColor, filterPassedTimeZonesProperty, getShowingDateText, isLockOrRestrictModule, nibrscolourStyles, stringToBase64, tableCustomStyles } from '../../../../../../Common/Utility';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AddDeleteUpadate, fetchPostData } from '../../../../../../hooks/Api';
 import { Comman_changeArrayFormat, threeColArray, threeColArrayWithCode } from '../../../../../../Common/ChangeArrayFormat';
@@ -30,7 +30,7 @@ const StatusOption = [
 
 const Charges = (props) => {
 
-  const { setStatus, DecChargeId, ListData, ArresteeID, setListData, get_List } = props
+  const { setStatus, DecChargeId, ListData, ArresteeID, setListData, get_List, isLocked, setIsLocked } = props
 
   const useQuery = () => {
     const params = new URLSearchParams(useLocation().search);
@@ -40,6 +40,7 @@ const Charges = (props) => {
   };
 
   let DecIncID = 0, DecEIncID = 0, DecArrestId = 0;
+
   // DecArrestId = 0;
   const query = useQuery();
   var IncID = query?.get("IncId");
@@ -93,7 +94,7 @@ const Charges = (props) => {
   const SelectedValue = useRef();
 
   const [chargeCodeDrp, setChargeCodeDrp] = useState([]);
-  const [Editval, setEditval] = useState();
+  const [Editval, setEditval] = useState([]);
   const [ArrestID, setArrestID] = useState('');
   const [ChargeID, setChargeID] = useState();
   const [LoginAgencyID, setLoginAgencyID] = useState('');
@@ -115,7 +116,6 @@ const Charges = (props) => {
 
   const [value, setValue] = useState({
     AttemptComplete: 'N', // Default value for AttemptComplete
-
     'NameID': '', 'ArrestID': '', 'ArrestNumber': '', 'IncidentID': '', 'CreatedByUserFK': '', 'IncidentNumber': '',
     'Count': '', 'ChargeCodeID': '', 'NIBRSID': '', 'UCRClearID': '', 'ChargeID': '', 'ModifiedByUserFK': '', 'Name': '',
     'LawTitleId': '', 'AttemptComplete': '', 'CategoryId': '', 'OffenseDateTime': '',
@@ -130,8 +130,6 @@ const Charges = (props) => {
       if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
     }
   }, []);
-
-
 
   useEffect(() => {
     if (localStoreData) {
@@ -153,7 +151,6 @@ const Charges = (props) => {
     }
   }, [effectiveScreenPermission]);
 
-
   useEffect(() => {
     if (LoginAgencyID) {
       const defaultDate = incReportedDate ? getShowingDateText(incReportedDate) : null;
@@ -164,7 +161,6 @@ const Charges = (props) => {
       // dispatch(get_PropertyTypeData(loginAgencyID));
     }
   }, [LoginAgencyID, incReportedDate]);
-
 
   useEffect(() => {
     if (LoginAgencyID) {
@@ -261,20 +257,25 @@ const Charges = (props) => {
         setEditval([]);
       }
     });
-
-
   }
 
 
   useEffect(() => {
     if (Editval) {
-
       setValue({
-        ...value, 'Count': Editval[0]?.Count ? Editval[0]?.Count : '', 'Name': Editval[0]?.Name, 'ChargeCodeID': Editval[0]?.ChargeCodeID || Editval?.ChargeCodeID,
-        'NIBRSID': Editval[0]?.NIBRSID || Editval?.NIBRSCodeId, 'UCRClearID': Editval[0]?.UCRClearID, 'ChargeID': Editval[0]?.ChargeID, 'ModifiedByUserFK': LoginPinID,
-        'LawTitleId': Editval[0]?.LawTitleId || Editval?.LawTitleId, 'AttemptComplete': Editval[0]?.AttemptComplete || Editval?.AttemptComplete, ChargeDateTime: Editval[0]?.ChargeDateTime,
-        'CategoryId': Editval[0]?.CategoryId, 'OffenseDateTime': Editval[0]?.OffenseDateTime,
-
+        ...value,
+        'Count': Editval[0]?.Count ? Editval[0]?.Count : '',
+        'Name': Editval[0]?.Name,
+        'ChargeCodeID': Editval[0]?.ChargeCodeID || Editval?.ChargeCodeID,
+        'NIBRSID': Editval[0]?.NIBRSID || Editval?.NIBRSCodeId,
+        'UCRClearID': Editval[0]?.UCRClearID,
+        'ChargeID': Editval[0]?.ChargeID,
+        'ModifiedByUserFK': LoginPinID,
+        'LawTitleId': Editval[0]?.LawTitleId || Editval?.LawTitleId,
+        'AttemptComplete': Editval[0]?.AttemptComplete || Editval?.AttemptComplete,
+        'ChargeDateTime': Editval[0]?.ChargeDateTime,
+        'CategoryId': Editval[0]?.CategoryId,
+        'OffenseDateTime': Editval[0]?.OffenseDateTime,
       });
       setArrestName(Editval[0]?.Name ? Editval[0]?.Name : '');
 
@@ -291,10 +292,10 @@ const Charges = (props) => {
         ...value, 'Count': '', 'ChargeCodeID': '', 'NIBRSID': '', 'UCRClearID': '', 'ChargeID': '', 'Name': Name, 'IncidentNumber': IncNo, 'ArrestNumber': ArrNo, 'LawTitleId': '', 'AttemptComplete': '', 'CategoryId': '', 'OffenseDateTime': '',
       });
     }
-  }, [Editval, changesStatusCount])
+  }, [Editval, changesStatusCount]);
 
   const Reset = () => {
-    setEditval('');
+    setEditval([]);
     setValue({ ...value, 'CreatedByUserFK': '', 'Count': '', 'ChargeCodeID': '', 'NIBRSID': '', 'UCRClearID': '', 'WarrantID': '', 'LawTitleId': '', 'AttemptComplete': '', 'CategoryId': '', 'OffenseDateTime': '', });
     setStatesChangeStatus(false); setChangesStatus(false); setErrors({}); setMultiSelected([]); setMultiSelected(prevValues => { return { ...prevValues, ['PropertyID']: '' } })
 
@@ -532,7 +533,6 @@ const Charges = (props) => {
     })
   }
 
-
   const onChangeAttComplete = (e, name) => {
     !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
     if (e) {
@@ -585,7 +585,6 @@ const Charges = (props) => {
     },
   ]
 
-
   const conditionalRowStyles = [
     {
       when: row => row.ChargeID === ChargeID,
@@ -599,16 +598,16 @@ const Charges = (props) => {
       modal.show();
     } else {
       if (MstPage === "MST-Arrest-Dash") {
-        navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(row?.ArrestID)}&ChargeId=${stringToBase64(row.ChargeID)}&Name=${Name}&ArrNo=${ArrNo}&ArrestSta=${true}&ChargeSta=${true}&SideBarStatus=${false}`)
+        navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(row?.ArrestID)}&ChargeId=${stringToBase64(row.ChargeID)}&Name=${Name}&ArrNo=${ArrNo}&ArrestSta=${true}&ChargeSta=${true}&SideBarStatus=${false}`);
 
         // setStatus(true); 
         if (row.OffenseID) {
           setEditval(row);
+
         }
         else {
-          get_ArrestCharge_Count(row?.ChargeID); setErrors('');
-          setChargeID(row.ChargeID);
-          GetSingleData(row.ChargeID);
+          get_ArrestCharge_Count(row?.ChargeID); setErrors(''); setChargeID(row.ChargeID); GetSingleData(row.ChargeID);
+
         }
 
       } else {
@@ -616,14 +615,14 @@ const Charges = (props) => {
         navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(row?.ArrestID)}&ChargeId=${stringToBase64(row.ChargeID)}&Name=${Name}&ArrNo=${ArrNo}&ArrestSta=${true}&ChargeSta=${true}&SideBarStatus=${false}`)
         if (row.OffenseID) {
           setEditval(row);
+
         }
         else {
-          get_ArrestCharge_Count(row?.ChargeID);
-          get_ArrestCharge_Count(row.ChargeID); setErrors(''); setStatesChangeStatus(false);
+          get_ArrestCharge_Count(row?.ChargeID); get_ArrestCharge_Count(row.ChargeID); setErrors(''); setStatesChangeStatus(false);
           //  setStatus(true); 
           setChargeID(row.ChargeID); setChangesStatus(false); GetSingleData(row.ChargeID); get_Arrest_Count(row?.ArrestID); get_Property_Data(row?.ChargeID);
-        }
 
+        }
 
       }
     }
@@ -743,7 +742,6 @@ const Charges = (props) => {
       }
     })
   }
-
 
   const InSertBasicInfo = (id, col1, url) => {
     const val = { 'ChargeID': ChargeID, [col1]: id, 'CreatedByUserFK': LoginPinID, }
@@ -888,46 +886,6 @@ const Charges = (props) => {
   return (
     <>
       <ArresList {...{ ListData }} />
-      {/* <div className="mt-2">
-        <fieldset>
-          <legend>Name Information</legend>
-          <div className="col-12 bb">
-            <div className="row">
-              <div className="col-2 col-md-2 col-lg-1 showlist">
-                <p htmlFor="" className='label-name'>Name:</p>
-              </div>
-              <div className="col-4 col-md-4 col-lg-2 text-show">
-                <label htmlFor=""></label>
-              </div>
-              <div className="col-2 col-md-2 col-lg-1 showlist">
-                <p htmlFor="" className='label-name'>DOB:</p>
-              </div>
-              <div className="col-4 col-md-4 col-lg-2 text-show">
-                <label htmlFor=""></label>
-              </div>
-              <div className="col-2 col-md-2 col-lg-1 showlist">
-                <p htmlFor="" className='label-name'>Age:</p>
-              </div>
-              <div className="col-4 col-md-4 col-lg-2 text-show">
-                <label htmlFor=""></label>
-              </div>
-              <div className="col-2 col-md-2 col-lg-1 showlist">
-                <p htmlFor="" className='label-name'>Gender:</p>
-              </div>
-              <div className="col-4 col-md-4 col-lg-2 text-show">
-                <label htmlFor=""></label>
-              </div>
-              <div className="col-2 col-md-2 col-lg-1 showlist">
-                <p htmlFor="" className='label-name'>Race:</p>
-              </div>
-              <div className="col-4 col-md-4 col-lg-2 text-show">
-                <label htmlFor=""></label>
-              </div>
-            </div>
-
-          </div>
-        </fieldset>
-      </div> */}
       <div className="container-fluid">
         <fieldset className="">
           <legend className="w-auto px-2">Weapon & Property</legend>
@@ -942,7 +900,6 @@ const Charges = (props) => {
                     className="basic-multi-SelectBox"
                     isMulti
                     name='ChargeWeaponTypeID'
-                    isDisabled={!value?.ChargeID}
                     isClearable={false}
                     closeMenuOnSelect={false}
                     hideSelectedOptions={true}
@@ -951,14 +908,18 @@ const Charges = (props) => {
                     value={filterArray(multiSelected.ChargeWeaponTypeID, 'label')}
                     components={{ MultiValue, }}
                     placeholder="Select Type Of Weapon From List.."
-                    styles={customStylesWithOutColorMulti}
+
+                    // styles={customStylesWithOutColorMulti}
+                    // isDisabled={!value?.ChargeID}
+                    styles={isLockOrRestrictModule("Lock", typeOfSecurityEditVal, isLocked, true) ? MultiSelectLockedStyle : customStylesWithOutColorMulti}
+                    isDisabled={!value?.ChargeID || isLockOrRestrictModule("Lock", typeOfSecurityEditVal, isLocked, true)}
+
                   />
                   :
                   <Select
                     className="basic-multi-select"
                     isMulti
                     name='ChargeWeaponTypeID'
-                    isDisabled={!value?.ChargeID}
                     isClearable={false}
                     closeMenuOnSelect={false}
                     hideSelectedOptions={true}
@@ -967,7 +928,10 @@ const Charges = (props) => {
                     value={filterArray(multiSelected.ChargeWeaponTypeID, 'label')}
                     placeholder="Select Type Of Weapon From List.."
                     components={{ MultiValue, }}
-                    styles={customStylesWithOutColorMulti}
+                    // styles={customStylesWithOutColorMulti}
+                    // isDisabled={!value?.ChargeID}
+                    styles={isLockOrRestrictModule("Lock", typeOfSecurityEditVal, isLocked, true) ? MultiSelectLockedStyle : customStylesWithOutColorMulti}
+                    isDisabled={!value?.ChargeID || isLockOrRestrictModule("Lock", typeOfSecurityEditVal, isLocked, true)}
 
                   />
               }
@@ -982,17 +946,19 @@ const Charges = (props) => {
                 options={propertyDrp}
                 isClearable={false}
                 closeMenuOnSelect={false}
-                isDisabled={!value?.ChargeID}
                 placeholder="Select.."
                 ref={SelectedValue}
                 className="basic-multi-select"
                 isMulti
-                styles={customStylesWithOutColorMulti}
                 components={{ MultiValue, }}
                 onChange={(e) => Property(e)}
                 value={multiSelected.PropertyID}
                 name='PropertyID'
                 noDataComponent={'There are no data to display'}
+                styles={isLockOrRestrictModule("Lock", propertyEditVal, isLocked, true) ? MultiSelectLockedStyle : customStylesWithOutColorMulti}
+                isDisabled={!value?.ChargeID || isLockOrRestrictModule("Lock", propertyEditVal, isLocked, true)}
+              // isDisabled={!value?.ChargeID}
+              // styles={customStylesWithOutColorMulti}
               />
             </div>
           </div>
@@ -1009,15 +975,18 @@ const Charges = (props) => {
                 Law Title
               </label>
             </div>
+
             <div className="col-4 col-md-4 col-lg-2 ">
               <Select
                 name='LawTitleId'
-                styles={customStylesWithOutColor}
                 value={lawTitleIdDrp?.filter((obj) => obj.value === value?.LawTitleId)}
                 options={lawTitleIdDrp}
                 isClearable
                 onChange={(e) => onChangeDrpLawTitle(e, 'LawTitleId')}
                 placeholder="Select..."
+                // styles={customStylesWithOutColor}
+                styles={isLockOrRestrictModule("Lock", Editval[0]?.LawTitleId, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                isDisabled={!value?.ChargeID || isLockOrRestrictModule("Lock", Editval[0]?.LawTitleId, isLocked)}
               />
             </div>
 
@@ -1029,15 +998,17 @@ const Charges = (props) => {
                 )}
               </label>
             </div>
-            <div className="col-4 col-md-4 col-lg-3  ">
+            <div className="col-4 col-md-4 col-lg-3">
               <Select
-                styles={Requiredcolour}
                 name="NIBRSID"
                 value={NIBRSDrpData?.filter((obj) => obj.value === value?.NIBRSID)}
                 isClearable
                 options={NIBRSDrpData}
                 onChange={(e) => { onChangeNIBRSCode(e, 'NIBRSID') }}
                 placeholder="Select..."
+                // styles={Requiredcolour}
+                styles={isLockOrRestrictModule("Lock", Editval[0]?.NIBRSID, isLocked) ? LockFildscolour : Requiredcolour}
+                isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.NIBRSID, isLocked)}
               />
             </div>
             <div className="col-2 col-md-2 col-lg-2 ">
@@ -1045,15 +1016,18 @@ const Charges = (props) => {
                 Category
               </label>
             </div>
+
             <div className="col-4 col-md-4 col-lg-2 ">
               <Select
                 name='CategoryId'
                 value={categoryIdDrp?.filter((obj) => obj.value === value?.CategoryId)}
-                styles={customStylesWithOutColor}
                 options={categoryIdDrp}
                 onChange={(e) => ChangeDropDown(e, 'CategoryId')}
                 isClearable
                 placeholder="Select..."
+                // styles={customStylesWithOutColor}
+                styles={isLockOrRestrictModule("Lock", Editval[0]?.CategoryId, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.CategoryId, isLocked)}
               />
             </div>
 
@@ -1065,15 +1039,18 @@ const Charges = (props) => {
                 ) : null}
               </Link>
             </div>
+
             <div className="col-4 col-md-4 col-lg-7 mt-0 ">
               <Select
                 name="ChargeCodeID"
                 value={chargeCodeDrp?.filter((obj) => obj.value === value?.ChargeCodeID)}
-                styles={Requiredcolour}
                 isClearable
                 options={chargeCodeDrp}
                 onChange={(e) => { onChangeDrpLawTitle(e, 'ChargeCodeID') }}
                 placeholder="Select..."
+                // styles={Requiredcolour}
+                styles={isLockOrRestrictModule("Lock", Editval[0]?.ChargeCodeID, isLocked) ? LockFildscolour : Requiredcolour}
+                isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.ChargeCodeID, isLocked)}
               />
             </div>
 
@@ -1088,14 +1065,18 @@ const Charges = (props) => {
                 )}
               </label>
             </div>
+
             <div className="col-3 col-md-4 col-lg-2">
               <Select
                 onChange={(e) => onChangeAttComplete(e, "AttemptComplete")}
                 options={StatusOption}
                 isClearable
-                styles={!value?.AttemptComplete ? nibrscolourStyles : nibrsSuccessStyles}
                 placeholder="Select..."
                 value={StatusOption.find((option) => option.value === value?.AttemptComplete) || null}
+
+                // styles={!value?.AttemptComplete ? nibrscolourStyles : nibrsSuccessStyles}
+                styles={isLockOrRestrictModule("Lock", Editval[0]?.AttemptComplete, isLocked) ? LockFildscolour : !value?.AttemptComplete ? nibrscolourStyles : nibrsSuccessStyles}
+                isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.AttemptComplete, isLocked)}
               />
             </div>
             <div className="col-2 col-md-2 col-lg-1 text-right">
@@ -1107,22 +1088,31 @@ const Charges = (props) => {
             </div>
             <div className="col-4 col-md-4 col-lg-3 ">
               <Select
-                styles={customStylesWithOutColor}
                 name="UCRClearID"
                 value={UCRClearDrpData?.filter((obj) => obj.value === value?.UCRClearID)}
                 isClearable
                 options={UCRClearDrpData}
                 onChange={(e) => { ChangeDropDown(e, 'UCRClearID') }}
                 placeholder="Select..."
+                // styles={customStylesWithOutColor}
+                styles={isLockOrRestrictModule("Lock", Editval[0]?.UCRClearID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.UCRClearID, isLocked)}
               />
             </div>
             <div className="col-2 col-md-2 col-lg-1 text-right">
               <label htmlFor="" className='new-label mb-0'>Count</label>
             </div>
             <div className="col-4 col-md-4 col-lg-3 mt-0 text-field">
-              <input type="text" name='Count' id='Count' maxLength={5} onChange={handlcount}
+              <input
+                type="text"
+                name='Count'
+                id='Count'
+                maxLength={5}
+                onChange={handlcount}
                 value={value?.Count}
-                className='' />
+                className={isLockOrRestrictModule("Lock", Editval[0]?.Count, isLocked) ? 'LockFildsColor' : ''}
+                disabled={isLockOrRestrictModule("Lock", Editval[0]?.Count, isLocked)}
+              />
             </div>
             <div className="col-3 col-md-3 col-lg-2 ">
               <label htmlFor="" className="new-label px-0 mb-0">
@@ -1161,8 +1151,8 @@ const Charges = (props) => {
                 }}
                 selected={value?.OffenseDateTime && new Date(value?.OffenseDateTime)}
 
-                // disabled={nibrsSubmittedPropertyMain === 1}
-                // className={'requiredColor'}
+                className={isLockOrRestrictModule("Lock", Editval[0]?.OffenseDateTime, isLocked) ? 'LockFildsColor' : ''}
+                disabled={isLockOrRestrictModule("Lock", Editval[0]?.OffenseDateTime, isLocked)}
                 autoComplete="Off"
                 placeholderText={'Select...'}
                 timeInputLabel
@@ -1180,8 +1170,6 @@ const Charges = (props) => {
                 is24Hour
               />
             </div>
-
-
           </div>
         </fieldset>
 

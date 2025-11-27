@@ -10,7 +10,7 @@ import Gang from './NameTab/Gang/Gang';
 import { AgencyContext } from '../../../Context/Agency/Index';
 import Connection from './NameTab/Connection/Connection';
 import Address from './NameTab/Address/Address';
-import { Decrypt_Id_Name, getShowingWithOutTime, stringToBase64, tableCustomStyle } from '../../Common/Utility';
+import { Decrypt_Id_Name, getShowingWithOutTime, stringToBase64, tableCustomStyle } from '../../Common/Utility'; 
 import Tab from '../../Utility/Tab/Tab';
 import { Link, useNavigate } from 'react-router-dom';
 import AssaultInjuryCom from './NameTab/Offender/OffenderTab/AllTabCom/AssaultInjuryCom';
@@ -309,6 +309,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
             }
             getPermissionLevelByLock(IncID, localStoreData?.PINID, row.NameID);
             setNameID(row.NameID); setMasterNameID(row?.MasterNameID);
+            setNameShowPage('home');
         }
     }
 
@@ -326,7 +327,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
             } else {
                 navigate(`/Name-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}&isNew=${true}`)
             }
-            setMasterNameID(''); setNameID('');
+            setMasterNameID(''); setNameID(''); 
         }
     }
 

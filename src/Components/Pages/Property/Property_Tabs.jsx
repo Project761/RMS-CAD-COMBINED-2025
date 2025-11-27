@@ -205,12 +205,12 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                     navigate(`/Prop-Home?IncId=${stringToBase64(DecIncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${stringToBase64(row?.PropertyID)}&MProId=${stringToBase64(row?.MasterPropertyID)}&ProSta=${true}&ProCategory=${row.PropertyType_Description}`);
 
                 }
-                setShowPage('home')
                 get_Property_Count(row?.PropertyID, row?.MasterPropertyID, MstPage === "MST-Property-Dash" ? true : false);
                 setMasterPropertyID(row?.MasterPropertyID); dispatch({ type: MasterProperty_ID, payload: row?.MasterPropertyID });
                 setPropertyID(row?.PropertyID); dispatch({ type: Property_ID, payload: row.PropertyID });
                 // Lock Restrict
                 getPermissionLevelByLock(DecIncID, localStoreData?.PINID, row?.PropertyID);
+                setShowPage('home')
             }
         }
     }

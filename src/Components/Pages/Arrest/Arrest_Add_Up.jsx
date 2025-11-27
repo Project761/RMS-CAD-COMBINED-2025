@@ -7,7 +7,7 @@ import CourtInformation from './ArrestTab/CourtInformation/CourtInformation'
 import Narratives from './ArrestTab/Narratives/Narratives'
 import PoliceForce from './ArrestTab/PoliceForce/PoliceForce'
 import Juvenile from './ArrestTab/Juvenile/Juvenile'
-import { base64ToString, Decrypt_Id_Name, stringToBase64, tableCustomStyle, tableCustomStyles } from '../../Common/Utility'
+import { base64ToString, Decrypt_Id_Name, isLockOrRestrictModule, stringToBase64, tableCustomStyle, tableCustomStyles } from '../../Common/Utility'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import Log from '../Log/Log'
@@ -62,7 +62,7 @@ const Arrest_Add_Up = () => {
     const [possessionID, setPossessionID] = useState('');
 
     const [RestStatus, setRestStatus] = useState(false);
-    const [Editval, setEditval] = useState();
+    const [Editval, setEditval] = useState([]);
     const [incExceDate, setincExceDate] = useState();
     const [ArresteeID, setArresteeID] = useState('');
 
@@ -72,6 +72,9 @@ const Arrest_Add_Up = () => {
         JSON.parse(sessionStorage.getItem('ChargeLocalData')) || []
     );
     const [isChargeDel, setIsChargeDel] = useState(false);
+    // Lock Restrict
+    const [isLocked, setIsLocked] = useState(false);
+    const [permissionToUnlock, setPermissionToUnlock] = useState(false);
 
     const useQuery = () => {
         const params = new URLSearchParams(useLocation().search);
@@ -92,11 +95,8 @@ const Arrest_Add_Up = () => {
     var ChargeSta = query?.get('ChargeSta');
     var isFromDashboard = query?.get('isFromDashboard');
     var isNew = query?.get("isNew");
-
     var SideBarStatus = query?.get("SideBarStatus");
     var ArrestStatus = query?.get("ArrestStatus");
-
-
     var ChargeId = query?.get('ChargeId');
     let DecArrestId = 0, DecIncID = 0, DecChargeId = 0
 
@@ -134,7 +134,6 @@ const Arrest_Add_Up = () => {
         }
     }, [ArrestSta, localStoreData, updateCount]);
 
-
     useEffect(() => {
         if (isFromDashboard === 'true' || isFromDashboard === true) {
             setShowPoliceForce(true);
@@ -143,6 +142,7 @@ const Arrest_Add_Up = () => {
     }, [isFromDashboard]);
 
     const [currentTab, setCurrentTab] = useState('Arrest');
+
     useEffect(() => {
         const pathname = window.location.pathname;
         if (pathname.includes('Arrest-Home')) setCurrentTab('Arrest');
@@ -153,6 +153,7 @@ const Arrest_Add_Up = () => {
         const base64Pattern = /^[A-Za-z0-9+/=]+$/;
         return base64Pattern.test(str);
     }
+
     if (!ArrestID) {
         ArrestID = 0;
     } else {
@@ -213,10 +214,13 @@ const Arrest_Add_Up = () => {
             cell: row =>
                 <div style={{ position: 'absolute', top: 4, right: 10 }}>
                     {
-                        effectiveScreenPermission ? effectiveScreenPermission[0]?.DeleteOK ?
+                        effectiveScreenPermission ? effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", arrestFilterData, isLocked, true) ?
                             <span onClick={() => setArrestID(row.ArrestID)} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">                                    <i className="fa fa-trash"></i>
                             </span>
-                            : <></> :
+                            :
+                            <></>
+                            :
+                            !isLockOrRestrictModule("Lock", arrestFilterData, isLocked, true) &&
                             <span onClick={() => setArrestID(row.ArrestID)} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">                                    <i className="fa fa-trash"></i>
                                 <i className="fa fa-trash"></i>
                             </span>
@@ -238,8 +242,6 @@ const Arrest_Add_Up = () => {
         })
     }
 
-
-
     const set_Edit_Value = (row) => {
         get_List(row.ArresteeID)
         setArresteeID(row.ArresteeID)
@@ -260,11 +262,33 @@ const Arrest_Add_Up = () => {
         } else {
             if (row.ArrestID) {
                 // Reset();
-                navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(row?.ArrestID)}&ArrNo=${row?.ArrestNumber}&Name=${row?.Arrestee_Name}&ArrestSta=${true}&ChargeSta=${false}&SideBarStatus=${!SideBarStatus}&ArrestStatus=${false}&isNew=${true} `)
+                navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(row?.ArrestID)}&ArrNo=${row?.ArrestNumber}&Name=${row?.Arrestee_Name}&ArrestSta=${true}&ChargeSta=${false}&SideBarStatus=${!SideBarStatus}&ArrestStatus=${false}&isNew=${true} `);
 
+                getPermissionLevelByLock(DecIncID, loginPinID)
                 // setArrestID(row?.ArrestID); setActiveArrest(row?.ArrestID); setErrors(''); setStatesChangeStatus(false); setChangesStatus(false); setStatus(true);
                 // GetSingleData(row.ArrestID, DecEIncID); get_Arrest_Count(row?.ArrestID);
             }
+        }
+    }
+
+
+    const getPermissionLevelByLock = async (IncidentID, OfficerID) => {
+        try {
+            const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { 'IncidentID': IncidentID, 'OfficerID': OfficerID, 'ModuleName': "Incident", 'ID': 0 });
+            console.log("🚀 ~ getPermissionLevelByLock ~ res:", res)
+            if (res?.length > 0) {
+                setIsLocked(res[0]?.IsLocked === true || res[0]?.IsLocked === 1 ? true : false);
+                setPermissionToUnlock(res[0]?.IsUnLockPermission === true || res[0]?.IsUnLockPermission === 1 ? true : false);
+
+            } else {
+                setPermissionToUnlock(false);
+                setIsLocked(false);
+
+            }
+        } catch (error) {
+            console.error('There was an error!', error);
+            setPermissionToUnlock(false);
+            setIsLocked(false);
         }
     }
 
@@ -291,12 +315,14 @@ const Arrest_Add_Up = () => {
             }
         }
     }
+
     const conditionalRowStyles = [
         {
             when: row => row.ArrestID === DecArrestId,
             style: { backgroundColor: '#001f3fbd', color: 'white', cursor: 'pointer', },
         },
     ];
+
     const DeleteArrest = () => {
         const val = { 'ArrestID': arrestID, 'DeletedByUserFK': loginPinID }
         AddDeleteUpadate('Arrest/Delete_Arrest', val).then((res) => {
@@ -339,6 +365,7 @@ const Arrest_Add_Up = () => {
             });
         }
     };
+
     const DeleteOffense = () => {
         const val = {
             'NameOffenseID': offenseNameID, 'DeletedByUserFK': loginPinID,
@@ -367,12 +394,12 @@ const Arrest_Add_Up = () => {
             }
         })
     }
+
     return (
         <div className=" section-body pt-1 p-1 bt" >
             <div className="div">
                 <div className="col-12  inc__tabs">
                     <Tab />
-
                 </div>
                 <div className="dark-row" >
                     <div className="col-12 col-sm-12">
@@ -409,53 +436,6 @@ const Arrest_Add_Up = () => {
                                                             </div>
 
                                                         </div>
-                                                        {/* <div className="d-flex flex-column align-items-center gap-2 flex-shrink-0">
-                                                            <div
-                                                                className="text-white"
-                                                                style={{
-                                                                    backgroundColor: "#001f3f",
-                                                                    color: "white",
-                                                                    width: "36px",
-                                                                    height: "36px",
-                                                                    borderRadius: "50%",
-                                                                    display: "flex",
-                                                                    alignItems: "center",
-                                                                    justifyContent: "center",
-                                                                    cursor: "pointer",
-                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                                                    marginBottom: "10px"
-                                                                }}
-                                                                title="Edit"
-                                                                onClick={() => {
-                                                                    set_Edit_Value(row);
-                                                                    setResetErrors(true);
-                                                                }}
-                                                            >
-                                                                <i className="fa fa-edit"></i>
-                                                            </div>
-
-
-                                                            <div
-                                                                style={{
-                                                                    backgroundColor: "#001f3f",
-                                                                    color: "white",
-                                                                    width: "36px",
-                                                                    height: "36px",
-                                                                    borderRadius: "50%",
-                                                                    display: "flex",
-                                                                    alignItems: "center",
-                                                                    justifyContent: "center",
-                                                                    cursor: "pointer",
-                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                                                }}
-                                                                data-toggle="modal"
-                                                                data-target="#DeleteModal"
-                                                                onClick={() => { setArrestID(row.ArrestID); }}
-                                                            >
-                                                                <i className="fa fa-trash"></i>
-                                                            </div>
-                                                        </div> */}
-
                                                         <div className="d-flex flex-column align-items-center gap-2 flex-shrink-0">
                                                             {/* Edit Button */}
                                                             {
@@ -525,28 +505,6 @@ const Arrest_Add_Up = () => {
                                                                     </>
                                                             }
 
-                                                            {/* <div
-                                                                style={{
-                                                                    backgroundColor: "#001f3f",
-                                                                    color: "white",
-                                                                    width: "36px",
-                                                                    height: "36px",
-                                                                    borderRadius: "50%",
-                                                                    display: "flex",
-                                                                    alignItems: "center",
-                                                                    justifyContent: "center",
-                                                                    cursor: "pointer",
-                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                                                    marginBottom: "10px"
-                                                                    // transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                                                                }}
-
-                                                                onClick={() => { set_EditRow(row); }}
-
-                                                                title="Edit"
-                                                            >
-                                                                <i className="fa fa-edit"></i>
-                                                            </div> */}
 
                                                             {/* Delete Button */}
                                                             {
@@ -663,28 +621,18 @@ const Arrest_Add_Up = () => {
                                         <div className="text-right ml-3">
                                             <div className="right-controls d-flex flex-column align-items-center gap-2">
                                                 <div className="view-toggle d-flex flex-column gap-2">
-
                                                     {MstPage != "MST-Arrest-Dash" && (
-                                                        <button className="btn btn-sm btn-success mb-2" onClick={() => { setStatusFalse(); setResetErrors(true) }}
-                                                        >
+                                                        <button className="btn btn-sm btn-success mb-2" onClick={() => { setStatusFalse(); setResetErrors(true); setIsLocked(false); }}  >
                                                             New
                                                         </button>
                                                     )}
                                                     {viewType === "card" && (
-
-                                                        <button
-                                                            className="btn btn-sm btn-success"
-                                                            onClick={() => setViewType("list")}
-                                                        >
+                                                        <button className="btn btn-sm btn-success" onClick={() => setViewType("list")}  >
                                                             Grid
                                                         </button>
-
                                                     )}
                                                     {viewType === "list" && (
-                                                        <button
-                                                            className="btn btn-sm btn-success"
-                                                            onClick={() => setViewType("card")}
-                                                        >
+                                                        <button className="btn btn-sm btn-success" onClick={() => setViewType("card")}  >
                                                             Card
                                                         </button>
                                                     )}
@@ -693,7 +641,6 @@ const Arrest_Add_Up = () => {
                                         </div>
                                     </div>
                                 )}
-
                                 {
                                     (status || isNew === "true" || isNew === true || ArrestCount === 0 || ArrestCount === "0") && (
                                         <div className="row " style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
@@ -704,7 +651,6 @@ const Arrest_Add_Up = () => {
                                                         to={
                                                             MstPage ?
                                                                 `/Arrest-Home?page=MST-Arrest-Dash&ArrestId=${ArrestID}&Name=${Name}&IncId=${IncID}&ArrNo=${ArrNo}&ArrestSta=${ArrestSta}&ChargeSta=${true}&SideBarStatus=${false}&ArrestStatus=${false}`
-
                                                                 :
                                                                 `/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&Name=${Name}&ArrestId=${ArrestID}&ArrestSta=${ArrestSta}&ArrNo=${ArrNo}&ChargeSta=${ChargeSta}&SideBarStatus=${false}&ArrestStatus=${false}`
                                                         }
@@ -859,39 +805,37 @@ const Arrest_Add_Up = () => {
                                 }
                                 {
                                     showPage === 'home' ?
-                                        <Home {...{ isEnabled, Editval, incExceDate, ResetErrors, setResetErrors, setincExceDate, GetSingleData, setEditval, RestStatus, setIsEnabled, setStatus, arrestID, matchedAgency, setmatchedAgency, setArrestID, showPage, Agencystatus, setAgencystatus, setShowPage, offenseNameID, setoffenseNameID, status, setEditArrestStatus, showJuvinile, EditArrestStatus, setShowJuvinile, setShowPoliceForce, DecIncID, DecArrestId, delChargeID, isChargeDel, setIsChargeDel, setDelChargeID, ChargeLocalArr, setChargeLocalArr, possessionID, setPossessionID, get_List }} />
+                                        <Home {...{ isEnabled, Editval, incExceDate, ResetErrors, setResetErrors, setincExceDate, GetSingleData, setEditval, RestStatus, setIsEnabled, setStatus, arrestID, matchedAgency, setmatchedAgency, setArrestID, showPage, Agencystatus, setAgencystatus, setShowPage, offenseNameID, setoffenseNameID, status, setEditArrestStatus, showJuvinile, EditArrestStatus, setShowJuvinile, setShowPoliceForce, DecIncID, DecArrestId, delChargeID, isChargeDel, setIsChargeDel, setDelChargeID, ChargeLocalArr, setChargeLocalArr, possessionID, setPossessionID, get_List, isLocked, setIsLocked }} />
                                         :
                                         showPage === 'Property' ?
                                             <Property {...{ DecArrestId, DecIncID, }} />
                                             :
-
                                             showPage === 'Charges' ?
-                                                <Charges {...{ DecArrestId, DecIncID, ListData, setListData, get_List, ArresteeID }} />
+                                                <Charges {...{ DecArrestId, DecIncID, ListData, setListData, get_List, ArresteeID, isLocked, setIsLocked }} />
                                                 :
                                                 showPage === 'Warrant' ?
-                                                    <Warrant {...{ DecArrestId, DecIncID, ListData, get_List }} />
+                                                    <Warrant {...{ DecArrestId, DecIncID, ListData, get_List, isLocked, setIsLocked }} />
                                                     :
                                                     showPage === 'Narratives' ?
-                                                        <Narratives {...{ DecArrestId, DecIncID, ListData, get_List }} />
+                                                        <Narratives {...{ DecArrestId, DecIncID, ListData, get_List, isLocked, setIsLocked }} />
                                                         :
                                                         showPage === 'MugShorts' ?
-                                                            <MugShorts {...{ DecArrestId, DecIncID, ListData, get_List }} />
+                                                            <MugShorts {...{ DecArrestId, DecIncID, ListData, get_List, isLocked, setIsLocked }} />
                                                             :
                                                             showPage === 'Fingerprint' ?
-                                                                <FingerPrint {...{ DecArrestId, DecIncID, ListData, get_List }} />
+                                                                <FingerPrint {...{ DecArrestId, DecIncID, ListData, get_List, isLocked, setIsLocked }} />
                                                                 :
                                                                 showPage === 'CriminalActivity' ?
-                                                                    <CriminalActivity {...{ DecArrestId, DecIncID, ListData, get_List }} />
+                                                                    <CriminalActivity {...{ DecArrestId, DecIncID, ListData, get_List, isLocked, setIsLocked }} />
                                                                     :
                                                                     showPage === 'CourtInformation' ?
-                                                                        <CourtInformation {...{ DecArrestId, DecIncID, ListData, get_List }} />
+                                                                        <CourtInformation {...{ DecArrestId, DecIncID, ListData, get_List, isLocked, setIsLocked }} />
                                                                         :
-
                                                                         showPage === 'PoliceForce' && showPoliceForce ?
-                                                                            <PoliceForce {...{ DecArrestId, DecIncID, ListData }} />
+                                                                            <PoliceForce {...{ DecArrestId, DecIncID, ListData, isLocked, setIsLocked }} />
                                                                             :
                                                                             showPage === 'Juvenile' ?
-                                                                                <Juvenile {...{ DecArrestId, DecIncID, ListData, get_List }} />
+                                                                                <Juvenile {...{ DecArrestId, DecIncID, ListData, get_List, isLocked, setIsLocked }} />
                                                                                 :
                                                                                 showPage === 'AuditLog' ?
                                                                                     <Log

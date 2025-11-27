@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext, useCallback } from 'react'
-import { Decrypt_Id_Name, filterPassedDateTime, formatDate, getShowingDateText, getShowingMonthDateYear, tableCustomStyles } from '../../../../Common/Utility'
+import { Decrypt_Id_Name, filterPassedDateTime, formatDate, getShowingDateText, getShowingMonthDateYear, isLockOrRestrictModule, LockFildscolour, tableCustomStyles } from '../../../../Common/Utility'
 import { AddDeleteUpadate, fetchData, fetchPostData } from '../../../../hooks/Api'
 import DataTable from 'react-data-table-component'
 import { toastifySuccess } from '../../../../Common/AlertMsg'
@@ -18,7 +18,7 @@ import ArresList from '../../../ShowAllList/ArrestList'
 
 const CourtInformation = (props) => {
 
-  const { DecArrestId, ListData, get_List } = props
+  const { DecArrestId, ListData, get_List, isLocked, setIsLocked } = props
 
   const dispatch = useDispatch();
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -42,7 +42,7 @@ const CourtInformation = (props) => {
   const [courtApperReasonDrp, setCourtApperReasonDrp] = useState([]);
   const [cityList, setCityList] = useState([]);
   const [biStateList, setBiStateList] = useState([]);
-  const [editval, setEditval] = useState();
+  const [editval, setEditval] = useState([]);
   const [openPage, setOpenPage] = useState('');
   const [statesChangeStatus, setStatesChangeStatus] = useState(false);
   const [clickedRow, setClickedRow] = useState(null);
@@ -91,6 +91,7 @@ const CourtInformation = (props) => {
       get_List(NameId);
     }
   }, [NameId])
+
   const [errors, setErrors] = useState({
     'NameErrors': '',
   })
@@ -134,6 +135,7 @@ const CourtInformation = (props) => {
     })
     setAppearDate(''); setPleaDate(''); setStatesChangeStatus(false);
     setErrors({ ...errors, ['CourtNameError']: '', });
+    setEditval([])
   }
 
   const escFunction = useCallback((event) => {
@@ -271,6 +273,7 @@ const CourtInformation = (props) => {
   }
 
   const startRef = React.useRef();
+
   const onKeyDown = (e) => {
     if (e.keyCode === 9 || e.which === 9) {
       startRef.current.setOpen(false);
@@ -318,11 +321,14 @@ const CourtInformation = (props) => {
       cell: row =>
         <div className="div" style={{ position: 'absolute', top: 4, right: 10 }}>
           {
-            effectiveScreenPermission ? effectiveScreenPermission[0]?.DeleteOK ?
+            effectiveScreenPermission ? effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", courtInfoData, isLocked, true) ?
               <span to={`#`} onClick={() => { setCourtInfoID(row.ArrsetCourtInformationID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                 <i className="fa fa-trash"></i>
               </span>
-              : <></> :
+              :
+              <></>
+              :
+              !isLockOrRestrictModule("Lock", courtInfoData, isLocked, true) &&
               <span to={`#`} onClick={() => { setCourtInfoID(row.ArrsetCourtInformationID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                 <i className="fa fa-trash"></i>
               </span>
@@ -385,7 +391,16 @@ const CourtInformation = (props) => {
             </span>
           </div>
           <div className="col-4 col-md-4 col-lg-3 mt-2 text-field">
-            <input type="text" name='CourtName' value={value?.CourtName} required className='requiredColor' onChange={handleChange} />
+            <input
+              type="text"
+              name='CourtName'
+              value={value?.CourtName}
+              required
+              onChange={handleChange}
+              // className='requiredColor'
+              className={isLockOrRestrictModule("Lock", editval[0]?.CourtName, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+              disabled={isLockOrRestrictModule("Lock", editval[0]?.CourtName, isLocked)}
+            />
           </div>
 
           <div className="col-2 col-md-2 col-lg-1 mt-2 pt-2">
@@ -394,12 +409,14 @@ const CourtInformation = (props) => {
           <div className="col-4 col-md-4 col-lg-2 mt-2 ">
             <Select
               name="CourtStateID"
-              styles={customStylesWithOutColor}
               value={biStateList?.filter((obj) => obj.value === value?.CourtStateID)}
               isClearable
               options={biStateList}
               onChange={(e) => selectHandleChange(e, 'CourtStateID')}
               placeholder="Select..."
+              // styles={customStylesWithOutColor}
+              styles={isLockOrRestrictModule("Lock", editval[0]?.CourtStateID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.CourtStateID, isLocked)}
             />
           </div>
           <div className="col-2 col-md-2 col-lg-2 mt-2 pt-2">
@@ -408,13 +425,15 @@ const CourtInformation = (props) => {
           <div className="col-4 col-md-4 col-lg-2 mt-2 ">
             <Select
               name="CourtCityID"
-              styles={customStylesWithOutColor}
               value={cityList?.filter((obj) => obj.value === value?.CourtCityID)}
               isClearable
               options={cityList}
               onChange={(e) => selectHandleChange(e, 'CourtCityID')}
               placeholder="Select..."
-              isDisabled={!value?.CourtStateID}
+              // isDisabled={!value?.CourtStateID}
+              // styles={customStylesWithOutColor}
+              styles={isLockOrRestrictModule("Lock", editval[0]?.CourtCityID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.CourtCityID, isLocked) || !value?.CourtStateID}
             />
           </div>
           <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
@@ -423,7 +442,14 @@ const CourtInformation = (props) => {
             </span>
           </div>
           <div className="col-4 col-md-4 col-lg-3 mt-2 text-field">
-            <input type="text" name='JudgeName' value={value?.JudgeName} onChange={handleChange} />
+            <input
+              type="text"
+              name='JudgeName'
+              value={value?.JudgeName}
+              onChange={handleChange}
+              className={isLockOrRestrictModule("Lock", editval[0]?.JudgeName, isLocked) ? 'LockFildsColor' : ''}
+              disabled={isLockOrRestrictModule("Lock", editval[0]?.JudgeName, isLocked)}
+            />
           </div>
           <div className="col-2 col-md-2 col-lg-1 mt-2 pt-1">
             <span data-toggle="modal" onClick={() => {
@@ -435,7 +461,9 @@ const CourtInformation = (props) => {
           <div className="col-4 col-md-4 col-lg-2 mt-2 ">
             <Select
               name='PleaID'
-              styles={customStylesWithOutColor}
+              // styles={customStylesWithOutColor}
+              styles={isLockOrRestrictModule("Lock", editval[0]?.PleaID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.PleaID, isLocked) || !value?.CourtStateID}
               value={arrestPleaDrp?.filter((obj) => obj.value === value?.PleaID)}
               isClearable
               options={arrestPleaDrp}
@@ -494,19 +522,37 @@ const CourtInformation = (props) => {
               autoComplete='off'
               showMonthDropdown
               showYearDropdown
+              className={isLockOrRestrictModule("Lock", editval[0]?.PleaDateTime, isLocked) ? 'LockFildsColor' : ''}
+              disabled={isLockOrRestrictModule("Lock", editval[0]?.PleaDateTime, isLocked)}
             />
           </div>
           <div className="col-2 col-md-2 col-lg-2 mt-2 pt-2">
             <label htmlFor="" className='new-label'>Prosecutor</label>
           </div>
           <div className="col-4 col-md-4 col-lg-3 mt-2 text-field">
-            <input type="text" name='Prosecutor' value={value?.Prosecutor} onChange={handleChange} />
+            <input
+              type="text"
+              name='Prosecutor'
+              value={value?.Prosecutor}
+              onChange={handleChange}
+              className={isLockOrRestrictModule("Lock", editval[0]?.Prosecutor, isLocked) ? 'LockFildsColor' : ''}
+              disabled={isLockOrRestrictModule("Lock", editval[0]?.Prosecutor, isLocked)}
+            />
           </div>
           <div className="col-2 col-md-2 col-lg-1 mt-2 pt-2">
             <label htmlFor="" className='new-label'>Attorney</label>
           </div>
           <div className="col-4 col-md-4 col-lg-2 mt-2 text-field">
-            <input type="text" name='Attorney' id='Attorney' onChange={handleChange} value={value?.Attorney} required />
+            <input
+              type="text"
+              name='Attorney'
+              id='Attorney'
+              onChange={handleChange}
+              value={value?.Attorney}
+              required
+              className={isLockOrRestrictModule("Lock", editval[0]?.Attorney, isLocked) ? 'LockFildsColor' : ''}
+              disabled={isLockOrRestrictModule("Lock", editval[0]?.Attorney, isLocked)}
+            />
           </div>
           <div className="col-2 col-md-2 col-lg-2 mt-2 pt-2">
             <label htmlFor="" className='new-label'>Appear Date/Time</label>
@@ -523,7 +569,6 @@ const CourtInformation = (props) => {
               }}
               id='AppearDateTime'
               name='AppearDateTime'
-              className=''
               dateFormat="MM/dd/yyyy HH:mm"
               timeFormat="HH:mm"
               is24Hour
@@ -545,6 +590,8 @@ const CourtInformation = (props) => {
               showYearDropdown
               dropdownMode="select"
               minDate={new Date(incReportedDate)}
+              className={isLockOrRestrictModule("Lock", editval[0]?.AppearDateTime, isLocked) ? 'LockFildsColor' : ''}
+              disabled={isLockOrRestrictModule("Lock", editval[0]?.AppearDateTime, isLocked)}
             />
           </div>
           <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1">
@@ -556,7 +603,10 @@ const CourtInformation = (props) => {
           </div>
           <div className="col-4 col-md-4 col-lg-3 mt-2 ">
             <Select
-              name='CourtAppearReasonID' styles={customStylesWithOutColor}
+              name='CourtAppearReasonID'
+              // styles={customStylesWithOutColor}
+              styles={isLockOrRestrictModule("Lock", editval[0]?.CourtAppearReasonID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.CourtAppearReasonID, isLocked) || !value?.CourtStateID}
               value={courtApperReasonDrp?.filter((obj) => obj.value === value?.CourtAppearReasonID)}
               isClearable
               options={courtApperReasonDrp}
@@ -568,7 +618,15 @@ const CourtInformation = (props) => {
         <div className="row bt mt-2">
           <div className="col-4 col-md-4 col-lg-3 mt-2">
             <div className="form-check ">
-              <input className="form-check-input" type="checkbox" name='IsRescheduled' id="flexCheckDefault" checked={value?.IsRescheduled} value={value?.IsRescheduled} onChange={handleChange} />
+              <input
+                className="form-check-input"
+                type="checkbox"
+                name='IsRescheduled'
+                id="flexCheckDefault"
+                checked={value?.IsRescheduled}
+                value={value?.IsRescheduled}
+                onChange={handleChange}
+              />
               <label className="form-check-label" htmlFor="flexCheckDefault">
                 Rescheduled
               </label>
@@ -576,7 +634,15 @@ const CourtInformation = (props) => {
           </div>
           <div className="col-3 col-md-3 col-lg-3 mt-2">
             <div className="form-check ">
-              <input className="form-check-input" type="checkbox" name='IsContinued' id="flexCheckDefault1" checked={value?.IsContinued} value={value?.IsContinued} onChange={handleChange} />
+              <input
+                className="form-check-input"
+                type="checkbox"
+                name='IsContinued'
+                id="flexCheckDefault1"
+                checked={value?.IsContinued}
+                value={value?.IsContinued}
+                onChange={handleChange}
+              />
               <label className="form-check-label" htmlFor="flexCheckDefault1">
                 Continued
               </label>
@@ -584,7 +650,15 @@ const CourtInformation = (props) => {
           </div>
           <div className="col-5 col-md-5 col-lg-3 mt-2">
             <div className="form-check ">
-              <input className="form-check-input" type="checkbox" name='IsAppearRequired' id="flexCheckDefault2" checked={value?.IsAppearRequired} value={value?.IsAppearRequired} onChange={handleChange} />
+              <input
+                className="form-check-input"
+                type="checkbox"
+                name='IsAppearRequired'
+                id="flexCheckDefault2"
+                checked={value?.IsAppearRequired}
+                value={value?.IsAppearRequired}
+                onChange={handleChange}
+              />
               <label className="form-check-label" htmlFor="flexCheckDefault2">
                 Appear Required
               </label>
@@ -592,7 +666,15 @@ const CourtInformation = (props) => {
           </div>
           <div className="col-5 col-md-4 col-lg-3 mt-2">
             <div className="form-check ">
-              <input className="form-check-input" type="checkbox" name='IsDismissed' id="flexCheckDefault3" checked={value?.IsDismissed} value={value?.IsDismissed} onChange={handleChange} />
+              <input
+                className="form-check-input"
+                type="checkbox"
+                name='IsDismissed'
+                id="flexCheckDefault3"
+                checked={value?.IsDismissed}
+                value={value?.IsDismissed}
+                onChange={handleChange}
+              />
               <label className="form-check-label" htmlFor="flexCheckDefault3">
                 Dismissed
               </label>

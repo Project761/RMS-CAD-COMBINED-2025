@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react'
-import { Decrypt_Id_Name, getShowingWithOutTime, Requiredcolour, tableCustomStyles } from '../../../../Common/Utility';
+import { Decrypt_Id_Name, getShowingWithOutTime, isLockOrRestrictModule, LockFildscolour, Requiredcolour, tableCustomStyles } from '../../../../Common/Utility';
 import { AddDeleteUpadate, fetchPostData } from '../../../../hooks/Api';
 import DataTable from 'react-data-table-component';
 import { toastifySuccess } from '../../../../Common/AlertMsg';
@@ -16,7 +16,8 @@ import { get_AgencyOfficer_Data } from '../../../../../redux/actions/DropDownsDa
 import ArresList from '../../../ShowAllList/ArrestList';
 
 const Juvenile = (props) => {
-  const { DecArrestId, ListData, get_List } = props
+
+  const { DecArrestId, ListData, get_List, isLocked, setIsLocked } = props
   const incReportedDate = useSelector((state) => state.Agency.incReportedDate);
   const agencyOfficerDrpData = useSelector((state) => state.DropDown.agencyOfficerDrpData);
 
@@ -33,10 +34,10 @@ const Juvenile = (props) => {
   const [status, setStatus] = useState(false);
   const [updateStatus, setUpdateStatus] = useState(0)
 
-  const [loginAgencyID, setLoginAgencyID] = useState('')
-  const [arrestID, setArrestID] = useState('')
+  const [loginAgencyID, setLoginAgencyID] = useState('');
+  const [arrestID, setArrestID] = useState('');
   const [loginPinID, setLoginPinID] = useState('');
-  const [editval, setEditval] = useState();
+  const [editval, setEditval] = useState([]);
   const [parentContactDtTm, setParentContactDtTm] = useState();
   const [statesChangeStatus, setStatesChangeStatus] = useState(false);
 
@@ -89,6 +90,7 @@ const Juvenile = (props) => {
       get_List(NameId);
     }
   }, [NameId])
+
   const [errors, setErrors] = useState({
     'ParentContactDtTmErrors': '', 'ContactByIDErrors': '',
   })
@@ -101,6 +103,7 @@ const Juvenile = (props) => {
       setErrors(prevValues => { return { ...prevValues, ['ContactByIDErrors']: RequiredFieldIncident(value.ContactByID) } })
     }
   }
+
   const { ParentContactDtTmErrors, ContactByIDErrors, } = errors
 
   useEffect(() => {
@@ -109,7 +112,6 @@ const Juvenile = (props) => {
       else { Add_Type() }
     }
   }, [ParentContactDtTmErrors, ContactByIDErrors])
-
 
   const GetSingleData = (arrestJuvenileID) => {
     const val = { 'ArrestJuvenileID': arrestJuvenileID, }
@@ -130,7 +132,6 @@ const Juvenile = (props) => {
       setParentContactDtTm(editval[0]?.ParentContactDtTm ? new Date(editval[0]?.ParentContactDtTm) : '');
     } else { setValue({ ...value, 'ParentContactDtTm': '', ' ContactByID': '', 'ParentAddress': '', 'ParentName': '', }) }
   }, [editval, changesStatusCount])
-
 
   const handleChange = (e) => {
     !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
@@ -180,12 +181,12 @@ const Juvenile = (props) => {
     })
   }
 
-
   const reset = () => {
     setValue({
       ...value, 'ParentContactDtTm': '', 'ContactByID': '', 'ParentAddress': '', 'ParentName': '', 'ParentPhone': "",
     }); setParentContactDtTm(''); setStatesChangeStatus(false); setChangesStatus(false)
     setErrors({ ...errors, 'ParentContactDtTmErrors': '', 'ContactByIDErrors': '', });
+    setEditval([])
   }
 
   const escFunction = useCallback((event) => {
@@ -234,12 +235,14 @@ const Juvenile = (props) => {
       cell: row =>
         <div className="div" style={{ position: 'absolute', top: 4, right: 10 }}>
           {
-            effectiveScreenPermission ? effectiveScreenPermission[0]?.DeleteOK ?
+            effectiveScreenPermission ? effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", juvenileData, isLocked, true) ?
               <span to={`#`} onClick={() => { setArrestJuvenileID(row.ArrestJuvenileID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                 <i className="fa fa-trash"></i>
               </span>
               : <></>
-              : <span to={`#`} onClick={() => { setArrestJuvenileID(row.ArrestJuvenileID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
+              :
+              !isLockOrRestrictModule("Lock", juvenileData, isLocked, true) &&
+              <span to={`#`} onClick={() => { setArrestJuvenileID(row.ArrestJuvenileID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                 <i className="fa fa-trash"></i>
               </span>
           }
@@ -247,6 +250,7 @@ const Juvenile = (props) => {
 
     }
   ]
+
   const conditionalRowStyles = [
     {
       when: row => row === clickedRow,
@@ -292,7 +296,17 @@ const Juvenile = (props) => {
             <label htmlFor="" className='new-label'>Parent Name</label>
           </div>
           <div className="col-4 col-md-4 col-lg-4 mt-2 text-field ">
-            <input type="text" className='ParentName' name='ParentName' value={value?.ParentName} onChange={handleChange} />
+            <input
+              type="text"
+              // className='ParentName'
+              name='ParentName'
+              value={value?.ParentName}
+              onChange={handleChange}
+
+              className={isLockOrRestrictModule("Lock", editval[0]?.ParentName, isLocked) ? 'LockFildsColor' : 'ParentName'}
+              disabled={isLockOrRestrictModule("Lock", editval[0]?.ParentName, isLocked)}
+
+            />
           </div>
           <div className="col-2 col-md-2 col-lg-2 mt-2 pt-2">
             <label htmlFor="" className='new-label'>Parent Contact Date{errors.ParentContactDtTmErrors !== 'true' ? (
@@ -307,9 +321,14 @@ const Juvenile = (props) => {
                   e?.preventDefault();
                 } else { onKeyDown(e); }
               }}
+
               id='ParentContactDtTm'
               name='ParentContactDtTm'
-              className='requiredColor' dateFormat="MM/dd/yyyy"
+              // className='requiredColor'
+              className={isLockOrRestrictModule("Lock", editval[0]?.ParentContactDtTm, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+              disabled={isLockOrRestrictModule("Lock", editval[0]?.ParentContactDtTm, isLocked)}
+
+              dateFormat="MM/dd/yyyy"
               onChange={(date) => { setParentContactDtTm(date); setStatesChangeStatus(true); setValue({ ...value, ['ParentContactDtTm']: date ? getShowingWithOutTime(date) : null }) }}
               selected={parentContactDtTm}
               isClearable={value?.ParentContactDtTm ? true : false}
@@ -333,17 +352,33 @@ const Juvenile = (props) => {
               name='ContactByID'
               value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ContactByID)}
               options={agencyOfficerDrpData}
-              styles={Requiredcolour}
               isClearable
               placeholder="Select..."
               onChange={(e) => { ChangeDropDown(e, 'ContactByID') }}
+
+              // styles={Requiredcolour}
+              styles={isLockOrRestrictModule("Lock", editval[0]?.ContactByID, isLocked) ? LockFildscolour : Requiredcolour}
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.ContactByID, isLocked)}
             />
           </div>
           <div className="col-2 col-md-2 col-lg-2 mt-2 pt-2">
             <label htmlFor="" className='new-label'>Parent Address</label>
           </div>
           <div className="col-4 col-md-4 col-lg-4 mt-2 ">
-            <textarea name='ParentAddress' id="ParentAddress" value={value?.ParentAddress} onChange={handleChange} cols="30" rows='2' className="form-control " style={{ resize: 'none' }}>
+            <textarea
+              name='ParentAddress'
+              id="ParentAddress"
+              value={value?.ParentAddress}
+              onChange={handleChange}
+              cols="30"
+              rows='2'
+              // className="form-control "
+              style={{ resize: 'none' }}
+
+              // className='requiredColor'
+              className={isLockOrRestrictModule("Lock", editval[0]?.ParentAddress, isLocked) ? 'form-control  LockFildsColor' : ' form-control'}
+              disabled={isLockOrRestrictModule("Lock", editval[0]?.ParentAddress, isLocked)}
+            >
             </textarea>
           </div>
         </div>
