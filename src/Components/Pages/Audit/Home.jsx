@@ -34,6 +34,7 @@ const rooms = [
     { name: "Room 4", sample: 5, total: 20 },
 ];
 
+
 const PropertyAuditTab = ({ DecProRomId, DecPropID, DecMPropID }) => {
     const [activeTab, setActiveTab] = useState(1);
     const [auditType, setAuditType] = useState(auditTypeOptions);
@@ -143,7 +144,7 @@ const PropertyAuditTab = ({ DecProRomId, DecPropID, DecMPropID }) => {
                 </ul>
 
                 <div className="audit-home__info">
-                    <div className="audit-home__infoBox">Audit ID: –</div>
+                    <div className="audit-home__infoBox">Audit ID: - AUD 7WD354  </div>
                     <div className="audit-home__infoBox">Elapsed: 00:00:00</div>
                 </div>
             </div>
@@ -230,7 +231,6 @@ const PropertyAuditTab = ({ DecProRomId, DecPropID, DecMPropID }) => {
                                 <div className="col-4 col-md-3 col-lg-3">
                                     <Select
                                         name='Team'
-
                                         value={teamList?.filter((obj) => obj.value == value?.Team)}
                                         options={teamList}
                                         onChange={(e) => ChangeDropDown(e, 'Team')}
@@ -250,7 +250,6 @@ const PropertyAuditTab = ({ DecProRomId, DecPropID, DecMPropID }) => {
                                 <div className="col-4 col-md-3 col-lg-3">
                                     <Select
                                         name='Method'
-
                                         value={methodList?.filter((obj) => obj.value == value?.Method)}
                                         options={methodList}
                                         onChange={(e) => ChangeDropDown(e, 'Method')}
@@ -381,7 +380,7 @@ const PropertyAuditTab = ({ DecProRomId, DecPropID, DecMPropID }) => {
 
 
                             {!isSampleGenerated && (
-                                <div className="col-12 d-flex justify-content-end mt-3 text-end">
+                                <div className="col-12 d-flex justify-content-end  text-end">
                                     <button
                                         type="button"
                                         className="btn btn-sm btn-success mr-1"

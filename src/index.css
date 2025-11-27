@@ -3003,7 +3003,8 @@ div[data-testid="table-header"],
 }
 
 .audit-home__tab-item {
-  padding: 8px 45px;
+  /* padding: 8px 45px; */
+  padding: 8px 35px;
   border: 1px solid #ddd;
   border-radius: 5px;
   cursor: pointer;
@@ -3043,7 +3044,7 @@ div[data-testid="table-header"],
 }
 
 .audit-home__infoBox:first-child {
-  padding-right: 50px;
+  /* padding-right: 50px; */
 }
 
 .plan-audit__header {

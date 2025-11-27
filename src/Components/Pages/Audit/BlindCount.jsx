@@ -9,8 +9,8 @@ const BlindCount = () => {
     const [selectedFileName, setSelectedFileName] = useState([]);
     const [selectedFiles, setSelectedFiles] = useState([])
 
-    const fileInputRef = useRef(null)
 
+    const fileInputRef = useRef(null)
     const changeHandler = (e) => {
         const files = e.target.files
         setSelectedFile(files)
@@ -40,15 +40,14 @@ const BlindCount = () => {
         })
     }
     return (
+        
         <div className="audit-home mt-4 col-md-12 ">
-
             <h4 className="plan-audit__title mb-3">Blind Count (Counter)</h4>
             <small className="text-muted mb-3 d-block">Use a barcode scanner or type manually.</small>
 
             <div className="row mb-3 ">
                 <div className="col-2 col-md-2 col-lg-2 mt-3">
                     <label htmlFor="" className='label-name '>Scan Of Type Property#</label>
-                    <label htmlFor="" className='new-label '>Document Name</label>
                 </div>
                 <div className="col-4 col-md-4 col-lg-4 text-field mt-2" >
                     <input type="text" name='DocumentName' required autoComplete='off' />
@@ -56,7 +55,7 @@ const BlindCount = () => {
 
                 <div className="col-2 col-md-2 col-lg-2 mt-3">
                     <label htmlFor="" className='label-name '>Location</label>
-                    <label htmlFor="" className='new-label '>Document Name</label>
+
                 </div>
                 <div className="col-4 col-md-4 col-lg-4 text-field mt-2" >
                     <input type="text" name='DocumentName' required autoComplete='off' />
