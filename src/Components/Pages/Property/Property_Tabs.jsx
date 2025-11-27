@@ -218,7 +218,7 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                 setMasterPropertyID(row?.MasterPropertyID); dispatch({ type: MasterProperty_ID, payload: row?.MasterPropertyID });
                 setPropertyID(row?.PropertyID); dispatch({ type: Property_ID, payload: row.PropertyID });
                 // Lock Restrict
-                getPermissionLevelByLock(DecIncID, localStoreData?.PINID, row?.PropertyID);
+                // getPermissionLevelByLock(DecIncID, localStoreData?.PINID, row?.PropertyID);
                 setShowPage('home')
             }
         }
@@ -333,7 +333,8 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
     // LockRestrict
     const getPermissionLevelByLock = async (IncidentID, OfficerID, PropertyID) => {
         try {
-            const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { 'IncidentID': IncidentID, 'OfficerID': OfficerID, 'ModuleName': "Property", 'ID': PropertyID || 0 });
+            // const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { 'IncidentID': IncidentID, 'OfficerID': OfficerID, 'ModuleName': "Property", 'ID': PropertyID || 0 });
+            const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { 'IncidentID': IncidentID, 'OfficerID': OfficerID, 'ModuleName': "Incident", 'ID': 0 });
             // console.log("🚀 ~ getPermissionLevelByLock ~ res:", res);
             if (res?.length > 0) {
                 setIsLocked(res[0]?.IsLocked === true || res[0]?.IsLocked === 1 ? true : false);
@@ -747,7 +748,8 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                                                     >
                                                         {isCad ? "Change Log" : " Audit Log"}
                                                     </span>
-                                                    {
+                                                    {/* don't remove code DK */}
+                                                    {/* {
                                                         status ?
                                                             <>
                                                                 {
@@ -781,7 +783,7 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                                                             </>
                                                             :
                                                             <></>
-                                                    }
+                                                    } */}
                                                 </ul>
                                             </div>
                                         </div>

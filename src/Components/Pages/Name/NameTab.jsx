@@ -184,7 +184,8 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
 
     const getPermissionLevelByLock = async (IncidentID, OfficerID, NameID) => {
         try {
-            const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { 'IncidentID': IncidentID, 'OfficerID': OfficerID, 'ModuleName': "Name", 'ID': NameID || 0 });
+            // const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { 'IncidentID': IncidentID, 'OfficerID': OfficerID, 'ModuleName': "Name", 'ID': NameID || 0 });
+            const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { 'IncidentID': IncidentID, 'OfficerID': OfficerID, 'ModuleName': "Incident", 'ID': 0 });
             console.log("🚀 ~ getPermissionLevelByLock ~ res:", res);
             if (res?.length > 0) {
                 setIsLocked(res[0]?.IsLocked === true || res[0]?.IsLocked === 1 ? true : false);
@@ -298,7 +299,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
             } else {
                 navigate(`/Name-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(row?.NameID)}&MasterNameID=${stringToBase64(row?.MasterNameID)}&NameStatus=${true}`)
             }
-            getPermissionLevelByLock(IncID, localStoreData?.PINID, row.NameID);
+            // getPermissionLevelByLock(IncID, localStoreData?.PINID, row.NameID);
             setNameID(row.NameID); setMasterNameID(row?.MasterNameID);
             setNameShowPage('home');
         }
@@ -786,7 +787,8 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                     >
                                                         {isCad ? "Change Log" : " Audit Log"}
                                                     </span>
-                                                    {
+                                                    {/* don't remove code DK */}
+                                                    {/* {
                                                         status ?
                                                             <>
                                                                 {
@@ -820,7 +822,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                             </>
                                                             :
                                                             <></>
-                                                    }
+                                                    } */}
                                                 </ul>
                                             </div>
                                         </div>
