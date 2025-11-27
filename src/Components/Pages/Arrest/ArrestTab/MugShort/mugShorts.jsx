@@ -323,7 +323,7 @@ const MugShorts = (props) => {
             sortable: true
         },
         {
-            name: 'Body build', selector: (row) => row.BodyBuildType, sortable: true
+            name: 'Body Build Type', selector: (row) => row.BodyBuildType, sortable: true
         },
         {
             name: <p className='text-end' style={{ position: 'absolute', top: 8, right: 10 }}>Delete</p>,
@@ -694,7 +694,7 @@ const MugShorts = (props) => {
                         <span data-toggle="modal" onClick={() => {
                             setOpenPage('Hair Shade')
                         }} data-target="#ListModel" className='new-link'>
-                            Hair Shades
+                            Hair Shade
                         </span>
                     </div>
                     <div className="col-3 col-md-3 col-lg-3" >

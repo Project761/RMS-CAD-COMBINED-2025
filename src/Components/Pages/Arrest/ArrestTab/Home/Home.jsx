@@ -21,6 +21,8 @@ import ListModal from '../../../Utility/ListManagementModel/ListModal';
 import { PhoneField } from '../../../Agency/AgencyValidation/validators';
 import { ErrorTooltip } from '../../ArrestNibrsErrors';
 import CurrentArrestMasterReport from './CurrentArrestMasterReport';
+import Location from '../../../../../CADComponents/Common/Location';
+
 
 
 
@@ -119,6 +121,9 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
     const [type, setType] = useState("ArrestMod");
     const [ArrestparentID, setArrestParentID] = useState('');
     const [isEditvalProcessed, setIsEditvalProcessed] = useState(false);
+    const [locationStatus, setLocationStatus] = useState(false);
+    const [updateStatus, setUpdateStatus] = useState(0);
+    const [onSelectLocation, setOnSelectLocation] = useState(false);
 
 
     const [value, setValue] = useState({
@@ -520,7 +525,8 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
             'IsSchoolNotified': IsSchoolNotified, 'Grade': Grade, 'LocationOfSchool': LocationOfSchool, 'NameOfSchool': NameOfSchool, 'ParentPhone': ParentPhone, 'ParentNameID': ParentNameID, 'ResponseID': ResponseID,
         }
         localStorage.setItem('insertedArrestVal', JSON.stringify(val));
-        setShowPage('Charges'); setStatus(true)
+        setShowPage('Charges');
+        //  setStatus(true)
         // navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(res?.ArrestID)}&ArrNo=${res?.ArrestNumber}&Name=${ArresteName}&ArrestSta=${true}&ChargeSta=${false}`)
         // AddDeleteUpadate('Arrest/Insert_Arrest', val).then(async (res) => {
         //     if (res.success) {
@@ -1082,8 +1088,10 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                     showDisabledMonthNavigation
                                     filterTime={(date) => filterPassedTimeZonesProperty(date, incReportedDate, datezone)}
 
-                                    disabled={isLockOrRestrictModule("Lock", Editval[0]?.ArrestDtTm, isLocked) || nibrsSubmittedArrestMain === 1}
-                                    className={nibrsSubmittedArrestMain === 1 || isLockOrRestrictModule("Lock", Editval[0]?.ArrestDtTm, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+                                    // disabled={isLockOrRestrictModule("Lock", Editval[0]?.ArrestDtTm, isLocked) || nibrsSubmittedArrestMain === 1}
+                                    // className={nibrsSubmittedArrestMain === 1 || isLockOrRestrictModule("Lock", Editval[0]?.ArrestDtTm, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+                                    disabled={nibrsSubmittedArrestMain === 1 || arrestID || isLockOrRestrictModule("Lock", Editval[0]?.ArrestDtTm, isLocked)}
+                                    className={nibrsSubmittedArrestMain === 1 || isLockOrRestrictModule("Lock", Editval[0]?.ArrestDtTm, isLocked) ? 'LockFildsColor' : arrestID ? "readonlyColor" : 'requiredColor'}
                                 />
                             </div>
                             <div className="col-2 col-md-2 col-lg-1">
@@ -1550,17 +1558,23 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                 <label htmlFor="" className='new-label mb-0'>Location Of School</label>
                             </div>
 
-                            <div className="col-4 col-md-4 col-lg-11">
-                                <input
-                                    name="LocationOfSchool"
-                                    value={value?.LocationOfSchool}
-                                    onChange={HandleChange}
-                                    type="text"
-                                    id="LocationOfSchool"
+                            <div className="col-4 col-md-4 col-lg-11 mt-0 text-field">
+                                <Location
+                                    {...{ value, setValue, locationStatus, setLocationStatus, updateStatus, setOnSelectLocation, setChangesStatus, setStatesChangeStatus }}
+                                    col='LocationOfSchool'
+                                    locationID='LocationOfSchool'
+                                    check={false}
+                                    verify={true}
+                                    style={{ resize: 'both' }}
+                                    // isDisabled={value?.IsJuvenileArrest ? false : true}
                                     className={isLockOrRestrictModule("Lock", Editval[0]?.LocationOfSchool, isLocked) ? "form-control LockFildsColor" : "form-control"}
                                     disabled={isLockOrRestrictModule("Lock", Editval[0]?.LocationOfSchool, isLocked) ? true : value?.IsJuvenileArrest ? false : true}
-                                // styles={value?.IsJuvenileArrest === 'true' ? Requiredcolour : customStylesWithOutColor}
                                 />
+                                {/* <input type="text" name="LocationOfSchool"
+                                    value={value?.LocationOfSchool}
+                                    disabled={value?.IsJuvenileArrest ? false : true} onChange={HandleChange}
+                                    styles={value?.IsJuvenileArrest === 'true' ? Requiredcolour : customStylesWithOutColor}
+                                    className=" form-control" id="LocationOfSchool" /> */}
                             </div>
                             <div className="col-2 col-md-2 col-lg-1">
                                 <label htmlFor="" className='new-label mb-0'>Grade</label>

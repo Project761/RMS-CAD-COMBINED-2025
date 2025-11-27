@@ -262,20 +262,13 @@ const Charges = (props) => {
 
   useEffect(() => {
     if (Editval) {
+      console.log(Editval)
       setValue({
-        ...value,
-        'Count': Editval[0]?.Count ? Editval[0]?.Count : '',
-        'Name': Editval[0]?.Name,
-        'ChargeCodeID': Editval[0]?.ChargeCodeID || Editval?.ChargeCodeID,
-        'NIBRSID': Editval[0]?.NIBRSID || Editval?.NIBRSCodeId,
-        'UCRClearID': Editval[0]?.UCRClearID,
-        'ChargeID': Editval[0]?.ChargeID,
-        'ModifiedByUserFK': LoginPinID,
-        'LawTitleId': Editval[0]?.LawTitleId || Editval?.LawTitleId,
-        'AttemptComplete': Editval[0]?.AttemptComplete || Editval?.AttemptComplete,
-        'ChargeDateTime': Editval[0]?.ChargeDateTime,
-        'CategoryId': Editval[0]?.CategoryId,
-        'OffenseDateTime': Editval[0]?.OffenseDateTime,
+        ...value, 'Count': Editval[0]?.Count ? Editval[0]?.Count : '', 'Name': Editval[0]?.Name, 'ChargeCodeID': Editval[0]?.ChargeCodeID || Editval?.ChargeCodeID,
+        'NIBRSID': Editval[0]?.NIBRSID || Editval?.NIBRSCodeId, 'UCRClearID': Editval[0]?.UCRClearID, 'ChargeID': Editval[0]?.ChargeID, 'ModifiedByUserFK': LoginPinID,
+        'LawTitleId': Editval[0]?.LawTitleId || Editval?.LawTitleId, 'AttemptComplete': Editval[0]?.AttemptComplete || Editval?.AttemptComplete, ChargeDateTime: Editval[0]?.ChargeDateTime,
+        'CategoryId': Editval[0]?.CategoryId || Editval?.CategoryID, 'OffenseDateTime': Editval[0]?.OffenseDateTime,
+
       });
       setArrestName(Editval[0]?.Name ? Editval[0]?.Name : '');
 
@@ -545,7 +538,7 @@ const Charges = (props) => {
   const update_Arrest_Charge = () => {
     const { Count, ChargeCodeID, NIBRSID, UCRClearID, Name, LawTitleId, AttemptComplete, CategoryId, OffenseDateTime } = value;
     const val = {
-      'IncidentID': DecEIncID, 'ArrestID': DecArrestId, 'ChargeID': DecChargeId, 'ModifiedByUserFK': LoginPinID, 'AgencyID': LoginAgencyID, 'Name': Name, 'IncidentNumber': IncNo, 'ArrestNumber': ArrNo, 'UCRClearID': UCRClearID, 'ChargeCodeID': ChargeCodeID, 'NIBRSID': NIBRSID, 'Count': Count,
+      'IncidentID': DecEIncID, 'ArrestID': DecArrestId, 'ChargeID': ChargeID, 'ModifiedByUserFK': LoginPinID, 'AgencyID': LoginAgencyID, 'Name': Name, 'IncidentNumber': IncNo, 'ArrestNumber': ArrNo, 'UCRClearID': UCRClearID, 'ChargeCodeID': ChargeCodeID, 'NIBRSID': NIBRSID, 'Count': Count,
       'LawTitleId': LawTitleId, 'AttemptComplete': AttemptComplete, 'CategoryId': CategoryId, 'OffenseDateTime': OffenseDateTime
     }
     AddDeleteUpadate('ArrestCharge/Update_ArrestCharge', val).then((res) => {
@@ -612,13 +605,16 @@ const Charges = (props) => {
 
       } else {
 
-        navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(row?.ArrestID)}&ChargeId=${stringToBase64(row.ChargeID)}&Name=${Name}&ArrNo=${ArrNo}&ArrestSta=${true}&ChargeSta=${true}&SideBarStatus=${false}`)
+
         if (row.OffenseID) {
+          navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(row?.ArrestID)}&ChargeId=${stringToBase64(row.ChargeID)}&Name=${Name}&ArrNo=${ArrNo}&ChargeSta=${true}&SideBarStatus=${false}`)
           setEditval(row);
 
         }
         else {
-          get_ArrestCharge_Count(row?.ChargeID); get_ArrestCharge_Count(row.ChargeID); setErrors(''); setStatesChangeStatus(false);
+          navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(row?.ArrestID)}&ChargeId=${stringToBase64(row.ChargeID)}&Name=${Name}&ArrNo=${ArrNo}&ArrestSta=${true}&ChargeSta=${true}&SideBarStatus=${false}`)
+          get_ArrestCharge_Count(row.ChargeID);
+          setErrors(''); setStatesChangeStatus(false);
           //  setStatus(true); 
           setChargeID(row.ChargeID); setChangesStatus(false); GetSingleData(row.ChargeID); get_Arrest_Count(row?.ArrestID); get_Property_Data(row?.ChargeID);
 
@@ -634,7 +630,7 @@ const Charges = (props) => {
       setErrors(''); setChargeID('');
       Reset();
     } else {
-      navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(ArrestID)}&Name=${Name}&ArrNo=${ArrNo}&ArrestSta=${true}&ChargeId=${('')}&ChargeSta=${false}&SideBarStatus=${false}`)
+      navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(ArrestID)}&Name=${Name}&ArrNo=${ArrNo}&ChargeId=${('')}&ChargeSta=${false}&SideBarStatus=${false}`)
       setErrors(''); setChargeID(''); Reset();
     }
   }

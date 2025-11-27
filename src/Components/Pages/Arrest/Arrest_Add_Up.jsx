@@ -303,6 +303,7 @@ const Arrest_Add_Up = () => {
                 get_Arrest_Count();
             }
         } else {
+            setShowPage('home')
             navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${('')}&ArrestSta=${false}&ChargeSta=${false}&SideBarStatus=${false}&SideBarStatus=${false}&isNew=${true}`)
             // setErrors(''); setPossessionID(''); setPossenSinglData([]);
             // setActiveArrest(false); setRightGivenCode(false); setArrestID(''); reset_Value(); setIsEnabled(false);
