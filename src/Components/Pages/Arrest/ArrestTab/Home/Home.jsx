@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react'
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Select from "react-select";
 import DatePicker from "react-datepicker";
-import { Aes256Encrypt, Decrypt_Id_Name, LockFildscolour, Requiredcolour, base64ToString, filterPassedTimeZoneArrest, filterPassedTimeZonesProperty, getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime, stringToBase64, } from '../../../../Common/Utility';
+import { Aes256Encrypt, Decrypt_Id_Name, LockFildscolour, Requiredcolour, base64ToString, filterPassedTimeZoneArrest, filterPassedTimeZonesProperty, getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime, isLockOrRestrictModule, stringToBase64, } from '../../../../Common/Utility';
 import { AddDeleteUpadate, AddDelete_Img, fetchPostData } from '../../../../hooks/Api';
 import { toastifyError, toastifySuccess } from '../../../../Common/AlertMsg';
 import { AgencyContext } from '../../../../../Context/Agency/Index';
@@ -26,7 +26,7 @@ import Location from '../../../../../CADComponents/Common/Location';
 
 
 
-const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce, ResetErrors, DecArrestId, setStatus, isEnabled, setIsEnabled, Agencystatus, setAgencystatus, arrestID, setArrestID, matchedAgency, setmatchedAgency, delChargeID, ChargeLocalArr, setChargeLocalArr, setDelChargeID, isChargeDel, setIsChargeDel, possessionID, setPossessionID, offenseNameID, setoffenseNameID, RestStatus, Editval, setEditval, incExceDate, setincExceDate, GetSingleData, get_List }) => {
+const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce, ResetErrors, DecArrestId, setStatus, isEnabled, setIsEnabled, Agencystatus, setAgencystatus, arrestID, setArrestID, matchedAgency, setmatchedAgency, delChargeID, ChargeLocalArr, setChargeLocalArr, setDelChargeID, isChargeDel, setIsChargeDel, possessionID, setPossessionID, offenseNameID, setoffenseNameID, RestStatus, Editval, setEditval, incExceDate, setincExceDate, GetSingleData, get_List, isLocked, setIsLocked }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -64,7 +64,6 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
     var NameID = query?.get("NameID");
     var NameStatus = query?.get("NameStatus");
     let isNew = query?.get('isNew');
-
     var SideBarStatus = query?.get("SideBarStatus");
 
     if (!IncID) { DecEIncID = 0; }
@@ -97,7 +96,6 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
     const [isDatePickerRequiredColor, setDatePickerRequiredColor] = useState(false);
     const [openPage, setOpenPage] = useState('');
     const [statesChangeStatus, setStatesChangeStatus] = useState(false);
-
     // const [incExceDate, setincExceDate] = useState();
 
     const [AgencyCode, setAgencyCode] = useState('');
@@ -161,7 +159,6 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
         } else { setaddUpdatePermission(false); }
     }, [effectiveScreenPermission]);
 
-
     useEffect(() => {
         if (loginAgencyID) {
             get_Arresting_DropDown(loginAgencyID, '1');
@@ -176,7 +173,6 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
 
     useEffect(() => {
         if (ResetErrors) {
-            console.log('hello')
             dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
             setPossessionID('');
             setResetErrors(false)
@@ -201,7 +197,6 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
             setincidentReportedDate(incidentDate[0]?.ReportedDate ? new Date(incidentDate[0]?.ReportedDate) : null)
         }
     }, [incidentDate]);
-
 
     useEffect(() => {
         if (DecEIncID) {
@@ -258,9 +253,9 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
     }, [DecEIncID, nameModalStatus, possessionID]);
 
     useEffect(() => {
-        console.log(possessionID, isEditvalProcessed, type)
+        // console.log(possessionID, isEditvalProcessed, type)
         if (possessionID && (isEditvalProcessed === false) && type === "ArrestMod") {
-            console.log(possessionID)
+            // console.log(possessionID)
             const newvalue = arresteeNameData?.filter((val) => val?.NameID == possessionID);
             setNameID(newvalue[0]?.NameID)
             setValue({
@@ -270,7 +265,6 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
             })
         }
     }, [arresteeNameData, nameModalStatus, isEditvalProcessed]);
-
 
 
     const checkSelectedName1 = (ArresteeID) => {
@@ -410,7 +404,7 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
     }, [ArrestDtTmError, ArresteeIDError, CellPhoneError, JuvenileDispoError, ArrestTypeIDError])
 
     useEffect(() => {
-        console.log("🚀 ~ Home ~ Editval:", Editval)
+        // console.log("🚀 ~ Home ~ Editval:", Editval)
         if (Editval?.length > 0) {
             const newvalue = arresteeNameData?.filter((val) => val?.NameID == Editval[0]?.ArresteeID);
 
@@ -427,10 +421,12 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                 // new add 
                 'IsSchoolNotified': Editval[0]?.IsSchoolNotified, 'Grade': Editval[0]?.Grade, 'LocationOfSchool': Editval[0]?.LocationOfSchool, 'LocationOfSchool': Editval[0]?.LocationOfSchool, 'NameOfSchool': Editval[0]?.NameOfSchool, 'ParentPhone': Editval[0]?.ParentPhone,
                 'ParentNameID': Editval[0]?.ParentNameID, 'ResponseID': Editval[0]?.ResponseID,
-                ['RaceID']: newvalue[0]?.RaceID, ['SexID']: newvalue[0]?.SexID, ['AgeFrom']: newvalue[0]?.AgeFrom, ['AgeUnitID']: newvalue[0]?.AgeUnitID,
-                ['DateOfBirth']: newvalue[0]?.DateOfBirth ? getShowingWithOutTime(newvalue[0].DateOfBirth) : null,
                 ['ArresteeID']: Editval[0]?.ArresteeID,
-                'IsJuvenileArrest': newvalue[0]?.IsJuvenile,
+
+                // Arrestee Data
+                ['RaceID']: newvalue[0]?.RaceID, ['SexID']: newvalue[0]?.SexID, ['AgeFrom']: newvalue[0]?.AgeFrom, ['AgeUnitID']: newvalue[0]?.AgeUnitID,
+                ['DateOfBirth']: newvalue[0]?.DateOfBirth ? getShowingWithOutTime(newvalue[0].DateOfBirth) : null, 'IsJuvenileArrest': newvalue[0]?.IsJuvenile,
+
             });
             setPossessionID(Editval[0]?.ArresteeID);
             setArrestParentID(Editval[0]?.ParentNameID);
@@ -983,7 +979,6 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
         return !isNaN(d.getTime()) ? d : null;
     };
 
-    console.log(possenSinglData, possessionID, value)
 
     return (
         <>
@@ -996,10 +991,27 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                             </div>
                             <div className="col-4 col-md-4 col-lg-3 d-flex gap-2">
                                 <div>
-                                    <input type="text" name="ArrestNumber" value={value?.ArrestNumber} className="readonlyColor form-control" id="ArrestNumber" readOnly />
+                                    <input
+                                        type="text"
+                                        name="ArrestNumber"
+                                        value={value?.ArrestNumber}
+                                        id="ArrestNumber"
+                                        readOnly
+                                        className="readonlyColor form-control"
+
+
+                                    />
                                 </div>
                                 <div className="form-check d-flex align-items-center gap-2 ml-1">
-                                    <input className="form-check-input" type="checkbox" name="IsJuvenileArrest" checked={value?.IsJuvenileArrest} onChange={HandleChange} disabled />
+                                    <input
+                                        type="checkbox"
+                                        name="IsJuvenileArrest"
+                                        checked={value?.IsJuvenileArrest}
+                                        onChange={HandleChange}
+
+                                        className={"form-check-input"}
+                                        disabled={isLockOrRestrictModule("Lock", Editval[0]?.IsJuvenileArrest, isLocked) ? true : false}
+                                    />
                                     <label className="form-check-label mb-0 text-nowrap" htmlFor="flexCheckDefault">Juvenile Arrest</label>
                                 </div>
                             </div>
@@ -1008,8 +1020,14 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                 <label htmlFor="" className='new-label text-nowrap mb-0'>Incident No.</label>
                             </div>
                             <div className="col-4 col-md-4 col-lg-2 mt-0 text-field">
-                                <input type="text" className='readonlyColor' name='IncidentNumber' value={IncNo ? IncNo : ''}
-                                    required readOnly />
+                                <input
+                                    type="text"
+                                    name='IncidentNumber'
+                                    value={IncNo ? IncNo : ''}
+                                    required
+                                    readOnly
+                                    className='readonlyColor'
+                                />
                             </div>
                             <div className="col-2 col-md-2 col-lg-2">
                                 <label htmlFor="" className='new-label mb-0'>
@@ -1025,80 +1043,7 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                     ) : null}
                                 </label>
                             </div>
-
                             <div className="col-4 col-md-4 col-lg-2 ">
-                                {/* <DatePicker
-                                    id='ArrestDtTm'
-                                    name='ArrestDtTm'
-                                    ref={startRef1}
-                                    onKeyDown={(e) => {
-                                        if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
-                                            e?.preventDefault();
-                                        } else {
-                                            onKeyDown(e);
-                                        }
-                                    }}
-                                    onChange={(date) => {
-                                        if (!date) {
-                                            !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-                                            setArrestDate(null);
-                                            setValue({ ...value, ['ArrestDtTm']: null });
-                                            return;
-                                        }
-
-                                        let currDate = new Date(date);
-                                        const minDate = extractIncidentDate ? new Date(extractIncidentDate) : new Date(incidentReportedDate);
-                                        const maxDate = new Date(datezone);
-
-                                        const isSameDate = (d1, d2) =>
-                                            d1.getFullYear() === d2.getFullYear() &&
-                                            d1.getMonth() === d2.getMonth() &&
-                                            d1.getDate() === d2.getDate();
-
-                                        if (minDate) {
-                                            const minDateTime = new Date(minDate);
-                                            minDateTime.setMinutes(minDateTime.getMinutes() + 1);
-                                            if (isSameDate(currDate, minDate)) {
-                                                if (currDate < minDateTime) {
-                                                    currDate = minDateTime;
-                                                }
-                                            }
-                                            if (currDate < minDateTime) {
-                                                currDate = minDateTime;
-                                            }
-                                        }
-                                        if (currDate > maxDate) {
-                                            currDate = maxDate;
-                                        }
-                                        !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-                                        setArrestDate(currDate);
-                                        setValue({ ...value, ['ArrestDtTm']: getShowingMonthDateYear(currDate) });
-                                    }}
-
-                                    // className='requiredColor'
-                                    dateFormat="MM/dd/yyyy HH:mm"
-                                    timeFormat="HH:mm"
-                                    is24Hour
-                                    timeInputLabel
-                                    showYearDropdown
-                                    showMonthDropdown  
-                                    dropdownMode="select"
-                                    isClearable={value?.ArrestDtTm ? true : false}
-                                    selected={value?.ArrestDtTm ? new Date(value?.ArrestDtTm) : null}
-                                    placeholderText={value?.ArrestDtTm ? value.ArrestDtTm : 'Select...'}
-                                    showTimeSelect
-                                    timeIntervals={1}
-                                    timeCaption="Time"
-                                    autoComplete="Off"
-                                    maxDate={new Date(datezone)}
-                                    minDate={extractIncidentDate ? new Date(extractIncidentDate) : new Date(incidentReportedDate)}
-                                    filterTime={(time) =>
-                                        filterPassedTimeZoneArrest(time, extractIncidentDate, datezone, incidentReportedDate)
-                                    }
-
-                                    disabled={nibrsSubmittedArrestMain === 1}
-                                    className={nibrsSubmittedArrestMain === 1 ? 'LockFildsColor' : 'requiredColor'}
-                                /> */}
                                 <DatePicker
                                     id='ArrestDtTm'
                                     name='ArrestDtTm'
@@ -1142,11 +1087,13 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                     maxDate={new Date(datezone)}
                                     showDisabledMonthNavigation
                                     filterTime={(date) => filterPassedTimeZonesProperty(date, incReportedDate, datezone)}
-                                    disabled={nibrsSubmittedArrestMain === 1 || arrestID}
-                                    className={nibrsSubmittedArrestMain === 1 ? 'LockFildsColor' : arrestID ? "readonlyColor" : 'requiredColor'}
+
+                                    // disabled={isLockOrRestrictModule("Lock", Editval[0]?.ArrestDtTm, isLocked) || nibrsSubmittedArrestMain === 1}
+                                    // className={nibrsSubmittedArrestMain === 1 || isLockOrRestrictModule("Lock", Editval[0]?.ArrestDtTm, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+                                    disabled={nibrsSubmittedArrestMain === 1 || arrestID || isLockOrRestrictModule("Lock", Editval[0]?.ArrestDtTm, isLocked)}
+                                    className={nibrsSubmittedArrestMain === 1 || isLockOrRestrictModule("Lock", Editval[0]?.ArrestDtTm, isLocked) ? 'LockFildsColor' : arrestID ? "readonlyColor" : 'requiredColor'}
                                 />
                             </div>
-
                             <div className="col-2 col-md-2 col-lg-1">
                                 <label className='new-label text-nowrap mb-0'> Agency Name </label>
                             </div>
@@ -1154,14 +1101,15 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                 <Select
                                     name="ArrestingAgencyID"
                                     value={arrestingAgencyDrpData?.filter((obj) => obj.value === value?.ArrestingAgencyID)}
-                                    styles={customStylesWithOutColor}
                                     isClearable
                                     options={arrestingAgencyDrpData}
                                     onChange={(e) => { ChangeDropDownArresting(e, 'ArrestingAgencyID') }}
                                     placeholder="Select..."
+                                    // styles={customStylesWithOutColor}
+                                    styles={isLockOrRestrictModule("Lock", Editval[0]?.ArrestingAgencyID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                    isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.ArrestingAgencyID, isLocked)}
                                 />
                             </div>
-
                             <div className="col-2 col-md-2 col-lg-2">
                                 <label htmlFor="" className='new-label mb-0'>Arresting Agency</label>
                             </div>
@@ -1172,8 +1120,9 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                     id='ArrestingAgency'
                                     value={value?.ArrestingAgency || ''}
                                     onChange={HandleChange}
-                                    disabled={!value.ArrestingAgencyID || Agencystatus ? true : false}
-                                    className={!value.ArrestingAgencyID || Agencystatus ? 'readonlyColor' : ''}
+
+                                    disabled={!value.ArrestingAgencyID || Agencystatus ? true : false || isLockOrRestrictModule("Lock", Editval[0]?.ArrestingAgency, isLocked)}
+                                    className={isLockOrRestrictModule("Lock", Editval[0]?.ArrestingAgency, isLocked) ? 'LockFildsColor' : !value.ArrestingAgencyID || Agencystatus ? 'readonlyColor' : ''}
                                 />
                             </div>
                             <div className="col-2 col-md-2 col-lg-2">
@@ -1182,7 +1131,9 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                             <div className="col-4 col-md-5 col-lg-2">
                                 <Select
                                     name='PoliceForceID'
-                                    styles={customStylesWithOutColor}
+                                    styles={isLockOrRestrictModule("Lock", Editval[0]?.PoliceForceID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                    isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.PoliceForceID, isLocked)}
+
                                     value={policeForceDrpData?.filter((obj) => obj.value === value?.PoliceForceID)}
                                     isClearable
                                     options={policeForceDrpData}
@@ -1192,32 +1143,7 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                     }}
                                     placeholder="Select..."
                                 />
-                                {/* {isEnabled && (
-                              <div className='mt-2'
-                                  style={{
-                                      backgroundColor: '#fbecec',
-                                      border: '1px solid red',
-                                      borderRadius: '6px',
-                                      padding: '3px 6px',
-                                      textAlign: 'center',
-                                      color: isHovered ? 'blue' : 'red',
-                                      fontSize: '16px',
-                                      maxWidth: '100%',
-                                      width: '220px', // can be % if inside flex/grid
-                                      boxSizing: 'border-box',
-                                      wordWrap: 'break-word',
-                                      cursor: 'pointer',
-                                  }}
-                                  onClick={handleClick}
-                                  onMouseEnter={handleMouseEnter}
-                                  onMouseLeave={handleMouseLeave}
-                              >
-                                  Enter Details in Police Force
-                              </div>
-  
-                          )} */}
                             </div>
-
                             <div className="col-2 col-md-2 col-lg-1">
                                 <label htmlFor="" className='new-label mb-0'>Arrest Type
                                     {errors.ArrestTypeIDError !== 'true' ? (
@@ -1229,22 +1155,25 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                 <Select
                                     name="ArrestTypeID"
                                     value={arrestTypeDrpData?.filter((obj) => obj.value === value?.ArrestTypeID)}
-                                    styles={nibrsSubmittedArrestMain === 1 ? LockFildscolour : Requiredcolour}
-                                    isDisabled={nibrsSubmittedArrestMain === 1 ? true : false}
+
+                                    styles={isLockOrRestrictModule("Lock", Editval[0]?.ArrestTypeID, isLocked) ? LockFildscolour : nibrsSubmittedArrestMain === 1 ? LockFildscolour : Requiredcolour}
+                                    isDisabled={nibrsSubmittedArrestMain === 1 || isLockOrRestrictModule("Lock", Editval[0]?.ArrestTypeID, isLocked) ? true : false}
+
                                     isClearable
                                     options={arrestTypeDrpData}
                                     onChange={(e) => { ChangeDropDown(e, 'ArrestTypeID') }}
                                     placeholder="Select..."
                                 />
                             </div>
-
                             <div className="col-4 col-md-4 col-lg-2">
                                 <label htmlFor="" className='new-label px-0 text-nowrap mb-0'>Supervisor</label>
                             </div>
                             <div className="col-4 col-md-4 col-lg-2">
                                 <Select
                                     name='SupervisorID'
-                                    styles={customStylesWithOutColor}
+                                    styles={isLockOrRestrictModule("Lock", Editval[0]?.SupervisorID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                    isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.SupervisorID, isLocked) ? true : false}
+
                                     value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.SupervisorID)}
                                     isClearable
                                     options={agencyOfficerDrpData}
@@ -1252,7 +1181,6 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                     placeholder="Select..."
                                 />
                             </div>
-
                             <div className="col-4 col-md-4 col-lg-1"></div>
                             {isEnabled ? (
                                 <div className="col-4 col-md-4 col-lg-3">
@@ -1310,8 +1238,10 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                         <Select
                                             className="w-100"
                                             name="ArresteeID"
-                                            styles={nibrsSubmittedArrestMain === 1 ? LockFildscolour : NameStatus ? 'readonlyColor' : Requiredcolour}
-                                            isDisabled={nibrsSubmittedArrestMain === 1 || NameStatus ? true : false}
+
+                                            styles={nibrsSubmittedArrestMain === 1 || isLockOrRestrictModule("Lock", Editval[0]?.ArresteeID, isLocked) ? LockFildscolour : NameStatus ? 'readonlyColor' : Requiredcolour}
+                                            isDisabled={nibrsSubmittedArrestMain === 1 || NameStatus ? true : false || isLockOrRestrictModule("Lock", Editval[0]?.ArresteeID, isLocked)}
+
                                             options={mastersNameDrpData}
                                             value={mastersNameDrpData?.filter((obj) => obj.value === value?.ArresteeID)}
                                             isClearable
@@ -1322,8 +1252,8 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                         <Select
                                             className="w-100"
                                             name="ArresteeID"
-                                            styles={nibrsSubmittedArrestMain === 1 ? LockFildscolour : NameStatus ? 'readonlyColor' : Requiredcolour}
-                                            isDisabled={arrestID || nibrsSubmittedArrestMain === 1 || NameStatus ? true : false}
+                                            styles={nibrsSubmittedArrestMain === 1 || isLockOrRestrictModule("Lock", Editval[0]?.ArresteeID, isLocked) ? LockFildscolour : NameStatus ? 'readonlyColor' : Requiredcolour}
+                                            isDisabled={arrestID || nibrsSubmittedArrestMain === 1 || NameStatus ? true : false || isLockOrRestrictModule("Lock", Editval[0]?.ArresteeID, isLocked)}
                                             options={arresteeNameData}
                                             value={arresteeNameData?.filter((obj) => obj.value === value?.ArresteeID)}
                                             isClearable
@@ -1375,29 +1305,51 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                         // showTimeSelect={allowTimeSelect} // Always show time picker
                                         timeFormat="HH:mm"
                                         timeIntervals={1}
-                                        className='readonlyColor'
                                         timeCaption="Time"
-                                        disabled
                                         placeholderText={value.DateOfBirth ? value.DateOfBirth : 'Select...'}
                                         isClearable={value.DateOfBirth ? true : false}
                                         showMonthDropdown
                                         showYearDropdown
                                         dropdownMode="select"
                                         autoComplete="off"
+
+                                        className={'readonlyColor'}
+                                        disabled
+
+                                    // className={isLockOrRestrictModule("Lock", Editval[0]?.NameTypeID, isLocked) ? "LockFildsColor" : 'readonlyColor'}
+                                    // disabled={isLockOrRestrictModule("Lock", Editval[0]?.NameTypeID, isLocked) ? true : false}
                                     />
                                 </div>
                             </div>
-
                             <div className="col-12 col-md-10 col-lg-4 d-flex align-items-center gap-2">
                                 <label htmlFor="AgeFrom" className="label-name mr-1 mb-0">
                                     Age
                                 </label>
                                 <div className="d-flex align-items-center gap-2">
-                                    <input type="text" name="AgeFrom" className="form-control " maxLength={3} readOnly placeholder="From" autoComplete="off"
-                                        style={{ width: "60px" }} value={value?.AgeFrom}
+                                    <input
+                                        type="text"
+                                        name="AgeFrom"
+                                        maxLength={3}
+                                        readOnly
+                                        placeholder="From"
+                                        autoComplete="off"
+                                        style={{ width: "60px" }}
+                                        value={value?.AgeFrom}
+                                        className={'form-control'}
+
+                                    // className={isLockOrRestrictModule("Lock", Editval[0]?.AgeFrom, isLocked) ? "LockFildsColor form-control" : 'form-control'}
+                                    // disabled={isLockOrRestrictModule("Lock", Editval[0]?.AgeFrom, isLocked) ? true : false}
                                     />
                                     <span className="dash-name">_</span>
-                                    <input type="text" name="AgeTo" className="form-control " readOnly maxLength={3} placeholder="To" autoComplete="off" style={{ width: "45px" }}
+                                    <input
+                                        type="text"
+                                        name="AgeTo"
+                                        className="form-control"
+                                        readOnly
+                                        maxLength={3}
+                                        placeholder="To"
+                                        autoComplete="off"
+                                        style={{ width: "45px" }}
                                     />
                                     <div className='ml-2'>
                                         <Select
@@ -1406,9 +1358,12 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                             options={ageUnitDrpData}
                                             onChange={(e) => ChangeDropDown(e, 'AgeUnitID')}
                                             isClearable
-                                            isDisabled
                                             placeholder="Age Unit..."
-                                            styles={value.AgeFrom ? Requiredcolour : customStylesWithOutColor}
+
+                                            isDisabled
+                                            styles={customStylesWithOutColor}
+                                        // isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.AgeUnitID, isLocked) ? true : false}
+                                        // styles={isLockOrRestrictModule("Lock", Editval[0]?.AgeUnitID, isLocked) ? LockFildscolour : value.AgeFrom ? Requiredcolour : customStylesWithOutColor}
                                         />
                                     </div>
                                 </div>
@@ -1422,14 +1377,16 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                 </div>
                                 <div style={{ width: "100%" }}>
                                     <Select
-                                        styles={customStylesWithOutColor}
                                         name='SexID'
                                         value={sexIdDrp?.filter((obj) => obj.value === value?.SexID)}
                                         options={sexIdDrp}
                                         onChange={(e) => ChangeDropDown(e, 'SexID')}
                                         isClearable
-                                        isDisabled
                                         placeholder="Select..."
+                                        styles={customStylesWithOutColor}
+                                        isDisabled
+                                    // styles={isLockOrRestrictModule("Lock", Editval[0]?.SexID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                    // isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.SexID, isLocked) ? true : false}
                                     />
                                 </div>
                             </div>
@@ -1439,13 +1396,15 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                             <div className="col-4 col-md-5 col-lg-3 ">
                                 <Select
                                     name='RaceID'
-                                    styles={customStylesWithOutColor}
                                     value={raceIdDrp?.filter((obj) => obj.value === value?.RaceID)}
                                     options={raceIdDrp}
                                     onChange={(e) => ChangeDropDown(e, 'RaceID')}
                                     isClearable
-                                    isDisabled
                                     placeholder="Select..."
+                                    styles={customStylesWithOutColor}
+                                    isDisabled
+                                // styles={isLockOrRestrictModule("Lock", Editval[0]?.RaceID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                // isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.RaceID, isLocked) ? true : false}
                                 />
                             </div>
 
@@ -1455,22 +1414,26 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                             <div className="col-4 col-md-4 col-lg-2">
                                 <Select
                                     name='RightsGivenID'
-                                    styles={customStylesWithOutColor}
                                     value={policeForceDrpData?.filter((obj) => obj.value === value?.RightsGivenID)}
                                     isClearable
                                     options={policeForceDrpData}
                                     onChange={(e) => ChangeDropDown(e, 'RightsGivenID')}
                                     placeholder="Select..."
+
+                                    styles={isLockOrRestrictModule("Lock", Editval[0]?.RightsGivenID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                    isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.RightsGivenID, isLocked) ? true : false}
                                 />
                             </div>
-
                             <div className="col-6 col-md-3 col-lg-2">
                                 <label htmlFor="" className='new-label px-0 text-nowrap mb-0'>Response</label>
                             </div>
                             <div className="col-4 col-md-4 col-lg-2">
                                 <Select
                                     name='ResponseID'
-                                    styles={customStylesWithOutColor}
+
+                                    styles={isLockOrRestrictModule("Lock", Editval[0]?.ResponseID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                    isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.ResponseID, isLocked) ? true : false}
+
                                     value={policeForceDrpData?.filter((obj) => obj.value === value?.ResponseID)}
                                     isClearable
                                     options={policeForceDrpData}
@@ -1485,7 +1448,10 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                             <div className="col-4 col-md-4 col-lg-3">
                                 <Select
                                     name='GivenByID'
-                                    styles={customStylesWithOutColor}
+
+                                    styles={isLockOrRestrictModule("Lock", Editval[0]?.GivenByID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                    isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.GivenByID, isLocked) ? true : false}
+
                                     value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.GivenByID)}
                                     isClearable
                                     options={agencyOfficerDrpData}
@@ -1500,7 +1466,10 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                             <div className="col-4 col-md-4 col-lg-2">
                                 <Select
                                     name='PrimaryOfficerID'
-                                    styles={customStylesWithOutColor}
+
+                                    styles={isLockOrRestrictModule("Lock", Editval[0]?.PrimaryOfficerID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                    isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.PrimaryOfficerID, isLocked) ? true : false}
+
                                     value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.PrimaryOfficerID)}
                                     isClearable
                                     options={agencyOfficerDrpData}
@@ -1510,33 +1479,10 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                             </div>
                             <div className="col-4 col-md-4 col-lg-4"></div>
 
-                            {/* <div className="col-2 col-md-2 col-lg-1">
-                        <label htmlFor="" className='new-label mb-0'>Parent Name</label>
-                    </div>
-                    <div className="col-4 col-md-4 col-lg-3 d-flex align-items-center g-2 ">
-                        <input type="text" name="ParentNameID" value={value?.ParentNameID} className="readonlyColor form-control" id="ParentNameID" readOnly />
-                     
-                        <div className="ml-1" data-toggle="modal" data-target="#MasterModal">
-                            <button
-                                className="btn btn-sm bg-green text-white"
-                                onClick={() => {
-                                    if (possessionID) {
-                                        GetSingleDataPassion(possessionID);
-                                    }
-                                    setNameModalStatus(true); setDatePickerRequiredColor(true);
-                                }}
-                            >
-                                <i className="fa fa-plus"></i>
-                            </button>
-                        </div>
-                       
-                    </div> */}
                             <div className="col-2 col-md-2 col-lg-1">
-                                <label htmlFor="" className='new-label mb-0'>Parent Name
-                                </label>
+                                <label htmlFor="" className='new-label mb-0'>Parent Name  </label>
                             </div>
                             <div className="col-4 col-md-4 col-lg-3 d-flex align-items-center g-2">
-
                                 <Select
                                     // styles={customStylesWithOutColor}
                                     className="w-100"
@@ -1546,11 +1492,10 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                     onChange={(e) => { ChangeDropDown(e, 'ParentNameID') }}
                                     isClearable
                                     placeholder="Select..."
-                                    isDisabled={value?.IsJuvenileArrest ? false : true}
-                                    styles={value?.IsJuvenileArrest === 'true' ? Requiredcolour : customStylesWithOutColor}
-                                />
 
-                                {/* {!arrestID && ( */}
+                                    isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.ParentNameID, isLocked) ? true : value?.IsJuvenileArrest ? false : true}
+                                    styles={isLockOrRestrictModule("Lock", Editval[0]?.ParentNameID, isLocked) ? LockFildscolour : value?.IsJuvenileArrest === 'true' ? Requiredcolour : customStylesWithOutColor}
+                                />
                                 <div className="ml-1" data-toggle="modal" data-target="#MasterModal">
                                     <button
                                         className="btn btn-sm bg-green text-white"
@@ -1571,30 +1516,42 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                         <i className="fa fa-plus"></i>
                                     </button>
                                 </div>
-                                {/* )} */}
                             </div>
-
                             <div className="col-2 col-md-2 col-lg-2">
                                 <label htmlFor="" className='new-label mb-0'>Parent Phone  {errors.CellPhoneError !== 'true' ? (
                                     <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.CellPhoneError}</p>
                                 ) : null}</label>
-
                             </div>
                             <div className="col-4 col-md-4 col-lg-2">
-                                <input type="text" maxLength={10} name='ParentPhone' id='ParentPhone' className={`form-control ${value?.IsJuvenileArrest === false ? 'readonlyColor' : ''}`}
-                                    value={value?.ParentPhone} onChange={handleChange} required disabled={value.IsJuvenileArrest === true ? false : true} />
-                            </div>
+                                <input
+                                    type="text"
+                                    maxLength={10}
+                                    name='ParentPhone'
+                                    id='ParentPhone'
+                                    value={value?.ParentPhone}
+                                    onChange={handleChange}
+                                    required
 
+                                    className={`form-control ${isLockOrRestrictModule("Lock", Editval[0]?.ParentPhone, isLocked) ? "LockFildsColor" : value?.IsJuvenileArrest === false ? 'readonlyColor' : ''}`}
+                                    disabled={isLockOrRestrictModule("Lock", Editval[0]?.ParentPhone, isLocked) ? true : value.IsJuvenileArrest === true ? false : true}
+                                />
+                            </div>
                             <div className="col-2 col-md-2 col-lg-2">
                                 <label htmlFor="" className='new-label mb-0'>Name Of School</label>
                             </div>
-
                             <div className="col-4 col-md-4 col-lg-2">
-                                <input type="text" name="NameOfSchool"
+                                <input
+                                    type="text"
+                                    name="NameOfSchool"
                                     value={value?.NameOfSchool}
-                                    disabled={value?.IsJuvenileArrest ? false : true} onChange={HandleChange}
-                                    styles={value?.IsJuvenileArrest === 'true' ? Requiredcolour : customStylesWithOutColor}
-                                    className=" form-control" id="NameOfSchool" />
+                                    onChange={HandleChange}
+                                    id="NameOfSchool"
+
+                                    // styles={value?.IsJuvenileArrest === 'true' ? Requiredcolour : customStylesWithOutColor}
+                                    disabled={isLockOrRestrictModule("Lock", Editval[0]?.NameOfSchool, isLocked) ? true : value?.IsJuvenileArrest ? false : true}
+                                    className={isLockOrRestrictModule("Lock", Editval[0]?.NameOfSchool, isLocked) ? "form-control LockFildsColor" : "form-control"}
+
+                                />
                             </div>
 
                             <div className="col-2 col-md-2 col-lg-1">
@@ -1609,7 +1566,9 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                     check={false}
                                     verify={true}
                                     style={{ resize: 'both' }}
-                                    isDisabled={value?.IsJuvenileArrest ? false : true}
+                                    // isDisabled={value?.IsJuvenileArrest ? false : true}
+                                    className={isLockOrRestrictModule("Lock", Editval[0]?.LocationOfSchool, isLocked) ? "form-control LockFildsColor" : "form-control"}
+                                    disabled={isLockOrRestrictModule("Lock", Editval[0]?.LocationOfSchool, isLocked) ? true : value?.IsJuvenileArrest ? false : true}
                                 />
                                 {/* <input type="text" name="LocationOfSchool"
                                     value={value?.LocationOfSchool}
@@ -1621,10 +1580,17 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                 <label htmlFor="" className='new-label mb-0'>Grade</label>
                             </div>
                             <div className="col-4 col-md-4 col-lg-3">
-                                <input type="text" name="Grade"
-                                    disabled={value?.IsJuvenileArrest ? false : true} onChange={HandleChange}
+                                <input
+                                    type="text"
+                                    name="Grade"
+                                    onChange={HandleChange}
                                     styles={value?.IsJuvenileArrest === 'true' ? Requiredcolour : customStylesWithOutColor}
-                                    value={value?.Grade} className=" form-control" id="Grade" />
+                                    value={value?.Grade}
+                                    id="Grade"
+
+                                    className={isLockOrRestrictModule("Lock", Editval[0]?.Grade, isLocked) ? "form-control LockFildsColor" : "form-control"}
+                                    disabled={isLockOrRestrictModule("Lock", Editval[0]?.Grade, isLocked) ? true : value?.IsJuvenileArrest ? false : true}
+                                />
                             </div>
 
                             <div className="col-2 col-md-2 col-lg-2">
@@ -1636,13 +1602,14 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                 <Select
                                     name='JuvenileDispositionID'
                                     menuPlacement='top'
-                                    isDisabled={value?.IsJuvenileArrest || nibrsSubmittedArrestMain === 1 ? false : true}
-                                    styles={nibrsSubmittedArrestMain === 1 ? LockFildscolour : value?.IsJuvenileArrest === 'true' || value?.IsJuvenileArrest === true ? Requiredcolour : customStylesWithOutColor}
                                     value={arrestJuvenileDisDrpData?.filter((obj) => obj.value === value?.JuvenileDispositionID)}
                                     isClearable
                                     options={arrestJuvenileDisDrpData}
                                     onChange={(e) => ChangeDropDown(e, 'JuvenileDispositionID')}
                                     placeholder="Select..."
+
+                                    isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.JuvenileDispositionID, isLocked) || value?.IsJuvenileArrest || nibrsSubmittedArrestMain === 1 ? false : true}
+                                    styles={isLockOrRestrictModule("Lock", Editval[0]?.JuvenileDispositionID, isLocked) || nibrsSubmittedArrestMain === 1 ? LockFildscolour : value?.IsJuvenileArrest === 'true' || value?.IsJuvenileArrest === true ? Requiredcolour : customStylesWithOutColor}
                                 />
                             </div>
                             {

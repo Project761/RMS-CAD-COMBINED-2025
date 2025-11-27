@@ -383,6 +383,7 @@ const OffenceHomeTabs = () => {
                 setCrimeId(row.CrimeID);
                 setStatus(true);
                 setResetErrors(true);
+                setshowOffPage('home');
             }
         }
     };
@@ -431,6 +432,7 @@ const OffenceHomeTabs = () => {
         navigate(`/Off-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${0}&OffSta=${false}&isNew=${true}`);
         setCrimeId('');
         setStatus(false);
+        setshowOffPage('home');
     };
 
     const DeleteOffence = () => {

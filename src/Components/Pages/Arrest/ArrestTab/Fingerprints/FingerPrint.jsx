@@ -3,7 +3,7 @@ import DataTable from 'react-data-table-component';
 import Select from "react-select";
 import DatePicker from "react-datepicker";
 import { useLocation } from 'react-router-dom';
-import { customStylesWithOutColor, Decrypt_Id_Name, getShowingDateText, getShowingMonthDateYear, Requiredcolour, tableCustomStyles } from '../../../../Common/Utility';
+import { customStylesWithOutColor, Decrypt_Id_Name, getShowingDateText, getShowingMonthDateYear, isLockOrRestrictModule, LockFildscolour, Requiredcolour, tableCustomStyles } from '../../../../Common/Utility';
 import NameListing from '../../../ShowAllList/NameListing';
 import { useDispatch, useSelector } from 'react-redux';
 import { get_LocalStoreData } from '../../../../../redux/actions/Agency';
@@ -21,7 +21,7 @@ import ArresList from '../../../ShowAllList/ArrestList';
 
 const FingerPrint = (props) => {
 
-    const { ListData, DecIncID, isViewEventDetails = false, DecArrestId ,get_List} = props
+    const { ListData, DecIncID, isViewEventDetails = false, DecArrestId, get_List, isLocked, setIsLocked } = props
 
     const { get_Name_Count, setChangesStatus, GetDataTimeZone, datezone, get_Arrest_Count, NameId } = useContext(AgencyContext)
 
@@ -39,7 +39,7 @@ const FingerPrint = (props) => {
     const [updateStatus, setUpdateStatus] = useState(0)
     const [FingerPrintData, setFingerPrintData] = useState([])
     const [FingerPrintDtTm, setFingerPrintDtTm] = useState(false);
-    const [editval, setEditval] = useState();
+    const [editval, setEditval] = useState([]);
     const [openPage, setOpenPage] = useState('');
 
     const [addUpdatePermission, setaddUpdatePermission] = useState();
@@ -72,7 +72,6 @@ const FingerPrint = (props) => {
         }
     }, [localStoreData]);
 
-
     useEffect(() => {
         if (effectiveScreenPermission?.length > 0) {
             setaddUpdatePermission(effectiveScreenPermission[0]?.AddOK != 1 || effectiveScreenPermission[0]?.Changeok != 1 ? true : false);
@@ -80,7 +79,6 @@ const FingerPrint = (props) => {
             setaddUpdatePermission(false);
         }
     }, [effectiveScreenPermission]);
-
 
     useEffect(() => {
         if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
@@ -93,6 +91,7 @@ const FingerPrint = (props) => {
             get_List(NameId);
         }
     }, [NameId])
+
     useEffect(() => {
         if (localStoreData) {
             setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
@@ -129,7 +128,7 @@ const FingerPrint = (props) => {
         fetchPostData('FingerPrints/GetSingleData_FingerPrints', val)
             .then((res) => {
                 if (res) { setEditval(res) }
-                else { setEditval() }
+                else { setEditval([]) }
             })
     }
 
@@ -141,33 +140,6 @@ const FingerPrint = (props) => {
             }); setFingerPrintDtTm(editval[0]?.FingerPrintDtTm ? new Date(editval[0]?.FingerPrintDtTm) : null);
         } else { setValue({ ...value, 'TRN': '', 'FingerPrintDtTm': '', 'PrintedByID': '', 'CreatedByUserFK': '', }) }
     }, [editval])
-
-
-    // const check_Validation_Error = (e) => {
-    //     // const TRNErrors = RequiredFieldIncident(value.TRN);
-    //     const PrintedByIDErrors = RequiredFieldIncident(value.FingerPrintDtTm);
-    //     setErrors(pre => {
-    //         return {
-    //             ...pre,
-    //             //  ['TRNErrors']: TRNErrors || pre['TRNErrors'],
-    //             ['PrintedByIDErrors']: PrintedByIDErrors || pre['PrintedByIDErrors'],
-    //         }
-    //     });
-    // }
-    // const { PrintedByIDErrors, } = errors
-
-    // useEffect(() => {
-    //     if (PrintedByIDErrors === 'true') {
-    //         if (FingerPrintsID && status) { update_Activity() }
-    //         else { Add_Type() }
-    //     }
-    // }, [PrintedByIDErrors,])
-
-
-    // useEffect(() => {
-    //     if (FingerPrintsID && status) { update_Activity() }
-    //     else { Add_Type() }
-    // }, [])
 
     const Add_Type = () => {
         const {
@@ -225,7 +197,6 @@ const FingerPrint = (props) => {
         setValue({ ...value, [e.target.name]: e.target.value });
     };
 
-
     const columns = [
         {
             name: 'TRN', selector: (row) => row.TRN, sortable: true
@@ -243,12 +214,14 @@ const FingerPrint = (props) => {
                 <div className="div" style={{ position: 'absolute', top: 4, right: 10 }}>
                     {
                         effectiveScreenPermission ?
-                            effectiveScreenPermission[0]?.DeleteOK ?
+                            effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", FingerPrintData, isLocked, true) ?
                                 <span onClick={() => { setFingerPrintsID(row.FingerPrintsID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                                     <i className="fa fa-trash"></i>
                                 </span>
                                 : <></>
-                            : <span onClick={() => { setFingerPrintsID(row.FingerPrintsID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
+                            :
+                            !isLockOrRestrictModule("Lock", FingerPrintData, isLocked, true) &&
+                            <span onClick={() => { setFingerPrintsID(row.FingerPrintsID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                                 <i className="fa fa-trash"></i>
                             </span>
                     }
@@ -267,12 +240,12 @@ const FingerPrint = (props) => {
         reset(); setStatesChangeStatus(false); setChangesStatus(false); setStatus(false); reset();
         setUpdateStatus(updateStatus + 1); setClickedRow(null);
     }
+
     const reset = () => {
         setValue({
             ...value, 'ArrestID': '', 'TRN': '', 'FingerPrintDtTm': '', 'PrintedByID': '', 'CreatedByUserFK': '',
         });
-        //  setErrors({ ...errors, 'PrintedByIDErrors': '', });
-        setFingerPrintDtTm(''); setFingerPrintDtTm('')
+        setFingerPrintDtTm(''); setFingerPrintDtTm(''); setEditval([])
     }
 
     const conditionalRowStyles = [
@@ -297,7 +270,16 @@ const FingerPrint = (props) => {
                         </label>
                     </div>
                     <div className="col-3 col-md-3 col-lg-3 text-field mt-1">
-                        <input type="text" className='' maxLength={10} value={value?.TRN} onChange={handleChange} name='TRN' required />
+                        <input
+                            type="text"
+                            className={isLockOrRestrictModule("Lock", editval[0]?.TRN, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", editval[0]?.TRN, isLocked)}
+                            maxLength={10}
+                            value={value?.TRN}
+                            onChange={handleChange}
+                            name='TRN'
+                            required
+                        />
                     </div>
                     <div className="col-3 col-md-3 col-lg-2 mt-2">
                         <lable className='label-name'>Date Of Fingerprint</lable>
@@ -306,7 +288,10 @@ const FingerPrint = (props) => {
                         <DatePicker
                             id='FingerPrintDtTm'
                             name='FingerPrintDtTm'
-                            className=''
+                            // className=''
+                            className={isLockOrRestrictModule("Lock", editval[0]?.FingerPrintDtTm, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", editval[0]?.FingerPrintDtTm, isLocked)}
+
                             dateFormat="MM/dd/yyyy HH:mm"
                             timeFormat="HH:mm"
                             is24Hour
@@ -341,12 +326,14 @@ const FingerPrint = (props) => {
                     <div className="col-3 col-md-3 col-lg-2 mt-1" >
                         <Select
                             name='PrintedByID'
-                            styles={customStylesWithOutColor}
                             value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.PrintedByID)}
                             isClearable
                             options={agencyOfficerDrpData}
                             onChange={(e) => ChangeDropDown(e, 'PrintedByID')}
                             placeholder="Select..."
+                            // styles={customStylesWithOutColor}
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.PrintedByID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.PrintedByID, isLocked)}
                         />
                     </div>
                 </div>
