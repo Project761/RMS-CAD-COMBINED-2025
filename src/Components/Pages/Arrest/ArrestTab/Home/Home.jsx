@@ -73,7 +73,7 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
     if (!NameID) { DecNameId = 0; }
     else { DecNameId = parseInt(base64ToString(NameID)); }
 
-    const { get_Arrest_Count, setArrestName, setIncidentNumber, get_OffenseName_Data, arrestChargeData, changesStatus, setArrestChargeData, updateCount, setUpdateCount, get_ArrestCharge_Count, get_Data_Arrest_Charge, nibrsSubmittedArrestMain, tabCountArrest, incidentNumber, ArresteName, arrestFilterData, get_Data_Arrest, policeForceDrpData, get_Police_Force, changesStatusCount, setChangesStatus, get_Incident_Count, setActiveArrest, datezone, GetDataTimeZone, setNameID, NameId, incidentCount } = useContext(AgencyContext);
+    const { get_Arrest_Count, setArrestName, setIncidentNumber, setoffenseChargeCount, get_OffenseName_Data, arrestChargeData, changesStatus, setArrestChargeData, updateCount, setUpdateCount, get_ArrestCharge_Count, get_Data_Arrest_Charge, nibrsSubmittedArrestMain, tabCountArrest, incidentNumber, ArresteName, arrestFilterData, get_Data_Arrest, policeForceDrpData, get_Police_Force, changesStatusCount, setChangesStatus, get_Incident_Count, setActiveArrest, datezone, GetDataTimeZone, setNameID, NameId, incidentCount } = useContext(AgencyContext);
 
     const [arrestDate, setArrestDate] = useState();
     const [rightGivenCode, setRightGivenCode] = useState('N');
@@ -177,6 +177,7 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
     useEffect(() => {
         if (ResetErrors) {
             console.log('hello')
+            setoffenseChargeCount('');
             dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
             setPossessionID('');
             setResetErrors(false)
