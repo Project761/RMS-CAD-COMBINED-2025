@@ -484,21 +484,19 @@ const Smt = (props) => {
             name: <p className='text-end' style={{ position: 'absolute', top: 8, right: 10 }}>Delete</p>,
             cell: row =>
                 <div className="div" style={{ position: 'absolute', top: 4, right: 10 }}>
-
-
-
                     {
                         effectiveScreenPermission ?
-                            effectiveScreenPermission[0]?.DeleteOK ?
+                            effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", smtData, isLocked, true) ?
                                 <span onClick={() => { setSmtId(row.SMTID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                                     <i className="fa fa-trash"></i>
                                 </span>
                                 : <></>
-                            : <span onClick={() => { setSmtId(row.SMTID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
+                            :
+                            !isLockOrRestrictModule("Lock", smtData, isLocked, true) &&
+                            <span onClick={() => { setSmtId(row.SMTID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                                 <i className="fa fa-trash"></i>
                             </span>
                     }
-
                 </div>
 
         }

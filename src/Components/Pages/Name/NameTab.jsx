@@ -10,7 +10,7 @@ import Gang from './NameTab/Gang/Gang';
 import { AgencyContext } from '../../../Context/Agency/Index';
 import Connection from './NameTab/Connection/Connection';
 import Address from './NameTab/Address/Address';
-import { Decrypt_Id_Name, getShowingWithOutTime, stringToBase64, tableCustomStyle } from '../../Common/Utility'; 
+import { Decrypt_Id_Name, getShowingWithOutTime, isLockOrRestrictModule, stringToBase64, tableCustomStyle } from '../../Common/Utility';
 import Tab from '../../Utility/Tab/Tab';
 import { Link, useNavigate } from 'react-router-dom';
 import AssaultInjuryCom from './NameTab/Offender/OffenderTab/AllTabCom/AssaultInjuryCom';
@@ -96,7 +96,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
     const [isBusinessName, setIsBusinessName] = useState(false);
     const [NameId, setNameId] = useState(false);
     const [ListData, setListData] = useState([]);
-    const [DocName, setDocName] = useState('NameDoc')
+    const [DocName, setDocName] = useState('NameDoc');
 
     const [showArrows, setShowArrows] = useState(false);
     const [viewType, setViewType] = useState('card'); // 'card' or 'list'
@@ -138,7 +138,6 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
     useEffect(() => {
         if (IncID) {
             get_Data_Name(IncID);
-            // getPermissionLevelByLock(IncID, localStoreData?.OfficerID, 0);
         }
     }, [IncID]);
 
@@ -173,6 +172,15 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
         window.addEventListener('resize', checkOverflow);
         return () => window.removeEventListener('resize', checkOverflow);
     }, [nameFilterData]);
+
+    useEffect(() => {
+        if (DecNameID && IncID && loginPinID) {
+            getPermissionLevelByLock(IncID, loginPinID, DecNameID);
+        } else {
+
+        }
+    }, [DecNameID, IncID, loginPinID]);
+
 
     const getPermissionLevelByLock = async (IncidentID, OfficerID, NameID) => {
         try {
@@ -240,25 +248,6 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
         {
             name: 'Alias Indicator', selector: (row) => row.AliasIndicator, sortable: true
         },
-        // {
-        //     width: '100px', name: 'View',
-        //     cell: row =>
-        //         <div style={{ position: 'absolute', top: 4, right: 30 }}>
-        //             {
-        //                 getNibrsError(row.NameID, nibrsNameValidateArray) ?
-        //                     <span
-        //                         onClick={(e) => { setErrString(row.NameID, nibrsNameValidateArray) }}
-        //                         className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
-        //                         data-toggle="modal"
-        //                         data-target="#NibrsErrorShowModal"
-        //                     >
-        //                         <i className="fa fa-eye"></i>
-        //                     </span>
-        //                     :
-        //                     <></>
-        //             }
-        //         </div>
-        // },
         {
             name: 'Reason Code', selector: (row) => row?.NameReasonCode || '',
             format: (row) => (<>{row?.NameReasonCode ? row?.NameReasonCode.substring(0, 50) : ''}{row?.NameReasonCode?.length > 40 ? '  . . .' : null} </>),
@@ -270,12 +259,14 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                 <div className="div" style={{ position: 'absolute', top: 4, right: 10 }}>
                     {
                         effectiveScreenPermission ?
-                            effectiveScreenPermission[0]?.DeleteOK ?
+                            effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", nameFilterData, isLocked, true) ?
                                 <span onClick={() => { setNameID(row.NameID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteNameModal">
                                     <i className="fa fa-trash"></i>
                                 </span>
                                 : <></>
-                            : <span onClick={() => { setNameID(row.NameID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteNameModal">
+                            :
+                            !isLockOrRestrictModule("Lock", nameFilterData, isLocked, true) &&
+                            <span onClick={() => { setNameID(row.NameID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteNameModal">
                                 <i className="fa fa-trash"></i>
                             </span>
                     }
@@ -327,7 +318,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
             } else {
                 navigate(`/Name-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}&isNew=${true}`)
             }
-            setMasterNameID(''); setNameID(''); 
+            setMasterNameID(''); setNameID('');
         }
     }
 
@@ -436,103 +427,59 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                         </div>
                                                         <div className="d-flex flex-column align-items-center gap-2 flex-shrink-0">
                                                             {/* Edit Button */}
-                                                            <div
-                                                                style={{
-                                                                    backgroundColor: "#001f3f",
-                                                                    color: "white",
-                                                                    width: "36px",
-                                                                    height: "36px",
-                                                                    borderRadius: "50%",
-                                                                    display: "flex",
-                                                                    alignItems: "center",
-                                                                    justifyContent: "center",
-                                                                    cursor: "pointer",
-                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                                                    marginBottom: "10px"
-                                                                    // transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                                                                }}
-                                                                // onMouseEnter={(e) => {
-                                                                //     e.currentTarget.style.transform = "scale(1.1)";
-                                                                //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
-                                                                // }}
-                                                                // onMouseLeave={(e) => {
-                                                                //     e.currentTarget.style.transform = "scale(1)";
-                                                                //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
-                                                                // }}
-                                                                onClick={() => {
-                                                                    set_Edit_Value(row);
-                                                                    setResetErrors(true);
-                                                                }}
-                                                                title="Edit"
-                                                            >
-                                                                <i className="fa fa-edit"></i>
-                                                            </div>
+                                                            {
+                                                                !isLockOrRestrictModule("Lock", nameFilterData, isLocked, true) &&
+                                                                <div
+                                                                    style={{
+                                                                        backgroundColor: "#001f3f",
+                                                                        color: "white",
+                                                                        width: "36px",
+                                                                        height: "36px",
+                                                                        borderRadius: "50%",
+                                                                        display: "flex",
+                                                                        alignItems: "center",
+                                                                        justifyContent: "center",
+                                                                        cursor: "pointer",
+                                                                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                        marginBottom: "10px"
+                                                                        // transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                                                                    }}
+                                                                    onClick={() => {
+                                                                        set_Edit_Value(row);
+                                                                        setResetErrors(true);
+                                                                    }}
+                                                                    title="Edit"
+                                                                >
+                                                                    <i className="fa fa-edit"></i>
+                                                                </div>
+                                                            }
 
                                                             {/* Delete Button */}
-                                                            <div
-                                                                style={{
-                                                                    backgroundColor: "#001f3f",
-                                                                    color: "white",
-                                                                    width: "36px",
-                                                                    height: "36px",
-                                                                    borderRadius: "50%",
-                                                                    display: "flex",
-                                                                    alignItems: "center",
-                                                                    justifyContent: "center",
-                                                                    cursor: "pointer",
-                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                                                    // transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                                                                }}
-                                                                // onMouseEnter={(e) => {
-                                                                //     e.currentTarget.style.transform = "scale(1.1)";
-                                                                //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
-                                                                // }}
-                                                                // onMouseLeave={(e) => {
-                                                                //     e.currentTarget.style.transform = "scale(1)";
-                                                                //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
-                                                                // }}
-                                                                data-toggle="modal"
-                                                                data-target="#DeleteNameModal"
-                                                                onClick={() => setNameID(row.NameID)}
-                                                                title="Delete"
-                                                            >
-                                                                <i className="fa fa-trash"></i>
-                                                            </div>
+                                                            {
+                                                                !isLockOrRestrictModule("Lock", nameFilterData, isLocked, true) &&
+                                                                <div
+                                                                    style={{
+                                                                        backgroundColor: "#001f3f",
+                                                                        color: "white",
+                                                                        width: "36px",
+                                                                        height: "36px",
+                                                                        borderRadius: "50%",
+                                                                        display: "flex",
+                                                                        alignItems: "center",
+                                                                        justifyContent: "center",
+                                                                        cursor: "pointer",
+                                                                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                        // transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                                                                    }}
+                                                                    data-toggle="modal"
+                                                                    data-target="#DeleteNameModal"
+                                                                    onClick={() => setNameID(row.NameID)}
+                                                                    title="Delete"
+                                                                >
+                                                                    <i className="fa fa-trash"></i>
+                                                                </div>
+                                                            }
                                                         </div>
-                                                        {/* <div className="d-fle flex-column gap-2 flex-shrink-0">
-                                                            <div
-                                                                style={{
-                                                                    backgroundColor: "#001f3f",
-                                                                    padding: "8px",
-                                                                    borderRadius: "50%",
-                                                                    display: "flex",
-                                                                    alignItems: "center",
-                                                                    justifyContent: "center",
-                                                                    cursor: "pointer",
-                                                                    marginBottom: "10px"
-                                                                }}
-                                                                className="text-white "
-                                                                onClick={() => { set_Edit_Value(row); setResetErrors(true) }}
-                                                            >
-                                                                <i className="fa fa-edit"></i>
-                                                            </div>
-                                                            <div
-                                                                style={{
-                                                                    backgroundColor: "#001f3f",
-                                                                    padding: "8px",
-                                                                    borderRadius: "50%",
-                                                                    display: "flex",
-                                                                    alignItems: "center",
-                                                                    justifyContent: "center",
-                                                                    cursor: "pointer",
-                                                                    fontSize: '20px'
-                                                                }}
-                                                                className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteNameModal"
-                                                                onClick={() => { setNameID(row.NameID); }}
-                                                            >
-                                                                <i className="fa fa-trash"></i>
-                                                            </div>
-                                                        </div> */}
                                                     </div>
                                                 ))}
                                             </div>
@@ -571,7 +518,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                         <div className="text-right ml-3">
                                             <div className="right-controls d-flex flex-column align-items-center gap-2">
                                                 <div className="view-toggle d-flex flex-column gap-2">
-                                                    <button className="btn btn-sm btn-success mb-2" onClick={() => { setStatusFalse(); setResetErrors(true) }}> New </button>
+                                                    <button className="btn btn-sm btn-success mb-2" onClick={() => { setStatusFalse(); setResetErrors(true); setIsLocked(false) }}> New </button>
                                                     {viewType === "card" && (<button className="btn btn-sm btn-success" onClick={() => setViewType("list")}  > Grid </button>)}
                                                     {viewType === "list" && (<button className="btn btn-sm btn-success" onClick={() => setViewType("card")} > Card  </button>)}
                                                 </div>

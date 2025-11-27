@@ -16,7 +16,7 @@ import PropertyNotes from './PropertyTab/PropertyNotes/PropertyNotes';
 import MiscellaneousInformation from './PropertyTab/MiscellaneousInformation/MiscellaneousInformation';
 import DocumentModal from '../../Common/DocumentModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { base64ToString, Decrypt_Id_Name, stringToBase64, tableCustomStyle } from '../../Common/Utility';
+import { base64ToString, Decrypt_Id_Name, isLockOrRestrictModule, stringToBase64, tableCustomStyle } from '../../Common/Utility';
 import { AddDeleteUpadate, fetchPostData } from '../../hooks/Api';
 import Other from './PropertyTab/Other/Other';
 import Involvements from '../SummaryModel/Involvement';
@@ -95,6 +95,7 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
         } else {
             setStatus(false); get_Property_Count('')
         }
+        setShowPage('home')
     }, [ProSta])
 
     useEffect(() => {
@@ -166,6 +167,14 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
             dispatch(get_PropertyMainModule_Data(DecIncID, MstPage === "MST-Property-Dash" ? true : false));
         }
     }, [DecIncID]);
+
+    useEffect(() => {
+        if (DecPropID && DecIncID && loginPinID) {
+            getPermissionLevelByLock(DecIncID, loginPinID, DecPropID);
+        } else {
+
+        }
+    }, [DecPropID, DecIncID, loginPinID]);
 
     const getStatusColors = (ID, nibrsValidateData) => {
         return getNibrsError(ID, nibrsValidateData) ? { backgroundColor: "rgb(255 202 194)" } : {};
@@ -268,12 +277,13 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                 <div style={{ position: 'absolute', top: 4, right: 10 }}>
                     {
                         effectiveScreenPermission ?
-                            effectiveScreenPermission[0]?.DeleteOK ?
+                            effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", propertyMainModuleData, isLocked, true) ?
                                 <span onClick={(e) => { setDelPropertyID(row.PropertyID); dispatch({ type: Property_ID, payload: row.PropertyID }); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                                     <i className="fa fa-trash"></i>
                                 </span>
                                 : <></>
                             :
+                            !isLockOrRestrictModule("Lock", propertyMainModuleData, isLocked, true) &&
                             <span onClick={(e) => { setDelPropertyID(row.PropertyID); dispatch({ type: Property_ID, payload: row.PropertyID }); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                                 <i className="fa fa-trash"></i>
                             </span>
@@ -472,35 +482,12 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                                                                     </>
                                                             }
 
-                                                            {/* <div
-                                                                style={{
-                                                                    backgroundColor: "#001f3f",
-                                                                    color: "white",
-                                                                    width: "36px",
-                                                                    height: "36px",
-                                                                    borderRadius: "50%",
-                                                                    display: "flex",
-                                                                    alignItems: "center",
-                                                                    justifyContent: "center",
-                                                                    cursor: "pointer",
-                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                                                    marginBottom: "10px"
-                                                                    // transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                                                                }}
-
-                                                                onClick={() => { set_EditRow(row); }}
-
-                                                                title="Edit"
-                                                            >
-                                                                <i className="fa fa-edit"></i>
-                                                            </div> */}
-
                                                             {/* Delete Button */}
                                                             {
                                                                 effectiveScreenPermission ?
                                                                     <>
                                                                         {
-                                                                            effectiveScreenPermission[0]?.DeleteOK ?
+                                                                            effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", propertyMainModuleData, isLocked, true) ?
                                                                                 <>
                                                                                     <div
                                                                                         style={{
@@ -532,53 +519,33 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                                                                     </>
                                                                     :
                                                                     <>
-                                                                        <div
-                                                                            style={{
-                                                                                backgroundColor: "#001f3f",
-                                                                                color: "white",
-                                                                                width: "36px",
-                                                                                height: "36px",
-                                                                                borderRadius: "50%",
-                                                                                display: "flex",
-                                                                                alignItems: "center",
-                                                                                justifyContent: "center",
-                                                                                cursor: "pointer",
-                                                                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                                                            }}
-                                                                            data-toggle="modal"
-                                                                            data-target="#DeleteModal"
-                                                                            onClick={() => {
-                                                                                setDelPropertyID(row.PropertyID);
-                                                                            }}
-                                                                            title="Delete"
-                                                                        >
-                                                                            <i className="fa fa-trash"></i>
-                                                                        </div>
+                                                                        {
+                                                                            !isLockOrRestrictModule("Lock", propertyMainModuleData, isLocked, true) &&
+                                                                            <div
+                                                                                style={{
+                                                                                    backgroundColor: "#001f3f",
+                                                                                    color: "white",
+                                                                                    width: "36px",
+                                                                                    height: "36px",
+                                                                                    borderRadius: "50%",
+                                                                                    display: "flex",
+                                                                                    alignItems: "center",
+                                                                                    justifyContent: "center",
+                                                                                    cursor: "pointer",
+                                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                                }}
+                                                                                data-toggle="modal"
+                                                                                data-target="#DeleteModal"
+                                                                                onClick={() => {
+                                                                                    setDelPropertyID(row.PropertyID);
+                                                                                }}
+                                                                                title="Delete"
+                                                                            >
+                                                                                <i className="fa fa-trash"></i>
+                                                                            </div>
+                                                                        }
                                                                     </>
                                                             }
-                                                            {/* <div
-                                                                style={{
-                                                                    backgroundColor: "#001f3f",
-                                                                    color: "white",
-                                                                    width: "36px",
-                                                                    height: "36px",
-                                                                    borderRadius: "50%",
-                                                                    display: "flex",
-                                                                    alignItems: "center",
-                                                                    justifyContent: "center",
-                                                                    cursor: "pointer",
-                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                                                }}
-                                                                data-toggle="modal"
-                                                                data-target="#DeleteModal"
-                                                                onClick={() => {
-                                                                    setMasterPropertyID(row?.MasterPropertyID); dispatch({ type: MasterProperty_ID, payload: row?.MasterPropertyID });
-                                                                    setPropertyID(row?.PropertyID); dispatch({ type: Property_ID, payload: row.PropertyID });
-                                                                }}
-                                                                title="Delete"
-                                                            >
-                                                                <i className="fa fa-trash"></i>
-                                                            </div> */}
                                                         </div>
                                                     </div>
                                                 ))}
@@ -861,9 +828,6 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                                                                 showPage === 'PropertyNotes' ?
                                                                     <PropertyNotes {...{ ListData, DecPropID, DecMPropID, DecIncID, isViewEventDetails }} />
                                                                     :
-
-
-
                                                                     showPage === 'PropertyManagement' ?
                                                                         <PropertyManagement {...{ DecPropID, DecMPropID, DecIncID, ProCategory, isViewEventDetails }} />
                                                                         :
@@ -882,7 +846,6 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                                                                                 />
                                                                                 :
                                                                                 showPage === 'PropertyTransactionLog' ?
-
                                                                                     <PropertyInvolvement
                                                                                         idColName={'MasterPropertyID'}
                                                                                         para={'PropertyID'}

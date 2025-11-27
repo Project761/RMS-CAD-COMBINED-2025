@@ -344,17 +344,17 @@ const Address = (props) => {
                 <div style={{ position: 'absolute', top: 4, right: 10 }}>
                     {
                         effectiveScreenPermission ?
-                            effectiveScreenPermission[0]?.DeleteOK ?
+                            effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", addressData, isLocked, true) ?
                                 <span onClick={() => { setNameAddressID(row.NameAddressID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                                     <i className="fa fa-trash"></i>
                                 </span>
                                 : <></>
-                            : <span onClick={() => { setNameAddressID(row.NameAddressID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
+                            :
+                            !isLockOrRestrictModule("Lock", addressData, isLocked, true) &&
+                            <span onClick={() => { setNameAddressID(row.NameAddressID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                                 <i className="fa fa-trash"></i>
                             </span>
                     }
-
-
                 </div>
 
         }

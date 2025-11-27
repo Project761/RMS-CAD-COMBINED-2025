@@ -340,12 +340,14 @@ const Identification = (props) => {
         <div className="div" style={{ position: 'absolute', top: 4, right: 10 }}>
           {
             effectiveScreenPermission ?
-              effectiveScreenPermission[0]?.DeleteOK ?
+              effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", identificationData, isLocked, true) ?
                 <span onClick={() => { setIdentificationNumberID(row.IdentificationNumberID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                   <i className="fa fa-trash"></i>
                 </span>
                 : <></>
-              : <span onClick={() => { setIdentificationNumberID(row.IdentificationNumberID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
+              :
+              !isLockOrRestrictModule("Lock", identificationData, isLocked, true) &&
+              <span onClick={() => { setIdentificationNumberID(row.IdentificationNumberID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                 <i className="fa fa-trash"></i>
               </span>
           }

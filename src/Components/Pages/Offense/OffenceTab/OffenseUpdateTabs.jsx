@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import BasicInformation from "./BasicInformation/BasicInformation";
 import Home from "./Home/Home";
 import { AgencyContext } from "../../../../Context/Agency/Index";
-import { Decrypt_Id_Name, base64ToString, getShowingWithOutTime, tableCustomStyles, stringToBase64 } from "../../../Common/Utility";
+import { Decrypt_Id_Name, base64ToString, getShowingWithOutTime, tableCustomStyles, stringToBase64, isLockOrRestrictModule } from "../../../Common/Utility";
 import { Link, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import Tab from "../../../Utility/Tab/Tab";
@@ -203,44 +203,6 @@ const OffenceHomeTabs = () => {
             selector: (row) => row.LawTitle_Description,
             sortable: true,
         },
-        // {
-        //     minWidth: "110px",
-        //     grow: 1,
-        //     cell: (row) => (
-        //         <div >
-        //             {
-        //                 getCrimeInfoErrorButton(row.CrimeID, nibrsValidateOffenseData) ?
-        //                     <>
-        //                         <span
-        //                             onClick={(e) => {
-        //                                 navigate(`/Off-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${stringToBase64(row?.CrimeID)}&OffSta=${true}&CrimeSta=${true}`);
-        //                             }}
-        //                             className={`btn btn-sm text-white px-2 py-0 mr-1 `}
-        //                             style={{
-        //                                 backgroundColor: "red",
-        //                             }}
-        //                         >
-        //                             Crime Info
-        //                         </span>
-        //                     </>
-        //                     :
-        //                     <>
-        //                         <span
-        //                             onClick={(e) => {
-        //                                 navigate(`/Off-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${stringToBase64(row?.CrimeID)}&OffSta=${true}&CrimeSta=${true}`);
-        //                             }}
-        //                             className={`btn btn-sm text-white px-2 py-0 mr-1 `}
-        //                             style={{
-        //                                 backgroundColor: "#19aea3",
-        //                             }}
-        //                         >
-        //                             Crime Info
-        //                         </span>
-        //                     </>
-        //             }
-        //         </div>
-        //     ),
-        // },
         {
             minWidth: "120px",
             grow: 1,
@@ -305,30 +267,6 @@ const OffenceHomeTabs = () => {
                 </div>
             ),
         },
-        // {
-        //     minWidth: "40px",
-        //     grow: 1,
-        //     name: "View",
-        //     cell: (row) => (
-        //         <div >
-        //             {getOffenseNibrsError(row.CrimeID, nibrsValidateOffenseData) ? (
-        //                 <span
-        //                     onClick={(e) =>
-        //                         setOffenseErrString(row.CrimeID, nibrsValidateOffenseData)
-        //                     }
-        //                     className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
-        //                     data-toggle="modal"
-        //                     data-target="#NibrsErrorShowModal"
-        //                 >
-        //                     <i className="fa fa-eye"></i>
-        //                 </span>
-        //             ) : (
-        //                 <></>
-        //             )}
-        //         </div>
-        //     ),
-
-        // },
         {
             minWidth: "40px",
             grow: 1,
@@ -344,9 +282,8 @@ const OffenceHomeTabs = () => {
                 <div >
                     {row.ArrestChargeCount === "0" && (
                         effectiveScreenPermission ? (
-                            effectiveScreenPermission[0]?.DeleteOK ? (
+                            effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", offenceFillterData, isLocked, true) ? (
                                 <span
-                                    // onClick={() => handleDeleteClick(row)}
                                     onClick={() => { setCrimeId(row.CrimeID); }}
                                     className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
                                     data-toggle="modal"
@@ -356,6 +293,7 @@ const OffenceHomeTabs = () => {
                                 </span>
                             ) : null
                         ) : (
+                            !isLockOrRestrictModule("Lock", offenceFillterData, isLocked, true) &&
                             <span
                                 onClick={() => { setCrimeId(row.CrimeID); }}
                                 className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
@@ -594,7 +532,7 @@ const OffenceHomeTabs = () => {
                                                                 effectiveScreenPermission ?
                                                                     <>
                                                                         {
-                                                                            effectiveScreenPermission[0]?.DeleteOK ?
+                                                                            effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", offenceFillterData, isLocked, true) ?
                                                                                 <>
                                                                                     <div
                                                                                         style={{
@@ -624,26 +562,30 @@ const OffenceHomeTabs = () => {
                                                                     </>
                                                                     :
                                                                     <>
-                                                                        <div
-                                                                            style={{
-                                                                                backgroundColor: "#001f3f",
-                                                                                color: "white",
-                                                                                width: "36px",
-                                                                                height: "36px",
-                                                                                borderRadius: "50%",
-                                                                                display: "flex",
-                                                                                alignItems: "center",
-                                                                                justifyContent: "center",
-                                                                                cursor: "pointer",
-                                                                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                                                            }}
-                                                                            data-toggle="modal"
-                                                                            data-target="#DeleteModal"
-                                                                            onClick={() => setCrimeId(row.CrimeID)}
-                                                                            title="Delete"
-                                                                        >
-                                                                            <i className="fa fa-trash"></i>
-                                                                        </div>
+                                                                        {
+                                                                            !isLockOrRestrictModule("Lock", offenceFillterData, isLocked, true) &&
+                                                                            <div
+                                                                                style={{
+                                                                                    backgroundColor: "#001f3f",
+                                                                                    color: "white",
+                                                                                    width: "36px",
+                                                                                    height: "36px",
+                                                                                    borderRadius: "50%",
+                                                                                    display: "flex",
+                                                                                    alignItems: "center",
+                                                                                    justifyContent: "center",
+                                                                                    cursor: "pointer",
+                                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                                }}
+                                                                                data-toggle="modal"
+                                                                                data-target="#DeleteModal"
+                                                                                onClick={() => setCrimeId(row.CrimeID)}
+                                                                                title="Delete"
+                                                                            >
+                                                                                <i className="fa fa-trash"></i>
+                                                                            </div>
+
+                                                                        }
                                                                     </>
                                                             }
 
