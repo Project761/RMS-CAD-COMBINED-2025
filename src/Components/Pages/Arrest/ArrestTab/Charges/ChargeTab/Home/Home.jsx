@@ -491,6 +491,7 @@ const Charges = (props) => {
         navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(res?.ArrestID)}&ArrNo=${res?.ArrestNumber}&Name=${ArresteName}&ArrestSta=${true}&ChargeSta=${false}`)
         Add_Charge_Data(res.ArrestID);
         get_Incident_Count(DecEIncID);
+        GetSingleData(res?.ArrestID, DecEIncID);
       }
     });
   }

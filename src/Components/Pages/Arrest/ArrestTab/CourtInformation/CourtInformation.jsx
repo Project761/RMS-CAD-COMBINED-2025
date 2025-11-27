@@ -18,7 +18,7 @@ import ArresList from '../../../ShowAllList/ArrestList'
 
 const CourtInformation = (props) => {
 
-  const { DecArrestId, ListData, get_List, isLocked, setIsLocked } = props
+  const { DecArrestId, ListData, get_List, isLocked, Editval, setIsLocked } = props
 
   const dispatch = useDispatch();
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -27,7 +27,7 @@ const CourtInformation = (props) => {
   const incReportedDate = useSelector((state) => state.Agency.incReportedDate);
 
 
-  const { get_Arrest_Count, ArresteName, setChangesStatus, NameId, } = useContext(AgencyContext)
+  const { get_Arrest_Count, ArresteName, setArrestName, setChangesStatus, NameId, } = useContext(AgencyContext)
   const [courtInfoData, setCourtInfoData] = useState();
   const [status, setStatus] = useState(false);
   const [modal, setModal] = useState(false)
@@ -66,9 +66,12 @@ const CourtInformation = (props) => {
 
   useEffect(() => {
     if (localStoreData) {
+      // setArrestName(Editval[0]?.Arrestee_Name ? Editval[0]?.Arrestee_Name : '');
       setLoginPinID(localStoreData?.PINID); setLoginAgencyID(localStoreData?.AgencyID); dispatch(get_ScreenPermissions_Data("A071", localStoreData?.AgencyID, localStoreData?.PINID));
     }
   }, [localStoreData]);
+
+ 
 
   useEffect(() => {
     if (effectiveScreenPermission?.length > 0) {
@@ -81,7 +84,7 @@ const CourtInformation = (props) => {
 
   useEffect(() => {
     if (DecArrestId) {
-      setValue({ ...value, 'ArrestID': DecArrestId, 'CreatedByUserFK': loginPinID, 'Name': ArresteName, })
+      setValue({ ...value, 'ArrestID': DecArrestId, 'CreatedByUserFK': loginPinID, 'Name': Editval[0]?.Arrestee_Name ? Editval[0]?.Arrestee_Name : '', })
       get_CourtInformation_Data(DecArrestId); setArrestID(DecArrestId);
     }
   }, [DecArrestId]);
@@ -121,7 +124,7 @@ const CourtInformation = (props) => {
       setPleaDate(editval[0]?.PleaDateTime ? new Date(editval[0]?.PleaDateTime) : null); getCity(editval[0]?.CourtStateID);
     } else {
       setValue({
-        ...value, 'Name': ArresteName, 'DocketID': "Docket 45", 'CourtName': "", 'CourtAppearReasonID': '', 'Attorney': '', 'CourtStateID': '', 'CourtCityID': '', 'JudgeName': '',
+        ...value, 'Name': Editval[0]?.Arrestee_Name ? Editval[0]?.Arrestee_Name : '', 'DocketID': "Docket 45", 'CourtName': "", 'CourtAppearReasonID': '', 'Attorney': '', 'CourtStateID': '', 'CourtCityID': '', 'JudgeName': '',
         'PleaID': '', 'PleaDateTime': '', 'Prosecutor': '', 'AppearDateTime': '', 'IsRescheduled': '', 'IsContinued': '', 'IsAppearRequired': '', 'IsDismissed': '', 'courtInfoID': ''
       }); setAppearDate(''); setPleaDate('')
     }
