@@ -4,7 +4,7 @@ import DatePicker from "react-datepicker";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import DataTable from 'react-data-table-component';
 import { useDispatch, useSelector } from 'react-redux';
-import { Decrypt_Id_Name, getShowingDateText, base64ToString, stringToBase64, getShowingWithOutTime, tableCustomStyles, nibrscolourStyles, Requiredcolour, } from '../../../Common/Utility';
+import { Decrypt_Id_Name, getShowingDateText, base64ToString, stringToBase64, getShowingWithOutTime, tableCustomStyles, nibrscolourStyles, Requiredcolour, LockFildscolour, isLockOrRestrictModule, MultiSelectLockedStyle, } from '../../../Common/Utility';
 import { AddDeleteUpadate, fetchPostData, fetchPostDataNibrs } from '../../../hooks/Api';
 import { Comman_changeArrayFormat, Comman_changeArrayFormatReasonCode, Comman_changeArrayFormat_With_Name, changeArray, fourColArray, fourColArrayReasonCode, offenseArray, sixColArray, threeColArray, threeColVictimOffenseArray } from '../../../Common/ChangeArrayFormat';
 import { toastifyError, toastifySuccess } from '../../../Common/AlertMsg';
@@ -27,7 +27,7 @@ const MultiValue = props => (
     </components.MultiValue>
 );
 
-const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
+const MinOffender = ({ offenderClick = false, isNibrsSummited = false, isLocked, setIsLocked, getPermissionLevelByLock = () => { } }) => {
 
     const SelectedValue = useRef();
     const navigate = useNavigate();
@@ -631,10 +631,11 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                     ) : '',
                 });
                 setMultiSelectedReason({
-
                     optionSelected: editval[0]?.Role ? makeRoleArr(editval[0]?.Role) : [],
                 });
 
+                // console.log(editval[0]?.ReasonCode);
+                // console.log(makeRoleArr(editval[0]?.Role));
 
 
             }
@@ -721,11 +722,12 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
     const set_Edit_Value = (row) => {
         if (row?.NameID || row?.MasterNameID) {
             Reset();
+            // get Inc-LockStatus
+            getPermissionLevelByLock(IncID, loginPinID);
             // get nibrs error tool tip
             getNibrsErrorToolTip(row?.NameID, IncNo, mainIncidentID);
             // Relationship
             Get_Relationship_Data(row?.NameID);
-
             setStatesChangeStatus(false)
             GetSingleData(row?.NameID, row?.MasterNameID);
             navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(row?.NameID)}&MasterNameID=${stringToBase64(row?.MasterNameID)}&NameStatus=${true}`)
@@ -736,59 +738,12 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
             setuploadImgFiles('');
             get_OffenseName_Data(row?.NameID);
             setErrors({
-                ...value, 'NameTypeIDError': '', 'LastNameError': '', 'FirstNameError': '', 'MiddleNameError': '', 'NameReasonCodeIDError': '', 'CertifiedByIDError': '', 'ContactError': 'true', 'WeightError': 'true', 'HeightError': 'true', 'AgeError': 'true', 'DateOfBirthError': '', 'RaceIDError': '', 'SexIDError': '', 'AddressError': 'true', 'SSN': '', 'DLError': 'true',
-            })
+                ...errors,
+                'NameTypeIDError': '', 'LastNameError': '', 'FirstNameError': '', 'MiddleNameError': '', 'NameReasonCodeIDError': '', 'CertifiedByIDError': '', 'ContactError': 'true', 'WeightError': 'true', 'HeightError': 'true', 'AgeError': 'true', 'DateOfBirthError': '', 'RaceIDError': '', 'SexIDError': '', 'AddressError': 'true', 'SSN': '', 'DLError': 'true',
+            });
         }
     }
 
-    // const columns = [
-    //     {
-    //         name: 'MNI',
-    //         selector: (row) => row.NameIDNumber,
-    //         sortable: true
-    //     },
-
-    //     {
-    //         name: 'Gender',
-    //         selector: (row) => row.Gender,
-    //         sortable: true
-    //     },
-    //     {
-    //         name: 'DOB',
-    //         selector: (row) => row.DateOfBirth ? getShowingWithOutTime(row.DateOfBirth) : " ",
-    //         sortable: true
-    //     },
-    //     {
-    //         width: '100px',
-    //         name: 'View',
-
-    //         cell: row =>
-    //             <div style={{ position: 'absolute', top: 4, right: 30 }}>
-    //                 {
-    //                     getNibrsError(row.NameID, nibrsValidateNameData) ?
-    //                         <span
-    //                             onClick={(e) => { setErrString(row.NameID, nibrsValidateNameData) }}
-    //                             className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
-    //                             data-toggle="modal"
-    //                             data-target="#NibrsErrorShowModal"
-    //                         >
-    //                             <i className="fa fa-eye"></i>
-    //                         </span>
-    //                         :
-    //                         <></>
-    //                 }
-    //             </div>
-    //     },
-    //     {
-    //         name: 'Reason Code',
-    //         selector: (row) => row?.NameReasonCode || '',
-    //         format: (row) => (
-    //             <>{row?.NameReasonCode ? row?.NameReasonCode.substring(0, 50) : ''}{row?.NameReasonCode?.length > 40 ? '  . . .' : null} </>
-    //         ),
-    //         sortable: true
-    //     },
-
-    // ]
     const columns = [
         {
             name: 'MNI', selector: (row) => row.NameIDNumber, sortable: true
@@ -818,7 +773,6 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
         {
             width: '100px',
             name: 'View',
-
             cell: row =>
                 <div style={{ position: 'absolute', top: 4, right: 30 }}>
                     {
@@ -1222,7 +1176,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                 get_Incident_Count(mainIncidentID, loginPinID);
                                 setErrors({ ...errors, ['AddressError']: 'true', ['WeightError']: 'true', ['AgeError']: 'true', ['ContactError']: 'true', ['NameTypeIDError']: '', });
                                 // Validate Offender
-                
+
                                 getNibrs_Names_Error(IncID, IncNo);
                                 getNibrsErrorToolTip(res?.NameID, IncNo, IncID);
                                 // validateIncSideBar
@@ -1314,7 +1268,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                 setErrors({ ...errors, ['ContactError']: 'true', ['NameTypeIDError']: '', });
 
                                 // Validate Offender
-                         
+
                                 getNibrs_Names_Error(IncID, IncNo);
                                 getNibrsErrorToolTip(nameID, IncNo, IncID);
                                 // validateIncSideBar
@@ -1776,7 +1730,6 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
             getNibrs_Names_Error(mainIncidentID, IncNo, true);
         }
     }, [offenderClick, IncNo, mainIncidentID])
-
 
     // validate Incident
     const getNibrs_Names_Error = (incidentID, IncNo, isDefaultSelected = false) => {
@@ -2382,7 +2335,6 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                             value={nameTypeData?.filter((obj) => obj.value === value?.NameTypeID)}
                             options={nameTypeData}
                             onChange={(e) => ChangeNameType(e, 'NameTypeID')}
-
                             placeholder="Select..."
                             isDisabled={nameID || masterNameID ? true : false}
                             styles={Requiredcolour}
@@ -2430,7 +2382,16 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                     ) : null}</label>
                             </div>
                             <div className="col-2 col-md-2 col-lg-4 text-field mt-1">
-                                <input type="text" name='LastName' className={'requiredColor'} value={value?.LastName} onChange={HandleChange} required />
+                                <input
+                                    type="text"
+                                    name='LastName'
+                                    value={value?.LastName}
+                                    onChange={HandleChange}
+                                    required
+
+                                    className={isLockOrRestrictModule("Lock", editval[0]?.LastName, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+                                    disabled={isLockOrRestrictModule("Lock", editval[0]?.LastName, isLocked)}
+                                />
                             </div>
                             {
                                 !nameID &&
@@ -2449,7 +2410,9 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                     onChange={(e) => ChangeDropDown(e, 'BusinessTypeID')}
                                     isClearable
                                     placeholder="Select..."
-                                    styles={customStylesWithOutColor}
+
+                                    styles={isLockOrRestrictModule("Lock", editval[0]?.LastName, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.LastName, isLocked)}
                                 />
                             </div>
                         </div>
@@ -2462,22 +2425,28 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                     MstPage === "MST-Name-Dash" ?
                                         <Select
                                             name='OwnerNameID'
-                                            styles={customStylesWithOutColor}
                                             options={mastersNameDrpData}
                                             value={mastersNameDrpData?.filter((obj) => obj.value === value?.OwnerNameID)}
                                             isClearable={value?.OwnerNameID ? true : false}
                                             onChange={(e) => ChangeDropDown(e, 'OwnerNameID')}
                                             placeholder="Select..."
+
+                                            // styles={customStylesWithOutColor}
+                                            styles={isLockOrRestrictModule("Lock", editval[0]?.OwnerNameID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.OwnerNameID, isLocked)}
                                         />
                                         :
                                         <Select
                                             name='OwnerNameID'
-                                            styles={customStylesWithOutColor}
                                             options={ownerNameData}
                                             value={ownerNameData?.filter((obj) => obj.value === value?.OwnerNameID)}
                                             isClearable={value?.OwnerNameID ? true : false}
                                             onChange={(e) => ChangeDropDown(e, 'OwnerNameID')}
                                             placeholder="Select..."
+
+                                            // styles={customStylesWithOutColor}
+                                            styles={isLockOrRestrictModule("Lock", editval[0]?.OwnerNameID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.OwnerNameID, isLocked)}
                                         />
                                 }
                             </div>
@@ -2502,7 +2471,16 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                 ) : null}</label>
                             </div>
                             <div className="col-2 col-md-2 col-lg-2 text-field mt-1">
-                                <input type="text" name='OwnerPhoneNumber' maxLength={11} className={''} value={value?.OwnerPhoneNumber} onChange={HandleChange} required />
+                                <input
+                                    type="text"
+                                    name='OwnerPhoneNumber'
+                                    maxLength={11}
+                                    value={value?.OwnerPhoneNumber}
+                                    onChange={HandleChange}
+                                    required
+                                    className={isLockOrRestrictModule("Lock", editval[0]?.OwnerPhoneNumber, isLocked) ? 'LockFildsColor' : ''}
+                                    disabled={isLockOrRestrictModule("Lock", editval[0]?.OwnerPhoneNumber, isLocked)}
+                                />
 
                             </div>
 
@@ -2512,7 +2490,16 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                 ) : null}</label>
                             </div>
                             <div className="col-2 col-md-2 col-lg-2 text-field mt-1">
-                                <input type="text" name='OwnerFaxNumber' className={''} value={value?.OwnerFaxNumber} onChange={HandleChange} required />
+                                <input
+                                    type="text"
+                                    name='OwnerFaxNumber'
+                                    value={value?.OwnerFaxNumber}
+                                    onChange={HandleChange}
+                                    required
+
+                                    className={isLockOrRestrictModule("Lock", editval[0]?.OwnerFaxNumber, isLocked) ? 'LockFildsColor' : ''}
+                                    disabled={isLockOrRestrictModule("Lock", editval[0]?.OwnerFaxNumber, isLocked)}
+                                />
                             </div>
                         </div>
                     </div>
@@ -2528,7 +2515,21 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                             ) : null}</label>
                                     </div>
                                     <div className="col-10 col-md-10 col-lg-2 text-field mt-1">
-                                        <input type="text" name='LastName' maxLength={100} onBlur={(e) => { e.relatedTarget !== saveButtonRef.current && e.relatedTarget !== closeButtonRef.current && LastFirstNameOnBlur(e) }} className={nameTypeCode === "B" ? 'readonlyColor' : 'requiredColor'} value={value?.LastName} onClick={() => { setChangesStatus(true); }} onChange={HandleChange} required disabled={nameTypeCode === "B" ? true : false} readOnly={nameTypeCode === "B" ? true : false} autoComplete='off' />
+                                        <input
+                                            type="text"
+                                            name='LastName'
+                                            maxLength={100}
+                                            onBlur={(e) => { e.relatedTarget !== saveButtonRef.current && e.relatedTarget !== closeButtonRef.current && LastFirstNameOnBlur(e) }}
+                                            value={value?.LastName}
+                                            onClick={() => { setChangesStatus(true); }}
+                                            onChange={HandleChange}
+                                            required
+                                            autoComplete='off'
+                                            readOnly={nameTypeCode === "B" ? true : false}
+
+                                            className={isLockOrRestrictModule("Lock", editval[0]?.LastName, isLocked) ? 'LockFildsColor' : nameTypeCode === "B" ? 'readonlyColor' : 'requiredColor'}
+                                            disabled={isLockOrRestrictModule("Lock", editval[0]?.LastName, isLocked) || nameTypeCode === "B" ? true : false}
+                                        />
                                     </div>
                                     <div className="col-2 col-md-2 col-lg-1 mt-2">
                                         <label htmlFor="" className='label-name '>First Name
@@ -2538,9 +2539,22 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                         </label>
                                     </div>
                                     <div className="col-2 col-md-4 col-lg-2 text-field mt-1">
-                                        <input type="text" maxLength={50} ref={firstNameInputRef} name='FirstName'
+                                        <input
+                                            type="text"
+                                            maxLength={50}
+                                            ref={firstNameInputRef}
+                                            name='FirstName'
                                             onBlur={(e) => { e.relatedTarget !== saveButtonRef.current && LastFirstNameOnBlur(e) }}
-                                            className={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? 'readonlyColor' : ''} value={value?.FirstName} onChange={HandleChange} required disabled={nameTypeCode === "B" ? true : false} readOnly={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? true : false} onClick={() => { setChangesStatus(true); }} autoComplete='off' />
+                                            value={value?.FirstName}
+                                            onChange={HandleChange}
+                                            required
+                                            readOnly={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? true : false}
+                                            onClick={() => { setChangesStatus(true); }}
+                                            autoComplete='off'
+
+                                            className={isLockOrRestrictModule("Lock", editval[0]?.FirstName, isLocked) ? 'LockFildsColor' : (nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? 'readonlyColor' : ''}
+                                            disabled={isLockOrRestrictModule("Lock", editval[0]?.FirstName, isLocked) || nameTypeCode === "B" ? true : false}
+                                        />
                                     </div>
                                     <div className="col-2 col-md-2 col-lg-1 mt-2 px-0">
                                         <label htmlFor="" className='label-name '>Middle Name
@@ -2550,7 +2564,20 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                         </label>
                                     </div>
                                     <div className="col-2 col-md-4 col-lg-2 text-field mt-1">
-                                        <input type="text" name='MiddleName' maxLength={50} value={value?.MiddleName} className={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? 'readonlyColor' : ''} onChange={HandleChange} required disabled={nameTypeCode === "B" ? true : false} readOnly={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? true : false} onClick={() => { setChangesStatus(true); }} autoComplete='off' />
+                                        <input
+                                            type="text"
+                                            name='MiddleName'
+                                            maxLength={50}
+                                            value={value?.MiddleName}
+                                            onChange={HandleChange}
+                                            required
+                                            readOnly={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? true : false}
+                                            onClick={() => { setChangesStatus(true); }}
+                                            autoComplete='off'
+
+                                            className={isLockOrRestrictModule("Lock", editval[0]?.MiddleName, isLocked) ? 'LockFildsColor' : (nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? 'readonlyColor' : ''}
+                                            disabled={isLockOrRestrictModule("Lock", editval[0]?.MiddleName, isLocked) || nameTypeCode === "B" ? true : false}
+                                        />
                                     </div>
                                     <div className="col-12 col-md-12 col-lg-3 d-flex mt-1 ">
                                         <div className="col-2 col-md-2 col-lg-2 mt-2 ml-4 ml-md-0">
@@ -2564,13 +2591,25 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                                 onChange={(e) => ChangeDropDown(e, 'SuffixID')}
                                                 isClearable
                                                 placeholder="Select..."
-                                                isDisabled={nameTypeCode === "B" ? true : false}
-                                                styles={customStylesWithOutColor}
+
+                                                styles={isLockOrRestrictModule("Lock", editval[0]?.SuffixID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.SuffixID, isLocked) || nameTypeCode === "B" ? true : false}
                                             />
                                         </div>
                                         <div className="col-4 col-md-2 col-lg-4">
                                             <div className="form-check pt-2 ">
-                                                <input className="form-check-input " type="checkbox" name='IsUnknown' value={value?.IsUnknown} checked={value?.IsUnknown} onChange={HandleChange} id="flexCheckDefault1" disabled={nameTypeCode === "B" ? true : false} readOnly={nameTypeCode === "B" ? true : false} />
+                                                <input
+                                                    className="form-check-input "
+                                                    type="checkbox"
+                                                    name='IsUnknown'
+                                                    value={value?.IsUnknown}
+                                                    checked={value?.IsUnknown}
+                                                    onChange={HandleChange}
+                                                    id="flexCheckDefault1"
+
+                                                    disabled={isLockOrRestrictModule("Lock", editval[0]?.IsUnknown, isLocked) || nameTypeCode === "B" ? true : false}
+                                                    readOnly={isLockOrRestrictModule("Lock", editval[0]?.IsUnknown, isLocked) || nameTypeCode === "B" ? true : false}
+                                                />
                                                 <label className="form-check-label label-name  pr-md-2" htmlFor="flexCheckDefault1">
                                                     Unknown
                                                 </label>
@@ -2610,28 +2649,22 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                                     } else {
                                                         onKeyDown(e);
                                                     }
-                                                }
-                                                }
+                                                }}
                                                 onChange={handleDateChange}
                                                 dateFormat={allowTimeSelect ? "MM/dd/yyyy" : "MM/dd/yyyy"}
                                                 isClearable={value.DateOfBirth ? true : false}
                                                 selected={dobDate}
                                                 placeholderText={value.DateOfBirth ? value.DateOfBirth : 'Select...'}
-
                                                 showMonthDropdown
                                                 showYearDropdown
                                                 dropdownMode="select"
                                                 autoComplete='Off'
-
                                                 maxDate={MstPage === "MST-Name-Dash" ? new Date() : new Date(incReportedDate)}
-                                                disabled={nameTypeCode === "B" ? true : false}
-                                                className={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? 'readonlyColor' : '' ? 'requiredColor' : ''}
                                                 readOnly={(nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? true : false}
-                                                includeTimes={
-                                                    dobDate && isSameDate(dobDate, maxAllowedDate)
-                                                        ? getLimitedTimesUpTo(maxAllowedDate)
-                                                        : undefined
-                                                }
+                                                includeTimes={dobDate && isSameDate(dobDate, maxAllowedDate) ? getLimitedTimesUpTo(maxAllowedDate) : undefined}
+
+                                                className={isLockOrRestrictModule("Lock", editval[0]?.DateOfBirth, isLocked) ? 'LockFildsColor' : (nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? 'readonlyColor' : '' ? 'requiredColor' : ''}
+                                                disabled={isLockOrRestrictModule("Lock", editval[0]?.DateOfBirth, isLocked) || nameTypeCode === "B" ? true : false}
                                             />
                                         </div>
                                         <div className="col-12 col-md-7 col-lg-3 d-flex " >
@@ -2641,11 +2674,26 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                                 ) : null}</label>
                                             </div>
                                             <div className="col-2 col-md-3 col-lg-5 mt-1  text-field px-0" >
-                                                <input type="text" name='AgeFrom' maxLength={3}
-                                                    className={value.DateOfBirth || value?.IsUnknown === 'true' || value?.IsUnknown === true ? 'readonlyColor' : victimTypeStatus || isAdult || IsOffender ? 'requiredColor' : ''}
+                                                <input
+                                                    type="text"
+                                                    name='AgeFrom'
+                                                    maxLength={3}
+                                                    value={value?.AgeFrom}
+                                                    onBlur={(e) => AgeFromOnBlur(e)}
+                                                    onChange={HandleChange}
+                                                    required
+                                                    placeholder='From'
+                                                    autoComplete='off'
 
+                                                    // className={value.DateOfBirth || value?.IsUnknown === 'true' || value?.IsUnknown === true ? 'readonlyColor' : victimTypeStatus || isAdult || IsOffender ? 'requiredColor' : ''}
+                                                    // disabled={(value.DateOfBirth ? true : false) || value?.IsUnknown === 'true' || value?.IsUnknown === true}
+
+                                                    className={isLockOrRestrictModule("Lock", editval[0]?.AgeFrom, isLocked) ? 'LockFildsColor' : value.DateOfBirth || value?.IsUnknown === 'true' || value?.IsUnknown === true ? 'readonlyColor' : victimTypeStatus || isAdult || IsOffender ? 'requiredColor' : ''}
+                                                    disabled={isLockOrRestrictModule("Lock", editval[0]?.AgeFrom, isLocked) || (value.DateOfBirth ? true : false) || value?.IsUnknown === 'true' || value?.IsUnknown === true}
+                                                    readOnly={(value.DateOfBirth ? true : false) || value?.IsUnknown === 'true' || value?.IsUnknown === true}
                                                     style={{
-                                                        textAlign: 'center', ...(value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.AgeFrom ? {
+                                                        textAlign: 'center',
+                                                        ...(value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.AgeFrom ? {
                                                             backgroundColor: 'rgb(255 202 194)',
                                                             height: 20,
                                                             minHeight: 33,
@@ -2653,18 +2701,25 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                                             marginTop: 2,
                                                             boxShadow: 0,
                                                         }
-                                                            : {}
+                                                            :
+                                                            {}
                                                     }}
-                                                    value={value?.AgeFrom}
-
-                                                    onBlur={(e) => AgeFromOnBlur(e)}
-                                                    onChange={HandleChange} required
-                                                    disabled={(value.DateOfBirth ? true : false) || value?.IsUnknown === 'true' || value?.IsUnknown === true}
-                                                    readOnly={(value.DateOfBirth ? true : false) || value?.IsUnknown === 'true' || value?.IsUnknown === true} placeholder='From' autoComplete='off' />
+                                                />
                                             </div>
                                             <span className='dash-name mt-1'>_</span>
-                                            <div className="col-2 col-md-2 col-lg-4 mt-1  text-field " >
-                                                <input type="text" name='AgeTo' maxLength={3}
+                                            <div className="col-2 col-md-2 col-lg-4 mt-1  text-field">
+                                                <input
+                                                    type="text"
+                                                    name='AgeTo'
+                                                    maxLength={3}
+                                                    value={value?.AgeTo}
+                                                    onChange={HandleChange}
+                                                    required
+                                                    placeholder='To'
+                                                    autoComplete='off'
+                                                    className={isLockOrRestrictModule("Lock", editval[0]?.AgeTo, isLocked) ? 'LockFildsColor' : value.DateOfBirth || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true ? 'readonlyColor' : ''}
+                                                    disabled={isLockOrRestrictModule("Lock", editval[0]?.AgeTo, isLocked) || value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true}
+                                                    readOnly={value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true}
                                                     style={{
                                                         textAlign: 'center', ...(value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.AgeTo ? {
                                                             backgroundColor: 'rgb(255 202 194)',
@@ -2676,9 +2731,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                                         }
                                                             : {}
                                                     }}
-
-                                                    value={value?.AgeTo} onChange={HandleChange} required className={value.DateOfBirth || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true ? 'readonlyColor' : ''} disabled={value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true} readOnly={value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true} placeholder='To' autoComplete='off' />
-
+                                                />
 
                                             </div>
                                             <div className="col-4 col-md-4 col-lg-12 mt-1 px-0 text-nowrap" >
@@ -2689,9 +2742,12 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                                     onChange={(e) => ChangeDropDown(e, 'AgeUnitID')}
                                                     isClearable
                                                     placeholder="Age Unit..."
-                                                    styles={value.AgeFrom ? Requiredcolour : customStylesWithOutColor}
 
-                                                    isDisabled={value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true}
+                                                    // styles={value.AgeFrom ? Requiredcolour : customStylesWithOutColor}
+                                                    // isDisabled={value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true}
+
+                                                    styles={isLockOrRestrictModule("Lock", editval[0]?.AgeUnitID, isLocked) ? LockFildscolour : value.AgeFrom ? Requiredcolour : customStylesWithOutColor}
+                                                    isDisabled={value.DateOfBirth || isLockOrRestrictModule("Lock", editval[0]?.AgeUnitID, isLocked) ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true}
                                                 />
                                             </div>
                                         </div>
@@ -2699,9 +2755,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                 </div>
                                 <div className="col-12 col-md-12 col-lg-6">
                                     <div className="row">
-
                                         <div className="col-2 col-md-2 col-lg-2 mt-2 ">
-
                                             <span data-toggle="modal" onClick={() => { setOpenPage('Gender') }} data-target="#ListModel" className='new-link px-0'>
                                                 Gender {errors.SexIDError !== 'true' ? (
                                                     <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.SexIDError}</p>
@@ -2710,20 +2764,21 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                         </div>
                                         <div className="col-10 col-md-10 col-lg-4 mt-1 ">
                                             <Select
-
-                                                styles={(value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.SexID && value?.IsUnknown !== 'true' && value?.IsUnknown !== true && !isAdult ? nibrscolourStyles : (isAdult || IsOffender || victimTypeStatus ? Requiredcolour : customStylesWithOutColor)}
                                                 name='SexID'
                                                 value={sexIdDrp?.filter((obj) => obj.value === value?.SexID)}
                                                 options={sexIdDrp}
                                                 onChange={(e) => ChangeDropDown(e, 'SexID')}
                                                 isClearable
                                                 placeholder="Select..."
-                                                isDisabled={nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true ? true : false}
+
+                                                styles={isLockOrRestrictModule("Lock", editval[0]?.SexID, isLocked) ? LockFildscolour : (value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.SexID && value?.IsUnknown !== 'true' && value?.IsUnknown !== true && !isAdult ? nibrscolourStyles : (isAdult || IsOffender || victimTypeStatus ? Requiredcolour : customStylesWithOutColor)}
+                                                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.SexID, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true ? true : false}
+
+                                            // styles={(value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.SexID && value?.IsUnknown !== 'true' && value?.IsUnknown !== true && !isAdult ? nibrscolourStyles : (isAdult || IsOffender || victimTypeStatus ? Requiredcolour : customStylesWithOutColor)}
+                                            // isDisabled={nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true ? true : false}
                                             />
                                         </div>
-
                                         <div className="col-2 col-md-2 col-lg-1 mt-2 px-0">
-
                                             <span data-toggle="modal" onClick={() => { setOpenPage('Race') }} data-target="#ListModel" className='new-link px-0'>
                                                 Race{errors.RaceIDError !== 'true' ? (
                                                     <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.RaceIDError}</p>
@@ -2738,9 +2793,9 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                                 onChange={(e) => ChangeDropDown(e, 'RaceID')}
                                                 isClearable
                                                 placeholder="Select..."
-                                                isDisabled={nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true ? true : false}
 
-                                                styles={(value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.RaceID && value?.IsUnknown !== 'true' && value?.IsUnknown !== true && !isAdult ? nibrscolourStyles : (isAdult || IsOffender || victimTypeStatus ? Requiredcolour : customStylesWithOutColor)}
+                                                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.RaceID, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true ? true : false}
+                                                styles={isLockOrRestrictModule("Lock", editval[0]?.RaceID, isLocked) ? LockFildscolour : (value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.RaceID && value?.IsUnknown !== 'true' && value?.IsUnknown !== true && !isAdult ? nibrscolourStyles : (isAdult || IsOffender || victimTypeStatus ? Requiredcolour : customStylesWithOutColor)}
                                             />
                                         </div>
                                     </div>
@@ -2770,8 +2825,9 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                                     onChange={(e) => ChangeDropDown(e, 'EthnicityID')}
                                                     isClearable
                                                     placeholder="Select..."
-                                                    styles={(value?.IsUnknown === 'true' || value?.IsUnknown === true) ? customStylesWithOutColor : victimTypeStatus ? Requiredcolour : ''}
-                                                    isDisabled={value?.IsUnknown === 'true' || value?.IsUnknown === true ? true : false}
+
+                                                    styles={isLockOrRestrictModule("Lock", editval[0]?.EthnicityID, isLocked) ? LockFildscolour : (value?.IsUnknown === 'true' || value?.IsUnknown === true) ? customStylesWithOutColor : victimTypeStatus ? Requiredcolour : ''}
+                                                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.EthnicityID, isLocked) || value?.IsUnknown === 'true' || value?.IsUnknown === true ? true : false}
                                                 />
                                             </div>
                                         </div>
@@ -2786,14 +2842,15 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                         <div className="col-md-5 mt-2 flex-grow-1 mt-2"  >
                                             <Select
                                                 name="ResidentID"
-
                                                 value={residentIDDrp?.filter((obj) => obj.value === value?.ResidentID) || null}
                                                 options={residentIDDrp}
                                                 onChange={(e) => ChangeDropDownResident(e, 'ResidentID')}
                                                 isClearable
                                                 placeholder="Select..."
                                                 menuPlacement="bottom"
-                                                styles={victimTypeStatus ? Requiredcolour : ''}
+
+                                                styles={isLockOrRestrictModule("Lock", editval[0]?.ResidentID, isLocked) ? LockFildscolour : victimTypeStatus ? Requiredcolour : ''}
+                                                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.ResidentID, isLocked)}
                                             />
                                         </div>
                                     </div>
@@ -2820,7 +2877,6 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                             closeMenuOnSelect={false}
                             hideSelectedOptions={true}
                             isClearable={false}
-
                             allowSelectAll={false}
                             value={multiSelectedReason?.optionSelected}
                             components={{ MultiValue }}
@@ -2840,11 +2896,11 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                 }
                                 onChangeReaonsRole(selectedOptions, 'Role');
                             }}
-
-                            styles={Requiredcolour}
+                            // styles={Requiredcolour}
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.Role ? makeRoleArr(editval[0]?.Role) : [], isLocked, true) ? LockFildscolour : Requiredcolour}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.Role ? makeRoleArr(editval[0]?.Role) : [], isLocked, true)}
                         />
                     </div>
-
 
                     <div className="col-2 col-md-2 col-lg-1 mt-2 pt-1">
                         <label htmlFor="" className='label-name '>
@@ -2855,14 +2911,16 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                     </div>
                     <div className="col-10 col-md-10 col-lg-4 mt-1 mb-1" >
                         <SelectBox
-                            styles={MstPage === "MST-Name-Dash" ? colourStylesMasterReason : colourStylesReason}
+                            // styles={MstPage === "MST-Name-Dash" ? colourStylesMasterReason : colourStylesReason}
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.ReasonCode, isLocked, true) ? LockFildscolour : MstPage === "MST-Name-Dash" ? colourStylesMasterReason : colourStylesReason}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.ReasonCode, isLocked, true)}
+
                             options={reasonIdDrp ? getFiltredReasonCode(reasonIdDrp) : []}
                             menuPlacement="bottom"
                             isMulti
                             closeMenuOnSelect={false}
                             hideSelectedOptions={true}
                             isClearable={false}
-
                             allowSelectAll={false}
                             value={multiSelected.optionSelected}
                             components={{ MultiValue }}
@@ -2910,11 +2968,13 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                         name='VictimTypeID'
                                         value={victimTypeDrp?.filter((obj) => obj.value === value?.VictimTypeID)}
                                         isClearable
-
                                         options={victimTypeDrp}
                                         onChange={(e) => { ChangeDropDown(e, 'VictimTypeID'); }}
                                         placeholder="Select.."
-                                        styles={roleStatus ? colourStylesReason : ''}
+
+                                        // styles={roleStatus ? colourStylesReason : ''}
+                                        styles={isLockOrRestrictModule("Lock", editval[0]?.VictimTypeID, isLocked) ? LockFildscolour : roleStatus ? colourStylesReason : ''}
+                                        isDisabled={isLockOrRestrictModule("Lock", editval[0]?.VictimTypeID, isLocked)}
 
                                     />
                                 </div>
@@ -2922,9 +2982,6 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                             :
                             <></>
                     }
-
-
-
                     <div className="col-lg-5 " style={{ margin: '0 auto' }} >
                         <div className='row' style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'nowrap' }}>
 
@@ -2963,7 +3020,6 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                     </div>
                 </div>
             </div>
-
             {
                 DeNameID ? (
                     <div className="row  align-items-center mt-2">
@@ -2984,7 +3040,10 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                 ref={SelectedValue}
                                 className="basic-multi-select select-box_offence"
                                 isMulti
-                                styles={customStylesWithOutColor123}
+
+                                // styles={customStylesWithOutColor123}
+                                styles={isLockOrRestrictModule("Lock", typeOfSecurityEditVal, isLocked, true) ? MultiSelectLockedStyle : customStylesWithOutColor123}
+                                isDisabled={isLockOrRestrictModule("Lock", typeOfSecurityEditVal, isLocked, true)}
                             />
                         </div>
                     </div>
@@ -2992,16 +3051,10 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                     :
                     null
             }
-
-
-
             <div className="row">
                 <div className="col-12 col-md-12 col-lg-12 ">
-
                     <div className="row justify-content-end mb-2">
-
                         <div className="col-12 col-md-12 col-lg-12 text-right" >
-
                             <div className=" mt-1 justify-content-between d-flex  " >
                                 {
                                     isNibrsSummited ? (
@@ -3022,7 +3075,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                                 Validate TIBRS
                                             </button>
                                             <div>
-                                                <button type="button" ref={crossButtonRef} className="btn btn-sm btn-success  mr-1" onClick={() => { setStatusFalse(); }}>
+                                                <button type="button" ref={crossButtonRef} className="btn btn-sm btn-success  mr-1" onClick={() => { setStatusFalse(); setIsLocked(false); }}>
                                                     New
                                                 </button>
                                                 {
@@ -3061,8 +3114,6 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                                         </>
                                     )
                                 }
-
-
                             </div>
                         </div>
                     </div>
@@ -3087,7 +3138,6 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                     <DataTable
                         dense
                         columns={columns}
-
                         data={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? nameFilterData : [] : nameFilterData}
                         selectableRowsHighlight
                         highlightOnHover
@@ -3096,7 +3146,6 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
                         pagination
                         paginationPerPage={'10'}
                         paginationRowsPerPageOptions={[10, 15, 20, 50]}
-
                         fixedHeaderScrollHeight='80px'
                         customStyles={tableCustomStyles}
                         conditionalRowStyles={conditionalRowStyles}
@@ -3108,14 +3157,11 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false,  }) => {
             </div>
             <ListModal {...{ openPage, setOpenPage }} />
             <ChangesModal func={check_Validation_Error} />
-
             <NirbsErrorShowModal
                 ErrorText={nibrsErrStr}
                 nibErrModalStatus={nibrsErrModalStatus}
                 setNibrsErrModalStatus={setNibrsErrModalStatus}
-
             />
-
             {
                 clickNibloder && (
                     <div className="loader-overlay">
@@ -3141,7 +3187,6 @@ const Get_PhoneType_Code = (data, dropDownData) => {
     });
     return val[0]?.id
 };
-
 
 const Get_RelationType_Code = (data, dropDownData) => {
 
