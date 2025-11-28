@@ -16,7 +16,7 @@ import { AgencyContext } from '../../../../Context/Agency/Index';
 import { toastifyError, toastifySuccess } from '../../../Common/AlertMsg';
 import { Comman_changeArrayFormat, fourColwithExtraCode, offenseArray, threeColVictimOffenseArray, } from '../../../Common/ChangeArrayFormat';
 import { AddDeleteUpadate, fetchPostData, fetchPostDataNibrs } from '../../../hooks/Api';
-import { Decrypt_Id_Name, Encrypted_Id_Name, Requiredcolour, base64ToString, filterPassedTimeZonesProperty, getShowingDateText, getShowingMonthDateYear, stringToBase64, tableCustomStyles } from '../../../Common/Utility';
+import { Decrypt_Id_Name, Encrypted_Id_Name, LockFildscolour, Requiredcolour, base64ToString, filterPassedTimeZonesProperty, getShowingDateText, getShowingMonthDateYear, isLockOrRestrictModule, stringToBase64, tableCustomStyles } from '../../../Common/Utility';
 import ChangesModal from '../../../Common/ChangesModal';
 import ListModal from '../../Utility/ListManagementModel/ListModal';
 import Loader from '../../../Common/Loader';
@@ -24,7 +24,7 @@ import DeletePopUpModal from '../../../Common/DeleteModal';
 import SelectBox from '../../../Common/SelectBox';
 
 
-const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsErrors = () => { } }) => {
+const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsErrors = () => { }, isLocked, setIsLocked, getPermissionLevelByLock = () => { } }) => {
 
     const dispatch = useDispatch();
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
@@ -211,7 +211,6 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
             get_Offense_DropDown(IncID);
         }
     }, [propertyID, IncID]);
-
 
     const check_Validation_Error = (e) => {
         const PropertyTypeIDErr = RequiredFieldIncident(value?.PropertyTypeID);
@@ -798,7 +797,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                     setChangesStatus(false); setStatesChangeStatus(true); setDrugLocalArr([]);
 
                     // Validate Property
-            
+
                     ValidateIncidentProperty(mainIncidentID);
                     NibrsErrorReturn(res?.PropertyID);
                     // validateIncSideBar
@@ -829,7 +828,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                 GetSingleData(DecPropID, DecMPropID);
 
                 // Validate Property
-           
+
                 ValidateIncidentProperty(mainIncidentID);
                 NibrsErrorReturn(DecPropID);
                 // validateIncSideBar
@@ -997,12 +996,13 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                 <div style={{ position: 'absolute', top: 4, right: 10 }}>
                     {
                         effectiveScreenPermission ?
-                            effectiveScreenPermission[0]?.DeleteOK ?
+                            effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", propertyMainModuleData, isLocked, true) ?
                                 <span onClick={(e) => { setDelPropertyID(row.PropertyID); dispatch({ type: Property_ID, payload: row.PropertyID }); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                                     <i className="fa fa-trash"></i>
                                 </span>
                                 : <></>
                             :
+                            !isLockOrRestrictModule("Lock", propertyMainModuleData, isLocked, true) &&
                             <span onClick={(e) => { setDelPropertyID(row.PropertyID); dispatch({ type: Property_ID, payload: row.PropertyID }); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                                 <i className="fa fa-trash"></i>
                             </span>
@@ -1029,8 +1029,10 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
     const set_EditRow = (row) => {
         setStatesChangeStatus(false); setShowLossCodeError(false);
         if (row?.PropertyID || row?.MasterPropertyID) {
+            // get Inc-Lock Status
+            getPermissionLevelByLock(IncID, loginPinID);
 
-            navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${stringToBase64(row?.PropertyID)}&MProId=${stringToBase64(row?.MasterPropertyID)}&ProSta=${true}&ProCategory=${row.PropertyType_Description}`)
+            navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${stringToBase64(row?.PropertyID)}&MProId=${stringToBase64(row?.MasterPropertyID)}&ProSta=${true}&ProCategory=${row.PropertyType_Description}`);
 
             Reset();
             GetSingleData(row?.PropertyID, row?.MasterPropertyID);
@@ -1473,7 +1475,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                                 setclickNibLoder(false);
 
 
-                       
+
 
                             }
 
@@ -1808,11 +1810,12 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                                 <Select
                                     name='LossCodeID'
                                     value={propertyLossCodeDrpData?.filter((obj) => obj.value === value?.LossCodeID)}
-                                    styles={Requiredcolour}
                                     options={propertyLossCodeDrpData}
                                     onChange={(e) => ChangePhoneType(e, 'LossCodeID')}
                                     isClearable
                                     placeholder="Select..."
+                                    styles={isLockOrRestrictModule("Lock", editval[0]?.LossCodeID, isLocked) ? LockFildscolour : Requiredcolour}
+                                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.LossCodeID, isLocked)}
                                 />
                             </div>
                             <div className="col-3 col-md-3 col-lg-2 mt-2">
@@ -1824,9 +1827,12 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                             </div>
                             <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
                                 <input
-                                    type="text" name="Value" id="Value" className={!value?.CategoryID ? 'readonlyColor' : lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD' ? 'requiredColor' : ''}
+                                    type="text"
+                                    name="Value"
+                                    id="Value"
+                                    className={isLockOrRestrictModule("Lock", editval[0]?.Value, isLocked) ? 'LockFildsColor' : !value?.CategoryID ? 'readonlyColor' : lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD' ? 'requiredColor' : ''}
                                     maxLength={9}
-                                    disabled={!value?.CategoryID || propCategoryCode === '09' || propCategoryCode === '22' || propCategoryCode === '65' || propCategoryCode === '66' || propCategoryCode === '88' || propCategoryCode === '10' || propCategoryCode === '10' || propCategoryCode === '48'}
+                                    disabled={isLockOrRestrictModule("Lock", editval[0]?.Value, isLocked) || !value?.CategoryID || propCategoryCode === '09' || propCategoryCode === '22' || propCategoryCode === '65' || propCategoryCode === '66' || propCategoryCode === '88' || propCategoryCode === '10' || propCategoryCode === '10' || propCategoryCode === '48'}
                                     value={`$${value?.Value}`}
                                     onChange={HandleChanges}
                                     required
@@ -1844,14 +1850,16 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                             </div>
                             <div className="col-3 col-md-3 col-lg-3 mt-1">
                                 <Select
-                                    styles={propertyID || masterPropertyID ? customStylesWithOutColor : Requiredcolour}
                                     name='PropertyTypeID'
                                     value={propertyTypeData?.filter((obj) => obj.value === value?.PropertyTypeID)}
                                     options={propertyTypeData}
                                     onChange={(e) => ChangeDropDown(e, 'PropertyTypeID')}
                                     isClearable
                                     placeholder="Select..."
-                                    isDisabled={propertyID || masterPropertyID || isDrugOffense ? true : false}
+                                    styles={isLockOrRestrictModule("Lock", editval[0]?.PropertyTypeID, isLocked) ? LockFildscolour : propertyID || masterPropertyID ? customStylesWithOutColor : Requiredcolour}
+                                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.PropertyTypeID, isLocked) || propertyID || masterPropertyID || isDrugOffense ? true : false}
+                                // styles={propertyID || masterPropertyID ? customStylesWithOutColor : Requiredcolour}
+                                // isDisabled={propertyID || masterPropertyID || isDrugOffense ? true : false}
                                 />
                             </div>
                             <div className="col-3 col-md-3 col-lg-1 mt-2">
@@ -1886,15 +1894,18 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                                     name='CategoryID'
                                     id='CategoryID'
                                     styles={
-                                        loginAgencyState === 'TX' ?
-                                            check_Category_Nibrs(nibrsCodeArr, propRecType, propCategoryCode, 'Color')
-                                                ?
+                                        isLockOrRestrictModule("Lock", editval[0]?.CategoryID, isLocked) ? LockFildscolour :
+                                            loginAgencyState === 'TX' ?
                                                 check_Category_Nibrs(nibrsCodeArr, propRecType, propCategoryCode, 'Color')
+                                                    ?
+                                                    check_Category_Nibrs(nibrsCodeArr, propRecType, propCategoryCode, 'Color')
+                                                    :
+                                                    Requiredcolour
                                                 :
                                                 Requiredcolour
-                                            :
-                                            Requiredcolour
                                     }
+                                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.CategoryID, isLocked)}
+
                                     value={propertyCategoryData?.filter((obj) => obj.value === value?.CategoryID)}
                                     options={propertyCategoryData}
                                     onChange={(e) => ChangeDropDown(e, 'CategoryID')}
@@ -1907,7 +1918,9 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                             </div>
                             <div className="col-9 col-md-9 col-lg-2 mt-1">
                                 <Select
-                                    styles={customStylesWithOutColor}
+                                    styles={isLockOrRestrictModule("Lock", editval[0]?.ClassificationID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.ClassificationID, isLocked)}
+
                                     name='ClassificationID'
                                     value={propertyClassificationData?.filter((obj) => obj.value === value?.ClassificationID)}
                                     options={propertyClassificationData}
@@ -1961,7 +1974,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                                     minDate={new Date(incReportedDate)}
                                     maxDate={new Date(datezone)}
                                     showDisabledMonthNavigation
-                                    timeFormat="HH:mm "
+                                    timeFormat="HH:mm"
                                     is24Hour
                                     filterTime={(date) => filterPassedTimeZonesProperty(date, incReportedDate, datezone)}
                                 />
@@ -2035,7 +2048,6 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                                         <legend> Drug  </legend>
                                         <div className="col-12">
                                             <div className="row mt-1">
-
                                                 <div className="col-12 col-md-2 col-lg-3 mt-2 ">
                                                     <label htmlFor="SuspectedDrugTypeID" className="form-label" style={{ fontSize: '13px', color: '#283041', fontWeight: '500' }}>
                                                         Drug Type
@@ -2044,12 +2056,14 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                                                         <Select
                                                             inputId="SuspectedDrugTypeID"
                                                             name="SuspectedDrugTypeID"
-                                                            styles={Requiredcolour}
                                                             value={suspectedDrugDrpData?.filter(obj => obj.value === value?.SuspectedDrugTypeID)}
                                                             isClearable
                                                             options={suspectedDrugDrpData}
                                                             onChange={(e) => onChangeDrugType(e, 'SuspectedDrugTypeID')}
                                                             placeholder="Select..."
+                                                            // styles={Requiredcolour}
+                                                            styles={isLockOrRestrictModule("Lock", drugEditData?.SuspectedDrugTypeID, isLocked) ? LockFildscolour : Requiredcolour}
+                                                            isDisabled={isLockOrRestrictModule("Lock", drugEditData?.SuspectedDrugTypeID, isLocked)}
                                                         />
                                                         {drugErrors.SuspectedDrugTypeIDError !== 'true' ? (
                                                             <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{drugErrors.SuspectedDrugTypeIDError}</p>
@@ -2064,12 +2078,14 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                                                     <div>
                                                         <Select
                                                             name='MeasurementUnitID'
-                                                            styles={Requiredcolour}
                                                             value={drugMeasureUnitData?.filter((obj) => obj.value === value?.MeasurementUnitID)}
                                                             options={drugMeasureUnitData}
                                                             onChange={(e) => onChangeDrugType(e, 'MeasurementUnitID')}
                                                             placeholder="Select..."
                                                             isClearable
+                                                            // styles={Requiredcolour}
+                                                            styles={isLockOrRestrictModule("Lock", drugEditData?.MeasurementUnitID, isLocked) ? LockFildscolour : Requiredcolour}
+                                                            isDisabled={isLockOrRestrictModule("Lock", drugEditData?.MeasurementUnitID, isLocked)}
                                                         />
                                                         {drugErrors.MeasurementUnitIDError !== 'true' ? (
                                                             <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{drugErrors.MeasurementUnitIDError}</p>
@@ -2080,17 +2096,18 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                                                 <div className="col-12 col-md-2 col-lg-2 mt-2 ">
                                                     <label className='form-label' htmlFor="MeasurementTypeID" style={{ fontSize: '13px', color: '#283041', fontWeight: '500' }}>
                                                         Measurement Type
-
                                                     </label>
                                                     <div >
                                                         <Select
                                                             name='MeasurementTypeID'
-                                                            styles={Requiredcolour}
                                                             options={drugMeasureTypeData}
                                                             value={drugMeasureTypeData?.filter((obj) => obj.value === value?.MeasurementTypeID)}
                                                             onChange={(e) => onChangeDrugType(e, 'MeasurementTypeID')}
                                                             isClearable
                                                             placeholder="Select..."
+                                                            // styles={Requiredcolour}
+                                                            styles={isLockOrRestrictModule("Lock", drugEditData?.MeasurementTypeID, isLocked) ? LockFildscolour : Requiredcolour}
+                                                            isDisabled={isLockOrRestrictModule("Lock", drugEditData?.MeasurementTypeID, isLocked)}
                                                         />
                                                         {drugErrors.MeasurementTypeIDError !== 'true' ? (
                                                             <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{drugErrors.MeasurementTypeIDError}</p>
@@ -2107,7 +2124,8 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                                                             type="number"
                                                             name='EstimatedDrugQty'
                                                             id='EstimatedDrugQty'
-                                                            className={'requiredColor'}
+                                                            className={isLockOrRestrictModule("Lock", drugEditData?.EstimatedDrugQty, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+                                                            disabled={isLockOrRestrictModule("Lock", drugEditData?.EstimatedDrugQty, isLocked)}
                                                             autoComplete='off'
                                                             maxLength={12}
                                                             step="0.001"
@@ -2183,7 +2201,6 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                                         type="button"
                                         data-toggle={"modal"}
                                         data-target={"#NibrsErrorShowModal"}
-
                                         onClick={() => { ValidateIncidentProperty(mainIncidentID) }}
                                         className={`ml-3 ${nibrsValidateData?.length > 0 ? `btn btn-sm  mr-2` : 'btn btn-sm btn-success mr-2'}`}
                                         style={{
@@ -2196,7 +2213,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                                         <button
                                             type="button"
                                             className="btn btn-sm btn-success mx-1"
-                                            onClick={newProperty}
+                                            onClick={() => { newProperty(); setIsLocked(false); }}
                                         >
                                             New
                                         </button>
