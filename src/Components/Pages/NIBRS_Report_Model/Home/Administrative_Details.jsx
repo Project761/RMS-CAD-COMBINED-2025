@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import Select from "react-select";
 import DatePicker from "react-datepicker";
 import { AgencyContext } from '../../../../Context/Agency/Index';
-import { getShowingDateText, getShowingMonthDateYear, Decrypt_Id_Name, base64ToString, stringToBase64, formatDate, filterPassedTimeZone, filterPassedTimeZoneException, nibrscolourStyles, Requiredcolour, } from '../../../Common/Utility';
+import { getShowingDateText, getShowingMonthDateYear, Decrypt_Id_Name, base64ToString, stringToBase64, formatDate, filterPassedTimeZone, filterPassedTimeZoneException, nibrscolourStyles, Requiredcolour, isLockOrRestrictModule, LockFildscolour, } from '../../../Common/Utility';
 import { AddDeleteUpadate, ScreenPermision, fetchPostData, fetchPostDataNibrs } from '../../../hooks/Api';
 import { toastifyError, toastifySuccess } from '../../../Common/AlertMsg';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -22,7 +22,7 @@ import NirbsErrorShowModal from '../../../Common/NirbsErrorShowModal';
 import NirbsAllModuleErrorShowModal from '../../../Common/NibrsAllModuleErrShowModal';
 
 
-const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
+const IncidentHome = ({ incidentClick = false, isNibrsSummited = false, isLocked, setIsLocked }) => {
 
     let navigate = useNavigate();
     const dispatch = useDispatch()
@@ -55,7 +55,6 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
     /// Error String
     const [IncidentErrorString, setIncidentErrorString] = useState('');
 
-
     const rmsDispositionDrpData = [
         {
             value: 15,
@@ -69,7 +68,6 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
         },
     ];
 
-
     const [value, setValue] = useState({
         'IncidentID': '', 'ReportedDate': '', 'OccurredFrom': '', 'OccurredTo': '', 'BIBRSDate': getShowingMonthDateYear(datezone), 'FinishedDate': '', 'DispositionDate': '', 'NIBRSclearancedate': '', 'IncidentNumber': "Auto Generated", 'CrimeLocation': '', 'DispositionComments': '', 'AgencyName': '', 'RMSCFSCodeID': '', 'NIBRSClearanceID': '', 'RMSDispositionId': '', 'ReceiveSourceID': '', 'CADCFSCodeID': '', 'CADDispositionId': '', 'AgencyID': '', 'IsVerify': true, 'crimelocationid': 0, 'FBIID': '', 'IsIncidentCode': true, 'DispatchedDate': '', 'ArrivedDate': '', 'DirectionPrefix': '', 'Street': '', 'DirectionSufix': '', 'TypeSufix': '', 'City': '', 'State': '', 'ZipCode': '', 'PremiseNo': '', 'ApartmentNo': '', 'CommonPlace': '', 'ApartmentType': '', 'Street_Parse': '', 'PremiseNo_Parse': '', 'DirectionPrefix_Parse': '',
         'TypeSuffix_Parse': '', 'DirectionSuffix_Parse': '', 'ZipCodeID': '', 'CityID': '', 'IsUsLocation': '', 'CountryID': '', 'Country': '', 'point_of_interest': '', 'neighborhood': '', 'subpremise': '', 'premise': '', 'CreatedByUserFK': '', 'ModifiedByUserFK': '', 'OffenseType': '', 'OffenseTypeID': '', 'Address': '', 'CADIncidentNumber': '', 'MasterIncidentNumber': '', 'IsCargoTheftInvolved': null, 'InitAdjust': '', 'AttempComp': '',
@@ -78,7 +76,6 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
 
     const [errors, setErrors] = useState({
         'OccuredError': '', 'CrimeLocationError': '', 'ExceptionalClearaceError': '', 'IsVerify': '', 'NIBRSclearancedateError': '', 'IncNumberError': '', 'NIBRSclearancedateError': '', 'IncNumberError': '', 'OffenceTypeError': '', 'CargoTheftError': "",
-
         'FBIIDError': '',
     })
 
@@ -484,7 +481,6 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
         }),
     };
 
-    console.log(clsDrpCode?.toString())
 
     return (
         loder ?
@@ -497,7 +493,11 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
                             ) : null}</label>
                         </div>
                         <div className="col-7 pl-1 col-md-7 col-lg-3  mt-1 ">
-                            <input type="text" name='IncidentNumber' id='IncidentNumber' maxLength={20}
+                            <input
+                                type="text"
+                                name='IncidentNumber'
+                                id='IncidentNumber'
+                                maxLength={20}
                                 className={`form-control  py-1 new-input ${incidentID ? 'readonly' : 'requiredColor'}`}
                                 readOnly={incidentID ? 'readonly' : ''}
                                 disabled={incidentID ? 'readonly' : ''}
@@ -518,7 +518,6 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
                                         id="ReportedDate"
                                         name='ReportedDate'
                                         dateFormat="MM/dd/yyyy HH:mm"
-
                                         onChange={(date) => {
                                             setStatesChangeStatus(true); setChangesStatus(true);
                                             const maxTime = datezone ? new Date(datezone) : null;
@@ -560,7 +559,6 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
                                         dropdownMode="select"
                                         showDisabledMonthNavigation
                                         autoComplete='off'
-
                                         timeFormat="HH:mm "
                                         is24Hour
                                         minDate={new Date(1991, 0, 1)}
@@ -616,7 +614,6 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
                                         dropdownMode="select"
                                         showDisabledMonthNavigation
                                         autoComplete='off'
-
                                         timeFormat="HH:mm "
                                         is24Hour
                                         minDate={new Date(1991, 0, 1)}
@@ -633,12 +630,15 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
                                 name='RMSDispositionId'
                                 value={rmsDispositionDrpData?.find(obj => obj.value === (value?.RMSDispositionId || 16))}
                                 isClearable={false}
-                                isDisabled={adultArrestStatus}
                                 options={rmsDispositionDrpData}
-                                styles={Requiredcolour}
                                 onChange={(e) => ChangeDropDown(e, 'RMSDispositionId')}
                                 placeholder="Select..."
-                            // styles={customStylesWithOutColor}
+
+                                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.RMSDispositionId, isLocked) || adultArrestStatus}
+                                styles={isLockOrRestrictModule("Lock", editval[0]?.RMSDispositionId, isLocked) ? LockFildscolour : Requiredcolour}
+                            // isDisabled={adultArrestStatus}
+                            // styles={Requiredcolour}
+
                             />
                         </div>
                         {
@@ -671,7 +671,10 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
                                             isClearable={value?.IsCargoTheftInvolved ? true : false}
                                             onChange={(e) => OnChangeCargoTheft(e, 'IsCargoTheftInvolved')}
                                             placeholder="Select..."
-                                            styles={value?.IsCargoTheftInvolved || value?.IsCargoTheftInvolved === false ? nibSuccessStyles : nibrscolourStyles}
+
+                                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.IsCargoTheftInvolved, isLocked)}
+                                            styles={isLockOrRestrictModule("Lock", editval[0]?.IsCargoTheftInvolved, isLocked) ? LockFildscolour : value?.IsCargoTheftInvolved || value?.IsCargoTheftInvolved === false ? nibSuccessStyles : nibrscolourStyles}
+                                        // styles={value?.IsCargoTheftInvolved || value?.IsCargoTheftInvolved === false ? nibSuccessStyles : nibrscolourStyles}
                                         />
                                     </div>
                                 </>
@@ -688,13 +691,17 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
                         <div className="col-9 col-md-9 col-lg-3 mt-2 ">
                             <Select
                                 name='NIBRSClearanceID'
-                                styles={getExceptionColorCode(clsDrpCode, value?.NIBRSClearanceID)}
                                 value={exceptionalClearID?.filter((obj) => obj.value === value?.NIBRSClearanceID)}
                                 isClearable
                                 options={exceptionalClearID}
                                 onChange={(e) => ChangeDropDown(e, 'NIBRSClearanceID')}
                                 placeholder="Select..."
-                                isDisabled={clsDrpCode === '02' ? true : false}
+
+                                styles={isLockOrRestrictModule("Lock", editval[0]?.NIBRSClearanceID, isLocked) ? LockFildscolour : getExceptionColorCode(clsDrpCode, value?.NIBRSClearanceID)}
+                                isDisabled={clsDrpCode === '02' || isLockOrRestrictModule("Lock", editval[0]?.NIBRSClearanceID, isLocked) ? true : false}
+
+                            // styles={getExceptionColorCode(clsDrpCode, value?.NIBRSClearanceID)}
+                            // isDisabled={clsDrpCode === '02' ? true : false}
 
                             />
                         </div>
@@ -707,7 +714,6 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
                             <DatePicker
                                 name='NIBRSclearancedate'
                                 id='NIBRSclearancedate'
-                                className={clsDrpCode === '01' ? value?.NIBRSclearancedate ? 'nibrsSuccessColor' : 'nibrsColor' : 'readonlyColor'}
 
                                 onChange={(date) => {
                                     if (date) {
@@ -760,8 +766,7 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
                                     } else {
                                         onKeyDown(e);
                                     }
-                                }
-                                }
+                                }}
                                 selected={value?.NIBRSclearancedate && new Date(value?.NIBRSclearancedate)}
                                 placeholderText={value?.NIBRSclearancedate ? value?.NIBRSclearancedate : 'Select...'}
                                 dateFormat="MM/dd/yyyy HH:mm"
@@ -770,18 +775,20 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false }) => {
                                 timeInputLabel
                                 isClearable={value?.NIBRSclearancedate ? true : false}
                                 autoComplete='Off'
-
                                 showMonthDropdown
                                 showYearDropdown
                                 dropdownMode="select"
                                 showTimeSelect
                                 timeIntervals={1}
-                                disabled={value?.NIBRSClearanceID && exClsDateCode !== 'N' ? false : true}
                                 minDate={reportedDate}
                                 maxDate={new Date(datezone)}
-                                filterTime={(date) =>
-                                    filterPassedTimeZoneException(date, datezone, reportedDate)
-                                }
+                                filterTime={(date) => filterPassedTimeZoneException(date, datezone, reportedDate)}
+
+                                className={isLockOrRestrictModule("Lock", editval[0]?.NIBRSclearancedate, isLocked) ? 'LockFildsColor' : clsDrpCode === '01' ? value?.NIBRSclearancedate ? 'nibrsSuccessColor' : 'nibrsColor' : 'readonlyColor'}
+                                disabled={isLockOrRestrictModule("Lock", editval[0]?.NIBRSclearancedate, isLocked) ? true : value?.NIBRSClearanceID && exClsDateCode !== 'N' ? false : true}
+
+                            // className={clsDrpCode === '01' ? value?.NIBRSclearancedate ? 'nibrsSuccessColor' : 'nibrsColor' : 'readonlyColor'}
+                            // disabled={value?.NIBRSClearanceID && exClsDateCode !== 'N' ? false : true}
                             />
                         </div>
                     </div>

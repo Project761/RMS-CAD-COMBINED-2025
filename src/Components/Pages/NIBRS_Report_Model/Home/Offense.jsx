@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AddDeleteUpadate, fetchPostData, fetchPostDataNibrs, ScreenPermision } from "../../../hooks/Api";
 import { Comman_changeArrayFormat, Comman_changeArrayFormatBasicInfo, Comman_changeArrayFormatMethodOfOperation, modifiedFbiCodeArray, threeColArray, threeColArrayWithCode, } from "../../../Common/ChangeArrayFormat";
 import { toastifyError, toastifySuccess } from "../../../Common/AlertMsg";
-import { base64ToString, Decrypt_Id_Name, getShowingWithOutTime, nibrscolourStyles, MultiSelectRequredColor, stringToBase64, tableCustomStyles, Requiredcolour, Nibrs_ErrorStyle, } from "../../../Common/Utility";
+import { base64ToString, Decrypt_Id_Name, getShowingWithOutTime, nibrscolourStyles, MultiSelectRequredColor, stringToBase64, tableCustomStyles, Requiredcolour, Nibrs_ErrorStyle, MultiSelectLockedStyle, isLockOrRestrictModule, LockFildscolour, } from "../../../Common/Utility";
 import {
   Bias_90C_Error, check_GangCrime_CrimeCode, check_Valid_Bias_Code, check_Valid_Nibrs_Code, checkCrimeActiSuitableCode, checkCriminalActivityIsRequire,
   checkMethodOfEntryIsRequire, checkWeaponTypeIsRequire, checkWeaponTypeValidate, chekLocationType,
@@ -35,7 +35,7 @@ const MultiValue = (props) => (
   </components.MultiValue>
 );
 
-const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
+const Offense = ({ offenseClick, isNibrsSummited = false, isLocked, setIsLocked, getPermissionLevelByLock = () => { } }) => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -85,7 +85,6 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
   const [showBiasError, setShowBiasError] = useState(true);
   const [showGangInformationError, setShowGangInformationError] = useState(true);
   const [showError, setShowError] = useState(false);
-
   // Law Title
   const [lawTitleIdDrp, setLawTitleIdDrp] = useState([]);
   //NIBRS Code
@@ -1208,7 +1207,6 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
       name: "View",
       cell: (row) => (
         <div style={{ position: "absolute", top: 4 }}>
-
           {getOffenseNibrsError(row.CrimeID, nibrsValidateOffenseData) ? (
             <span
               onClick={(e) =>
@@ -1226,44 +1224,6 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
         </div>
       ),
     },
-
-    // {
-    //   name: (
-    //     <p
-    //       className="text-end"
-    //       style={{ position: "absolute", top: "7px", right: 30 }}
-    //     >
-    //       Action
-    //     </p>
-    //   ),
-    //   cell: (row) => (
-    //     <div style={{ position: "absolute", top: 4, right: 30 }}>
-    //       {effectiveScreenPermission ? (
-    //         effectiveScreenPermission[0]?.DeleteOK ? (
-    //           <span
-    //             onClick={(e) => setOffenceID(row.CrimeID)}
-    //             className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
-    //             data-toggle="modal"
-    //             data-target="#DeleteModal"
-    //           >
-    //             <i className="fa fa-trash"></i>
-    //           </span>
-    //         ) : (
-    //           <></>
-    //         )
-    //       ) : (
-    //         <span
-    //           onClick={(e) => setOffenceID(row.CrimeID)}
-    //           className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
-    //           data-toggle="modal"
-    //           data-target="#DeleteModal"
-    //         >
-    //           <i className="fa fa-trash"></i>
-    //         </span>
-    //       )}
-    //     </div>
-    //   ),
-    // },
     {
       name: (
         <p
@@ -1277,7 +1237,7 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
         <div style={{ position: "absolute", top: 4, right: 30 }}>
           {row.ArrestChargeCount === "0" && (
             effectiveScreenPermission ? (
-              effectiveScreenPermission[0]?.DeleteOK ? (
+              effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", offenceFillterData, isLocked, true) ? (
                 <span
                   onClick={() => setOffenceID(row.CrimeID)}
                   className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
@@ -1287,21 +1247,23 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
                   <i className="fa fa-trash"></i>
                 </span>
               ) : null
-            ) : (
-              <span
-                onClick={() => setOffenceID(row.CrimeID)}
-                className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
-                data-toggle="modal"
-                data-target="#DeleteModal"
-              >
-                <i className="fa fa-trash"></i>
-              </span>
             )
+              :
+              (
+                !isLockOrRestrictModule("Lock", offenceFillterData, isLocked, true) &&
+                <span
+                  onClick={() => setOffenceID(row.CrimeID)}
+                  className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
+                  data-toggle="modal"
+                  data-target="#DeleteModal"
+                >
+                  <i className="fa fa-trash"></i>
+                </span>
+              )
           )}
         </div>
       ),
     },
-
   ];
 
   const getOffenseNibrsError = (crimeId, nibrsValidateOffenseData) => {
@@ -1355,6 +1317,9 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
   ];
 
   const setEditVal = (row) => {
+    // get Inc-Lock status
+    getPermissionLevelByLock(IncID, loginPinID);
+
     get_Weapon_Data(row?.CrimeID);
     setOffenceID(row?.CrimeID);
     setStatesChangeStatus(false);
@@ -1581,8 +1546,7 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
   };
 
   const onChangeGangInfo = (e, name) => {
-    setChangesStatus(true);
-    setStatesChangeStatus(true);
+    setChangesStatus(true); setStatesChangeStatus(true);
     const id = [];
     if (e) {
       e.map((item, i) => {
@@ -1698,7 +1662,6 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
   //   }
   // }, [value?.NIBRSCodeId,]);
 
-
   const OnChangeCargoTheft = (e, name) => {
     setStatesChangeStatus(true); setChangesStatus(true);
     if (e) {
@@ -1710,7 +1673,7 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
 
   const [isHovered, setIsHovered] = useState(false);
 
-  const handleMouseEnter = () => setIsHovered(true);  
+  const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => setIsHovered(false);
 
 
@@ -1733,13 +1696,14 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
           <div className="col-7 col-md-7 col-lg-4">
             <Select
               name="LawTitleId"
-              value={lawTitleIdDrp?.filter(
-                (obj) => obj.value === value?.LawTitleId
-              )}
+              value={lawTitleIdDrp?.filter((obj) => obj.value === value?.LawTitleId)}
               options={lawTitleIdDrp}
               isClearable
               onChange={(e) => onChangeDrpLawTitle(e, "LawTitleId")}
               placeholder="Select..."
+
+              styles={isLockOrRestrictModule("Lock", editval[0]?.LawTitleId, isLocked) ? LockFildscolour : {}}
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.LawTitleId, isLocked) ? true : false}
             />
           </div>
           <div className="col-4 col-md-4 col-lg-2 ">
@@ -1754,7 +1718,6 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
           </div>
           <div className="col-7 col-md-7 col-lg-4 ">
             <Select
-              styles={Requiredcolour}
               name="NIBRSCodeId"
               value={nibrsCodeDrp?.filter((obj) => obj.value === value?.NIBRSCodeId)}
               options={filteredOptions.length > 0 ? filteredOptions : nibrsCodeDrp}
@@ -1762,6 +1725,10 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
               isClearable
               onChange={(e) => onChangeNIBRSCode(e, "NIBRSCodeId")}
               placeholder="Select..."
+
+              // styles={Requiredcolour}
+              styles={isLockOrRestrictModule("Lock", editval[0]?.NIBRSCodeId, isLocked) ? LockFildscolour : Requiredcolour}
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.NIBRSCodeId, isLocked) ? true : false}
             />
           </div>
           <div className="col-4 col-md-4 col-lg-2">
@@ -1787,7 +1754,6 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
           <div className="col-7 col-md-7 col-lg-4">
             <Select
               name="ChargeCodeID"
-              styles={Requiredcolour}
               value={chargeCodeDrp?.filter(
                 (obj) => obj.value === value?.ChargeCodeID
               )}
@@ -1795,6 +1761,9 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
               options={chargeCodeDrp}
               onChange={(e) => onChangeDrpLawTitle(e, "ChargeCodeID")}
               placeholder="Select..."
+              // styles={Requiredcolour}
+              styles={isLockOrRestrictModule("Lock", editval[0]?.ChargeCodeID, isLocked) ? LockFildscolour : Requiredcolour}
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.ChargeCodeID, isLocked) ? true : false}
             />
 
           </div>
@@ -1804,7 +1773,6 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
           <div className="col-7 col-md-7 col-lg-4">
             <Select
               name="CategoryId"
-              styles={MethodOfEntryStyles}
               value={categoryIdDrp?.filter(
                 (obj) => obj.value === value?.CategoryId
               )}
@@ -1812,6 +1780,9 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
               options={categoryIdDrp}
               onChange={(e) => changeDropDown(e, "CategoryId")}
               placeholder="Select..."
+              // styles={MethodOfEntryStyles}
+              styles={isLockOrRestrictModule("Lock", editval[0]?.CategoryId, isLocked) ? LockFildscolour : MethodOfEntryStyles}
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.CategoryId, isLocked) ? true : false}
             />
           </div>
           <div className={`col-2 mt-0 `}>
@@ -1842,13 +1813,11 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
               onChange={(e) => changeDropDown(e, "AttemptComplete")}
               options={StatusOption}
               isClearable
-              styles={
-                !value?.AttemptComplete ? nibrscolourStyles : nibrsSuccessStyles
-              }
               placeholder="Select..."
-              value={StatusOption.filter(
-                (option) => option.value === value?.AttemptComplete
-              )}
+              value={StatusOption.filter((option) => option.value === value?.AttemptComplete)}
+              // styles={!value?.AttemptComplete ? nibrscolourStyles : nibrsSuccessStyles}
+              styles={isLockOrRestrictModule("Lock", editval[0]?.CategoryId, isLocked) ? LockFildscolour : !value?.AttemptComplete ? nibrscolourStyles : nibrsSuccessStyles}
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.CategoryId, isLocked) ? true : false}
             />
 
           </div>
@@ -1877,18 +1846,29 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
             )}
             <Select
               name="PrimaryLocationId"
-              styles={
-                loginAgencyState === "TX"
-                  ?
-                  chekLocationType(nibrsCode, primaryLocationCode) ? nibrscolourStyles : check_Valid_Nibrs_Code(nibrsCode) ? MethodOfEntryStyles : Requiredcolour
-                  :
-                  Requiredcolour
-              }
               value={locationIdDrp?.filter((obj) => obj.value === value?.PrimaryLocationId)}
               isClearable
               options={locationIdDrp}
               onChange={(e) => changeDropDown(e, "PrimaryLocationId")}
               placeholder="Select..."
+
+              styles={
+                isLockOrRestrictModule("Lock", editval[0]?.PrimaryLocationId, isLocked) ? LockFildscolour :
+                  loginAgencyState === "TX"
+                    ?
+                    chekLocationType(nibrsCode, primaryLocationCode) ? nibrscolourStyles : check_Valid_Nibrs_Code(nibrsCode) ? MethodOfEntryStyles : Requiredcolour
+                    :
+                    Requiredcolour
+              }
+
+              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.PrimaryLocationId, isLocked) ? true : false}
+            // styles={
+            //   loginAgencyState === "TX"
+            //     ?
+            //     chekLocationType(nibrsCode, primaryLocationCode) ? nibrscolourStyles : check_Valid_Nibrs_Code(nibrsCode) ? MethodOfEntryStyles : Requiredcolour
+            //     :
+            //     Requiredcolour
+            // }
             />
 
           </div>
@@ -1920,21 +1900,22 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
             <Select
               isMulti
               styles={
-                loginAgencyState === "TX"
-                  ?
-                  getGangInfoStyleColor(nibrsCode) ? getGangInfoStyleColor(nibrsCode) : customStylesWithOutColor
-                  :
-                  customStylesWithOutColor
+                isLockOrRestrictModule("Lock", editval[0]?.IsGangInfo, isLocked, true) ? MultiSelectLockedStyle :
+                  loginAgencyState === "TX"
+                    ?
+                    getGangInfoStyleColor(nibrsCode) ? getGangInfoStyleColor(nibrsCode) : customStylesWithOutColor
+                    :
+                    customStylesWithOutColor
               }
               isDisabled={
-                loginAgencyState === "TX"
-                  ?
-                  isGangDisabled(nibrsCode) ? false : true
-                  :
-                  false
+                isLockOrRestrictModule("Lock", editval[0]?.IsGangInfo, isLocked, true) ? true :
+                  loginAgencyState === "TX"
+                    ?
+                    isGangDisabled(nibrsCode) ? false : true
+                    :
+                    false
               }
               value={gangInfoVal}
-
               onChange={(e) => onChangeGangInfo(e, "IsGangInfo")}
               options={gangInfoDrpVal}
               isClearable
@@ -1983,18 +1964,23 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
             )}
             <Select
               styles={
-                loginAgencyState === "TX"
-                  ? getMethodOfEntryStyleColor(nibrsCode)
+                isLockOrRestrictModule("Lock", editval[0]?.CrimeMethodOfEntryID, isLocked) ? LockFildscolour :
+                  loginAgencyState === "TX"
                     ? getMethodOfEntryStyleColor(nibrsCode)
-                    : customStylesWithOutColor
-                  : customStylesWithOutColor
+                      ? getMethodOfEntryStyleColor(nibrsCode)
+                      :
+                      MethodOfEntryStyles
+                    :
+                    MethodOfEntryStyles
               }
               isDisabled={
-                loginAgencyState === "TX"
-                  ? nibrsCode === "220"
-                    ? false
-                    : true
-                  : false
+                isLockOrRestrictModule("Lock", editval[0]?.CrimeMethodOfEntryID, isLocked) ? true :
+                  loginAgencyState === "TX"
+                    ? nibrsCode === "220" ? false
+                      :
+                      true
+                    :
+                    false
               }
               name="CrimeMethodOfEntryID"
               menuPlacement="top"
@@ -2043,13 +2029,13 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
               min={1}
               max={99}
               style={{
-                backgroundColor: loginAgencyState === "TX" &&
-                  nibrsCode === "220" && (primaryLocationCode === "14" || primaryLocationCode === "19") ? value?.PremisesEntered ? "rgb(159 212 174)"
+                backgroundColor: isLockOrRestrictModule("Lock", editval[0]?.PremisesEntered, isLocked) ? "#D9E4F2" : loginAgencyState === "TX" && nibrsCode === "220" && (primaryLocationCode === "14" || primaryLocationCode === "19") ? value?.PremisesEntered ? "rgb(159 212 174)"
                   :
                   "rgb(255 202 194)"
                   :
                   ""
               }}
+              disabled={isLockOrRestrictModule("Lock", editval[0]?.PremisesEntered, isLocked)}
               name="PremisesEntered"
               value={value?.PremisesEntered}
               onChange={handleChange}
@@ -2085,7 +2071,9 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
                   onChange={(e) => OnChangeCargoTheft(e, "IsCargoTheftInvolved")}
                   isClearable={value?.IsCargoTheftInvolved ? true : false}
                   placeholder="Select..."
-                  styles={Requiredcolour}
+                  // styles={Requiredcolour}
+                  styles={isLockOrRestrictModule("Lock", editval[0]?.IsCargoTheftInvolved, isLocked) ? LockFildscolour : Requiredcolour}
+                  isDisabled={isLockOrRestrictModule("Lock", editval[0]?.IsCargoTheftInvolved, isLocked)}
                 />
               </div>
             </>
@@ -2143,7 +2131,6 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
                 {nibrsFieldError?.CriminalActivity && showCriminalActivityError && (
                   <div className="nibrs-tooltip-error">
                     <div className="tooltip-arrow"></div>
-
                     <div className="tooltip-content">
                       <span className="text-danger">
                         ⚠️ {nibrsFieldError.CriminalActivityError || ""}
@@ -2154,47 +2141,25 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
                 <SelectBox
                   className="basic-multi-select"
                   styles={
-                    loginAgencyState === "TX"
-                      ? checkCriminalActivityIsRequire(
-                        nibrsCode,
-                        loginAgencyState
-                      )
-                        ? ErrorStyle_CriminalActivity(false)
-                        : check_GangCrime_CrimeCode(
-                          nibrsCode,
-                          crimeActSelectedCodeArray,
-                          "Color"
-                        )
-                          ? check_GangCrime_CrimeCode(
-                            nibrsCode,
-                            crimeActSelectedCodeArray,
-                            "Color"
-                          )
+                    isLockOrRestrictModule("Lock", criminalActivityEditVal, isLocked, true) ? MultiSelectLockedStyle :
+                      loginAgencyState === "TX"
+                        ? checkCriminalActivityIsRequire(nibrsCode, loginAgencyState) ? ErrorStyle_CriminalActivity(false)
                           :
-                          checkCrimeActiSuitableCode(
-                            nibrsCode,
-                            crimeActSelectedCodeArray,
-                            loginAgencyState
-                          )
-                            ? ErrorStyle_CriminalActivity(true) : customStylesWithOutColor : customStylesWithOutColor
+                          check_GangCrime_CrimeCode(nibrsCode, crimeActSelectedCodeArray, "Color") ? check_GangCrime_CrimeCode(nibrsCode, crimeActSelectedCodeArray, "Color")
+                            :
+                            checkCrimeActiSuitableCode(nibrsCode, crimeActSelectedCodeArray, loginAgencyState)
+                              ?
+                              ErrorStyle_CriminalActivity(true) : customStylesWithOutColor : customStylesWithOutColor
                   }
+                  isDisabled={isLockOrRestrictModule("Lock", criminalActivityEditVal, isLocked, true)}
                   name="CrimeActivity"
-                  options={
-                    crimeActivityDrp?.length > 0
-                      ? get_CriminalActivity_DrpData(crimeActivityDrp)
-                      : []
-                  }
-
+                  options={crimeActivityDrp?.length > 0 ? get_CriminalActivity_DrpData(crimeActivityDrp) : []}
                   isClearable={false}
-
                   isMulti
                   closeMenuOnSelect={false}
                   hideSelectedOptions={true}
                   components={{ MultiValue }}
-                  onChange={(e) => {
-                    CrimeActivitychange(e);
-                    setStatesChangeStatus(true);
-                  }}
+                  onChange={(e) => { CrimeActivitychange(e); setStatesChangeStatus(true); }}
                   value={filterArray(crimeActivity, "label")}
                   placeholder="Select Criminal Activity From List"
                 />
@@ -2245,7 +2210,16 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
                 <SelectBox
                   className="basic-multi-select"
                   name="WeaponTypeID"
-                  styles={loginAgencyState === "TX" ? checkWeaponTypeValidate(nibrsCode, WeaponSelectCodeArray, "Color", loginAgencyState) ? checkWeaponTypeValidate(nibrsCode, WeaponSelectCodeArray, "Color", loginAgencyState) : customStylesWithOutColor : customStylesWithOutColor}
+                  styles={
+                    isLockOrRestrictModule("Lock", weaponEditVal, isLocked, true) ? MultiSelectLockedStyle :
+                      loginAgencyState === "TX" ?
+                        checkWeaponTypeValidate(nibrsCode, WeaponSelectCodeArray, "Color", loginAgencyState) ? checkWeaponTypeValidate(nibrsCode, WeaponSelectCodeArray, "Color", loginAgencyState)
+                          :
+                          customStylesWithOutColor
+                        :
+                        customStylesWithOutColor
+                  }
+                  isDisabled={isLockOrRestrictModule("Lock", weaponEditVal, isLocked, true)}
                   isClearable={false}
                   options={weaponDrp?.length > 0 ? getWeaponDrpData(weaponDrp, nibrsCode) : []}
                   hideSelectedOptions={true}
@@ -2298,9 +2272,18 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
                   options={getOffenderUsingDrpData(filteredOptionsOffederUsing)}
                   isClearable={false}
                   isMulti
-                  styles={loginAgencyState == 'TX' ? nibrsCode === "999" ? customStylesWithOutColor : getCheckNotApplicable() ? Nibrs_ErrorStyle : MultiSelectRequredColor : MultiSelectRequredColor}
-                  // styles={loginAgencyState == 'TX' ? getCheckNotApplicable() ? Nibrs_ErrorStyle : customStylesWithColor : customStylesWithColor}
-
+                  styles={
+                    isLockOrRestrictModule("Lock", crimeOffenderUseEditVal, isLocked, true) ? MultiSelectLockedStyle :
+                      loginAgencyState == 'TX' ?
+                        nibrsCode === "999" ? customStylesWithOutColor
+                          :
+                          getCheckNotApplicable() ? Nibrs_ErrorStyle
+                            :
+                            MultiSelectRequredColor
+                        :
+                        MultiSelectRequredColor
+                  }
+                  isDisabled={isLockOrRestrictModule("Lock", crimeOffenderUseEditVal, isLocked, true)}
                   closeMenuOnSelect={false}
                   hideSelectedOptions={true}
                   components={{ MultiValue }}
@@ -2326,7 +2309,6 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
               </div>
               <div className="col-9 col-md-9 col-lg-8 ">
                 {nibrsFieldError?.Bias && showBiasError &&
-
                   (<div className="nibrs-tooltip-error" style={{ left: '-80px' }}>
                     <div className="tooltip-arrow"></div>
                     <div className="tooltip-content">
@@ -2342,23 +2324,15 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
                   options={crimeBiasCategoryDrp?.length > 0 ? getBiasDrpData(crimeBiasCategoryDrp) : []}
                   isClearable={false}
                   styles={
-                    loginAgencyState === 'TX' ? nibrsCode === "999" ? customStylesWithOutColor :
-                      nibrsCode === '09C' && !bias09CCodeStatus ? ErrorStyle_NIBRS_09C(nibrsCode)
+                    isLockOrRestrictModule("Lock", crimeBiasCategoryEditVal, isLocked, true) ? MultiSelectLockedStyle :
+                      loginAgencyState === 'TX' ? nibrsCode === "999" ? customStylesWithOutColor :
+                        nibrsCode === '09C' && !bias09CCodeStatus ? ErrorStyle_NIBRS_09C(nibrsCode)
+                          :
+                          check_Valid_Bias_Code(BiasSelectCodeArray) ? nibrscolourStyles : MultiSelectRequredColor
                         :
-                        check_Valid_Bias_Code(BiasSelectCodeArray) ? nibrscolourStyles : MultiSelectRequredColor
-                      :
-                      MultiSelectRequredColor
+                        MultiSelectRequredColor
                   }
-                  // styles={
-                  //   loginAgencyState === 'TX' ? nibrsCode === '09C' && !bias09CCodeStatus ? ErrorStyle_NIBRS_09C(nibrsCode)
-                  //     :
-                  //     check_Valid_Bias_Code(BiasSelectCodeArray) ? Nibrs_ErrorStyle
-                  //       :
-                  //       customStylesWithColor
-                  //     :
-                  //     customStylesWithColor
-                  // }
-
+                  isDisabled={isLockOrRestrictModule("Lock", crimeBiasCategoryEditVal, isLocked, true)}
                   isMulti
                   closeMenuOnSelect={false}
                   hideSelectedOptions={true}
@@ -2444,7 +2418,7 @@ const Offense = ({ offenseClick, isNibrsSummited = false, }) => {
                 </button>
 
                 <div>
-                  <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => { setStatusFalse(); }}>
+                  <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => { setStatusFalse(); setIsLocked(false); }}>
                     New
                   </button>
                   {OffId && (OffSta === true || OffSta === "true") ? (

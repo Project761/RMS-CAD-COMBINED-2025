@@ -30,6 +30,7 @@ const NibrsHome = () => {
 
   const [openSection, setOpenSection] = useState(null);
   const [loginAgencyID, setLoginAgencyID] = useState('');
+  const [loginPinID, setLoginPinID,] = useState('');
   const [incidentID, setIncidentID] = useState();
   const [nibrsValidateloder, setnibrsValidateLoder] = useState(false);
   const [nibrsValidateIncidentData, setnibrsValidateIncidentData] = useState([]);
@@ -72,6 +73,9 @@ const NibrsHome = () => {
   const [propertyErrorString, setPropertyErrorString] = useState('');
   const [vehicleErrorString, setVehicleErrorString] = useState('');
   const [arrestErrorString, setArrestErrorString] = useState('');
+  // Lock Restrict
+  const [isLocked, setIsLocked] = useState(false);
+  const [permissionToUnlock, setPermissionToUnlock] = useState(false);
 
   const offenseCount = incidentCount[0]?.OffenseCount || 0;
   const NameCount = incidentCount[0]?.NameCount || 0;
@@ -105,14 +109,16 @@ const NibrsHome = () => {
 
   useEffect(() => {
     if (localStoreData) {
+      setLoginPinID(localStoreData?.PINID)
       setLoginAgencyID(localStoreData?.AgencyID); setBaseDate(localStoreData?.BaseDate ? localStoreData?.BaseDate : null); setOriNumber(localStoreData?.ORI);
+
     }
   }, [localStoreData]);
 
   const toggleSection = (section) => {
     navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}`);
     setOpenSection(openSection === section ? null : section);
-
+    getPermissionLevelByLock(IncID, loginPinID)
     switch (section) {
       case "admin": setIncidentClick(true);
         break;
@@ -435,50 +441,6 @@ const NibrsHome = () => {
     transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
   }
 
-  const sectionData = [
-    {
-      title: "Administrative Details",
-      status: (!isOffenseInc && !isGroup_B_Offense_ArrestInc) ? !nibrsValidateIncidentData?.Administrative ? "completed" : "attention highlighted" : "completed",
-      sectionKey: "admin",
-      list: <Administrative_Details incidentClick={incidentClick} isNibrsSummited={isNibrsSummited} />
-    },
-    {
-      title: !isOffenseInc ? `Offense (${offenseCount})` : <span className="text-center" style={TitleErrorStyle} > {`Offense (${offenseCount}) --- This Incident does not have any TIBRS reportable Crime(s)`} </span>,
-      status: !offenseErrorStatus && !isOffenseInc ? "completed" : "attention highlighted",
-      sectionKey: "offenses",
-      list: (<Offense offenseClick={offenseClick} isNibrsSummited={isNibrsSummited} />)
-    },
-    {
-      title: `Offender (${OffenderCount})`,
-      status: !offenderErrorStatus ? "completed" : "attention highlighted",
-      sectionKey: "offenders",
-      list: <MainOffender offenderClick={offenderClick} isNibrsSummited={isNibrsSummited} />
-    },
-    {
-      title: isVictimConnectedError ? <span className="text-center" style={TitleErrorStyle}> {`Victim (${VictimCount}) --- Connection of victim and offense is needed`} </span> : `Victim (${VictimCount})`,
-      status: !victimErrorStatus && !isVictimConnectedError ? "completed" : "attention highlighted",
-      sectionKey: "Victims",
-      list: <MainVictims victimClick={victimClick} isNibrsSummited={isNibrsSummited} />
-    },
-    {
-      title: getPropertyTitle(),
-      status: !propErrorStatus && !isCrimeAgainstPropertyError && !isSuspectedDrugTypeErrorStatus && !isPropertyIdZeroError ? "completed" : "attention highlighted",
-      sectionKey: "Properties",
-      list: <Properties propertyClick={propertyClick} isNibrsSummited={isNibrsSummited} />
-    },
-    {
-      title: isOffense240VehError ? <span className="text-center" style={TitleErrorStyle}> {`Vehicle (${VehicleCount}) --- For crimes against vehicle, a Vehicle record is required.`} </span> : `Vehicle (${VehicleCount})`,
-      status: !vehErrorStatus ? "completed" : "attention highlighted",
-      sectionKey: "VehicleTab",
-      list: <VehicleTab vehicleClick={vehicleClick} isNibrsSummited={isNibrsSummited} />
-    },
-    {
-      title: !isGroup_B_Offense_ArrestInc ? `Arrestee (${ArrestCount})` : <span className="text-center" style={TitleErrorStyle}>Arrestee --- There is no arrest attached to this Group B offense Incident</span>,
-      status: !nibrsValidateIncidentData?.Arrestees && !isGroup_B_Offense_ArrestInc ? "completed" : "attention highlighted",
-      sectionKey: "Arrestees",
-      list: <Arrestees arrestClick={arrestClick} isNibrsSummited={isNibrsSummited} />
-    },
-  ];
 
 
   const getGroupBOffenseData = async (IncID) => {
@@ -511,6 +473,72 @@ const NibrsHome = () => {
       return false
     }
   }
+
+  // Lock Restrict
+  const getPermissionLevelByLock = async (IncidentID, OfficerID) => {
+    try {
+      const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { 'IncidentID': IncidentID, 'OfficerID': OfficerID, 'ModuleName': "Incident", 'ID': 0 });
+      // console.log("🚀 ~ getPermissionLevelByLock ~ res:", res)
+      if (res?.length > 0) {
+        setIsLocked(res[0]?.IsLocked === true || res[0]?.IsLocked === 1 ? true : false);
+        setPermissionToUnlock(res[0]?.IsUnLockPermission === true || res[0]?.IsUnLockPermission === 1 ? true : false);
+
+      } else {
+        setPermissionToUnlock(false);
+        setIsLocked(false);
+
+      }
+    } catch (error) {
+      console.error('There was an error!', error);
+      setPermissionToUnlock(false);
+      setIsLocked(false);
+    }
+  }
+
+  const sectionData = [
+    {
+      title: "Administrative Details",
+      status: (!isOffenseInc && !isGroup_B_Offense_ArrestInc) ? !nibrsValidateIncidentData?.Administrative ? "completed" : "attention highlighted" : "completed",
+      sectionKey: "admin",
+      list: <Administrative_Details incidentClick={incidentClick} isNibrsSummited={isNibrsSummited} isLocked={isLocked} setIsLocked={setIsLocked} />
+    },
+    {
+      title: !isOffenseInc ? `Offense (${offenseCount})` : <span className="text-center" style={TitleErrorStyle} > {`Offense (${offenseCount}) --- This Incident does not have any TIBRS reportable Crime(s)`} </span>,
+      status: !offenseErrorStatus && !isOffenseInc ? "completed" : "attention highlighted",
+      sectionKey: "offenses",
+      list: (<Offense offenseClick={offenseClick} isNibrsSummited={isNibrsSummited} isLocked={isLocked} setIsLocked={setIsLocked} getPermissionLevelByLock={getPermissionLevelByLock} />)
+    },
+    {
+      title: `Offender (${OffenderCount})`,
+      status: !offenderErrorStatus ? "completed" : "attention highlighted",
+      sectionKey: "offenders",
+      list: <MainOffender offenderClick={offenderClick} isNibrsSummited={isNibrsSummited} isLocked={isLocked} setIsLocked={setIsLocked} getPermissionLevelByLock={getPermissionLevelByLock} />
+    },
+    {
+      title: isVictimConnectedError ? <span className="text-center" style={TitleErrorStyle}> {`Victim (${VictimCount}) --- Connection of victim and offense is needed`} </span> : `Victim (${VictimCount})`,
+      status: !victimErrorStatus && !isVictimConnectedError ? "completed" : "attention highlighted",
+      sectionKey: "Victims",
+      list: <MainVictims victimClick={victimClick} isNibrsSummited={isNibrsSummited} isLocked={isLocked} setIsLocked={setIsLocked} getPermissionLevelByLock={getPermissionLevelByLock} />
+    },
+    {
+      title: getPropertyTitle(),
+      status: !propErrorStatus && !isCrimeAgainstPropertyError && !isSuspectedDrugTypeErrorStatus && !isPropertyIdZeroError ? "completed" : "attention highlighted",
+      sectionKey: "Properties",
+      list: <Properties propertyClick={propertyClick} isNibrsSummited={isNibrsSummited} isLocked={isLocked} setIsLocked={setIsLocked} getPermissionLevelByLock={getPermissionLevelByLock} />
+    },
+    {
+      title: isOffense240VehError ? <span className="text-center" style={TitleErrorStyle}> {`Vehicle (${VehicleCount}) --- For crimes against vehicle, a Vehicle record is required.`} </span> : `Vehicle (${VehicleCount})`,
+      status: !vehErrorStatus ? "completed" : "attention highlighted",
+      sectionKey: "VehicleTab",
+      list: <VehicleTab vehicleClick={vehicleClick} isNibrsSummited={isNibrsSummited} />
+    },
+    {
+      title: !isGroup_B_Offense_ArrestInc ? `Arrestee (${ArrestCount})` : <span className="text-center" style={TitleErrorStyle}>Arrestee --- There is no arrest attached to this Group B offense Incident</span>,
+      status: !nibrsValidateIncidentData?.Arrestees && !isGroup_B_Offense_ArrestInc ? "completed" : "attention highlighted",
+      sectionKey: "Arrestees",
+      list: <Arrestees arrestClick={arrestClick} isNibrsSummited={isNibrsSummited} />
+    },
+  ];
 
   return (
     <>
