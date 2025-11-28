@@ -3540,7 +3540,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                                                 {errors.DateOfBirthError !== 'true' ? (
                                                     <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.DateOfBirthError}</p>
                                                 ) : null}</label>
-
                                         </div>
                                         <div className="col-2 col-md-3 col-lg-4 mt-0">
                                             <DatePicker
@@ -3632,7 +3631,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                                                     // disabled={value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true}
                                                     className={isLockOrRestrictModule("Lock", editval[0]?.AgeTo, isLocked) ? 'LockFildsColor' : value.DateOfBirth || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true ? 'readonlyColor' : ''}
                                                     disabled={isLockOrRestrictModule("Lock", editval[0]?.AgeTo, isLocked) || value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true}
-
                                                     style={{
                                                         textAlign: 'center', ...(value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.AgeTo ? {
                                                             backgroundColor: 'rgb(255 202 194)',
@@ -3646,7 +3644,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                                                     }}
                                                 />
                                             </div>
-                                            <div className="col-4 col-md-4 col-lg-12  mt-1 px-0 text-nowrap" >
+                                            <div className="col-4 col-md-4 col-lg-12  mt-1 px-0 text-nowrap">
                                                 <Select
                                                     name='AgeUnitID'
                                                     value={ageUnitDrpData?.filter((obj) => obj.value === value?.AgeUnitID)}
@@ -3657,6 +3655,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
 
                                                     // styles={value.AgeFrom ? Requiredcolour : customStylesWithOutColor}
                                                     // isDisabled={value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true}
+
                                                     styles={isLockOrRestrictModule("Lock", editval[0]?.AgeUnitID, isLocked) ? LockFildscolour : value.AgeFrom ? Requiredcolour : customStylesWithOutColor}
                                                     isDisabled={value.DateOfBirth || isLockOrRestrictModule("Lock", editval[0]?.AgeUnitID, isLocked) ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true}
                                                 />
@@ -3768,8 +3767,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                                             // styles={victimTypeStatus ? Requiredcolour : ''}
                                             />
                                         </div>
-
-
                                     </div>
                                 </div>
                             </div>
@@ -3879,7 +3876,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                                         {errors.VictimTypeError !== 'true' ? (
                                             <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.VictimTypeError}</p>
                                         ) : null}</label>
-
                                 </div>
                                 <div className="col-3 col-md-3 col-lg-2  mt-2" >
                                     <Select
@@ -3964,7 +3960,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                                             )}
                                             <Select
                                                 name='VictimInjuryID'
-
                                                 styles={
                                                     isLockOrRestrictModule("Lock", injuryTypeEditVal, isLocked, true) ? MultiSelectLockedStyle :
                                                         loginAgencyState === 'TX' ?
@@ -4344,7 +4339,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                                 </div>
                             )
                                 :
-                                null
+                                <></>
                         }
                         {
                             nameTypeCode === "I" && DeNameID ? (
@@ -4374,7 +4369,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                                 </div>
                             )
                                 :
-                                null
+                                <></>
                         }
                         <div className="row">
                             <div className="col-12 col-md-12 col-lg-12 mb-2 mt-2"  >
@@ -4406,14 +4401,18 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                                                             effectiveScreenPermission ?
                                                                 effectiveScreenPermission[0]?.Changeok && nibrsSubmittedVictim !== 1 ?
                                                                     <>
-                                                                        <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); setcalled(true) }} ref={saveButtonRef} disabled={nameSearchStatus || !statesChangeStatus}>Update</button>
+                                                                        <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); setcalled(true) }} ref={saveButtonRef} disabled={nameSearchStatus || !statesChangeStatus}>
+                                                                            Update
+                                                                        </button>
                                                                     </>
                                                                     :
                                                                     <>
                                                                     </>
                                                                 :
                                                                 <>
-                                                                    <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); setcalled(true) }} ref={saveButtonRef} disabled={nameSearchStatus || !statesChangeStatus}>Update</button>
+                                                                    <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); setcalled(true) }} ref={saveButtonRef} disabled={nameSearchStatus || !statesChangeStatus}>
+                                                                        Update
+                                                                    </button>
                                                                 </>
                                                         )
                                                             :
@@ -4421,17 +4420,18 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                                                                 effectiveScreenPermission ?
                                                                     effectiveScreenPermission[0]?.AddOK ?
                                                                         <>
-                                                                            <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); setcalled(true) }}
-                                                                                ref={saveButtonRef}>Save</button>
+                                                                            <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); setcalled(true) }} ref={saveButtonRef}>
+                                                                                Save
+                                                                            </button>
                                                                         </>
                                                                         :
                                                                         <>
                                                                         </>
                                                                     :
                                                                     <>
-                                                                        <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); setcalled(true) }}
-
-                                                                        >Save</button>
+                                                                        <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); setcalled(true) }}>
+                                                                            Save
+                                                                        </button>
                                                                     </>
                                                             )
                                                     }
