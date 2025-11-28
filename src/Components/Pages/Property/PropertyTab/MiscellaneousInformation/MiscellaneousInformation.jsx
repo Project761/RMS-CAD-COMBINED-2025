@@ -2284,7 +2284,7 @@ const MiscellaneousInformation = (props) => {
                                           closeMenuOnSelect={false}
                                           onChange={Agencychange}
                                           value={multiSelected.optionSelected}
-
+                                          allowSelectAll={true}
                                           styles={colourStylesUsers}
                                         // isDisabled={}
                                         />
@@ -2303,7 +2303,7 @@ const MiscellaneousInformation = (props) => {
                                           hideSelectedOptions={true}
                                           onChange={Agencychange}
                                           value={multiSelected.optionSelected}
-
+                                          allowSelectAll={true}
                                           styles={colourStylesUsers}
                                         // isDisabled={}
                                         />

@@ -280,6 +280,7 @@ const OffenceHomeTabs = () => {
             ),
             cell: (row) => (
                 <div >
+
                     {row.ArrestChargeCount === "0" && (
                         effectiveScreenPermission ? (
                             effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", offenceFillterData, isLocked, true) ? (
@@ -528,12 +529,48 @@ const OffenceHomeTabs = () => {
                                                             }
 
                                                             {/* Delete Button */}
-                                                            {
-                                                                effectiveScreenPermission ?
-                                                                    <>
-                                                                        {
-                                                                            effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", offenceFillterData, isLocked, true) ?
-                                                                                <>
+
+
+
+                                                            {row.ArrestChargeCount === "0" && (
+                                                                <>
+                                                                    {
+
+                                                                        effectiveScreenPermission ?
+                                                                            <>
+                                                                                {
+                                                                                    effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", offenceFillterData, isLocked, true) ?
+                                                                                        <>
+                                                                                            <div
+                                                                                                style={{
+                                                                                                    backgroundColor: "#001f3f",
+                                                                                                    color: "white",
+                                                                                                    width: "36px",
+                                                                                                    height: "36px",
+                                                                                                    borderRadius: "50%",
+                                                                                                    display: "flex",
+                                                                                                    alignItems: "center",
+                                                                                                    justifyContent: "center",
+                                                                                                    cursor: "pointer",
+                                                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                                                }}
+                                                                                                data-toggle="modal"
+                                                                                                data-target="#DeleteModal"
+                                                                                                onClick={() => setCrimeId(row.CrimeID)}
+                                                                                                title="Delete"
+                                                                                            >
+                                                                                                <i className="fa fa-trash"></i>
+                                                                                            </div>
+                                                                                        </>
+                                                                                        :
+                                                                                        <>
+                                                                                        </>
+                                                                                }
+                                                                            </>
+                                                                            :
+                                                                            <>
+                                                                                {
+                                                                                    !isLockOrRestrictModule("Lock", offenceFillterData, isLocked, true) &&
                                                                                     <div
                                                                                         style={{
                                                                                             backgroundColor: "#001f3f",
@@ -554,40 +591,14 @@ const OffenceHomeTabs = () => {
                                                                                     >
                                                                                         <i className="fa fa-trash"></i>
                                                                                     </div>
-                                                                                </>
-                                                                                :
-                                                                                <>
-                                                                                </>
-                                                                        }
-                                                                    </>
-                                                                    :
-                                                                    <>
-                                                                        {
-                                                                            !isLockOrRestrictModule("Lock", offenceFillterData, isLocked, true) &&
-                                                                            <div
-                                                                                style={{
-                                                                                    backgroundColor: "#001f3f",
-                                                                                    color: "white",
-                                                                                    width: "36px",
-                                                                                    height: "36px",
-                                                                                    borderRadius: "50%",
-                                                                                    display: "flex",
-                                                                                    alignItems: "center",
-                                                                                    justifyContent: "center",
-                                                                                    cursor: "pointer",
-                                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                                                                }}
-                                                                                data-toggle="modal"
-                                                                                data-target="#DeleteModal"
-                                                                                onClick={() => setCrimeId(row.CrimeID)}
-                                                                                title="Delete"
-                                                                            >
-                                                                                <i className="fa fa-trash"></i>
-                                                                            </div>
 
-                                                                        }
-                                                                    </>
-                                                            }
+                                                                                }
+                                                                            </>
+                                                                    }
+
+                                                                </>
+                                                            )}
+
 
                                                         </div>
                                                     </div>
