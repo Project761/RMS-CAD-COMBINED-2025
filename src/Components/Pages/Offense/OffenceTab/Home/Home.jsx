@@ -305,8 +305,10 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     const WeaponTypeErr = isWeaponRequired ? validateFields(weaponID) : 'true';
     const CriminalActivityErr = checkCriminalActivityIsRequire(nibrsCode, loginAgencyState) ? validateFields(crimeActivity) : 'true';
 
-    const offenderusingErr = nibrsCode != "999" ? RequiredFieldIncidentOffender(crimeOffenderUse) : 'true';
-    const CrimeBiasCategoryErr = nibrsCode != "999" ? validateFields(crimeBiasCategory) : 'true';
+    // const offenderusingErr = nibrsCode != "999" ? RequiredFieldIncidentOffender(crimeOffenderUse) : 'true';
+    // const CrimeBiasCategoryErr = nibrsCode != "999" ? validateFields(crimeBiasCategory) : 'true';
+    const offenderusingErr = ((nibrsCode === "999") || (nibrsCode === "90G") || (nibrsCode === "90B") || (nibrsCode === "90C") || (nibrsCode === "90D") || (nibrsCode === "90F") || (nibrsCode === "90J") || (nibrsCode === "90K") || (nibrsCode === "90L") || (nibrsCode === " 90M") || (nibrsCode === "90Z")) ? 'true' : validateFields(crimeOffenderUse);
+    const CrimeBiasCategoryErr = ((nibrsCode === "999") || (nibrsCode === "90G") || (nibrsCode === "90B") || (nibrsCode === "90C") || (nibrsCode === "90D") || (nibrsCode === "90F") || (nibrsCode === "90J") || (nibrsCode === "90K") || (nibrsCode === "90L") || (nibrsCode === " 90M") || (nibrsCode === "90Z")) ? 'true' : validateFields(crimeOffenderUse);
     const GangInformationError = loginAgencyState === "TX" && isGangDisabled(nibrsCode) && value?.NIBRSCodeId ? RequiredFieldIncident(value?.IsGangInfo) : "true";
 
 
@@ -2466,7 +2468,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   isDisabled={isLockOrRestrictModule("Lock", crimeOffenderUseEditVal, isLocked, true) || nibrsSubmittedOffenseMain === 1}
                   styles={
                     isLockOrRestrictModule("Lock", crimeOffenderUseEditVal, isLocked, true) ? MultiSelectLockedStyle :
-                      loginAgencyState == 'TX' ? nibrsCode === "999" ? MultiSelectWithOutColorStyle
+                      loginAgencyState == 'TX' ? (nibrsCode === "999" || nibrsCode === "90G" || (nibrsCode === "90B") || (nibrsCode === "90C") || (nibrsCode === "90D") || (nibrsCode === "90F") || (nibrsCode === "90J") || (nibrsCode === "90K") || (nibrsCode === "90L") || (nibrsCode === " 90M") || (nibrsCode === "90Z")) ? MultiSelectWithOutColorStyle
                         :
                         getCheckNotApplicable() ? Nibrs_ErrorStyle : MultiSelectRequredColor
                         :
@@ -2516,7 +2518,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   isDisabled={isLockOrRestrictModule("Lock", crimeBiasCategoryEditVal, isLocked, true) || nibrsSubmittedOffenseMain === 1}
                   styles={
                     isLockOrRestrictModule("Lock", crimeBiasCategoryEditVal, isLocked, true) ? MultiSelectLockedStyle :
-                      loginAgencyState === 'TX' ? nibrsCode === "999" ? customStylesWithOutColor
+                      loginAgencyState === 'TX' ? (nibrsCode === "999" || nibrsCode === "90G" || (nibrsCode === "90B") || (nibrsCode === "90C") || (nibrsCode === "90D") || (nibrsCode === "90F") || (nibrsCode === "90J") || (nibrsCode === "90K") || (nibrsCode === "90L") || (nibrsCode === " 90M") || (nibrsCode === "90Z")) ? customStylesWithOutColor
                         :
                         nibrsCode === '09C' && !bias09CCodeStatus ? ErrorStyle_NIBRS_09C(nibrsCode)
                           :

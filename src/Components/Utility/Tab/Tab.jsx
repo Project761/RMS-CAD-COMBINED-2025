@@ -191,6 +191,7 @@ const Tab = () => {
         if (pathname.includes('NIBRSAudit-Home')) setCurrentTab('NIBRSAudit');
         if (pathname.includes('CloseHistory-Home')) setCurrentTab('CloseHistory');
         if (pathname.includes('case-management')) setCurrentTab('case-management');
+        if (pathname.includes('Missing-Home')) setCurrentTab('MissingPerson');
 
         // if (pathname.includes('Offvic-Home')) setCurrentTab('Arrest');
         // if (pathname.includes('Offvic-Home')) setCurrentTab('OffenderVicitm');
@@ -434,7 +435,7 @@ const Tab = () => {
                             data-target={changesStatus ? "#SaveModal" : ''}
                             // style={{ color: currentTab === 'Arrest' ? 'Red' : '#130e0e', fontWeight: '500' }}
                             // style={{ color: showPage === 'Arrest' ? 'Red' : incidentCount?.ArrestCount > 0 ? 'blue' : '#000' }}
-                            style={{ color: currentTab === 'Arrest' ? 'Red' : incidentCount[0]?.ArrestCount > 0 ? 'blue' : '#130e0e', fontWeight: '600' }}
+                            style={{ color: currentTab === 'MissingPerson' ? 'Red' : incidentCount[0]?.MissingPersonCount > 0 ? 'blue' : '#130e0e', fontWeight: '600' }}
 
                             onClick={() => { if (!changesStatus) { setCurrentTab('MissingPerson'); } }}
                             to={

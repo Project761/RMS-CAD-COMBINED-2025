@@ -10,7 +10,7 @@ import { fetchPostData } from '../../hooks/Api'
 
 const ConfirmModal = (props) => {
 
-    const { showModal, setShowModal, arresteeChange, possessionID,  value, setValue, setErrors } = props
+    const { showModal, setShowModal, arresteeChange, possessionID, value, setValue, setErrors } = props
 
     const { setIncStatus, updateCount, setUpdateCount, } = useContext(AgencyContext);
 
@@ -95,12 +95,32 @@ const ConfirmModal = (props) => {
                         <div className="modal-content" style={{ backgroundColor: 'aliceblue' }} >
                             <div className="box text-center py-4">
                                 <h5 className="modal-title  " style={{ color: 'cadetblue', fontWeight: '700' }} id="exampleModalLabel">
-                                    {!arresteeChange?.LastName && 'LastName,'}
-                                    {!arresteeChange?.AgeFrom && ' Age,'}
+                                    {/* {!arresteeChange?.LastName && 'LastName,'}
+                                    {!arresteeChange?.AgeFrom && 'Age'}
                                     {!arresteeChange?.Race_Description && ' Race,'}
-                                    {!arresteeChange?.Gendre_Description && ' Gender, '}
-                                    <span >
-                                        Should not be Empty
+                                    {!arresteeChange?.Gendre_Description && ' Gender, '} */}
+                                    {
+                                        [
+                                            !arresteeChange?.LastName && 'LastName',
+                                            !arresteeChange?.AgeFrom && 'Age',
+                                            !arresteeChange?.Race_Description && 'Race',
+                                            !arresteeChange?.Gendre_Description && 'Gender'
+                                        ]
+                                            .filter(Boolean)
+                                            .join(', ')
+                                    }
+                                    {/* <span style={{ marginLeft: '4px' }} >
+                                        can't be Empty
+                                    </span> */}
+                                    <span style={{ marginLeft: '4px' }} >
+                                        {
+                                            (
+                                                !arresteeChange?.LastName ||
+                                                !arresteeChange?.AgeFrom ||
+                                                !arresteeChange?.Race_Description ||
+                                                !arresteeChange?.Gendre_Description
+                                            ) && "can't be empty"
+                                        }
                                     </span>
                                 </h5>
                                 <div className="btn-box mt-2" data-toggle="modal" data-target="#MasterModal" >

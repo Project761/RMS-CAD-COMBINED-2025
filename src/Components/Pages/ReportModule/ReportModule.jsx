@@ -157,21 +157,21 @@ const ReportModule = (props) => {
 
     // Field dropdown options
     const fieldOptions = useMemo(() => ({
-        'Gender': sexIdDrp.map(item => item.label),
-        'Race': raceIdDrp.map(item => item.label),
+        'Gender': sexIdDrp?.map(item => item.label),
+        'Race': raceIdDrp?.map(item => item.label),
         // 'DOB': ['1999', '2000', '2001'], // DOB will be handled differently if needed
-        'Ethnicity': ethinicityDrpData.map(item => item.label),
-        'Resident': residentIDDrp.map(item => item.label),
-        'Victim': victimIdDrp.map(item => item.Description),
-        'Offender': offenderIdDrp.map(item => item.Description),
-        'Other': otherIdDrp.map(item => item.Description),
-        'Vehicle Category': vehicleCategoryIdDrp.map(item => item.label),
-        'Vehicle Loss Code': vehicleLossCodeDrpData.map(item => item.label),
-        'Plate Type': plateTypeIdDrp.map(item => item.label),
-        'Plate State': stateList.map(item => item.label),
-        'Property Type': propertyTypeData.map(item => item.label),
-        'Property Loss Code': propertyLossCodeData.map(item => item.Description),
-        'Property Category': propertyCategoryData.map(item => item.Description),
+        'Ethnicity': ethinicityDrpData?.map(item => item.label),
+        'Resident': residentIDDrp?.map(item => item.label),
+        'Victim': victimIdDrp?.map(item => item.Description),
+        'Offender': offenderIdDrp?.map(item => item.Description),
+        'Other': otherIdDrp?.map(item => item.Description),
+        'Vehicle Category': vehicleCategoryIdDrp?.map(item => item.label),
+        'Vehicle Loss Code': vehicleLossCodeDrpData?.map(item => item.label),
+        'Plate Type': plateTypeIdDrp?.map(item => item.label),
+        'Plate State': stateList?.map(item => item.label),
+        'Property Type': propertyTypeData?.map(item => item.label),
+        'Property Loss Code': propertyLossCodeData?.map(item => item.Description),
+        'Property Category': propertyCategoryData?.map(item => item.Description),
     }), [sexIdDrp, raceIdDrp, ethinicityDrpData, residentIDDrp, victimIdDrp, offenderIdDrp, otherIdDrp, vehicleCategoryIdDrp, vehicleLossCodeDrpData, plateTypeIdDrp, stateList, propertyTypeData, propertyLossCodeData, propertyCategoryData]);
     console.log("@@fieldOptions", fieldOptions)
     const [value, setValue] = useState({
