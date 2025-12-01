@@ -1230,6 +1230,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
   }
 
   const Reset = () => {
+    setPossessionID();
     setroleStatus(false); setIsAdultArrest(false); setisMissing(false); setIsVictim(false); setIsSocietyName(false); setarrestCount(''); setmissingpersonCount(''); setpropertyOwnerCount(''); setIsSecondDropdownDisabled(true); setvictimTypeStatus(false); setnibrsSubmittedName(0); setIsAdult(false);
     setIsOffender(false); setcalled(false); setShowOffender(false); setShowVictim(false); setshowWarrant(false); setDobDate(''); setAvailableAlert([])
     setStatesChangeStatus(false); setOnSelectLocation(true); setChangesStatus(false); setResetErrors(false)
@@ -1243,7 +1244,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
       setValue({
         ...value,
         ['NameTypeID']: Id[0]?.value, 'NameIDNumber': 'Auto Generated', 'BusinessTypeID': '', 'SuffixID': '', 'VerifyID': '', 'SexID': '',
-        'RaceID': '', 'PhoneTypeID': '', 'NameReasonCodeID': [], 'Role': [], 'CertifiedByID': '', 'AgeUnitID': '', 'IsVerify': true, 'IsUnListedPhNo': '', 'LastName': '', 'FirstName': '', 'MiddleName': '', 'SSN': '', 'WeightFrom': '', 'WeightTo': '', 'HeightFrom': '', 'HeightTo': '', 'Address': '', 'Contact': '', 'OwnerPhoneNumber': '', 'OwnerFaxNumber': '', 'OwnerNameID': '', 'DateOfBirth': '', 'CertifiedDtTm': null, 'AgeFrom': '', 'AgeTo': '', 'Years': '', 'MasterNameID': '', 'NameID': '', 'EthnicityID': '', 'DLNumber': "", 'DLStateID': '', 'IsUnknown': '', 'IsJuvenile': '', 'VictimCode': '', 'ResidentID': '', 'IsInjury': '', 'VictimTypeID': '',
+        'RaceID': '', 'PhoneTypeID': '', 'NameReasonCodeID': [], 'Role': [], 'OwnerNameID': '', 'CertifiedByID': '', 'AgeUnitID': '', 'IsVerify': true, 'IsUnListedPhNo': '', 'LastName': '', 'FirstName': '', 'MiddleName': '', 'SSN': '', 'WeightFrom': '', 'WeightTo': '', 'HeightFrom': '', 'HeightTo': '', 'Address': '', 'Contact': '', 'OwnerPhoneNumber': '', 'OwnerFaxNumber': '', 'OwnerNameID': '', 'DateOfBirth': '', 'CertifiedDtTm': null, 'AgeFrom': '', 'AgeTo': '', 'Years': '', 'MasterNameID': '', 'NameID': '', 'EthnicityID': '', 'DLNumber': "", 'DLStateID': '', 'IsUnknown': '', 'IsJuvenile': '', 'VictimCode': '', 'ResidentID': '', 'IsInjury': '', 'VictimTypeID': '',
       })
       setglobalname(''); setglobalnameto(''); setLocationStatus(true); setUpdateStatus(updateStatus + 1); setNameTypeCode(Id[0].id); setIsBusinessName(false); setcountAppear(false); setcountStatus(false);
     }
