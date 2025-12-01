@@ -700,7 +700,8 @@ body *::-webkit-scrollbar-thumb {
 }
 
 .inc__tabs ul li {
-  padding: 0px 10px !important;
+  /* padding: 0px 10px !important; */
+   padding: 0px 8px !important;
 }
 
 .inc_sub_tab ul li a {
@@ -2326,10 +2327,16 @@ input.nibrs-reopened:disabled {
   font-weight: 800;
   text-transform: uppercase !important;
 }
+/* abhi */
 
 .incident-card:has(.child) {
   height: auto !important;
   min-height: 100vh;
+}
+
+.incident-card:has(.Offense_child) {
+  height: auto !important;
+  /* min-height: 100vh; */
 }
 
 .nibrs-rejected-PoliceF {

@@ -54,13 +54,13 @@ const AlertTable = (props) => {
     return (
 
         <div className='row bt bb align-items-center'>
-            <div className={`${labelCol ? labelCol : "col-lg-1"} mt-2 text-nowrap text-right`}>
+            <div className={`${labelCol ? labelCol : "col-lg-1"}  text-nowrap text-right`}>
                 {masterPropertyID && (ProSta === 'true' || ProSta === true) && (
                     <span data-toggle="modal" data-target="#MasterAlert" style={{ cursor: "pointer" }} className='alert-link pt-1'>Alerts :</span>
                 )}
             </div>
 
-            <div className='alert-name col-lg-11 mt-2 d-flex align-items-center' style={{
+            <div className='alert-name col-lg-11 d-flex align-items-center' style={{
                 alignContent: "center", height: "30px", overflowY: 'auto',
             }} >
                 {availableAlert?.filter((alert) => alert?.AlertDateTo ? new Date(alert?.AlertDateTo) >= new Date(year, month, day) : alert)?.length > 0 ?

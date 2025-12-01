@@ -1999,919 +1999,942 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
     <>
       {((incidentCount[0]?.NameCount === 0 || incidentCount[0]?.NameCount === "0") || (NameStatus === true || NameStatus === 'true') || isNew === "true" || isNew === true) && (
         <>
-          <div className="row child">
-            <div className="col-12 col-md-12 col-lg-12 mt-1 ">
-              <div className="row align-items-center mt-2" style={{ rowGap: "8px" }}>
-                <div className="col-2 col-md-2 col-lg-1">
-                  <label htmlFor="" className='label-name mb-0'>Name Type
-                    {errors.NameTypeIDError !== 'true' ? (
-                      <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.NameTypeIDError}</p>
-                    ) : null}
-                  </label>
-                </div>
-                <div className="col-3 col-md-3 col-lg-2">
-                  <Select
-                    name='NameTypeID'
-                    value={nameTypeData?.filter((obj) => obj.value === value?.NameTypeID)}
-                    options={nameTypeData}
-                    onChange={(e) => ChangeNameType(e, 'NameTypeID')}
-                    placeholder="Select..."
-
-                    // styles={nibrsSubmittedName === 1 ? LockFildscolour : Requiredcolour}
-                    // isDisabled={nameID || masterNameID || nibrsSubmittedName === 1 ? true : false}
-                    styles={isLockOrRestrictModule("Lock", editval[0]?.NameTypeID, isLocked) || nibrsSubmittedName === 1 ? LockFildscolour : Requiredcolour}
-                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.NameTypeID, isLocked) || nameID || masterNameID || nibrsSubmittedName === 1 ? true : false}
-                  />
-                </div>
-                <div className="col-2 col-md-2 col-lg-1">
-                  <label htmlFor="" className='label-name mb-0'>MNI</label>
-                </div>
-                <div className="col-2 col-md-3 col-lg-2 text-field mt-0">
-                  <input type="text" className='readonlyColor' value={value?.NameIDNumber} name='nameid' required readOnly />
-                </div>
-                <div className="col-3 col-md-2 col-lg-1">
-                  <div className="form-check ">
-                    {
-                      !(nameTypeCode === "B") && (
-                        value.DateOfBirth || value.AgeFrom ? (
-                          <>
-                            <input className="form-check-input" type="checkbox" name="IsJuvenile" value={value?.IsJuvenile} checked={value?.IsJuvenile} id="flexCheckDefault"
-                              disabled={isLockOrRestrictModule("Lock", editval[0]?.IsJuvenile, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1}
-                            />
-                            <label className="form-check-label" htmlFor="flexCheckDefault">
-                              Juvenile
-                            </label>
-                          </>
-                        ) : (
-                          <>
-                            <input className="form-check-input" type="checkbox" name="IsJuvenile" value={value?.IsJuvenile} checked={false} id="flexCheckDefault"
-                              disabled={isLockOrRestrictModule("Lock", editval[0]?.IsJuvenile, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1}
-                            />
-                            <label className="form-check-label" htmlFor="flexCheckDefault">
-                              Juvenile
-                            </label>
-                          </>
-                        )
-                      )
-                    }
+          <div className='Offense_child'>
+            <div className="row ">
+              <div className="col-12 col-md-12 col-lg-12 mt-1 ">
+                <div className="row align-items-center" style={{ rowGap: "3px" }}>
+                  <div className="col-2 col-md-2 col-lg-1">
+                    <label htmlFor="" className='label-name mb-0'>Name Type
+                      {errors.NameTypeIDError !== 'true' ? (
+                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.NameTypeIDError}</p>
+                      ) : null}
+                    </label>
                   </div>
-                </div>
-                <div className='col-5 mb-md-5 mb-sm-5 mb-lg-0'>
-                  {
-                    (!value.IsUnknown && ((masterNameID && MstPage === "MST-Name-Dash") || nameID)) ? (
-                      <AlertTable
-                        availableAlert={availableAlert}
-                        masterPropertyID={masterNameID ? masterNameID : ''}
-                        ProSta={NameStatus}
-                      />
-                    ) : null
-                  }
-                </div>
-                {
-                  nameTypeCode === "B" ?
-                    <>
-                      <div className="col-1 col-md-1 col-lg-1 ">
-                        <label htmlFor="" className='label-name mb-0 text-nowrap'>Business Name
-                          {errors.LastNameError !== 'true' && nameTypeCode === 'B' ? (
-                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.LastNameError}</p>
-                          ) : null}</label>
-                      </div>
-                      <div className="col-2 col-md-2 col-lg-4 text-field mt-0">
-                        <input
-                          type="text"
-                          name='LastName'
-                          value={value?.LastName}
-                          onChange={HandleChange}
-                          required
-                          // className={isSocietyName ? 'readonlyColor' : 'requiredColor'}
-                          // disabled={isSocietyName}
-                          className={isLockOrRestrictModule("Lock", editval[0]?.LastName, isLocked) ? 'LockFildsColor' : isSocietyName ? 'readonlyColor' : 'requiredColor'}
-                          disabled={isSocietyName || isLockOrRestrictModule("Lock", editval[0]?.LastName, isLocked)}
-                        />
-                      </div>
+                  <div className="col-3 col-md-3 col-lg-2">
+                    <Select
+                      name='NameTypeID'
+                      value={nameTypeData?.filter((obj) => obj.value === value?.NameTypeID)}
+                      options={nameTypeData}
+                      onChange={(e) => ChangeNameType(e, 'NameTypeID')}
+                      placeholder="Select..."
+
+                      // styles={nibrsSubmittedName === 1 ? LockFildscolour : Requiredcolour}
+                      // isDisabled={nameID || masterNameID || nibrsSubmittedName === 1 ? true : false}
+                      styles={isLockOrRestrictModule("Lock", editval[0]?.NameTypeID, isLocked) || nibrsSubmittedName === 1 ? LockFildscolour : Requiredcolour}
+                      isDisabled={isLockOrRestrictModule("Lock", editval[0]?.NameTypeID, isLocked) || nameID || masterNameID || nibrsSubmittedName === 1 ? true : false}
+                    />
+                  </div>
+                  <div className="col-2 col-md-2 col-lg-1">
+                    <label htmlFor="" className='label-name mb-0'>MNI</label>
+                  </div>
+                  <div className="col-2 col-md-3 col-lg-2 text-field mt-0">
+                    <input type="text" className='readonlyColor' value={value?.NameIDNumber} name='nameid' required readOnly />
+                  </div>
+                  <div className="col-3 col-md-2 col-lg-1">
+                    <div className="form-check ">
                       {
-                        !nameID ?
-                          (
+                        !(nameTypeCode === "B") && (
+                          value.DateOfBirth || value.AgeFrom ? (
                             <>
-                              <div className="col-12 col-md-3 col-lg-1 name-box mt-0 text-center " >
-                                <button type="button" data-toggle="modal" data-target="#SearchModal" className="btn btn-sm btn-success" onClick={() => getNameSearch(loginAgencyID, value?.NameTypeID, value.LastName, value.FirstName, value.MiddleName, value.DateOfBirth, value.SSN, value.HeightFrom, value.HeightTo, value.WeightFrom, value.WeightTo, value.EthnicityID, value.RaceID, value.SexID, value.PhoneTypeID, value.Contact, true)}>Search</button>
-                              </div>
+                              <input className="form-check-input" type="checkbox" name="IsJuvenile" value={value?.IsJuvenile} checked={value?.IsJuvenile} id="flexCheckDefault"
+                                disabled={isLockOrRestrictModule("Lock", editval[0]?.IsJuvenile, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1}
+                              />
+                              <label className="form-check-label" htmlFor="flexCheckDefault">
+                                Juvenile
+                              </label>
+                            </>
+                          ) : (
+                            <>
+                              <input className="form-check-input" type="checkbox" name="IsJuvenile" value={value?.IsJuvenile} checked={false} id="flexCheckDefault"
+                                disabled={isLockOrRestrictModule("Lock", editval[0]?.IsJuvenile, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1}
+                              />
+                              <label className="form-check-label" htmlFor="flexCheckDefault">
+                                Juvenile
+                              </label>
                             </>
                           )
-                          :
-                          <>
-                            <div className="col-12 col-md-3 col-lg-1 name-box mt-0 text-center " ></div>
-                          </>
-
+                        )
                       }
-                      <div className="col-1 col-md-1 col-lg-1">
-                        <label htmlFor="" className='label-name mb-0'>Business Type</label>
-                      </div>
-                      <div className="col-2 col-md-2 col-lg-5">
-                        <Select
-                          name='BusinessTypeID'
-                          value={businessTypeDrp?.filter((obj) => obj.value === value?.BusinessTypeID)}
-                          options={businessTypeDrp}
-                          onChange={(e) => ChangeDropDown(e, 'BusinessTypeID')}
-                          isClearable
-                          placeholder="Select..."
-                          // styles={customStylesWithOutColor}
-                          styles={isLockOrRestrictModule("Lock", editval[0]?.BusinessTypeID, isLocked) ? LockFildscolour : customStylesWithOutColor}
-                          isDisabled={isLockOrRestrictModule("Lock", editval[0]?.BusinessTypeID, isLocked) ? true : false}
+                    </div>
+                  </div>
+                  <div className='col-5 mb-md-5 mb-sm-5 mb-lg-0'>
+                    {
+                      (!value.IsUnknown && ((masterNameID && MstPage === "MST-Name-Dash") || nameID)) ? (
+                        <AlertTable
+                          availableAlert={availableAlert}
+                          masterPropertyID={masterNameID ? masterNameID : ''}
+                          ProSta={NameStatus}
                         />
-                      </div>
-
-                      <div className="col-1 col-md-1 col-lg-1">
-                        <label htmlFor="" className='label-name mb-0 '>Owner Name</label>
-                      </div>
-                      <div className="col-2 col-md-2 col-lg-3">
-                        {
-                          MstPage === "MST-Name-Dash" ?
-                            <Select
-                              name='OwnerNameID'
-                              options={mastersNameDrpData}
-                              value={mastersNameDrpData?.filter((obj) => obj.value === value?.OwnerNameID)}
-                              isClearable={value?.OwnerNameID ? true : false}
-                              onChange={(e) => ChangeDropDown(e, 'OwnerNameID')}
-                              placeholder="Select..."
-                              // styles={customStylesWithOutColor}
-                              styles={isLockOrRestrictModule("Lock", editval[0]?.OwnerNameID, isLocked) ? LockFildscolour : customStylesWithOutColor}
-                              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.OwnerNameID, isLocked) ? true : false}
-                            />
-                            :
-                            <Select
-                              name='OwnerNameID'
-                              options={ownerNameData}
-                              value={ownerNameData?.filter((obj) => obj.value === value?.OwnerNameID)}
-                              isClearable={value?.OwnerNameID ? true : false}
-                              onChange={(e) => ChangeDropDown(e, 'OwnerNameID')}
-                              placeholder="Select..."
-                              // styles={customStylesWithOutColor}
-                              styles={isLockOrRestrictModule("Lock", editval[0]?.OwnerNameID, isLocked) ? LockFildscolour : customStylesWithOutColor}
-                              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.OwnerNameID, isLocked) ? true : false}
-                            />
-                        }
-                      </div>
-                      <div className="col-1 " data-toggle="modal" data-target="#MasterModal"  >
-                        <button onClick={() => {
-                          if (possessionID) {
-                            setTimeout(() => {
-                              GetSingleDataPassion(possessionID);
-                            }, [200])
-                          }
-                          setNameModalStatus(true);
-                        }}
-                          className=" btn btn-sm bg-green text-white py-1"
-                        >
-                          <i className="fa fa-plus" > </i>
-                        </button>
-                      </div>
-                      <div className="col-1 col-md-1 col-lg-1">
-                        <label htmlFor="" className='label-name mb-0'>Owner&nbsp;Phone&nbsp;No.{errors.OwnerPhoneNumberError !== 'true' ? (
-                          <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.OwnerPhoneNumberError}</p>
-                        ) : null}</label>
-                      </div>
-                      <div className="col-2 col-md-2 col-lg-2 text-field mt-0">
-                        <input
-                          type="text"
-                          name='OwnerPhoneNumber'
-                          maxLength={11}
-                          onChange={HandleChange}
-                          required
-                          value={value?.OwnerPhoneNumber}
-                          className={isLockOrRestrictModule("Lock", editval[0]?.OwnerPhoneNumber, isLocked) ? 'LockFildsColor' : ''}
-                          disabled={isLockOrRestrictModule("Lock", editval[0]?.OwnerPhoneNumber, isLocked) ? true : false}
-                        />
-                      </div>
-
-                      <div className="col-1 col-md-1 col-lg-2 ">
-                        <label htmlFor="" className='label-name px-0 mb-0'>Business Fax No.{errors.OwnerFaxNumberError !== 'true' ? (
-                          <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.OwnerFaxNumberError}</p>
-                        ) : null}</label>
-                      </div>
-                      <div className="col-2 col-md-2 col-lg-2 text-field mt-0">
-                        <input
-                          type="text"
-                          name='OwnerFaxNumber'
-                          value={value?.OwnerFaxNumber}
-                          onChange={HandleChange}
-                          required
-                          className={isLockOrRestrictModule("Lock", editval[0]?.OwnerFaxNumber, isLocked) ? 'LockFildsColor' : ''}
-                          disabled={isLockOrRestrictModule("Lock", editval[0]?.OwnerFaxNumber, isLocked) ? true : false}
-                        />
-                      </div>
-                    </>
-                    :
-                    <>
-                      <div className="col-2 col-md-2 col-lg-1">
-                        <label htmlFor="" className='label-name mb-0'>Last Name
-                          {errors.LastNameError !== 'true' && nameTypeCode !== 'B' ? (
-                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.LastNameError}</p>
-                          ) : null}</label>
-                      </div>
-                      <div className="col-10 col-md-10 col-lg-2 text-field mt-0">
-                        <input
-                          type="text"
-                          name='LastName'
-                          maxLength={100}
-                          onBlur={(e) => { e.relatedTarget !== saveButtonRef.current && e.relatedTarget !== closeButtonRef.current && LastFirstNameOnBlur(e) }}
-                          onClick={() => { !addUpdatePermission && setChangesStatus(true); }}
-                          onChange={HandleChange}
-                          required
-                          autoComplete='off'
-                          className={isLockOrRestrictModule("Lock", editval[0]?.LastName, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1 ? 'LockFildsColor' : 'requiredColor'} value={value?.LastName}
-                          disabled={isLockOrRestrictModule("Lock", editval[0]?.LastName, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false}
-                          readOnly={isLockOrRestrictModule("Lock", editval[0]?.LastName, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false}
-                        />
-                      </div>
-                      <div className="col-2 col-md-2 col-lg-1">
-                        <label htmlFor="" className='label-name mb-0'>First Name
-                          {errors.FirstNameError !== 'true' && nameTypeCode !== 'B' ? (
-                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.FirstNameError}</p>
-                          ) : null}
-                        </label>
-                      </div>
-                      <div className="col-2 col-md-4 col-lg-2 text-field mt-0">
-                        <input
-                          type="text"
-                          maxLength={50}
-                          ref={firstNameInputRef}
-                          name='FirstName'
-                          onBlur={(e) => { e.relatedTarget !== saveButtonRef.current && LastFirstNameOnBlur(e) }}
-                          value={value?.FirstName}
-                          onChange={HandleChange}
-                          required
-                          onClick={() => { !addUpdatePermission && setChangesStatus(true); }}
-                          autoComplete='off'
-                          disabled={(isLockOrRestrictModule("Lock", editval[0]?.FirstName, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1) ? true : false}
-                          className={(isLockOrRestrictModule("Lock", editval[0]?.FirstName, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? 'LockFildsColor' : ''}
-                          readOnly={(isLockOrRestrictModule("Lock", editval[0]?.FirstName, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? true : false}
-                        />
-                      </div>
-                      <div className="col-2 col-md-2 col-lg-1">
-                        <label htmlFor="" className='label-name mb-0 '>Middle Name
-                          {errors.MiddleNameError !== 'true' && nameTypeCode !== 'B' ? (
-                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.MiddleNameError}</p>
-                          ) : null}
-                        </label>
-                      </div>
-                      <div className="col-2 col-md-4 col-lg-2 text-field mt-0">
-                        <input
-                          type="text"
-                          name='MiddleName'
-                          maxLength={50}
-                          value={value?.MiddleName}
-                          onChange={HandleChange}
-                          required
-                          onClick={() => { !addUpdatePermission && setChangesStatus(true); }}
-                          autoComplete='off'
-                          className={(isLockOrRestrictModule("Lock", editval[0]?.MiddleName, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? 'LockFildsColor' : ''}
-                          disabled={isLockOrRestrictModule("Lock", editval[0]?.MiddleName, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false}
-                          readOnly={isLockOrRestrictModule("Lock", editval[0]?.MiddleName, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
-                        />
-                      </div>
-                      <div className="col-12 col-md-12 col-lg-3 d-flex align-items-center ">
-                        <div className="col-2 col-md-2 col-lg-2 ml-4 ml-md-0">
-                          <label htmlFor="" className='label-name mb-0'>Suffix</label>
+                      ) : null
+                    }
+                  </div>
+                  {
+                    nameTypeCode === "B" ?
+                      <>
+                        <div className="col-1 col-md-1 col-lg-1 ">
+                          <label htmlFor="" className='label-name mb-0 text-nowrap'>Business Name
+                            {errors.LastNameError !== 'true' && nameTypeCode === 'B' ? (
+                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.LastNameError}</p>
+                            ) : null}</label>
                         </div>
-                        <div className="col-8 col-md-8 col-lg-6 ">
-                          <Select
-                            name='SuffixID'
-                            value={suffixIdDrp?.filter((obj) => obj.value === value?.SuffixID)}
-                            options={suffixIdDrp}
-                            onChange={(e) => ChangeDropDown(e, 'SuffixID')}
-                            isClearable
-                            placeholder="Select..."
-
-                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.SuffixID, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false}
-                            styles={isLockOrRestrictModule("Lock", editval[0]?.SuffixID, isLocked) || nibrsSubmittedName === 1 ? LockFildscolour : customStylesWithOutColor}
+                        <div className="col-2 col-md-2 col-lg-4 text-field mt-0">
+                          <input
+                            type="text"
+                            name='LastName'
+                            value={value?.LastName}
+                            onChange={HandleChange}
+                            required
+                            // className={isSocietyName ? 'readonlyColor' : 'requiredColor'}
+                            // disabled={isSocietyName}
+                            className={isLockOrRestrictModule("Lock", editval[0]?.LastName, isLocked) ? 'LockFildsColor' : isSocietyName ? 'readonlyColor' : 'requiredColor'}
+                            disabled={isSocietyName || isLockOrRestrictModule("Lock", editval[0]?.LastName, isLocked)}
                           />
                         </div>
-                        <div className="col-4 col-md-2 col-lg-4">
-                          <div className="form-check">
-                            <input
-                              className="form-check-input "
-                              type="checkbox"
-                              name='IsUnknown'
-                              value={value?.IsUnknown}
-                              checked={value?.IsUnknown}
-                              onChange={HandleChange}
-                              id="flexCheckDefault1"
-                              disabled={nameTypeCode === "B" ? true : false}
-                              readOnly={nameTypeCode === "B" ? true : false}
-                            />
-                            <label className="form-check-label label-name  pr-md-2" htmlFor="flexCheckDefault1">
-                              Unknown
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                    </>
-                }
+                        {
+                          !nameID ?
+                            (
+                              <>
+                                <div className="col-12 col-md-3 col-lg-1 name-box mt-0 text-center " >
+                                  <button type="button" data-toggle="modal" data-target="#SearchModal" className="btn btn-sm btn-success" onClick={() => getNameSearch(loginAgencyID, value?.NameTypeID, value.LastName, value.FirstName, value.MiddleName, value.DateOfBirth, value.SSN, value.HeightFrom, value.HeightTo, value.WeightFrom, value.WeightTo, value.EthnicityID, value.RaceID, value.SexID, value.PhoneTypeID, value.Contact, true)}>Search</button>
+                                </div>
+                              </>
+                            )
+                            :
+                            <>
+                              <div className="col-12 col-md-3 col-lg-1 name-box mt-0 text-center " ></div>
+                            </>
 
-                {
-                  nameTypeCode === "B" ?
-                    <>
-                    </>
-                    :
-                    <>
-                      <div className="col-1 col-md-2 col-lg-1">
-                        <label htmlFor="" className='label-name mb-0'>DOB
-                          {errors.DateOfBirthError !== 'true' ? (
-                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.DateOfBirthError}</p>
-                          ) : null}</label>
-                      </div>
-                      <div className="col-2 col-md-3 col-lg-2">
-                        <DatePicker
-                          id='DateOfBirth'
-                          name='DateOfBirth'
-                          ref={startRef}
-                          selected={dobDate}
-                          onChange={handleDateChange}
-                          onKeyDown={(e) => {
-                            if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
-                              e.preventDefault();
-                            } else {
-                              onKeyDown(e);
-                            }
-                          }}
-                          dateFormat={allowTimeSelect ? "MM/dd/yyyy" : "MM/dd/yyyy"}
-                          // showTimeSelect={allowTimeSelect} // Always show time picker
-                          timeFormat="HH:mm"
-                          timeIntervals={1}
-                          timeCaption="Time"
-                          placeholderText={value.DateOfBirth ? value.DateOfBirth : 'Select...'}
-                          isClearable={value.DateOfBirth ? true : false}
-                          showMonthDropdown
-                          showYearDropdown
-                          dropdownMode="select"
-                          autoComplete="off"
-                          maxDate={maxAllowedDate}
-                          disabled={isLockOrRestrictModule("Lock", editval[0]?.DateOfBirth, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1}
-                          className={(isLockOrRestrictModule("Lock", editval[0]?.DateOfBirth, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? 'LockFildsColor' : '' ? 'requiredColor' : ''}
-                          readOnly={(isLockOrRestrictModule("Lock", editval[0]?.DateOfBirth, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1)}
-                          // Disable time input if not allowed
-                          timeInputLabel={allowTimeSelect ? "" : "Time Not Available"}
-                          includeTimes={
-                            dobDate && isSameDate(dobDate, maxAllowedDate) ? getLimitedTimesUpTo(maxAllowedDate)
+                        }
+                        <div className="col-1 col-md-1 col-lg-1">
+                          <label htmlFor="" className='label-name mb-0'>Business Type</label>
+                        </div>
+                        <div className="col-2 col-md-2 col-lg-5">
+                          <Select
+                            name='BusinessTypeID'
+                            value={businessTypeDrp?.filter((obj) => obj.value === value?.BusinessTypeID)}
+                            options={businessTypeDrp}
+                            onChange={(e) => ChangeDropDown(e, 'BusinessTypeID')}
+                            isClearable
+                            placeholder="Select..."
+                            // styles={customStylesWithOutColor}
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.BusinessTypeID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.BusinessTypeID, isLocked) ? true : false}
+                          />
+                        </div>
+
+                        <div className="col-1 col-md-1 col-lg-1">
+                          <label htmlFor="" className='label-name mb-0 '>Owner Name</label>
+                        </div>
+                        <div className="col-2 col-md-2 col-lg-3">
+                          {
+                            MstPage === "MST-Name-Dash" ?
+                              <Select
+                                name='OwnerNameID'
+                                options={mastersNameDrpData}
+                                value={mastersNameDrpData?.filter((obj) => obj.value === value?.OwnerNameID)}
+                                isClearable={value?.OwnerNameID ? true : false}
+                                onChange={(e) => ChangeDropDown(e, 'OwnerNameID')}
+                                placeholder="Select..."
+                                // styles={customStylesWithOutColor}
+                                styles={isLockOrRestrictModule("Lock", editval[0]?.OwnerNameID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.OwnerNameID, isLocked) ? true : false}
+                              />
                               :
-                              undefined
+                              <Select
+                                name='OwnerNameID'
+                                options={ownerNameData}
+                                value={ownerNameData?.filter((obj) => obj.value === value?.OwnerNameID)}
+                                isClearable={value?.OwnerNameID ? true : false}
+                                onChange={(e) => ChangeDropDown(e, 'OwnerNameID')}
+                                placeholder="Select..."
+                                // styles={customStylesWithOutColor}
+                                styles={isLockOrRestrictModule("Lock", editval[0]?.OwnerNameID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.OwnerNameID, isLocked) ? true : false}
+                              />
                           }
-                        />
-                      </div>
-                      <div className="col-12 col-md-7 col-lg-3">
-                        <div className="row align-items-center ">
-                          <div className="col-12 col-md-1">
-                            <label htmlFor="" className='label-name mb-0'>Age {errors.AgeFromError !== 'true' ? (
-                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.AgeFromError}</p>
-                            ) : null}</label>
-                          </div>
-                          <div className="col-5 col-md-2 mt-0 text-field px-0" >
-                            <input
-                              type="text"
-                              name='AgeFrom'
-                              maxLength={3}
-                              value={value?.AgeFrom}
-                              onBlur={(e) => AgeFromOnBlur(e)}
-                              onChange={HandleChange}
-                              required
-                              placeholder='From'
-                              autoComplete='off'
-                              disabled={(isLockOrRestrictModule("Lock", editval[0]?.AgeFrom, isLocked) || value.DateOfBirth ? true : false) || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
-                              readOnly={(isLockOrRestrictModule("Lock", editval[0]?.AgeFrom, isLocked) || value.DateOfBirth ? true : false) || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
-                              className={
-                                isLockOrRestrictModule("Lock", editval[0]?.AgeFrom, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1 ? 'LockFildsColor'
-                                  :
-                                  value.DateOfBirth || value?.IsUnknown === 'true' || value?.IsUnknown === true ? 'readonlyColor'
-                                    :
-                                    victimTypeStatus || isAdult || IsOffender ? 'requiredColor'
-                                      :
-                                      ''
-                              }
-                              style={{
-                                textAlign: 'center', ...(value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.AgeFrom ? {
-                                  backgroundColor: 'rgb(255 202 194)',
-                                  height: 20,
-                                  minHeight: 33,
-                                  fontSize: 14,
-                                  marginTop: 2,
-                                  boxShadow: 0,
-                                }
-                                  : {}
-                              }}
-                            />
-                          </div>
-                          <div className="col-1 text-center px-0" style={{ marginTop: "-14px" }}>
-                            <span className="dash-name">_</span>
-                          </div>
-                          <div className="col-5 col-md-2 mt-0 text-field px-0 " >
-                            <input
-                              type="text"
-                              name='AgeTo'
-                              maxLength={3}
-                              value={value?.AgeTo}
-                              onChange={HandleChange}
-                              placeholder='To'
-                              autoComplete='off'
-                              required
-                              style={{
-                                textAlign: 'center', ...(value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.AgeTo ? {
-                                  backgroundColor: 'rgb(255 202 194)',
-                                  height: 20,
-                                  minHeight: 33,
-                                  fontSize: 14,
-                                  marginTop: 2,
-                                  boxShadow: 0,
-                                }
-                                  : {}
-                              }}
-                              className={
-                                isLockOrRestrictModule("Lock", editval[0]?.AgeTo, isLocked) || nibrsSubmittedName === 1 ? 'LockFildsColor'
-                                  :
-                                  value.DateOfBirth || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true ? 'readonlyColor'
-                                    :
-                                    ''
-                              }
-                              disabled={isLockOrRestrictModule("Lock", editval[0]?.AgeTo, isLocked) || value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
-                              readOnly={isLockOrRestrictModule("Lock", editval[0]?.AgeTo, isLocked) || value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
-
-                            />
-                          </div>
-                          <div className="col-5 col-md-6" >
-                            <Select
-                              name='AgeUnitID'
-                              value={ageUnitDrpData?.filter((obj) => obj.value === value?.AgeUnitID)}
-                              options={ageUnitDrpData}
-                              onChange={(e) => ChangeDropDown(e, 'AgeUnitID')}
-                              isClearable
-                              placeholder="Age Unit..."
-                              styles={isLockOrRestrictModule("Lock", editval[0]?.AgeUnitID, isLocked) ? LockFildscolour : value.AgeFrom ? Requiredcolour : customStylesWithOutColor}
-                              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.AgeUnitID, isLocked) || value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
-
-                            />
-                          </div>
+                        </div>
+                        <div className="col-1 " data-toggle="modal" data-target="#MasterModal"  >
+                          <button onClick={() => {
+                            if (possessionID) {
+                              setTimeout(() => {
+                                GetSingleDataPassion(possessionID);
+                              }, [200])
+                            }
+                            setNameModalStatus(true);
+                          }}
+                            className=" btn btn-sm bg-green text-white py-1"
+                          >
+                            <i className="fa fa-plus" > </i>
+                          </button>
+                        </div>
+                        <div className="col-1 col-md-1 col-lg-1">
+                          <label htmlFor="" className='label-name mb-0'>Owner&nbsp;Phone&nbsp;No.{errors.OwnerPhoneNumberError !== 'true' ? (
+                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.OwnerPhoneNumberError}</p>
+                          ) : null}</label>
+                        </div>
+                        <div className="col-2 col-md-2 col-lg-2 text-field mt-0">
+                          <input
+                            type="text"
+                            name='OwnerPhoneNumber'
+                            maxLength={11}
+                            onChange={HandleChange}
+                            required
+                            value={value?.OwnerPhoneNumber}
+                            className={isLockOrRestrictModule("Lock", editval[0]?.OwnerPhoneNumber, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", editval[0]?.OwnerPhoneNumber, isLocked) ? true : false}
+                          />
                         </div>
 
-
-                      </div>
-                      <div className="col-2 col-md-2 col-lg-1">
-                        <span data-toggle="modal" onClick={() => { setOpenPage('Gender') }} data-target="#ListModel" className='new-link px-0'>
-                          Gender {errors.SexIDError !== 'true' ? (
-                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.SexIDError}</p>
-                          ) : null}
-                        </span>
-                      </div>
-                      <div className="col-10 col-md-10 col-lg-2 ">
-                        <Select
-                          name='SexID'
-                          value={sexIdDrp?.filter((obj) => obj.value === value?.SexID)}
-                          options={sexIdDrp}
-                          onChange={(e) => ChangeDropDown(e, 'SexID')}
-                          isClearable
-                          placeholder="Select..."
-                          styles={isLockOrRestrictModule("Lock", editval[0]?.SexID, isLocked) || nibrsSubmittedName === 1 ? LockFildscolour : (value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.SexID && value?.IsUnknown !== 'true' && value?.IsUnknown !== true && !isAdult ? colourStylesVictimCode : (isAdult || IsOffender || victimTypeStatus ? Requiredcolour : customStylesWithOutColor)}
-                          isDisabled={isLockOrRestrictModule("Lock", editval[0]?.SexID, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
-                        />
-                      </div>
-                      <div className="col-2 col-md-2 col-lg-1 px-0">
-                        <span data-toggle="modal" onClick={() => { setOpenPage('Race') }} data-target="#ListModel" className='new-link px-0'>
-                          Race{errors.RaceIDError !== 'true' ? (
-                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.RaceIDError}</p>
-                          ) : null}
-                        </span>
-                      </div>
-                      <div className="col-10 col-md-10 col-lg-2">
-                        <Select
-                          name='RaceID'
-                          value={raceIdDrp?.filter((obj) => obj.value === value?.RaceID)}
-                          options={raceIdDrp}
-                          onChange={(e) => ChangeDropDown(e, 'RaceID')}
-                          isClearable
-                          placeholder="Select..."
-                          isDisabled={isLockOrRestrictModule("Lock", editval[0]?.RaceID, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
-                          styles={isLockOrRestrictModule("Lock", editval[0]?.RaceID, isLocked) || nibrsSubmittedName === 1 ? LockFildscolour : (value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.RaceID && value?.IsUnknown !== 'true' && value?.IsUnknown !== true && !isAdult ? colourStylesVictimCode : (isAdult || IsOffender || victimTypeStatus ? Requiredcolour : customStylesWithOutColor)}
-                        />
-                      </div>
-                      <div className="col-2 col-md-2 col-lg-1">
-                        <span data-toggle="modal" onClick={() => { setOpenPage('Ethnicity') }} data-target="#ListModel" className='new-link px-0'>
-                          Ethnicity{errors.EthnicityErrorr !== 'true' ? (
-                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.EthnicityErrorr}</p>
-                          ) : null}
-
-                        </span>
-                      </div>
-                      <div className="col-10 col-md-10 col-lg-2">
-                        <Select
-                          name='EthnicityID'
-                          value={ethinicityDrpData?.filter((obj) => obj.value === value?.EthnicityID)}
-                          options={ethinicityDrpData}
-                          onChange={(e) => ChangeDropDown(e, 'EthnicityID')}
-                          isClearable
-                          placeholder="Select..."
-                          styles={isLockOrRestrictModule("Lock", editval[0]?.EthnicityID, isLocked) || nibrsSubmittedName === 1 ? LockFildscolour : (value?.IsUnknown === 'true' || value?.IsUnknown === true) ? customStylesWithOutColor : victimTypeStatus ? Requiredcolour : ''}
-                          isDisabled={isLockOrRestrictModule("Lock", editval[0]?.EthnicityID, isLocked) || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
-                        />
-                      </div>
-                      <div className='col-lg-3'>
-                        <div className='row align-items-center'>
-                          <div className="col-12 col-md-3 ">
-                            <label htmlFor="" className='label-name mb-0 text-nowrap'>Weight
-                              <p className='text-center mb-0' style={{ fontWeight: 'bold', fontSize: '10px' }}>(LBS)</p>
-                              {errors.WeightError !== 'true' ? (
-                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.WeightError}</p>
-                              ) : null}
-                            </label>
+                        <div className="col-1 col-md-1 col-lg-2 ">
+                          <label htmlFor="" className='label-name px-0 mb-0'>Business Fax No.{errors.OwnerFaxNumberError !== 'true' ? (
+                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.OwnerFaxNumberError}</p>
+                          ) : null}</label>
+                        </div>
+                        <div className="col-2 col-md-2 col-lg-2 text-field mt-0">
+                          <input
+                            type="text"
+                            name='OwnerFaxNumber'
+                            value={value?.OwnerFaxNumber}
+                            onChange={HandleChange}
+                            required
+                            className={isLockOrRestrictModule("Lock", editval[0]?.OwnerFaxNumber, isLocked) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", editval[0]?.OwnerFaxNumber, isLocked) ? true : false}
+                          />
+                        </div>
+                      </>
+                      :
+                      <>
+                        <div className="col-2 col-md-2 col-lg-1">
+                          <label htmlFor="" className='label-name mb-0'>Last Name
+                            {errors.LastNameError !== 'true' && nameTypeCode !== 'B' ? (
+                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.LastNameError}</p>
+                            ) : null}</label>
+                        </div>
+                        <div className="col-10 col-md-10 col-lg-2 text-field mt-0">
+                          <input
+                            type="text"
+                            name='LastName'
+                            maxLength={100}
+                            onBlur={(e) => { e.relatedTarget !== saveButtonRef.current && e.relatedTarget !== closeButtonRef.current && LastFirstNameOnBlur(e) }}
+                            onClick={() => { !addUpdatePermission && setChangesStatus(true); }}
+                            onChange={HandleChange}
+                            required
+                            autoComplete='off'
+                            className={isLockOrRestrictModule("Lock", editval[0]?.LastName, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1 ? 'LockFildsColor' : 'requiredColor'} value={value?.LastName}
+                            disabled={isLockOrRestrictModule("Lock", editval[0]?.LastName, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false}
+                            readOnly={isLockOrRestrictModule("Lock", editval[0]?.LastName, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false}
+                          />
+                        </div>
+                        <div className="col-2 col-md-2 col-lg-1">
+                          <label htmlFor="" className='label-name mb-0'>First Name
+                            {errors.FirstNameError !== 'true' && nameTypeCode !== 'B' ? (
+                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.FirstNameError}</p>
+                            ) : null}
+                          </label>
+                        </div>
+                        <div className="col-2 col-md-4 col-lg-2 text-field mt-0">
+                          <input
+                            type="text"
+                            maxLength={50}
+                            ref={firstNameInputRef}
+                            name='FirstName'
+                            onBlur={(e) => { e.relatedTarget !== saveButtonRef.current && LastFirstNameOnBlur(e) }}
+                            value={value?.FirstName}
+                            onChange={HandleChange}
+                            required
+                            onClick={() => { !addUpdatePermission && setChangesStatus(true); }}
+                            autoComplete='off'
+                            disabled={(isLockOrRestrictModule("Lock", editval[0]?.FirstName, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1) ? true : false}
+                            className={(isLockOrRestrictModule("Lock", editval[0]?.FirstName, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? 'LockFildsColor' : ''}
+                            readOnly={(isLockOrRestrictModule("Lock", editval[0]?.FirstName, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? true : false}
+                          />
+                        </div>
+                        <div className="col-2 col-md-2 col-lg-1">
+                          <label htmlFor="" className='label-name mb-0 '>Middle Name
+                            {errors.MiddleNameError !== 'true' && nameTypeCode !== 'B' ? (
+                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.MiddleNameError}</p>
+                            ) : null}
+                          </label>
+                        </div>
+                        <div className="col-2 col-md-4 col-lg-2 text-field mt-0">
+                          <input
+                            type="text"
+                            name='MiddleName'
+                            maxLength={50}
+                            value={value?.MiddleName}
+                            onChange={HandleChange}
+                            required
+                            onClick={() => { !addUpdatePermission && setChangesStatus(true); }}
+                            autoComplete='off'
+                            className={(isLockOrRestrictModule("Lock", editval[0]?.MiddleName, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? 'LockFildsColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", editval[0]?.MiddleName, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false}
+                            readOnly={isLockOrRestrictModule("Lock", editval[0]?.MiddleName, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
+                          />
+                        </div>
+                        <div className="col-12 col-md-12 col-lg-3 d-flex align-items-center ">
+                          <div className="col-2 col-md-2 col-lg-2 ml-4 ml-md-0">
+                            <label htmlFor="" className='label-name mb-0'>Suffix</label>
                           </div>
-                          <div className="col-5 col-md-4  text-field mt-0" >
-                            <input
-                              type="text"
-                              name='WeightFrom'
-                              ref={crossButtonRef}
-                              onBlur={(e) => {
-                                if (e.target.name === 'WeightFrom' &&
-                                  e.relatedTarget !== crossButtonRef.current &&
-                                  e.relatedTarget?.name !== 'HeightFrom' &&
-                                  e.relatedTarget?.name !== 'HeightTo') {
-                                  handleWeightFromBlur(e);
-                                }
-                              }}
-                              value={value?.WeightFrom}
-                              maxLength={3}
-                              onKeyDown={handleKeyDown}
-                              onChange={HandleChange}
-                              required
-                              disabled={isLockOrRestrictModule("Lock", editval[0]?.WeightFrom, isLocked) || nameTypeCode === "B" ? true : false}
-                              readOnly={isLockOrRestrictModule("Lock", editval[0]?.WeightFrom, isLocked) || nameTypeCode === "B" ? true : false}
-                              className={isLockOrRestrictModule("Lock", editval[0]?.WeightFrom, isLocked) ? 'LockFildsColor' : nameTypeCode === "B" ? 'readonlyColor' : ''}
-                              placeholder='From'
-                              autoComplete='off'
+                          <div className="col-8 col-md-8 col-lg-6 ">
+                            <Select
+                              name='SuffixID'
+                              value={suffixIdDrp?.filter((obj) => obj.value === value?.SuffixID)}
+                              options={suffixIdDrp}
+                              onChange={(e) => ChangeDropDown(e, 'SuffixID')}
+                              isClearable
+                              placeholder="Select..."
+
+                              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.SuffixID, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1 ? true : false}
+                              styles={isLockOrRestrictModule("Lock", editval[0]?.SuffixID, isLocked) || nibrsSubmittedName === 1 ? LockFildscolour : customStylesWithOutColor}
                             />
                           </div>
-                          <div className="col-2 col-md-1 text-center" style={{ marginTop: "-14px" }}>
-                            <span className="dash-name">_</span>
+                          <div className="col-4 col-md-2 col-lg-4">
+                            <div className="form-check">
+                              <input
+                                className="form-check-input "
+                                type="checkbox"
+                                name='IsUnknown'
+                                value={value?.IsUnknown}
+                                checked={value?.IsUnknown}
+                                onChange={HandleChange}
+                                id="flexCheckDefault1"
+                                disabled={nameTypeCode === "B" ? true : false}
+                                readOnly={nameTypeCode === "B" ? true : false}
+                              />
+                              <label className="form-check-label label-name  pr-md-2" htmlFor="flexCheckDefault1">
+                                Unknown
+                              </label>
+                            </div>
                           </div>
-                          <div className="col-5 col-md-4 ">
-                            <div className="text-field mt-0">
+                        </div>
+                      </>
+                  }
+
+                  {
+                    nameTypeCode === "B" ?
+                      <>
+                      </>
+                      :
+                      <>
+                        <div className="col-1 col-md-2 col-lg-1">
+                          <label htmlFor="" className='label-name mb-0'>DOB
+                            {errors.DateOfBirthError !== 'true' ? (
+                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.DateOfBirthError}</p>
+                            ) : null}</label>
+                        </div>
+                        <div className="col-2 col-md-3 col-lg-2">
+                          <DatePicker
+                            id='DateOfBirth'
+                            name='DateOfBirth'
+                            ref={startRef}
+                            selected={dobDate}
+                            onChange={handleDateChange}
+                            onKeyDown={(e) => {
+                              if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                                e.preventDefault();
+                              } else {
+                                onKeyDown(e);
+                              }
+                            }}
+                            dateFormat={allowTimeSelect ? "MM/dd/yyyy" : "MM/dd/yyyy"}
+                            // showTimeSelect={allowTimeSelect} // Always show time picker
+                            timeFormat="HH:mm"
+                            timeIntervals={1}
+                            timeCaption="Time"
+                            placeholderText={value.DateOfBirth ? value.DateOfBirth : 'Select...'}
+                            isClearable={value.DateOfBirth ? true : false}
+                            showMonthDropdown
+                            showYearDropdown
+                            dropdownMode="select"
+                            autoComplete="off"
+                            maxDate={maxAllowedDate}
+                            disabled={isLockOrRestrictModule("Lock", editval[0]?.DateOfBirth, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1}
+                            className={(isLockOrRestrictModule("Lock", editval[0]?.DateOfBirth, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1) ? 'LockFildsColor' : '' ? 'requiredColor' : ''}
+                            readOnly={(isLockOrRestrictModule("Lock", editval[0]?.DateOfBirth, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1)}
+                            // Disable time input if not allowed
+                            timeInputLabel={allowTimeSelect ? "" : "Time Not Available"}
+                            includeTimes={
+                              dobDate && isSameDate(dobDate, maxAllowedDate) ? getLimitedTimesUpTo(maxAllowedDate)
+                                :
+                                undefined
+                            }
+                          />
+                        </div>
+                        <div className="col-12 col-md-7 col-lg-3">
+                          <div className="row align-items-center ">
+                            <div className="col-12 col-md-1">
+                              <label htmlFor="" className='label-name mb-0'>Age {errors.AgeFromError !== 'true' ? (
+                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.AgeFromError}</p>
+                              ) : null}</label>
+                            </div>
+                            <div className="col-5 col-md-2 mt-0 text-field px-0" >
                               <input
                                 type="text"
-                                name='WeightTo'
+                                name='AgeFrom'
+                                maxLength={3}
+                                value={value?.AgeFrom}
+                                onBlur={(e) => AgeFromOnBlur(e)}
+                                onChange={HandleChange}
+                                required
+                                placeholder='From'
+                                autoComplete='off'
+                                disabled={(isLockOrRestrictModule("Lock", editval[0]?.AgeFrom, isLocked) || value.DateOfBirth ? true : false) || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
+                                readOnly={(isLockOrRestrictModule("Lock", editval[0]?.AgeFrom, isLocked) || value.DateOfBirth ? true : false) || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
+                                className={
+                                  isLockOrRestrictModule("Lock", editval[0]?.AgeFrom, isLocked) || nameTypeCode === "B" || nibrsSubmittedName === 1 ? 'LockFildsColor'
+                                    :
+                                    value.DateOfBirth || value?.IsUnknown === 'true' || value?.IsUnknown === true ? 'readonlyColor'
+                                      :
+                                      victimTypeStatus || isAdult || IsOffender ? 'requiredColor'
+                                        :
+                                        ''
+                                }
+                                style={{
+                                  textAlign: 'center', ...(value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.AgeFrom ? {
+                                    backgroundColor: 'rgb(255 202 194)',
+                                    height: 20,
+                                    minHeight: 33,
+                                    fontSize: 14,
+                                    marginTop: 2,
+                                    boxShadow: 0,
+                                  }
+                                    : {}
+                                }}
+                              />
+                            </div>
+                            <div className="col-1 text-center px-0" style={{ marginTop: "-14px" }}>
+                              <span className="dash-name">_</span>
+                            </div>
+                            <div className="col-5 col-md-2 mt-0 text-field px-0 " >
+                              <input
+                                type="text"
+                                name='AgeTo'
+                                maxLength={3}
+                                value={value?.AgeTo}
+                                onChange={HandleChange}
+                                placeholder='To'
+                                autoComplete='off'
+                                required
+                                style={{
+                                  textAlign: 'center', ...(value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.AgeTo ? {
+                                    backgroundColor: 'rgb(255 202 194)',
+                                    height: 20,
+                                    minHeight: 33,
+                                    fontSize: 14,
+                                    marginTop: 2,
+                                    boxShadow: 0,
+                                  }
+                                    : {}
+                                }}
+                                className={
+                                  isLockOrRestrictModule("Lock", editval[0]?.AgeTo, isLocked) || nibrsSubmittedName === 1 ? 'LockFildsColor'
+                                    :
+                                    value.DateOfBirth || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true ? 'readonlyColor'
+                                      :
+                                      ''
+                                }
+                                disabled={isLockOrRestrictModule("Lock", editval[0]?.AgeTo, isLocked) || value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
+                                readOnly={isLockOrRestrictModule("Lock", editval[0]?.AgeTo, isLocked) || value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
+
+                              />
+                            </div>
+                            <div className="col-5 col-md-6" >
+                              <Select
+                                name='AgeUnitID'
+                                value={ageUnitDrpData?.filter((obj) => obj.value === value?.AgeUnitID)}
+                                options={ageUnitDrpData}
+                                onChange={(e) => ChangeDropDown(e, 'AgeUnitID')}
+                                isClearable
+                                placeholder="Age Unit..."
+                                styles={isLockOrRestrictModule("Lock", editval[0]?.AgeUnitID, isLocked) ? LockFildscolour : value.AgeFrom ? Requiredcolour : customStylesWithOutColor}
+                                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.AgeUnitID, isLocked) || value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
+
+                              />
+                            </div>
+                          </div>
+
+
+                        </div>
+                        <div className="col-2 col-md-2 col-lg-1">
+                          <span data-toggle="modal" onClick={() => { setOpenPage('Gender') }} data-target="#ListModel" className='new-link px-0'>
+                            Gender {errors.SexIDError !== 'true' ? (
+                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.SexIDError}</p>
+                            ) : null}
+                          </span>
+                        </div>
+                        <div className="col-10 col-md-10 col-lg-2 ">
+                          <Select
+                            name='SexID'
+                            value={sexIdDrp?.filter((obj) => obj.value === value?.SexID)}
+                            options={sexIdDrp}
+                            onChange={(e) => ChangeDropDown(e, 'SexID')}
+                            isClearable
+                            placeholder="Select..."
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.SexID, isLocked) || nibrsSubmittedName === 1 ? LockFildscolour : (value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.SexID && value?.IsUnknown !== 'true' && value?.IsUnknown !== true && !isAdult ? colourStylesVictimCode : (isAdult || IsOffender || victimTypeStatus ? Requiredcolour : customStylesWithOutColor)}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.SexID, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
+                          />
+                        </div>
+                        <div className="col-2 col-md-2 col-lg-1 px-0">
+                          <span data-toggle="modal" onClick={() => { setOpenPage('Race') }} data-target="#ListModel" className='new-link px-0'>
+                            Race{errors.RaceIDError !== 'true' ? (
+                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.RaceIDError}</p>
+                            ) : null}
+                          </span>
+                        </div>
+                        <div className="col-10 col-md-10 col-lg-2">
+                          <Select
+                            name='RaceID'
+                            value={raceIdDrp?.filter((obj) => obj.value === value?.RaceID)}
+                            options={raceIdDrp}
+                            onChange={(e) => ChangeDropDown(e, 'RaceID')}
+                            isClearable
+                            placeholder="Select..."
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.RaceID, isLocked) || nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.RaceID, isLocked) || nibrsSubmittedName === 1 ? LockFildscolour : (value?.VictimCode === 'I' || value?.VictimCode === 'L') && !value.RaceID && value?.IsUnknown !== 'true' && value?.IsUnknown !== true && !isAdult ? colourStylesVictimCode : (isAdult || IsOffender || victimTypeStatus ? Requiredcolour : customStylesWithOutColor)}
+                          />
+                        </div>
+                        <div className="col-2 col-md-2 col-lg-1">
+                          <span data-toggle="modal" onClick={() => { setOpenPage('Ethnicity') }} data-target="#ListModel" className='new-link px-0'>
+                            Ethnicity{errors.EthnicityErrorr !== 'true' ? (
+                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.EthnicityErrorr}</p>
+                            ) : null}
+
+                          </span>
+                        </div>
+                        <div className="col-10 col-md-10 col-lg-2">
+                          <Select
+                            name='EthnicityID'
+                            value={ethinicityDrpData?.filter((obj) => obj.value === value?.EthnicityID)}
+                            options={ethinicityDrpData}
+                            onChange={(e) => ChangeDropDown(e, 'EthnicityID')}
+                            isClearable
+                            placeholder="Select..."
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.EthnicityID, isLocked) || nibrsSubmittedName === 1 ? LockFildscolour : (value?.IsUnknown === 'true' || value?.IsUnknown === true) ? customStylesWithOutColor : victimTypeStatus ? Requiredcolour : ''}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.EthnicityID, isLocked) || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1 ? true : false}
+                          />
+                        </div>
+                        <div className='col-lg-3'>
+                          <div className='row align-items-center'>
+                            <div className="col-12 col-md-3 ">
+                              <label htmlFor="" className='label-name mb-0 text-nowrap'>Weight
+                                <p className='text-center mb-0' style={{ fontWeight: 'bold', fontSize: '10px' }}>(LBS)</p>
+                                {errors.WeightError !== 'true' ? (
+                                  <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.WeightError}</p>
+                                ) : null}
+                              </label>
+                            </div>
+                            <div className="col-5 col-md-4  text-field mt-0" >
+                              <input
+                                type="text"
+                                name='WeightFrom'
                                 ref={crossButtonRef}
                                 onBlur={(e) => {
-                                  if (e.target.name === 'WeightTo' &&
+                                  if (e.target.name === 'WeightFrom' &&
                                     e.relatedTarget !== crossButtonRef.current &&
                                     e.relatedTarget?.name !== 'HeightFrom' &&
                                     e.relatedTarget?.name !== 'HeightTo') {
-                                    handleWeightToBlur(e);
+                                    handleWeightFromBlur(e);
                                   }
                                 }}
-                                value={value?.WeightTo}
+                                value={value?.WeightFrom}
                                 maxLength={3}
+                                onKeyDown={handleKeyDown}
                                 onChange={HandleChange}
                                 required
-                                className={isLockOrRestrictModule("Lock", editval[0]?.WeightTo, isLocked) ? 'LockFildsColor' : (nameTypeCode === "B" || !value?.WeightFrom || value.WeightFrom === '0' || value.WeightFrom === '00' || value.WeightFrom === '000') ? 'readonlyColor' : ''}
-                                disabled={(isLockOrRestrictModule("Lock", editval[0]?.WeightTo, isLocked) || nameTypeCode === "B" || !value?.WeightFrom || value.WeightFrom === '0' || value.WeightFrom === '00' || value.WeightFrom === '000') ? true : false}
-                                readOnly={isLockOrRestrictModule("Lock", editval[0]?.WeightTo, isLocked) || nameTypeCode === "B" ? true : false}
-                                placeholder='To'
+                                disabled={isLockOrRestrictModule("Lock", editval[0]?.WeightFrom, isLocked) || nameTypeCode === "B" ? true : false}
+                                readOnly={isLockOrRestrictModule("Lock", editval[0]?.WeightFrom, isLocked) || nameTypeCode === "B" ? true : false}
+                                className={isLockOrRestrictModule("Lock", editval[0]?.WeightFrom, isLocked) ? 'LockFildsColor' : nameTypeCode === "B" ? 'readonlyColor' : ''}
+                                placeholder='From'
                                 autoComplete='off'
                               />
                             </div>
+                            <div className="col-2 col-md-1 text-center" style={{ marginTop: "-14px" }}>
+                              <span className="dash-name">_</span>
+                            </div>
+                            <div className="col-5 col-md-4 ">
+                              <div className="text-field mt-0">
+                                <input
+                                  type="text"
+                                  name='WeightTo'
+                                  ref={crossButtonRef}
+                                  onBlur={(e) => {
+                                    if (e.target.name === 'WeightTo' &&
+                                      e.relatedTarget !== crossButtonRef.current &&
+                                      e.relatedTarget?.name !== 'HeightFrom' &&
+                                      e.relatedTarget?.name !== 'HeightTo') {
+                                      handleWeightToBlur(e);
+                                    }
+                                  }}
+                                  value={value?.WeightTo}
+                                  maxLength={3}
+                                  onChange={HandleChange}
+                                  required
+                                  className={isLockOrRestrictModule("Lock", editval[0]?.WeightTo, isLocked) ? 'LockFildsColor' : (nameTypeCode === "B" || !value?.WeightFrom || value.WeightFrom === '0' || value.WeightFrom === '00' || value.WeightFrom === '000') ? 'readonlyColor' : ''}
+                                  disabled={(isLockOrRestrictModule("Lock", editval[0]?.WeightTo, isLocked) || nameTypeCode === "B" || !value?.WeightFrom || value.WeightFrom === '0' || value.WeightFrom === '00' || value.WeightFrom === '000') ? true : false}
+                                  readOnly={isLockOrRestrictModule("Lock", editval[0]?.WeightTo, isLocked) || nameTypeCode === "B" ? true : false}
+                                  placeholder='To'
+                                  autoComplete='off'
+                                />
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div className='col-lg-3'>
-                        <div className='row align-items-center flex-nowrap'>
-                          <div className="col-12 col-md-4  ">
-                            <label htmlFor="" className='label-name mb-0 text-nowrap'>Height
-                              <p className='text-center mb-0' style={{ fontWeight: 'bold', fontSize: '10px' }}>(FT)</p>
-                              {errors.HeightError !== 'true' ? (
-                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.HeightError}</p>
-                              ) : null}
-                            </label>
-                          </div>
-                          <div className="col-5 col-md-4 text-field mt-0" >
-                            <input
-                              type="text"
-                              name='HeightFrom'
-                              maxLength={3}
-                              value={value?.HeightFrom}
-                              onBlur={(e) => {
-                                if (e.target.name === 'HeightFrom' && e.relatedTarget !== crossButtonRef.current &&
-                                  e.relatedTarget?.name !== 'WeightFrom' &&
-                                  e.relatedTarget?.name !== 'WeightTo') {
-                                  HeightFromOnBlur(e);
-                                }
-                              }}
-                              onChange={HandleChange}
-                              required
-                              onKeyDown={handleKeyDown}
-                              disabled={isLockOrRestrictModule("Lock", editval[0]?.HeightFrom, isLocked) || nameTypeCode === "B" ? true : false}
-                              readOnly={isLockOrRestrictModule("Lock", editval[0]?.HeightFrom, isLocked) || nameTypeCode === "B" ? true : false}
-                              className={isLockOrRestrictModule("Lock", editval[0]?.HeightFrom, isLocked) ? 'LockFildsColor' : nameTypeCode === "B" ? 'readonlyColor' : ''}
-                              placeholder='From'
-                              autoComplete='off'
-                            />
-                          </div>
-                          <div className="col-2 col-md-1 text-center" style={{ marginTop: "-14px" }}>
-                            <span className="dash-name">_</span>
-                          </div>
-                          <div className="col-5 col-md-3 ">
-                            <div className="text-field mt-0">
+                        <div className='col-lg-3'>
+                          <div className='row align-items-center flex-nowrap'>
+                            <div className="col-12 col-md-4  ">
+                              <label htmlFor="" className='label-name mb-0 text-nowrap'>Height
+                                <p className='text-center mb-0' style={{ fontWeight: 'bold', fontSize: '10px' }}>(FT)</p>
+                                {errors.HeightError !== 'true' ? (
+                                  <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.HeightError}</p>
+                                ) : null}
+                              </label>
+                            </div>
+                            <div className="col-5 col-md-4 text-field mt-0" >
                               <input
                                 type="text"
-                                name='HeightTo'
+                                name='HeightFrom'
                                 maxLength={3}
-                                value={value?.HeightTo}
+                                value={value?.HeightFrom}
                                 onBlur={(e) => {
-                                  if (e.target.name === 'HeightTo' && e.relatedTarget !== crossButtonRef.current &&
+                                  if (e.target.name === 'HeightFrom' && e.relatedTarget !== crossButtonRef.current &&
                                     e.relatedTarget?.name !== 'WeightFrom' &&
                                     e.relatedTarget?.name !== 'WeightTo') {
-                                    HeightOnChange(e);
+                                    HeightFromOnBlur(e);
                                   }
                                 }}
                                 onChange={HandleChange}
                                 required
-                                className={isLockOrRestrictModule("Lock", editval[0]?.HeightTo, isLocked) ? 'LockFildsColor' : nameTypeCode === "B" ? 'readonlyColor' : ''}
-                                disabled={isLockOrRestrictModule("Lock", editval[0]?.HeightTo, isLocked) || nameTypeCode === "B" ? true : false}
-                                readOnly={isLockOrRestrictModule("Lock", editval[0]?.HeightTo, isLocked) || nameTypeCode === "B" ? true : false}
-                                placeholder='To'
+                                onKeyDown={handleKeyDown}
+                                disabled={isLockOrRestrictModule("Lock", editval[0]?.HeightFrom, isLocked) || nameTypeCode === "B" ? true : false}
+                                readOnly={isLockOrRestrictModule("Lock", editval[0]?.HeightFrom, isLocked) || nameTypeCode === "B" ? true : false}
+                                className={isLockOrRestrictModule("Lock", editval[0]?.HeightFrom, isLocked) ? 'LockFildsColor' : nameTypeCode === "B" ? 'readonlyColor' : ''}
+                                placeholder='From'
                                 autoComplete='off'
                               />
                             </div>
+                            <div className="col-2 col-md-1 text-center" style={{ marginTop: "-14px" }}>
+                              <span className="dash-name">_</span>
+                            </div>
+                            <div className="col-5 col-md-3 ">
+                              <div className="text-field mt-0">
+                                <input
+                                  type="text"
+                                  name='HeightTo'
+                                  maxLength={3}
+                                  value={value?.HeightTo}
+                                  onBlur={(e) => {
+                                    if (e.target.name === 'HeightTo' && e.relatedTarget !== crossButtonRef.current &&
+                                      e.relatedTarget?.name !== 'WeightFrom' &&
+                                      e.relatedTarget?.name !== 'WeightTo') {
+                                      HeightOnChange(e);
+                                    }
+                                  }}
+                                  onChange={HandleChange}
+                                  required
+                                  className={isLockOrRestrictModule("Lock", editval[0]?.HeightTo, isLocked) ? 'LockFildsColor' : nameTypeCode === "B" ? 'readonlyColor' : ''}
+                                  disabled={isLockOrRestrictModule("Lock", editval[0]?.HeightTo, isLocked) || nameTypeCode === "B" ? true : false}
+                                  readOnly={isLockOrRestrictModule("Lock", editval[0]?.HeightTo, isLocked) || nameTypeCode === "B" ? true : false}
+                                  placeholder='To'
+                                  autoComplete='off'
+                                />
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="col-2 col-md-2 col-lg-1 px-0" >
-                        <span data-toggle="modal" onClick={() => { setOpenPage('Resident') }} data-target="#ListModel" className='new-link px-0'>
-                          Resident{errors.ResidentError !== 'true' ? (
-                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ResidentError}</p>
-                          ) : null}
-                        </span>
-                      </div>
-                      <div className="col-10 col-md-10 col-lg-2">
-                        <Select
-                          name="ResidentID"
-                          value={residentIDDrp?.filter((obj) => obj.value === value?.ResidentID) || null}
-                          options={residentIDDrp}
-                          onChange={(e) => ChangeDropDownResident(e, 'ResidentID')}
-                          isClearable
-                          placeholder="Select..."
-                          menuPlacement="bottom"
-                          styles={isLockOrRestrictModule("Lock", editval[0]?.ResidentID, isLocked) || nibrsSubmittedName === 1 ? LockFildscolour : victimTypeStatus ? Requiredcolour : ''}
-                          isDisabled={isLockOrRestrictModule("Lock", editval[0]?.ResidentID, isLocked) || nibrsSubmittedName === 1 ? true : false}
-                        />
-                      </div>
-
-                      <div className='col-12 col-md-12 col-lg-12'>
-                        <fieldset className='mt-0 pb-1' style={{ width: "100%" }}>
-                          <legend>SSN/DL Info </legend>
-                        </fieldset>
-                      </div>
-
-                      <div className="col-2 col-md-2 col-lg-1">
-                        <label htmlFor="" className='label-name mb-0 '>SSN
-                          {errors.SSN !== 'true' ? (
-                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.SSN}</p>
-                          ) : null}</label>
-                      </div>
-                      <div className="col-3 col-md-3 col-lg-2 text-field mt-0" >
-                        <input
-                          style={{ height: "35px" }}
-                          type="text"
-                          className={isLockOrRestrictModule("Lock", editval[0]?.HeightTo, isLocked) ? 'LockFildsColor' : (nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? 'readonlyColor' : ''}
-                          readOnly={isLockOrRestrictModule("Lock", editval[0]?.HeightTo, isLocked) || (nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? true : false}
-                          disabled={isLockOrRestrictModule("Lock", editval[0]?.HeightTo, isLocked) || (nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? true : false}
-                          maxLength={10}
-                          name='SSN'
-                          value={value?.SSN}
-                          onChange={HandleChange}
-                          required
-                          autoComplete='off'
-                        />
-                      </div>
-                      <div className="col-3 col-md-6 col-lg-5 d-flex row align-items-center " >
-                        <div className="col-2 col-md-2 col-lg-2 pl-2">
-                          <label htmlFor="" className='label-name mb-0'>State/DL#</label>
+                        <div className="col-2 col-md-2 col-lg-1 px-0" >
+                          <span data-toggle="modal" onClick={() => { setOpenPage('Resident') }} data-target="#ListModel" className='new-link px-0'>
+                            Resident{errors.ResidentError !== 'true' ? (
+                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ResidentError}</p>
+                            ) : null}
+                          </span>
                         </div>
-                        <div className="col-3 col-md-5 col-lg-6" >
+                        <div className="col-10 col-md-10 col-lg-2">
                           <Select
-                            name='DLStateID'
-                            value={stateList?.filter((obj) => obj.value === value?.DLStateID)}
-                            options={stateList}
-                            onChange={(e) => ChangeDropDown(e, 'DLStateID')}
+                            name="ResidentID"
+                            value={residentIDDrp?.filter((obj) => obj.value === value?.ResidentID) || null}
+                            options={residentIDDrp}
+                            onChange={(e) => ChangeDropDownResident(e, 'ResidentID')}
                             isClearable
-                            placeholder="State"
-
-                            styles={isLockOrRestrictModule("Lock", editval[0]?.DLStateID, isLocked) ? selectBoxDiableColourStyles : customStylesWithOutColor}
-                            className={isLockOrRestrictModule("Lock", editval[0]?.DLStateID, isLocked) ? 'LockFildsColor' : (nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? 'readonlyColor' : ''}
-                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.DLStateID, isLocked) || (nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? true : false}
+                            placeholder="Select..."
+                            menuPlacement="bottom"
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.ResidentID, isLocked) || nibrsSubmittedName === 1 ? LockFildscolour : victimTypeStatus ? Requiredcolour : ''}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.ResidentID, isLocked) || nibrsSubmittedName === 1 ? true : false}
                           />
                         </div>
-                        {/* <span className='dash-name' >
+
+                        <div className='col-12 col-md-12 col-lg-12'>
+                          <fieldset className='mt-0 py-1' style={{ width: "100%" }}>
+                            <legend>SSN/DL Info </legend>
+                          </fieldset>
+                        </div>
+
+                        <div className="col-2 col-md-2 col-lg-1">
+                          <label htmlFor="" className='label-name mb-0 '>SSN
+                            {errors.SSN !== 'true' ? (
+                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.SSN}</p>
+                            ) : null}</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2 text-field mt-0" >
+                          <input
+                            style={{ height: "35px" }}
+                            type="text"
+                            className={isLockOrRestrictModule("Lock", editval[0]?.HeightTo, isLocked) ? 'LockFildsColor' : (nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? 'readonlyColor' : ''}
+                            readOnly={isLockOrRestrictModule("Lock", editval[0]?.HeightTo, isLocked) || (nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? true : false}
+                            disabled={isLockOrRestrictModule("Lock", editval[0]?.HeightTo, isLocked) || (nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? true : false}
+                            maxLength={10}
+                            name='SSN'
+                            value={value?.SSN}
+                            onChange={HandleChange}
+                            required
+                            autoComplete='off'
+                          />
+                        </div>
+                        <div className="col-3 col-md-6 col-lg-5 d-flex row align-items-center " >
+                          <div className="col-2 col-md-2 col-lg-2 pl-2">
+                            <label htmlFor="" className='label-name mb-0'>State/DL#</label>
+                          </div>
+                          <div className="col-3 col-md-5 col-lg-6" >
+                            <Select
+                              name='DLStateID'
+                              value={stateList?.filter((obj) => obj.value === value?.DLStateID)}
+                              options={stateList}
+                              onChange={(e) => ChangeDropDown(e, 'DLStateID')}
+                              isClearable
+                              placeholder="State"
+
+                              styles={isLockOrRestrictModule("Lock", editval[0]?.DLStateID, isLocked) ? selectBoxDiableColourStyles : customStylesWithOutColor}
+                              className={isLockOrRestrictModule("Lock", editval[0]?.DLStateID, isLocked) ? 'LockFildsColor' : (nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? 'readonlyColor' : ''}
+                              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.DLStateID, isLocked) || (nameTypeCode === "B" || value?.IsUnknown === 'true' || value?.IsUnknown === true) ? true : false}
+                            />
+                          </div>
+                          {/* <span className='dash-name' >
                       {errors.DLError !== 'true' ? (
                         <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.DLError}</p>
                       ) : null}
                     </span> */}
-                        <div className="col-3 col-md-5 col-lg-4 text-field mt-0" >
-                          <input
-                            type="text"
-                            style={{ textTransform: "uppercase" }}
-                            value={value?.DLNumber ? value.DLNumber.replace(/[^\w\s]/g, '') : ''}
-                            maxLength={15}
-                            onChange={HandleChange}
-                            name="DLNumber"
-                            required
-                            autoComplete='off'
-                            className={isLockOrRestrictModule("Lock", editval[0]?.DLNumber, isLocked) ? 'LockFildsColor' : value?.DLStateID ? 'requiredColor' : 'readonlyColor'}
-                            disabled={isLockOrRestrictModule("Lock", editval[0]?.DLNumber, isLocked) || value?.DLStateID ? false : true}
-                          />
-                          {errors.DLError && errors.DLError !== 'true' && (
-                            <div style={{ fontSize: '11px', color: 'red', marginTop: '2px' }}>
-                              {errors.DLError}
-                            </div>
-                          )}
+                          <div className="col-3 col-md-5 col-lg-4 text-field mt-0" >
+                            <input
+                              type="text"
+                              style={{ textTransform: "uppercase" }}
+                              value={value?.DLNumber ? value.DLNumber.replace(/[^\w\s]/g, '') : ''}
+                              maxLength={15}
+                              onChange={HandleChange}
+                              name="DLNumber"
+                              required
+                              autoComplete='off'
+                              className={isLockOrRestrictModule("Lock", editval[0]?.DLNumber, isLocked) ? 'LockFildsColor' : value?.DLStateID ? 'requiredColor' : 'readonlyColor'}
+                              disabled={isLockOrRestrictModule("Lock", editval[0]?.DLNumber, isLocked) || value?.DLStateID ? false : true}
+                            />
+                            {errors.DLError && errors.DLError !== 'true' && (
+                              <div style={{ fontSize: '11px', color: 'red', marginTop: '2px' }}>
+                                {errors.DLError}
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                      <div className="col-3 col-md-6 col-lg-4 d-flex align-items-center " >
-                        <div className="col-2 col-md-2 col-lg-4">
-                          <span data-toggle="modal" onClick={() => { setOpenPage('Verify') }} data-target="#ListModel" className='new-link px-0'>
-                            How Verify
-                          </span>
+                        <div className="col-3 col-md-6 col-lg-4 d-flex align-items-center " >
+                          <div className="col-2 col-md-2 col-lg-4">
+                            <span data-toggle="modal" onClick={() => { setOpenPage('Verify') }} data-target="#ListModel" className='new-link px-0'>
+                              How Verify
+                            </span>
+                          </div>
+                          <div className="col-10 col-md-10 col-lg-8">
+                            <Select
+                              name='VerifyID'
+                              value={verifyIdDrp?.filter((obj) => obj.value === value?.VerifyID)}
+                              options={verifyIdDrp}
+                              onChange={(e) => ChangeDropDown(e, 'VerifyID')}
+                              isClearable
+                              placeholder="Verify ID"
+
+                              // styles={customStylesWithOutColor}
+                              // isDisabled={!value?.DLStateID}
+                              styles={isLockOrRestrictModule("Lock", editval[0]?.VerifyID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                              isDisabled={isLockOrRestrictModule("Lock", editval[0]?.VerifyID, isLocked) || !value?.DLStateID}
+                            />
+                          </div>
                         </div>
-                        <div className="col-10 col-md-10 col-lg-8">
-                          <Select
-                            name='VerifyID'
-                            value={verifyIdDrp?.filter((obj) => obj.value === value?.VerifyID)}
-                            options={verifyIdDrp}
-                            onChange={(e) => ChangeDropDown(e, 'VerifyID')}
-                            isClearable
-                            placeholder="Verify ID"
+                      </>
+                  }
+                  <div className="col-2 col-md-2 col-lg-1">
+                    <label htmlFor="" className='label-name mb-0 '>
+                      Role {errors.RoleError !== 'true' ? (
+                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.RoleError}</p>
+                      ) : null}
+                    </label>
+                  </div>
+                  <div className="col-3 col-md-3 col-lg-3">
+                    <SelectBox
+                      options={filteredReasonCodeRoleArr || []}
+                      menuPlacement="bottom"
+                      isMulti
+                      closeMenuOnSelect={false}
+                      hideSelectedOptions={true}
+                      isClearable={false}
+                      allowSelectAll={false}
+                      value={multiSelectedReason?.optionSelected}
+                      components={{ MultiValue }}
+                      onChange={(selectedOptions, actionMeta) => {
+                        const removedOption = actionMeta.removedValue;
+                        const action = actionMeta.action;
+                        if ((action === 'remove-value' || action === 'pop-value') && removedOption?.value === 3 && NameTabCount?.NameWarrantCount > 0
+                        ) { return; }
+                        if ((action === 'remove-value' || action === 'pop-value') && removedOption?.value === 3 && arrestCount > 0
+                        ) { return; }
+                        if ((action === 'remove-value' || action === 'pop-value') && removedOption?.value === 3 && missingpersonCount > 0
+                        ) { return; }
+                        if ((action === 'remove-value' || action === 'pop-value') && removedOption?.value === 3 && propertyOwnerCount > 0
+                        ) { return; }
+                        const isRemovingVictim = removedOption?.value === 1;
 
-                            // styles={customStylesWithOutColor}
-                            // isDisabled={!value?.DLStateID}
-                            styles={isLockOrRestrictModule("Lock", editval[0]?.VerifyID, isLocked) ? LockFildscolour : customStylesWithOutColor}
-                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.VerifyID, isLocked) || !value?.DLStateID}
-                          />
-                        </div>
-                      </div>
-                    </>
-                }
-                <div className="col-2 col-md-2 col-lg-1">
-                  <label htmlFor="" className='label-name mb-0 '>
-                    Role {errors.RoleError !== 'true' ? (
-                      <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.RoleError}</p>
-                    ) : null}
-                  </label>
-                </div>
-                <div className="col-3 col-md-3 col-lg-3">
-                  <SelectBox
-                    options={filteredReasonCodeRoleArr || []}
-                    menuPlacement="bottom"
-                    isMulti
-                    closeMenuOnSelect={false}
-                    hideSelectedOptions={true}
-                    isClearable={false}
-                    allowSelectAll={false}
-                    value={multiSelectedReason?.optionSelected}
-                    components={{ MultiValue }}
-                    onChange={(selectedOptions, actionMeta) => {
-                      const removedOption = actionMeta.removedValue;
-                      const action = actionMeta.action;
-                      if ((action === 'remove-value' || action === 'pop-value') && removedOption?.value === 3 && NameTabCount?.NameWarrantCount > 0
-                      ) { return; }
-                      if ((action === 'remove-value' || action === 'pop-value') && removedOption?.value === 3 && arrestCount > 0
-                      ) { return; }
-                      if ((action === 'remove-value' || action === 'pop-value') && removedOption?.value === 3 && missingpersonCount > 0
-                      ) { return; }
-                      if ((action === 'remove-value' || action === 'pop-value') && removedOption?.value === 3 && propertyOwnerCount > 0
-                      ) { return; }
-                      const isRemovingVictim = removedOption?.value === 1;
-
-                      if ((action === 'remove-value' || action === 'pop-value') && isRemovingVictim && value.checkVictem === 1 && nameID) {
-                        return;
-                      }
-                      if ((action === 'remove-value' || action === 'pop-value') && isRemovingVictim && value.checkVictem !== 1) {
-                        setMultiSelected({ optionSelected: [] });
-                        setValue(prev => ({ ...prev, NameReasonCodeID: null }));
-                      }
-                      onChangeReaonsRole(selectedOptions, 'Role');
-                    }}
-
-                    styles={isLockOrRestrictModule("Lock", editval[0]?.Role, isLocked, true) || nibrsSubmittedName === 1 || isSocietyName ? LockFildscolour : MstPage === "MST-Name-Dash" ? 'readonlyColor' : colourStylesRole}
-                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.Role, isLocked, true) || nibrsSubmittedName === 1 || isSocietyName || MstPage === "MST-Name-Dash"}
-                  />
-                </div>
-                <div className="col-2 col-md-2 col-lg-1">
-                  <label htmlFor="" className='label-name mb-0'>
-                    Reason Code
-                    {errors.NameReasonCodeIDError !== 'true' ? (
-                      <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.NameReasonCodeIDError}</p>
-                    ) : null}
-                  </label>
-                </div>
-                <div className="col-10 col-md-10 col-lg-4" >
-                  <SelectBox
-                    styles={isLockOrRestrictModule("Lock", editval[0]?.ReasonCode, isLocked, true) || nibrsSubmittedName === 1 || isSocietyName ? LockFildscolour : MstPage === "MST-Name-Dash" ? colourStylesMasterReason : colourStylesReason}
-                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.ReasonCode, isLocked, true) || nibrsSubmittedName === 1 || isSocietyName || isSecondDropdownDisabled && MstPage !== "MST-Name-Dash" ? true : false}
-
-                    options={reasonIdDrp ? getFiltredReasonCode(reasonIdDrp) : []}
-                    menuPlacement="bottom"
-                    isMulti
-                    closeMenuOnSelect={false}
-                    hideSelectedOptions={true}
-                    isClearable={false}
-                    allowSelectAll={false}
-                    value={multiSelected.optionSelected}
-                    components={{ MultiValue }}
-                    onChange={(selectedOptions, actionMeta) => {
-                      const victimLabels = [
-                        "Victim", "Business Is A Victim", "Domestic Victim", "Individual Is A Victim",
-                        "Individual Victim", "Other Is A Victim", "Restraint Victim", "Society Is A Victim"
-                      ];
-
-                      const removedOption = actionMeta.removedValue;
-                      const action = actionMeta.action;
-                      if (
-                        (action === 'remove-value' || action === 'pop-value') &&
-                        removedOption?.reasonCode === 'WAR' &&
-                        NameTabCount?.NameWarrantCount > 0
-                      ) {
-                        return;
-                      }
-                      if (
-                        (action === 'remove-value' || action === 'pop-value') &&
-                        (removedOption?.reasonCode === 'ADAR' || removedOption?.reasonCode === 'JVA') &&
-                        arrestCount > 0
-                      ) {
-                        return;
-                      }
-                      if (
-                        (action === 'remove-value' || action === 'pop-value') &&
-                        (removedOption?.reasonCode === 'MIS') &&
-                        missingpersonCount > 0
-                      ) {
-                        return;
-                      }
-                      if (
-                        (action === 'remove-value' || action === 'pop-value') &&
-                        (removedOption?.reasonCode === 'OWN') &&
-                        propertyOwnerCount > 0
-                      ) {
-                        return;
-                      }
-                      if ((action === 'remove-value' || action === 'pop-value') && removedOption) {
-                        const isVictim = victimLabels.includes(removedOption.label);
-                        const currentVictimCount = multiSelected.optionSelected.filter(opt =>
-                          victimLabels.includes(opt.label)
-                        ).length;
-
-                        if (nameID && isVictim && currentVictimCount <= 1) {
+                        if ((action === 'remove-value' || action === 'pop-value') && isRemovingVictim && value.checkVictem === 1 && nameID) {
                           return;
                         }
-                      }
-                      if (value.checkVictem === 1 || (value.checkVictem === 0 && value.checkOffender === 1) || value.checkOffender === 0) {
-                        OnChangeSelectedReason(selectedOptions, 'NameReasonCodeID');
-                      }
-                    }}
-                  />
-                </div>
-                {
-                  roleStatus && MstPage !== "MST-Name-Dash" ?
-                    <>
-                      <div className="col-3 col-md-3 col-lg-1 mt-3">
-                        <label htmlFor="" className='label-name '>
-                          Victim Type
-                          {errors.VictimTypeError !== 'true' ? (
-                            <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.VictimTypeError}</p>
-                          ) : null}</label>
-                      </div>
-                      <div className="col-3 col-md-3 col-lg-2  mt-2" >
-                        <Select
-                          name='VictimTypeID'
-                          value={victimTypeDrp?.filter((obj) => obj.value === value?.VictimTypeID)}
-                          isClearable
-                          options={victimTypeDrp}
-                          onChange={(e) => { ChangeDropDown(e, 'VictimTypeID'); }}
-                          placeholder="Select.."
+                        if ((action === 'remove-value' || action === 'pop-value') && isRemovingVictim && value.checkVictem !== 1) {
+                          setMultiSelected({ optionSelected: [] });
+                          setValue(prev => ({ ...prev, NameReasonCodeID: null }));
+                        }
+                        onChangeReaonsRole(selectedOptions, 'Role');
+                      }}
 
-                          styles={isLockOrRestrictModule("Lock", editval[0]?.VictimTypeID, isLocked) ? LockFildscolour : roleStatus ? colourStylesReason : ''}
-                          isDisabled={isLockOrRestrictModule("Lock", editval[0]?.VictimTypeID, isLocked) || isSocietyName}
-                        />
-                      </div>
-                    </>
-                    :
-                    <></>
-                }
+                      styles={isLockOrRestrictModule("Lock", editval[0]?.Role, isLocked, true) || nibrsSubmittedName === 1 || isSocietyName ? LockFildscolour : MstPage === "MST-Name-Dash" ? 'readonlyColor' : colourStylesRole}
+                      isDisabled={isLockOrRestrictModule("Lock", editval[0]?.Role, isLocked, true) || nibrsSubmittedName === 1 || isSocietyName || MstPage === "MST-Name-Dash"}
+                    />
+                  </div>
+                  <div className="col-2 col-md-2 col-lg-1">
+                    <label htmlFor="" className='label-name mb-0'>
+                      Reason Code
+                      {errors.NameReasonCodeIDError !== 'true' ? (
+                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.NameReasonCodeIDError}</p>
+                      ) : null}
+                    </label>
+                  </div>
+                  <div className="col-10 col-md-10 col-lg-4" >
+                    <SelectBox
+                      styles={isLockOrRestrictModule("Lock", editval[0]?.ReasonCode, isLocked, true) || nibrsSubmittedName === 1 || isSocietyName ? LockFildscolour : MstPage === "MST-Name-Dash" ? colourStylesMasterReason : colourStylesReason}
+                      isDisabled={isLockOrRestrictModule("Lock", editval[0]?.ReasonCode, isLocked, true) || nibrsSubmittedName === 1 || isSocietyName || isSecondDropdownDisabled && MstPage !== "MST-Name-Dash" ? true : false}
 
-                <div className="col-lg-5" style={{ margin: '0 auto' }} >
-                  <div className='row align-items-center' style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'nowrap' }}>
-                    {
-                      nameID && MstPage !== "MST-Name-Dash" && NameTabCount?.NameOffenseCount <= 0 ?
-                        <>
+                      options={reasonIdDrp ? getFiltredReasonCode(reasonIdDrp) : []}
+                      menuPlacement="bottom"
+                      isMulti
+                      closeMenuOnSelect={false}
+                      hideSelectedOptions={true}
+                      isClearable={false}
+                      allowSelectAll={false}
+                      value={multiSelected.optionSelected}
+                      components={{ MultiValue }}
+                      onChange={(selectedOptions, actionMeta) => {
+                        const victimLabels = [
+                          "Victim", "Business Is A Victim", "Domestic Victim", "Individual Is A Victim",
+                          "Individual Victim", "Other Is A Victim", "Restraint Victim", "Society Is A Victim"
+                        ];
+
+                        const removedOption = actionMeta.removedValue;
+                        const action = actionMeta.action;
+                        if (
+                          (action === 'remove-value' || action === 'pop-value') &&
+                          removedOption?.reasonCode === 'WAR' &&
+                          NameTabCount?.NameWarrantCount > 0
+                        ) {
+                          return;
+                        }
+                        if (
+                          (action === 'remove-value' || action === 'pop-value') &&
+                          (removedOption?.reasonCode === 'ADAR' || removedOption?.reasonCode === 'JVA') &&
+                          arrestCount > 0
+                        ) {
+                          return;
+                        }
+                        if (
+                          (action === 'remove-value' || action === 'pop-value') &&
+                          (removedOption?.reasonCode === 'MIS') &&
+                          missingpersonCount > 0
+                        ) {
+                          return;
+                        }
+                        if (
+                          (action === 'remove-value' || action === 'pop-value') &&
+                          (removedOption?.reasonCode === 'OWN') &&
+                          propertyOwnerCount > 0
+                        ) {
+                          return;
+                        }
+                        if ((action === 'remove-value' || action === 'pop-value') && removedOption) {
+                          const isVictim = victimLabels.includes(removedOption.label);
+                          const currentVictimCount = multiSelected.optionSelected.filter(opt =>
+                            victimLabels.includes(opt.label)
+                          ).length;
+
+                          if (nameID && isVictim && currentVictimCount <= 1) {
+                            return;
+                          }
+                        }
+                        if (value.checkVictem === 1 || (value.checkVictem === 0 && value.checkOffender === 1) || value.checkOffender === 0) {
+                          OnChangeSelectedReason(selectedOptions, 'NameReasonCodeID');
+                        }
+                      }}
+                    />
+                  </div>
+                  {
+                    roleStatus && MstPage !== "MST-Name-Dash" ?
+                      <>
+                        <div className="col-3 col-md-3 col-lg-1 mt-3">
+                          <label htmlFor="" className='label-name '>
+                            Victim Type
+                            {errors.VictimTypeError !== 'true' ? (
+                              <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.VictimTypeError}</p>
+                            ) : null}</label>
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2  mt-2" >
+                          <Select
+                            name='VictimTypeID'
+                            value={victimTypeDrp?.filter((obj) => obj.value === value?.VictimTypeID)}
+                            isClearable
+                            options={victimTypeDrp}
+                            onChange={(e) => { ChangeDropDown(e, 'VictimTypeID'); }}
+                            placeholder="Select.."
+
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.VictimTypeID, isLocked) ? LockFildscolour : roleStatus ? colourStylesReason : ''}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.VictimTypeID, isLocked) || isSocietyName}
+                          />
+                        </div>
+                      </>
+                      :
+                      <></>
+                  }
+
+                  <div className="col-lg-5" style={{ margin: '0 auto' }} >
+                    <div className='row align-items-center' style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'nowrap' }}>
+                      {
+                        nameID && MstPage !== "MST-Name-Dash" && NameTabCount?.NameOffenseCount <= 0 ?
+                          <>
+                            <span
+                              onMouseEnter={handleMouseEnter}
+                              onMouseLeave={handleMouseLeave}
+                              style={{
+                                display: 'flex', justifyContent: 'center', alignItems: 'center',
+                                color: isHovered ? 'blue' : 'red', border: '1px solid red', backgroundColor: '#fbecec',
+                                borderRadius: '4px', padding: '4px 8px', margin: '0 auto',
+                                cursor: 'pointer', fontSize: '14px', fontWeight: 500,
+                                width: 'fit-content', height: 'fit-content',
+
+                              }}
+                              className="col-12 col-md-4" onClick={() => setNameShowPage('Offense')}>
+                              Add Offense
+                            </span>
+                          </>
+                          : <></>
+
+                      }
+                      {
+                        isMissing && MstPage !== "MST-Name-Dash" ? (
                           <span
                             onMouseEnter={handleMouseEnter}
                             onMouseLeave={handleMouseLeave}
+                            className="col-12 col-md-4"
+                            // style={{ color: 'red', display: "flex", justifyContent: "end" }}
                             style={{
                               display: 'flex', justifyContent: 'center', alignItems: 'center',
                               color: isHovered ? 'blue' : 'red', border: '1px solid red', backgroundColor: '#fbecec',
@@ -2920,236 +2943,196 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                               width: 'fit-content', height: 'fit-content',
 
                             }}
-                            className="col-12 col-md-4" onClick={() => setNameShowPage('Offense')}>
-                            Add Offense
+                            onClick={(e) => { navigate(`/Missing-Home?IncId=${stringToBase64(mainIncidentID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(nameID)}&MasterNameID=${stringToBase64(masterNameID)}&NameStatus=${true}&MissPerSta=${false}`) }}
+                          >
+                            Missing Person
                           </span>
-                        </>
-                        : <></>
+                        ) : <></>
+                      }
 
-                    }
-                    {
-                      isMissing && MstPage !== "MST-Name-Dash" ? (
+                      {isAdultArrest && MstPage !== "MST-Name-Dash" ? (
                         <span
                           onMouseEnter={handleMouseEnter}
                           onMouseLeave={handleMouseLeave}
                           className="col-12 col-md-4"
-                          // style={{ color: 'red', display: "flex", justifyContent: "end" }}
                           style={{
                             display: 'flex', justifyContent: 'center', alignItems: 'center',
                             color: isHovered ? 'blue' : 'red', border: '1px solid red', backgroundColor: '#fbecec',
                             borderRadius: '4px', padding: '4px 8px', margin: '0 auto',
                             cursor: 'pointer', fontSize: '14px', fontWeight: 500,
                             width: 'fit-content', height: 'fit-content',
-
                           }}
-                          onClick={(e) => { navigate(`/Missing-Home?IncId=${stringToBase64(mainIncidentID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(nameID)}&MasterNameID=${stringToBase64(masterNameID)}&NameStatus=${true}&MissPerSta=${false}`) }}
+                          onClick={(e) => { navigate(`/Arrest-Home?IncId=${stringToBase64(mainIncidentID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(nameID)}&MasterNameID=${stringToBase64(masterNameID)}&NameStatus=${true}`) }}
                         >
-                          Missing Person
+                          Arrest
                         </span>
                       ) : <></>
-                    }
-
-                    {isAdultArrest && MstPage !== "MST-Name-Dash" ? (
-                      <span
-                        onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
-                        className="col-12 col-md-4"
-                        style={{
-                          display: 'flex', justifyContent: 'center', alignItems: 'center',
-                          color: isHovered ? 'blue' : 'red', border: '1px solid red', backgroundColor: '#fbecec',
-                          borderRadius: '4px', padding: '4px 8px', margin: '0 auto',
-                          cursor: 'pointer', fontSize: '14px', fontWeight: 500,
-                          width: 'fit-content', height: 'fit-content',
-                        }}
-                        onClick={(e) => { navigate(`/Arrest-Home?IncId=${stringToBase64(mainIncidentID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(nameID)}&MasterNameID=${stringToBase64(masterNameID)}&NameStatus=${true}`) }}
-                      >
-                        Arrest
-                      </span>
-                    ) : <></>
-                    }
+                      }
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div >
-          </div >
-          <div className='col-12 col-md-12 col-lg-12'>
-            <fieldset className='mt-0 pb-1' style={{ width: "100%" }}>
-              <legend>Address/Contact Info </legend>
-            </fieldset>
-          </div>
-          <div className='row align-items-center mt-1' style={{ rowGap: "8px" }}>
-            <div className='col-5 col-md-8 col-lg-11'>
-              <div className='row align-items-center' style={{ rowGap: "8px" }}>
-                <div className="col-3 col-md-2 col-lg-1">
-                  <label htmlFor="" className='label-name mb-0'>Address
-                    {errors.CrimeLocationError !== 'true' ? (
-                      <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.CrimeLocationError}</p>
-                    ) : null}</label>
-                </div>
-                <div className="col-7  col-md-7 col-lg-9 mt-0 text-field" >
-                  <Location
-                    {...{ value, setValue, setChangesStatus, locationStatus, setLocationStatus, updateStatus, setOnSelectLocation, setStatesChangeStatus }}
-                    col='Address'
-                    locationID='NameLocationID'
-                    check={isAdult ? false : false}
-                    verify={value.IsVerify}
-                    page='Name'
-                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.NameLocationID, isLocked)}
-                  />
-                </div>
-                <div className="col-3 col-md-3 col-lg-2">
-                  <div className="form-check ">
-                    <input className="form-check-input" type="checkbox" name='IsVerify' value={value?.IsVerify} checked={(value?.IsVerify || !value?.NameLocationID)} onChange={HandleChange} data-toggle="modal" data-target="#NameVerifyModal" id="flexCheckDefault3" />
-                    <label className="form-check-label mr-2" htmlFor="flexCheckDefault3">
-                      Verify
-                    </label>
-                    {
-                      !value?.IsVerify && addVerifySingleData.length > 0 ?
-                        <i className="fa fa-edit " onKeyDown={''} onClick={() => { if (value.NameLocationID) { get_Add_Single_Data(value.NameLocationID); setModalStatus(true); } }} data-toggle="modal" data-target="#NameVerifyModal" style={{ cursor: 'pointer', backgroundColor: '' }} > Edit </i>
-                        :
-                        <>
-                        </>
-                    }
+              </div >
+            </div>
+            <div className='col-12 col-md-12 col-lg-12'>
+              <fieldset className='mt-0 py-1' style={{ width: "100%" }}>
+                <legend>Address/Contact Info </legend>
+              </fieldset>
+            </div>
+            <div className='row align-items-center' style={{ rowGap: "3px" }}>
+              <div className='col-5 col-md-8 col-lg-11'>
+                <div className='row align-items-center' style={{ rowGap: "3px" }}>
+                  <div className="col-3 col-md-2 col-lg-1">
+                    <label htmlFor="" className='label-name mb-0'>Address
+                      {errors.CrimeLocationError !== 'true' ? (
+                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.CrimeLocationError}</p>
+                      ) : null}</label>
                   </div>
-                </div>
-                <div className="col-2 col-md-2 col-lg-1 px-0">
-                  <label htmlFor="" className='label-name px-0 mb-0'>Contact Type</label>
-                </div>
-                <div className="col-3 col-md-3 col-lg-3">
-                  <Select
-                    name='PhoneTypeID'
-                    value={phoneTypeIdDrp?.filter((obj) => obj.value === value?.PhoneTypeID)}
-                    options={phoneTypeIdDrp}
-                    onChange={(e) => ChangePhoneType(e, 'PhoneTypeID')}
-                    isClearable
-                    placeholder="Select..."
-
-                    disabled={isLockOrRestrictModule("Lock", editval[0]?.PhoneTypeID, isLocked) || phoneTypeCode ? false : true}
-                    styles={isLockOrRestrictModule("Lock", editval[0]?.PhoneTypeID, isLocked) ? LockFildscolour : customStylesWithOutColor}
-                  />
-                </div>
-                <div className="col-1 col-md-2 col-lg-1">
-                  <label htmlFor="" className='label-name mb-0'>Contact
-                  </label>
-                </div>
-                <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
-                  <input
-                    type="text"
-                    maxLength={phoneTypeCode !== 'E' ? 10 : ''}
-                    name='Contact'
-                    value={value?.Contact}
-                    onChange={HandleChange}
-                    required
-                    autoComplete='off'
-                    disabled={isLockOrRestrictModule("Lock", editval[0]?.Contact, isLocked) || value?.PhoneTypeID ? false : true}
-                    className={isLockOrRestrictModule("Lock", editval[0]?.Contact, isLocked) ? 'LockFildsColor' : value?.PhoneTypeID ? 'requiredColor' : 'readonlyColor'}
-                  />
-                  {errors.ContactError !== 'true' ? (
-                    <span style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ContactError}</span>
-                  ) : null}
-                </div>
-                <div className="col-3 col-md-1 col-lg-2">
-                  {
-                    phoneTypeCode !== 'E' ?
-                      <div className="form-check ">
-                        <input className="form-check-input" type="checkbox" name='IsUnListedPhNo' value={value?.IsUnListedPhNo} disabled={!value?.Contact ? true : false} checked={value?.IsUnListedPhNo} onChange={HandleChange} id="flexCheckDefault2" />
-                        <label className="form-check-label" htmlFor="flexCheckDefault2">
-                          Unlisted
-                        </label>
-                      </div> : <></>
-                  }
-                </div>
-              </div>
-            </div>
-            <div className="col-4 col-md-4 col-lg-1" >
-              <div className="img-box" data-toggle="modal" data-target="#ImageModel">
-                <Carousel autoPlay={true} className="carousel-style" showArrows={true} showThumbs={false} showStatus={false} >
-                  {
-                    nameMultiImg.length > 0 ?
-                      nameMultiImg?.map((item) => (
-
-                        <div key={item?.PhotoID ? item?.PhotoID : item?.imgID} onClick={() => { setImageModalStatus(true) }} data-toggle="modal" data-target="#ImageModel" className='model-img'>
-                          <img src={`data:image/png;base64,${item.Photo}`} style={{ height: '90px' }} />
-                        </div>
-                      ))
-                      :
-                      <div data-toggle="modal" data-target="#ImageModel" onClick={() => { setImageModalStatus(true) }} >
-                        <img src={defualtImage} alt='' />
-                      </div>
-                  }
-                </Carousel>
-              </div>
-            </div>
-          </div >
-          <div className='row mb-2'>
-            {!isViewEventDetails &&
-              <div className="col-12 col-md-12 col-lg-12 text-right" >
-                <div className=" mt-1 text-md-right " >
-
-                  {/* {
-                  Don't Remove this code ----->  Devendra Kashyap
-                   
-                    MstPage !== "MST-Name-Dash" && nameFilterData?.length > 0 && <button type="button"
-                      className="btn btn-sm  text-white mr-1"
-                      onClick={() => { nibrsValidateName(mainIncidentID, incReportedDate, baseDate, oriNumber) }}
-                      style={{
-                        backgroundColor: `${nibrsValidateNameData?.length > 0 ? nibrsValidateNameData?.length > 0 ? 'Red' : 'green' : 'teal'}`,
-                      }}
-                    >
-                      Validate TIBRS
-                    </button>
-                  } */}
-
-                  <button type="button" className="btn btn-sm btn-success mr-1" data-toggle="modal" data-target="#NCICModal" onClick={() => { setOpenNCICModal(true) }}>TLETS</button>
-
-                  {/* <button type="button" ref={crossButtonRef} className="btn btn-sm btn-success  mr-1" onClick={() => { setStatusFalse(); }}>
-                    New
-                  </button> */}
-                  {
-                    (masterNameID && MstPage === "MST-Name-Dash") || (nameID) ? (
-                      effectiveScreenPermission ?
-                        effectiveScreenPermission[0]?.Changeok ?
-                          <>
-                            <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); setcalled(true) }} ref={saveButtonRef} disabled={isLoading || nameSearchStatus || !statesChangeStatus}>Update</button>
-
-                          </>
+                  <div className="col-7  col-md-7 col-lg-9 mt-0 text-field" >
+                    <Location
+                      {...{ value, setValue, setChangesStatus, locationStatus, setLocationStatus, updateStatus, setOnSelectLocation, setStatesChangeStatus }}
+                      col='Address'
+                      locationID='NameLocationID'
+                      check={isAdult ? false : false}
+                      verify={value.IsVerify}
+                      page='Name'
+                      isDisabled={isLockOrRestrictModule("Lock", editval[0]?.NameLocationID, isLocked)}
+                    />
+                  </div>
+                  <div className="col-3 col-md-3 col-lg-2">
+                    <div className="form-check ">
+                      <input className="form-check-input" type="checkbox" name='IsVerify' value={value?.IsVerify} checked={(value?.IsVerify || !value?.NameLocationID)} onChange={HandleChange} data-toggle="modal" data-target="#NameVerifyModal" id="flexCheckDefault3" />
+                      <label className="form-check-label mr-2" htmlFor="flexCheckDefault3">
+                        Verify
+                      </label>
+                      {
+                        !value?.IsVerify && addVerifySingleData.length > 0 ?
+                          <i className="fa fa-edit " onKeyDown={''} onClick={() => { if (value.NameLocationID) { get_Add_Single_Data(value.NameLocationID); setModalStatus(true); } }} data-toggle="modal" data-target="#NameVerifyModal" style={{ cursor: 'pointer', backgroundColor: '' }} > Edit </i>
                           :
                           <>
                           </>
-                        :
-                        <>
-                          <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); setcalled(true) }} ref={saveButtonRef} disabled={isLoading || nameSearchStatus || !statesChangeStatus}>Update</button>
+                      }
+                    </div>
+                  </div>
+                  <div className="col-2 col-md-2 col-lg-1 px-0">
+                    <label htmlFor="" className='label-name px-0 mb-0'>Contact Type</label>
+                  </div>
+                  <div className="col-3 col-md-3 col-lg-3">
+                    <Select
+                      name='PhoneTypeID'
+                      value={phoneTypeIdDrp?.filter((obj) => obj.value === value?.PhoneTypeID)}
+                      options={phoneTypeIdDrp}
+                      onChange={(e) => ChangePhoneType(e, 'PhoneTypeID')}
+                      isClearable
+                      placeholder="Select..."
 
-                        </>
-                    ) :
-                      (
+                      disabled={isLockOrRestrictModule("Lock", editval[0]?.PhoneTypeID, isLocked) || phoneTypeCode ? false : true}
+                      styles={isLockOrRestrictModule("Lock", editval[0]?.PhoneTypeID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                    />
+                  </div>
+                  <div className="col-1 col-md-2 col-lg-1">
+                    <label htmlFor="" className='label-name mb-0'>Contact
+                    </label>
+                  </div>
+                  <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
+                    <input
+                      type="text"
+                      maxLength={phoneTypeCode !== 'E' ? 10 : ''}
+                      name='Contact'
+                      value={value?.Contact}
+                      onChange={HandleChange}
+                      required
+                      autoComplete='off'
+                      disabled={isLockOrRestrictModule("Lock", editval[0]?.Contact, isLocked) || value?.PhoneTypeID ? false : true}
+                      className={isLockOrRestrictModule("Lock", editval[0]?.Contact, isLocked) ? 'LockFildsColor' : value?.PhoneTypeID ? 'requiredColor' : 'readonlyColor'}
+                    />
+                    {errors.ContactError !== 'true' ? (
+                      <span style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ContactError}</span>
+                    ) : null}
+                  </div>
+                  <div className="col-3 col-md-1 col-lg-2">
+                    {
+                      phoneTypeCode !== 'E' ?
+                        <div className="form-check ">
+                          <input className="form-check-input" type="checkbox" name='IsUnListedPhNo' value={value?.IsUnListedPhNo} disabled={!value?.Contact ? true : false} checked={value?.IsUnListedPhNo} onChange={HandleChange} id="flexCheckDefault2" />
+                          <label className="form-check-label" htmlFor="flexCheckDefault2">
+                            Unlisted
+                          </label>
+                        </div> : <></>
+                    }
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-4 col-md-4 col-lg-1" >
+                <div className="img-box" data-toggle="modal" data-target="#ImageModel">
+                  <Carousel autoPlay={true} className="carousel-style" showArrows={true} showThumbs={false} showStatus={false} >
+                    {
+                      nameMultiImg.length > 0 ?
+                        nameMultiImg?.map((item) => (
+
+                          <div key={item?.PhotoID ? item?.PhotoID : item?.imgID} onClick={() => { setImageModalStatus(true) }} data-toggle="modal" data-target="#ImageModel" className='model-img'>
+                            <img src={`data:image/png;base64,${item.Photo}`} style={{ height: '90px' }} />
+                          </div>
+                        ))
+                        :
+                        <div data-toggle="modal" data-target="#ImageModel" onClick={() => { setImageModalStatus(true) }} >
+                          <img src={defualtImage} alt='' />
+                        </div>
+                    }
+                  </Carousel>
+                </div>
+              </div>
+            </div >
+            <div className='row mb-1'>
+              {!isViewEventDetails &&
+                <div className="col-12 col-md-12 col-lg-12 text-right" >
+                  <div className=" mt-1 text-md-right " >
+                    <button type="button" className="btn btn-sm btn-success mr-1" data-toggle="modal" data-target="#NCICModal" onClick={() => { setOpenNCICModal(true) }}>TLETS</button>
+                    {
+                      (masterNameID && MstPage === "MST-Name-Dash") || (nameID) ? (
                         effectiveScreenPermission ?
-                          effectiveScreenPermission[0]?.AddOK ?
+                          effectiveScreenPermission[0]?.Changeok ?
                             <>
-                              <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); setcalled(true) }} disabled={isLoading || nameSearchStatus || saveValue} ref={saveButtonRef}>Save</button>
-                              {nameTypeCode !== "B" && (
-                                <button type="button" data-toggle="modal" data-target="#SearchModal" className="btn btn-sm btn-success mr-1" onClick={() => getNameSearch(loginAgencyID, value?.NameTypeID, value.LastName, value.FirstName, value.MiddleName, value.DateOfBirth, value.SSN, value.HeightFrom, value.HeightTo, value.WeightFrom, value.WeightTo, value.EthnicityID, value.ResidentID, value.RaceID, value.SexID, value.PhoneTypeID, value.Contact, true,)}>Search</button>
-                              )}
+                              <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); setcalled(true) }} ref={saveButtonRef} disabled={isLoading || nameSearchStatus || !statesChangeStatus}>Update</button>
+
                             </>
                             :
                             <>
                             </>
                           :
                           <>
-                            <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); setcalled(true) }} disabled={isLoading || nameSearchStatus || saveValue}>Save</button>
+                            <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); setcalled(true) }} ref={saveButtonRef} disabled={isLoading || nameSearchStatus || !statesChangeStatus}>Update</button>
 
                           </>
-                      )
-                  }
-                  {
-                    MstPage === "MST-Name-Dash" &&
-                    <button type="button" className="btn btn-sm btn-success mx-1" ref={closeButtonRef} onClick={onMasterPropClose} data-dismiss="modal">Close</button>
-                  }
-                </div>
-              </div>
-            }
+                      ) :
+                        (
+                          effectiveScreenPermission ?
+                            effectiveScreenPermission[0]?.AddOK ?
+                              <>
+                                <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); setcalled(true) }} disabled={isLoading || nameSearchStatus || saveValue} ref={saveButtonRef}>Save</button>
+                                {nameTypeCode !== "B" && (
+                                  <button type="button" data-toggle="modal" data-target="#SearchModal" className="btn btn-sm btn-success mr-1" onClick={() => getNameSearch(loginAgencyID, value?.NameTypeID, value.LastName, value.FirstName, value.MiddleName, value.DateOfBirth, value.SSN, value.HeightFrom, value.HeightTo, value.WeightFrom, value.WeightTo, value.EthnicityID, value.ResidentID, value.RaceID, value.SexID, value.PhoneTypeID, value.Contact, true,)}>Search</button>
+                                )}
+                              </>
+                              :
+                              <>
+                              </>
+                            :
+                            <>
+                              <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); setcalled(true) }} disabled={isLoading || nameSearchStatus || saveValue}>Save</button>
 
-          </div >
+                            </>
+                        )
+                    }
+                    {
+                      MstPage === "MST-Name-Dash" &&
+                      <button type="button" className="btn btn-sm btn-success mx-1" ref={closeButtonRef} onClick={onMasterPropClose} data-dismiss="modal">Close</button>
+                    }
+                  </div>
+                </div>
+              }
+            </div >
+          </div>
           <ListModal {...{ openPage, setOpenPage }} />
           <NameSearchModal {...{ mainIncidentID, nameSearchValue, loginAgencyID, setValue, ResetSearch, setMultiSelected, value, setDobDate, get_Name_MultiImage, setUpdateStatus, updateStatus, MstPage }} />
           <DeletePopUpModal func={delete_Image_File} />

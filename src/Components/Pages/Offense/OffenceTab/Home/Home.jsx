@@ -1998,8 +1998,8 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
     <>
       {((incidentCount[0]?.OffenseCount === 0 || incidentCount[0]?.OffenseCount === "0") || (OffSta === true || OffSta === 'true') || isNew === "true" || isNew === true) && (
         <>
-          <div className="col-12 child">
-            <div className="row align-items-center mt-2" style={{ rowGap: "8px" }}>
+          <div className="col-12 Offense_child">
+            <div className="row align-items-center mt-1 " style={{ rowGap: "5px" }}>
               <div className="col-4 col-md-4 custom-col-12 ">
                 <span data-toggle="modal" onClick={() => { setOpenPage("Law Title"); }} data-target="#ListModel" className="new-link px-0">Law Title</span>
               </div>
@@ -2113,16 +2113,16 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   placeholder="Select..."
                 />
               </div>
-              <div className="col-4 col-md-4 custom-col-12 " style={{ lineHeight: 1.1 }}>
-                <span style={{ lineHeight: 1.1 }} data-toggle="modal" onClick={() => setOpenPage("Location Type")} data-target="#ListModel" className="new-link d-block text-nowrap">
-                  Primary Location Type
+              <div className="col-4 col-md-4 custom-col-12 text-right " style={{ lineHeight: 1.1 }}>
+                <span style={{ lineHeight: 1.1 }} data-toggle="modal" onClick={() => setOpenPage("Location Type")} data-target="#ListModel" className="new-link  ">
+                  Primary Location 
                   {locationTypeComplteStatus && (<ErrorTooltip ErrorStr={locationTypeComplteError} />)}
                   {chekLocationType(nibrsCode, primaryLocationCode) && (<ErrorTooltip ErrorStr={CyberspaceLocationError} />)}
                 </span>
                 <br />
                 {errors.PrimaryLocationError !== "true" ? (<div style={{ color: "red", fontSize: "13px", display: "block", display: "flex", width: "100%", justifyContent: "flex-end" }}>{errors.PrimaryLocationError}</div>) : null}
               </div>
-              <div className="col-7 col-md-7 col-lg-4 ">
+              <div className="lg-custom_new">
                 <Select
                   name="PrimaryLocationId"
 
@@ -2143,22 +2143,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                             Requiredcolour
                   }
                   isDisabled={isLockOrRestrictModule("Lock", editval[0]?.PrimaryLocationId, isLocked) || nibrsSubmittedOffenseMain === 1}
-
-
-                  // styles={
-                  //   nibrsSubmittedOffenseMain === 1 ? LockFildscolour
-                  //     :
-                  //     (panelCode === "03" || panelCode === "07" || panelCode === "06") ? Requiredcolour
-                  //       :
-                  //       loginAgencyState === "TX" ? chekLocationType(nibrsCode, primaryLocationCode) ? nibrscolourStyles
-                  //         :
-                  //         check_Valid_Nibrs_Code(nibrsCode) ? customStylesWithOutColor
-                  //           :
-                  //           Requiredcolour
-                  //         :
-                  //         Requiredcolour
-                  // }
-                  // isDisabled={nibrsSubmittedOffenseMain === 1}
                   value={locationIdDrp?.filter((obj) => obj.value === value?.PrimaryLocationId)}
                   isClearable
                   options={locationIdDrp}
@@ -2166,15 +2150,12 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   placeholder="Select..."
                 />
               </div>
-              <div className="" style={{ flex: "0 0 21.3%", minWidth: "21.3%" }}>
-                <span data-toggle="modal" onClick={() => setOpenPage("Location Type")} data-target="#ListModel" className="new-link">Secondary Location Type </span>
+              <div className="custom-col-12_new">
+                <span data-toggle="modal" onClick={() => setOpenPage("Location Type")} data-target="#ListModel" className="new-link">Secondary Location  </span>
               </div>
-              <div className="col-7 col-md-7 col-lg-4  ">
+              <div className="lg-custom_new  ">
                 <Select
                   name="SecondaryLocationId"
-
-                  // styles={customStylesWithOutColor}
-                  // isDisabled={!value?.PrimaryLocationId}
                   styles={isLockOrRestrictModule("Lock", editval[0]?.SecondaryLocationId, isLocked) ? LockFildscolour : customStylesWithOutColor}
                   isDisabled={isLockOrRestrictModule("Lock", editval[0]?.SecondaryLocationId, isLocked) || !value?.PrimaryLocationId}
 
@@ -2186,10 +2167,51 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   placeholder="Select..."
                 />
               </div>
-              <div className="custom-col-12">
-                <span data-toggle="modal" onClick={() => setOpenPage("Crime Left  Scene")} data-target="#ListModel" className="new-link px-0">Offender Left Scene </span>
+
+              {nibrsCode === "220" || nibrsCode === "210" || nibrsCode === "120" || nibrsCode === "23D" || nibrsCode === "23F" || nibrsCode === "23H" || nibrsCode === "240" || nibrsCode === "26A" || nibrsCode === "26A" || nibrsCode === "23D" || nibrsCode === "26C" || nibrsCode === "26E" || nibrsCode === "26F" || nibrsCode === "26G" || nibrsCode === "270" || nibrsCode === "510" ?
+                <>
+                  <div className="custom-col-12_new" style={{ display: "flex", flexDirection: "column" }}>
+                    <div>
+                      <span className="new-label">
+                        Cargo Theft
+                        {errors.CargoTheftError !== "true" ? (
+                          <p style={{ color: "red", fontSize: "11px", margin: "0px", padding: "0px" }}>
+                            {errors.CargoTheftError}
+                          </p>
+                        ) : null}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="lg-custom_new ">
+                    <Select
+                      name="IsCargoTheftInvolved"
+                      value={YesNoArr?.filter((obj) => obj.value === value?.IsCargoTheftInvolved)}
+                      options={YesNoArr}
+                      menuPlacement="bottom"
+                      onChange={(e) => OnChangeCargoTheft(e, "IsCargoTheftInvolved")}
+                      isClearable={value?.IsCargoTheftInvolved ? true : false}
+                      placeholder="Select..."
+                      // styles={Requiredcolour}
+                      styles={isLockOrRestrictModule("Lock", editval[0]?.IsCargoTheftInvolved, isLocked) ? LockFildscolour : Requiredcolour}
+                      isDisabled={isLockOrRestrictModule("Lock", editval[0]?.IsCargoTheftInvolved, isLocked) ? true : false}
+                    />
+                  </div>
+                </>
+                :
+                <>
+                  <div className="custom-col-12_new"></div>
+                  <div className="lg-custom_new"></div>
+                </>
+              }
+
+
+
+
+              <div className="custom-col-12_new">
+                <span data-toggle="modal" onClick={() => setOpenPage("Crime Left  Scene")} data-target="#ListModel" className="new-link ">Offender Left Scene </span>
               </div>
-              <div className="col-7 col-md-7 col-lg-4">
+              <div className="lg-custom_new">
                 <Select
                   name="OffenderLeftSceneId"
                   // styles={customStylesWithOutColor}
@@ -2203,12 +2225,14 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   placeholder="Select..."
                 />
               </div>
-              <div className="" style={{ flex: "0 0 21.3%", minWidth: "21.3%" }}>
-                <label htmlFor="" className="new-label">
+
+              <div className="custom-col-12_new">
+                <label htmlFor="" className="new-label mb-0">
                   Domestic violence
                 </label>
               </div>
-              <div className="col-7 col-md-7 col-lg-4 ">
+
+              <div className="lg-custom_new">
                 <Select
                   onChange={(e) => changeDropDowns(e, "IsDomesticViolence")}
                   options={StatusOptions}
@@ -2221,7 +2245,8 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   isDisabled={isLockOrRestrictModule("Lock", editval[0]?.IsDomesticViolence, isLocked) || nibrsSubmittedOffenseMain === 1}
                 />
               </div>
-              <div className="custom-col-12">
+
+              <div className="custom-col-12_new">
                 <label htmlFor="" className="new-label d-block m-0 text-nowrap">
                   Gang Information
                   {gangInformationStatus && (<ErrorTooltip ErrorStr={gangInformationError} />)}
@@ -2236,7 +2261,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   </span>
                 ) : null}
               </div>
-              <div className="col-7 col-md-7 col-lg-4">
+              <div className="lg-custom_new">
                 <Select
                   isMulti
                   styles={
@@ -2285,14 +2310,14 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                 />
               </div>
 
-              <div className="" style={{ flex: "0 0 21.3%", minWidth: "21.3%" }} >
+              <div className="custom-col-12_new">
                 <label htmlFor="" className="new-label m-0 text-nowrap">
                   Premises Entered
                 </label>
                 <br />
                 {errors.PremisesEnteredError !== "true" ? (<div style={{ color: "red", fontSize: "13px", display: "block", display: "flex", width: "100%", justifyContent: "flex-end" }}  >{errors.PremisesEnteredError}</div>) : null}
               </div>
-              <div className="col-7 col-md-7 col-lg-4 text-field mt-0">
+              <div className="lg-custom_new text-field mt-0">
                 <input
                   type="text"
                   style={{
@@ -2314,7 +2339,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   disabled={isLockOrRestrictModule("Lock", editval[0]?.PremisesEntered, isLocked) ? true : false}
                 />
               </div>
-              <div className="custom-col-12" style={{ lineHeight: 1.1 }}>
+              <div className="custom-col-12_new" style={{ lineHeight: 1.1 }}>
                 <span data-toggle="modal" onClick={() => setOpenPage("Method Of Entry")} data-target="#ListModel" className="new-link px-0" >
                   Method Of Entry
                   {methodOfEntryStatus ? (<ErrorTooltip ErrorStr={methodOfEntryError} />) : (<></>)}
@@ -2325,7 +2350,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                 </div>
                 ) : null}
               </div>
-              <div className="col-7 col-md-7 col-lg-4 ">
+              <div className="lg-custom_new ">
                 <Select
                   styles={
                     isLockOrRestrictModule("Lock", editval[0]?.CrimeMethodOfEntryID, isLocked) ? LockFildscolour :
@@ -2350,14 +2375,14 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   placeholder="Select..."
                 />
               </div>
-              <div className="" style={{ flex: "0 0 21.3%", minWidth: "21.3%" }} >
+              <div className="custom-col-12_new" >
                 <label htmlFor="" className="new-label px-0 mb-0">
                   Offense  Date/Time{errors.OffenseDttmError !== 'true' ? (
                     <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.OffenseDttmError}</p>
                   ) : null}
                 </label>
               </div>
-              <div className="col-7 col-md-7 col-lg-4 ">
+              <div className="lg-custom_new">
                 <DatePicker
                   id='OffenseDateTime'
                   name='OffenseDateTime'
@@ -2409,40 +2434,9 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                 />
               </div>
 
-              {nibrsCode === "220" || nibrsCode === "210" || nibrsCode === "120" || nibrsCode === "23D" || nibrsCode === "23F" || nibrsCode === "23H" || nibrsCode === "240" || nibrsCode === "26A" || nibrsCode === "26A" || nibrsCode === "23D" || nibrsCode === "26C" || nibrsCode === "26E" || nibrsCode === "26F" || nibrsCode === "26G" || nibrsCode === "270" || nibrsCode === "510" ?
-                <>
-                  <div className="custom-col-12 " style={{ display: "flex", flexDirection: "column" }}>
-                    <div>
-                      <span className="new-label">
-                        Cargo Theft
-                        {errors.CargoTheftError !== "true" ? (
-                          <p style={{ color: "red", fontSize: "11px", margin: "0px", padding: "0px" }}>
-                            {errors.CargoTheftError}
-                          </p>
-                        ) : null}
-                      </span>
-                    </div>
-                  </div>
 
-                  <div className="col-7 col-md-7 col-lg-4">
-                    <Select
-                      name="IsCargoTheftInvolved"
-                      value={YesNoArr?.filter((obj) => obj.value === value?.IsCargoTheftInvolved)}
-                      options={YesNoArr}
-                      menuPlacement="bottom"
-                      onChange={(e) => OnChangeCargoTheft(e, "IsCargoTheftInvolved")}
-                      isClearable={value?.IsCargoTheftInvolved ? true : false}
-                      placeholder="Select..."
-                      // styles={Requiredcolour}
-                      styles={isLockOrRestrictModule("Lock", editval[0]?.IsCargoTheftInvolved, isLocked) ? LockFildscolour : Requiredcolour}
-                      isDisabled={isLockOrRestrictModule("Lock", editval[0]?.IsCargoTheftInvolved, isLocked) ? true : false}
-                    />
-                  </div>
-                </>
-                :
-                <></>
-              }
-              <div className="custom-col-12 text-right" style={["220", "210", "120", "23D", "23F", "23H", "240", "26A", "26C", "26E", "26F", "26G", "270", "510"].includes(nibrsCode) ? { flex: "0 0 21.3%", minWidth: "21.3%" } : {}}>
+
+              <div className="custom-col-12 text-right" >
                 <div className="d-flex flex-column align-items-end">
                   <span data-toggle="modal" onClick={() => { setOpenPage('Offender Suspected of Using') }} data-target="#ListModel" className='new-link px-0 '>
                     Offender suspected of using
@@ -2478,10 +2472,14 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                         :
                         MultiSelectRequredColor
                   }
+                  menuPlacement='top'
                 />
 
               </div>
-              <div className={`text-right ${["220", "210", "120", "23D", "23F", "23H", "240", "26A", "26C", "26E", "26F", "26G", "270", "510"].includes(nibrsCode) ? "custom-col-12" : ""}`} style={!["220", "210", "120", "23D", "23F", "23H", "240", "26A", "26C", "26E", "26F", "26G", "270", "510"].includes(nibrsCode) ? { flex: "0 0 21.3%", minWidth: "21.3%" } : {}}>
+
+              {/* <div className={`text-right ${["220", "210", "120", "23D", "23F", "23H", "240", "26A", "26C", "26E", "26F", "26G", "270", "510"].includes(nibrsCode) ? "custom-col-12" : ""}`} style={!["220", "210", "120", "23D", "23F", "23H", "240", "26A", "26C", "26E", "26F", "26G", "270", "510"].includes(nibrsCode) ? { flex: "0 0 21.3%", minWidth: "21.3%" } : {}}> */}
+
+              <div className={`text-right custom-col-12 `} style={{ flex: "0 0 21.3%", minWidth: "21.3%" }}>
                 <div className="d-flex flex-column align-items-end">
                   {/* Main clickable label */}
                   <span data-toggle="modal" data-target="#ListModel" className="new-link px-0 text-right" onClick={() => setOpenPage("Bias Motivation")} style={{ display: "inline-block" }}>
@@ -2513,6 +2511,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   onChange={(e) => CrimeBiasCategorychange(e)}
                   value={filterArray(crimeBiasCategory, 'label')}
                   placeholder='Select Bias From List'
+                  menuPlacement='top'
 
                   isDisabled={isLockOrRestrictModule("Lock", crimeBiasCategoryEditVal, isLocked, true) || nibrsSubmittedOffenseMain === 1}
                   styles={
@@ -2529,7 +2528,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
 
               </div>
 
-              <div className="custom-col-12 text-right" style={["220", "210", "120", "23D", "23F", "23H", "240", "26A", "26C", "26E", "26F", "26G", "270", "510"].includes(nibrsCode) ? { flex: "0 0 21.3%", minWidth: "21.3%" } : {}}>
+              <div className="custom-col-12 text-right custom-col-12"  >
                 <div className="d-flex flex-column align-items-end">
                   <span data-toggle="modal" data-target="#ListModel" className='new-link px-0 ' onClick={() => { setOpenPage('Weapon Type') }}>Weapon Used (Select Upto 3)</span>
                   <div className="d-flex flex-column align-items-end ">
@@ -2581,8 +2580,8 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                 />
               </div>
 
-              <div className={`text-right ${["220", "210", "120", "23D", "23F", "23H", "240", "26A", "26C", "26E", "26F", "26G", "270", "510"].includes(nibrsCode) ? "custom-col-12" : ""}`} style={!["220", "210", "120", "23D", "23F", "23H", "240", "26A", "26C", "26E", "26F", "26G", "270", "510"].includes(nibrsCode) ? { flex: "0 0 21.3%", minWidth: "21.3%" } : {}}>
-
+              {/* <div className={`text-right ${["220", "210", "120", "23D", "23F", "23H", "240", "26A", "26C", "26E", "26F", "26G", "270", "510"].includes(nibrsCode) ? "custom-col-12" : ""}`} style={!["220", "210", "120", "23D", "23F", "23H", "240", "26A", "26C", "26E", "26F", "26G", "270", "510"].includes(nibrsCode) ? { flex: "0 0 21.3%", minWidth: "21.3%" } : {}}> */}
+              <div className={`text-right `} style={{flex: "0 0 21.3%", minWidth: "21.3%"}} >
                 <div className="d-flex flex-column align-items-end">
                   <span data-toggle="modal" data-target="#ListModel" className='new-link px-0' onClick={() => { setOpenPage('Criminal Activity') }}>Criminal Activity</span>
                   <div className="d-flex flex-column align-items-end ">
@@ -2621,73 +2620,83 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   onChange={(e) => CrimeActivitychange(e)}
                   value={filterArray(crimeActivity, 'label')}
                   placeholder='Select Criminal Activity From List'
+                  menuPlacement='top'
                 />
+              </div>
+
+
+
+
+
+
+            </div>
+            <div className="d-flex align-items-center mt-2 mb-1 justify-content-between">
+              {/* CENTER TEXT (auto margin se center me rahega) */}
+              <div className="flex-grow-1 text-center">
+                {
+                  isNibrs999 || nibrsCode === "999" ? null : (
+                    <div
+                      onMouseEnter={handleMouseEnter}
+                      onMouseLeave={handleMouseLeave}
+                      style={{
+                        border: '1px solid red',
+                        backgroundColor: '#ffe6e6',
+                        color: isHovered ? 'blue' : 'red',
+                        padding: '3px',
+                        borderRadius: '4px',
+                        display: 'inline-block',
+                        transition: 'color 0.3s ease',
+                        fontWeight: 'bold',
+                        fontSize: '14px'
+                      }}
+                    >
+                      Each offense must have at least one victim connected
+                    </div>
+                  )
+                }
+              </div>
+
+              {/* BUTTONS RIGHT SIDE */}
+              <div className="text-right mr-1">
+                {OffId ? (
+                  <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => setshowOffPage("CrimeInformation")}>
+                    Crime Information
+                  </button>
+                ) : null}
+
+                {OffId && (OffSta === true || OffSta === "true") ? (
+                  effectiveScreenPermission ? (
+                    effectiveScreenPermission[0]?.Changeok ? (
+                      <button type="button" disabled={!statesChangeStatus} onClick={() => check_Validation_Error()} className="btn btn-sm btn-success">
+                        Update
+                      </button>
+                    ) : null
+                  ) : (
+                    <button type="button" disabled={!statesChangeStatus} onClick={() => check_Validation_Error()} className="btn btn-sm btn-success">
+                      Update
+                    </button>
+                  )
+                ) : (
+                  effectiveScreenPermission ? (
+                    effectiveScreenPermission[0]?.AddOK ? (
+                      <button type="button" onClick={() => check_Validation_Error()} className="btn btn-sm btn-success">
+                        Save
+                      </button>
+                    ) : null
+                  ) : (
+                    <button type="button" onClick={() => check_Validation_Error()} className="btn btn-sm btn-success">
+                      Save
+                    </button>
+                  )
+                )}
               </div>
             </div>
           </div>
 
-          <div className="text-center p-1 mt-2">
-            {
-              isNibrs999 || nibrsCode === "999" ? null : (
-                <div
-                  onMouseEnter={handleMouseEnter}
-                  onMouseLeave={handleMouseLeave}
-                  style={{
-                    border: '1px solid red', backgroundColor: '#ffe6e6', color: isHovered ? 'blue' : 'red',
-                    padding: '3px', borderRadius: '4px', display: 'inline-block',
-                    transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
-                  }}
-                >
-                  Each offense must have at least one victim connected
-                </div>
-              )
-            }
-          </div>
 
-          <div className="col-12 text-right mb-1 mt-1 field-button  d-flex justify-content-between">
-            <div>
-              {/* {offenceFillterData?.length > 0 && (
-            <button
-              type="button"
-              onClick={() => nibrsValidateOffense(mainIncidentID, IncNo)}
-              className={`btn btn-sm text-white mr-2`}
-              style={{ backgroundColor: `${nibrsValidateOffenseData?.length > 0 ? nibrsValidateOffenseData?.length > 0 ? "red" : "green" : "teal"}` }}
-            >
-              Validate TIBRS Offense
-            </button>
-          )} */}
-            </div>
-            <div>
-              {OffId ? (
-                <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => setshowOffPage("CrimeInformation")}>Crime Information</button>
-              ) : (
-                <></>
-              )}
-              {/* <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => setStatusFalse()}>New</button> */}
-              {OffId && (OffSta === true || OffSta === "true") ? (
-                effectiveScreenPermission ? (
-                  effectiveScreenPermission[0]?.Changeok ? (
-                    <button type="button" disabled={!statesChangeStatus} onClick={() => check_Validation_Error()} className="btn btn-sm btn-success ">Update</button>
-                  ) : (
-                    <></>
-                  )
-                ) : (
-                  <button type="button" disabled={!statesChangeStatus} onClick={() => check_Validation_Error()} className="btn btn-sm btn-success ">Update</button>
-                )
-              )
-                :
-                effectiveScreenPermission ? (
-                  effectiveScreenPermission[0]?.AddOK ? (
-                    <button type="button" onClick={() => check_Validation_Error()} className="btn btn-sm btn-success">Save</button>
-                  ) : (
-                    <></>
-                  )
-                ) : (
-                  <button type="button" onClick={() => check_Validation_Error()} className="btn btn-sm btn-success ">Save</button>
-                )
-              }
-            </div>
-          </div>
+
+
+
           <div className="px-0 mt-2">
             {/* <DataTable
           showHeader={true}
