@@ -398,141 +398,141 @@ const OffenceHomeTabs = () => {
                 <div className="dark-row" >
                     <div className="col-12 col-sm-12">
                         <div className="card Agency incident-card">
-                            <div className="card-body">
+                            <div className="card-body py-1">
+
+
                                 {offenceFillterData && offenceFillterData.length > 0 && (
-                                    <div className="card-carousel-container position-relative mb-3">
+                                    <div className="card-carousel-container position-relative mb-1">
                                         {/* Cards Wrapper */}
-                                        {viewType === "card" ? (
-                                            <div className="card-carousel" id="cardCarousel" ref={carouselRef}>
+                                        <div className="col-lg-10">
+                                            {viewType === "card" ? (
+                                                <div className="card-carousel" id="cardCarousel" ref={carouselRef}>
 
-                                                {offenceFillterData?.map((row, index) => (
+                                                    {offenceFillterData?.map((row, index) => (
 
-                                                    <div
-                                                        className="info-card position-relative d-flex align-items-center justify-content-between"
-                                                        key={index}
-                                                        style={{
-                                                            cursor: "pointer",
-                                                            borderLeft: nibrsValidateOffenseData?.some(item => item?.CrimeID === row?.CrimeID) ? "5px solid #EB0101" : "5px solid #2DEB7A",
-                                                            backgroundColor: row?.CrimeID === crimeId ? "#425971" : "#ffffff",
-                                                        }}
-                                                    >
-                                                        {/* Card Content */}
-                                                        <div>
-                                                            <p
-                                                                className="mb-1 small truncate-multiline"
-                                                                style={{ color: row?.CrimeID === crimeId ? "white" : "black", fontWeight: "bold" }}
-                                                            >
-                                                                {row.FBIID_Description}
-                                                            </p>
+                                                        <div
+                                                            className="info-card position-relative d-flex align-items-center justify-content-between"
+                                                            key={index}
+                                                            style={{
+                                                                cursor: "pointer",
+                                                                borderLeft: nibrsValidateOffenseData?.some(item => item?.CrimeID === row?.CrimeID) ? "5px solid #EB0101" : "5px solid #2DEB7A",
+                                                                backgroundColor: row?.CrimeID === crimeId ? "#425971" : "#ffffff",
+                                                            }}
+                                                        >
+                                                            {/* Card Content */}
+                                                            <div>
+                                                                <p
+                                                                    className="mb-1 small truncate-multiline"
+                                                                    style={{ color: row?.CrimeID === crimeId ? "white" : "black", fontWeight: "bold" }}
+                                                                >
+                                                                    {row.FBIID_Description}
+                                                                </p>
 
-                                                            <p
-                                                                className="mb-1 small truncate-multiline"
-                                                                style={{ color: row?.CrimeID === crimeId ? "white" : "black" }}
-                                                            >
-                                                                {row.OffenseName_Description || ""}
-                                                            </p>
+                                                                <p
+                                                                    className="mb-1 small truncate-multiline"
+                                                                    style={{ color: row?.CrimeID === crimeId ? "white" : "black" }}
+                                                                >
+                                                                    {row.OffenseName_Description || ""}
+                                                                </p>
 
-                                                            <p
-                                                                className="mb-0 small truncate-multiline"
-                                                                style={{ color: row?.CrimeID === crimeId ? "white" : "black" }}
-                                                            >
-                                                                {row.LawTitle_Description || ""}
-                                                            </p>
-                                                        </div>
-
-
-                                                        <div className="d-flex flex-column align-items-center gap-2 flex-shrink-0">
-                                                            {/* Edit Button */}
-                                                            {
-                                                                effectiveScreenPermission ?
-                                                                    <>
-                                                                        {
-                                                                            effectiveScreenPermission[0]?.Changeok ?
-                                                                                <>
-                                                                                    <div
-                                                                                        style={{
-                                                                                            backgroundColor: "#001f3f",
-                                                                                            color: "white",
-                                                                                            width: "36px",
-                                                                                            height: "36px",
-                                                                                            borderRadius: "50%",
-                                                                                            display: "flex",
-                                                                                            alignItems: "center",
-                                                                                            justifyContent: "center",
-                                                                                            cursor: "pointer",
-                                                                                            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                                                                            marginBottom: "10px"
-                                                                                            // transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                                                                                        }}
-                                                                                        // onMouseEnter={(e) => {
-                                                                                        //     e.currentTarget.style.transform = "scale(1.1)";
-                                                                                        //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
-                                                                                        // }}
-                                                                                        // onMouseLeave={(e) => {
-                                                                                        //     e.currentTarget.style.transform = "scale(1)";
-                                                                                        //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
-                                                                                        // }}
-                                                                                        onClick={() => {
-                                                                                            setEditValOffense(row);
-
-                                                                                            setshowOffPage('home');
-                                                                                        }}
-
-                                                                                        title="Edit"
-                                                                                    >
-                                                                                        <i className="fa fa-edit"></i>
-                                                                                    </div>
-
-                                                                                </>
-                                                                                :
-                                                                                <>
-                                                                                </>
-                                                                        }
-                                                                    </>
-                                                                    :
-                                                                    <>
-                                                                        <div
-                                                                            style={{
-                                                                                backgroundColor: "#001f3f",
-                                                                                color: "white",
-                                                                                width: "36px",
-                                                                                height: "36px",
-                                                                                borderRadius: "50%",
-                                                                                display: "flex",
-                                                                                alignItems: "center",
-                                                                                justifyContent: "center",
-                                                                                cursor: "pointer",
-                                                                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                                                                marginBottom: "10px"
-                                                                                // transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                                                                            }}
-                                                                            // onMouseEnter={(e) => {
-                                                                            //     e.currentTarget.style.transform = "scale(1.1)";
-                                                                            //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
-                                                                            // }}
-                                                                            // onMouseLeave={(e) => {
-                                                                            //     e.currentTarget.style.transform = "scale(1)";
-                                                                            //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
-                                                                            // }}
-                                                                            onClick={() => {
-                                                                                setEditValOffense(row);
-
-                                                                                setshowOffPage('home');
-                                                                            }}
-
-                                                                            title="Edit"
-                                                                        >
-                                                                            <i className="fa fa-edit"></i>
-                                                                        </div>
-
-                                                                    </>
-                                                            }
-
-                                                            {/* Delete Button */}
+                                                                <p
+                                                                    className="mb-0 small truncate-multiline"
+                                                                    style={{ color: row?.CrimeID === crimeId ? "white" : "black" }}
+                                                                >
+                                                                    {row.LawTitle_Description || ""}
+                                                                </p>
+                                                            </div>
 
 
+                                                            <div className="d-flex flex-column align-items-center gap-2 flex-shrink-0">
+                                                                {/* Edit Button */}
+                                                                {
+                                                                    effectiveScreenPermission ?
+                                                                        <>
+                                                                            {
+                                                                                effectiveScreenPermission[0]?.Changeok ?
+                                                                                    <>
+                                                                                        <div
+                                                                                            style={{
+                                                                                                backgroundColor: "#001f3f",
+                                                                                                color: "white",
+                                                                                                width: "36px",
+                                                                                                height: "36px",
+                                                                                                borderRadius: "50%",
+                                                                                                display: "flex",
+                                                                                                alignItems: "center",
+                                                                                                justifyContent: "center",
+                                                                                                cursor: "pointer",
+                                                                                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                                                marginBottom: "10px"
+                                                                                                // transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                                                                                            }}
+                                                                                            // onMouseEnter={(e) => {
+                                                                                            //     e.currentTarget.style.transform = "scale(1.1)";
+                                                                                            //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
+                                                                                            // }}
+                                                                                            // onMouseLeave={(e) => {
+                                                                                            //     e.currentTarget.style.transform = "scale(1)";
+                                                                                            //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
+                                                                                            // }}
+                                                                                            onClick={() => {
+                                                                                                setEditValOffense(row);
 
-                                                            {row.ArrestChargeCount === "0" && (
+                                                                                                setshowOffPage('home');
+                                                                                            }}
+
+                                                                                            title="Edit"
+                                                                                        >
+                                                                                            <i className="fa fa-edit"></i>
+                                                                                        </div>
+
+                                                                                    </>
+                                                                                    :
+                                                                                    <>
+                                                                                    </>
+                                                                            }
+                                                                        </>
+                                                                        :
+                                                                        <>
+                                                                            <div
+                                                                                style={{
+                                                                                    backgroundColor: "#001f3f",
+                                                                                    color: "white",
+                                                                                    width: "36px",
+                                                                                    height: "36px",
+                                                                                    borderRadius: "50%",
+                                                                                    display: "flex",
+                                                                                    alignItems: "center",
+                                                                                    justifyContent: "center",
+                                                                                    cursor: "pointer",
+                                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                                    marginBottom: "10px"
+                                                                                    // transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                                                                                }}
+                                                                                // onMouseEnter={(e) => {
+                                                                                //     e.currentTarget.style.transform = "scale(1.1)";
+                                                                                //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
+                                                                                // }}
+                                                                                // onMouseLeave={(e) => {
+                                                                                //     e.currentTarget.style.transform = "scale(1)";
+                                                                                //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
+                                                                                // }}
+                                                                                onClick={() => {
+                                                                                    setEditValOffense(row);
+
+                                                                                    setshowOffPage('home');
+                                                                                }}
+
+                                                                                title="Edit"
+                                                                            >
+                                                                                <i className="fa fa-edit"></i>
+                                                                            </div>
+
+                                                                        </>
+                                                                }
+
+                                                                {/* Delete Button */}
+                                                                 {row.ArrestChargeCount === "0" && (
                                                                 <>
                                                                     {
 
@@ -598,58 +598,54 @@ const OffenceHomeTabs = () => {
 
                                                                 </>
                                                             )}
-
-
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )
-                                            :
-                                            viewType === "list" ? (
-                                                <div className="modal-table" style={{ flex: "0 0 95%", maxWidth: "95%" }}>
-                                                    <DataTable
-                                                        showHeader={true}
-                                                        persistTableHead={true}
-                                                        dense
-                                                        columns={columns}
-                                                        data={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? offenceFillterData : "" : offenceFillterData}
-                                                        highlightOnHover
-                                                        noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : "There are no data to display"}
-                                                        responsive
-                                                        customStyles={tableCustomStyles}
-                                                        onRowClicked={(row) => {
-                                                            setEditValOffense(row);
-                                                            setshowOffPage('home');
-                                                        }}
-                                                        conditionalRowStyles={mergedConditionalRowStyles}
-                                                        // conditionalRowStyles={conditionalRowStyles1}
-                                                        // conditionalRowStyles={conditionalRowStyles}
-                                                        fixedHeader
-                                                        fixedHeaderScrollHeight="170px"
-                                                        pagination
-                                                        paginationPerPage={"100"}
-                                                        paginationRowsPerPageOptions={[100, 150, 200, 500]}
-                                                        showPaginationBottom={100}
-                                                    />
+                                                    ))}
                                                 </div>
                                             )
                                                 :
-                                                null
-                                        }
-                                        <div className="text-right ml-3">
-                                            <div className="right-controls d-flex flex-column align-items-center gap-2">
-                                                <div className="view-toggle d-flex flex-column gap-2">
-                                                    <button className="btn btn-sm btn-success mb-2" onClick={() => {
-                                                        setStatusFalse(); setResetErrors(true); setIsLocked(false);
-                                                    }}> New </button>
-                                                    {viewType === "card" && (<button className="btn btn-sm btn-success" onClick={() => setViewType("list")}  > Grid </button>)}
-                                                    {viewType === "list" && (<button className="btn btn-sm btn-success" onClick={() => setViewType("card")} > Card  </button>)}
-                                                </div>
+                                                viewType === "list" ? (
+                                                    <div className="modal-table" >
+                                                        <DataTable
+                                                            showHeader={true}
+                                                            persistTableHead={true}
+                                                            dense
+                                                            columns={columns}
+                                                            data={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? offenceFillterData : "" : offenceFillterData}
+                                                            highlightOnHover
+                                                            noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : "There are no data to display"}
+                                                            responsive
+                                                            customStyles={tableCustomStyles}
+                                                            onRowClicked={(row) => {
+                                                                setEditValOffense(row);
+                                                                setshowOffPage('home');
+                                                            }}
+                                                            conditionalRowStyles={mergedConditionalRowStyles}
+                                                            // conditionalRowStyles={conditionalRowStyles1}
+                                                            // conditionalRowStyles={conditionalRowStyles}
+                                                            fixedHeader
+                                                            fixedHeaderScrollHeight="110px"
+                                                           
+                                                        />
+                                                    </div>
+                                                )
+                                                    :
+                                                    null
+                                            }
+                                        </div>
+                                        <div className="col-lg-2">
+                                            <div className="view-toggle d-flex align-items-center justify-content-end" style={{ gap: "10px" }}>
+                                                <button className="btn btn-sm btn-success" onClick={() => {
+                                                    setStatusFalse(); setResetErrors(true); setIsLocked(false);
+                                                }}> New </button>
+                                                {viewType === "card" && (<button className="btn btn-sm btn-success" onClick={() => setViewType("list")}  > Grid </button>)}
+                                                {viewType === "list" && (<button className="btn btn-sm btn-success" onClick={() => setViewType("card")} > Card  </button>)}
                                             </div>
                                         </div>
                                     </div>
                                 )}
+
+
                                 {
                                     (status || isNew === "true" || isNew === true || offenseCountnew === 0 || offenseCountnew === "0") && (
                                         <div className="row mt-1 " style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>

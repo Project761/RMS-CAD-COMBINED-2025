@@ -734,7 +734,7 @@ const MugShorts = (props) => {
                         <span data-toggle="modal" onClick={() => {
                             setOpenPage('Body Build')
                         }} data-target="#ListModel" className='new-link'>
-                            Body Build Type
+                            Body Build
                         </span>
                     </div>
                     <div className="col-3 col-md-3 col-lg-3" >

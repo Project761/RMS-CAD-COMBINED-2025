@@ -378,9 +378,9 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                 <div className="dark-row" >
                     <div className="col-12 col-sm-12">
                         <div className={`card Agency ${isCad ? 'CAD-incident-card' : 'incident-card'}`}>
-                            <div className="card-body " style={{ paddingTop: "2px" }} >
+                            <div className="card-body pb-0 " style={{ paddingTop: "4px" }} >
                                 {nameFilterData && nameFilterData.length > 0 && MstPage !== "MST-Name-Dash" && (
-                                    <div className="card-carousel-container position-relative mb-3">
+                                    <div className="card-carousel-container position-relative mb-1">
                                         {/* Cards Wrapper */}
                                         {viewType === "card" ? (
                                             <div className="card-carousel" id="cardCarousel" ref={carouselRef}>
@@ -503,7 +503,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                             highlightOnHover
                                                             responsive
                                                             fixedHeader
-                                                            fixedHeaderScrollHeight="150px"
+                                                            fixedHeaderScrollHeight="100px"
                                                             customStyles={tableCustomStyle}
                                                             conditionalRowStyles={conditionalRowStyles}
                                                             onRowClicked={(row) => { set_Edit_Value(row); }}
