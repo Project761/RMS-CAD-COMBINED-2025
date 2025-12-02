@@ -1261,9 +1261,9 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                                 onRowClicked={(row) => {
                                     setEditVal(row);
                                 }}
-                                pagination
-                                paginationRowsPerPageOptions={[5, 10, 15, 20]}
-                                paginationPerPage={'5'}
+                                // pagination
+                                // paginationRowsPerPageOptions={[5, 10, 15, 20]}
+                                // paginationPerPage={'5'}
                                 conditionalRowStyles={conditionalRowStyles}
                                 showHeader={true}
                                 fixedHeaderScrollHeight='80px'

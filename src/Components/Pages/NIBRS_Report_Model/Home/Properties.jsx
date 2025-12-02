@@ -2397,7 +2397,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
             }
 
             <div className="col-12 modal-table pt-1">
-                <DataTable
+                <DataTable  
                     dense
                     fixedHeader
                     persistTableHead={true}
@@ -2412,9 +2412,9 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                         set_EditRow(row);
                     }}
                     fixedHeaderScrollHeight='90px'
-                    pagination
-                    paginationPerPage={'100'}
-                    paginationRowsPerPageOptions={[100, 150, 200, 500]}
+                    // pagination
+                    // paginationPerPage={'100'}
+                    // paginationRowsPerPageOptions={[100, 150, 200, 500]}
                     noDataComponent={"There are no data to display"}
                 />
 
