@@ -26,9 +26,9 @@ import { AgencyContext } from '../../../../Context/Agency/Index';
 import { toastifyError, toastifySuccess } from '../../../Common/AlertMsg';
 import { threeColArray } from '../../../Common/ChangeArrayFormat';
 import { AddDeleteUpadate, fetchPostData, fetchPostDataNibrs, } from '../../../hooks/Api';
-import { Decrypt_Id_Name, Encrypted_Id_Name, Requiredcolour, base64ToString, filterPassedTimeZone, filterPassedTimeZonesProperty, getShowingDateText, getShowingMonthDateYear, getYearWithOutDateTime, stringToBase64, tableCustomStyles } from '../../../Common/Utility';
+import { Decrypt_Id_Name, Encrypted_Id_Name, LockFildscolour, Requiredcolour, base64ToString, filterPassedTimeZone, filterPassedTimeZonesProperty, getShowingDateText, getShowingMonthDateYear, getYearWithOutDateTime, isLockOrRestrictModule, stringToBase64, tableCustomStyles } from '../../../Common/Utility';
 
-const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsSummited = false, }) => {
+const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsSummited = false, isLocked, setIsLocked, getPermissionLevelByLock = () => { } }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -800,6 +800,9 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
         } else {
 
             if (row.PropertyID || row.MasterPropertyID) {
+                // get Inc-Lock Status
+                getPermissionLevelByLock(IncID, loginPinID);
+
                 navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${stringToBase64(row?.PropertyID)}&MVehId=${stringToBase64(row?.MasterPropertyID)}&VehSta=${true}`)
                 GetSingleData(row?.PropertyID, row?.MasterPropertyID);
                 get_vehicle_Count(row?.PropertyID, 0);
@@ -953,11 +956,14 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                             <Select
                                 name='LossCodeID'
                                 value={propertyLossCodeData?.filter((obj) => obj.value === value?.LossCodeID)}
-                                styles={Requiredcolour}
                                 options={propertyLossCodeData}
                                 onChange={(e) => ChangePhoneType(e, 'LossCodeID')}
                                 isClearable
                                 placeholder="Select..."
+                                // styles={Requiredcolour}
+                                styles={isLockOrRestrictModule("Lock", editval[0]?.LossCodeID, isLocked) ? LockFildscolour : Requiredcolour}
+                                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.LossCodeID, isLocked)}
+
                             />
                         </div>
                         <div className="col-2 col-md-2 col-lg-2 mt-2 pt-1 px-4">
@@ -972,7 +978,6 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                                         id='reportedDtTm'
                                         name='reportedDtTm'
                                         ref={startRef}
-
                                         onKeyDown={(e) => {
                                             if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
                                                 e.preventDefault();
@@ -998,7 +1003,10 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                                         is24Hour
                                         isClearable={false}
                                         selected={value?.ReportedDtTm && new Date(value?.ReportedDtTm)}
-                                        className='requiredColor'
+                                        // className='requiredColor'
+                                        className={isLockOrRestrictModule("Lock", editval[0]?.ReportedDtTm, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+                                        disabled={isLockOrRestrictModule("Lock", editval[0]?.ReportedDtTm, isLocked)}
+
                                         autoComplete="Off"
                                         timeInputLabel
                                         placeholderText={'Select...'}
@@ -1054,7 +1062,9 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                                         maxDate={new Date(datezone)}
                                         showDisabledMonthNavigation
                                         filterTime={(date) => filterPassedTimeZonesProperty(date, incReportedDate, datezone)}
-                                        className='requiredColor'
+                                        // className='requiredColor'
+                                        className={isLockOrRestrictModule("Lock", editval[0]?.ReportedDtTm, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+                                        disabled={isLockOrRestrictModule("Lock", editval[0]?.ReportedDtTm, isLocked)}
                                     />
                             }
                         </div>
@@ -1076,11 +1086,14 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                             <Select
                                 name='CategoryID'
                                 value={categoryIdDrp?.filter((obj) => obj.value === value?.CategoryID)}
-                                styles={Requiredcolour}
                                 options={categoryIdDrp}
                                 onChange={(e) => ChangeDropDown(e, 'CategoryID')}
                                 isClearable
                                 placeholder="Select..."
+                                // styles={Requiredcolour}
+                                styles={isLockOrRestrictModule("Lock", editval[0]?.CategoryID, isLocked) ? LockFildscolour : Requiredcolour}
+                                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.CategoryID, isLocked)}
+
                             />
                         </div>
                         <div className="col-2 col-md-2 col-lg-2 mt-2 ">
@@ -1090,11 +1103,13 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                             <Select
                                 name='ClassificationID'
                                 value={classificationID?.filter((obj) => obj.value === value?.ClassificationID)}
-                                styles={customStylesWithOutColor}
                                 options={classificationID}
                                 onChange={(e) => ChangeDropDown(e, 'ClassificationID')}
                                 isClearable
                                 placeholder="Select..."
+                                // styles={customStylesWithOutColor}
+                                styles={isLockOrRestrictModule("Lock", editval[0]?.ClassificationID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.ClassificationID, isLocked)}
                             />
                         </div>
                         <div className="col-12 col-md-12 col-lg-4 d-flex ">
@@ -1110,7 +1125,9 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                                 <Select
                                     name='PlateID'
                                     value={stateList?.filter((obj) => obj.value === value?.PlateID)}
-                                    styles={getPlateStateStyle()}
+                                    // styles={getPlateStateStyle()}
+                                    styles={isLockOrRestrictModule("Lock", editval[0]?.PlateID, isLocked) ? LockFildscolour : getPlateStateStyle()}
+                                    isDisabled={isLockOrRestrictModule("Lock", editval[0]?.PlateID, isLocked)}
                                     options={stateList}
                                     onChange={(e) => {
                                         ChangeDropDown(e, 'PlateID');
@@ -1125,11 +1142,20 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                             <span className='' style={{ marginTop: '-8px' }}>
                                 <div className="text-field col-12 col-md-12 col-lg-12 ">
                                     <input
-                                        className={`${value.PlateID ? "requiredColor" : ''} ${!value?.PlateID ? 'readonlyColor' : ''}`}
-                                        disabled={!value?.PlateID}
-                                        type="text" name='VehicleNo' id='VehicleNo' maxLength={8}
-                                        isDisabled={!value?.PlateID}
-                                        value={value?.VehicleNo} onChange={HandleChanges} required placeholder='Number..' autoComplete='off' style={{ padding: "5px" }} />
+                                        className={isLockOrRestrictModule("Lock", editval[0]?.VehicleNo, isLocked) ? 'LockFildsColor' : `${value.PlateID ? "requiredColor" : ''} ${!value?.PlateID ? 'readonlyColor' : ''}`}
+                                        // disabled={!value?.PlateID}
+                                        disabled={!value?.PlateID || isLockOrRestrictModule("Lock", editval[0]?.VehicleNo, isLocked)}
+                                        type="text"
+                                        name='VehicleNo'
+                                        id='VehicleNo'
+                                        maxLength={8}
+                                        value={value?.VehicleNo}
+                                        onChange={HandleChanges}
+                                        required
+                                        placeholder='Number..'
+                                        autoComplete='off'
+                                        style={{ padding: "5px" }}
+                                    />
                                 </div>
                                 {errors.VehicleNoError !== 'true' && value.PlateID ? (
                                     <p style={{ color: 'red', fontSize: '11px', margin: '0px', paddingLeft: '7px' }}>{errors.VehicleNoError}</p>
@@ -1148,11 +1174,13 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                             <Select
                                 name='PlateTypeID'
                                 value={plateTypeIdDrp?.filter((obj) => obj.value === value?.PlateTypeID)}
-                                styles={Requiredcolour}
                                 options={plateTypeIdDrp ? getPlateTypeOption(plateTypeIdDrp) : []}
                                 onChange={(e) => ChangeDropDown(e, 'PlateTypeID')}
                                 isClearable
                                 placeholder="Select..."
+                                // styles={Requiredcolour}
+                                styles={isLockOrRestrictModule("Lock", editval[0]?.PlateTypeID, isLocked) ? LockFildscolour : Requiredcolour}
+                                isDisabled={isLockOrRestrictModule("Lock", editval[0]?.PlateTypeID, isLocked)}
                             />
                         </div>
                         <div className="col-2 col-md-2 col-lg-2 mt-2 ">
@@ -1167,8 +1195,8 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                                 type="text"
                                 name="Value"
                                 id="Value"
-                                className={!value?.CategoryID ? 'readonlyColor' : lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD' ? 'requiredColor' : ''}
-                                disabled={!value?.CategoryID}
+                                className={isLockOrRestrictModule("Lock", editval[0]?.Value, isLocked) ? 'LockFildsColor' : !value?.CategoryID ? 'readonlyColor' : lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD' ? 'requiredColor' : ''}
+                                disabled={!value?.CategoryID || isLockOrRestrictModule("Lock", editval[0]?.Value, isLocked)}
                                 maxLength={9}
                                 value={`$ ${value?.Value}`}
                                 onChange={HandleChanges}
@@ -1179,7 +1207,6 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                         <div className='col-2  mt-1 mb-md-5 mb-sm-5 mb-lg-0'>
 
                         </div>
-
                     </div>
                     <div className="text-center p-1 d-flex justify-content-center">
                         {
@@ -1216,7 +1243,12 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                                         </button>
                                     </div>
                                     <div>
-                                        <button type="button" className="btn btn-sm btn-success mr-1" onClick={newVehicle}>New</button>
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm btn-success mr-1"
+                                            // onClick={newVehicle}
+                                            onClick={() => { newVehicle(); setIsLocked(false); }}
+                                        >New</button>
                                         {
                                             vehicleStatus && (VehSta === 'true' || VehSta === true) ?
                                                 effectiveScreenPermission ?
