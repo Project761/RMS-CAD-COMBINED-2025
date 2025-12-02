@@ -3359,16 +3359,10 @@ icon-buttons {
   cursor: pointer;
 }
 
-
-
-/* .custom-col-12 {
-  flex: 0 0 12%;
-  max-width: 12%;
+/* .incident-card:has(.Offense_child) {
+  height: auto !important;
+  min-height: 100vh;
 } */
-/* .lg-custom {
-    max-width: 20.3% !important;
-    flex: 0 0 20.3% !important;
-  } */
 
 
 .custom-col-12_new {

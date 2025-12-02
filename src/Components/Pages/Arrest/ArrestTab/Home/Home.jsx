@@ -986,8 +986,8 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
         <>
             {((incidentCount[0]?.ArrestCount === 0 || incidentCount[0]?.ArrestCount === "0") || (ArrestSta === true || ArrestSta === 'true') || isNew === "true" || isNew === true) && (
                 <>
-                    <div className="col-12 child " id="display-not-form">
-                        <div className="row align-items-center mt-1" style={{ rowGap: "8px" }}>
+                    <div className="col-12 Offense_child " id="display-not-form">
+                        <div className="row align-items-center mt-1" style={{ rowGap: "5px" }}>
                             <div className="col-2 col-md-2 col-lg-1 ">
                                 <label htmlFor="" className='new-label mb-0 '> Arrest No.</label>
                             </div>

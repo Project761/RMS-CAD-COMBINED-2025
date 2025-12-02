@@ -13,6 +13,7 @@ import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Lege
 import IncompleteNibrsIncident from "./IncompleteNibrsIncident/IncompleteNibrsIncident";
 import PendingCaseReview from "./WhiteBoardTab/PendingCaseReview";
 import SupervisorCaseReview from "./DashboardTab/SupervisorCaseReview";
+import ManualPurgeRequest from "../../CADComponents/CaseManagement/components/manualPurgeRequest";
 // import 'bootstrap-icons/font/bootstrap-icons.css';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
@@ -288,9 +289,15 @@ const Dashboard = () => {
                     </div>
                   </div>
 
-                  <div className="col-12">
+                  <div className="col-12 mb-3">
                     <div style={cardStyle} className="p-3 h-100">
                       <IncompleteNibrsIncident isPreview={true} />
+                    </div>
+                  </div>
+                 
+                  <div className="col-12">
+                    <div style={cardStyle} className="p-3 h-100">
+                      <ManualPurgeRequest isPreview={true} />
                     </div>
                   </div>
                 </div>

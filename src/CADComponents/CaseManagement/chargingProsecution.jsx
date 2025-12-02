@@ -471,196 +471,192 @@ function ChargingProsecution({ CaseId = null }) {
         }
     };
 
-  return (
+    return (
         <>
             <div className="mt-2">
-                <div className="card shadow-sm" style={{ border: '0px', borderRadius: '10px' }}>
-                    <div className="card-header" style={{ backgroundColor: '#f8f9fa', borderBottom: '1px solid #dee2e6' }}>
-                        <h5 className="mb-0" style={{ fontWeight: 'bold', fontSize: '18px' }}>Charge Recommendation</h5>
-                    </div>
-                    <div className="card-body">
-                        <div className="row align-items-center mt-2" style={{ rowGap: "8px" }}>
-                            <div className="col-2 col-md-2 col-lg-1">
-                                <label htmlFor="" className='new-label mb-0'>
-                                    Law Title
-                                </label>
-                            </div>
-                            <div className="col-4 col-md-4 col-lg-2">
-                                <Select
-                                    name='LawTitleId'
-                                    styles={customStylesWithOutColor}
-                                    value={lawTitleIdDrp?.filter((obj) => obj.value === value?.LawTitleId)}
-                                    options={lawTitleIdDrp}
-                                    isClearable
-                                    onChange={(e) => onChangeDrpLawTitle(e, 'LawTitleId')}
-                                    placeholder="Select..."
-                                />
-                            </div>
+                <fieldset className='mt-1'>
+                    <legend>Charge Recommendation</legend>
+                    <div className="row align-items-center mt-2" style={{ rowGap: "8px" }}>
+                        <div className="col-2 col-md-2 col-lg-1">
+                            <label htmlFor="" className='new-label mb-0'>
+                                Law Title
+                            </label>
+                        </div>
+                        <div className="col-4 col-md-4 col-lg-2">
+                            <Select
+                                name='LawTitleId'
+                                styles={customStylesWithOutColor}
+                                value={lawTitleIdDrp?.filter((obj) => obj.value === value?.LawTitleId)}
+                                options={lawTitleIdDrp}
+                                isClearable
+                                onChange={(e) => onChangeDrpLawTitle(e, 'LawTitleId')}
+                                placeholder="Select..."
+                            />
+                        </div>
 
-                            <div className="col-2 col-md-2 col-lg-2 text-right">
-                                <label htmlFor="" className='new-label mb-0'>
-                                    TIBRS Code
-                                    {errors.NIBRSIDError !== 'true' && (
-                                        <span style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px', display: "block" }}>{errors.NIBRSIDError}</span>
-                                    )}
-                                </label>
-                            </div>
-                            <div className="col-4 col-md-4 col-lg-3">
-                                <Select
-                                    styles={Requiredcolour}
-                                    name="NIBRSID"
-                                    value={NIBRSDrpData?.filter((obj) => obj.value === value?.NIBRSID)}
-                                    isClearable
-                                    options={NIBRSDrpData}
-                                    onChange={(e) => { onChangeNIBRSCode(e, 'NIBRSID') }}
-                                    placeholder="Select..."
-                                />
-                            </div>
-                            <div className="col-2 col-md-2 col-lg-2">
-                                <label htmlFor="" className='new-label mb-0'>
-                                    Category
-                                </label>
-                            </div>
-                            <div className="col-4 col-md-4 col-lg-2">
-                                <Select
-                                    name='CategoryId'
-                                    value={categoryIdDrp?.filter((obj) => obj.value === value?.CategoryId)}
-                                    styles={customStylesWithOutColor}
-                                    options={categoryIdDrp}
-                                    onChange={(e) => ChangeDropDown(e, 'CategoryId')}
-                                    isClearable
-                                    placeholder="Select..."
-                                />
-                            </div>
+                        <div className="col-2 col-md-2 col-lg-2 text-right">
+                            <label htmlFor="" className='new-label mb-0'>
+                                TIBRS Code
+                                {errors.NIBRSIDError !== 'true' && (
+                                    <span style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px', display: "block" }}>{errors.NIBRSIDError}</span>
+                                )}
+                            </label>
+                        </div>
+                        <div className="col-4 col-md-4 col-lg-3">
+                            <Select
+                                styles={Requiredcolour}
+                                name="NIBRSID"
+                                value={NIBRSDrpData?.filter((obj) => obj.value === value?.NIBRSID)}
+                                isClearable
+                                options={NIBRSDrpData}
+                                onChange={(e) => { onChangeNIBRSCode(e, 'NIBRSID') }}
+                                placeholder="Select..."
+                            />
+                        </div>
+                        <div className="col-2 col-md-2 col-lg-2">
+                            <label htmlFor="" className='new-label mb-0'>
+                                Category
+                            </label>
+                        </div>
+                        <div className="col-4 col-md-4 col-lg-2">
+                            <Select
+                                name='CategoryId'
+                                value={categoryIdDrp?.filter((obj) => obj.value === value?.CategoryId)}
+                                styles={customStylesWithOutColor}
+                                options={categoryIdDrp}
+                                onChange={(e) => ChangeDropDown(e, 'CategoryId')}
+                                isClearable
+                                placeholder="Select..."
+                            />
+                        </div>
 
-                            <div className="col-2 col-md-2 col-lg-1 text-right">
-                                <Link to={'/ListManagement?page=Charge%20Code&call=/Arr-Charge-Home'} className='new-link'>
-                                    Offense Code/Name
-                                    {errors.ChargeCodeIDError !== 'true' ? (
-                                        <span style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px', display: "block" }}>{errors.ChargeCodeIDError}</span>
-                                    ) : null}
-                                </Link>
-                            </div>
-                            <div className="col-4 col-md-4 col-lg-7 mt-0">
-                                <Select
-                                    name="ChargeCodeID"
-                                    value={chargeCodeDrp?.filter((obj) => obj.value === value?.ChargeCodeID)}
-                                    styles={Requiredcolour}
-                                    isClearable
-                                    options={chargeCodeDrp}
-                                    onChange={(e) => { onChangeDrpLawTitle(e, 'ChargeCodeID') }}
-                                    placeholder="Select..."
-                                />
-                            </div>
+                        <div className="col-2 col-md-2 col-lg-1 text-right">
+                            <Link to={'/ListManagement?page=Charge%20Code&call=/Arr-Charge-Home'} className='new-link'>
+                                Offense Code/Name
+                                {errors.ChargeCodeIDError !== 'true' ? (
+                                    <span style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px', display: "block" }}>{errors.ChargeCodeIDError}</span>
+                                ) : null}
+                            </Link>
+                        </div>
+                        <div className="col-4 col-md-4 col-lg-7 mt-0">
+                            <Select
+                                name="ChargeCodeID"
+                                value={chargeCodeDrp?.filter((obj) => obj.value === value?.ChargeCodeID)}
+                                styles={Requiredcolour}
+                                isClearable
+                                options={chargeCodeDrp}
+                                onChange={(e) => { onChangeDrpLawTitle(e, 'ChargeCodeID') }}
+                                placeholder="Select..."
+                            />
+                        </div>
 
-                            <div className="col-2 col-md-2 col-lg-2 text-right">
-                                <label className="new-label mb-0">
-                                    Attempt/Complete
-                                    {errors.AttemptRequiredError !== 'true' && (
-                                        <span style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px', display: "block" }}>
-                                            {errors.AttemptRequiredError}
-                                        </span>
-                                    )}
-                                </label>
-                            </div>
-                            <div className="col-3 col-md-4 col-lg-2">
-                                <Select
-                                    onChange={(e) => onChangeAttComplete(e, "AttemptComplete")}
-                                    options={StatusOption}
-                                    isClearable
-                                    styles={!value?.AttemptComplete ? nibrscolourStyles : nibrsSuccessStyles}
-                                    placeholder="Select..."
-                                    value={StatusOption.find((option) => option.value === value?.AttemptComplete) || null}
-                                />
-                            </div>
-                            <div className="col-2 col-md-2 col-lg-1 text-right">
-                                <span data-toggle="modal" onClick={() => {
-                                    setOpenPage('UCR Clear')
-                                }} data-target="#ListModel" className='new-link'>
-                                    UCR Clear
-                                </span>
-                            </div>
-                            <div className="col-4 col-md-4 col-lg-3">
-                                <Select
-                                    styles={customStylesWithOutColor}
-                                    name="UCRClearID"
-                                    value={UCRClearDrpData?.filter((obj) => obj.value === value?.UCRClearID)}
-                                    isClearable
-                                    options={UCRClearDrpData}
-                                    onChange={(e) => { ChangeDropDown(e, 'UCRClearID') }}
-                                    placeholder="Select..."
-                                />
-                            </div>
-                            <div className="col-2 col-md-2 col-lg-1 text-right">
-                                <label htmlFor="" className='new-label mb-0'>Count</label>
-                            </div>
-                            <div className="col-4 col-md-4 col-lg-3 mt-0 text-field">
-                                <input
-                                    type="text"
-                                    name='Count'
-                                    id='Count'
-                                    maxLength={5}
-                                    onChange={handlcount}
-                                    value={value?.Count}
-                                    className=''
-                                />
-                            </div>
-                            <div className="col-3 col-md-3 col-lg-2">
-                                <label htmlFor="" className="new-label px-0 mb-0">
-                                    Charge Date/Time
-                                    {errors.OffenseDttmError !== 'true' ? (
-                                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.OffenseDttmError}</p>
-                                    ) : null}
-                                </label>
-                            </div>
-                            <div className="col-3 col-md-4 col-lg-2">
-                                <DatePicker
-                                    id='OffenseDateTime'
-                                    name='OffenseDateTime'
-                                    ref={startRef}
-                                    onKeyDown={(e) => {
-                                        if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
-                                            e?.preventDefault();
-                                        } else {
-                                            onKeyDown(e);
-                                        }
-                                    }}
-                                    dateFormat="MM/dd/yyyy HH:mm"
-                                    isClearable={false}
-                                    onChange={(date) => {
-                                        setStatesChangeStatus(true);
-                                        setChangesStatus(true);
-                                        if (date > new Date(datezone)) {
-                                            date = new Date(datezone);
-                                        }
-                                        if (date >= new Date()) {
-                                            setValue({ ...value, OffenseDateTime: new Date() ? getShowingDateText(new Date(date)) : null });
-                                        } else if (date <= new Date(incReportedDate)) {
-                                            setValue({ ...value, OffenseDateTime: new Date() ? getShowingDateText(new Date(date)) : null });
-                                        } else {
-                                            setValue({ ...value, OffenseDateTime: date ? getShowingDateText(date) : null });
-                                        }
-                                    }}
-                                    selected={value?.OffenseDateTime && new Date(value?.OffenseDateTime)}
-                                    autoComplete="Off"
-                                    placeholderText={'Select...'}
-                                    timeInputLabel
-                                    showTimeSelect
-                                    timeIntervals={1}
-                                    timeCaption="Time"
-                                    showYearDropdown
-                                    showMonthDropdown
-                                    dropdownMode="select"
-                                    minDate={new Date(incReportedDate)}
-                                    maxDate={new Date(datezone)}
-                                    filterTime={(date) => filterPassedTimeZonesProperty(date, incReportedDate, datezone)}
-                                    timeFormat="HH:mm "
-                                    is24Hour
-                                />
-                            </div>
+                        <div className="col-2 col-md-2 col-lg-2 text-right">
+                            <label className="new-label mb-0">
+                                Attempt/Complete
+                                {errors.AttemptRequiredError !== 'true' && (
+                                    <span style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px', display: "block" }}>
+                                        {errors.AttemptRequiredError}
+                                    </span>
+                                )}
+                            </label>
+                        </div>
+                        <div className="col-3 col-md-4 col-lg-2">
+                            <Select
+                                onChange={(e) => onChangeAttComplete(e, "AttemptComplete")}
+                                options={StatusOption}
+                                isClearable
+                                styles={!value?.AttemptComplete ? nibrscolourStyles : nibrsSuccessStyles}
+                                placeholder="Select..."
+                                value={StatusOption.find((option) => option.value === value?.AttemptComplete) || null}
+                            />
+                        </div>
+                        <div className="col-2 col-md-2 col-lg-1 text-right">
+                            <span data-toggle="modal" onClick={() => {
+                                setOpenPage('UCR Clear')
+                            }} data-target="#ListModel" className='new-link'>
+                                UCR Clear
+                            </span>
+                        </div>
+                        <div className="col-4 col-md-4 col-lg-3">
+                            <Select
+                                styles={customStylesWithOutColor}
+                                name="UCRClearID"
+                                value={UCRClearDrpData?.filter((obj) => obj.value === value?.UCRClearID)}
+                                isClearable
+                                options={UCRClearDrpData}
+                                onChange={(e) => { ChangeDropDown(e, 'UCRClearID') }}
+                                placeholder="Select..."
+                            />
+                        </div>
+                        <div className="col-2 col-md-2 col-lg-1 text-right">
+                            <label htmlFor="" className='new-label mb-0'>Count</label>
+                        </div>
+                        <div className="col-4 col-md-4 col-lg-3 mt-0 text-field">
+                            <input
+                                type="text"
+                                name='Count'
+                                id='Count'
+                                maxLength={5}
+                                onChange={handlcount}
+                                value={value?.Count}
+                                className=''
+                            />
+                        </div>
+                        <div className="col-3 col-md-3 col-lg-2">
+                            <label htmlFor="" className="new-label px-0 mb-0">
+                                Charge Date/Time
+                                {errors.OffenseDttmError !== 'true' ? (
+                                    <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.OffenseDttmError}</p>
+                                ) : null}
+                            </label>
+                        </div>
+                        <div className="col-3 col-md-4 col-lg-2">
+                            <DatePicker
+                                id='OffenseDateTime'
+                                name='OffenseDateTime'
+                                ref={startRef}
+                                onKeyDown={(e) => {
+                                    if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                                        e?.preventDefault();
+                                    } else {
+                                        onKeyDown(e);
+                                    }
+                                }}
+                                dateFormat="MM/dd/yyyy HH:mm"
+                                isClearable={false}
+                                onChange={(date) => {
+                                    setStatesChangeStatus(true);
+                                    setChangesStatus(true);
+                                    if (date > new Date(datezone)) {
+                                        date = new Date(datezone);
+                                    }
+                                    if (date >= new Date()) {
+                                        setValue({ ...value, OffenseDateTime: new Date() ? getShowingDateText(new Date(date)) : null });
+                                    } else if (date <= new Date(incReportedDate)) {
+                                        setValue({ ...value, OffenseDateTime: new Date() ? getShowingDateText(new Date(date)) : null });
+                                    } else {
+                                        setValue({ ...value, OffenseDateTime: date ? getShowingDateText(date) : null });
+                                    }
+                                }}
+                                selected={value?.OffenseDateTime && new Date(value?.OffenseDateTime)}
+                                autoComplete="Off"
+                                placeholderText={'Select...'}
+                                timeInputLabel
+                                showTimeSelect
+                                timeIntervals={1}
+                                timeCaption="Time"
+                                showYearDropdown
+                                showMonthDropdown
+                                dropdownMode="select"
+                                minDate={new Date(incReportedDate)}
+                                maxDate={new Date(datezone)}
+                                filterTime={(date) => filterPassedTimeZonesProperty(date, incReportedDate, datezone)}
+                                timeFormat="HH:mm "
+                                is24Hour
+                            />
                         </div>
                     </div>
-                </div>
+                </fieldset>
             </div>
             <div className="col-12 text-right mt-0 p-0">
                 <button type="button" className="btn btn-sm btn-success mx-1 py-1 text-center" onClick={() => { setStatusFalse(); }}>New</button>
@@ -690,272 +686,255 @@ function ChargingProsecution({ CaseId = null }) {
             </div>
 
             {/* B. Prosecutor Filing Section */}
-            <div className="mt-4">
-                <div className="card shadow-sm" style={{ border: '0px', borderRadius: '10px' }}>
-                    <div className="card-header" style={{ backgroundColor: '#f8f9fa', borderBottom: '1px solid #dee2e6' }}>
-                        <h5 className="mb-0" style={{ fontWeight: 'bold', fontSize: '18px' }}>B. Prosecutor Filing Section</h5>
-                    </div>
-                    <div className="card-body">
-                        <div className="row align-items-center mt-2" style={{ rowGap: "8px" }}>
-                            {/* Left Column */}
-                            <div className="col-md-6">
-                                <div className="row align-items-center mb-3" style={{ rowGap: "8px" }}>
-                                    <div className="col-4">
-                                        <label htmlFor="" className='new-label mb-0'>
-                                            Prosecutor Name
-                                        </label>
-                                    </div>
-                                    <div className="col-8">
-                                        <input
-                                            type="text"
-                                            className="form-control py-1 new-input"
-                                            placeholder="Enter prosecutor name"
-                                            value={prosecutorFormState.prosecutorName}
-                                            onChange={(e) => handleProsecutorFormState("prosecutorName", e.target.value)}
-                                        />
-                                    </div>
+            <div className="mt-2">
+                <fieldset className='mt-1'>
+                    <legend>B. Prosecutor Filing Section</legend>
+                    <div className="row mt-2" style={{ rowGap: "8px" }}>
+                        {/* First Column */}
+                        <div className="col-md-4">
+                            <div className="row align-items-center mb-3" style={{ rowGap: "8px" }}>
+                                <div className="col-4">
+                                    <label htmlFor="" className='new-label mb-0'>
+                                        Prosecutor Name
+                                    </label>
                                 </div>
-                                <div className="row align-items-center mb-3" style={{ rowGap: "8px" }}>
-                                    <div className="col-4">
-                                        <label htmlFor="" className='new-label mb-0'>
-                                            Prosecutor Case #
-                                        </label>
-                                    </div>
-                                    <div className="col-8">
-                                        <input
-                                            type="text"
-                                            className="form-control py-1 new-input requiredColor"
-                                            placeholder="Enter case number"
-                                            value={prosecutorFormState.prosecutorCaseNumber}
-                                            onChange={(e) => handleProsecutorFormState("prosecutorCaseNumber", e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="row align-items-center mb-3" style={{ rowGap: "8px" }}>
-                                    <div className="col-4">
-                                        <label htmlFor="" className='new-label mb-0'>
-                                            Filed Offense Code
-                                        </label>
-                                    </div>
-                                    <div className="col-8">
-                                        <Select
-                                            name='filedOffenseCode'
-                                            styles={Requiredcolour}
-                                            value={filedOffenseCodeDrp?.find((obj) => obj.value === prosecutorFormState.filedOffenseCode)}
-                                            options={filedOffenseCodeDrp}
-                                            isClearable
-                                            onChange={(e) => handleProsecutorFormState("filedOffenseCode", e?.value || null)}
-                                            placeholder="Select..."
-                                        />
-                                    </div>
-                                </div>
-                                <div className="row align-items-center mb-3" style={{ rowGap: "8px" }}>
-                                    <div className="col-4">
-                                        <label htmlFor="" className='new-label mb-0'>
-                                            Number of Counts
-                                        </label>
-                                    </div>
-                                    <div className="col-8">
-                                        <input
-                                            type="text"
-                                            className="form-control py-1 new-input requiredColor"
-                                            placeholder="1"
-                                            value={prosecutorFormState.numberOfCounts}
-                                            onChange={(e) => handleProsecutorFormState("numberOfCounts", e.target.value)}
-                                        />
-                                    </div>
+                                <div className="col-8">
+                                    <input
+                                        type="text"
+                                        className="form-control py-1 new-input"
+                                        placeholder="Enter prosecutor name"
+                                        value={prosecutorFormState.prosecutorName}
+                                        onChange={(e) => handleProsecutorFormState("prosecutorName", e.target.value)}
+                                    />
                                 </div>
                             </div>
-
-                            {/* Right Column */}
-                            <div className="col-md-6">
-                                <div className="row align-items-center mb-3" style={{ rowGap: "8px" }}>
-                                    <div className="col-4">
-                                        <label htmlFor="" className='new-label mb-0'>
-                                            Prosecutor Office
-                                        </label>
-                                    </div>
-                                    <div className="col-8">
-                                        <input
-                                            type="text"
-                                            className="form-control py-1 new-input"
-                                            placeholder="Enter office name"
-                                            value={prosecutorFormState.prosecutorOffice}
-                                            onChange={(e) => handleProsecutorFormState("prosecutorOffice", e.target.value)}
-                                        />
-                                    </div>
+                            <div className="row align-items-center mb-3" style={{ rowGap: "8px" }}>
+                                <div className="col-4">
+                                    <label htmlFor="" className='new-label mb-0'>
+                                        Prosecutor Case #
+                                    </label>
                                 </div>
-                                <div className="row align-items-center mb-3" style={{ rowGap: "8px" }}>
-                                    <div className="col-4">
-                                        <label htmlFor="" className='new-label mb-0'>
-                                            Filing Status
-                                        </label>
-                                    </div>
-                                    <div className="col-8">
-                                        <Select
-                                            name='filingStatus'
-                                            styles={Requiredcolour}
-                                            value={filingStatusDrp?.find((obj) => obj.value === prosecutorFormState.filingStatus)}
-                                            options={filingStatusDrp}
-                                            isClearable
-                                            onChange={(e) => handleProsecutorFormState("filingStatus", e?.value || null)}
-                                            placeholder="Select..."
-                                        />
-                                    </div>
+                                <div className="col-8">
+                                    <input
+                                        type="text"
+                                        className="form-control py-1 new-input requiredColor"
+                                        placeholder="Enter case number"
+                                        value={prosecutorFormState.prosecutorCaseNumber}
+                                        onChange={(e) => handleProsecutorFormState("prosecutorCaseNumber", e.target.value)}
+                                    />
                                 </div>
-                                <div className="row align-items-center mb-3" style={{ rowGap: "8px" }}>
-                                    <div className="col-4">
-                                        <label htmlFor="" className='new-label mb-0'>
-                                            Filed Charge Description
-                                        </label>
-                                    </div>
-                                    <div className="col-8">
-                                        <input
-                                            type="text"
-                                            className="form-control py-1 new-input requiredColor"
-                                            placeholder="Auto-populated"
-                                            value={prosecutorFormState.filedChargeDescription}
-                                            onChange={(e) => handleProsecutorFormState("filedChargeDescription", e.target.value)}
-                                            readOnly
-                                        />
-                                    </div>
+                            </div>
+                            <div className="row align-items-center mb-3" style={{ rowGap: "8px" }}>
+                                <div className="col-4">
+                                    <label htmlFor="" className='new-label mb-0'>
+                                        Filed Offense Code
+                                    </label>
                                 </div>
-                                <div className="row align-items-center mb-3" style={{ rowGap: "8px" }}>
-                                    <div className="col-4">
-                                        <label htmlFor="" className='new-label mb-0'>
-                                            Filing Date
-                                        </label>
-                                    </div>
-                                    <div className="col-8">
-                                        <DatePicker
-                                            id='filingDate'
-                                            name='filingDate'
-                                            ref={filingDateRef}
-                                            selected={prosecutorFormState.filingDate ? new Date(prosecutorFormState.filingDate) : null}
-                                            onChange={(date) => handleProsecutorFormState("filingDate", date ? getShowingDateText(date) : null)}
-                                            dateFormat="MM/dd/yyyy HH:mm"
-                                            isClearable
-                                            className="form-control py-1 new-input requiredColor"
-                                            placeholderText="dd-mm-yyyy --:--"
-                                            showTimeSelect
-                                            timeFormat="HH:mm"
-                                            timeIntervals={1}
-                                            timeCaption="Time"
-                                            showYearDropdown
-                                            showMonthDropdown
-                                            dropdownMode="select"
-                                            autoComplete="Off"
-                                            is24Hour
-                                        />
-                                    </div>
+                                <div className="col-8">
+                                    <Select
+                                        name='filedOffenseCode'
+                                        styles={Requiredcolour}
+                                        value={filedOffenseCodeDrp?.find((obj) => obj.value === prosecutorFormState.filedOffenseCode)}
+                                        options={filedOffenseCodeDrp}
+                                        isClearable
+                                        onChange={(e) => handleProsecutorFormState("filedOffenseCode", e?.value || null)}
+                                        placeholder="Select..."
+                                    />
                                 </div>
                             </div>
                         </div>
 
-                        {/* Notes Section */}
-                        <div className="row mt-3">
-                            <div className="col-12">
-                                <h6 className="fw-bold mb-2">Notes</h6>
-                                <textarea
-                                    className="form-control requiredColor"
-                                    rows="4"
-                                    placeholder="Enter notes about filing..."
-                                    value={prosecutorFormState.notes}
-                                    onChange={(e) => handleProsecutorFormState("notes", e.target.value)}
-                                />
+                        {/* Second Column */}
+                        <div className="col-md-4">
+                            <div className="row align-items-center mb-3" style={{ rowGap: "8px" }}>
+                                <div className="col-4">
+                                    <label htmlFor="" className='new-label mb-0'>
+                                        Number of Counts
+                                    </label>
+                                </div>
+                                <div className="col-8">
+                                    <input
+                                        type="text"
+                                        className="form-control py-1 new-input requiredColor"
+                                        placeholder="1"
+                                        value={prosecutorFormState.numberOfCounts}
+                                        onChange={(e) => handleProsecutorFormState("numberOfCounts", e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <div className="row align-items-center mb-3" style={{ rowGap: "8px" }}>
+                                <div className="col-4">
+                                    <label htmlFor="" className='new-label mb-0'>
+                                        Prosecutor Office
+                                    </label>
+                                </div>
+                                <div className="col-8">
+                                    <input
+                                        type="text"
+                                        className="form-control py-1 new-input"
+                                        placeholder="Enter office name"
+                                        value={prosecutorFormState.prosecutorOffice}
+                                        onChange={(e) => handleProsecutorFormState("prosecutorOffice", e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <div className="row align-items-center mb-3" style={{ rowGap: "8px" }}>
+                                <div className="col-4">
+                                    <label htmlFor="" className='new-label mb-0'>
+                                        Filing Status
+                                    </label>
+                                </div>
+                                <div className="col-8">
+                                    <Select
+                                        name='filingStatus'
+                                        styles={Requiredcolour}
+                                        value={filingStatusDrp?.find((obj) => obj.value === prosecutorFormState.filingStatus)}
+                                        options={filingStatusDrp}
+                                        isClearable
+                                        onChange={(e) => handleProsecutorFormState("filingStatus", e?.value || null)}
+                                        placeholder="Select..."
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Third Column */}
+                        <div className="col-md-4">
+                            <div className="row align-items-center mb-3" style={{ rowGap: "8px" }}>
+                                <div className="col-4">
+                                    <label htmlFor="" className='new-label mb-0'>
+                                        Filed Charge Description
+                                    </label>
+                                </div>
+                                <div className="col-8">
+                                    <input
+                                        type="text"
+                                        className="form-control py-1 new-input requiredColor"
+                                        placeholder="Auto-populated"
+                                        value={prosecutorFormState.filedChargeDescription}
+                                        onChange={(e) => handleProsecutorFormState("filedChargeDescription", e.target.value)}
+                                        readOnly
+                                    />
+                                </div>
+                            </div>
+                            <div className="row align-items-center mb-3" style={{ rowGap: "8px" }}>
+                                <div className="col-4">
+                                    <label htmlFor="" className='new-label mb-0'>
+                                        Filing Date
+                                    </label>
+                                </div>
+                                <div className="col-8">
+                                    <DatePicker
+                                        id='filingDate'
+                                        name='filingDate'
+                                        ref={filingDateRef}
+                                        selected={prosecutorFormState.filingDate ? new Date(prosecutorFormState.filingDate) : null}
+                                        onChange={(date) => handleProsecutorFormState("filingDate", date ? getShowingDateText(date) : null)}
+                                        dateFormat="MM/dd/yyyy HH:mm"
+                                        isClearable
+                                        className="form-control py-1 new-input requiredColor"
+                                        placeholderText="dd-mm-yyyy --:--"
+                                        showTimeSelect
+                                        timeFormat="HH:mm"
+                                        timeIntervals={1}
+                                        timeCaption="Time"
+                                        showYearDropdown
+                                        showMonthDropdown
+                                        dropdownMode="select"
+                                        autoComplete="Off"
+                                        is24Hour
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+
+                    {/* Notes Section */}
+                    <div className="row">
+                        <div className="col-12">
+                            <h6 className="fw-bold mb-2">Notes</h6>
+                            <textarea
+                                className="form-control requiredColor"
+                                rows="2"
+                                placeholder="Enter notes about filing..."
+                                value={prosecutorFormState.notes}
+                                onChange={(e) => handleProsecutorFormState("notes", e.target.value)}
+                            />
+                        </div>
+                    </div>
+                </fieldset>
             </div>
 
             {/* C. DA Notifications */}
-            <div className="mt-4 mb-4">
-                <div className="card shadow-sm" style={{ border: '0px', borderRadius: '10px' }}>
-                    <div className="card-header" style={{ backgroundColor: '#f8f9fa', borderBottom: '1px solid #dee2e6' }}>
-                        <h5 className="mb-0" style={{ fontWeight: 'bold', fontSize: '18px' }}>C. DA Notifications</h5>
-                    </div>
-                    <div className="card-body">
-                        <div className="row">
-                            <div className="col-12 d-flex flex-column flex-md-row" style={{ gap: '20px' }}>
-                                <div className="form-check">
-                                    <input
-                                        className="form-check-input"
-                                        type="checkbox"
-                                        id="notifyAssignedInvestigator"
-                                        checked={daNotificationState.notifyAssignedInvestigator}
-                                        onChange={(e) => handleDaNotificationState("notifyAssignedInvestigator", e.target.checked)}
-                                    />
-                                    <label className="form-check-label" htmlFor="notifyAssignedInvestigator">
-                                        Notify Assigned Investigator
-                                    </label>
-                                </div>
-                                <div className="form-check">
-                                    <input
-                                        className="form-check-input"
-                                        type="checkbox"
-                                        id="notifySupervisor"
-                                        checked={daNotificationState.notifySupervisor}
-                                        onChange={(e) => handleDaNotificationState("notifySupervisor", e.target.checked)}
-                                    />
-                                    <label className="form-check-label" htmlFor="notifySupervisor">
-                                        Notify Supervisor
-                                    </label>
-                                </div>
+            <div className="mt-2 mb-4">
+                <fieldset>
+                    <legend>C. DA Notifications</legend>
+                    <div className="row">
+                        <div className="col-12 d-flex flex-column flex-md-row mt-2" style={{ gap: '20px' }}>
+                            <div className="form-check">
+                                <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    id="notifyAssignedInvestigator"
+                                    checked={daNotificationState.notifyAssignedInvestigator}
+                                    onChange={(e) => handleDaNotificationState("notifyAssignedInvestigator", e.target.checked)}
+                                />
+                                <label className="form-check-label" htmlFor="notifyAssignedInvestigator">
+                                    Notify Assigned Investigator
+                                </label>
+                            </div>
+                            <div className="form-check">
+                                <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    id="notifySupervisor"
+                                    checked={daNotificationState.notifySupervisor}
+                                    onChange={(e) => handleDaNotificationState("notifySupervisor", e.target.checked)}
+                                />
+                                <label className="form-check-label" htmlFor="notifySupervisor">
+                                    Notify Supervisor
+                                </label>
                             </div>
                         </div>
-
-                        <div className="mt-4">
-                            <h6 className="fw-bold mb-2">Status Activity Log</h6>
-                            <div className="table-responsive">
-                                <table className="table table-bordered mb-0">
-                                    <thead style={{ backgroundColor: '#163B5B', color: '#fff' }}>
-                                        <tr>
-                                            <th scope="col">Date/Time</th>
-                                            <th scope="col">User</th>
-                                            <th scope="col">Action</th>
-                                            <th scope="col">Status</th>
-                                            <th scope="col">Notes</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {daStatusLog.length === 0 ? (
-                                            <tr>
-                                                <td colSpan={5} className="text-center py-3">
-                                                    There are no data to display
-                                                </td>
-                                            </tr>
-                                        ) : (
-                                            daStatusLog.map((log, index) => (
-                                                <tr key={index}>
-                                                    <td>{log.dateTime}</td>
-                                                    <td>{log.user}</td>
-                                                    <td>{log.action}</td>
-                                                    <td>{log.status}</td>
-                                                    <td>{log.notes}</td>
-                                                </tr>
-                                            ))
-                                        )}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div className="d-flex justify-content-end align-items-center mt-4" style={{ gap: '12px' }}>
-                            <button type="button" className="btn btn-outline-secondary btn-sm">
-                                Cancel
-                            </button>
-                            <button type="button" className="btn btn-sm btn-success">
-                                Save
-                            </button>
-                            <button type="button" className="btn btn-sm btn-success">
-                                Submit to DA
-                            </button>
-                        </div>
                     </div>
-                </div>
+
+                    <div className="mt-2">
+                        <h6 className="fw-bold mb-2">Status Activity Log</h6>
+                        <DataTable
+                            columns={[
+                                { name: 'Date/Time', selector: row => row.dateTime, sortable: true },
+                                { name: 'User', selector: row => row.user, sortable: true },
+                                { name: 'Action', selector: row => row.action, sortable: true },
+                                { name: 'Status', selector: row => row.status, sortable: true },
+                                { name: 'Notes', selector: row => row.notes, wrap: true },
+                            ]}
+                            data={daStatusLog}
+                            dense
+                            selectableRowsHighlight
+                            highlightOnHover
+                            pagination
+                            onRowClicked={(row) => { set_Edit_Value(row); }}
+                            fixedHeaderScrollHeight='250px'
+                            conditionalRowStyles={conditionalRowStyles}
+                            fixedHeader
+                            persistTableHead={true}
+                            customStyles={tableCustomStyles}
+                            noDataComponent="There are no data to display"
+                        />
+                    </div>
+                    <div className="d-flex justify-content-end align-items-center mt-4" style={{ gap: '12px' }}>
+                        <button type="button" className="btn btn-outline-secondary btn-sm">
+                            Cancel
+                        </button>
+                        <button type="button" className="btn btn-sm btn-success">
+                            Save
+                        </button>
+                        <button type="button" className="btn btn-sm btn-success">
+                            Submit to DA
+                        </button>
+                    </div>
+                </fieldset>
             </div>
-
             <DeletePopUpModal func={DeleteChargeRecommendation} />
             <ListModal {...{ openPage, setOpenPage }} />
             <ChangesModal func={check_Validation_Error} />

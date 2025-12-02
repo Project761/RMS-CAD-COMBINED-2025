@@ -9,7 +9,7 @@ import { base64ToString, filterPassedTimeZonesProperty, getShowingDateText, tabl
 import { useDispatch, useSelector } from "react-redux";
 import { useQuery } from "react-query";
 import CaseManagementServices from "../../CADServices/APIs/caseManagement";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { fetchPostData } from "../../Components/hooks/Api";
 import { Comman_changeArrayFormat } from "../../Components/Common/ChangeArrayFormat";
 import { get_AgencyOfficer_Data } from "../../redux/actions/DropDownsData";
@@ -99,14 +99,32 @@ function Home({ CaseId = null, RMSCaseNumber = null, refetchCaseManagementCaseDa
     useEffect(() => {
         if (isGetCaseManagementCaseDataSuccess && getCaseManagementCaseData) {
             const data = JSON.parse(getCaseManagementCaseData?.data?.data)
-            setIncidentList(data?.Table1);
+            // setIncidentList(data?.Table1);
             setCaseFormState(prev => ({
                 ...prev,
                 primaryOfficer: data?.Table?.[0]?.ReportingOfficer,
                 incidentAddress: data?.Table?.[0]?.CrimeLocation
             }))
+
+            if (data?.Table1 && Array.isArray(data.Table1) && data.Table1.length > 0) {
+                setIncidentList(prev => {
+                    let newData = [...(prev || [])];
+                    data.Table1.forEach((row) => {
+                        if (row?.IncidentID && IncID && row?.IncidentID === IncID) {
+                            return; // Don't add current incident
+                        }
+                        const existingItem = newData.find((item) =>
+                            item?.IncidentID && row?.IncidentID && item?.IncidentID === row?.IncidentID
+                        );
+                        if (!existingItem) {
+                            newData.push(row);
+                        }
+                    });
+                    return newData;
+                });
+            }
         }
-    }, [isGetCaseManagementCaseDataSuccess, getCaseManagementCaseData])
+    }, [isGetCaseManagementCaseDataSuccess, getCaseManagementCaseData, IncID])
 
     const getSupervisorsByAgencyIDKey = `/Personnel/GetSupervisorsByAgencyID/${localStoreData?.AgencyID}`;
     const { data: getSupervisorsByAgencyID, isSuccess: isGetSupervisorsByAgencyIDSuccess } = useQuery(
@@ -449,7 +467,7 @@ function Home({ CaseId = null, RMSCaseNumber = null, refetchCaseManagementCaseDa
                             </div>
                             <div className="row">
                                 <div className="col-md-6 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
-                                    <label className="form-label fw-bold text-nowrap">Crime Code & Description</label>
+                                    <Link to={'/ListManagement?page=Charge%20Code&call=/Arr-Charge-Home'} className='new-link text-nowrap'> Offense Code/Name</Link>
                                     <Select
                                         placeholder="Select"
                                         options={chargeCodeDrp}
@@ -460,7 +478,7 @@ function Home({ CaseId = null, RMSCaseNumber = null, refetchCaseManagementCaseDa
                                     />
                                 </div>
                                 <div className="col-md-6 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
-                                    <label className="form-label fw-bold text-nowrap">Crime Class</label>
+                                    <label className="form-label fw-bold text-nowrap">Category</label>
                                     <Select
                                         placeholder="Select"
                                         options={categoryIdDrp}

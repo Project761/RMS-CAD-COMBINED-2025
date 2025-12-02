@@ -199,6 +199,7 @@ import CaseManagement from './CADPage/CaseManagement';
 import MissingPersonForm from './Components/Pages/MissingPerson/MissingPersonForm/MissingPersonForm';
 import ReportModule from './Components/Pages/ReportModule/ReportModule';
 import HomeCaseManagement from './CADPage/HomeCaseManagement';
+import ManualPurgeRequest from './CADComponents/CaseManagement/components/manualPurgeRequest';
 // import PropertyAuditTab from './Components/Pages/PropertyRoom/Audit/Home';
 function App() {
   const [otp, setOtp] = useState("");
@@ -280,6 +281,7 @@ function App() {
             <Route exact path="/assigned-Reports" element={<Auth cmp={AssignedReports} path="/assignedReports" dashboardSidebar={dashboardSidebar} />} />
             <Route exact path="/all" element={<Auth cmp={DashboardAll} path="/all" dashboardSidebar={dashboardSidebar} />} />
             <Route exact path="/assigned-Incompletenibrs" element={<Auth cmp={IncompleteNibrsIncident} path="/assigned-Incompletenibrs" dashboardSidebar={dashboardSidebar} />} />
+            <Route exact path="/manual-purge-request" element={<Auth cmp={ManualPurgeRequest} path="/manual-purge-request" dashboardSidebar={dashboardSidebar} />} />
 
             <Route exact path="/PoliceForceTask" element={<Auth cmp={PoliceForceTask} patIncompleteNibrsIncidenth="/PoliceForceTask" dashboardSidebar={dashboardSidebar} />} />
 

@@ -4471,7 +4471,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                             // pagination
                             // paginationPerPage={'10'}
                             // paginationRowsPerPageOptions={[10, 15, 20, 50]}
-                            fixedHeaderScrollHeight='80px'
+                            // fixedHeaderScrollHeight='80px'
                             customStyles={tableCustomStyles}
                             conditionalRowStyles={conditionalRowStyles}
                             onRowClicked={(row) => {

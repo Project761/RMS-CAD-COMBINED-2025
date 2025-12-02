@@ -466,22 +466,22 @@ function DashwhiteBoard() {
                                             <strong>{item?.CreatedByName || "-"}</strong>
                                         </div>
 
-                                        <div className="" style={{ fontSize: '13px', color: '#283041' }}>
+                                        {item?.ElapsedDays && <div className="" style={{ fontSize: '13px', color: '#283041' }}>
                                             <span>Elapsed days</span><br />
                                             <strong>{item?.ElapsedDays || "-"}</strong>
-                                        </div>
-                                        <div className="" style={{ fontSize: '13px', color: '#283041' }}>
+                                        </div>}
+                                        {item?.expiresDate && <div className="" style={{ fontSize: '13px', color: '#283041' }}>
                                             <span>Expires at</span><br />
                                             <strong>{item?.expiresDate ? getShowingDateText(item?.expiresDate) : "-"}</strong>
-                                        </div>
-                                        <div className="" style={{ fontSize: '13px', color: '#283041' }}>
+                                        </div>}
+                                        {item?.UpdatedByByName && <div className="" style={{ fontSize: '13px', color: '#283041' }}>
                                             <span>Updated by</span><br />
                                             <strong> {item?.UpdatedByByName || "-"}</strong>
-                                        </div>
-                                        <div className="" style={{ fontSize: '13px', color: '#283041' }}>
+                                        </div>}
+                                        {item?.ModifiedDtTm && <div className="" style={{ fontSize: '13px', color: '#283041' }}>
                                             <span>Updated at</span><br />
                                             <strong>  {item?.ModifiedDtTm ? getShowingDateText(item?.ModifiedDtTm) : "-"}</strong>
-                                        </div>
+                                        </div>}
                                         <div className="cad-images image-preview cursor pointer d-flex flex-wrap gap-4">
                                             {Documents?.length > 0 && (
                                                 <>

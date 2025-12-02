@@ -13,6 +13,7 @@ import CaseManagementServices from '../../CADServices/APIs/caseManagement';
 import { useQuery } from 'react-query';
 import { fetchPostData } from '../../Components/hooks/Api';
 import { Comman_changeArrayFormat } from '../../Components/Common/ChangeArrayFormat';
+import ListModal from '../../Components/Pages/Utility/ListManagementModel/ListModal';
 
 function CaseEffort({ CaseId }) {
     const dispatch = useDispatch();
@@ -39,6 +40,7 @@ function CaseEffort({ CaseId }) {
     const [loginPinID, setLoginPinID] = useState(null)
     const [agencyID, setAgencyID] = useState(null)
     const [isDisabled, setIsDisabled] = useState(false);
+    const [openPage, setOpenPage] = useState("");
     const [
         errorCaseEffortState,
         ,
@@ -74,7 +76,7 @@ function CaseEffort({ CaseId }) {
         if (getAllCaseEffortsData && isGetAllCaseEffortsDataSuccess) {
             const data = JSON.parse(getAllCaseEffortsData?.data?.data)?.Table
             setCaseEffortsData(data)
-        }else{
+        } else {
             setCaseEffortsData([])
         }
     }, [getAllCaseEffortsData, isGetAllCaseEffortsDataSuccess])
@@ -324,159 +326,163 @@ function CaseEffort({ CaseId }) {
 
 
     return (
-        <div className='col-12 col-md-12 col-lg-12 mt-2'>
-            {/* Task Management Form */}
-            <div className="row">
-                <div className="col-md-4 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
-                    <label className="form-label text-nowrap" style={{ width: "130px" }}>
-                        <div className="text-nowrap">Task List</div>
-                        {errorCaseEffortState.taskList && isEmptyObject(formState.taskList) ? <span style={{ color: 'red' }}>Required</span> : ''}
-                    </label>
-                    <Select
-                        isClearable
-                        options={caseTaskDrpData}
-                        placeholder="Select"
-                        styles={coloredStyle_Select}
-                        value={formState.taskList}
-                        getOptionLabel={(v) => `${v?.Code} | ${v?.Description}`}
-                        getOptionValue={(v) => v?.Code}
-                        formatOptionLabel={(option, { context }) => {
-                            return context === 'menu'
-                                ? `${option?.Code} | ${option?.Description}`
-                                : option?.Code;
-                        }}
-                        label="Description"
-                        onChange={(e) => handleFormState('taskList', e)}
-                    />
+        <>
+            <div className='col-12 col-md-12 col-lg-12 mt-2'>
+                {/* Task Management Form */}
+                <div className="row">
+                    <div className="col-md-4 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
+                        <label className="form-label text-nowrap" style={{ width: "130px" }}>
+                            <span className="text-nowrap new-link px-0" data-toggle="modal" data-target="#ListModel"
+                                onClick={() => { setOpenPage("Case Task"); }}>Task List</span>
+                            {errorCaseEffortState.taskList && isEmptyObject(formState.taskList) ? <span style={{ color: 'red' }}>Required</span> : ''}
+                        </label>
+                        <Select
+                            isClearable
+                            options={caseTaskDrpData}
+                            placeholder="Select"
+                            styles={coloredStyle_Select}
+                            value={formState.taskList}
+                            getOptionLabel={(v) => `${v?.Code} | ${v?.Description}`}
+                            getOptionValue={(v) => v?.Code}
+                            formatOptionLabel={(option, { context }) => {
+                                return context === 'menu'
+                                    ? `${option?.Code} | ${option?.Description}`
+                                    : option?.Description;
+                            }}
+                            label="Description"
+                            onChange={(e) => handleFormState('taskList', e)}
+                        />
+                    </div>
+                    <div className="col-md-4 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
+                        <label className="form-label">
+                            <div className="text-nowrap">Case Team Member</div>
+                            {errorCaseEffortState.investigator && isEmptyObject(formState.investigator) ? <span style={{ color: 'red' }}>Required</span> : ''}
+                        </label>
+                        <Select
+                            isClearable
+                            options={activeTeamMembersData}
+                            placeholder="Select"
+                            styles={coloredStyle_Select}
+                            value={formState.investigator}
+                            onChange={(e) => handleFormState('investigator', e)}
+                        />
+                    </div>
+                    <div className="col-md-4 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
+                        <label className="form-label text-nowrap">
+                            <div className="text-nowrap">Task Due Date</div>
+                            {errorCaseEffortState.taskDueDate && !formState.taskDueDate ? <span style={{ color: 'red' }}>Required</span> : ''}
+                        </label>
+                        <DatePicker
+                            selected={formState.taskDueDate}
+                            onChange={(date) => handleFormState('taskDueDate', date)}
+                            dateFormat="MM/dd/yyyy"
+                            placeholderText="Select"
+                            className="form-control requiredColor"
+                            isClearable
+                        />
+                    </div>
                 </div>
-                <div className="col-md-4 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
-                    <label className="form-label">
-                        <div className="text-nowrap">Case Team Member</div>
-                        {errorCaseEffortState.investigator && isEmptyObject(formState.investigator) ? <span style={{ color: 'red' }}>Required</span> : ''}
-                    </label>
-                    <Select
-                        isClearable
-                        options={activeTeamMembersData}
-                        placeholder="Select"
-                        styles={coloredStyle_Select}
-                        value={formState.investigator}
-                        onChange={(e) => handleFormState('investigator', e)}
-                    />
+                <div className="row">
+                    <div className="col-md-4 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
+                        <label className="form-label text-nowrap" style={{ width: "130px" }}>
+                            <div className="text-nowrap">Start DT/TM</div>
+                            {errorCaseEffortState.startDateTime && !formState.startDateTime ? <span style={{ color: 'red' }}>Required</span> : ''}
+                        </label>
+                        <DatePicker
+                            selected={formState.startDateTime}
+                            onChange={handleStartDateTimeChange}
+                            showTimeSelect
+                            timeFormat="HH:mm"
+                            timeIntervals={15}
+                            dateFormat="MM/dd/yyyy HH:mm"
+                            placeholderText="Select"
+                            className="form-control requiredColor"
+                            isClearable
+                        />
+                    </div>
+                    <div className="col-md-4 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
+                        <label className="form-label text-nowrap" style={{ width: "90px", marginLeft: "55px" }}>
+                            <div className="text-nowrap">End DT/TM</div>
+                            {errorCaseEffortState.endDateTime && !formState.endDateTime ? <span style={{ color: 'red' }}>Required</span> : ''}
+                        </label>
+                        <DatePicker
+                            selected={formState.endDateTime}
+                            onChange={handleEndDateTimeChange}
+                            showTimeSelect
+                            timeFormat="HH:mm"
+                            timeIntervals={15}
+                            dateFormat="MM/dd/yyyy HH:mm"
+                            placeholderText="Select"
+                            className="form-control requiredColor"
+                            isClearable
+                        />
+                    </div>
+                    <div className="col-md-4 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
+                        <label className="form-label text-nowrap" style={{ width: "110px" }}>Duration</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            value={duration}
+                            readOnly
+                            style={{ backgroundColor: '#f8f9fa' }}
+                        />
+                    </div>
                 </div>
-                <div className="col-md-4 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
-                    <label className="form-label text-nowrap">
-                        <div className="text-nowrap">Task Due Date</div>
-                        {errorCaseEffortState.taskDueDate && !formState.taskDueDate ? <span style={{ color: 'red' }}>Required</span> : ''}
-                    </label>
-                    <DatePicker
-                        selected={formState.taskDueDate}
-                        onChange={(date) => handleFormState('taskDueDate', date)}
-                        dateFormat="MM/dd/yyyy"
-                        placeholderText="Select"
-                        className="form-control requiredColor"
-                        isClearable
-                    />
+                <div className="row">
+                    <div className="col-md-12 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
+                        <label className="form-label text-nowrap">Task Instruction</label>
+                        <textarea
+                            className="form-control"
+                            rows="3"
+                            placeholder="Placeholder"
+                            value={formState.taskInstruction}
+                            onChange={(e) => handleFormState('taskInstruction', e.target.value)}
+                        />
+                    </div>
                 </div>
-            </div>
-            <div className="row">
-                <div className="col-md-4 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
-                    <label className="form-label text-nowrap" style={{ width: "130px" }}>
-                        <div className="text-nowrap">Start DT/TM</div>
-                        {errorCaseEffortState.startDateTime && !formState.startDateTime ? <span style={{ color: 'red' }}>Required</span> : ''}
-                    </label>
-                    <DatePicker
-                        selected={formState.startDateTime}
-                        onChange={handleStartDateTimeChange}
-                        showTimeSelect
-                        timeFormat="HH:mm"
-                        timeIntervals={15}
-                        dateFormat="MM/dd/yyyy HH:mm"
-                        placeholderText="Select"
-                        className="form-control requiredColor"
-                        isClearable
-                    />
+                <div className="row">
+                    <div className="col-md-12 d-flex justify-content-end" style={{ gap: "10px" }}>
+                        <button
+                            type="button"
+                            className="btn btn-sm btn-success"
+                            onClick={handleNew}
+                        >
+                            New
+                        </button>
+                        <button
+                            type="button"
+                            className="btn btn-sm btn-success"
+                            onClick={handleSave}
+                            disabled={isDisabled}
+                        >
+                            {formState?.CaseEffortID ? "Update" : "Save"}
+                        </button>
+                    </div>
                 </div>
-                <div className="col-md-4 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
-                    <label className="form-label text-nowrap" style={{ width: "90px", marginLeft: "55px" }}>
-                        <div className="text-nowrap">End DT/TM</div>
-                        {errorCaseEffortState.endDateTime && !formState.endDateTime ? <span style={{ color: 'red' }}>Required</span> : ''}
-                    </label>
-                    <DatePicker
-                        selected={formState.endDateTime}
-                        onChange={handleEndDateTimeChange}
-                        showTimeSelect
-                        timeFormat="HH:mm"
-                        timeIntervals={15}
-                        dateFormat="MM/dd/yyyy HH:mm"
-                        placeholderText="Select"
-                        className="form-control requiredColor"
-                        isClearable
-                    />
-                </div>
-                <div className="col-md-4 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
-                    <label className="form-label text-nowrap" style={{ width: "110px" }}>Duration</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        value={duration}
-                        readOnly
-                        style={{ backgroundColor: '#f8f9fa' }}
-                    />
-                </div>
-            </div>
-            <div className="row">
-                <div className="col-md-12 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
-                    <label className="form-label text-nowrap">Task Instruction</label>
-                    <textarea
-                        className="form-control"
-                        rows="3"
-                        placeholder="Placeholder"
-                        value={formState.taskInstruction}
-                        onChange={(e) => handleFormState('taskInstruction', e.target.value)}
-                    />
-                </div>
-            </div>
-            <div className="row">
-                <div className="col-md-12 d-flex justify-content-end" style={{ gap: "10px" }}>
-                    <button
-                        type="button"
-                        className="btn btn-success px-2"
-                        onClick={handleNew}
-                    >
-                        New
-                    </button>
-                    <button
-                        type="button"
-                        className="btn btn-success px-2"
-                        onClick={handleSave}
-                        disabled={isDisabled}
-                    >
-                        {formState?.CaseEffortID ? "Update" : "Save"}
-                    </button>
-                </div>
-            </div>
 
-            {/* Task List Table */}
-            <div className="table-responsive mt-2">
-                <DataTable
-                    dense
-                    columns={columns}
-                    data={caseEffortsData}
-                    customStyles={tableCustomStyles}
-                    pagination
-                    conditionalRowStyles={conditionalRowStyles}
-                    responsive
-                    noDataComponent={'There are no data to display'}
-                    striped
-                    onRowClicked={(row) => {
-                        handelSetEditData(row);
-                    }}
-                    persistTableHead={true}
-                    highlightOnHover
-                    fixedHeader
-                />
+                {/* Task List Table */}
+                <div className="table-responsive mt-2">
+                    <DataTable
+                        dense
+                        columns={columns}
+                        data={caseEffortsData}
+                        customStyles={tableCustomStyles}
+                        pagination
+                        conditionalRowStyles={conditionalRowStyles}
+                        responsive
+                        noDataComponent={'There are no data to display'}
+                        striped
+                        onRowClicked={(row) => {
+                            handelSetEditData(row);
+                        }}
+                        persistTableHead={true}
+                        highlightOnHover
+                        fixedHeader
+                    />
+                </div>
             </div>
-        </div>
+            <ListModal {...{ openPage, setOpenPage }} />
+        </>
     )
 }
 

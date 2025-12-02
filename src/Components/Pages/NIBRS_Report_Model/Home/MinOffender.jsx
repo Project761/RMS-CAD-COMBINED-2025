@@ -3143,10 +3143,10 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, isLocked,
                         highlightOnHover
                         responsive
                         fixedHeader
-                        pagination
-                        paginationPerPage={'10'}
-                        paginationRowsPerPageOptions={[10, 15, 20, 50]}
-                        fixedHeaderScrollHeight='80px'
+                        // pagination
+                        // paginationPerPage={'10'}
+                        // paginationRowsPerPageOptions={[10, 15, 20, 50]}
+                        // fixedHeaderScrollHeight='80px'
                         customStyles={tableCustomStyles}
                         conditionalRowStyles={conditionalRowStyles}
                         onRowClicked={(row) => { setClickedRow(row); set_Edit_Value(row); }}

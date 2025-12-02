@@ -2469,11 +2469,11 @@ const Offense = ({ offenseClick, isNibrsSummited = false, isLocked, setIsLocked,
             onRowClicked={(row) => { setEditVal(row); }}
             conditionalRowStyles={mergedConditionalRowStyles}
             fixedHeader
-            fixedHeaderScrollHeight="170px"
-            pagination
-            paginationPerPage={"100"}
-            paginationRowsPerPageOptions={[100, 150, 200, 500]}
-            showPaginationBottom={100}
+            // fixedHeaderScrollHeight="170px"
+            // pagination
+            // paginationPerPage={"100"}
+            // paginationRowsPerPageOptions={[100, 150, 200, 500]}
+            // showPaginationBottom={100}
             noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : "There are no data to display"}
           />
         </div>

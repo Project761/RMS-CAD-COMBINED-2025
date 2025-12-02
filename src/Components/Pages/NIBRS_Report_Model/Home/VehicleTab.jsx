@@ -418,7 +418,7 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                 setMasterPropertyID(res?.MasterPropertyID);
 
                 // Validate Vehicle 
-             
+
                 ValidateVehicle(mainIncidentID);
                 NibrsErrorReturn(res?.PropertyID);
                 // validateIncSideBar
@@ -445,7 +445,7 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                 setValue({ ...value, Value: previousValue, });
 
                 // Validate Vehicle 
-          
+
                 ValidateVehicle(mainIncidentID);
                 NibrsErrorReturn(vehicleID);
                 // validateIncSideBar
@@ -1266,7 +1266,7 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                                 // paginationPerPage={'5'}
                                 conditionalRowStyles={conditionalRowStyles}
                                 showHeader={true}
-                                fixedHeaderScrollHeight='80px'
+                                // fixedHeaderScrollHeight='80px'
                                 noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : 'There are no data to display'}
                             />
                         }

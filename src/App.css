@@ -2333,6 +2333,12 @@ input.nibrs-reopened:disabled {
   height: auto !important;
   min-height: 100vh;
 }
+.incident-card:has(.Offense_child) {
+  height: auto !important;
+  /* min-height: 100vh; */
+}
+
+
 
 .incident-card:has(.Offense_child) {
   height: auto !important;

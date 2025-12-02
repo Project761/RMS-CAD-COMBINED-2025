@@ -2117,7 +2117,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
               </div>
               <div className="col-4 col-md-4 custom-col-12 text-right " style={{ lineHeight: 1.1 }}>
                 <span style={{ lineHeight: 1.1 }} data-toggle="modal" onClick={() => setOpenPage("Location Type")} data-target="#ListModel" className="new-link  ">
-                  Primary Location 
+                  Primary Location
                   {locationTypeComplteStatus && (<ErrorTooltip ErrorStr={locationTypeComplteError} />)}
                   {chekLocationType(nibrsCode, primaryLocationCode) && (<ErrorTooltip ErrorStr={CyberspaceLocationError} />)}
                 </span>
@@ -2583,7 +2583,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
               </div>
 
               {/* <div className={`text-right ${["220", "210", "120", "23D", "23F", "23H", "240", "26A", "26C", "26E", "26F", "26G", "270", "510"].includes(nibrsCode) ? "custom-col-12" : ""}`} style={!["220", "210", "120", "23D", "23F", "23H", "240", "26A", "26C", "26E", "26F", "26G", "270", "510"].includes(nibrsCode) ? { flex: "0 0 21.3%", minWidth: "21.3%" } : {}}> */}
-              <div className={`text-right `} style={{flex: "0 0 21.3%", minWidth: "21.3%"}} >
+              <div className={`text-right `} style={{ flex: "0 0 21.3%", minWidth: "21.3%" }} >
                 <div className="d-flex flex-column align-items-end">
                   <span data-toggle="modal" data-target="#ListModel" className='new-link px-0' onClick={() => { setOpenPage('Criminal Activity') }}>Criminal Activity</span>
                   <div className="d-flex flex-column align-items-end ">
