@@ -38,6 +38,8 @@ function LegalOrder() {
         status: false,
     });
 
+    const modalLabelStyle = { minWidth: '100px', marginBottom: 0, textAlign: 'right' };
+
     // Order type options
     const orderTypeOptions = [
         { value: 'Search Warrant', label: 'Search Warrant' },
@@ -154,7 +156,7 @@ function LegalOrder() {
             name: 'Return Filed',
             selector: row => row.returnFiled ? 'Yes' : 'No',
             cell: row => (
-                <span 
+                <span
                     className="badge px-2 py-1 rounded-pill"
                     style={{
                         backgroundColor: '#dcfce7',
@@ -171,7 +173,7 @@ function LegalOrder() {
             name: 'Status',
             selector: row => row.status,
             cell: row => (
-                <span 
+                <span
                     className="badge px-2 py-1 rounded-pill"
                     style={{
                         backgroundColor: '#dcfce7',
@@ -229,157 +231,165 @@ function LegalOrder() {
 
             {/* Add Legal Order Modal */}
             {showModal && (
-                <div 
-                    className="modal fade show" 
+                <div
+                    className="modal fade show"
                     style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}
                     tabIndex="-1"
                 >
-                    <div className="modal-dialog modal-dialog-centered modal-lg" style={{ maxHeight: '90vh' }}>
+                    <div className="modal-dialog modal-dialog-centered modal-xl" style={{ maxHeight: '90vh' }}>
                         <div className="modal-content" style={{ maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
                             <div className="modal-header" style={{ borderBottom: '1px solid #dee2e6' }}>
                                 <h5 className="modal-title" style={{ fontSize: '18px', fontWeight: '600' }}>Add Legal Order</h5>
-                                <button 
-                                    type="button" 
-                                    className="close" 
-                                    onClick={handleCloseModal}
-                                    style={{ border: 'none', background: 'none', fontSize: '24px', cursor: 'pointer' }}
-                                >
-                                    <span>&times;</span>
-                                </button>
                             </div>
                             <div className="modal-body" style={{ overflowY: 'auto', flex: '1', padding: '10px' }}>
-                                
+
                                 {/* Two Column Form */}
                                 <div className="row">
                                     {/* Left Column */}
                                     <div className="col-md-6">
-                                        <div className="mb-3">
-                                            <label className="form-label">
+                                        <div className="mb-3 d-flex align-items-center" style={{ gap: '12px' }}>
+                                            <label className="form-label mb-0" style={modalLabelStyle}>
                                                 Order Type <span className="text-danger">*</span>
+                                            </label>
+                                            <div className="flex-grow-1">
+                                                <Select
+                                                    isClearable
+                                                    options={orderTypeOptions}
+                                                    placeholder="Select order type"
+                                                    styles={coloredStyle_Select}
+                                                    value={formState.orderType}
+                                                    onChange={(e) => handleFormState('orderType', e)}
+                                                />
                                                 {errorState.orderType && !formState.orderType && (
-                                                    <span className="text-danger ms-2" style={{ fontSize: '12px' }}>Required</span>
+                                                    <small className="text-danger">Required</small>
                                                 )}
-                                            </label>
-                                            <Select
-                                                isClearable
-                                                options={orderTypeOptions}
-                                                placeholder="Select order type"
-                                                styles={coloredStyle_Select}
-                                                value={formState.orderType}
-                                                onChange={(e) => handleFormState('orderType', e)}
-                                            />
+                                            </div>
                                         </div>
-                                        <div className="mb-3">
-                                            <label className="form-label">
+                                        <div className="mb-3 d-flex align-items-center" style={{ gap: '12px' }}>
+                                            <label className="form-label mb-0" style={modalLabelStyle}>
                                                 Court <span className="text-danger">*</span>
+                                            </label>
+                                            <div className="flex-grow-1">
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    placeholder="Enter court name"
+                                                    value={formState.court}
+                                                    onChange={(e) => handleFormState('court', e.target.value)}
+                                                />
                                                 {errorState.court && !formState.court && (
-                                                    <span className="text-danger ms-2" style={{ fontSize: '12px' }}>Required</span>
+                                                    <small className="text-danger">Required</small>
                                                 )}
-                                            </label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                placeholder="Enter court name"
-                                                value={formState.court}
-                                                onChange={(e) => handleFormState('court', e.target.value)}
-                                            />
+                                            </div>
                                         </div>
-                                        <div className="mb-3">
-                                            <label className="form-label">
+                                        <div className="mb-3 d-flex align-items-center" style={{ gap: '12px' }}>
+                                            <label className="form-label mb-0" style={modalLabelStyle}>
                                                 Date Issued <span className="text-danger">*</span>
-                                                {errorState.dateIssued && !formState.dateIssued && (
-                                                    <span className="text-danger ms-2" style={{ fontSize: '12px' }}>Required</span>
-                                                )}
                                             </label>
-                                            <DatePicker
-                                                selected={formState.dateIssued}
-                                                onChange={(date) => handleFormState('dateIssued', date)}
-                                                dateFormat="dd-MM-yyyy"
-                                                placeholderText="dd-mm-yyyy"
-                                                className="form-control"
-                                                isClearable
-                                            />
+                                            <div className="flex-grow-1">
+                                                <DatePicker
+                                                    selected={formState.dateIssued}
+                                                    onChange={(date) => handleFormState('dateIssued', date)}
+                                                    dateFormat="dd-MM-yyyy"
+                                                    placeholderText="dd-mm-yyyy"
+                                                    className="form-control"
+                                                    isClearable
+                                                />
+                                                {errorState.dateIssued && !formState.dateIssued && (
+                                                    <small className="text-danger">Required</small>
+                                                )}
+                                            </div>
                                         </div>
-                                        <div className="mb-3">
-                                            <label className="form-label">Served By</label>
-                                            <Select
-                                                isClearable
-                                                options={agencyOfficerDrpData || []}
-                                                placeholder="Select officer"
-                                                styles={coloredStyle_Select}
-                                                value={formState.servedBy}
-                                                onChange={(e) => handleFormState('servedBy', e)}
-                                            />
+                                        <div className="mb-3 d-flex align-items-center" style={{ gap: '12px' }}>
+                                            <label className="form-label mb-0" style={modalLabelStyle}>Served By</label>
+                                            <div className="flex-grow-1">
+                                                <Select
+                                                    isClearable
+                                                    options={agencyOfficerDrpData || []}
+                                                    placeholder="Select officer"
+                                                    styles={coloredStyle_Select}
+                                                    value={formState.servedBy}
+                                                    onChange={(e) => handleFormState('servedBy', e)}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
 
                                     {/* Right Column */}
                                     <div className="col-md-6">
-                                        <div className="mb-3">
-                                            <label className="form-label">
+                                        <div className="mb-3 d-flex align-items-center" style={{ gap: '12px' }}>
+                                            <label className="form-label mb-0" style={modalLabelStyle}>
                                                 Order Number <span className="text-danger">*</span>
+                                            </label>
+                                            <div className="flex-grow-1">
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    placeholder="Enter order number"
+                                                    value={formState.orderNumber}
+                                                    onChange={(e) => handleFormState('orderNumber', e.target.value)}
+                                                />
                                                 {errorState.orderNumber && !formState.orderNumber && (
-                                                    <span className="text-danger ms-2" style={{ fontSize: '12px' }}>Required</span>
+                                                    <small className="text-danger">Required</small>
                                                 )}
-                                            </label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                placeholder="Enter order number"
-                                                value={formState.orderNumber}
-                                                onChange={(e) => handleFormState('orderNumber', e.target.value)}
-                                            />
+                                            </div>
                                         </div>
-                                        <div className="mb-3">
-                                            <label className="form-label">
+                                        <div className="mb-3 d-flex align-items-center" style={{ gap: '12px' }}>
+                                            <label className="form-label mb-0" style={modalLabelStyle}>
                                                 Judge <span className="text-danger">*</span>
+                                            </label>
+                                            <div className="flex-grow-1">
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    placeholder="Enter judge name"
+                                                    value={formState.judge}
+                                                    onChange={(e) => handleFormState('judge', e.target.value)}
+                                                />
                                                 {errorState.judge && !formState.judge && (
-                                                    <span className="text-danger ms-2" style={{ fontSize: '12px' }}>Required</span>
+                                                    <small className="text-danger">Required</small>
                                                 )}
-                                            </label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                placeholder="Enter judge name"
-                                                value={formState.judge}
-                                                onChange={(e) => handleFormState('judge', e.target.value)}
-                                            />
+                                            </div>
                                         </div>
-                                        <div className="mb-3">
-                                            <label className="form-label">Date Served</label>
-                                            <DatePicker
-                                                selected={formState.dateServed}
-                                                onChange={(date) => handleFormState('dateServed', date)}
-                                                dateFormat="dd-MM-yyyy"
-                                                placeholderText="dd-mm-yyyy"
-                                                className="form-control"
-                                                isClearable
-                                            />
+                                        <div className="mb-3 d-flex align-items-center" style={{ gap: '12px' }}>
+                                            <label className="form-label mb-0" style={modalLabelStyle}>Date Served</label>
+                                            <div className="flex-grow-1">
+                                                <DatePicker
+                                                    selected={formState.dateServed}
+                                                    onChange={(date) => handleFormState('dateServed', date)}
+                                                    dateFormat="dd-MM-yyyy"
+                                                    placeholderText="dd-mm-yyyy"
+                                                    className="form-control"
+                                                    isClearable
+                                                />
+                                            </div>
                                         </div>
-                                        <div className="mb-3">
-                                            <label className="form-label">
+                                        <div className="mb-3 d-flex align-items-center" style={{ gap: '12px' }}>
+                                            <label className="form-label mb-0" style={modalLabelStyle}>
                                                 Status <span className="text-danger">*</span>
-                                                {errorState.status && !formState.status && (
-                                                    <span className="text-danger ms-2" style={{ fontSize: '12px' }}>Required</span>
-                                                )}
                                             </label>
-                                            <Select
-                                                isClearable
-                                                options={statusOptions}
-                                                placeholder="Select status"
-                                                styles={coloredStyle_Select}
-                                                value={formState.status}
-                                                onChange={(e) => handleFormState('status', e)}
-                                            />
+                                            <div className="flex-grow-1">
+                                                <Select
+                                                    isClearable
+                                                    options={statusOptions}
+                                                    placeholder="Select status"
+                                                    styles={coloredStyle_Select}
+                                                    value={formState.status}
+                                                    onChange={(e) => handleFormState('status', e)}
+                                                />
+                                                {errorState.status && !formState.status && (
+                                                    <small className="text-danger">Required</small>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Notes Section */}
-                                <div className="mb-3">
-                                    <label className="form-label">Notes</label>
+                                <div className="mb-3 d-flex align-items-center" style={{ gap: '12px' }}>
+                                    <label className="form-label mb-0" style={modalLabelStyle}>Notes</label>
                                     <textarea
-                                        className="form-control"
+                                        className="form-control flex-grow-1"
                                         rows="3"
                                         placeholder="Enter any additional notes or details"
                                         value={formState.notes}
@@ -388,8 +398,8 @@ function LegalOrder() {
                                 </div>
 
                                 {/* Checkboxes */}
-                                <div className="mb-3">
-                                    <div className="form-check mb-2">
+                                <div className="mb-3 d-flex align-items-center" style={{ gap: '12px' }}>
+                                    <div className="form-check mb-2 offset-1">
                                         <input
                                             className="form-check-input"
                                             type="checkbox"
@@ -401,7 +411,7 @@ function LegalOrder() {
                                             Return Filed
                                         </label>
                                     </div>
-                                    <div className="form-check">
+                                    <div className="form-check offset-1">
                                         <input
                                             className="form-check-input"
                                             type="checkbox"
@@ -469,14 +479,15 @@ function LegalOrder() {
                             <div className="modal-footer" style={{ borderTop: '1px solid #dee2e6', padding: '15px 20px' }}>
                                 <button
                                     type="button"
-                                    className="btn btn-secondary"
+                                    className="btn btn-light"
                                     onClick={handleCloseModal}
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="button"
-                                    className="btn btn-primary"
+                                    className="btn btn-success px-4 py-2"
+                                    style={{ backgroundColor: '#20c997', borderColor: '#20c997' }}
                                     onClick={handleSave}
                                 >
                                     Add Legal Order

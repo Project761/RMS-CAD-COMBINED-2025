@@ -2397,7 +2397,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
             }
 
             <div className="col-12 modal-table pt-1">
-                <DataTable  
+                <DataTable
                     dense
                     fixedHeader
                     persistTableHead={true}
@@ -2411,7 +2411,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                     onRowClicked={(row) => {
                         set_EditRow(row);
                     }}
-                    fixedHeaderScrollHeight='90px'
+                    // fixedHeaderScrollHeight='90px'
                     // pagination
                     // paginationPerPage={'100'}
                     // paginationRowsPerPageOptions={[100, 150, 200, 500]}

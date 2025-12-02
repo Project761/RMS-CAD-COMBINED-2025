@@ -15,6 +15,8 @@ import { AddDelete_Img } from '../../Components/hooks/Api';
 import ModalConfirm from '../Common/ModalConfirm';
 import ViewSingleImageModal from '../ViewSingleImageModal/ViewSingleImageModal';
 import img from '../../img/file.jpg'
+import ListModal from '../../Components/Pages/Utility/ListManagementModel/ListModal';
+import { Comman_changeArrayFormat } from '../../Components/Common/ChangeArrayFormat';
 
 function DetectiveNotes({ CaseId }) {
     const dispatch = useDispatch();
@@ -24,6 +26,7 @@ function DetectiveNotes({ CaseId }) {
     const PriorityDrpData = useSelector((state) => state.CADDropDown.PriorityDrpData);
     const [notes, setNotes] = useState([])
     const [isDataUpdated, setIsDataUpdated] = useState(false);
+    const [activeTeamMembersData, setActiveTeamMembersData] = useState([])
     const [selectedImages, setSelectedImages] = useState([])
     const [showConfirmModal, setShowConfirmModal] = useState(false)
     const [confirmParams, setConfirmParams] = useState({ index: null, image: null })
@@ -50,6 +53,7 @@ function DetectiveNotes({ CaseId }) {
 
     const [loginPinID, setLoginPinID] = useState(null)
     const [agencyID, setAgencyID] = useState(null)
+    const [openPage, setOpenPage] = useState("");
     const [isDisabled, setIsDisabled] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [deleteNoteId, setDeleteNoteId] = useState(null)
@@ -99,6 +103,28 @@ function DetectiveNotes({ CaseId }) {
             setNotes([])
         }
     }, [getAllDetectiveNotesData, isGetAllDetectiveNotesDataSuccess])
+
+    const getActiveTeamMembersKey = `/CaseManagement/GetActiveTeamMembers/${CaseId}`;
+    const { data: getActiveTeamMembersData, isSuccess: isGetActiveTeamMembersDataSuccess, refetch: refetchActiveTeamMembersData } = useQuery(
+        [getActiveTeamMembersKey, {
+            "CaseID": parseInt(CaseId)
+        },],
+        CaseManagementServices.getActiveTeamMembers,
+        {
+            refetchOnWindowFocus: false,
+            retry: 0,
+            enabled: !!CaseId
+        }
+    );
+
+    useEffect(() => {
+        if (getActiveTeamMembersData && isGetActiveTeamMembersDataSuccess) {
+            const data = Comman_changeArrayFormat(JSON.parse(getActiveTeamMembersData?.data?.data)?.Table, 'PINID', 'FullName')
+            setActiveTeamMembersData(data || [])
+        } else {
+            setActiveTeamMembersData([])
+        }
+    }, [getActiveTeamMembersData, isGetActiveTeamMembersDataSuccess])
 
     // Event handlers
     const handleNew = () => {
@@ -349,11 +375,6 @@ function DetectiveNotes({ CaseId }) {
         }
     }
 
-    const handleApplyFilter = () => {
-        // Here you would typically apply the filters to the notes
-        console.log('Applying filters:', filterState)
-    }
-
     const pinnedNotes = notes.filter(note => note.isPinned)
     const allNotes = notes.filter(note => !note.isPinned)
     const getImageSrc = (image, item) => {
@@ -448,333 +469,336 @@ function DetectiveNotes({ CaseId }) {
     }
 
     return (
-        <div className='col-12 col-md-12 col-lg-12 mt-2'>
-            {/* New Intelligence Note Form */}
-            <div>
-                <div className="row">
-                    <div className="col-md-3 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
-                        <label className="form-label text-nowrap"> <div className="text-nowrap">Note By</div> {errorState.noteBy && isEmptyObject(formState.noteBy) ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
-                        <Select
-                            isClearable
-                            options={agencyOfficerDrpData}
-                            placeholder="Select"
-                            styles={coloredStyle_Select}
-                            value={formState.noteBy}
-                            onChange={(e) => handleFormState('noteBy', e)}
-                        />
-                    </div>
-                    <div className="col-md-3 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
-                        <label className="form-label text-nowrap"> <div className="text-nowrap">Source Type</div> {errorState.sourceType && isEmptyObject(formState.sourceType) ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
-                        <Select
-                            isClearable
-                            options={sourceTypeDrpData}
-                            getOptionLabel={(v) => `${v?.SourceTypeCode} | ${v?.Description}`}
-                            getOptionValue={(v) => v?.SourceTypeCode}
-                            formatOptionLabel={(option, { context }) => {
-                                return context === 'menu'
-                                    ? `${option?.SourceTypeCode} | ${option?.Description}`
-                                    : option?.SourceTypeCode;
-                            }}
-                            placeholder="Select"
-                            styles={coloredStyle_Select}
-                            value={formState.sourceType}
-                            onChange={(e) => handleFormState('sourceType', e)}
-                        />
-                    </div>
-                    <div className="col-md-3 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
-                        <label className="form-label text-nowrap"> <div className="text-nowrap">Confidence</div> {errorState.confidence && isEmptyObject(formState.confidence) ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
-                        <Select
-                            isClearable
-                            options={PriorityDrpData}
-                            getOptionLabel={(v) => `${v?.PriorityCode} | ${v?.Description}`}
-                            getOptionValue={(v) => v?.PriorityCode}
-                            formatOptionLabel={(option, { context }) => {
-                                return context === 'menu'
-                                    ? `${option?.PriorityCode} | ${option?.Description}`
-                                    : option?.PriorityCode;
-                            }}
-                            placeholder="Select"
-                            styles={coloredStyle_Select}
-                            value={formState.confidence}
-                            onChange={(e) => handleFormState('confidence', e)}
-                        />
-                    </div>
-                    <div className="col-md-3 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
-                        <label className="form-label text-nowrap"> <div className="text-nowrap">Date/Time</div> {errorState.dateTime && !formState.dateTime ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
-                        <DatePicker
-                            selected={formState.dateTime}
-                            onChange={(date) => handleFormState('dateTime', date)}
-                            showTimeSelect
-                            timeFormat="HH:mm"
-                            timeIntervals={15}
-                            dateFormat="MM/dd/yyyy HH:mm"
-                            placeholderText="Select"
-                            className="form-control requiredColor"
-                            isClearable
-                        />
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-md-12 mb-3 d-flex" style={{ gap: "10px" }}>
-                        <label className="form-label text-nowrap"> <div className="text-nowrap">Intelligence Text</div> {errorState.intelligenceText && isEmpty(formState.intelligenceText) ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
-                        <textarea
-                            className="form-control requiredColor"
-                            rows="3"
-                            placeholder="Placeholder"
-                            value={formState.intelligenceText}
-                            onChange={(e) => handleFormState('intelligenceText', e.target.value)}
-                        />
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-12 d-flex align-items-center mb-3" style={{ gap: "10px" }}>
-                        <label className="tab-form-label d-flex justify-content-end mr-1 text-nowrap">Upload File</label>
-                        <div className="text-field mt-0 w-100">
-                            <input
-                                type="file"
-                                accept="image/png, image/jpeg, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, text/csv, 'text/plain', video/mp4"
-                                multiple
-                                className='w-100'
-                                onChange={handleImageChange}
-                                ref={fileInputRef}
+        <>
+            <div className='col-12 col-md-12 col-lg-12 mt-2'>
+                {/* New Intelligence Note Form */}
+                <div>
+                    <div className="row">
+                        <div className="col-md-3 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
+                            <label className="form-label text-nowrap"> <div className="text-nowrap">Note By</div> {errorState.noteBy && isEmptyObject(formState.noteBy) ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
+                            <Select
+                                isClearable
+                                options={activeTeamMembersData}
+                                placeholder="Select"
+                                styles={coloredStyle_Select}
+                                value={formState.noteBy}
+                                onChange={(e) => handleFormState('noteBy', e)}
+                            />
+                        </div>
+                        <div className="col-md-3 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
+                            <label className="form-label text-nowrap">    <span className="text-nowrap new-link px-0" data-toggle="modal" data-target="#ListModel"
+                                onClick={() => { setOpenPage("Source Type"); }}>Source Type</span> {errorState.sourceType && isEmptyObject(formState.sourceType) ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
+                            <Select
+                                isClearable
+                                options={sourceTypeDrpData}
+                                getOptionLabel={(v) => `${v?.SourceTypeCode} | ${v?.Description}`}
+                                getOptionValue={(v) => v?.SourceTypeCode}
+                                formatOptionLabel={(option, { context }) => {
+                                    return context === 'menu'
+                                        ? `${option?.SourceTypeCode} | ${option?.Description}`
+                                        : option?.SourceTypeCode;
+                                }}
+                                placeholder="Select"
+                                styles={coloredStyle_Select}
+                                value={formState.sourceType}
+                                onChange={(e) => handleFormState('sourceType', e)}
+                            />
+                        </div>
+                        <div className="col-md-3 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
+                            <label className="form-label text-nowrap"> <div className="text-nowrap">Confidence</div> {errorState.confidence && isEmptyObject(formState.confidence) ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
+                            <Select
+                                isClearable
+                                options={PriorityDrpData}
+                                getOptionLabel={(v) => `${v?.PriorityCode} | ${v?.Description}`}
+                                getOptionValue={(v) => v?.PriorityCode}
+                                formatOptionLabel={(option, { context }) => {
+                                    return context === 'menu'
+                                        ? `${option?.PriorityCode} | ${option?.Description}`
+                                        : option?.PriorityCode;
+                                }}
+                                placeholder="Select"
+                                styles={coloredStyle_Select}
+                                value={formState.confidence}
+                                onChange={(e) => handleFormState('confidence', e)}
+                            />
+                        </div>
+                        <div className="col-md-3 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
+                            <label className="form-label text-nowrap"> <div className="text-nowrap">Date/Time</div> {errorState.dateTime && !formState.dateTime ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
+                            <DatePicker
+                                selected={formState.dateTime}
+                                onChange={(date) => handleFormState('dateTime', date)}
+                                showTimeSelect
+                                timeFormat="HH:mm"
+                                timeIntervals={15}
+                                dateFormat="MM/dd/yyyy HH:mm"
+                                placeholderText="Select"
+                                className="form-control requiredColor"
+                                isClearable
                             />
                         </div>
                     </div>
-                </div>
-                <div className="tab-form-row col-10 offset-2">
-                    <div className="cad-images image-preview cursor pointer">
-                        {selectedImages.map((image, index) => (
-                            <div
-                                key={index}
-                                className="cad-images image-container"
-                                data-toggle="modal"
-                                data-target="#ViewSingleImageModal"
-                                onClick={() => {
-                                    const fileType = image.FileAttachment || image.name;
-                                    if (isImageFile(fileType)) {
-                                        setViewSingleImage(image);
-                                        setIsOpenViewSingleImageModal(true);
-                                    } else {
-                                        window.open(image.FileAttachment || URL.createObjectURL(image), '_blank');
-                                    }
-                                }}
-                            >
-                                {image.DetectiveID ? (
-                                    isImageFile(image.FileAttachment) ? (
-                                        <img
-                                            src={image.FileAttachment}
-                                            alt={`Selected ${index}`}
-                                            width="50"
-                                            height="50"
-                                        />
-                                    ) : (
-                                        <img
-                                            src={img}
-                                            alt="Document Icon"
-                                            width="50"
-                                            height="50"
-                                        />
-                                    )
-                                ) : (
-                                    isImageFile(image.name) ? (
-                                        <img
-                                            src={URL.createObjectURL(image)}
-                                            alt={`Selected ${index}`}
-                                            width="50"
-                                            height="50"
-                                        />
-                                    ) : (
-                                        <img
-                                            src={img}
-                                            alt="Document Icon"
-                                            width="50"
-                                            height="50"
-                                        />
-                                    )
-                                )}
-
-                                {/* File name */}
-                                <p
-                                    style={{
-                                        fontSize: '10px',
-                                        textAlign: 'center',
-                                        margin: '5px 0',
-                                        wordWrap: 'break-word',
-                                        overflowWrap: 'break-word',
-                                        maxWidth: '100px',
-                                        whiteSpace: 'normal',
-                                    }}
-                                >
-                                    {image?.DocumentID ? image?.DocumentName : image?.name || 'No Name'}
-                                </p>
-
-                                {/* Trash icon */}
-                                <button
-                                    className="delete-button"
-                                    onClick={(e) => {
-                                        e.stopPropagation(); // Prevents the parent click handler from firing
-                                        setConfirmParams({ index, image }); // Pass the parameters to use later
-                                        setShowConfirmModal(true); // Open the modal
-                                    }}
-                                >
-                                    <i className="fa fa-trash"></i>
-                                </button>
+                    <div className="row">
+                        <div className="col-md-12 mb-3 d-flex" style={{ gap: "10px" }}>
+                            <label className="form-label text-nowrap"> <div className="text-nowrap">Intelligence Text</div> {errorState.intelligenceText && isEmpty(formState.intelligenceText) ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
+                            <textarea
+                                className="form-control requiredColor"
+                                rows="3"
+                                placeholder="Placeholder"
+                                value={formState.intelligenceText}
+                                onChange={(e) => handleFormState('intelligenceText', e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-12 d-flex align-items-center mb-3" style={{ gap: "10px" }}>
+                            <label className="tab-form-label d-flex justify-content-end mr-1 text-nowrap">Upload File</label>
+                            <div className="text-field mt-0 w-100">
+                                <input
+                                    type="file"
+                                    accept="image/png, image/jpeg, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, text/csv, 'text/plain', video/mp4"
+                                    multiple
+                                    className='w-100'
+                                    onChange={handleImageChange}
+                                    ref={fileInputRef}
+                                />
                             </div>
-                        ))}
+                        </div>
+                    </div>
+                    <div className="tab-form-row col-10 offset-2">
+                        <div className="cad-images image-preview cursor pointer">
+                            {selectedImages.map((image, index) => (
+                                <div
+                                    key={index}
+                                    className="cad-images image-container"
+                                    data-toggle="modal"
+                                    data-target="#ViewSingleImageModal"
+                                    onClick={() => {
+                                        const fileType = image.FileAttachment || image.name;
+                                        if (isImageFile(fileType)) {
+                                            setViewSingleImage(image);
+                                            setIsOpenViewSingleImageModal(true);
+                                        } else {
+                                            window.open(image.FileAttachment || URL.createObjectURL(image), '_blank');
+                                        }
+                                    }}
+                                >
+                                    {image.DetectiveID ? (
+                                        isImageFile(image.FileAttachment) ? (
+                                            <img
+                                                src={image.FileAttachment}
+                                                alt={`Selected ${index}`}
+                                                width="50"
+                                                height="50"
+                                            />
+                                        ) : (
+                                            <img
+                                                src={img}
+                                                alt="Document Icon"
+                                                width="50"
+                                                height="50"
+                                            />
+                                        )
+                                    ) : (
+                                        isImageFile(image.name) ? (
+                                            <img
+                                                src={URL.createObjectURL(image)}
+                                                alt={`Selected ${index}`}
+                                                width="50"
+                                                height="50"
+                                            />
+                                        ) : (
+                                            <img
+                                                src={img}
+                                                alt="Document Icon"
+                                                width="50"
+                                                height="50"
+                                            />
+                                        )
+                                    )}
+
+                                    {/* File name */}
+                                    <p
+                                        style={{
+                                            fontSize: '10px',
+                                            textAlign: 'center',
+                                            margin: '5px 0',
+                                            wordWrap: 'break-word',
+                                            overflowWrap: 'break-word',
+                                            maxWidth: '100px',
+                                            whiteSpace: 'normal',
+                                        }}
+                                    >
+                                        {image?.DocumentID ? image?.DocumentName : image?.name || 'No Name'}
+                                    </p>
+
+                                    {/* Trash icon */}
+                                    <button
+                                        className="delete-button"
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // Prevents the parent click handler from firing
+                                            setConfirmParams({ index, image }); // Pass the parameters to use later
+                                            setShowConfirmModal(true); // Open the modal
+                                        }}
+                                    >
+                                        <i className="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-md-12 d-flex justify-content-end" style={{ gap: "10px" }}>
+                            <button
+                                type="button"
+                                className="btn btn-success px-2"
+                                onClick={handleNew}
+                            >
+                                New
+                            </button>
+                            <button
+                                type="button"
+                                className="btn btn-success px-2"
+                                onClick={handleSave}
+                                disabled={isDisabled}
+                            >
+                                {formState?.detectiveID ? "Update" : "Save"}
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div className="row">
-                    <div className="col-md-12 d-flex justify-content-end" style={{ gap: "10px" }}>
-                        <button
-                            type="button"
-                            className="btn btn-success px-2"
-                            onClick={handleNew}
-                        >
-                            New
-                        </button>
-                        <button
-                            type="button"
-                            className="btn btn-success px-2"
-                            onClick={handleSave}
-                            disabled={isDisabled}
-                        >
-                            {formState?.detectiveID ? "Update" : "Save"}
-                        </button>
-                    </div>
-                </div>
-            </div>
 
-            {/* Filters Section */}
-            <fieldset className='mt-1'>
-                <legend>Filters</legend>
-                <div className="row">
-                    <div className="col-md-4 mt-2 mb-2 d-flex align-items-center" style={{ gap: "10px" }}>
-                        <label className="form-label text-nowrap">Text Contains</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Placeholder"
-                            value={filterState?.filterText}
-                            onChange={(e) => handleFilterState('filterText', e.target.value)}
-                        />
-                    </div>
-                    <div className="col-md-3 mb-2 d-flex align-items-center" style={{ gap: "10px" }}>
-                        <label className="form-label text-nowrap">Note By</label>
-                        <Select
-                            isClearable
-                            options={agencyOfficerDrpData}
-                            placeholder="Select"
-                            styles={colorLessStyle_Select}
-                            value={filterState?.filterNoteBy}
-                            onChange={(e) => handleFilterState('filterNoteBy', e)}
-                        />
-                    </div>
-                    <div className="col-md-3 mb-2 d-flex align-items-center" style={{ gap: "10px" }}>
-                        <label className="form-label text-nowrap">Confidence</label>
-                        <Select
-                            isClearable
-                            options={PriorityDrpData}
-                            placeholder="Select"
-                            styles={colorLessStyle_Select}
-                            value={filterState?.filterConfidence}
-                            getOptionLabel={(v) => `${v?.PriorityCode} | ${v?.Description}`}
-                            getOptionValue={(v) => v?.PriorityCode}
-                            formatOptionLabel={(option, { context }) => {
-                                return context === 'menu'
-                                    ? `${option?.PriorityCode} | ${option?.Description}`
-                                    : option?.PriorityCode;
-                            }}
-                            onChange={(e) => handleFilterState('filterConfidence', e)}
-                        />
-                    </div>
-                    <div className="col-md-2 mb-2 d-flex align-items-center" style={{ gap: "10px" }}>
-                        <label className="form-label text-nowrap">Has Documents</label>
-                        <input
-                            type="checkbox"
-                            checked={filterState?.hasDocuments || false}
-                            onChange={(e) => handleFilterState('hasDocuments', e.target.checked)}
-                        />
-                    </div>
-                </div>
-            </fieldset>
-
-            {/* Pinned Notes Section */}
-            <div className="mb-2">
-                <fieldset className=''>
-                    <legend>Pinned Notes</legend>
-                    <div className='mt-2 d-flex flex-column' style={{ gap: "10px" }}>
-                        {pinnedNotes.length > 0 ? (
-                            pinnedNotes.map((note, index) => (
-                                <NoteCard key={note.id} note={note} index={index} showPinAction={false} />
-                            ))
-                        ) : (
-                            <div className="text-muted text-center py-3">No pinned notes</div>
-                        )}</div>
-                </fieldset>
-            </div>
-
-
-            {/* All Notes Section */}
-            <div>
+                {/* Filters Section */}
                 <fieldset className='mt-1'>
-                    <legend>All Notes</legend>
-                    <div className='mt-2 d-flex flex-column' style={{ gap: "10px" }}>
-                        {allNotes.length > 0 ? (
-                            allNotes.map((note, index) => (
-                                <NoteCard key={note.id} note={note} index={index} showPinAction={true} />
-                            ))
-                        ) : (
-                            <div className="text-muted text-center py-3">No notes found</div>
-                        )}
+                    <legend>Filters</legend>
+                    <div className="row">
+                        <div className="col-md-4 mt-2 mb-2 d-flex align-items-center" style={{ gap: "10px" }}>
+                            <label className="form-label text-nowrap">Text Contains</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Placeholder"
+                                value={filterState?.filterText}
+                                onChange={(e) => handleFilterState('filterText', e.target.value)}
+                            />
+                        </div>
+                        <div className="col-md-3 mb-2 d-flex align-items-center" style={{ gap: "10px" }}>
+                            <label className="form-label text-nowrap">Note By</label>
+                            <Select
+                                isClearable
+                                options={agencyOfficerDrpData}
+                                placeholder="Select"
+                                styles={colorLessStyle_Select}
+                                value={filterState?.filterNoteBy}
+                                onChange={(e) => handleFilterState('filterNoteBy', e)}
+                            />
+                        </div>
+                        <div className="col-md-3 mb-2 d-flex align-items-center" style={{ gap: "10px" }}>
+                            <label className="form-label text-nowrap">Confidence</label>
+                            <Select
+                                isClearable
+                                options={PriorityDrpData}
+                                placeholder="Select"
+                                styles={colorLessStyle_Select}
+                                value={filterState?.filterConfidence}
+                                getOptionLabel={(v) => `${v?.PriorityCode} | ${v?.Description}`}
+                                getOptionValue={(v) => v?.PriorityCode}
+                                formatOptionLabel={(option, { context }) => {
+                                    return context === 'menu'
+                                        ? `${option?.PriorityCode} | ${option?.Description}`
+                                        : option?.PriorityCode;
+                                }}
+                                onChange={(e) => handleFilterState('filterConfidence', e)}
+                            />
+                        </div>
+                        <div className="col-md-2 mb-2 d-flex align-items-center" style={{ gap: "10px" }}>
+                            <label className="form-label text-nowrap">Has Documents</label>
+                            <input
+                                type="checkbox"
+                                checked={filterState?.hasDocuments || false}
+                                onChange={(e) => handleFilterState('hasDocuments', e.target.checked)}
+                            />
+                        </div>
                     </div>
                 </fieldset>
-            </div>
 
-            {/* Delete Confirmation Modal */}
-            {showDeleteModal && (
-                <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-                    <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content">
-                            <div className="modal-body text-center py-5">
-                                <h5 className="modal-title mt-2">Are you sure you want to delete this record?</h5>
-                                <div className="btn-box mt-3">
-                                    <button
-                                        type="button"
-                                        onClick={handleDelete}
-                                        className="btn btn-sm text-white"
-                                        style={{ background: "#ef233c" }}
-                                    >
-                                        Delete
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-sm btn-secondary ml-2"
-                                        onClick={handleCloseDeleteModal}
-                                    >
-                                        Cancel
-                                    </button>
+                {/* Pinned Notes Section */}
+                <div className="mb-2">
+                    <fieldset className=''>
+                        <legend>Pinned Notes</legend>
+                        <div className='mt-2 d-flex flex-column' style={{ gap: "10px" }}>
+                            {pinnedNotes.length > 0 ? (
+                                pinnedNotes.map((note, index) => (
+                                    <NoteCard key={note.id} note={note} index={index} showPinAction={false} />
+                                ))
+                            ) : (
+                                <div className="text-muted text-center py-3">No pinned notes</div>
+                            )}</div>
+                    </fieldset>
+                </div>
+
+
+                {/* All Notes Section */}
+                <div>
+                    <fieldset className='mt-1'>
+                        <legend>All Notes</legend>
+                        <div className='mt-2 d-flex flex-column' style={{ gap: "10px" }}>
+                            {allNotes.length > 0 ? (
+                                allNotes.map((note, index) => (
+                                    <NoteCard key={note.id} note={note} index={index} showPinAction={true} />
+                                ))
+                            ) : (
+                                <div className="text-muted text-center py-3">No notes found</div>
+                            )}
+                        </div>
+                    </fieldset>
+                </div>
+
+                {/* Delete Confirmation Modal */}
+                {showDeleteModal && (
+                    <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                        <div className="modal-dialog modal-dialog-centered">
+                            <div className="modal-content">
+                                <div className="modal-body text-center py-5">
+                                    <h5 className="modal-title mt-2">Are you sure you want to delete this record?</h5>
+                                    <div className="btn-box mt-3">
+                                        <button
+                                            type="button"
+                                            onClick={handleDelete}
+                                            className="btn btn-sm text-white"
+                                            style={{ background: "#ef233c" }}
+                                        >
+                                            Delete
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm btn-secondary ml-2"
+                                            onClick={handleCloseDeleteModal}
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
-            <ModalConfirm
-                showModal={showConfirmModal}
-                setShowModal={setShowConfirmModal}
-                confirmAction=""
-                handleConfirm={() => {
-                    removeImage(confirmParams.index, confirmParams.image);
-                    setIsDataUpdated(true)
-                    setShowConfirmModal(false);
-                }}
-                isCustomMessage
-                message="Are you sure you want to delete this item ?"
-            />
+                )}
+                <ModalConfirm
+                    showModal={showConfirmModal}
+                    setShowModal={setShowConfirmModal}
+                    confirmAction=""
+                    handleConfirm={() => {
+                        removeImage(confirmParams.index, confirmParams.image);
+                        setIsDataUpdated(true)
+                        setShowConfirmModal(false);
+                    }}
+                    isCustomMessage
+                    message="Are you sure you want to delete this item ?"
+                />
 
-            <ViewSingleImageModal isOpenViewSingleImageModal={isOpenViewSingleImageModal} setIsOpenViewSingleImageModal={setIsOpenViewSingleImageModal} viewSingleImage={viewSingleImage} id={viewSingleImage?.whiteBoardID} />
-
-        </div>
+                <ViewSingleImageModal isOpenViewSingleImageModal={isOpenViewSingleImageModal} setIsOpenViewSingleImageModal={setIsOpenViewSingleImageModal} viewSingleImage={viewSingleImage} id={viewSingleImage?.whiteBoardID} />
+            </div>
+            <ListModal {...{ openPage, setOpenPage }} />
+        </>
     )
 }
 

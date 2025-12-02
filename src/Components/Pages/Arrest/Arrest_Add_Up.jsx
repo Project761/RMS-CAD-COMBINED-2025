@@ -414,10 +414,10 @@ const Arrest_Add_Up = () => {
                 <div className="dark-row" >
                     <div className="col-12 col-sm-12">
                         <div className="card Agency incident-card ">
-                            <div className="card-body" >
+                            <div className="card-body py-1" >
 
                                 {arrestFilterData && arrestFilterData.length > 0 && (
-                                    <div className="card-carousel-container position-relative" style={{ marginBottom: "40px" }}>
+                                    <div className="card-carousel-container position-relative mb-1" >
                                         {/* Cards Wrapper */}
                                         {viewType === "card" ? (
                                             <div className="card-carousel" id="cardCarousel" ref={carouselRef}>
@@ -654,7 +654,7 @@ const Arrest_Add_Up = () => {
                                 )}
                                 {
                                     (status || isNew === "true" || isNew === true || ArrestCount === 0 || ArrestCount === "0") && (
-                                        <div className="row " style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
+                                        <div className="row mt-1 " style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
                                             <div className="col-12 name-tab">
                                                 <ul className='nav nav-tabs'>
                                                     <Link

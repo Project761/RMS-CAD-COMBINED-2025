@@ -3,6 +3,9 @@ import DataTable from 'react-data-table-component';
 import { tableCustomStyles } from '../../Components/Common/Utility';
 import useObjState from '../../CADHook/useObjState';
 import Select from "react-select";
+import { colorLessStyle_Select } from '../Utility/CustomStylesForReact';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 function PropertyEvidence() {
     // Property/Evidence data
@@ -105,13 +108,16 @@ function PropertyEvidence() {
         [propertyData]
     );
 
+    const modalLabelStyle = { minWidth: '110px', marginBottom: 0, textAlign: 'right' };
+    const modalFormallyLabelStyle = { minWidth: '180px', marginBottom: 0, textAlign: 'right' };
+
     const [digitalEvidenceForm, , handleDigitalEvidenceForm, clearDigitalEvidenceForm] = useObjState({
         evidenceLink: '',
         fileType: null,
         fileHash: '',
         fileSize: '',
         captureSource: null,
-        retentionDate: '',
+        retentionDate: null,
         accessRestriction: null,
     });
     const [digitalEvidenceData, setDigitalEvidenceData] = useState([]);
@@ -195,13 +201,21 @@ function PropertyEvidence() {
 
     const saveDigitalEvidence = () => {
         if (!digitalEvidenceForm.evidenceLink || !digitalEvidenceForm.fileType) return;
+        const formatDate = (date) => {
+            if (!date) return '';
+            const d = new Date(date);
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
+            return `${day}-${month}-${year}`;
+        };
         const newEntry = {
             id: digitalEvidenceData.length + 1,
             evidenceLink: digitalEvidenceForm.evidenceLink,
             fileType: digitalEvidenceForm.fileType?.label || '',
             fileSize: digitalEvidenceForm.fileSize,
             captureSource: digitalEvidenceForm.captureSource?.label || '',
-            retentionDate: digitalEvidenceForm.retentionDate,
+            retentionDate: formatDate(digitalEvidenceForm.retentionDate),
             accessRestriction: digitalEvidenceForm.accessRestriction?.label || '',
         };
         setDigitalEvidenceData(prev => [...prev, newEntry]);
@@ -304,45 +318,28 @@ function PropertyEvidence() {
         }
     ];
 
-    const tabPanels = [
-        {
-            id: 'home',
-            title: 'Property & Evidence',
-            description: 'Manage all physical property items and evidence records.'
-        },
-        {
-            id: 'digitalEvidence',
-            title: 'Digital Evidence',
-            description: 'Capture metadata for digital artifacts linked to the case.'
-        }
-    ];
-
     return (
         <div className='col-12 col-md-12 col-lg-12 mt-2'>
-            <div className="card shadow-sm mb-4" style={{ border: '0px', borderRadius: '12px' }}>
-                <div className="card-body d-flex flex-wrap align-items-center" style={{ gap: '10px' }}>
-                    {tabPanels.map((tab) => {
-                        const isActive = activeTab === tab.id;
-                        return (
-                            <button
-                                key={tab.id}
-                                className="btn text-start flex-grow-1"
-                                onClick={() => setActiveTab(tab.id)}
-                                style={{
-                                    borderRadius: '10px',
-                                    border: isActive ? '1px solid #163b5b' : '1px solid #e2e8f0',
-                                    background: isActive ? '#163b5b' : '#f8fafc',
-                                    color: isActive ? '#fff' : '#0f172a',
-                                    padding: '12px 16px',
-                                    boxShadow: isActive ? '0 6px 20px rgba(22,59,91,0.3)' : 'none',
-                                    transition: 'all 0.2s ease'
-                                }}
-                            >
-                                <div className="fw-semibold" style={{ fontSize: '15px' }}>{tab.title}</div>
-                                <div style={{ fontSize: '12px', opacity: 0.8 }}>{tab.description}</div>
-                            </button>
-                        );
-                    })}
+            <div className="row" style={{ marginLeft: '-18px', marginRight: '-18px' }}>
+                <div className="col-12 name-tab mb-2">
+                    <ul className='nav nav-tabs'>
+                        <span
+                            className={`nav-item ml-2 ${activeTab === 'home' ? 'active' : ''}`}
+                            style={{ color: activeTab === 'home' ? 'Red' : '#000' }}
+                            aria-current="page"
+                            onClick={() => setActiveTab('home')}
+                        >
+                            Property & Evidence
+                        </span>
+                        <span
+                            className={`nav-item ${activeTab === 'digitalEvidence' ? 'active' : ''}`}
+                            style={{ color: activeTab === 'digitalEvidence' ? 'Red' : '#000' }}
+                            aria-current="page"
+                            onClick={() => setActiveTab('digitalEvidence')}
+                        >
+                            Digital Evidence
+                        </span>
+                    </ul>
                 </div>
             </div>
 
@@ -388,364 +385,380 @@ function PropertyEvidence() {
             )}
 
             {activeTab === 'digitalEvidence' && (
-                <div className="card shadow-sm" style={{ border: '0px', borderRadius: '10px' }}>
-                    <div className="card-body">
-                        <h5 className="fw-bold mb-3">Digital Evidence Metadata</h5>
-                        <div className="row">
-                            <div className="col-md-6 mb-3">
-                                <label className="form-label">Evidence System Link</label>
-                                <input
-                                    type="url"
-                                    className="form-control"
-                                    placeholder="https://example.com/evidence"
-                                    value={digitalEvidenceForm.evidenceLink}
-                                    onChange={(e) => handleDigitalEvidenceForm('evidenceLink', e.target.value)}
-                                />
-                            </div>
-                            <div className="col-md-6 mb-3">
-                                <label className="form-label">File Type</label>
-                                <Select
-                                    classNamePrefix="react-select"
-                                    options={fileTypeOptions}
-                                    placeholder="Select file type"
-                                    value={digitalEvidenceForm.fileType}
-                                    onChange={(option) => handleDigitalEvidenceForm('fileType', option)}
-                                    isClearable
-                                />
-                            </div>
-                            <div className="col-md-6 mb-3">
-                                <label className="form-label">File Hash / Checksum (SHA-256)</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="Enter SHA-256 hash"
-                                    value={digitalEvidenceForm.fileHash}
-                                    onChange={(e) => handleDigitalEvidenceForm('fileHash', e.target.value)}
-                                />
-                            </div>
-                            <div className="col-md-6 mb-3">
-                                <label className="form-label">File Size (MB/GB)</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="e.g., 250 MB"
-                                    value={digitalEvidenceForm.fileSize}
-                                    onChange={(e) => handleDigitalEvidenceForm('fileSize', e.target.value)}
-                                />
-                            </div>
-                            <div className="col-md-6 mb-3">
-                                <label className="form-label">Capture Source</label>
-                                <Select
-                                    classNamePrefix="react-select"
-                                    options={captureSourceOptions}
-                                    placeholder="Select source"
-                                    value={digitalEvidenceForm.captureSource}
-                                    onChange={(option) => handleDigitalEvidenceForm('captureSource', option)}
-                                    isClearable
-                                />
-                            </div>
-                            <div className="col-md-6 mb-3">
-                                <label className="form-label">Retention Date</label>
-                                <input
-                                    type="date"
-                                    className="form-control"
-                                    value={digitalEvidenceForm.retentionDate}
-                                    onChange={(e) => handleDigitalEvidenceForm('retentionDate', e.target.value)}
-                                />
-                            </div>
-                            <div className="col-md-6 mb-3">
-                                <label className="form-label">Access Restriction</label>
-                                <Select
-                                    classNamePrefix="react-select"
-                                    options={accessRestrictionOptions}
-                                    placeholder="Select restriction level"
-                                    value={digitalEvidenceForm.accessRestriction}
-                                    onChange={(option) => handleDigitalEvidenceForm('accessRestriction', option)}
-                                    isClearable
-                                />
-                            </div>
-                        </div>
-                        <div className="d-flex justify-content-end">
-                            <button className="btn btn-info text-white" onClick={saveDigitalEvidence}>
-                                Save Digital Evidence
-                            </button>
-                        </div>
 
-                        <div className="mt-4">
-                            <DataTable
-                                dense
-                                columns={digitalEvidenceColumns}
-                                data={digitalEvidenceData}
-                                customStyles={tableCustomStyles}
-                                noDataComponent={'There are no digital evidence records'}
-                                striped
-                                highlightOnHover
-                                persistTableHead
-                                pagination
+                <fieldset className='mt-1'>
+                    <legend>Digital Evidence Metadata</legend>
+                    <div className="row mt-2">
+                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                            <label className="new-label" style={{ minWidth: '200px', marginBottom: 0, textAlign: 'right' }}>Evidence System Link</label>
+                            <input
+                                type="url"
+                                className="form-control"
+                                placeholder="https://example.com/evidence"
+                                value={digitalEvidenceForm.evidenceLink}
+                                onChange={(e) => handleDigitalEvidenceForm('evidenceLink', e.target.value)}
+                            />
+                        </div>
+                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                            <label className="new-label" style={{ minWidth: '200px', marginBottom: 0, textAlign: 'right' }}>File Type</label>
+                            <Select
+                                classNamePrefix="react-select"
+                                options={fileTypeOptions}
+                                styles={colorLessStyle_Select}
+                                placeholder="Select file type"
+                                value={digitalEvidenceForm.fileType}
+                                onChange={(option) => handleDigitalEvidenceForm('fileType', option)}
+                                isClearable
+                            />
+                        </div>
+                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                            <label className="new-label text-nowrap" style={{ minWidth: '200px', marginBottom: 0, textAlign: 'right' }}>File Hash / Checksum (SHA-256)</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Enter SHA-256 hash"
+                                value={digitalEvidenceForm.fileHash}
+                                onChange={(e) => handleDigitalEvidenceForm('fileHash', e.target.value)}
+                            />
+                        </div>
+                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                            <label className="new-label" style={{ minWidth: '200px', marginBottom: 0, textAlign: 'right' }}>File Size (MB/GB)</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="e.g., 250 MB"
+                                value={digitalEvidenceForm.fileSize}
+                                onChange={(e) => handleDigitalEvidenceForm('fileSize', e.target.value)}
+                            />
+                        </div>
+                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                            <label className="new-label" style={{ minWidth: '200px', marginBottom: 0, textAlign: 'right' }}>Capture Source</label>
+                            <Select
+                                classNamePrefix="react-select"
+                                options={captureSourceOptions}
+                                styles={colorLessStyle_Select}
+                                placeholder="Select source"
+                                value={digitalEvidenceForm.captureSource}
+                                onChange={(option) => handleDigitalEvidenceForm('captureSource', option)}
+                                isClearable
+                            />
+                        </div>
+                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                            <label className="new-label" style={{ minWidth: '200px', marginBottom: 0, textAlign: 'right' }}>Retention Date</label>
+                            <DatePicker
+                                selected={digitalEvidenceForm.retentionDate}
+                                onChange={(date) => handleDigitalEvidenceForm('retentionDate', date)}
+                                dateFormat="dd-MM-yyyy"
+                                placeholderText="dd-mm-yyyy"
+                                className="form-control"
+                                isClearable
+                            />
+                        </div>
+                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                            <label className="new-label" style={{ minWidth: '200px', marginBottom: 0, textAlign: 'right' }}>Access Restriction</label>
+                            <Select
+                                classNamePrefix="react-select"
+                                options={accessRestrictionOptions}
+                                placeholder="Select restriction level"
+                                styles={colorLessStyle_Select}
+                                value={digitalEvidenceForm.accessRestriction}
+                                onChange={(option) => handleDigitalEvidenceForm('accessRestriction', option)}
+                                isClearable
                             />
                         </div>
                     </div>
-                </div>
-            )}
+                    <div className="d-flex justify-content-end">
+                        <button
+                            type="button"
+                            className="btn btn-success px-4 py-2"
+                            onClick={saveDigitalEvidence}
+                            style={{ backgroundColor: '#20c997', borderColor: '#20c997' }}
+                        >
+                            Save Digital Evidence
+                        </button>
+                    </div>
+
+                    <div className="mt-4">
+                        <DataTable
+                            dense
+                            columns={digitalEvidenceColumns}
+                            data={digitalEvidenceData}
+                            customStyles={tableCustomStyles}
+                            noDataComponent={'There are no digital evidence records'}
+                            striped
+                            highlightOnHover
+                            persistTableHead
+                            pagination
+                        />
+                    </div>
+                </fieldset>
+            )
+            }
 
             {/* Add Property Modal */}
-            {isAddPropertyModalOpen && (
-                <div
-                    className="modal fade show"
-                    style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}
-                    tabIndex="-1"
-                    role="dialog"
-                >
-                    <div className="modal-dialog modal-lg modal-dialog-centered" role="document">
-                        <div className="modal-content" style={{ borderRadius: '12px' }}>
-                            <div className="modal-header">
-                                <div>
-                                    <h5 className="modal-title">Add New Property</h5>
-                                    <p className="mb-0 text-muted" style={{ fontSize: '13px' }}>
-                                        Enter the details of the property item to be added to the case.
-                                    </p>
-                                </div>
-                                <button type="button" className="close" onClick={closeAddPropertyModal}>
-                                    <span>&times;</span>
-                                </button>
-                            </div>
-                            <div className="modal-body">
-                                <div className="row">
-                                    <div className="col-md-6 mb-3">
-                                        <label className="form-label fw-bold">Item Number *</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="e.g., PRN-001241"
-                                            value={newPropertyForm.itemNumber}
-                                            onChange={(e) => handleNewPropertyForm('itemNumber', e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="col-md-6 mb-3">
-                                        <label className="form-label fw-bold">Category *</label>
-                                        <Select
-                                            className="react-select-container"
-                                            classNamePrefix="react-select"
-                                            options={categoryOptions}
-                                            placeholder="Select category"
-                                            value={newPropertyForm.category}
-                                            onChange={(option) => handleNewPropertyForm('category', option)}
-                                            isClearable
-                                        />
-                                    </div>
-                                    <div className="col-md-6 mb-3">
-                                        <label className="form-label fw-bold">Classification</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="e.g., Waxer, Laptop, etc."
-                                            value={newPropertyForm.classification}
-                                            onChange={(e) => handleNewPropertyForm('classification', e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="col-md-6 mb-3">
-                                        <label className="form-label fw-bold">Physical Location</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="e.g., Property Room A-13"
-                                            value={newPropertyForm.physicalLocation}
-                                            onChange={(e) => handleNewPropertyForm('physicalLocation', e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="col-md-6 mb-3">
-                                        <label className="form-label fw-bold">Custodian *</label>
-                                        <Select
-                                            className="react-select-container"
-                                            classNamePrefix="react-select"
-                                            options={custodianOptions}
-                                            placeholder="Select custodian"
-                                            value={newPropertyForm.custodian}
-                                            onChange={(option) => handleNewPropertyForm('custodian', option)}
-                                            isClearable
-                                        />
-                                    </div>
-                                    <div className="col-md-6 mb-3">
-                                        <label className="form-label fw-bold">Status *</label>
-                                        <Select
-                                            className="react-select-container"
-                                            classNamePrefix="react-select"
-                                            options={statusOptions}
-                                            placeholder="Select status"
-                                            value={newPropertyForm.status}
-                                            onChange={(option) => handleNewPropertyForm('status', option)}
-                                            isClearable
-                                        />
-                                    </div>
-                                    <div className="col-12 mb-3">
-                                        <label className="form-label fw-bold">Description</label>
-                                        <textarea
-                                            className="form-control"
-                                            rows="3"
-                                            placeholder="Enter detailed description of the property item"
-                                            value={newPropertyForm.description}
-                                            onChange={(e) => handleNewPropertyForm('description', e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="col-12 mb-3">
-                                        <label className="form-label fw-bold">Notes</label>
-                                        <textarea
-                                            className="form-control"
-                                            rows="3"
-                                            placeholder="Additional notes or comments"
-                                            value={newPropertyForm.notes}
-                                            onChange={(e) => handleNewPropertyForm('notes', e.target.value)}
-                                        />
+            {
+                isAddPropertyModalOpen && (
+                    <div
+                        className="modal fade show"
+                        style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}
+                        tabIndex="-1"
+                        role="dialog"
+                    >
+                        <div className="modal-dialog modal-xl modal-dialog-centered" role="document">
+                            <div className="modal-content" style={{ borderRadius: '6px' }}>
+                                <div className="modal-header">
+                                    <div>
+                                        <h5 className="modal-title">Add New Property</h5>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="modal-footer d-flex justify-content-end" style={{ gap: '12px' }}>
-                                <button type="button" className="btn btn-light px-4" onClick={closeAddPropertyModal}>
-                                    Cancel
-                                </button>
-                                <button type="button" className="btn btn-primary px-4" onClick={saveNewProperty}>
-                                    Add Property
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Formally Enter as Evidence Modal */}
-            {isEnterEvidenceModalOpen && (
-                <div
-                    className="modal fade show"
-                    style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}
-                    tabIndex="-1"
-                    role="dialog"
-                >
-                    <div className="modal-dialog modal-lg modal-dialog-centered" role="document">
-                        <div className="modal-content" style={{ borderRadius: '12px' }}>
-                            <div className="modal-header">
-                                <div>
-                                    <h5 className="modal-title">Formally Enter as Evidence</h5>
-                                    <p className="mb-0 text-muted" style={{ fontSize: '13px' }}>
-                                        Convert property item to formal evidence with proper documentation and chain of custody.
-                                    </p>
-                                </div>
-                                <button type="button" className="close" onClick={closeEnterEvidenceModal}>
-                                    <span>&times;</span>
-                                </button>
-                            </div>
-                            <div className="modal-body">
-                                <div className="row">
-                                    <div className="col-md-6 mb-3">
-                                        <label className="form-label fw-bold">Property Item Number *</label>
-                                        <Select
-                                            classNamePrefix="react-select"
-                                            options={propertyItemOptions}
-                                            placeholder="Select property item"
-                                            value={enterEvidenceForm.propertyItem}
-                                            onChange={(option) => handleEnterEvidenceForm('propertyItem', option)}
-                                            isClearable
-                                        />
-                                    </div>
-                                    <div className="col-md-6 mb-3">
-                                        <label className="form-label fw-bold">Evidence Tag Number *</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="e.g., EV-2025-001"
-                                            value={enterEvidenceForm.evidenceTag}
-                                            onChange={(e) => handleEnterEvidenceForm('evidenceTag', e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="col-md-6 mb-3">
-                                        <label className="form-label fw-bold">Collected By *</label>
-                                        <Select
-                                            classNamePrefix="react-select"
-                                            options={collectedByOptions}
-                                            placeholder="Select officer"
-                                            value={enterEvidenceForm.collectedBy}
-                                            onChange={(option) => handleEnterEvidenceForm('collectedBy', option)}
-                                            isClearable
-                                        />
-                                    </div>
-                                    <div className="col-md-6 mb-3">
-                                        <label className="form-label fw-bold">Collection Date &amp; Time *</label>
-                                        <input
-                                            type="datetime-local"
-                                            className="form-control"
-                        value={enterEvidenceForm.collectionDateTime}
-                                            onChange={(e) => handleEnterEvidenceForm('collectionDateTime', e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="col-md-6 mb-3">
-                                        <label className="form-label fw-bold">Evidence Type *</label>
-                                        <Select
-                                            classNamePrefix="react-select"
-                                            options={evidenceTypeOptions}
-                                            placeholder="Select type"
-                                            value={enterEvidenceForm.evidenceType}
-                                            onChange={(option) => handleEnterEvidenceForm('evidenceType', option)}
-                                            isClearable
-                                        />
-                                    </div>
-                                    <div className="col-md-6 mb-3">
-                                        <label className="form-label fw-bold">Evidence Storage Location *</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="e.g., Evidence Locker B-12"
-                                            value={enterEvidenceForm.storageLocation}
-                                            onChange={(e) => handleEnterEvidenceForm('storageLocation', e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="col-12 mb-3">
-                                        <label className="form-label fw-bold">Chain of Custody Information</label>
-                                        <textarea
-                                            className="form-control"
-                                            rows="3"
-                                            placeholder="Document the chain of custody from collection to storage"
-                                            value={enterEvidenceForm.custodyInfo}
-                                            onChange={(e) => handleEnterEvidenceForm('custodyInfo', e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="col-12 mb-3">
-                                        <label className="form-label fw-bold">Additional Notes</label>
-                                        <textarea
-                                            className="form-control"
-                                            rows="3"
-                                            placeholder="Any additional information about the evidence"
-                                            value={enterEvidenceForm.additionalNotes}
-                                            onChange={(e) => handleEnterEvidenceForm('additionalNotes', e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="col-12">
-                                        <div className="form-check">
+                                <div className="modal-body">
+                                    <div className="row">
+                                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                                            <label className="new-label fw-bold mb-0" style={modalLabelStyle}>Item Number</label>
                                             <input
-                                                className="form-check-input"
-                                                type="checkbox"
-                                                id="createTimelineEntry"
-                                                checked={enterEvidenceForm.createTimelineEntry}
-                                                onChange={(e) => handleEnterEvidenceForm('createTimelineEntry', e.target.checked)}
+                                                type="text"
+                                                className="form-control flex-grow-1"
+                                                placeholder="e.g., PRN-001241"
+                                                value={newPropertyForm.itemNumber}
+                                                onChange={(e) => handleNewPropertyForm('itemNumber', e.target.value)}
                                             />
-                                            <label className="form-check-label" htmlFor="createTimelineEntry">
-                                                Automatically create an entry in Case Timeline
-                                            </label>
+                                        </div>
+                                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                                            <label className="new-label fw-bold mb-0" style={modalLabelStyle}>Category</label>
+                                            <div className="flex-grow-1">
+                                                <Select
+                                                    classNamePrefix="react-select"
+                                                    options={categoryOptions}
+                                                    placeholder="Select category"
+                                                    value={newPropertyForm.category}
+                                                    onChange={(option) => handleNewPropertyForm('category', option)}
+                                                    isClearable
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                                            <label className="new-label fw-bold mb-0" style={modalLabelStyle}>Classification</label>
+                                            <input
+                                                type="text"
+                                                className="form-control flex-grow-1"
+                                                placeholder="e.g., Waxer, Laptop, etc."
+                                                value={newPropertyForm.classification}
+                                                onChange={(e) => handleNewPropertyForm('classification', e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                                            <label className="new-label fw-bold mb-0" style={modalLabelStyle}>Physical Location</label>
+                                            <input
+                                                type="text"
+                                                className="form-control flex-grow-1"
+                                                placeholder="e.g., Property Room A-13"
+                                                value={newPropertyForm.physicalLocation}
+                                                onChange={(e) => handleNewPropertyForm('physicalLocation', e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                                            <label className="new-label fw-bold mb-0" style={modalLabelStyle}>Custodian</label>
+                                            <div className="flex-grow-1">
+                                                <Select
+                                                    classNamePrefix="react-select"
+                                                    options={custodianOptions}
+                                                    placeholder="Select custodian"
+                                                    value={newPropertyForm.custodian}
+                                                    onChange={(option) => handleNewPropertyForm('custodian', option)}
+                                                    isClearable
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                                            <label className="new-label fw-bold mb-0" style={modalLabelStyle}>Status</label>
+                                            <div className="flex-grow-1">
+                                                <Select
+                                                    classNamePrefix="react-select"
+                                                    options={statusOptions}
+                                                    placeholder="Select status"
+                                                    value={newPropertyForm.status}
+                                                    onChange={(option) => handleNewPropertyForm('status', option)}
+                                                    isClearable
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-12 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                                            <label className="new-label fw-bold" style={modalLabelStyle}>Description</label>
+                                            <textarea
+                                                className="form-control"
+                                                rows="3"
+                                                placeholder="Enter detailed description of the property item"
+                                                value={newPropertyForm.description}
+                                                onChange={(e) => handleNewPropertyForm('description', e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="col-12 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                                            <label className="new-label fw-bold" style={modalLabelStyle}>Notes</label>
+                                            <textarea
+                                                className="form-control"
+                                                rows="3"
+                                                placeholder="Additional notes or comments"
+                                                value={newPropertyForm.notes}
+                                                onChange={(e) => handleNewPropertyForm('notes', e.target.value)}
+                                            />
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="modal-footer d-flex justify-content-end" style={{ gap: '12px' }}>
-                                <button type="button" className="btn btn-light px-4" onClick={closeEnterEvidenceModal}>
-                                    Cancel
-                                </button>
-                                <button type="button" className="btn btn-success px-4" onClick={submitEnterEvidence}>
-                                    Enter as Evidence
-                                </button>
+                                <div className="modal-footer d-flex justify-content-end" style={{ gap: '12px' }}>
+                                    <button type="button" className="btn btn-light px-4" onClick={closeAddPropertyModal}>
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="btn btn-success px-4 py-2"
+                                        onClick={saveNewProperty}
+                                        style={{ backgroundColor: '#20c997', borderColor: '#20c997' }}
+                                    >
+                                        Add Property
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+
+            {/* Formally Enter as Evidence Modal */}
+            {
+                isEnterEvidenceModalOpen && (
+                    <div
+                        className="modal fade show"
+                        style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}
+                        tabIndex="-1"
+                        role="dialog"
+                    >
+                        <div className="modal-dialog modal-xl modal-dialog-centered" role="document">
+                            <div className="modal-content" style={{ borderRadius: '6px' }}>
+                                <div className="modal-header">
+                                    <div>
+                                        <h5 className="modal-title">Formally Enter as Evidence</h5>
+                                    </div>
+                                </div>
+                                <div className="modal-body">
+                                    <div className="row">
+                                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                                            <label className="new-label fw-bold mb-0" style={modalFormallyLabelStyle}>Property Number</label>
+                                            <div className="flex-grow-1">
+                                                <Select
+                                                    classNamePrefix="react-select"
+                                                    options={propertyItemOptions}
+                                                    placeholder="Select property item"
+                                                    value={enterEvidenceForm.propertyItem}
+                                                    onChange={(option) => handleEnterEvidenceForm('propertyItem', option)}
+                                                    isClearable
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                                            <label className="new-label fw-bold mb-0" style={modalFormallyLabelStyle}>Evidence Tag Number</label>
+                                            <input
+                                                type="text"
+                                                className="form-control flex-grow-1"
+                                                placeholder="e.g., EV-2025-001"
+                                                value={enterEvidenceForm.evidenceTag}
+                                                onChange={(e) => handleEnterEvidenceForm('evidenceTag', e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                                            <label className="new-label fw-bold mb-0" style={modalFormallyLabelStyle}>Collected By</label>
+                                            <div className="flex-grow-1">
+                                                <Select
+                                                    classNamePrefix="react-select"
+                                                    options={collectedByOptions}
+                                                    placeholder="Select officer"
+                                                    value={enterEvidenceForm.collectedBy}
+                                                    onChange={(option) => handleEnterEvidenceForm('collectedBy', option)}
+                                                    isClearable
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                                            <label className="new-label fw-bold mb-0" style={modalFormallyLabelStyle}>Collection Date &amp; Time</label>
+                                            <input
+                                                type="datetime-local"
+                                                className="form-control flex-grow-1"
+                                                value={enterEvidenceForm.collectionDateTime}
+                                                onChange={(e) => handleEnterEvidenceForm('collectionDateTime', e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                                            <label className="new-label fw-bold mb-0" style={modalFormallyLabelStyle}>Evidence Type</label>
+                                            <div className="flex-grow-1">
+                                                <Select
+                                                    classNamePrefix="react-select"
+                                                    options={evidenceTypeOptions}
+                                                    placeholder="Select type"
+                                                    value={enterEvidenceForm.evidenceType}
+                                                    onChange={(option) => handleEnterEvidenceForm('evidenceType', option)}
+                                                    isClearable
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                                            <label className="new-label fw-bold mb-0" style={modalFormallyLabelStyle}>Evidence Storage Location</label>
+                                            <input
+                                                type="text"
+                                                className="form-control flex-grow-1"
+                                                placeholder="e.g., Evidence Locker B-12"
+                                                value={enterEvidenceForm.storageLocation}
+                                                onChange={(e) => handleEnterEvidenceForm('storageLocation', e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="col-12 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                                            <label className="new-label fw-bold" style={modalFormallyLabelStyle}>Chain of Custody Information</label>
+                                            <textarea
+                                                className="form-control"
+                                                rows="3"
+                                                placeholder="Document the chain of custody from collection to storage"
+                                                value={enterEvidenceForm.custodyInfo}
+                                                onChange={(e) => handleEnterEvidenceForm('custodyInfo', e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="col-12 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                                            <label className="new-label fw-bold" style={modalFormallyLabelStyle}>Additional Notes</label>
+                                            <textarea
+                                                className="form-control"
+                                                rows="3"
+                                                placeholder="Any additional information about the evidence"
+                                                value={enterEvidenceForm.additionalNotes}
+                                                onChange={(e) => handleEnterEvidenceForm('additionalNotes', e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="col-12">
+                                            <div className="form-check">
+                                                <input
+                                                    className="form-check-input"
+                                                    type="checkbox"
+                                                    id="createTimelineEntry"
+                                                    checked={enterEvidenceForm.createTimelineEntry}
+                                                    onChange={(e) => handleEnterEvidenceForm('createTimelineEntry', e.target.checked)}
+                                                />
+                                                <label className="form-check-label" htmlFor="createTimelineEntry">
+                                                    Automatically create an entry in Case Timeline
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="modal-footer d-flex justify-content-end" style={{ gap: '12px' }}>
+                                    <button type="button" className="btn btn-light px-4" onClick={closeEnterEvidenceModal}>
+                                        Cancel
+                                    </button>
+                                    <button type="button" className="btn btn-success px-4" onClick={submitEnterEvidence}>
+                                        Enter as Evidence
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+        </div >
     )
 }
 

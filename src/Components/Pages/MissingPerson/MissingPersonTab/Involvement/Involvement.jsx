@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
-import { base64ToString, Decrypt_Id_Name, getShowingDateText, tableCustomStyles } from '../../../../Common/Utility'
+import { base64ToString, Decrypt_Id_Name, getShowingDateText, getShowingWithOutTime, tableCustomStyles } from '../../../../Common/Utility'
 import { fetchPostData } from '../../../../hooks/Api';
 import { get_LocalStoreData } from '../../../../../redux/actions/Agency';
 import { useLocation } from 'react-router-dom';
@@ -93,8 +93,26 @@ const Involvement = ({ DecMissPerID, DecIncID }) => {
             sortable: true
         },
         {
+            width: '180px',
             name: 'New Value',
-            selector: (row) => row.NewValue,
+            selector: (row) => {
+                const isDateLike = (value) => {
+                    return value && /^\d{4}-\d{2}-\d{2}$/.test(value)
+                }
+                let displayValue = ''
+                if (isDateLike(row.NewValue)) {
+                    displayValue = getShowingWithOutTime(row.NewValue)
+                } else {
+                    displayValue = row.NewValue || ' '
+                }
+
+                return (
+                    <span title={row?.NewValue}>
+                        {displayValue?.substring(0, 20)}
+                        {displayValue?.length > 20 ? '...' : ''}
+                    </span>
+                )
+            },
             sortable: true
         },
         {

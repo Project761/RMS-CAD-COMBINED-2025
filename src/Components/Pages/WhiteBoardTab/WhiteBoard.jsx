@@ -387,22 +387,22 @@ function WhiteBoard() {
                                             {item?.CreatedByName || "-"}
                                         </div>
 
-                                        <div className="">
+                                        {item?.ElapsedDays && <div className="">
                                             <strong>Elapsed days</strong><br />
                                             {item?.ElapsedDays || "-"}
-                                        </div>
-                                        <div className="">
+                                        </div>}
+                                        {item?.expiresDate && <div className="">
                                             <strong>Expires at</strong><br />
                                             {item?.expiresDate ? getShowingDateText(item?.expiresDate) : "-"}
-                                        </div>
-                                        <div className="">
+                                        </div>}
+                                        {item?.UpdatedByByName && <div className="">
                                             <strong>Updated by</strong><br />
                                             {item?.UpdatedByByName || "-"}
-                                        </div>
-                                        <div className="">
+                                        </div>}
+                                        {item?.ModifiedDtTm && <div className="">
                                             <strong>Updated at</strong><br />
                                             {item?.ModifiedDtTm ? getShowingDateText(item?.ModifiedDtTm) : "-"}
-                                        </div>
+                                        </div>}
                                         <div className="cad-images image-preview cursor pointer d-flex flex-wrap gap-4">
                                             {Documents?.length > 0 && (
                                                 <>

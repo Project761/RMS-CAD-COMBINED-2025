@@ -439,7 +439,6 @@ const PoliceForceIncident = (props) => {
       : selectedOption
         ? [selectedOption]
         : [];
-    console.log("arr", arr)
     const ids = arr
       .map(o => (o?.value != null ? String(o.value) : null))
       .filter(Boolean);

@@ -279,6 +279,14 @@ class CaseManagementServices {
         return null;
     };
 
+    addManualPurgeApprove = async (payload) => {
+        if (payload) {
+            return await axios.post(`/CaseManagement/AddManualPurgeApprove`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.addManualPurgeApprove");
+        return null;
+    };
+
     getManualPurgeByCaseID = async ({ queryKey }) => {
         const [_key, payload] = queryKey;
         if (payload) {

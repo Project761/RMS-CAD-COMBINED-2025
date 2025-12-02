@@ -175,11 +175,11 @@ const Warrant = (props) => {
     }
 
     const check_Validation_Error = (e) => {
-        const WarrantTypeIDErrors = RequiredFieldIncident(value.WarrantTypeID);
+        const WarrantTypeIDErrors = value.WarrantNumber ? RequiredFieldIncident(value.WarrantTypeID) : 'true';
         const WarrantNumberErrors = RequiredFieldIncident(value.WarrantNumber);
-        const DateTimeIssuedErrors = RequiredFieldIncident(value.DateTimeIssued);
-        const DateExpiredErrors = RequiredFieldIncident(value.DateExpired);
-        const IssuingAgencyIDErrors = RequiredFieldIncident(value.IssuingAgencyID || value.WarrantIssuingAgency);
+        const DateTimeIssuedErrors = value.WarrantNumber ? RequiredFieldIncident(value.DateTimeIssued) : 'true';
+        const DateExpiredErrors = value?.DateTimeIssued ? RequiredFieldIncident(value.DateExpired) : 'true';
+        const IssuingAgencyIDErrors = value.WarrantNumber ? RequiredFieldIncident(value.IssuingAgencyID || value.WarrantIssuingAgency) : 'true';
 
         setErrors(pre => {
             return {
@@ -514,7 +514,7 @@ const Warrant = (props) => {
                             placeholder="Select..."
 
                             // styles={Requiredcolour}
-                            styles={isLockOrRestrictModule("Lock", editval[0]?.WarrantTypeID, isLocked) ? LockFildscolour : Requiredcolour}
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.WarrantTypeID, isLocked) ? LockFildscolour : value.WarrantNumber ? Requiredcolour : ''}
                             isDisabled={isLockOrRestrictModule("Lock", editval[0]?.WarrantTypeID, isLocked)}
                         />
                     </div>
@@ -572,7 +572,7 @@ const Warrant = (props) => {
                             dateFormat="MM/dd/yyyy HH:mm"
                             timeFormat="HH:mm"
                             // className='requiredColor'
-                            className={isLockOrRestrictModule("Lock", editval[0]?.DateTimeIssued, isLocked) ? "LockFildsColor" : 'requiredColor'}
+                            className={isLockOrRestrictModule("Lock", editval[0]?.DateTimeIssued, isLocked) ? "LockFildsColor" : value.WarrantNumber ? 'requiredColor' : ''}
                             disabled={isLockOrRestrictModule("Lock", editval[0]?.DateTimeIssued, isLocked)}
                             is24Hour
                             timeInputLabel
@@ -698,7 +698,7 @@ const Warrant = (props) => {
                             }
                             onChange={(e) => DropDownIssuingAgency(e, "WarrantIssuingAgencyID")}
                             // styles={Requiredcolour}
-                            styles={isLockOrRestrictModule("Lock", editval[0]?.IssuingAgencyID, isLocked) ? LockFildscolour : Requiredcolour}
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.IssuingAgencyID, isLocked) ? LockFildscolour : value.WarrantNumber ? Requiredcolour : ''}
                             isDisabled={isLockOrRestrictModule("Lock", editval[0]?.IssuingAgencyID, isLocked)}
                         />
                     </div>

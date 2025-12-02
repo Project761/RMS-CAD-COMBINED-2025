@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Select from "react-select";
 import { coloredStyle_Select, colorLessStyle_Select } from '../Utility/CustomStylesForReact';
 import DataTable from 'react-data-table-component';
@@ -13,6 +13,8 @@ import { get_Narrative_Type_Drp_Data } from '../../redux/actions/DropDownsData';
 import { Comman_changeArrayFormat } from '../../Components/Common/ChangeArrayFormat';
 import AddGroup from './AddGroup';
 import { useLocation } from 'react-router-dom';
+import ChangesModal from '../../Components/Common/ChangesModal';
+import { AgencyContext } from '../../Context/Agency/Index';
 
 function ReportWorkflow() {
     const dispatch = useDispatch();
@@ -30,6 +32,7 @@ function ReportWorkflow() {
     const [GroupListData, setGroupListData] = useState([]);
     const [showModal, setShowModal] = useState(false);
 
+    const { changesStatus, setChangesStatus } = useContext(AgencyContext);
     const [value, setValue] = useState({
         'AgencyID': '', 'WorkflowName': '', 'ApprovalType': "IsMultipleLevel", 'AppliesReportTypeID': '', 'Notes': '', 'ReportApproverGroupID': '',
         'ReportApproverRequired': '', 'ReportReviewerGroupID': '', 'IsSkipApproverAuthor': '', 'IsMultipleLevel': true, 'IsSingleLevel': '', 'IsNoApproval': '', 'IsSelfApproved': '', 'CreatedByUserFK': '',
@@ -67,10 +70,11 @@ function ReportWorkflow() {
 
     const handleSpecialKeyDown = (e) => {
         const isAlphanumeric = e.key.length === 1 && e.key.match(/[a-zA-Z0-9]/);
+        const isSpace = e.key === " ";
         const controlKeys = ["Backspace", "Delete", "Tab", "Enter", "Escape", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown",
         ];
 
-        if (!isAlphanumeric && !controlKeys.includes(e.key)) {
+        if (!isAlphanumeric && !isSpace && !controlKeys.includes(e.key)) {
             e.preventDefault();
         }
     };
@@ -142,10 +146,21 @@ function ReportWorkflow() {
         }
     }, [editval])
 
+    const resetEditVal = () => {
+        setValue({
+            ...value,
+            'WorkflowName': editval[0]?.WorkflowName, 'ReportApproverGroupID': Number(editval[0]?.ReportApproverGroupID),
+            'Notes': editval[0]?.Notes, 'ReportReviewerGroupID': Number(editval[0]?.ReportReviewerGroupID),
+            'ReportApproverRequired': editval[0]?.ReportApproverRequired, 'ReportApproverRequired': editval[0]?.ReportApproverRequired != null ? Number(editval[0].ReportApproverRequired) : '', 'AppliesReportTypeID': editval[0]?.AppliesReportTypeID, 'IsMultipleLevel': editval[0]?.IsMultipleLevel,
+            'IsSingleLevel': editval[0]?.IsSingleLevel, 'IsSkipApproverAuthor': editval[0]?.IsSkipApproverAuthor,
+            'IsSelfApproved': editval[0]?.IsSelfApproved, 'IsNoApproval': editval[0]?.IsNoApproval, 'ModifiedByUserFK': loginPinID,
+        })
+    }
+
     const reset = () => {
         setValue({
             ...value, 'WorkflowName': '', 'AppliesReportTypeID': '', 'Notes': '', 'IsSkipApproverAuthor': '', 'ReportApproverGroupID': '', 'ReportApproverRequired': '', 'ReportReviewerGroupID': '', 'IsMultipleLevel': true, 'IsSingleLevel': '', 'IsNoApproval': '', 'IsSelfApproved': '', 'AppliesReportTypeErrors': '', 'ReportApproverGroupIDErrors': ''
-        }); setErrors({ ...errors, 'WorkflowNameErrors': '', 'ReportApproverGroupIDErrors': '', 'AppliesReportTypeErrors': '', 'ReportReviewerGroupIDErrors': '' }); setStatus(false); setClickedRow(null)
+        }); setErrors({ ...errors, 'WorkflowNameErrors': '', 'ReportApproverGroupIDErrors': '', 'AppliesReportTypeErrors': '', 'ReportReviewerGroupIDErrors': '' }); setStatus(false); setChangesStatus(false); setClickedRow(null)
     }
 
     const check_Validation_Error = (e) => {
@@ -187,7 +202,7 @@ function ReportWorkflow() {
         else {
             AddDeleteUpadate('ReportWorkFlow/Insert_ReportWorkFlow', Value).then((res) => {
                 const parsedData = JSON.parse(res.data); const message = parsedData.Table[0].Message;
-                toastifySuccess(message); get_Data_ReportWorkflow(aId); setStatus(false); reset(); setErrors({ ...errors, 'WorkflowNameErrors': '', });
+                toastifySuccess(message); get_Data_ReportWorkflow(aId); setStatus(false); setChangesStatus(false); reset(); setErrors({ ...errors, 'WorkflowNameErrors': '', });
             })
         }
 
@@ -217,7 +232,7 @@ function ReportWorkflow() {
             AddDeleteUpadate('ReportWorkFlow/Update_ReportWorkFlow', Value).then((res) => {
                 const parsedData = JSON.parse(res.data); const message = parsedData.Table[0].Message;
                 toastifySuccess(message);
-                setStatus(false); setErrors({ ...errors, 'WorkflowNameErrors': '', 'WorkflowNameErrors': '' });
+                setStatus(false); setChangesStatus(false); setErrors({ ...errors, 'WorkflowNameErrors': '', 'WorkflowNameErrors': '' });
                 reset(); get_Data_ReportWorkflow(aId);
             })
         }
@@ -232,6 +247,7 @@ function ReportWorkflow() {
                     ...value,
                     ApprovalType: inputValue, ReportApproverGroupID: '', approvalsRequired: '', ReportApproverRequired: '', ReportReviewerGroupID: '', skipIfApproverIsAuthor: false
                 });
+                setChangesStatus(true);
             } else { setValue({ ...value, [name]: inputValue }); }
         }
         else if (
@@ -241,9 +257,11 @@ function ReportWorkflow() {
             name === "IsMultipleLevel"
         ) {
             setValue({ ...value, [name]: checked });
+            setChangesStatus(true);
         }
         else {
             setValue({ ...value, [name]: e.target.value });
+            setChangesStatus(true);
         }
     };
 
@@ -269,8 +287,13 @@ function ReportWorkflow() {
     ];
 
     const set_Edit_Value = (row) => {
-        setStatus(true); setErrors(''); setReportWorkFlowID(row.ReportWorkFlowID);
-        GetSingleData(row?.ReportWorkFlowID)
+        if (changesStatus) {
+            const modal = new window.bootstrap.Modal(document?.getElementById('SaveModal'));
+            modal?.show();
+        } else {
+            setStatus(true); setChangesStatus(true); setErrors(''); setReportWorkFlowID(row.ReportWorkFlowID);
+            GetSingleData(row?.ReportWorkFlowID)
+        }
     }
 
     const conditionalRowStyles = [
@@ -303,6 +326,7 @@ function ReportWorkflow() {
             IsNoApproval: selectedOptionnew === 'IsNoApproval',
         }));
         setErrors({ ...errors, 'WorkflowNameErrors': '', 'WorkflowNameErrors': '', 'AppliesReportTypeErrors': '', 'ReportApproverGroupIDErrors': '', 'ReportReviewerGroupIDErrors': '' });
+        setChangesStatus(true);
     };
 
     const handleReportWorkflowState = (e) => {
@@ -313,7 +337,7 @@ function ReportWorkflow() {
                     ...value,
                     [e.target.name]: e.target.checked
                 })
-                // setChangesStatus(true)
+                setChangesStatus(true);
                 // setStatesChangeStatus(true);
 
             } else {
@@ -338,7 +362,7 @@ function ReportWorkflow() {
                     <legend>Scope</legend>
                     <div className="row">
                         <div className="col-2 d-flex align-self-center justify-content-end">
-                            <label htmlFor="" className="tab-form-label">  Workflow Name{errors.WorkflowNameErrors !== 'true' ? (
+                            <label htmlFor="" className="tab-form-label">  Workflow Name {errors.WorkflowNameErrors !== 'true' ? (
                                 <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.WorkflowNameErrors}</p>
                             ) : null}  </label>
                         </div>
@@ -357,7 +381,7 @@ function ReportWorkflow() {
                                 styles={coloredStyle_Select}
                                 value={narrativeTypeDrpData?.filter((obj) => obj.value === value?.AppliesReportTypeID)}
                                 options={narrativeTypeDrpData}
-                                onChange={(e) => ChangeDropDownReportType(e, 'AppliesReportTypeID', 'NarrativeTypeCode')}
+                                onChange={(e) => { ChangeDropDownReportType(e, 'AppliesReportTypeID', 'NarrativeTypeCode'); setChangesStatus(true); }}
                                 placeholder="Select.."
                                 menuPlacement="bottom"
                             />
@@ -393,112 +417,112 @@ function ReportWorkflow() {
                                     </small>
                                 </div>
                             </div>
-                         
-                                    
-                                        <div className="col-12 d-flex align-items-center mb-2" style={{ marginLeft: "15px" }}>
-                                            <div className="col-7 d-flex gap-2 align-content-center">
-                                                <div className="form-check mr-3">
-                                                    <input
-                                                        className="form-check-input"
-                                                        type="radio"
-                                                        name="ApprovalType"
-                                                        id="IsMultipleLevel"
-                                                        value="IsMultipleLevel"
-                                                        checked={value?.IsMultipleLevel}
-                                                        onChange={handleRadioChange}
-                                                    />
-                                                    <label className="form-check-label" htmlFor="IsMultipleLevel">Multiple Level</label>
-                                                </div>
 
-                                                <div className="form-check mr-3">
-                                                    <input
-                                                        className="form-check-input"
-                                                        type="radio"
-                                                        name="ApprovalType"
-                                                        id="IsSingleLevel"
-                                                        value="IsSingleLevel"
-                                                        checked={value?.IsSingleLevel}
-                                                        onChange={handleRadioChange}
-                                                    />
-                                                    <label className="form-check-label" htmlFor="IsSingleLevel">Single Level</label>
-                                                </div>
 
-                                                <div className="form-check mr-3">
-                                                    <input
-                                                        className="form-check-input"
-                                                        type="radio"
-                                                        name="ApprovalType"
-                                                        id="IsSelfApproved"
-                                                        value="IsSelfApproved"
-                                                        checked={value?.IsSelfApproved}
-                                                        onChange={handleRadioChange}
-                                                    />
-                                                    <label className="form-check-label" htmlFor="IsSelfApproved">Self Approved</label>
-                                                </div>
+                            <div className="col-12 d-flex align-items-center mb-2" style={{ marginLeft: "15px" }}>
+                                <div className="col-7 d-flex gap-2 align-content-center">
+                                    <div className="form-check mr-3">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            name="ApprovalType"
+                                            id="IsMultipleLevel"
+                                            value="IsMultipleLevel"
+                                            checked={value?.IsMultipleLevel}
+                                            onChange={handleRadioChange}
+                                        />
+                                        <label className="form-check-label" htmlFor="IsMultipleLevel">Multiple Level</label>
+                                    </div>
 
-                                                <div className="form-check">
-                                                    <input
-                                                        className="form-check-input"
-                                                        type="radio"
-                                                        name="ApprovalType"
-                                                        id="IsNoApproval"
-                                                        value="IsNoApproval"
-                                                        checked={value?.IsNoApproval}
-                                                        onChange={handleRadioChange}
-                                                    />
-                                                    <label className="form-check-label" htmlFor="IsNoApproval">No Approval</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-12 d-flex align-items-center" style={{ marginLeft: "15px" }}>
-                                            <div className="col-4 d-flex gap-2 align-content-center" >
-                                                <label htmlFor="" className="tab-form-label"> {errors.ReportApproverGroupIDErrors !== 'true' ? (
-                                                    <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReportApproverGroupIDErrors}</p>
-                                                ) : null}  </label>
-                                                <Select
-                                                    // styles={coloredStyle_Select}
-                                                    name="ReportApproverGroupID"
-                                                    value={ReportApprovingLevel?.filter((obj) => obj.value === value?.ReportApproverGroupID)}
-                                                    isClearable
-                                                    placeholder="Select..."
-                                                    options={ReportApprovingLevel}
-                                                    onChange={(e) => ChangeDropDownReportType(e, 'ReportApproverGroupID')}
-                                                    styles={value.IsSelfApproved || value.IsNoApproval ? colorLessStyle_Select : coloredStyle_Select}
-                                                    className="w-100"
-                                                    isDisabled={value.IsSelfApproved || value.IsNoApproval || value.ApprovalType === "IsNoApproval"}
-                                                />
-                                            </div>
-                                            <div className="col-4 d-flex align-items-center" style={{ gap: "10px" }}>
-                                                <label htmlFor="" className="tab-form-label text-nowrap"> Approvals Required (hops) <span className='hovertext ml-2' data-hover="Approvals stop at Level 1 (highest) even if more hops are configured" ><i className='fa fa-exclamation-circle'></i></span>
-                                                </label>
-                                                <input type="number" name='ReportApproverRequired' className="form-control py-1 new-input " placeholder="Enter hops" min="1"
-                                                    disabled={value.IsNoApproval || value.IsSelfApproved || value.IsSingleLevel} value={value.ReportApproverRequired} onChange={HandleChange}
-                                                />
-                                            </div>
-                                            <div className="col-4 d-flex align-items-center" style={{ gap: "10px" }}>
-                                                <label className="form-label text-nowrap ">Reviewer (read-only)
-                                                    <span className='hovertext ml-2' data-hover=" Reviewers can comment but cannot block Approval process" ><i className='fa fa-exclamation-circle'></i></span>
-                                                    {errors.ReportReviewerGroupIDErrors !== 'true' ? (
-                                                        <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReportReviewerGroupIDErrors}</p>
-                                                    ) : null}</label>
-                                                <Select
-                                                    name="ReportReviewerGroupID"
-                                                    value={groupList?.filter((obj) => obj.value === value?.ReportReviewerGroupID)}
-                                                    isClearable
-                                                    placeholder="Select..."
-                                                    options={groupList}
-                                                    onChange={(e) => ChangeDropDownReportType(e, 'ReportReviewerGroupID')}
-                                                    styles={value.IsSelfApproved || value.IsNoApproval ? colorLessStyle_Select : coloredStyle_Select}
-                                                    className="w-100"
-                                                    isDisabled={value.IsSelfApproved || value.IsNoApproval}
-                                                />
-                                            </div>
-                                            {/* <div className="col-4 d-flex align-items-center">
+                                    <div className="form-check mr-3">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            name="ApprovalType"
+                                            id="IsSingleLevel"
+                                            value="IsSingleLevel"
+                                            checked={value?.IsSingleLevel}
+                                            onChange={handleRadioChange}
+                                        />
+                                        <label className="form-check-label" htmlFor="IsSingleLevel">Single Level</label>
+                                    </div>
+
+                                    <div className="form-check mr-3">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            name="ApprovalType"
+                                            id="IsSelfApproved"
+                                            value="IsSelfApproved"
+                                            checked={value?.IsSelfApproved}
+                                            onChange={handleRadioChange}
+                                        />
+                                        <label className="form-check-label" htmlFor="IsSelfApproved">Self Approved</label>
+                                    </div>
+
+                                    <div className="form-check">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            name="ApprovalType"
+                                            id="IsNoApproval"
+                                            value="IsNoApproval"
+                                            checked={value?.IsNoApproval}
+                                            onChange={handleRadioChange}
+                                        />
+                                        <label className="form-check-label" htmlFor="IsNoApproval">No Approval</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-12 d-flex align-items-center" style={{ marginLeft: "15px" }}>
+                                <div className="col-4 d-flex gap-2 align-content-center" >
+                                    <label htmlFor="" className="tab-form-label"> {errors.ReportApproverGroupIDErrors !== 'true' ? (
+                                        <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReportApproverGroupIDErrors}</p>
+                                    ) : null}  </label>
+                                    <Select
+                                        // styles={coloredStyle_Select}
+                                        name="ReportApproverGroupID"
+                                        value={ReportApprovingLevel?.filter((obj) => obj.value === value?.ReportApproverGroupID)}
+                                        isClearable
+                                        placeholder="Select..."
+                                        options={ReportApprovingLevel}
+                                        onChange={(e) => { ChangeDropDownReportType(e, 'ReportApproverGroupID'); setChangesStatus(true); }}
+                                        styles={value.IsSelfApproved || value.IsNoApproval ? colorLessStyle_Select : coloredStyle_Select}
+                                        className="w-100"
+                                        isDisabled={value.IsSelfApproved || value.IsNoApproval || value.ApprovalType === "IsNoApproval"}
+                                    />
+                                </div>
+                                <div className="col-4 d-flex align-items-center" style={{ gap: "10px" }}>
+                                    <label htmlFor="" className="tab-form-label text-nowrap"> Approvals Required (hops) <span className='hovertext ml-2' data-hover="Approvals stop at Level 1 (highest) even if more hops are configured" ><i className='fa fa-exclamation-circle'></i></span>
+                                    </label>
+                                    <input type="number" name='ReportApproverRequired' className="form-control py-1 new-input " placeholder="Enter hops" min="1"
+                                        disabled={value.IsNoApproval || value.IsSelfApproved || value.IsSingleLevel} value={value.ReportApproverRequired} onChange={HandleChange}
+                                    />
+                                </div>
+                                <div className="col-4 d-flex align-items-center" style={{ gap: "10px" }}>
+                                    <label className="form-label text-nowrap ">Reviewer (read-only)
+                                        <span className='hovertext ml-2' data-hover=" Reviewers can comment but cannot block Approval process" ><i className='fa fa-exclamation-circle'></i></span>
+                                        {errors.ReportReviewerGroupIDErrors !== 'true' ? (
+                                            <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReportReviewerGroupIDErrors}</p>
+                                        ) : null}</label>
+                                    <Select
+                                        name="ReportReviewerGroupID"
+                                        value={groupList?.filter((obj) => obj.value === value?.ReportReviewerGroupID)}
+                                        isClearable
+                                        placeholder="Select..."
+                                        options={groupList}
+                                        onChange={(e) => { ChangeDropDownReportType(e, 'ReportReviewerGroupID'); setChangesStatus(true); }}
+                                        styles={value.IsSelfApproved || value.IsNoApproval ? colorLessStyle_Select : coloredStyle_Select}
+                                        className="w-100"
+                                        isDisabled={value.IsSelfApproved || value.IsNoApproval}
+                                    />
+                                </div>
+                                {/* <div className="col-4 d-flex align-items-center">
                                                     <small className="text-danger">  Reviewers can comment but cannot block Approval process </small>
                                                 </div> */}
-                                        </div>
-                                   
-                        
+                            </div>
+
+
 
                             {
                                 ((value?.IsSingleLevel && value.ReportApproverGroupID === 2) || (value?.IsMultipleLevel && value.ReportApproverGroupID === 2)) ?
@@ -529,7 +553,7 @@ function ReportWorkflow() {
                                 </div>
                                 <div className="col-3">
                                     <input type="number" className="form-control py-1 new-input requiredColor" placeholder="Enter hours" min="1" disabled={value.ApprovalType === "IsNoApproval"} value={value.reportWritingTimeLimit}
-                                        onChange={(e) => handleReportWorkflowState("reportWritingTimeLimit", e.target.value)}
+                                        onChange={(e) => { handleReportWorkflowState("reportWritingTimeLimit", e.target.value); setChangesStatus(true); }}
                                     />
                                 </div>
                                 <div className="col-1">
@@ -540,7 +564,7 @@ function ReportWorkflow() {
                                         isDisabled={value.ApprovalType === "IsNoApproval"}
                                         className="w-100"
                                         value={timeUnitOptions.find(option => option.value === value.reportWritingTimeUnit)}
-                                        onChange={(e) => { handleReportWorkflowState("reportWritingTimeUnit", e.value); handleReportWorkflowState("warningTimeUnit", e.value) }}
+                                        onChange={(e) => { handleReportWorkflowState("reportWritingTimeUnit", e.value); handleReportWorkflowState("warningTimeUnit", e.value); setChangesStatus(true); }}
                                     />
                                 </div>
                                 <div className="col-2 d-flex align-self-center justify-content-end">
@@ -550,7 +574,7 @@ function ReportWorkflow() {
                                 </div>
                                 <div className="col-3">
                                     <input type="number" className="form-control py-1 new-input requiredColor" placeholder="Enter hours" min="1" disabled={value.ApprovalType === "IsNoApproval"} value={value.reportApprovalTimeLimit}
-                                        onChange={(e) => handleReportWorkflowState("reportApprovalTimeLimit", e.target.value)}
+                                        onChange={(e) => { handleReportWorkflowState("reportApprovalTimeLimit", e.target.value); setChangesStatus(true); }}
                                     />
                                 </div>
                                 <div className="col-1">
@@ -561,7 +585,7 @@ function ReportWorkflow() {
                                         isDisabled={value.ApprovalType === "IsNoApproval"}
                                         className="w-100"
                                         value={timeUnitOptions.find(option => option.value === value.reportApprovalTimeUnit)}
-                                        onChange={(e) => { handleReportWorkflowState("reportApprovalTimeUnit", e.value); handleReportWorkflowState("warningBeforeTimeUnit2", e.value) }}
+                                        onChange={(e) => { handleReportWorkflowState("reportApprovalTimeUnit", e.value); handleReportWorkflowState("warningBeforeTimeUnit2", e.value); setChangesStatus(true); }}
                                     />
                                 </div>
                             </div>
@@ -576,6 +600,7 @@ function ReportWorkflow() {
                                             const isChecked = e.target.checked;
                                             handleReportWorkflowState("warningBeforeTimeCheck", isChecked);
                                             if (!isChecked) { handleReportWorkflowState("warningBeforeTime", ""); }
+                                            setChangesStatus(true);
                                         }}
                                     />
                                     <input
@@ -585,6 +610,7 @@ function ReportWorkflow() {
                                             if (value === "" || (value && !isNaN(value) && parseFloat(value) < parseFloat(maxValue))) {
                                                 handleReportWorkflowState("warningBeforeTime", value);
                                             }
+                                            setChangesStatus(true);
                                         }}
                                     />
                                 </div>
@@ -596,7 +622,7 @@ function ReportWorkflow() {
                                         isDisabled
                                         className="w-100"
                                         value={timeUnitOptions.find(option => option.value === value.warningTimeUnit)}
-                                        onChange={(e) => handleReportWorkflowState("warningTimeUnit", e.value)}
+                                        onChange={(e) => { handleReportWorkflowState("warningTimeUnit", e.value); setChangesStatus(true); }}
                                     />
                                 </div>
                                 <div className="col-2 d-flex align-self-center justify-content-end">
@@ -608,6 +634,7 @@ function ReportWorkflow() {
                                             const isChecked = e.target.checked;
                                             handleReportWorkflowState("warningBeforeTimeCheck2", isChecked);
                                             if (!isChecked) { handleReportWorkflowState("warningBeforeTime2", ""); }
+                                            setChangesStatus(true);
                                         }}
                                     />
                                     <input
@@ -623,6 +650,7 @@ function ReportWorkflow() {
                                             if (value === "" || (value && !isNaN(value) && parseFloat(value) < parseFloat(maxValue))) {
                                                 handleReportWorkflowState("warningBeforeTime2", value);
                                             }
+                                            setChangesStatus(true);
                                         }}
                                     />
                                 </div>
@@ -634,7 +662,7 @@ function ReportWorkflow() {
                                         isDisabled
                                         className="w-100"
                                         value={timeUnitOptions.find(option => option.value === value.warningBeforeTimeUnit2)}
-                                        onChange={(e) => handleReportWorkflowState("warningBeforeTimeUnit2", e.value)}
+                                        onChange={(e) => { handleReportWorkflowState("warningBeforeTimeUnit2", e.value); setChangesStatus(true); }}
                                     />
                                 </div>
                             </div>
@@ -658,7 +686,7 @@ function ReportWorkflow() {
                                         isDisabled={value.ApprovalType === "IsNoApproval"}
                                         className="w-100"
                                         value={value.notification}
-                                        onChange={(e) => handleReportWorkflowState("notification", e)}
+                                        onChange={(e) => { handleReportWorkflowState("notification", e); setChangesStatus(true); }}
                                     />
                                 </div>
                                 <div className="form-check mr-2">
@@ -668,7 +696,7 @@ function ReportWorkflow() {
                                         id="notifyUponExpiration"
                                         checked={value.notifyUponExpiration}
                                         disabled={value.reportApproverType === "IsNoApproval"}
-                                        onChange={(e) => handleReportWorkflowState("notifyUponExpiration", e.target.checked)}
+                                        onChange={(e) => { handleReportWorkflowState("notifyUponExpiration", e.target.checked); setChangesStatus(true); }}
                                     />
                                     <label className="form-check-label" htmlFor="notifyUponExpiration">
                                         Notify Upon Expiration
@@ -818,6 +846,7 @@ function ReportWorkflow() {
                     fixedHeader
                 />
             </div>
+            <ChangesModal func={check_Validation_Error} setToReset={resetEditVal} />
         </div>
     )
 }

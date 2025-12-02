@@ -1495,7 +1495,6 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
             }
         })
     };
-
     const GetReasonIdDrp = (loginAgencyID, id, type, RoleIdsArray) => {
         const val = { AgencyID: loginAgencyID, CategoryID: id, Role: (RoleIdsArray === null || RoleIdsArray === undefined) ? [] : (Array.isArray(RoleIdsArray) ? RoleIdsArray : [RoleIdsArray]) };
         // const val = { AgencyID: loginAgencyID, CategoryID: id, Role: RoleIdsArray === null ? null : (Array.isArray(RoleIdsArray) ? RoleIdsArray : [RoleIdsArray]) };

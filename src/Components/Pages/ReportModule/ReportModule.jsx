@@ -134,7 +134,6 @@ const ReportModule = (props) => {
     const [vehicleCategoryIdDrp, setVehicleCategoryIdDrp] = useState([]);
     const [propertyCategoryData, setPropertyCategoryData] = useState([]);
     const [propertyLossCodeData, setPropertyLossCodeData] = useState([]);
-
     // Define keyword-based suggestions (using useMemo to avoid recreating on each render)
     const [narrativeAutoSaveID, setNarrativeAutoSaveID] = useState(NarrativeAutoSaveID);
     const autosaveIntervalRef = useRef(null);
@@ -173,7 +172,6 @@ const ReportModule = (props) => {
         'Property Loss Code': propertyLossCodeData?.map(item => item.Description),
         'Property Category': propertyCategoryData?.map(item => item.Description),
     }), [sexIdDrp, raceIdDrp, ethinicityDrpData, residentIDDrp, victimIdDrp, offenderIdDrp, otherIdDrp, vehicleCategoryIdDrp, vehicleLossCodeDrpData, plateTypeIdDrp, stateList, propertyTypeData, propertyLossCodeData, propertyCategoryData]);
-    console.log("@@fieldOptions", fieldOptions)
     const [value, setValue] = useState({
         'IncidentId': '', 'NarrativeID': '', 'ReportedByPINActivityID': null, 'NarrativeTypeID': null, 'AsOfDate': null,
         'CreatedByUserFK': '', 'ModifiedByUserFK': '', 'ApprovingSupervisorID': '', 'NarrativeAssignedID': '', 'WrittenForID': '',
@@ -447,12 +445,12 @@ const ReportModule = (props) => {
         try {
             const res = await fetchPostDataNew("PropertytypeWithLossCode/GetData_PropertytypeWithLossCode", {
                 "AgencyID": loginAgencyID,
-                IsArticleReason: true,
-                IsBoatReason: true,
-                IsGunReason: true,
-                IsSecurityReason: true,
-                IsOtherReason: true,
-                IsDrugReason: true
+                IsArticleReason: 0,
+                IsBoatReason: 0,
+                IsGunReason: 0,
+                IsSecurityReason: 0,
+                IsOtherReason: 0,
+                IsDrugReason: 0
             });
             if (res) {
                 setPropertyLossCodeData(res?.Table);
@@ -1564,135 +1562,137 @@ const ReportModule = (props) => {
     const textSentToAPI = useRef('');
 
     useEffect(() => {
-        const data = value?.CommentsDoc;
+        if (value.Status !== 'Approved' && value.Status !== 'Pending Review') {
+            const data = value?.CommentsDoc;
 
-        // Skip if this update is from API response
-        if (isUpdatingFromAPI.current) {
-            isUpdatingFromAPI.current = false;
-            return;
-        }
-
-        // Skip if the value hasn't changed from last API call
-        if (data === lastAPICallValue.current) {
-            return;
-        }
-
-        // Clear previous timeout
-        if (missingFieldDebounceRef.current) {
-            clearTimeout(missingFieldDebounceRef.current);
-        }
-
-        // Set new timeout for debouncing (3 seconds delay)
-        missingFieldDebounceRef.current = setTimeout(() => {
-            if (data?.length > 0) {
-                // Store the value we're about to send to API
-                lastAPICallValue.current = data;
-                // Store the text sent to API to preserve user-added text later
-                textSentToAPI.current = data;
-
-                const val = {
-                    text: data,
-                    IncidentID: incidentID,
-                    AgencyID: loginAgencyID
-                };
-                AddDeleteUpadate('/suggestion/MissingFiled', val)
-                    .then((res) => {
-                        setMissingField(res);
-                        // Update CommentsDoc with the modified HTML from ReportText
-                        const reportText = res?.ReportText || res?.data?.ReportText || res?.data?.Table?.[0]?.ReportText;
-                        if (reportText) {
-                            // Get current editor content to check if user has added text
-                            let currentEditorContent = '';
-                            if (narrativeQuillRef.current) {
-                                const quillInstance = narrativeQuillRef.current.getEditor();
-                                currentEditorContent = quillInstance.root.innerHTML;
-                            } else {
-                                currentEditorContent = value?.CommentsDoc || '';
-                            }
-
-                            // Only update if the current content still matches what we sent to API
-                            // This preserves user-added text that was typed after the API call was made
-                            const textSentToAPIValue = textSentToAPI.current;
-
-                            // Compare plain text (without HTML tags) to check if content has changed
-                            const stripHtml = (html) => {
-                                const tmp = document.createElement('DIV');
-                                tmp.innerHTML = html;
-                                return tmp.textContent || tmp.innerText || '';
-                            };
-
-                            const currentPlainText = stripHtml(currentEditorContent).trim();
-                            const sentPlainText = stripHtml(textSentToAPIValue).trim();
-
-                            // Only update if current content exactly matches what was sent (user hasn't added new text)
-                            // This prevents overwriting user-added text like "bhasvin" that might not be in span tags
-                            if (currentPlainText === sentPlainText) {
-                                // Set flag to prevent useEffect and onChange from triggering
-                                isUpdatingFromAPI.current = true;
-
-                                // Update the last API call value to the new reportText
-                                lastAPICallValue.current = reportText;
-
-                                // Update ReactQuill editor directly using 'api' source to prevent onChange
-                                if (narrativeQuillRef.current) {
-                                    const quillInstance = narrativeQuillRef.current.getEditor();
-
-                                    // Save current cursor position before updating (only if editor has focus)
-                                    const selection = quillInstance.getSelection(true);
-                                    const cursorIndex = selection && selection.index !== null ? selection.index : null;
-
-                                    // Get the length of current content
-                                    const length = quillInstance.getLength();
-
-                                    // Delete all content first, then insert new content using 'api' source
-                                    quillInstance.deleteText(0, length, 'api');
-                                    quillInstance.clipboard.dangerouslyPasteHTML(0, reportText, 'api');
-
-                                    // Restore cursor position after update (only if we had a valid cursor position)
-                                    if (cursorIndex !== null) {
-                                        // Use setTimeout to ensure the paste operation is complete before setting selection
-                                        setTimeout(() => {
-                                            const newLength = quillInstance.getLength();
-                                            // Ensure cursor position doesn't exceed new content length
-                                            const restoredIndex = Math.min(cursorIndex, Math.max(0, newLength - 1));
-                                            quillInstance.setSelection(restoredIndex, 'api');
-                                        }, 0);
-                                    }
-                                }
-
-                                // Update state (this will update the value prop, but onChange will be skipped due to flag)
-                                setValue((prevValue) => ({
-                                    ...prevValue,
-                                    CommentsDoc: reportText,
-                                    Comments: reportText,
-                                }));
-
-                                // Clear the flag after a short delay to allow React to process the update
-                                setTimeout(() => {
-                                    isUpdatingFromAPI.current = false;
-                                }, 100);
-                            }
-                        }
-                    })
-                    .catch(err => {
-                        setMissingField({});
-                        // Reset lastAPICallValue on error so we can retry
-                        lastAPICallValue.current = '';
-                        textSentToAPI.current = '';
-                    });
-            } else {
-                setMissingField({});
-                lastAPICallValue.current = '';
-                textSentToAPI.current = '';
+            // Skip if this update is from API response
+            if (isUpdatingFromAPI.current) {
+                isUpdatingFromAPI.current = false;
+                return;
             }
-        }, 3000); // 3 seconds debounce delay
 
-        // Cleanup function to clear timeout on unmount or dependency change
-        return () => {
+            // Skip if the value hasn't changed from last API call
+            if (data === lastAPICallValue.current) {
+                return;
+            }
+
+            // Clear previous timeout
             if (missingFieldDebounceRef.current) {
                 clearTimeout(missingFieldDebounceRef.current);
             }
-        };
+
+            // Set new timeout for debouncing (3 seconds delay)
+            missingFieldDebounceRef.current = setTimeout(() => {
+                if (data?.length > 0) {
+                    // Store the value we're about to send to API
+                    lastAPICallValue.current = data;
+                    // Store the text sent to API to preserve user-added text later
+                    textSentToAPI.current = data;
+
+                    const val = {
+                        text: data,
+                        IncidentID: incidentID,
+                        AgencyID: loginAgencyID
+                    };
+                    AddDeleteUpadate('/suggestion/MissingFiled', val)
+                        .then((res) => {
+                            setMissingField(res);
+                            // Update CommentsDoc with the modified HTML from ReportText
+                            const reportText = res?.ReportText || res?.data?.ReportText || res?.data?.Table?.[0]?.ReportText;
+                            if (reportText) {
+                                // Get current editor content to check if user has added text
+                                let currentEditorContent = '';
+                                if (narrativeQuillRef.current) {
+                                    const quillInstance = narrativeQuillRef.current.getEditor();
+                                    currentEditorContent = quillInstance.root.innerHTML;
+                                } else {
+                                    currentEditorContent = value?.CommentsDoc || '';
+                                }
+
+                                // Only update if the current content still matches what we sent to API
+                                // This preserves user-added text that was typed after the API call was made
+                                const textSentToAPIValue = textSentToAPI.current;
+
+                                // Compare plain text (without HTML tags) to check if content has changed
+                                const stripHtml = (html) => {
+                                    const tmp = document.createElement('DIV');
+                                    tmp.innerHTML = html;
+                                    return tmp.textContent || tmp.innerText || '';
+                                };
+
+                                const currentPlainText = stripHtml(currentEditorContent).trim();
+                                const sentPlainText = stripHtml(textSentToAPIValue).trim();
+
+                                // Only update if current content exactly matches what was sent (user hasn't added new text)
+                                // This prevents overwriting user-added text like "bhasvin" that might not be in span tags
+                                if (currentPlainText === sentPlainText) {
+                                    // Set flag to prevent useEffect and onChange from triggering
+                                    isUpdatingFromAPI.current = true;
+
+                                    // Update the last API call value to the new reportText
+                                    lastAPICallValue.current = reportText;
+
+                                    // Update ReactQuill editor directly using 'api' source to prevent onChange
+                                    if (narrativeQuillRef.current) {
+                                        const quillInstance = narrativeQuillRef.current.getEditor();
+
+                                        // Save current cursor position before updating (only if editor has focus)
+                                        const selection = quillInstance.getSelection(true);
+                                        const cursorIndex = selection && selection.index !== null ? selection.index : null;
+
+                                        // Get the length of current content
+                                        const length = quillInstance.getLength();
+
+                                        // Delete all content first, then insert new content using 'api' source
+                                        quillInstance.deleteText(0, length, 'api');
+                                        quillInstance.clipboard.dangerouslyPasteHTML(0, reportText, 'api');
+
+                                        // Restore cursor position after update (only if we had a valid cursor position)
+                                        if (cursorIndex !== null) {
+                                            // Use setTimeout to ensure the paste operation is complete before setting selection
+                                            setTimeout(() => {
+                                                const newLength = quillInstance.getLength();
+                                                // Ensure cursor position doesn't exceed new content length
+                                                const restoredIndex = Math.min(cursorIndex, Math.max(0, newLength - 1));
+                                                quillInstance.setSelection(restoredIndex, 'api');
+                                            }, 0);
+                                        }
+                                    }
+
+                                    // Update state (this will update the value prop, but onChange will be skipped due to flag)
+                                    setValue((prevValue) => ({
+                                        ...prevValue,
+                                        CommentsDoc: reportText,
+                                        Comments: reportText,
+                                    }));
+
+                                    // Clear the flag after a short delay to allow React to process the update
+                                    setTimeout(() => {
+                                        isUpdatingFromAPI.current = false;
+                                    }, 100);
+                                }
+                            }
+                        })
+                        .catch(err => {
+                            setMissingField({});
+                            // Reset lastAPICallValue on error so we can retry
+                            lastAPICallValue.current = '';
+                            textSentToAPI.current = '';
+                        });
+                } else {
+                    setMissingField({});
+                    lastAPICallValue.current = '';
+                    textSentToAPI.current = '';
+                }
+            }, 500); // 3 seconds debounce delay
+
+            // Cleanup function to clear timeout on unmount or dependency change
+            return () => {
+                if (missingFieldDebounceRef.current) {
+                    clearTimeout(missingFieldDebounceRef.current);
+                }
+            };
+        }
     }, [value.CommentsDoc, incidentID, loginAgencyID]);
     const autoRedact = (quill, detectedWordsData) => {
         if (!quill || !Array.isArray(detectedWordsData) || detectedWordsData.length === 0) return;
@@ -2145,6 +2145,48 @@ const ReportModule = (props) => {
         const cursorIndex = selection.index;
         const textLower = text.toLowerCase();
 
+        // Helper function to detect if "loss code:" or "category:" is in Property context
+        const isPropertyContext = (textBeforePattern, patternIndex) => {
+            const textBeforeLower = textBeforePattern.toLowerCase();
+
+            // Check for Property context indicators
+            // Look for patterns like "Property (Property Type", "Property (property category", "Property (losscode", "Property (category"
+            const propertyIndicators = [
+                'property (property type',
+                'property (property category',
+                'property (losscode',
+                'property (loss code',
+                'property (category'
+            ];
+
+            // Check if any Property indicator exists before the current position
+            for (const indicator of propertyIndicators) {
+                const indicatorIndex = textBeforeLower.lastIndexOf(indicator);
+                if (indicatorIndex !== -1 && indicatorIndex < patternIndex) {
+                    // Check if "Vehicle" doesn't appear between the indicator and the pattern
+                    const textBetween = textBeforeLower.substring(indicatorIndex, patternIndex);
+                    if (!textBetween.includes('vehicle')) {
+                        return true;
+                    }
+                }
+            }
+
+            // Also check if "Property" appears before "loss code:" and "Vehicle" doesn't appear between them
+            const propertyIndex = textBeforeLower.lastIndexOf('property');
+            const vehicleIndex = textBeforeLower.lastIndexOf('vehicle');
+
+            if (propertyIndex !== -1 && propertyIndex < patternIndex) {
+                // If Vehicle appears after Property but before loss code, it's Vehicle context
+                if (vehicleIndex !== -1 && vehicleIndex > propertyIndex && vehicleIndex < patternIndex) {
+                    return false;
+                }
+                // If Property appears and Vehicle doesn't appear between them, it's Property context
+                return true;
+            }
+
+            return false;
+        };
+
         // Field names to check (case insensitive)
         const fieldNames = [
             { name: 'gender', field: 'Gender' },
@@ -2154,13 +2196,12 @@ const ReportModule = (props) => {
             { name: 'victim', field: 'Victim' },
             { name: 'offender', field: 'Offender' },
             { name: 'other', field: 'Other' },
-            { name: 'vehiclecategory', field: 'Vehicle Category' },
-            { name: 'vehiclelosscode', field: 'Vehicle Loss Code' },
-            { name: 'platetype', field: 'Plate Type' },
-            { name: 'platestate', field: 'Plate State' },
-            { name: 'propertytype', field: 'Property Type' },
-            { name: 'propertylosscode', field: 'Property Loss Code' },
-            { name: 'propertycategory', field: 'Property Category' },
+            { name: 'category', field: 'Vehicle Category' },
+            { name: 'loss code', field: 'Vehicle Loss Code' },
+            { name: 'plate type', field: 'Plate Type' },
+            { name: 'plate state', field: 'Plate State' },
+            { name: 'property type', field: 'Property Type' },
+            // Removed propertylosscode and propertycategory - now handled dynamically via 'loss code' and 'category' with context detection
         ];
 
         for (const { name, field: fieldName } of fieldNames) {
@@ -2192,39 +2233,73 @@ const ReportModule = (props) => {
                 endIndex++;
             }
 
+            // Special handling for "loss code:" and "category:" - determine if it's Property or Vehicle context
+            let actualFieldName = fieldName;
+            if (name === 'loss code') {
+                const textBeforePattern = text.substring(0, patternIndex);
+                if (isPropertyContext(textBeforePattern, patternIndex)) {
+                    actualFieldName = 'Property Loss Code';
+                } else {
+                    actualFieldName = 'Vehicle Loss Code';
+                }
+            } else if (name === 'category') {
+                const textBeforePattern = text.substring(0, patternIndex);
+                if (isPropertyContext(textBeforePattern, patternIndex)) {
+                    actualFieldName = 'Property Category';
+                } else {
+                    actualFieldName = 'Vehicle Category';
+                }
+            }
+
             // Special handling for Property Loss Code and Property Category - filter based on Property Type
-            let filteredOptions = fieldOptions[fieldName];
-            if (fieldName === 'Property Loss Code' || fieldName === 'Property Category') {
+            let filteredOptions = fieldOptions[actualFieldName];
+            if (actualFieldName === 'Property Loss Code' || actualFieldName === 'Property Category') {
                 // Search backwards from the current field position for Property Type
                 const textBeforeCurrentField = text.substring(0, patternIndex);
-                const propertyTypePattern = 'propertytype:';
+                const propertyTypePattern = 'property type:';
                 const propertyTypeIndex = textBeforeCurrentField.toLowerCase().lastIndexOf(propertyTypePattern);
 
                 if (propertyTypeIndex !== -1) {
                     // Found Property Type before current field
                     const propertyTypeColonIndex = propertyTypeIndex + propertyTypePattern.length;
-                    // Extract the Property Type value (text after colon until space, closing paren, or newline)
+                    // Extract the Property Type value (text after colon until closing paren, next field pattern, or newline)
+                    // Property Type values can contain spaces, so we need to extract until we hit a closing paren or next field
                     let propertyTypeEndIndex = propertyTypeColonIndex;
                     while (propertyTypeEndIndex < textBeforeCurrentField.length &&
                         textBeforeCurrentField[propertyTypeEndIndex] &&
-                        textBeforeCurrentField[propertyTypeEndIndex] !== ' ' &&
                         textBeforeCurrentField[propertyTypeEndIndex] !== ')' &&
                         textBeforeCurrentField[propertyTypeEndIndex] !== '\n') {
+                        // Check if we've hit the start of another field pattern (like "Loss Code:" or "Category:")
+                        const remainingText = textBeforeCurrentField.substring(propertyTypeEndIndex).toLowerCase();
+                        if (remainingText.startsWith('loss code:') ||
+                            remainingText.startsWith('category:') ||
+                            remainingText.startsWith('property category:')) {
+                            break;
+                        }
                         propertyTypeEndIndex++;
                     }
                     const propertyTypeValue = textBeforeCurrentField.substring(propertyTypeColonIndex, propertyTypeEndIndex).trim();
 
                     if (propertyTypeValue) {
                         // Find the matching PropertyTypeIDs from propertyTypeData
-                        const matchedPropertyType = propertyTypeData?.find(item =>
+                        // Try exact match first, then try partial match (in case of extra characters)
+                        let matchedPropertyType = propertyTypeData?.find(item =>
                             item.label?.toLowerCase() === propertyTypeValue.toLowerCase()
                         );
+
+                        // If exact match not found, try matching the beginning of the label
+                        if (!matchedPropertyType) {
+                            matchedPropertyType = propertyTypeData?.find(item =>
+                                propertyTypeValue.toLowerCase().startsWith(item.label?.toLowerCase()) ||
+                                item.label?.toLowerCase().startsWith(propertyTypeValue.toLowerCase())
+                            );
+                        }
 
                         if (matchedPropertyType?.value) {
                             // Filter based on field type
                             // PropertyTypeIDs is now an array, check if it includes the selected property type's value
                             const propertyTypeValueStr = String(matchedPropertyType.value);
-                            if (fieldName === 'Property Loss Code') {
+                            if (actualFieldName === 'Property Loss Code') {
                                 const filteredLossCodes = propertyLossCodeData?.filter(item => {
                                     // Handle both array and string formats for backward compatibility
                                     if (Array.isArray(item.PropertyTypeIDs)) {
@@ -2232,8 +2307,11 @@ const ReportModule = (props) => {
                                     }
                                     return item.PropertyTypeIDs === propertyTypeValueStr;
                                 });
-                                filteredOptions = filteredLossCodes?.map(item => item.Description) || [];
-                            } else if (fieldName === 'Property Category') {
+                                // If filtering results in empty list, show all options instead
+                                filteredOptions = filteredLossCodes?.length > 0
+                                    ? filteredLossCodes.map(item => item.Description)
+                                    : fieldOptions[actualFieldName];
+                            } else if (actualFieldName === 'Property Category') {
                                 const filteredCategories = propertyCategoryData?.filter(item => {
                                     // Handle both array and string formats for backward compatibility
                                     if (Array.isArray(item.PropertyTypeIDs)) {
@@ -2241,19 +2319,24 @@ const ReportModule = (props) => {
                                     }
                                     return item.PropertyTypeIDs === propertyTypeValueStr;
                                 });
-                                filteredOptions = filteredCategories?.map(item => item.Description) || [];
+                                // If filtering results in empty list, show all options instead
+                                filteredOptions = filteredCategories?.length > 0
+                                    ? filteredCategories.map(item => item.Description)
+                                    : fieldOptions[actualFieldName];
                             }
                         } else {
-                            // Property Type not found, don't show dropdown
-                            continue;
+                            // Property Type value doesn't match any known type, show all options
+                            // Don't filter - show all available options
+                            filteredOptions = fieldOptions[actualFieldName];
                         }
                     } else {
-                        // Property Type value is empty, don't show dropdown
-                        continue;
+                        // Property Type value is empty, show all options
+                        filteredOptions = fieldOptions[actualFieldName];
                     }
                 } else {
-                    // Property Type not found before current field, don't show dropdown
-                    continue;
+                    // Property Type not found before current field - show all options (don't filter)
+                    // This allows Loss Code to be entered before Property Type
+                    filteredOptions = fieldOptions[actualFieldName];
                 }
             }
 
@@ -2267,7 +2350,7 @@ const ReportModule = (props) => {
 
             setFieldDropdown({
                 show: true,
-                field: fieldName,
+                field: actualFieldName,
                 position: {
                     top: bounds.top + bounds.height + 5 + (containerRect?.top || 0) + window.scrollY,
                     left: bounds.left + (containerRect?.left || 0) + window.scrollX,
@@ -2276,7 +2359,7 @@ const ReportModule = (props) => {
                 endIndex,
                 requiresParen: false, // Not used anymore but keeping for compatibility
                 hasClosingParen: false, // Not used anymore but keeping for compatibility
-                filteredOptions: (fieldName === 'Property Loss Code' || fieldName === 'Property Category') ? filteredOptions : null, // Store filtered options for Property Loss Code and Property Category
+                filteredOptions: (actualFieldName === 'Property Loss Code' || actualFieldName === 'Property Category') ? filteredOptions : null, // Store filtered options for Property Loss Code and Property Category
             });
             return true;
         }
@@ -2580,7 +2663,7 @@ const ReportModule = (props) => {
                                                         isClearable
                                                         styles={value.Status === 'Pending Review' || value.Status === 'Approved' || (NarrativeAssignId && tabParam && assigned) || status || ((value.Status === 'Draft' || value.Status === 'Rejected') &&
                                                             !IsSuperadmin &&
-                                                            !(value.ReportedByPINActivityID === loginPinID || value.WrittenForID === loginPinID)) ? colourStylesUsers : Requiredcolour}
+                                                            !(value.ReportedByPINActivityID === loginPinID || value.WrittenForID === loginPinID)) ? colourStylesUsers : ""}
 
                                                         onChange={(e) => ChangeDropDownReportTemplateType(e, 'reportTemplateTypeId')}
                                                         value={value?.reportTemplateTypeId ? reportTemplateDropdownData?.find((obj) => obj.templateID === value?.reportTemplateTypeId) : ""}

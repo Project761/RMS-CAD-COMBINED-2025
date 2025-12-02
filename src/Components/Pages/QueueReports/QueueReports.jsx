@@ -177,7 +177,11 @@ function QueueReports({ isPreview }) {
             {row?.IncidentNumber}
           </span>
         );
-      }, sortable: true, grow: 0, width: "105px",
+      },
+      selector: row => row.IncidentNumber,
+      sortable: true,
+      wrap: true,
+      grow: 0, width: "105px",
     },
     {
       name: 'Arrest# ', cell: row => {
