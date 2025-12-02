@@ -290,7 +290,7 @@ const OffenceHomeTabs = () => {
                                     data-toggle="modal"
                                     data-target="#DeleteModal"
                                 >
-                                    <i className="fa fa-trash"></i>
+                                    <i className="fa fa-trash"></i>   
                                 </span>
                             ) : null
                         ) : (

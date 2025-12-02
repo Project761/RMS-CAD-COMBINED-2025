@@ -2627,10 +2627,6 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
               </div>
 
 
-
-
-
-
             </div>
             <div className="d-flex align-items-center mt-2 mb-1 justify-content-between">
               {/* CENTER TEXT (auto margin se center me rahega) */}
