@@ -119,7 +119,7 @@ const ConfirmModal = (props) => {
                                                 !arresteeChange?.AgeFrom ||
                                                 !arresteeChange?.Race_Description ||
                                                 !arresteeChange?.Gendre_Description
-                                            ) && "can't be empty"
+                                            ) && "cannot be empty"
                                         }
                                     </span>
                                 </h5>
