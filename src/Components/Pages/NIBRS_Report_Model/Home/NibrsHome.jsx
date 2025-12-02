@@ -530,7 +530,7 @@ const NibrsHome = () => {
       title: isOffense240VehError ? <span className="text-center" style={TitleErrorStyle}> {`Vehicle (${VehicleCount}) --- For crimes against vehicle, a Vehicle record is required.`} </span> : `Vehicle (${VehicleCount})`,
       status: !vehErrorStatus ? "completed" : "attention highlighted",
       sectionKey: "VehicleTab",
-      list: <VehicleTab vehicleClick={vehicleClick} isNibrsSummited={isNibrsSummited} />
+      list: <VehicleTab vehicleClick={vehicleClick} isNibrsSummited={isNibrsSummited} isLocked={isLocked} setIsLocked={setIsLocked} getPermissionLevelByLock={getPermissionLevelByLock} />
     },
     {
       title: !isGroup_B_Offense_ArrestInc ? `Arrestee (${ArrestCount})` : <span className="text-center" style={TitleErrorStyle}>Arrestee --- There is no arrest attached to this Group B offense Incident</span>,
