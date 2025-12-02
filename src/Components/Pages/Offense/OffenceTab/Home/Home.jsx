@@ -2518,7 +2518,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   isDisabled={isLockOrRestrictModule("Lock", crimeBiasCategoryEditVal, isLocked, true) || nibrsSubmittedOffenseMain === 1}
                   styles={
                     isLockOrRestrictModule("Lock", crimeBiasCategoryEditVal, isLocked, true) ? MultiSelectLockedStyle :
-                      loginAgencyState === 'TX' ? (nibrsCode === "999" || nibrsCode === "90G" || (nibrsCode === "90B") || (nibrsCode === "90C") || (nibrsCode === "90D") || (nibrsCode === "90F") || (nibrsCode === "90J") || (nibrsCode === "90K") || (nibrsCode === "90L") || (nibrsCode === " 90M") || (nibrsCode === "90Z")) ? customStylesWithOutColor
+                      loginAgencyState === 'TX' ? (nibrsCode === "999" || nibrsCode === "90G" || (nibrsCode === "90B") || (nibrsCode === "90C") || (nibrsCode === "90D") || (nibrsCode === "90F") || (nibrsCode === "90J") || (nibrsCode === "90K") || (nibrsCode === "90L") || (nibrsCode === " 90M") || (nibrsCode === "90Z")) ? MultiSelectWithOutColorStyle
                         :
                         nibrsCode === '09C' && !bias09CCodeStatus ? ErrorStyle_NIBRS_09C(nibrsCode)
                           :
