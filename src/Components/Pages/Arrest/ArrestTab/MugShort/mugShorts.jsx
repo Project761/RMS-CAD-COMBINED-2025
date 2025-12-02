@@ -323,7 +323,7 @@ const MugShorts = (props) => {
             sortable: true
         },
         {
-            name: 'Body Build Type', selector: (row) => row.BodyBuildType, sortable: true
+            name: 'Body Build ', selector: (row) => row.BodyBuildType, sortable: true
         },
         {
             name: <p className='text-end' style={{ position: 'absolute', top: 8, right: 10 }}>Delete</p>,
