@@ -4468,9 +4468,9 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                             highlightOnHover
                             responsive
                             fixedHeader
-                            pagination
-                            paginationPerPage={'10'}
-                            paginationRowsPerPageOptions={[10, 15, 20, 50]}
+                            // pagination
+                            // paginationPerPage={'10'}
+                            // paginationRowsPerPageOptions={[10, 15, 20, 50]}
                             fixedHeaderScrollHeight='80px'
                             customStyles={tableCustomStyles}
                             conditionalRowStyles={conditionalRowStyles}
