@@ -536,7 +536,7 @@ const NibrsHome = () => {
       title: !isGroup_B_Offense_ArrestInc ? `Arrestee (${ArrestCount})` : <span className="text-center" style={TitleErrorStyle}>Arrestee --- There is no arrest attached to this Group B offense Incident</span>,
       status: !nibrsValidateIncidentData?.Arrestees && !isGroup_B_Offense_ArrestInc ? "completed" : "attention highlighted",
       sectionKey: "Arrestees",
-      list: <Arrestees arrestClick={arrestClick} isNibrsSummited={isNibrsSummited} />
+      list: <Arrestees arrestClick={arrestClick} isNibrsSummited={isNibrsSummited} isLocked={isLocked} setIsLocked={setIsLocked} getPermissionLevelByLock={getPermissionLevelByLock} />
     },
   ];
 

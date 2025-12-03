@@ -74,7 +74,7 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
     const [plateTypeCode, setPlateTypeCode] = useState('');
     const [lossCode, setLossCode] = useState('');
     const [masterPropertyID, setMasterPropertyID] = useState('');
-    const [editval, setEditval] = useState();
+    const [editval, setEditval] = useState([]);
     const [mainIncidentID, setMainIncidentID] = useState('');
     const [vehicleID, setVehicleID] = useState('');
     const [loginAgencyID, setLoginAgencyID] = useState('');
@@ -733,12 +733,13 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                 <div style={{ position: 'absolute', top: 4, right: 10 }}>
                     {
                         effectiveScreenPermission ?
-                            effectiveScreenPermission[0]?.DeleteOK ?
+                            effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", VehicleFilterData, isLocked, true) ?
                                 <span onClick={(e) => { setVehicleID(row.PropertyID); dispatch({ type: Vehicle_ID, payload: row.PropertyID }); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                                     <i className="fa fa-trash"></i>
                                 </span>
                                 : <></>
                             :
+                            !isLockOrRestrictModule("Lock", VehicleFilterData, isLocked, true) &&
                             <span onClick={(e) => { setVehicleID(row.PropertyID); dispatch({ type: Vehicle_ID, payload: row.PropertyID }); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                                 <i className="fa fa-trash"></i>
                             </span>
@@ -1340,7 +1341,6 @@ const Get_LossCode = (data, dropDownData) => {
     });
     return val[0]?.id
 }
-
 
 const getCategoryCode = (data, dropDownData) => {
     const result = data?.map((sponsor) => (sponsor.CategoryID))
