@@ -553,6 +553,8 @@ const Narrative = (props) => {
       </div>
 
       <div className="col-12 text-right mt-3 ">
+        {/* <button type="button" className="btn btn-sm btn-success mx-1 py-1 text-center" onClick={() => { setShowPage('Charges'); }}>Back</button>
+        <button type="button" className="btn btn-sm btn-success mx-1 py-1 text-center" onClick={() => { setShowPage('Narratives'); }}>Next</button> */}
         <button type="button" className="btn btn-sm btn-success mr-1 " onClick={() => { setStatusFalse(); }}>New</button>
         {
           status ?

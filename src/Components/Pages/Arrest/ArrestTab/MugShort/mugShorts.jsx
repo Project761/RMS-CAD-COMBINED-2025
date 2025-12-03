@@ -19,7 +19,7 @@ import ArresList from '../../../ShowAllList/ArrestList';
 
 const MugShorts = (props) => {
 
-    const { DecArrestId, DecMasterNameID, DecIncID, isViewEventDetails = false, get_List, ListData, isLocked, setIsLocked } = props
+    const { DecArrestId, DecMasterNameID, DecIncID, isViewEventDetails = false, get_List, ListData, isLocked, setIsLocked, setShowPage } = props
 
     const { setChangesStatus, get_Arrest_Count, NameId } = useContext(AgencyContext)
 
@@ -125,10 +125,10 @@ const MugShorts = (props) => {
     }
 
     useEffect(() => {
-        if (status && Array?.isArray(editval) && editval?.length > 0) {
+        if (Array?.isArray(editval) && editval?.length > 0) {
             setValue({
                 ...value,
-                MugshotID: MugshotID, FrontMugshot: editval[0]?.FrontImage || '', LeftMugshot: editval[0]?.LeftImage || '', RightMugshot: editval[0]?.RightImage || '', EnterMugshot: editval[0]?.EnterImage || '', EyeColorID: editval[0]?.EyeColorID || '', Height: editval[0]?.Height || '',
+                MugshotID: editval[0]?.MugshotID, FrontMugshot: editval[0]?.FrontImage || '', LeftMugshot: editval[0]?.LeftImage || '', RightMugshot: editval[0]?.RightImage || '', EnterMugshot: editval[0]?.EnterImage || '', EyeColorID: editval[0]?.EyeColorID || '', Height: editval[0]?.Height || '',
                 Weight: editval[0]?.Weight || '', HairColorID: editval[0]?.HairColorID || '', HairStyleID: editval[0]?.HairStyleID || '', HairLengthID: editval[0]?.HairLengthID || '', HairShadeID: editval[0]?.HairShadeID || '', BodyBuildTypeID: editval[0]?.BodyBuildTypeID || '', Complexion: Number(editval[0]?.Complexion) || '', ModifiedByUserFK: loginPinID,
             });
         } else {
@@ -157,7 +157,8 @@ const MugShorts = (props) => {
         const val = { ArrestID: ArrestID }
         fetchPostData('Mugshots/GetData_Mugshots', val).then((res) => {
             if (res) {
-                setWarrentTypeData(res)
+                setEditval(res)
+                // setWarrentTypeData(res)
             } else {
                 setWarrentTypeData([]);
             }
@@ -219,8 +220,9 @@ const MugShorts = (props) => {
 
     useEffect(() => {
         if (EyeColorIDErrors === 'true' && HairColorIDErrors === 'true' && HeightErrors === 'true' && WeightErrors === 'true') {
-            if (MugshotID && status) { update_MugShorts() }
-            else { Add_MugShorts() }
+            // if (MugshotID && status) { update_MugShorts() }
+            // else { Add_MugShorts() }
+            update_MugShorts()
         }
     }, [EyeColorIDErrors, HairColorIDErrors, HeightErrors, WeightErrors])
 
@@ -831,20 +833,23 @@ const MugShorts = (props) => {
                     </div>
                 </div>
                 <div className="btn-box text-right mr-1 mb-2 mt-3">
+                    {/* <button type="button" className="btn btn-sm btn-success mx-1 py-1 text-center" onClick={() => { setShowPage('Narratives'); }}>Back</button>
+                    <button type="button" className="btn btn-sm btn-success mx-1 py-1 text-center" onClick={() => { setShowPage('Fingerprint'); }}>Next</button> */}
                     <button type="button" onClick={setStatusFalse}
                         className="btn btn-sm btn-success mr-1" >New</button>
                     {/* <button type="button" className="btn btn-sm btn-success mr-1" onClick={Add_MugShorts}>Save</button> */}
-                    {
+                    <button type="button" className="btn btn-sm btn-success mr-1" disabled={!statesChangeStatus} onClick={(e) => { check_Validation_Error(); }}>Update</button>
+                    {/* {
                         status ?
                             <button type="button" className="btn btn-sm btn-success mr-1" disabled={!statesChangeStatus} onClick={(e) => { check_Validation_Error(); }}>Update</button>
                             :
                             <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); }}>Save</button>
-                    }
+                    } */}
                     <button type="button" onClick={handleAddMugshot} className="btn btn-sm btn-success mr-1" >Add Mughshot</button>
                 </div>
             </div >
             <div className="col-12 mt-3 modal-table">
-                <DataTable
+                {/* <DataTable
                     dense
                     columns={columns}
                     data={warrentTypeData}
@@ -857,7 +862,7 @@ const MugShorts = (props) => {
                     fixedHeaderScrollHeight='200px'
                     conditionalRowStyles={conditionalRowStyles}
                     noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : 'There are no data to display'}
-                />
+                /> */}
             </div>
             <DeletePopUpModal func={Delete_MugShorts} />
             <ChangesModal func={check_Validation_Error} />

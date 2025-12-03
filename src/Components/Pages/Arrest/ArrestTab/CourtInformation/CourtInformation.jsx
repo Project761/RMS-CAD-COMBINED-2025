@@ -18,7 +18,7 @@ import ArresList from '../../../ShowAllList/ArrestList'
 
 const CourtInformation = (props) => {
 
-  const { DecArrestId, ListData, get_List, isLocked, Editval, setIsLocked } = props
+  const { DecArrestId, ListData, get_List, isLocked, Editval, setIsLocked, setShowPage } = props
 
   const dispatch = useDispatch();
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -71,7 +71,7 @@ const CourtInformation = (props) => {
     }
   }, [localStoreData]);
 
- 
+
 
   useEffect(() => {
     if (effectiveScreenPermission?.length > 0) {
@@ -687,6 +687,8 @@ const CourtInformation = (props) => {
       </div>
 
       <div className="btn-box text-right mt-1 mr-1 mb-2">
+        {/* <button type="button" className="btn btn-sm btn-success mx-1 py-1 text-center" onClick={() => { setShowPage('Fingerprint'); }}>Back</button>
+        <button type="button" className="btn btn-sm btn-success mx-1 py-1 text-center" onClick={() => { setShowPage('Juvenile'); }}>Next</button> */}
         <button type="button" className="btn btn-sm btn-success mx-1 py-1 text-center" onClick={() => { setStatusFalse(); }}>New</button>
         {
           status ?
