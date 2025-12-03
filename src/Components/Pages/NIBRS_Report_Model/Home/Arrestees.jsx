@@ -16,12 +16,12 @@ import { RequiredFieldIncident } from '../../Utility/Personnel/Validation';
 import { AgencyContext } from '../../../../Context/Agency/Index';
 import { toastifyError, toastifySuccess } from '../../../Common/AlertMsg';
 import { AddDeleteUpadate, AddDelete_Img, fetchPostData, fetchPostDataNibrs } from '../../../hooks/Api';
-import { Aes256Encrypt, Decrypt_Id_Name, Requiredcolour, base64ToString, customStylesWithOutColor, filterPassedTimeZone, filterPassedTimeZoneArrest, getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime, nibrscolourStyles, stringToBase64, tableCustomStyles } from '../../../Common/Utility';
+import { Aes256Encrypt, Decrypt_Id_Name, LockFildscolour, Requiredcolour, base64ToString, customStylesWithOutColor, filterPassedTimeZone, filterPassedTimeZoneArrest, getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime, isLockOrRestrictModule, nibrscolourStyles, stringToBase64, tableCustomStyles } from '../../../Common/Utility';
 import ListModal from '../../Utility/ListManagementModel/ListModal';
 import { get_ScreenPermissions_Data } from '../../../../redux/actions/IncidentAction';
 import { Comman_changeArrayFormat, threeColArrayWithCode } from '../../../Common/ChangeArrayFormat';
 
-const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
+const Arrestees = ({ arrestClick, isNibrsSummited = false, isLocked, setIsLocked, getPermissionLevelByLock = () => { } }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -72,7 +72,7 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
     const [arrestDate, setArrestDate] = useState();
     const [rightGivenCode, setRightGivenCode] = useState('N');
     const [ArrestID, setArrestID] = useState('');
-    const [Editval, setEditval] = useState();
+    const [Editval, setEditval] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [arresteeChange, setArresteeChange] = useState();
     const [clickedRow, setClickedRow] = useState(null);
@@ -109,7 +109,6 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
     //  NIBRS Error
     const [clickNibLoder, setclickNibLoder] = useState(false);
 
-
     const type = "ArrestMod"
 
     const [value, setValue] = useState({
@@ -118,7 +117,6 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
 
     const [errors, setErrors] = useState({
         'ArresteeIDError': '', 'ArrestDtTmError': '', 'JuvenileDispoError': '', 'ArrestTypeIDError': '',
-
     })
 
     useEffect(() => {
@@ -147,7 +145,6 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
             setincidentReportedDate(incidentDate[0]?.ReportedDate ? new Date(incidentDate[0]?.ReportedDate) : null)
         }
     }, [incidentDate]);
-
 
     const GetEditData = (incidentID) => {
         const val = { IncidentID: incidentID };
@@ -180,14 +177,11 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
         })
     }
 
-
-
     useEffect(() => {
         if (possessionID) {
             checkSelectedName(parseInt(possessionID))
         }
     }, [possessionID, arresteeNameData]);
-
 
     useEffect(() => {
         if (DecNameId) {
@@ -217,7 +211,6 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
         }
     }
 
-
     useEffect(() => {
         if (loginAgencyID) {
             setValue({ ...value, 'IncidentID': DecEIncID, 'ArrestID': ArrestID, 'CreatedByUserFK': loginPinID, 'AgencyID': loginAgencyID });
@@ -236,8 +229,6 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
             reset_Value()
         }
     }, [ArrestID, DecEIncID]);
-
-
 
     const GetSingleData = (ArrestID, MainIncidentID) => {
         const val = { 'ArrestID': ArrestID, 'PINID': '0', 'IncidentID': MainIncidentID }
@@ -404,12 +395,8 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
         }
     }, [rightGivenCode])
 
-
-
     const insert_Arrest_Data = async () => {
-
         if (ChargeLocalArr?.length === 0 && tabCountArrest?.ChargeCount === 0 && arrestChargeData.length === 0) {
-
             toastifyError('Please add at least one charge')
             setErrors({
                 ...errors,
@@ -417,9 +404,6 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
             })
         }
         else {
-
-
-
             const { ArrestID, AgencyID, ArrestNumber, IncidentID, CreatedByUserFK, IsJuvenileArrest, ArrestDtTm, ArrestingAgency, ArrestTypeID, SupervisorID, PoliceForceID, RightsGivenID, JuvenileDispositionID, PhoneNo, PrimaryOfficerID, GivenByID, ArresteeID, ArresteeLable, ModifiedByUserFK, IsMultipleArrestees, ArrestingAgencyID, } = value;
             const val = {
                 'ArrestID': ArrestID, 'AgencyID': loginAgencyID, 'IncidentID': DecEIncID, 'ArrestNumber': ArrestNumber, 'CreatedByUserFK': loginPinID, 'IsJuvenileArrest': IsJuvenileArrest, 'ArrestDtTm': ArrestDtTm, 'ArrestingAgency': ArrestingAgency, 'ArrestTypeID': ArrestTypeID, 'SupervisorID': SupervisorID, 'PoliceForceID': PoliceForceID, 'RightsGivenID': RightsGivenID, 'JuvenileDispositionID': JuvenileDispositionID, 'PhoneNo': PhoneNo, 'PrimaryOfficerID': PrimaryOfficerID, 'GivenByID': GivenByID, 'ArresteeID': ArresteeID, 'ArresteeLable': 0, 'ModifiedByUserFK': '', 'IsMultipleArrestees': IsMultipleArrestees, 'ArrestingAgencyID': ArrestingAgencyID,
@@ -446,8 +430,6 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
 
 
         }
-
-
     }
 
     const update_Arrest = () => {
@@ -567,10 +549,13 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
             cell: row =>
                 <div style={{ position: 'absolute', top: 4, right: 10 }}>
                     {
-                        effectiveScreenPermission ? effectiveScreenPermission[0]?.DeleteOK ?
+                        effectiveScreenPermission ? effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", arrestFilterData, isLocked, true) ?
                             <span onClick={() => setArrestID(row.ArrestID)} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">                                    <i className="fa fa-trash"></i>
                             </span>
-                            : <></> :
+                            :
+                            <></>
+                            :
+                            !isLockOrRestrictModule("Lock", arrestFilterData, isLocked, true) &&
                             <span onClick={() => setArrestID(row.ArrestID)} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">                                    <i className="fa fa-trash"></i>
                                 <i className="fa fa-trash"></i>
                             </span>
@@ -585,6 +570,8 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
             modal.show();
         } else {
             if (row?.ArrestID) {
+                // get Inc-Lock Status
+                getPermissionLevelByLock(DecEIncID, loginPinID);
                 Reset();
                 navigate(`/nibrs-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(row?.ArrestID)}&ArrNo=${row?.ArrestNumber}&Name=${row?.Arrestee_Name}&ArrestSta=${true}&ChargeSta=${false}&SideBarStatus=${!SideBarStatus}&ArrestStatus=${false} `)
                 setArrestID(row?.ArrestID); setActiveArrest(row?.ArrestID); setErrors(''); setStatesChangeStatus(true); setChangesStatus(false); setStatus(true);
@@ -604,9 +591,6 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
         get_NIBRS_Drp_Data(loginAgencyID, null);
         // charge code
         get_ChargeCode_Drp_Data(loginAgencyID, null, null);
-
-
-
     }
 
     const conditionalRowStyles = [
@@ -615,8 +599,6 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
             style: { backgroundColor: '#001f3fbd', color: 'white', cursor: 'pointer', },
         },
     ];
-
-
 
     //--------------------possession---------------------------------//
     const GetSingleDataPassion = (nameID, masterNameID) => {
@@ -721,7 +703,6 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
     }
 
     //------------newChange----------------
-
     const clearID = () => {
         if (Editval?.length > 0) {
             setArrestID(ArrestID)
@@ -832,7 +813,6 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
         }
     }, [DecEIncID]);
 
-
     const GetSingleDataCharge = (ChargeID) => {
         if (ArrestID) {
             const val = { 'ChargeID': ChargeID };
@@ -893,7 +873,6 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
             setNarrativeApprovedStatus(false);
         }
     }
-
 
     const LawTitleIdDrpDwnVal = async (loginAgencyID, ChargeCodeID) => {
         const val = { AgencyID: loginAgencyID, ChargeCodeID: ChargeCodeID }
@@ -1030,7 +1009,6 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
         get_Arrest_Count(ArrestID);
         get_Data_Arrest_Charge(ArrestID);
     };
-
 
     const Add_Charge_Data = () => {
         const { ChargeCodeID, NIBRSID, LawTitleId, AttemptComplete } = valueCharge;
@@ -1184,7 +1162,6 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
         }
     };
 
-
     const columnsCharge = [
         {
             name: 'NIBRS Code', selector: (row) => row.NIBRS_Description || row.FBICode_Desc, sortable: true
@@ -1222,7 +1199,6 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
     ];
 
     const set_Edit_ValueCharge = (row) => {
-
         setDelChargeID(row.ChargeID);
         if (!row.OffenseID) {
             setChargeID(row.ChargeID);
@@ -1242,10 +1218,6 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
     const setStatusFalseCharge = () => {
         setErrorsCharge(''); setChargeID(''); Reset();
     }
-
-
-
-
 
     // Validate Arrest 
     const ValidateArrest = (incidentID) => {
@@ -1284,14 +1256,11 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
 
     const arrestChargeCount = arrestFilterData?.every((item) => item?.ChargeCount > 0);
 
-
     //  Attempted/Completed
     const StatusOption = [
         { value: "A", label: "Attempted" },
         { value: "C", label: "Completed" },
     ];
-
-
 
     const nibrsSuccessStyles = {
         control: (styles) => ({
@@ -1344,26 +1313,36 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
                     <div className="col-12 col-md-12 col-lg-11 pt-2 p-0">
                         <div className="row px-2">
                             <div className="col-2 col-md-2 col-lg-1  mt-2 ">
-                                <label htmlFor="" className='new-label '> Arrest No.</label>
+                                <label htmlFor="" className='new-label'> Arrest No.</label>
                             </div>
                             <div className="col-4 col-md-4 col-lg-2  text-field  mt-1">
-                                <input type="text" name='ArrestNumber' value={value?.ArrestNumber} className="readonlyColor" onChange={''} id='ArrestNumber' required readOnly />
+                                <input
+                                    type="text"
+                                    name='ArrestNumber'
+                                    value={value?.ArrestNumber}
+                                    className="readonlyColor"
+                                    onChange={''}
+                                    id='ArrestNumber'
+                                    required
+                                    readOnly
+                                />
                             </div>
                             <div className="col-2 col-md-3 col-lg-2 mt-1 pt-2">
                                 <label htmlFor="" className='new-label text-nowrap'>Incident No.</label>
                             </div>
                             <div className="col-4 col-md-4 col-lg-3 mt-1 text-field">
-                                <input type="text" className='readonlyColor' name='IncidentNumber' value={IncNo ? IncNo : ''} required readOnly />
+                                <input
+                                    type="text"
+                                    className='readonlyColor'
+                                    name='IncidentNumber'
+                                    value={IncNo ? IncNo : ''}
+                                    required
+                                    readOnly
+                                />
                             </div>
                             <div className="col-2 col-md-2 col-lg-2 mt-2">
                                 <label htmlFor="" className='new-label'>
                                     Arrest Date/Time
-                                    {/* {
-                                        loginAgencyState === 'TX' ?
-                                            checkArrestDate(value?.ArrestDtTm, incExceDate) && <ErrorTooltip ErrorStr={'The arrest date must be after the exceptional clearance date if the incident is marked as "cleared exceptionally'} />
-                                            :
-                                            <></>
-                                    } */}
                                     {errors.ArrestDtTmError !== 'true' ? (
                                         <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ArrestDtTmError}</p>
                                     ) : null}
@@ -1381,7 +1360,6 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
                                             onKeyDown(e);
                                         }
                                     }}
-
                                     onChange={(date) => {
                                         if (!date) {
                                             setChangesStatus(true);
@@ -1422,9 +1400,10 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
                                         setArrestDate(currDate);
                                         setValue({ ...value, ['ArrestDtTm']: getShowingMonthDateYear(currDate) });
                                     }}
+                                    // className='requiredColor'
+                                    className={isLockOrRestrictModule("Lock", Editval[0]?.ArrestDtTm, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+                                    disabled={isLockOrRestrictModule("Lock", Editval[0]?.ArrestDtTm, isLocked)}
 
-
-                                    className='requiredColor'
                                     dateFormat="MM/dd/yyyy HH:mm"
                                     timeFormat="HH:mm"
                                     is24Hour
@@ -1439,18 +1418,11 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
                                     timeIntervals={1}
                                     timeCaption="Time"
                                     autoComplete="Off"
-
                                     maxDate={new Date(datezone)}
                                     minDate={extractIncidentDate ? new Date(extractIncidentDate) : new Date(incidentReportedDate)}
-                                    filterTime={(time) =>
-                                        filterPassedTimeZoneArrest(time, extractIncidentDate, datezone, incidentReportedDate)
-                                    }
+                                    filterTime={(time) => filterPassedTimeZoneArrest(time, extractIncidentDate, datezone, incidentReportedDate)}
                                 />
                             </div>
-
-
-
-
                         </div>
                     </div>
                 </div>
@@ -1471,27 +1443,31 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
                                     MstPage === "MST-Arrest-Dash" ?
                                         <Select
                                             name="ArresteeID"
-                                            styles={Requiredcolour}
                                             options={mastersNameDrpData}
                                             value={mastersNameDrpData?.filter((obj) => obj.value === value?.ArresteeID)}
                                             isClearable
                                             onChange={(e) => ChangeDropDown(e, 'ArresteeID')}
                                             placeholder="Select..."
+                                            // styles={Requiredcolour}
+                                            styles={isLockOrRestrictModule("Lock", Editval[0]?.ArresteeID, isLocked) ? LockFildscolour : Requiredcolour}
+                                            isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.ArresteeID, isLocked)}
                                         />
                                         :
                                         <Select
                                             name="ArresteeID"
-                                            styles={Requiredcolour}
                                             options={arresteeNameData}
                                             value={arresteeNameData?.filter((obj) => obj.value === value?.ArresteeID)}
                                             isClearable
-                                            isDisabled={ArrestID ? true : false}
                                             onChange={(e) => ChangeDropDown(e, 'ArresteeID')}
                                             placeholder="Select..."
+                                            // styles={Requiredcolour}
+                                            // isDisabled={ArrestID ? true : false}
+                                            styles={isLockOrRestrictModule("Lock", Editval[0]?.ArresteeID, isLocked) ? LockFildscolour : Requiredcolour}
+                                            isDisabled={ArrestID || isLockOrRestrictModule("Lock", Editval[0]?.ArresteeID, isLocked) ? true : false}
                                         />
                                 }
                             </div>
-                            <div className="col-1  " data-toggle="modal" data-target="#MasterModal"  >
+                            <div className="col-1" data-toggle="modal" data-target="#MasterModal"  >
                                 <button
                                     className=" btn btn-sm bg-green text-white"
                                     disabled={ArrestID}
@@ -1514,15 +1490,15 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
                                 <Select
                                     name="ArrestTypeID"
                                     value={arrestTypeDrpData?.filter((obj) => obj.value === value?.ArrestTypeID)}
-                                    styles={Requiredcolour}
                                     isClearable
                                     options={arrestTypeDrpData}
                                     onChange={(e) => { ChangeDropDown(e, 'ArrestTypeID') }}
                                     placeholder="Select..."
+                                    // styles={Requiredcolour}
+                                    styles={isLockOrRestrictModule("Lock", Editval[0]?.ArrestTypeID, isLocked) ? LockFildscolour : Requiredcolour}
+                                    isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.ArrestTypeID, isLocked)}
                                 />
                             </div>
-
-
                         </div>
                     </div>
                 </div>
@@ -1533,38 +1509,53 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
                 <div className="row">
                     <div className="col-12 col-md-12 col-lg-11 pt-2 p-0 ">
                         <div className="row">
-                            <div className="col-2 col-md-2 col-lg-1 mt-2 p-0 ">
-
-                                <span data-toggle="modal" onClick={() => {
-                                    setOpenPage('Arrest Juvenile Disposition')
-                                }} data-target="#ListModel" className='new-link'>
-                                    Disposition {errors.JuvenileDispoError !== 'true' ? (
+                            <div className="col-2 col-md-2 col-lg-1 mt-2">
+                                <span
+                                    data-toggle="modal"
+                                    onClick={() => { setOpenPage('Arrest Juvenile Disposition') }}
+                                    data-target="#ListModel"
+                                    className='new-link'
+                                >
+                                    Disposition
+                                    {errors.JuvenileDispoError !== 'true' ? (
                                         <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.JuvenileDispoError}</p>
                                     ) : null}
                                 </span>
                             </div>
-                            <div className="col-4 col-md-4 col-lg-4 mt-1">
+                            <div className="col-4 col-md-4 col-lg-4 mt-1 ml-2">
                                 <Select
                                     name='JuvenileDispositionID'
                                     menuPlacement='top'
-                                    styles={value?.IsJuvenileArrest === 'true' || value?.IsJuvenileArrest === true ? Requiredcolour : customStylesWithOutColor}
                                     value={arrestJuvenileDisDrpData?.filter((obj) => obj.value === value?.JuvenileDispositionID)}
                                     isClearable
                                     options={arrestJuvenileDisDrpData}
                                     onChange={(e) => ChangeDropDown(e, 'JuvenileDispositionID')}
                                     placeholder="Select..."
-                                    isDisabled={!(value?.IsJuvenileArrest === true || value?.IsJuvenileArrest === 'true')}
-
-
+                                    // styles={value?.IsJuvenileArrest === 'true' || value?.IsJuvenileArrest === true ? Requiredcolour : customStylesWithOutColor}
+                                    // isDisabled={!(value?.IsJuvenileArrest === true || value?.IsJuvenileArrest === 'true')}
+                                    styles={isLockOrRestrictModule("Lock", Editval[0]?.JuvenileDispositionID, isLocked) ? LockFildscolour : value?.IsJuvenileArrest === 'true' || value?.IsJuvenileArrest === true ? Requiredcolour : customStylesWithOutColor}
+                                    isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.JuvenileDispositionID, isLocked) || !(value?.IsJuvenileArrest === true || value?.IsJuvenileArrest === 'true')}
                                 />
                             </div>
-                            <div className="col-2 col-md-2 col-lg-2 mt-2 ">
+                            <div className="col-2 col-md-2 col-lg-1 mt-2 ml-5">
                                 <label htmlFor="" className='new-label'>Phone No:{errors.CellPhoneError !== 'true' ? (
                                     <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.CellPhoneError}</p>
                                 ) : null}</label>
                             </div>
-                            <div className="col-4 col-md-4 col-lg-2 mt-1 text-field">
-                                <input type="text" maxLength={10} name='PhoneNo' id='PhoneNo' className={`${value.IsJuvenileArrest === false ? "readonlyColor" : ''}`} value={value?.PhoneNo} onChange={handleChange} required disabled={value.IsJuvenileArrest === true ? false : true} />
+                            <div className="col-4 col-md-4 col-lg-3 mt-1 text-field">
+                                <input
+                                    type="text"
+                                    maxLength={10}
+                                    name='PhoneNo'
+                                    id='PhoneNo'
+                                    value={value?.PhoneNo}
+                                    onChange={handleChange}
+                                    required
+                                    // className={`${value.IsJuvenileArrest === false ? "readonlyColor" : ''}`}
+                                    // disabled={value.IsJuvenileArrest === true ? false : true}
+                                    className={`${isLockOrRestrictModule("Lock", Editval[0]?.PhoneNo, isLocked) ? 'LockFildscolour' : value.IsJuvenileArrest === false ? "readonlyColor" : ''}`}
+                                    disabled={isLockOrRestrictModule("Lock", Editval[0]?.PhoneNo, isLocked) || value.IsJuvenileArrest === true ? false : true}
+                                />
                             </div>
                         </div>
                     </div>
@@ -1658,7 +1649,6 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
                                     value={chargeCodeDrp?.filter((obj) => obj.value === valueCharge?.ChargeCodeID)}
                                     styles={Requiredcolour}
                                     isClearable
-
                                     options={chargeCodeDrp}
                                     onChange={(e) => { onChangeDrpLawTitle(e, 'ChargeCodeID') }}
                                     placeholder="Select..."
@@ -1685,8 +1675,6 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
                                     value={StatusOption.filter((option) => option.value === valueCharge?.AttemptComplete)}
                                 />
                             </div>
-
-
                             <div className="btn-box text-right col-lg-12 mt-2 mb-2 d-flex" style={{ justifyContent: "space-between", alignItems: "center" }}>
                                 {
                                     isNibrsSummited ? (
@@ -1714,12 +1702,16 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
                                                     ChargeID ?
                                                         effectiveScreenPermission ? effectiveScreenPermission[0]?.Changeok ?
                                                             <button type="button" onClick={() => check_Validation_ErrorCharge()} disabled={!statesChangeStatus} className="btn btn-sm btn-success  mr-1">Update Charge</button>
-                                                            : <></> :
+                                                            :
+                                                            <></>
+                                                            :
                                                             <button type="button" onClick={() => check_Validation_ErrorCharge()} disabled={!statesChangeStatus} className="btn btn-sm btn-success  mr-1">Update Charge</button>
                                                         :
                                                         effectiveScreenPermission ? effectiveScreenPermission[0]?.AddOK ?
                                                             <button type="button" onClick={() => check_Validation_ErrorCharge()} className="btn btn-sm btn-success  mr-1">Add Charge</button>
-                                                            : <></> :
+                                                            :
+                                                            <></>
+                                                            :
                                                             <button type="button" onClick={() => check_Validation_ErrorCharge()} className="btn btn-sm btn-success  mr-1">Add Charge</button>
                                                 }
 
@@ -1734,7 +1726,6 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
                     <div className="col-12 mt-2">
                         <DataTable
                             dense
-
                             data={
                                 effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? (ArrestID || possessionID) && arrestChargeData.length > 0
                                     ? arrestChargeData
@@ -1744,7 +1735,6 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
                                         ? arrestChargeData
                                         : ChargeLocalArr
                             }
-
                             columns={columnsCharge}
                             selectableRowsHighlight
                             highlightOnHover
@@ -1758,11 +1748,9 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
                             noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : 'There are no data to display'}
                         />
                     </div>
-
                     <ListModal {...{ openPage, setOpenPage }} />
                     <ChangesModal func={check_Validation_Error} />
                 </fieldset>
-
             </>
             <div className="col-12 d-flex justify-content-between  p-0" style={{ marginTop: '-8px' }}>
                 {
@@ -1773,30 +1761,40 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
                         <>
                             {/* don't remove black div */}
                             <div>
-
                             </div>
                             <div>
-                                {MstPage !== "MST-Arrest-Dash" && (<button type="button" className="btn btn-sm btn-success mr-2  mt-2" onClick={setStatusFalse}>New </button>)}
+                                {MstPage !== "MST-Arrest-Dash" && (
+                                    <button
+                                        type="button"
+                                        className="btn btn-sm btn-success mr-2  mt-2"
+                                        // onClick={setStatusFalse}
+                                        onClick={() => { setStatusFalse(); setIsLocked(false); }}
+                                    >
+                                        New
+                                    </button>
+                                )}
                                 {
                                     ArrestID && (ArrestSta === true || ArrestSta === 'true') ?
                                         effectiveScreenPermission ? effectiveScreenPermission[0]?.Changeok && nibrsSubmittedArrestee !== 1 ?
                                             <button type="button" className="btn btn-sm btn-success mr-2 mt-2" data-toggle="modal" data-target="#myModal"
                                                 disabled={!statesChangeStatus} onClick={() => { if (!showModal) { check_Validation_Error(); } }}>Update</button>
-                                            : <></> :
+                                            :
+                                            <></>
+                                            :
                                             <button type="button" className="btn btn-sm btn-success mr-2  mt-2" data-toggle="modal" data-target="#myModal" disabled={!statesChangeStatus} onClick={() => { if (!showModal) { check_Validation_Error(); } }}>Update</button>
                                         :
                                         effectiveScreenPermission ? effectiveScreenPermission[0]?.AddOK ?
                                             <button type="button" className="btn btn-sm btn-success mr-2  mt-2" data-toggle="modal" data-target="#myModal" onClick={() => { if (!showModal) { check_Validation_Error(); } }}>Save</button>
-                                            : <></> :
+                                            :
+                                            <></>
+                                            :
                                             <button type="button" className="btn btn-sm btn-success mr-2  mt-2" data-toggle="modal" data-target="#myModal" onClick={() => { if (!showModal) { check_Validation_Error(); } }}>Save</button>
                                 }
                             </div>
                         </>
                     )
                 }
-
             </div>
-
             <div className="col-12 pt-1">
                 {
                     MstPage != "MST-Arrest-Dash" &&
@@ -1817,7 +1815,6 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
                         paginationPerPage={'100'}
                         paginationRowsPerPageOptions={[100, 150, 200, 500]}
                         noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : 'There are no data to display'}
-
                     />
                 }
             </div>
@@ -1825,10 +1822,7 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false }) => {
             <ConfirmModal {...{ showModal, setShowModal, arresteeChange, value, possessionID, setPossessionID, setValue, setErrors }} />
             <DeletePopUpModal func={offenseNameID ? DeleteOffense : isChargeDel ? DeleteCharge : DeleteArrest} clearID={clearID} />
             <ChangesModal func={check_Validation_Error} />
-
-
             <MasterNameModel {...{ type, setArrestID, isDatePickerRequiredColor, value, setValue, setMstNameID, nameModalStatus, setNameModalStatus, loginPinID, loginAgencyID, possessionID, setPossessionID, possenSinglData, setPossenSinglData, GetSingleDataPassion }} />
-
         </>
     )
 }
