@@ -15,6 +15,7 @@ import AddGroup from './AddGroup';
 import { useLocation } from 'react-router-dom';
 import ChangesModal from '../../Components/Common/ChangesModal';
 import { AgencyContext } from '../../Context/Agency/Index';
+import DeletePopUpModal from '../../Components/Common/DeleteModal';
 
 function ReportWorkflow() {
     const dispatch = useDispatch();
@@ -284,6 +285,36 @@ function ReportWorkflow() {
         {
             name: "Report Approval Time Limit", selector: row => row?.reportApprovalTimeLimit, sortable: true,
         },
+        {
+            minWidth: "40px",
+            grow: 1,
+            name: (
+                <p
+                    className="text-end"
+                    style={{ position: "absolute", top: "7px", }}
+                >
+                    Action
+                </p>
+            ),
+            cell: (row) => (
+                <div >
+
+
+
+                    <span
+                        onClick={() => { setReportWorkFlowID(row.ReportWorkFlowID); }}
+                        className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
+                        data-toggle="modal"
+                        data-target="#DeleteModal"
+                    >
+                        <i className="fa fa-trash"></i>
+                    </span>
+
+
+
+                </div>
+            ),
+        },
     ];
 
     const set_Edit_Value = (row) => {
@@ -352,6 +383,19 @@ function ReportWorkflow() {
                 [e.target.name]: " "
             })
         }
+    };
+
+    const DeleteReportWorkFlowID = () => {
+        const val = { ReportWorkFlowID: reportWorkFlowID, DeletedByUserFK: loginPinID };
+        AddDeleteUpadate("ReportWorkFlow/Delete_ReportWorkFlow", val).then((res) => {
+            const parsedData = JSON.parse(res.data);
+            const message = parsedData.Table[0].Message;
+            toastifySuccess(message);
+            // get_Incident_Count(mainIncidentID, loginPinID);
+            get_Data_ReportWorkflow(aId);
+            // setStatusFalse();
+            // setResetErrors(true);
+        });
     };
 
     return (
@@ -847,6 +891,7 @@ function ReportWorkflow() {
                 />
             </div>
             <ChangesModal func={check_Validation_Error} setToReset={resetEditVal} />
+            <DeletePopUpModal func={DeleteReportWorkFlowID} />
         </div>
     )
 }
