@@ -282,7 +282,9 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
             } else {
                 setValue({ ...value, ['IsJuvenileArrest']: status, ['ArresteeID']: parseInt(DecNameId) })
             }
-            return keysToCheck.every(key => nameStatus[0]?.hasOwnProperty(key) && nameStatus[0]?.[key]);
+            const allKeysExist = keysToCheck.every(key => nameStatus[0]?.[key] != null);
+            // return keysToCheck.every(key => nameStatus[0]?.hasOwnProperty(key) && nameStatus[0]?.[key]);
+            return allKeysExist;
         } else {
             return true
         }
@@ -880,6 +882,7 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
         if (ArresteeID) {
             const keysToCheck = ['AgeFrom', 'Gendre_Description', 'LastName', 'Race_Description'];
             const nameStatus = MstPage === "MST-Arrest-Dash" ? mastersNameDrpData : arresteeNameData?.filter((val) => val?.NameID == ArresteeID);
+            console.log(nameStatus[0])
             setArresteeChange(nameStatus[0]);
             const age = nameStatus[0]?.AgeFrom;
             const status = nameStatus[0]?.IsJuvenile;
@@ -889,7 +892,9 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
             } else {
                 setValue({ ...value, ['IsJuvenileArrest']: status, ['ArresteeID']: parseInt(possessionID) })
             }
-            return keysToCheck.every(key => nameStatus[0]?.hasOwnProperty(key) && nameStatus[0]?.[key]);
+            const allKeysExist = keysToCheck.every(key => nameStatus[0]?.[key] != null);
+            // console.log(keysToCheck.every(key => nameStatus[0]?.hasOwnProperty(key) && nameStatus[0]?.[key]), keysToCheck)
+            return allKeysExist;
         } else {
             return true
         }

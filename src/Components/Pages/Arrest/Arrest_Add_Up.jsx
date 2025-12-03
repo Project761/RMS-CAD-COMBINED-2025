@@ -822,31 +822,31 @@ const Arrest_Add_Up = () => {
                                             <Property {...{ DecArrestId, DecIncID, }} />
                                             :
                                             showPage === 'Charges' ?
-                                                <Charges {...{ DecArrestId, DecIncID, ListData, setListData, get_List, ArresteeID, isLocked, setIsLocked }} />
+                                                <Charges {...{ DecArrestId, DecIncID, ListData, setListData, get_List, ArresteeID, isLocked, setIsLocked, setShowPage }} />
                                                 :
                                                 showPage === 'Warrant' ?
-                                                    <Warrant {...{ DecArrestId, DecIncID, ListData, get_List, isLocked, setIsLocked }} />
+                                                    <Warrant {...{ DecArrestId, DecIncID, ListData, get_List, isLocked, setIsLocked, setShowPage }} />
                                                     :
                                                     showPage === 'Narratives' ?
-                                                        <Narratives {...{ DecArrestId, DecIncID, ListData, get_List, isLocked, setIsLocked }} />
+                                                        <Narratives {...{ DecArrestId, DecIncID, ListData, get_List, isLocked, setIsLocked, setShowPage }} />
                                                         :
                                                         showPage === 'MugShorts' ?
-                                                            <MugShorts {...{ DecArrestId, DecIncID, ListData, get_List, isLocked, setIsLocked }} />
+                                                            <MugShorts {...{ DecArrestId, DecIncID, ListData, get_List, isLocked, setIsLocked, setShowPage }} />
                                                             :
                                                             showPage === 'Fingerprint' ?
-                                                                <FingerPrint {...{ DecArrestId, DecIncID, ListData, get_List, isLocked, setIsLocked }} />
+                                                                <FingerPrint {...{ DecArrestId, DecIncID, ListData, get_List, isLocked, setIsLocked, setShowPage }} />
                                                                 :
                                                                 showPage === 'CriminalActivity' ?
-                                                                    <CriminalActivity {...{ DecArrestId, DecIncID, ListData, get_List, isLocked, setIsLocked }} />
+                                                                    <CriminalActivity {...{ DecArrestId, DecIncID, ListData, get_List, isLocked, setIsLocked, setShowPage }} />
                                                                     :
                                                                     showPage === 'CourtInformation' ?
-                                                                        <CourtInformation {...{ DecArrestId, DecIncID, Editval, ListData, get_List, isLocked, setIsLocked }} />
+                                                                        <CourtInformation {...{ DecArrestId, DecIncID, Editval, ListData, get_List, isLocked, setIsLocked, setShowPage }} />
                                                                         :
                                                                         showPage === 'PoliceForce' && showPoliceForce ?
-                                                                            <PoliceForce {...{ DecArrestId, DecIncID, ListData, isLocked, setIsLocked }} />
+                                                                            <PoliceForce {...{ DecArrestId, DecIncID, ListData, isLocked, setIsLocked, setShowPage }} />
                                                                             :
                                                                             showPage === 'Juvenile' ?
-                                                                                <Juvenile {...{ DecArrestId, DecIncID, ListData, get_List, isLocked, setIsLocked }} />
+                                                                                <Juvenile {...{ DecArrestId, DecIncID, ListData, get_List, isLocked, setIsLocked, setShowPage }} />
                                                                                 :
                                                                                 showPage === 'AuditLog' ?
                                                                                     <Log

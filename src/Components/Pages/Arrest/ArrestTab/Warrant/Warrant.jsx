@@ -22,7 +22,7 @@ import ArresList from '../../../ShowAllList/ArrestList';
 
 const Warrant = (props) => {
 
-    const { ListData, DecNameID, DecArrestId, DecMasterNameID, DecIncID, isViewEventDetails = false, get_List, isLocked, setIsLocked } = props
+    const { ListData, DecNameID, DecArrestId, DecMasterNameID, DecIncID, isViewEventDetails = false, get_List, isLocked, setIsLocked, setShowPage } = props
 
     const { get_Name_Count, get_Arrest_Count, setChangesStatus, GetDataTimeZone, datezone, NameId } = useContext(AgencyContext)
 
@@ -706,6 +706,8 @@ const Warrant = (props) => {
                 </div>
                 {!isViewEventDetails &&
                     <div className="btn-box text-right mr-1 mb-2 mt-3">
+                        {/* <button type="button" className="btn btn-sm btn-success mx-1 py-1 text-center" onClick={() => { setShowPage('Charges'); }}>Back</button>
+                        <button type="button" className="btn btn-sm btn-success mx-1 py-1 text-center" onClick={() => { setShowPage('Narratives'); }}>Next</button> */}
                         <button type="button" data-dismiss="modal" onClick={() => {
                             setStatusFalse();
                         }} className="btn btn-sm btn-success mr-1" >New</button>

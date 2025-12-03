@@ -30,7 +30,7 @@ const StatusOption = [
 
 const Charges = (props) => {
 
-  const { setStatus, DecChargeId, ListData, ArresteeID, setListData, get_List, isLocked, setIsLocked } = props
+  const { setStatus, DecChargeId, ListData, ArresteeID, setListData, get_List, isLocked, setIsLocked, setShowPage } = props
 
   const useQuery = () => {
     const params = new URLSearchParams(useLocation().search);
@@ -1172,6 +1172,8 @@ const Charges = (props) => {
 
       </div>
       <div className="col-12 text-right mt-0 p-0">
+        {/* <button type="button" className="btn btn-sm btn-success mx-1 py-1 text-center" onClick={() => { setShowPage('home'); }}>Back</button>
+        <button type="button" className="btn btn-sm btn-success mx-1 py-1 text-center" onClick={() => { setShowPage('Warrant'); }}>Next</button> */}
         <button type="button" className="btn btn-sm btn-success mx-1 py-1 text-center" onClick={() => { setStatusFalse(); }}>New</button>
         {
           (ChargeSta === true || ChargeSta === 'true') && ChargeID ?

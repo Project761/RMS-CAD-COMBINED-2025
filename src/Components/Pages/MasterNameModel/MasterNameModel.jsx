@@ -955,7 +955,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
             const NameReasonCodeIDErr = RequiredFieldIncident(masterNameValues.NameReasonCodeID);
             const DLNumberErr = masterNameValues?.DLStateID ? RequiredFieldIncident(masterNameValues.DLNumber) : 'true';
 
-            const AgeFromErr = (type === "MissingMod" && !masterNameValues.DateOfBirth) || (victimTypeStatus && type === "VehicleName" && !masterNameValues.DateOfBirth) || (victimTypeStatus && type === "ComplainantName" && !masterNameValues.DateOfBirth) || (victimTypeStatus && !masterNameValues.DateOfBirth) || type === "ArrestMod" && !masterNameValues.DateOfBirth || isAdult || isOffender || type === "Offender" || type === 'Victim' ? RequiredFieldIncident(masterNameValues.AgeFrom) : 'true'
+            const AgeFromErr = (type === "MissingMod" && !masterNameValues.DateOfBirth) || (victimTypeStatus && type === "VehicleName" && !masterNameValues.DateOfBirth) || (victimTypeStatus && type === "ComplainantName" && !masterNameValues.DateOfBirth) || (victimTypeStatus && !masterNameValues.DateOfBirth) || (type === "ArrestMod" && !masterNameValues.DateOfBirth) || isAdult || isOffender || type === "Offender" || type === 'Victim' ? RequiredFieldIncident(masterNameValues.AgeFrom) : 'true'
 
             const EthnicityErrorr = (nameTypeCode === "B") ? 'true' : victimTypeStatus ? RequiredFieldIncident(masterNameValues.EthnicityID) : 'true'
             const ResidentErr = victimTypeStatus ? RequiredFieldIncident(masterNameValues.ResidentID) : 'true'
@@ -1023,7 +1023,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
             const NameReasonCodeIDErr = RequiredFieldIncident(masterNameValues.NameReasonCodeID);
             const DLNumberErr = masterNameValues?.DLStateID ? RequiredFieldIncident(masterNameValues.DLNumber) : 'true';
             const ContactErr = phoneTypeCode ? phoneTypeCode === 'E' ? Email_Field(masterNameValues.Contact) : PhoneFieldNotReq(masterNameValues.Contact) : 'true';
-            const AgeFromErr = (type === "MissingMod" && !masterNameValues.DateOfBirth) || (victimTypeStatus && type === "ComplainantName") || type === "ArrestMod" || type === "Offender" || type === 'Victim' ? RequiredFieldIncident(masterNameValues.AgeFrom) : 'true'
+            const AgeFromErr = (type === "MissingMod" && !masterNameValues.DateOfBirth) || (victimTypeStatus && type === "ComplainantName") || (type === "ArrestMod" && !masterNameValues.DateOfBirth) || type === "Offender" || type === 'Victim' ? RequiredFieldIncident(masterNameValues.AgeFrom) : 'true'
             // const AgeFromErr = (type === "MissingMod" && !masterNameValues.DateOfBirth) || (victimTypeStatus && type === "ComplainantName") || type === "ArrestMod" || type === "NameBusiness" || type === "Property" || type === "VehicleOwner" || type === "VehicleName" ? RequiredFieldIncident(masterNameValues.AgeFrom) : 'true'
             // const AgeFromErr = (nameTypeCode === "B") ? 'true' : (type === "MissingMod" && !masterNameValues.DateOfBirth)  ? RequiredFieldIncident(masterNameValues.AgeFrom) : ''
             const RoleErr = (type === "NameBusiness" || type === "VehicleOwner" || type === "MissingMod" || type === 'Pro-Owner' || type === "Victim" || type === "Offender" || type === 'MissingPersonVehicleOwner') ? 'true' : RequiredFieldIncident(masterNameValues.Role);

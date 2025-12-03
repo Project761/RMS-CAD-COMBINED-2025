@@ -21,7 +21,7 @@ import ArresList from '../../../ShowAllList/ArrestList';
 
 const FingerPrint = (props) => {
 
-    const { ListData, DecIncID, isViewEventDetails = false, DecArrestId, get_List, isLocked, setIsLocked } = props
+    const { ListData, DecIncID, isViewEventDetails = false, DecArrestId, get_List, isLocked, setIsLocked, setShowPage } = props
 
     const { get_Name_Count, setChangesStatus, GetDataTimeZone, datezone, get_Arrest_Count, NameId } = useContext(AgencyContext)
 
@@ -339,6 +339,8 @@ const FingerPrint = (props) => {
                 </div>
                 {!isViewEventDetails &&
                     <div className="btn-box text-right mr-1 mb-2 mt-3">
+                        {/* <button type="button" className="btn btn-sm btn-success mx-1 py-1 text-center" onClick={() => { setShowPage('MugShorts'); }}>Back</button>
+                        <button type="button" className="btn btn-sm btn-success mx-1 py-1 text-center" onClick={() => { setShowPage('CourtInformation'); }}>Next</button> */}
                         <button type="button" data-dismiss="modal" onClick={() => {
                             setStatusFalse();
                         }} className="btn btn-sm btn-success mr-1" >New</button>
