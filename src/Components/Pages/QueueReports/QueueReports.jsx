@@ -365,7 +365,7 @@ function QueueReports({ isPreview }) {
 
   const GetSingleData = (NarrativeID, UseOfForceID) => {
 
-    const val = UseOfForceID ? { UseOfForceID } : { NarrativeID, 'OfficerID': loginPinID, };
+    const val = UseOfForceID ? { UseOfForceID } : { NarrativeID, 'OfficerID': loginPinID, 'AgencyID': loginAgencyID, };
     // const narrativePayload = { 'NarrativeID': NarrativeID, }
     // const useOfForcePayload = { 'UseOfForceID': UseOfForceID }
     // const val = UseOfForceID ? useOfForcePayload : narrativePayload
