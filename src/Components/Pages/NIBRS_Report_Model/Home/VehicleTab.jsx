@@ -1192,7 +1192,7 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                         </div>
                         <div className="col-4 col-md-4 col-lg-3 mt-1 text-field">
                             <input
-                                type="text"  
+                                type="text"
                                 name="Value"
                                 id="Value"
                                 className={isLockOrRestrictModule("Lock", editval[0]?.Value, isLocked) ? 'LockFildsColor' : !value?.CategoryID ? 'readonlyColor' : lossCode === 'STOL' || lossCode === 'BURN' || lossCode === 'RECD' ? 'requiredColor' : ''}
