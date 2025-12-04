@@ -2818,7 +2818,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                       isDisabled={isLockOrRestrictModule("Lock", editval[0]?.ReasonCode, isLocked, true) || nibrsSubmittedName === 1 || isSocietyName || isSecondDropdownDisabled && MstPage !== "MST-Name-Dash" ? true : false}
 
                       options={reasonIdDrp ? getFiltredReasonCode(reasonIdDrp) : []}
-                      menuPlacement="bottom"
+                      menuPlacement="top"
                       isMulti
                       closeMenuOnSelect={false}
                       hideSelectedOptions={true}
@@ -3025,6 +3025,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                       onChange={(e) => ChangePhoneType(e, 'PhoneTypeID')}
                       isClearable
                       placeholder="Select..."
+                      menuPlacement="top"
 
                       disabled={isLockOrRestrictModule("Lock", editval[0]?.PhoneTypeID, isLocked) || phoneTypeCode ? false : true}
                       styles={isLockOrRestrictModule("Lock", editval[0]?.PhoneTypeID, isLocked) ? LockFildscolour : customStylesWithOutColor}
