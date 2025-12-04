@@ -2943,9 +2943,17 @@ const Home = (props) => {
                             id='activitydate'
                             onChange={(date) => {
                                 if (date) {
+                                    const now = new Date();
+                                    const selectedDateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                                    const todayOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+                                    if (selectedDateOnly.getTime() === todayOnly.getTime()) {
+                                        if (date.getTime() > now.getTime()) {
+                                            date.setHours(now.getHours(), now.getMinutes());
+                                        }
+                                    }
                                     const isOnlyTimeSelect = date.getHours() === 0 && date.getMinutes() === 0 && date.getSeconds() === 0;
                                     if (isOnlyTimeSelect) {
-                                        const now = new Date();
                                         date.setHours(now.getHours(), now.getMinutes(), 0);
                                     }
                                 }
@@ -2966,7 +2974,7 @@ const Home = (props) => {
                             showYearDropdown
                             dropdownMode="select"
                             maxDate={new Date(datezone)}
-                            filterTime={filterPassedTime}
+                            filterTime={filterPassedTimes}
                             showDisabledMonthNavigation
                             autoComplete='off'
                             disabled={selectedOption === null || selectedOption === ''}
@@ -2984,9 +2992,17 @@ const Home = (props) => {
                             id='ExpectedDate'
                             onChange={(date) => {
                                 if (date) {
+                                    const now = new Date();
+                                    const selectedDateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                                    const todayOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+                                    if (selectedDateOnly.getTime() === todayOnly.getTime()) {
+                                        if (date.getTime() > now.getTime()) {
+                                            date.setHours(now.getHours(), now.getMinutes());
+                                        }
+                                    }
                                     const isOnlyTimeSelect = date.getHours() === 0 && date.getMinutes() === 0 && date.getSeconds() === 0;
                                     if (isOnlyTimeSelect) {
-                                        const now = new Date();
                                         date.setHours(now.getHours(), now.getMinutes(), 0);
                                     }
                                 }
@@ -3009,7 +3025,7 @@ const Home = (props) => {
                             showDisabledMonthNavigation
                             autoComplete='off'
                             maxDate={new Date(datezone)}
-                            filterTime={filterPassedTime}
+                            filterTime={filterPassedTimes}
                             disabled={selectedOption === null || selectedOption === ''}
                             className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                         />
