@@ -146,11 +146,11 @@ const Home = (props) => {
 
     const [value, setValue] = useState({
         'PropertyID': '', 'MasterPropertyId': '', 'ActivityType': '', 'DestinationStorageLocation': '', 'ReleasingOfficerID': '', 'IsInternalTransfer': true, 'Destination': '', 'ModeOfTransport': '',
-        'IsExternalTransfer': false, 'ActivityReasonID': '', 'ReceipentOfficerID': '', 'ExpectedDate': '', 'ActivityComments': '', 'OtherPersonNameID': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '', 'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '', 'IsCheckIn': false, 'IsCheckOut': false, 'IsRelease': false, 'IsDestroy': false, 'IsTransferLocation': false, 'IsUpdate': false, 'CreatedByUserFK': '', 'AgencyID': '', 'PropertyTypeID': '', 'VehicleTypeID': '', 'LastSeenDtTm': '', 'PackagingDetails': ''
+        'IsExternalTransfer': false, 'ActivityReasonID': '', 'ReceipentOfficerID': '', 'ExpectedDate': '', 'ModeOfTransport': '', 'ReleaseDate': '', 'ActivityComments': '', 'OtherPersonNameID': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '', 'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '', 'IsCheckIn': false, 'IsCheckOut': false, 'IsRelease': false, 'IsDestroy': false, 'IsTransferLocation': false, 'IsUpdate': false, 'CreatedByUserFK': '', 'AgencyID': '', 'PropertyTypeID': '', 'VehicleTypeID': '', 'LastSeenDtTm': '', 'PackagingDetails': ''
     })
 
     const [errors, setErrors] = useState({
-        'ReasonError': '', 'ActivityDateError': '', 'InvestigatorError': '', 'LocationError': '', 'PropertyError': '', 'ExpectedDateError': '', 'OfficerNameError': '', 'NameError': '', 'CourtDateError': '', 'ReleaseDateError': '', 'DestroyDateError': '', 'TypeError': '', 'TransferError': '', 'SearchError': '', 'ActivityDtTmError': '',
+        'ReasonError': '', 'ActivityDateError': '', 'InvestigatorError': '', 'PropertyRoomOfficerError': '', 'LocationError': '', 'ReleasedDateTimeError': '', 'PropertyError': '', 'ExpectedDateError': '', 'OfficerNameError': '', 'NameError': '', 'CourtDateError': '', 'ReleaseDateError': '', 'DestroyDateError': '', 'TypeError': '', 'TransferError': '', 'SearchError': '', 'ActivityDtTmError': '',
     })
 
     const [searcherror, setsearcherror] = useState({
@@ -278,7 +278,7 @@ const Home = (props) => {
         }));
         setErrors({
             ...errors,
-            'ReasonError': '', 'ActivityDateError': '', 'InvestigatorError': '', 'PropertyError': '', 'ExpectedDateError': '', 'OfficerNameError': '', 'NameError': '', 'CourtDateError': '', 'ReleaseDateError': '', 'DestroyDateError': '', 'TypeError': '', 'TransferError': '', 'LocationError': '', 'SearchError': '', 'ActivityDtTmError': '',
+            'ReasonError': '', 'ActivityDateError': '', 'InvestigatorError': '', 'ReceipientError': '', 'ReleasingOfficerError': '', 'ReleasedDateTimeError': '', 'PropertyRoomOfficerError': '', 'PropertyError': '', 'ExpectedDateError': '', 'OfficerNameError': '', 'NameError': '', 'CourtDateError': '', 'ReleaseDateError': '', 'DestroyDateError': '', 'TypeError': '', 'TransferError': '', 'LocationError': '', 'SearchError': '', 'ActivityDtTmError': '',
         })
         GetData_PropertyroomRadio(propertyId, selectedCategory);
     };
@@ -548,12 +548,12 @@ const Home = (props) => {
         const ActivityType = selectedOption;
         const CreatedByUserFK = loginPinID;
 
-        const { ActivityReasonID, ExpectedDate, ActivityComments, DestinationStorageLocation, ReceipentOfficerID, ReleasingOfficerID, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate, CourtDate,
+        const { ActivityReasonID, ExpectedDate, ActivityComments, DestinationStorageLocation, ModeOfTransport, ReceipentOfficerID, ReleasingOfficerID, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate, CourtDate,
             ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId, IsCheckIn,
             IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, activitydate, AgencyID, PackagingDetails,
         } = value;
         const valuesArray = PropertyID.map((id, index) => ({
-            PropertyID: id, ActivityType, ActivityReasonID, ExpectedDate, activitydate, DestinationStorageLocation, ReceipentOfficerID, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
+            PropertyID: id, ActivityType, ActivityReasonID, ExpectedDate, activitydate, DestinationStorageLocation, ModeOfTransport, ReceipentOfficerID, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
             CourtDate, ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, ReleasingOfficerID, OfficerNameID, InvestigatorID, location, activityid, EventId,
             MasterPropertyId: MasterPropertyId[index], IsCheckIn, IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, CreatedByUserFK, AgencyID, PackagingDetails,
         }));
@@ -1057,11 +1057,11 @@ const Home = (props) => {
             'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '',
             'MasterPropertyId': '', 'IsCheckIn': '', 'IsCheckOut': '', 'IsRelease': '', 'IsDestroy': '', 'IsTransferLocation': '', 'IsUpdate': '', 'CreatedByUserFK': '', 'PropertyTypeID': '',
             'OtherPersonNameID': '', 'LastSeenDtTm': '', 'PackagingDetails': '', 'ReleasingOfficerID': '', 'ReceipentOfficerID': '',
-            ['ReportedDate']: '', ['ReportedDateTo']: ''
+            ['ReportedDate']: '', ['ReportedDateTo']: '', 'ModeOfTransport': '',
         });
         setErrors({
             ...errors,
-            'ReasonError': '', 'ActivityDateError': '', 'InvestigatorError': '', 'PropertyError': '', 'ExpectedDateError': '', 'OfficerNameError': '', 'NameError': '', 'CourtDateError': '', 'ReleaseDateError': '', 'DestroyDateError': '', 'TypeError': '', 'TransferError': '', 'LocationError': '', 'SearchError': '', 'ActivityDtTmError': '',
+            'ReasonError': '', 'ActivityDateError': '', 'InvestigatorError': '', 'PropertyError': '', 'PropertyRoomOfficerError': '', 'ExpectedDateError': '', 'OfficerNameError': '', 'NameError': '', 'CourtDateError': '', 'ReleaseDateError': '', 'DestroyDateError': '', 'TypeError': '', 'TransferError': '', 'LocationError': '', 'SearchError': '', 'ActivityDtTmError': '',
         })
         setradioButtonStatus(false);
         setsearcherror(prevValues => { return { ...prevValues, 'SearchError': '', } })
@@ -3225,15 +3225,15 @@ const Home = (props) => {
                     </div>
                     <div className="col-3 col-md-3 col-lg-2 ">
                         <DatePicker
-                            name='activitydate'
-                            id='activitydate'
+                            name='ReleaseDate'
+                            id='ReleaseDate'
                             onChange={(date) => {
-                                setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
+                                setreleasedate(date); setValue({ ...value, ['ReleaseDate']: date ? getShowingMonthDateYear(date) : null, });
 
                             }}
-                            isClearable={activitydate ? true : false}
-                            selected={activitydate}
-                            placeholderText={activitydate ? activitydate : 'Select...'}
+                            isClearable={releasedate ? true : false}
+                            selected={releasedate}
+                            placeholderText={releasedate ? releasedate : 'Select...'}
                             dateFormat="MM/dd/yyyy HH:mm"
                             timeFormat="HH:mm "
                             is24Hour
@@ -3346,8 +3346,8 @@ const Home = (props) => {
                         <label htmlFor="" className='new-label mb-0'>Mode of Transport</label>
                     </div>
                     <div className="col-9 col-md-9 col-lg-2 text-field mt-0">
-                        <input type="text" name="ActivityComments"
-                            className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
+                        <input type="text" name="ModeOfTransport"
+                            className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ModeOfTransport} onChange={(e) => { handleChange(e) }} />
                     </div>
 
 
@@ -4012,8 +4012,8 @@ const Home = (props) => {
                                             <label htmlFor="" className='new-label mb-0'>Mode of Transport</label>
                                         </div>
                                         <div className="col-9 col-md-9 col-lg-2 text-field mt-0">
-                                            <input type="text" name="ActivityComments"
-                                                className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
+                                            <input type="text" name="ModeOfTransport"
+                                                className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ModeOfTransport} onChange={(e) => { handleChange(e) }} />
                                         </div>
                                         <div className="col-3 col-md-3 col-lg-2 ">
                                             <label htmlFor="" className='new-label mb-0'>Expected Arrival Date/Time{errors.ExpectedReturnDateTimeError !== 'true' ? (
@@ -4599,15 +4599,15 @@ const Home = (props) => {
                             </div>
                             <div className="col-3 col-md-3 col-lg-2">
                                 <DatePicker
-                                    name='activitydate'
-                                    id='activitydate'
+                                    name='ReleaseDate'
+                                    id='ReleaseDate'
                                     onChange={(date) => {
-                                        setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
+                                        setreleasedate(date); setValue({ ...value, ['ReleaseDate']: date ? getShowingMonthDateYear(date) : null, });
 
                                     }}
-                                    isClearable={activitydate ? true : false}
-                                    selected={activitydate}
-                                    placeholderText={activitydate ? activitydate : 'Select...'}
+                                    isClearable={releasedate ? true : false}
+                                    selected={releasedate}
+                                    placeholderText={releasedate ? releasedate : 'Select...'}
                                     dateFormat="MM/dd/yyyy HH:mm"
                                     timeFormat="HH:mm "
                                     is24Hour
