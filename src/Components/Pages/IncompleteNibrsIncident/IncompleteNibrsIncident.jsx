@@ -79,7 +79,34 @@ function IncompleteNibrsIncident({ isPreview }) {
                     }
                 </div>)
         },
-        { name: 'Incident# ', selector: row => row?.IncidentNumber, sortable: true, },
+        // {
+        //     name: 'Incident# ',
+        //     selector: row => row?.IncidentNumber,
+        //     sortable: true,
+        // },
+        {
+            name: 'Incident# ', cell: row => {
+                return (
+                    <span
+                        onClick={() =>
+                            navigate(`/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&IsCadInc=${true}`)
+                        }
+                        style={{
+                            color: '#007bff',
+                            cursor: 'pointer',
+                            textDecoration: 'underline',
+                        }}
+                        title="Go to Incident"
+                    >
+                        {row?.IncidentNumber}
+                    </span>
+                );
+            },
+            selector: row => row.IncidentNumber,
+            sortable: true,
+            wrap: true,
+            grow: 0, width: "105px",
+        },
 
         { name: 'Reported DT/TM', selector: row => row.ReportedDate ? getShowingMonthDateYear(row.ReportedDate) : " ", sortable: true },
 
