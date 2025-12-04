@@ -294,7 +294,7 @@ const Dashboard = () => {
                       <IncompleteNibrsIncident isPreview={true} />
                     </div>
                   </div>
-                 
+
                   <div className="col-12">
                     <div style={cardStyle} className="p-3 h-100">
                       <ManualPurgeRequest isPreview={true} />
