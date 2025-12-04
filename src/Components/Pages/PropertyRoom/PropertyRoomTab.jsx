@@ -25,7 +25,6 @@ const PropertyRoomTab = () => {
 
     let DecPropID = 0, DecMPropID = 0, DecProRomId = 0, DeSelectedStatus = 0
 
-
     const query = useQuery();
     var IncID = query?.get("IncId");
     var IncNo = query?.get("IncNo");
@@ -43,9 +42,6 @@ const PropertyRoomTab = () => {
     var CallStatus = query?.get('CallStatus');
     var CheckboxStatus = query?.get('CheckboxStatus');
 
-
-
-
     if (!IncID) IncID = 0;
     else IncID = parseInt(base64ToString(IncID));
     if (!ProId) ProId = 0;
@@ -56,10 +52,6 @@ const PropertyRoomTab = () => {
     else DecProRomId = parseInt(base64ToString(ProRomId));
     // if (!SelectedStatus) SelectedStatus = 0;
     // else DeSelectedStatus = parseInt(base64ToString(SelectedStatus));
-
-
-
-
 
     return (
         <>
@@ -134,7 +126,6 @@ const PropertyRoomTab = () => {
                                         showIncPage === 'home' ?
                                             // <Home {...{ setStatus, DecProRomId, DecPropID, DecMPropID }} />
                                             <Home {...{ setStatus, showIncPage, DecPropID, DecMPropID, SelectedOption, DecProRomId, ProRoomStatus, SelectedCategory, CallStatus, ProType, ProNumber, VehNumber, ProTransfer, CheckboxStatus }} />
-
                                             :
                                             showIncPage === 'ChainOfCustody' ?
                                                 <ChainOfCustody {...{ DecPropID }} />

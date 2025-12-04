@@ -24,7 +24,7 @@ import SelectBox from '../../../../Common/SelectBox';
 
 const Home = (props) => {
 
-    const { setStatus, DecPropID, DecMPropID, SelectedCategory, CallStatus, ProType, SelectedOption , ProNumber, VehNumber , ProTransfer, CheckboxStatus } = props
+    const { setStatus, DecPropID, DecMPropID, SelectedCategory, CallStatus, ProType, SelectedOption, ProNumber, VehNumber, ProTransfer, CheckboxStatus } = props
 
     const { GetDataTimeZone, datezone, setChangesStatus } = useContext(AgencyContext);
     const navigate = useNavigate();
@@ -163,18 +163,18 @@ const Home = (props) => {
             setMasterPropertyId(prev => (prev?.length ? prev : DecPropID));
             if (!CheckboxStatus) { sessionStorage.removeItem('selectedRows'); }
             if (CallStatus === 'true') { GetData_Propertyroom(DecPropID, SelectedCategory); }
-            else if (CallStatus === 'false' && (ProType && (ProNumber || VehNumber && SelectedOption !== 'VehicleTypeID') )) {
+            else if (CallStatus === 'false' && (ProType && (ProNumber || VehNumber && SelectedOption !== 'VehicleTypeID'))) {
                 SearchButtons(ProType, (ProNumber || VehNumber), localStoreData?.AgencyID);
                 const matchedOption = AddType.find(option => option.value === ProType);
                 if (matchedOption) { setSelectedOptions(matchedOption); settransfer(ProTransfer); setPropertyNumber(ProNumber); }
             }
-            else if(SelectedOption === 'VehicleTypeID'){
-                 const matchedOption = AddType.find(option => option.value === SelectedOption);
+            else if (SelectedOption === 'VehicleTypeID') {
+                const matchedOption = AddType.find(option => option.value === SelectedOption);
                 if (matchedOption) { setSelectedOptions(matchedOption); }
             }
             // setValue({ ...value, 'PropertyTypeID': parseInt(ProNumber), 'ActivityType': ProTransfer })
             settransfer(ProTransfer); setPropertyNumber(ProNumber); GetDataTimeZone(localStoreData?.AgencyID);
-           if(VehNumber) {setvehicleNumber(VehNumber);}
+            if (VehNumber) { setvehicleNumber(VehNumber); }
         }
     }, [localStoreData, ProType, ProNumber, CallStatus, DecPropID, SelectedCategory, propertyTypeData, ProTransfer]);
 
@@ -1329,6 +1329,16 @@ const Home = (props) => {
     }
 
 
+    const now = new Date();
+    const filterPassedTimes = (time) => {
+        if (!activitydate) return true;
+
+        const selectedDate = new Date(activitydate);
+        const selectedDay = selectedDate.toDateString();
+        const today = now.toDateString();
+        if (selectedDay !== today) return true;
+        return time.getTime() <= now.getTime();
+    };
 
 
     return (
@@ -1351,7 +1361,7 @@ const Home = (props) => {
                                         setSelectedOptions(selectedOption);
                                         setPropertyNumber('');
                                         setvehicleNumber(''); setSearchData([]);
-                                        
+
                                         setsearcherror(prevValues => {
                                             return { ...prevValues, 'SearchError': '', }
                                         })
@@ -2694,11 +2704,9 @@ const Home = (props) => {
                                 </label>
                             </div>
                             <div className="col-3 col-md-3 col-lg-10 ">
-                                <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px", }}
-                                >
+                                <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px", }}>
                                     <div style={{ display: "flex", alignItems: "center", border: "1px solid #ccc", borderRadius: "6px", background: "#f9f9f9", width: "100%" }}>
-                                        <label
-                                            htmlFor="file-input"
+                                        <label htmlFor="file-input"
                                             style={{
                                                 padding: "5px 16px",
                                                 backgroundColor: "#e9e9e9",
@@ -2779,7 +2787,6 @@ const Home = (props) => {
                                 </div>
                             </div>
                         </div>
-
                     </div>
 
                     <fieldset style={{ width: "100%" }}>
@@ -2900,7 +2907,6 @@ const Home = (props) => {
                                     minDate={courtdate ? new Date(courtdate) : new Date()}
                                     disabled={value.IsCheckOut || value.IsRelease || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                                     className={value.IsCheckOut || value.IsRelease || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
-
                                 />
                             </div>
                         </div>
@@ -2936,8 +2942,15 @@ const Home = (props) => {
                             name='activitydate'
                             id='activitydate'
                             onChange={(date) => {
-                                setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
-
+                                if (date) {
+                                    const isOnlyTimeSelect = date.getHours() === 0 && date.getMinutes() === 0 && date.getSeconds() === 0;
+                                    if (isOnlyTimeSelect) {
+                                        const now = new Date();
+                                        date.setHours(now.getHours(), now.getMinutes(), 0);
+                                    }
+                                }
+                                setactivitydate(date);
+                                setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
                             }}
                             isClearable={activitydate ? true : false}
                             selected={activitydate}
@@ -2952,13 +2965,13 @@ const Home = (props) => {
                             showMonthDropdown
                             showYearDropdown
                             dropdownMode="select"
+                            maxDate={new Date(datezone)}
+                            filterTime={filterPassedTime}
                             showDisabledMonthNavigation
                             autoComplete='off'
-                            maxDate={new Date(datezone)}
                             disabled={selectedOption === null || selectedOption === ''}
                             className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                         />
-
                     </div>
                     <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
                         <label htmlFor="" className='new-label mb-0'>Expected Return Date/Time{errors.ExpectedReturnDateTimeError !== 'true' ? (
@@ -2970,8 +2983,15 @@ const Home = (props) => {
                             name='ExpectedDate'
                             id='ExpectedDate'
                             onChange={(date) => {
-                                setExpecteddate(date); setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
-
+                                if (date) {
+                                    const isOnlyTimeSelect = date.getHours() === 0 && date.getMinutes() === 0 && date.getSeconds() === 0;
+                                    if (isOnlyTimeSelect) {
+                                        const now = new Date();
+                                        date.setHours(now.getHours(), now.getMinutes(), 0);
+                                    }
+                                }
+                                setExpecteddate(date);
+                                setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
                             }}
                             isClearable={expecteddate ? true : false}
                             selected={expecteddate}
@@ -2989,6 +3009,7 @@ const Home = (props) => {
                             showDisabledMonthNavigation
                             autoComplete='off'
                             maxDate={new Date(datezone)}
+                            filterTime={filterPassedTime}
                             disabled={selectedOption === null || selectedOption === ''}
                             className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                         />
