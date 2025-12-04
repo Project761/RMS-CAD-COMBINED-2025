@@ -276,7 +276,6 @@ const OffenderVictim = () => {
     }, [VictimDrpp, nameModalStatus])
 
     // new end //
-
     const get_Data_Name_Drp = (IncID) => {
         const val = { 'IncidentID': IncID, }
         fetchPostData('NameRelationship/GetDataDropDown_OffenderName', val).then((data) => {
@@ -537,7 +536,8 @@ const OffenderVictim = () => {
                 const parsedData = JSON.parse(data.data);
                 const message = parsedData.Table[0].Message;
                 if (message === 'Victim-Offender Relationship Already Present') {
-                    toastifyError(message); setErrors({
+                    toastifyError(message);
+                    setErrors({
                         ...errors, 'RelationshipTypeIDErrors': '', ' VictimNameIDErrors': '', 'RelationshipIDErrors': '', 'OffenseIDIDErrors': ''
                     });
                 } else {
@@ -554,18 +554,19 @@ const OffenderVictim = () => {
                 // validateIncSideBar
                 validate_IncSideBar(IncID, IncNo, loginAgencyID);
             } else {
-                toastifyError(data.Message)
+                toastifyError(data.Message);
+
             }
         })
     }
-
 
     const update_Relationship = () => {
         AddDeleteUpadate('NameRelationship/Update_NameRelationship', value).then((data) => {
             if (data.success) {
                 const parsedData = JSON.parse(data.data);
                 const message = parsedData.Table[0].Message;
-                toastifySuccess(message); setChangesStatus(false)
+                toastifySuccess(message);
+                setChangesStatus(false);
                 // toastifySuccess(data.Message);
                 get_Data_VictimOffenderName(IncID); setStatesChangeStatus(false); setStatusFalse(); setStatus(false);
                 // setStatus(true);
@@ -578,7 +579,8 @@ const OffenderVictim = () => {
                 // validateIncSideBar
                 validate_IncSideBar(IncID, IncNo, loginAgencyID);
             } else {
-                toastifyError(data.Message)
+                toastifyError(data.Message);
+
             }
         })
     }
@@ -721,26 +723,7 @@ const OffenderVictim = () => {
     const [error, setError] = useState({
         'RelationshipTypeIDErrors': '',
         // 'offenderusingErrors': '',
-    })
-
-    // const check_ValidationError = (e) => {
-    //     if (RequiredFieldIncident(values.PrimaryLocationId)) {
-    //         setError(prevValues => { return { ...prevValues, ['PrimaryLocationIdErrors']: RequiredFieldIncident(values.PrimaryLocationId) } })
-    //     }
-    //     // if (RequiredFieldIncident(values.CrimeOffenderUseID)) {
-    //     //     setError(prevValues => { return { ...prevValues, ['offenderusingErrors']: RequiredFieldIncident(values.CrimeOffenderUseID) } })
-    //     // }
-    // }
-
-    // Check All Field Format is True Then Submit 
-    // const { PrimaryLocationIdErrors, } = error
-
-    // useEffect(() => {
-    //     if (PrimaryLocationIdErrors === 'true') {
-    //         if (statusOffrnce && CrimeID) { Update_Offence() }
-    //         else { save_Offrnce() }
-    //     }
-    // }, [PrimaryLocationIdErrors])
+    });
 
     const ChangeDropDownPrimary = (e, name) => {
         !addUpdatePermission && setStatesChangeStatus1(true); !addUpdatePermission && setChangesStatus(true);
@@ -1125,7 +1108,6 @@ const OffenderVictim = () => {
         return () => window.removeEventListener('keydown', handleEsc);
     }, []);
 
-
     const allOptions = filterArray(crimeOffenderUseDrp, 'label') || [];
 
     const options = React.useMemo(() => {
@@ -1138,8 +1120,6 @@ const OffenderVictim = () => {
         }
         return allOptions;
     }, [offenderusing, allOptions]);
-
-
 
     const check_Validation_Error_Offense_Section = (e) => {
         const WeaponTypeErr = isCrimeIDSelected ? validateFields(weaponID) : 'true';
@@ -1209,10 +1189,6 @@ const OffenderVictim = () => {
         })
 
     }
-
-
-
-
 
     return (
         <>
@@ -1310,9 +1286,12 @@ const OffenderVictim = () => {
                                                 />
                                             </div>
                                             <div className="col-2 col-md-2 col-lg-1 mt-3">
-                                                <label htmlFor="" className='label-name '>Offense{value?.VictimNameID && errors.OffenseIDIDErrors !== 'true' ? (
-                                                    <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.OffenseIDIDErrors}</p>
-                                                ) : null}</label>
+                                                <label htmlFor="" className='label-name '>
+                                                    Offense
+                                                    {value?.VictimNameID && errors.OffenseIDIDErrors !== 'true' ? (
+                                                        <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.OffenseIDIDErrors}</p>
+                                                    ) : null}
+                                                </label>
                                             </div>
                                             <div className="col-4 col-md-4 col-lg-5" >
                                                 <SelectBox
@@ -1335,7 +1314,7 @@ const OffenderVictim = () => {
                                             <div className="col-2 col-md-2 col-lg-1 mt-3">
                                                 <label htmlFor="" className='label-name '>Injury Type</label>
                                             </div>
-                                            <div className="col-4 col-md-4 col-lg-5 " >
+                                            <div className="col-4 col-md-4 col-lg-5">
                                                 <SelectBox
                                                     name='offenderInjuryID'
                                                     isClearable={false}
@@ -1357,17 +1336,17 @@ const OffenderVictim = () => {
                                                 <button type="button" data-dismiss="modal" className="btn btn-sm btn-success mr-1" onClick={() => { setStatusFalse(); }}>New</button>
                                                 {
                                                     status ?
-                                                        permissionForEdit ? <button type="button" className="btn btn-sm btn-success mr-1" disabled={!statesChangeStatus} onClick={(e) => { check_Validation_Error(); }}>Update</button> : <></>
+                                                        permissionForEdit ? <button type="button" className="btn btn-sm btn-success mr-1" disabled={!statesChangeStatus} onClick={(e) => { check_Validation_Error(); }}>Update</button>
+                                                            :
+                                                            <></>
                                                         :
-                                                        permissionForAdd ? <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); }}>Save</button> : <></>
+                                                        permissionForAdd ? <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); }}>Save</button>
+                                                            :
+                                                            <></>
                                                 }
                                             </div>
-
-
                                         </div>
-
                                     </fieldset>
-
                                     <fieldset className='mt-2'>
                                         <legend>Offense</legend>
                                         <div className='row mt-3 align-align-items-center'>
@@ -1413,9 +1392,6 @@ const OffenderVictim = () => {
                                                     {errors.OffenderusingError !== "true" && (
                                                         <span style={{ color: "red", fontSize: "13px", margin: 0, padding: 0, display: "inline-block", }}>{errors.OffenderusingError}</span>
                                                     )} </label>
-
-
-
                                             </div>
                                             <div className="col-4 col-md-4 col-lg-5 pt-1" >
                                                 <SelectBox

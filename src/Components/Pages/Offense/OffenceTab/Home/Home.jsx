@@ -2230,7 +2230,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
 
               <div className="custom-col-12_new">
                 <label htmlFor="" className="new-label mb-0">
-                  Domestic violence
+                  Domestic Violence
                 </label>
               </div>
 
@@ -2441,7 +2441,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
               <div className="custom-col-12 text-right" >
                 <div className="d-flex flex-column align-items-end">
                   <span data-toggle="modal" onClick={() => { setOpenPage('Offender Suspected of Using') }} data-target="#ListModel" className='new-link px-0 '>
-                    Offender suspected of using
+                    Offender Suspected of Using
                   </span>
                   <div className="d-flex flex-column align-items-end ">
                     {offenderUsingStatus && (<ErrorTooltip ErrorStr={offenderUsingError} />)}
@@ -2485,7 +2485,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                 <div className="d-flex flex-column align-items-end">
                   {/* Main clickable label */}
                   <span data-toggle="modal" data-target="#ListModel" className="new-link px-0 text-right" onClick={() => setOpenPage("Bias Motivation")} style={{ display: "inline-block" }}>
-                    Bias motivation (Select Upto 5)
+                    Bias Motivation (Select Upto 5)
                   </span>
                   {/* Tooltip or errors always below label */}
                   <div className="d-flex flex-column align-items-end ">

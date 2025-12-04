@@ -202,6 +202,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
     if (!localStoreData?.AgencyID || !localStoreData.PINID) {
       if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
     }
+    setChangesStatus(false);
   }, []);
 
   useEffect(() => {
@@ -1133,52 +1134,6 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
   const [isOffense240VehError, setIsOffense240VehError] = useState(false);
 
 
-
-  // validate Incident
-  const nibrsValidateInc = (incidentID, reportDate, baseDate, oriNumber) => {
-    try {
-      setnibrsValidateLoder(true);
-
-      // const val = {
-      //   gIntAgencyID: loginAgencyID, IsIncidentCheck: true, gIncidentID: incidentID, dtpDateTo: reportDate,
-      //   dtpDateFrom: reportDate, BaseDate: baseDate, strORINumber: oriNumber, strComputerName: uniqueId,
-      //   //no use
-      //   rdbSubmissionFile: false, rdbErrorLog: false, rdbNonReportable: false, chkPastErrorPrint: false,
-      //   rdbOne: false, rdbTwoMonth: false, rdbThreeMonth: false, rdbAllLogFile: false, IPAddress: "",
-      // };
-      // // https://apigoldline.com:5002/api/NIBRS/TXIBRS
-      // fetchPostData("NIBRS/TXIBRS", val).then((data) => {
-      //   if (Array.isArray(data) && data.length > 0) {
-      //     setnibrsValidateLoder(false);
-      //     const errorObject = data[0]?.ErrorObject || {};
-
-      //     setnibrsValidateIncidentData(data);
-      //     setnibrsValidIncScreen(!errorObject?.Administrative);
-      //     setnibrsValidAllIncModule(!errorObject?.Incident);
-      //     console.log("🚀 ~ nibrsValidateInc ~ !errorObject?:", errorObject);
-      //     // console.log("🚀 ~ nibrsValidateInc ~ !errorObject?.Incident:", !errorObject?.Incident);
-
-      //     setIncValidateErrStr(errorObject?.Administrative || "");
-      //     setincAllModuleValidateErrStr(errorObject?.Incident || "");
-      //     setOffenseState(errorObject?.Offense?.[0]?.OnPageError || "");
-
-      //   } else {
-      //     setnibrsValidateIncidentData([]);
-      //     setnibrsValidIncScreen(true);
-      //     setnibrsValidAllIncModule(true);
-      //     setnibrsValidateLoder(false);
-
-      //   }
-      // });
-    } catch (error) {
-      console.log("🚀 ~ nibrsValidateInc ~ error:", error);
-      setnibrsValidateLoder(false);
-    }
-  };
-
-
-
-
   useEffect(() => {
     const validateNibrs = async (incidentValidateNibrsData, offenseValidateNibrsData, victimValidateNibrsData, offenderValidateNibrsData, propertyValidateNibrsData) => {
       // // loader
@@ -1422,8 +1377,6 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
   }
 
 
-
-
   const [isHovered, setIsHovered] = useState(false);
   const [isHoveredUseOfForce, setIsHoveredUseOfForce] = useState(false);
   const handleMouseEnter = () => setIsHovered(true);
@@ -1528,8 +1481,6 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
 
   const isValidZone = (zone) => zone && Object.keys(zone).length > 0;
   const isVerifyLocation = geoFormValues.isVerify && isValidZone(geoFormValues.patrolZone) && isValidZone(geoFormValues.emsZone) && isValidZone(geoFormValues.fireZone) && isValidZone(geoFormValues.otherZone);
-
-  // console.log("🚀 ~ IncidentHome ~ isLockOrRestrictModule:", isLockOrRestrictModule("Lock", value?.CaseStatusID, isLocked))
 
   return loder ? (
     <>
