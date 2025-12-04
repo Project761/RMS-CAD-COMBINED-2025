@@ -286,21 +286,14 @@ function ReportWorkflow() {
             name: "Report Approval Time Limit", selector: row => row?.reportApprovalTimeLimit, sortable: true,
         },
         {
-            minWidth: "40px",
-            grow: 1,
-            name: (
-                <p
-                    className="text-end"
-                    style={{ position: "absolute", top: "7px", }}
-                >
-                    Action
-                </p>
-            ),
+            name: <p className="text-end w-100 m-0">Action</p>,
+            width: "70px",
+            minWidth: "70px",
+            maxWidth: "70px",
+            center: false,
+            right: true,
             cell: (row) => (
-                <div >
-
-
-
+                <div className="text-end w-100">
                     <span
                         onClick={() => { setReportWorkFlowID(row.ReportWorkFlowID); }}
                         className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
@@ -309,12 +302,10 @@ function ReportWorkflow() {
                     >
                         <i className="fa fa-trash"></i>
                     </span>
-
-
-
                 </div>
             ),
-        },
+        }
+
     ];
 
     const set_Edit_Value = (row) => {
