@@ -25,7 +25,7 @@ const Incident = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { setShowIncPage, setTabCount, setCaseStatus, setIncidentCount, incidentRecentData, setIncidentRecentData, exceptionalClearID, GetDataExceptionalClearanceID, rmsDisposition, getRmsDispositionID, incidentSearchData, setIncidentSearchData, incAdvSearchData, setIncAdvSearchData, setPropertyCount, setVehicleCount, GetDataTimeZone, datezone, recentSearchData, setRecentSearchData, searchObject, setSearchObject, setCaseManagementDataIncidentRecent } = useContext(AgencyContext);
+    const { setShowIncPage, setTabCount, setCaseStatus, setIncidentCount, incidentRecentData, setIncidentRecentData, exceptionalClearID, GetDataExceptionalClearanceID, rmsDisposition, getRmsDispositionID, incidentSearchData, setIncidentSearchData, incAdvSearchData, setIncAdvSearchData, setPropertyCount, setVehicleCount, GetDataTimeZone, datezone, recentSearchData, setRecentSearchData, searchObject, setSearchObject, setCaseManagementDataIncidentRecent, setChangesStatus } = useContext(AgencyContext);
 
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
 
@@ -536,6 +536,7 @@ const Incident = () => {
             getIncidentNoSearch();
         }
     };
+
     const isValidDate = (d) => d && !isNaN(new Date(d).getTime());
 
     return (
