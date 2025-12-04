@@ -4676,7 +4676,7 @@ const Home = (props) => {
             <div className=" col-12  mt-2 btn-box d-flex justify-content-between align-items-center" >
 
                 <div className="row propertyroom-button">
-                    <div className='mr-1 mt-1 ' style={{ width: '150px' }}>
+                    {/* <div className='mr-1 mt-1 ' style={{ width: '150px' }}>
                         <Select
                             name='Investigator'
                             styles={customStylesWithOutColor}
@@ -4684,7 +4684,7 @@ const Home = (props) => {
                             placeholder="Export..."
                             menuPlacement='top'
                         />
-                    </div>
+                    </div> */}
                     <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1">
                         Email Report
                     </button>
@@ -4701,9 +4701,9 @@ const Home = (props) => {
                     <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={printForm} disabled={selectedStatus !== 'Release'}>
                         Display Property Released Receipt
                     </button>
-                    <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1">
+                    {/* <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1">
                         Export
-                    </button>
+                    </button> */}
                 </div>
 
                 <div>
