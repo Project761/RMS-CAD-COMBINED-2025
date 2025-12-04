@@ -996,12 +996,22 @@ input[type="file"] {
   padding: 0px 15px !important;
 }
 
-.name-tab {
+/* .name-tab {
   border: 1px solid #8392a1 !important;
   padding: 8px 0px !important;
   background-color: white;
   height: auto;
+} */
+
+.name-tab {
+    display: flex;
+    align-items: center;
+    border: 1px solid #8392a1 !important;
+    padding: 8px 6px !important;
+    background-color: white;
 }
+
+
 
 @media screen and (max-width: 1078px) {
   .name-tab {
@@ -1477,13 +1487,24 @@ input[type="file"] {
   top: 50px;
 }
 
-.nav-tabs span {
+/* .nav-tabs span {
   font-weight: 600 !important;
   font-size: 14px !important;
   border-right: 1px solid #a1a3a4;
-  /* padding: 0px 12px !important; */
+  padding: 0px 12px !important;
   padding: 0px 6px !important;
+} */
+
+
+.nav-tabs span {
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    border-right: 1px solid #a1a3a4;
+    padding: 0px 10px !important;
+    display: flex;
+    align-items: center;
 }
+
 
 .nav-tabs .nav-item.disabled {
   opacity: .4;
