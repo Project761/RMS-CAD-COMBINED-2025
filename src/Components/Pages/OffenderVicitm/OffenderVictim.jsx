@@ -412,7 +412,7 @@ const OffenderVictim = () => {
             while (i) {
                 missing = (~multiSelected.indexOf(injuryTypeEditVal[--i])) ? missing : injuryTypeEditVal[i];
                 if (missing) {
-                    DelSertBasicInfo(missing.id, 'NameEventInjuryID', 'InjuryVictim/Delete_VictimInjury');
+                    DelSertBasicInfoOff(missing.id, 'NameEventInjuryID', 'InjuryVictim/Delete_VictimInjury');
                     break;
                 }
             }
@@ -509,7 +509,7 @@ const OffenderVictim = () => {
                 get_OffenseName_Data(DrpNameID); get_Offense_DropDown(IncID, DrpNameID);
                 const message = parsedData.Table[0].Message;
                 col1 === 'OffenderOffenseID' && get_OffenseName_Data(DrpNameID);
-                col1 === 'InjuryID' && get_InjuryType_Data(VictimID);
+                col1 === 'NameEventInjuryID' && get_InjuryType_Data(VictimID);
                 col1 === 'CrimeOffenderUseID' && get_Crime_OffenderUse_Data(CrimeID);
                 col1 === 'CrimeBiasCategoryID' && get_Crime_Bias_Category_Data(CrimeID);
                 col1 === 'WeaponID' && get_Weapon_Data(CrimeID);
@@ -543,7 +543,10 @@ const OffenderVictim = () => {
                 } else {
                     toastifySuccess(message);
                     get_Data_VictimOffenderName(IncID); setStatus(false);
-                    setStatusFalse(); setStatesChangeStatus(false); setChangesStatus(false);
+                    setStatusFalse(); setStatesChangeStatus(false); setChangesStatus(false)
+                    if (OffenseID) { InSertBasicInfoOffense(); }
+                    if (victimInjuryID) { InSertBasicInfoInjury(); }
+
                     setErrors({
                         ...errors, 'RelationshipTypeIDErrors': '', ' VictimNameIDErrors': '', 'RelationshipIDErrors': '', 'OffenseIDIDErrors': ''
                     });
@@ -567,6 +570,8 @@ const OffenderVictim = () => {
                 // toastifySuccess(data.Message);
                 get_Data_VictimOffenderName(IncID); setStatesChangeStatus(false); setStatusFalse(); setStatus(false);
                 // setStatus(true);
+                if (OffenseID) { InSertBasicInfoOffense(); }
+                if (victimInjuryID) { InSertBasicInfoInjury(); }
                 setErrors({
                     ...errors,
                     'RelationshipTypeIDErrors': '', ' VictimNameIDErrors': '', 'RelationshipIDErrors': '', 'OffenseIDIDErrors': ''
@@ -640,6 +645,67 @@ const OffenderVictim = () => {
         setOffenseID([]);
         // setoffenderusing([])
     }
+
+
+    const InSertBasicInfoOffense = () => {
+        const val = {
+            'NameID': DrpNameID,
+            'OffenseID': OffenseID?.map((item) => item?.value),
+            'CreatedByUserFK': loginPinID,
+            'MasterNameID': '',
+            'IsMaster': DrpNameID ? false : true
+        }
+        AddDeleteUpadate('NameOffense/Insert_NameOffense', val).then((res) => {
+            if (res) {
+                const parsedData = JSON.parse(res.data);
+                const message = parsedData.Table[0].Message;
+                // get_OffenseName_Data(DrpNameID)
+                // toastifySuccess(message);
+
+                // get_Name_Count(DecNameID)
+                // get_Offense_DropDown(incidentID, DecNameID);
+
+
+                // col1 === 'OffenseID' && get_OffenseName_Data(DecNameID);
+            } else {
+                console.log("Somthing Wrong");
+            }
+        }).catch((err) => {
+            console.log("🚀 ~ Insert AddDeleteUpadate ~ err:", err);
+        })
+    }
+
+    const InSertBasicInfoInjury = () => {
+        const val = {
+            'NameID': DrpNameID,
+            'VictimInjuryID': victimInjuryID?.map((item) => item?.value),
+            'CreatedByUserFK': loginPinID,
+            'MasterNameID': '',
+            'VictimID': VictimID,
+            'IsMaster': DrpNameID ? false : true
+        }
+        AddDeleteUpadate('InjuryVictim/Insert_VictimInjury', val).then((res) => {
+            if (res) {
+                const parsedData = JSON.parse(res.data);
+                const message = parsedData.Table[0].Message;
+                // get_InjuryType_Data(VictimID);
+                // toastifySuccess(message);
+
+                // get_Name_Count(DecNameID)
+                // get_Offense_DropDown(incidentID, DecNameID);
+
+
+                // col1 === 'OffenseID' && get_OffenseName_Data(DecNameID);
+            } else {
+                console.log("Somthing Wrong");
+            }
+        }).catch((err) => {
+            console.log("🚀 ~ Insert AddDeleteUpadate ~ err:", err);
+        })
+    }
+
+
+
 
     //------------------------------------------Offence---------------------------------------
     const [Offencedata, setOffencedata] = useState([])

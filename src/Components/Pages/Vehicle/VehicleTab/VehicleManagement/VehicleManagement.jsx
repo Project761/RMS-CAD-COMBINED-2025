@@ -26,7 +26,7 @@ const VehicleManagement = (props) => {
     const componentRef = useRef();
     const fileInputRef = useRef(null)
 
-    const { DecVehId, DecMVehId,  VicCategory, isViewEventDetails = false } = props
+    const { DecVehId, DecMVehId, VicCategory, isViewEventDetails = false } = props
     const { GetDataTimeZone, datezone, setChangesStatus, incidentReportedDate } = useContext(AgencyContext);
     const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
     const dispatch = useDispatch();
@@ -96,7 +96,7 @@ const VehicleManagement = (props) => {
     const [value, setValue] = useState({
         'PropertyID': '', 'MasterPropertyId': '', 'ActivityType': '', 'DestinationStorageLocation': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'OtherPersonNameID': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
         'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '',
-        'IsCheckIn': false, 'IsCheckOut': false, 'IsRelease': false, 'IsDestroy': false, 'IsTransferLocation': false, 'IsUpdate': false, 'CreatedByUserFK': '', 'ActivityDtTm': '', 'LastSeenDtTm': '', 'ModeofTransport': '', 'Destination': '', 'IsInternalTransfer': true,
+        'IsCheckIn': false, 'IsCheckOut': false, 'IsRelease': false, 'IsDestroy': false, 'ReleasingOfficerID': '', 'ReceipentOfficerID': '', 'IsTransferLocation': false, 'IsUpdate': false, 'CreatedByUserFK': '', 'ActivityDtTm': '', 'LastSeenDtTm': '', 'ModeofTransport': '', 'Destination': '', 'IsInternalTransfer': true,
         'IsExternalTransfer': false,
     })
 
@@ -394,12 +394,12 @@ const VehicleManagement = (props) => {
         const CreatedByUserFK = loginPinID;
         const AgencyId = loginAgencyID;
 
-        const { ActivityReasonID, ExpectedDate, ActivityComments, DestinationStorageLocation, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
+        const { ActivityReasonID, ExpectedDate, ActivityComments, DestinationStorageLocation, ReleasingOfficerID, ReceipentOfficerID, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
             CourtDate, ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId,
             IsCheckIn, IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, ActivityDtTm
         } = value;
         const val = {
-            PropertyID, ActivityType, ActivityReasonID, ExpectedDate, DestinationStorageLocation, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
+            PropertyID, ActivityType, ActivityReasonID, ExpectedDate, DestinationStorageLocation, ActivityComments, ReleasingOfficerID, ReceipentOfficerID, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
             CourtDate, ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId,
             MasterPropertyId, IsCheckIn, IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, CreatedByUserFK, AgencyId, ActivityDtTm
         };
@@ -488,7 +488,7 @@ const VehicleManagement = (props) => {
             ...value,
             'PropertyID': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'OtherPersonNameID': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
             'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '',
-            'MasterPropertyId': '', 'IsCheckIn': '', 'IsCheckOut': '', 'IsRelease': '', 'IsDestroy': '', 'IsTransferLocation': '', 'IsUpdate': '', 'CreatedByUserFK': '', 'LastSeenDtTm': '', 'ModeofTransport': '', 'Destination': ''
+            'MasterPropertyId': '', 'IsCheckIn': '', 'IsCheckOut': '', 'IsRelease': '', 'IsDestroy': '', 'ReleasingOfficerID': '', 'ReceipentOfficerID': '', 'IsTransferLocation': '', 'IsUpdate': '', 'CreatedByUserFK': '', 'LastSeenDtTm': '', 'ModeofTransport': '', 'Destination': ''
         });
         setErrors({
             ...errors,

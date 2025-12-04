@@ -110,7 +110,7 @@ const PropertyManagement = (props) => {
         'PropertyID': '', 'MasterPropertyId': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'OtherPersonNameID': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
         'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '',
         'IsCheckIn': false, 'IsCheckOut': false, 'IsRelease': false, 'IsDestroy': false, 'IsTransferLocation': false, 'IsUpdate': false, 'CreatedByUserFK': '', 'ActivityDtTm': '', 'LastSeenDtTm': '', 'ModeofTransport': '', 'Destination': '', 'IsInternalTransfer': true,
-        'IsExternalTransfer': false,
+        'IsExternalTransfer': false, 'ReleasingOfficerID': '', 'ReceipentOfficerID': '',
         'DestinationStorageLocation': ''
     })
 
@@ -479,12 +479,12 @@ const PropertyManagement = (props) => {
         const ActivityType = selectedOption
         const CreatedByUserFK = loginPinID;
         const AgencyId = loginAgencyID;
-        const { ActivityReasonID, ExpectedDate, ActivityComments, IsInternalTransfer, IsExternalTransfer, DestinationStorageLocation, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
+        const { ActivityReasonID, ExpectedDate, ActivityComments, IsInternalTransfer, ReleasingOfficerID, ReceipentOfficerID, IsExternalTransfer, DestinationStorageLocation, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
             CourtDate, ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId,
             IsCheckIn, IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, ActivityDtTm
         } = value;
         const val = {
-            PropertyID, ActivityType, ActivityReasonID, ExpectedDate, IsInternalTransfer, IsExternalTransfer, DestinationStorageLocation, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
+            PropertyID, ActivityType, ActivityReasonID, ExpectedDate, IsInternalTransfer, IsExternalTransfer, ReleasingOfficerID, ReceipentOfficerID, DestinationStorageLocation, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
             CourtDate, ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId,
             MasterPropertyId, IsCheckIn, IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, CreatedByUserFK, AgencyId, ActivityDtTm
         };
@@ -613,7 +613,7 @@ const PropertyManagement = (props) => {
             ...value,
             'PropertyID': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'OtherPersonNameID': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
             'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '', 'EvidenceType': '',
-            'MasterPropertyId': '', 'IsCheckIn': '', 'PackagingDetails': '', 'IsCheckOut': '', 'IsRelease': '', 'IsDestroy': '', 'IsTransferLocation': '', 'IsUpdate': '', 'CreatedByUserFK': '', 'LastSeenDtTm': '', 'ModeofTransport': '', 'Destination': ''
+            'MasterPropertyId': '', 'IsCheckIn': '', 'PackagingDetails': '', 'IsCheckOut': '', 'ReleasingOfficerID': '', 'ReceipentOfficerID': '', 'IsRelease': '', 'IsDestroy': '', 'IsTransferLocation': '', 'IsUpdate': '', 'CreatedByUserFK': '', 'LastSeenDtTm': '', 'ModeofTransport': '', 'Destination': ''
         });
         setSelectedFiles([]);
         setErrors({
