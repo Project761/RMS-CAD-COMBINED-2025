@@ -701,7 +701,7 @@ body *::-webkit-scrollbar-thumb {
 
 .inc__tabs ul li {
   /* padding: 0px 10px !important; */
-   padding: 0px 8px !important;
+  padding: 0px 8px !important;
 }
 
 .inc_sub_tab ul li a {
@@ -2327,12 +2327,14 @@ input.nibrs-reopened:disabled {
   font-weight: 800;
   text-transform: uppercase !important;
 }
+
 /* abhi */
 
 .incident-card:has(.child) {
   height: auto !important;
   min-height: 100vh;
 }
+
 .incident-card:has(.Offense_child) {
   height: auto !important;
   /* min-height: 100vh; */
@@ -2761,4 +2763,9 @@ input.readonlyColor_MasterInput {
   background: #ff5571;
   display: inline-block;
   margin: 0 0.2rem 0 0;
+}
+
+.destroy-dark {
+  color: #804400;
+  font-weight: 500;
 }
