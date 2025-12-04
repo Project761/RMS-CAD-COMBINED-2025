@@ -24,7 +24,7 @@ import SelectBox from '../../../../Common/SelectBox';
 
 const Home = (props) => {
 
-    const { setStatus, DecPropID, DecMPropID, SelectedCategory, CallStatus, ProType, SelectedOption , ProNumber, VehNumber , ProTransfer, CheckboxStatus } = props
+    const { setStatus, DecPropID, DecMPropID, SelectedCategory, CallStatus, ProType, SelectedOption, ProNumber, VehNumber, ProTransfer, CheckboxStatus } = props
 
     const { GetDataTimeZone, datezone, setChangesStatus } = useContext(AgencyContext);
     const navigate = useNavigate();
@@ -145,8 +145,8 @@ const Home = (props) => {
     const [selectedOptions, setSelectedOptions] = useState(AddType[0]);
 
     const [value, setValue] = useState({
-        'PropertyID': '', 'MasterPropertyId': '', 'ActivityType': '', 'DestinationStorageLocation': '', 'IsInternalTransfer': true, 'Destination': '', 'ModeOfTransport': '',
-        'IsExternalTransfer': false, 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'OtherPersonNameID': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '', 'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '', 'IsCheckIn': false, 'IsCheckOut': false, 'IsRelease': false, 'IsDestroy': false, 'IsTransferLocation': false, 'IsUpdate': false, 'CreatedByUserFK': '', 'AgencyID': '', 'PropertyTypeID': '', 'VehicleTypeID': '', 'LastSeenDtTm': '', 'PackagingDetails': ''
+        'PropertyID': '', 'MasterPropertyId': '', 'ActivityType': '', 'DestinationStorageLocation': '', 'ReleasingOfficerID': '', 'IsInternalTransfer': true, 'Destination': '', 'ModeOfTransport': '',
+        'IsExternalTransfer': false, 'ActivityReasonID': '', 'ReceipentOfficerID': '', 'ExpectedDate': '', 'ActivityComments': '', 'OtherPersonNameID': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '', 'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '', 'IsCheckIn': false, 'IsCheckOut': false, 'IsRelease': false, 'IsDestroy': false, 'IsTransferLocation': false, 'IsUpdate': false, 'CreatedByUserFK': '', 'AgencyID': '', 'PropertyTypeID': '', 'VehicleTypeID': '', 'LastSeenDtTm': '', 'PackagingDetails': ''
     })
 
     const [errors, setErrors] = useState({
@@ -163,18 +163,18 @@ const Home = (props) => {
             setMasterPropertyId(prev => (prev?.length ? prev : DecPropID));
             if (!CheckboxStatus) { sessionStorage.removeItem('selectedRows'); }
             if (CallStatus === 'true') { GetData_Propertyroom(DecPropID, SelectedCategory); }
-            else if (CallStatus === 'false' && (ProType && (ProNumber || VehNumber && SelectedOption !== 'VehicleTypeID') )) {
+            else if (CallStatus === 'false' && (ProType && (ProNumber || VehNumber && SelectedOption !== 'VehicleTypeID'))) {
                 SearchButtons(ProType, (ProNumber || VehNumber), localStoreData?.AgencyID);
                 const matchedOption = AddType.find(option => option.value === ProType);
                 if (matchedOption) { setSelectedOptions(matchedOption); settransfer(ProTransfer); setPropertyNumber(ProNumber); }
             }
-            else if(SelectedOption === 'VehicleTypeID'){
-                 const matchedOption = AddType.find(option => option.value === SelectedOption);
+            else if (SelectedOption === 'VehicleTypeID') {
+                const matchedOption = AddType.find(option => option.value === SelectedOption);
                 if (matchedOption) { setSelectedOptions(matchedOption); }
             }
             // setValue({ ...value, 'PropertyTypeID': parseInt(ProNumber), 'ActivityType': ProTransfer })
             settransfer(ProTransfer); setPropertyNumber(ProNumber); GetDataTimeZone(localStoreData?.AgencyID);
-           if(VehNumber) {setvehicleNumber(VehNumber);}
+            if (VehNumber) { setvehicleNumber(VehNumber); }
         }
     }, [localStoreData, ProType, ProNumber, CallStatus, DecPropID, SelectedCategory, propertyTypeData, ProTransfer]);
 
@@ -548,13 +548,13 @@ const Home = (props) => {
         const ActivityType = selectedOption;
         const CreatedByUserFK = loginPinID;
 
-        const { ActivityReasonID, ExpectedDate, ActivityComments, DestinationStorageLocation, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate, CourtDate,
+        const { ActivityReasonID, ExpectedDate, ActivityComments, DestinationStorageLocation, ReceipentOfficerID, ReleasingOfficerID, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate, CourtDate,
             ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId, IsCheckIn,
             IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, activitydate, AgencyID, PackagingDetails,
         } = value;
         const valuesArray = PropertyID.map((id, index) => ({
-            PropertyID: id, ActivityType, ActivityReasonID, ExpectedDate, activitydate, DestinationStorageLocation, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
-            CourtDate, ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId,
+            PropertyID: id, ActivityType, ActivityReasonID, ExpectedDate, activitydate, DestinationStorageLocation, ReceipentOfficerID, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
+            CourtDate, ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, ReleasingOfficerID, OfficerNameID, InvestigatorID, location, activityid, EventId,
             MasterPropertyId: MasterPropertyId[index], IsCheckIn, IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, CreatedByUserFK, AgencyID, PackagingDetails,
         }));
         let valuesArrayString = JSON.stringify(valuesArray);
@@ -1056,7 +1056,7 @@ const Home = (props) => {
             'PropertyID': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
             'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '',
             'MasterPropertyId': '', 'IsCheckIn': '', 'IsCheckOut': '', 'IsRelease': '', 'IsDestroy': '', 'IsTransferLocation': '', 'IsUpdate': '', 'CreatedByUserFK': '', 'PropertyTypeID': '',
-            'OtherPersonNameID': '', 'LastSeenDtTm': '', 'PackagingDetails': '',
+            'OtherPersonNameID': '', 'LastSeenDtTm': '', 'PackagingDetails': '', 'ReleasingOfficerID': '', 'ReceipentOfficerID': '',
             ['ReportedDate']: '', ['ReportedDateTo']: ''
         });
         setErrors({
@@ -1301,6 +1301,7 @@ const Home = (props) => {
                 ReceiveDate: editval?.ReceiveDate || '', OfficerNameID: editval?.OfficerNameID || '', InvestigatorID: editval?.InvestigatorID || '', location: editval?.location || '',
                 activityid: editval?.activityid || '', EventId: editval?.EventId || '', MasterPropertyId: editval?.MasterPropertyId || '',
                 CreatedByUserFK: editval?.CreatedByUserFK || '',
+                ReleasingOfficerID: editval?.ReleasingOfficerID,
             });
             dispatch(get_AgencyOfficer_Data(loginAgencyID, IncID));
             GetActivityReasonDrp(loginAgencyID);
@@ -1351,7 +1352,7 @@ const Home = (props) => {
                                         setSelectedOptions(selectedOption);
                                         setPropertyNumber('');
                                         setvehicleNumber(''); setSearchData([]);
-                                        
+
                                         setsearcherror(prevValues => {
                                             return { ...prevValues, 'SearchError': '', }
                                         })
