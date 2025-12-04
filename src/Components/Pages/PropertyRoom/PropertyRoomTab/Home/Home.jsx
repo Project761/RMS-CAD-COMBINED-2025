@@ -705,6 +705,7 @@ const Home = (props) => {
             sortable: true,
             cell: (row) => {
                 let color = 'black';
+                let className = '';
                 switch (row.Status) {
                     case 'CheckIn':
                         color = 'green';
@@ -716,13 +717,16 @@ const Home = (props) => {
                         color = 'black';
                         break;
                     case 'Destroy':
-                        color = 'orange';
+                        className  = 'destroy-dark';
                         break;
                     default:
                         color = 'gray';
                 }
                 return (
-                    <span style={{ color }}>
+                    <span
+                        style={className ? {} : { color }}  
+                        className={className}              
+                    >
                         {row.Status}
                     </span>
                 );
