@@ -412,7 +412,7 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
         if (Editval?.length > 0) {
             const newvalue = arresteeNameData?.filter((val) => val?.NameID == Editval[0]?.ArresteeID);
 
-            setNameID(newvalue[0]?.NameID)
+            setNameID(newvalue[0]?.NameID);
             get_Arrest_MultiImage(arrestID);
             setValue({
                 ...value,

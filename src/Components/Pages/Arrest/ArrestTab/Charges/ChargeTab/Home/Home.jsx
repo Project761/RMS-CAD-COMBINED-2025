@@ -122,7 +122,7 @@ const Charges = (props) => {
   });
 
   const [errors, setErrors] = useState({
-    'NIBRSIDError': '', 'ChargeCodeIDError': '', 'AttemptRequiredError': '',
+    'NIBRSIDError': '', 'ChargeCodeIDError': '', 'AttemptRequiredError': '', 'ChargeDateTimeError': '',
   })
 
   useEffect(() => {
@@ -217,19 +217,25 @@ const Charges = (props) => {
   }, [DecArrestId])
 
   const check_Validation_Error = (e) => {
-    const NIBRSIDError = RequiredFieldIncident(value.NIBRSID); const ChargeCodeIDError = RequiredFieldIncident(value.ChargeCodeID); const AttemptRequiredError = RequiredFieldIncident(value.AttemptComplete);
+    const NIBRSIDError = RequiredFieldIncident(value.NIBRSID);
+    const ChargeCodeIDError = RequiredFieldIncident(value.ChargeCodeID);
+    const AttemptRequiredError = RequiredFieldIncident(value.AttemptComplete);
+    const ChargeDateTimeErr = RequiredFieldIncident(value.OffenseDateTime)
     setErrors(pre => {
       return {
         ...pre,
-        ['NIBRSIDError']: NIBRSIDError || pre['NIBRSIDError'], ['ChargeCodeIDError']: ChargeCodeIDError || pre['ChargeCodeIDError'], ['AttemptRequiredError']: AttemptRequiredError || pre['AttemptRequiredError'],
+        ['NIBRSIDError']: NIBRSIDError || pre['NIBRSIDError'],
+        ['ChargeCodeIDError']: ChargeCodeIDError || pre['ChargeCodeIDError'],
+        ['AttemptRequiredError']: AttemptRequiredError || pre['AttemptRequiredError'],
+        ['ChargeDateTimeError']: ChargeDateTimeErr || pre['ChargeDateTimeError'],
       }
     });
   }
 
-  const { ChargeCodeIDError, NIBRSIDError, AttemptRequiredError } = errors
+  const { ChargeCodeIDError, NIBRSIDError, AttemptRequiredError, ChargeDateTimeError } = errors
 
   useEffect(() => {
-    if (ChargeCodeIDError === 'true' && NIBRSIDError === 'true' && AttemptRequiredError === 'true') {
+    if (ChargeCodeIDError === 'true' && NIBRSIDError === 'true' && AttemptRequiredError === 'true' && ChargeDateTimeError == 'true') {
       if ((ChargeSta === true || ChargeSta === 'true') && ChargeID) { update_Arrest_Charge() }
       else {
         if (DecArrestId) { Add_Charge_Data(); }
@@ -238,7 +244,7 @@ const Charges = (props) => {
         }
       }
     }
-  }, [ChargeCodeIDError, NIBRSIDError, AttemptRequiredError])
+  }, [ChargeCodeIDError, NIBRSIDError, AttemptRequiredError, ChargeDateTimeError])
 
   useEffect(() => {
     if (DecChargeId) {
@@ -259,15 +265,20 @@ const Charges = (props) => {
     });
   }
 
-
   useEffect(() => {
     if (Editval) {
       console.log(Editval)
       setValue({
-        ...value, 'Count': Editval[0]?.Count ? Editval[0]?.Count : '', 'Name': Editval[0]?.Name, 'ChargeCodeID': Editval[0]?.ChargeCodeID || Editval?.ChargeCodeID,
-        'NIBRSID': Editval[0]?.NIBRSID || Editval?.NIBRSCodeId, 'UCRClearID': Editval[0]?.UCRClearID, 'ChargeID': Editval[0]?.ChargeID, 'ModifiedByUserFK': LoginPinID,
-        'LawTitleId': Editval[0]?.LawTitleId || Editval?.LawTitleId, 'AttemptComplete': Editval[0]?.AttemptComplete || Editval?.AttemptComplete, ChargeDateTime: Editval[0]?.ChargeDateTime,
-        'CategoryId': Editval[0]?.CategoryId || Editval?.CategoryID, 'OffenseDateTime': Editval[0]?.OffenseDateTime,
+        ...value, 'Count': Editval[0]?.Count ? Editval[0]?.Count : '',
+        'Name': Editval[0]?.Name, 'ChargeCodeID': Editval[0]?.ChargeCodeID || Editval?.ChargeCodeID,
+        'NIBRSID': Editval[0]?.NIBRSID || Editval?.NIBRSCodeId,
+        'UCRClearID': Editval[0]?.UCRClearID,
+        'ChargeID': Editval[0]?.ChargeID, 'ModifiedByUserFK': LoginPinID,
+        'LawTitleId': Editval[0]?.LawTitleId || Editval?.LawTitleId,
+        'AttemptComplete': Editval[0]?.AttemptComplete || Editval?.AttemptComplete,
+        'CategoryId': Editval[0]?.CategoryId || Editval?.CategoryID,
+        'OffenseDateTime': Editval[0]?.OffenseDateTime,
+        'ChargeDateTime': Editval[0]?.ChargeDateTime,
 
       });
       setArrestName(Editval[0]?.Name ? Editval[0]?.Name : '');
@@ -961,8 +972,6 @@ const Charges = (props) => {
           </div>
         </fieldset>
       </div>
-
-
       <div className="col-12">
         <fieldset className="p-2">
           <legend className="w-auto px-2">Charge information</legend>
@@ -972,7 +981,6 @@ const Charges = (props) => {
                 Law Title
               </label>
             </div>
-
             <div className="col-4 col-md-4 col-lg-2 ">
               <Select
                 name='LawTitleId'
@@ -986,7 +994,6 @@ const Charges = (props) => {
                 isDisabled={!value?.ChargeID || isLockOrRestrictModule("Lock", Editval[0]?.LawTitleId, isLocked)}
               />
             </div>
-
             <div className="col-2 col-md-2 col-lg-2 text-right">
               <label htmlFor="" className='new-label mb-0'>
                 TIBRS Code
@@ -1013,7 +1020,6 @@ const Charges = (props) => {
                 Category
               </label>
             </div>
-
             <div className="col-4 col-md-4 col-lg-2 ">
               <Select
                 name='CategoryId'
@@ -1027,7 +1033,6 @@ const Charges = (props) => {
                 isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.CategoryId, isLocked)}
               />
             </div>
-
             <div className="col-2 col-md-2 col-lg-1  text-right">
               <Link to={'/ListManagement?page=Charge%20Code&call=/Arr-Charge-Home'} className='new-link '>
                 Offense Code/Name
@@ -1036,7 +1041,6 @@ const Charges = (props) => {
                 ) : null}
               </Link>
             </div>
-
             <div className="col-4 col-md-4 col-lg-7 mt-0 ">
               <Select
                 name="ChargeCodeID"
@@ -1050,8 +1054,6 @@ const Charges = (props) => {
                 isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.ChargeCodeID, isLocked)}
               />
             </div>
-
-
             <div className="col-2 col-md-2 col-lg-2 text-right" >
               <label className="new-label mb-0"  >
                 {/* Attempt/Complete */}
@@ -1063,7 +1065,6 @@ const Charges = (props) => {
                 )}
               </label>
             </div>
-
             <div className="col-3 col-md-4 col-lg-2">
               <Select
                 onChange={(e) => onChangeAttComplete(e, "AttemptComplete")}
@@ -1114,9 +1115,13 @@ const Charges = (props) => {
             </div>
             <div className="col-3 col-md-3 col-lg-2 ">
               <label htmlFor="" className="new-label px-0 mb-0">
-                Charge  Date/Time{errors.OffenseDttmError !== 'true' ? (
-                  <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.OffenseDttmError}</p>
+                Charge  Date/Time
+                {errors.ChargeDateTimeError !== 'true' ? (
+                  <span style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px', display: "block", }}>{errors.ChargeDateTimeError}</span>
                 ) : null}
+                {/* {errors.ChargeDateTimeError !== 'true' ? (
+                  <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ChargeDateTimeError}</p>
+                ) : null} */}
               </label>
             </div>
             <div className="col-3 col-md-4 col-lg-2">
@@ -1148,8 +1153,7 @@ const Charges = (props) => {
                   }
                 }}
                 selected={value?.OffenseDateTime && new Date(value?.OffenseDateTime)}
-
-                className={isLockOrRestrictModule("Lock", Editval[0]?.OffenseDateTime, isLocked) ? 'LockFildsColor' : ''}
+                className={isLockOrRestrictModule("Lock", Editval[0]?.OffenseDateTime, isLocked) ? 'LockFildsColor' : 'requiredColor'}
                 disabled={isLockOrRestrictModule("Lock", Editval[0]?.OffenseDateTime, isLocked)}
                 autoComplete="Off"
                 placeholderText={'Select...'}
