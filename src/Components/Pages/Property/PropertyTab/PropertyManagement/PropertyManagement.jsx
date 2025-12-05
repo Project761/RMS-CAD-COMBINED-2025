@@ -989,8 +989,6 @@ const PropertyManagement = (props) => {
                                 className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
                         </div>
 
-
-
                         <div className='col-12 col-md-12 col-lg-12 '>
                             <div className="row align-items-center ">
                                 <div className="col-3 col-md-3 col-lg-2">
@@ -999,8 +997,7 @@ const PropertyManagement = (props) => {
                                     </label>
                                 </div>
                                 <div className="col-3 col-md-3 col-lg-10 ">
-                                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px", }}
-                                    >
+                                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px", }} >
                                         <div style={{ display: "flex", alignItems: "center", border: "1px solid #ccc", borderRadius: "6px", background: "#f9f9f9", width: "100%" }}>
                                             <label
                                                 htmlFor="file-input"
