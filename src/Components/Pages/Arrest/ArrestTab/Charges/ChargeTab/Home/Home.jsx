@@ -1054,7 +1054,8 @@ const Charges = (props) => {
 
             <div className="col-2 col-md-2 col-lg-2 text-right" >
               <label className="new-label mb-0"  >
-                Attempt/Complete
+                {/* Attempt/Complete */}
+                Attempted/Completed
                 {errors.AttemptRequiredError !== 'true' && (
                   <span style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px', display: "block", }}>
                     {errors.AttemptRequiredError}

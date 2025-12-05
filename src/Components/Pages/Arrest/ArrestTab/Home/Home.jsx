@@ -451,8 +451,10 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
             }
             if (Editval[0]?.PoliceForceID === 1) {
                 setIsEnabled(true);
+
             } else {
                 setIsEnabled(false);
+
             }
         } else {
             setIsEditvalProcessed(false);
