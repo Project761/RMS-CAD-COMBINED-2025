@@ -473,6 +473,17 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
         if (e.target.name === "IsJuvenileArrest") {
             !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
             setValue({ ...value, [e.target.name]: e.target.checked });
+
+        } else if (e.target.name === 'IsSchoolNotified') {
+            !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
+            setValue({ ...value, [e.target.name]: e.target.checked });
+
+            // if (value?.IsSchoolNotified) {
+            //     return;
+            // } else {
+            //     setValue({ ...value, [e.target.name]: e.target.checked });
+            // }
+
         } else if (e.target.name === 'PhoneNo') {
             var ele = e.target.value.replace(/[^0-9\s]/g, "")
             if (ele.length === 10) {
@@ -485,9 +496,11 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                 ele = e.target.value.split('-').join('').replace(/[^0-9\s]/g, "");
                 setChangesStatus(true); setValue({ ...value, [e.target.name]: ele });
             }
+
         } else {
             !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
             ; setValue({ ...value, [e.target.name]: e.target.value });
+
         }
     };
 
@@ -986,7 +999,6 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
         return !isNaN(d.getTime()) ? d : null;
     };
 
-
     return (
         <>
             {((incidentCount[0]?.ArrestCount === 0 || incidentCount[0]?.ArrestCount === "0") || (ArrestSta === true || ArrestSta === 'true') || isNew === "true" || isNew === true) && (
@@ -1023,7 +1035,6 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                     <label className="form-check-label mb-0 text-nowrap" htmlFor="flexCheckDefault">Juvenile Arrest</label>
                                 </div>
                             </div>
-
                             <div className="col-2 col-md-3 col-lg-2 ">
                                 <label htmlFor="" className='new-label text-nowrap mb-0'>Incident No.</label>
                             </div>
@@ -1232,7 +1243,6 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                     </div>
                                 </div>
                             )}
-
                             <div className="col-2 col-md-2 col-lg-1">
                                 <label htmlFor="" className='new-label mb-0'>Arrestee
                                     {errors.ArresteeIDError !== 'true' ? (
@@ -1376,7 +1386,6 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                     </div>
                                 </div>
                             </div>
-
                             <div className="col-6 col-md-3 col-lg-2 d-flex align-items-center gap-2 ">
                                 <div className="col-2 col-md-2 col-lg-1">
                                     <label htmlFor="SexID" className="new-label mb-0 mr-1">
@@ -1438,10 +1447,8 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                             <div className="col-4 col-md-4 col-lg-2">
                                 <Select
                                     name='ResponseID'
-
                                     styles={isLockOrRestrictModule("Lock", Editval[0]?.ResponseID, isLocked) ? LockFildscolour : customStylesWithOutColor}
                                     isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.ResponseID, isLocked) ? true : false}
-
                                     value={policeForceDrpData?.filter((obj) => obj.value === value?.ResponseID)}
                                     isClearable
                                     options={policeForceDrpData}
@@ -1449,7 +1456,6 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                     placeholder="Select..."
                                 />
                             </div>
-
                             <div className="col-2 col-md-2 col-lg-1">
                                 <label htmlFor="" className='new-label mb-0'>Given By</label>
                             </div>
@@ -1486,7 +1492,6 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                 />
                             </div>
                             <div className="col-4 col-md-4 col-lg-4"></div>
-
                             <div className="col-2 col-md-2 col-lg-1">
                                 <label htmlFor="" className='new-label mb-0'>Parent Name  </label>
                             </div>
@@ -1526,7 +1531,7 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                 </div>
                             </div>
                             <div className="col-2 col-md-2 col-lg-2">
-                                <label htmlFor="" className='new-label mb-0'>Parent Phone  {errors.CellPhoneError !== 'true' ? (
+                                <label htmlFor="" className='new-label mb-0'>Parent Phone#  {errors.CellPhoneError !== 'true' ? (
                                     <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.CellPhoneError}</p>
                                 ) : null}</label>
                             </div>
@@ -1561,11 +1566,9 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
 
                                 />
                             </div>
-
                             <div className="col-2 col-md-2 col-lg-1">
                                 <label htmlFor="" className='new-label mb-0'>Location Of School</label>
                             </div>
-
                             <div className="col-4 col-md-4 col-lg-11 mt-0 text-field">
                                 <Location
                                     {...{ value, setValue, locationStatus, setLocationStatus, updateStatus, setOnSelectLocation, setChangesStatus, setStatesChangeStatus }}
@@ -1595,12 +1598,10 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                     styles={value?.IsJuvenileArrest === 'true' ? Requiredcolour : customStylesWithOutColor}
                                     value={value?.Grade}
                                     id="Grade"
-
                                     className={isLockOrRestrictModule("Lock", Editval[0]?.Grade, isLocked) ? "form-control LockFildsColor" : "form-control"}
                                     disabled={isLockOrRestrictModule("Lock", Editval[0]?.Grade, isLocked) ? true : value?.IsJuvenileArrest ? false : true}
                                 />
                             </div>
-
                             <div className="col-2 col-md-2 col-lg-2">
                                 <label htmlFor="" className='new-label mb-0'>Disposition {errors.JuvenileDispoError !== 'true' ? (
                                     <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.JuvenileDispoError}</p>
@@ -1626,12 +1627,11 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                         <div className='col-2 col-md-2 col-lg-3'>
                                             <label className="form-check-label mb-0 ml-3 text-nowrap" htmlFor="flexCheckDefault">School Notified</label>
                                             <input className="form-check-input ml-2" type="checkbox" name="IsSchoolNotified" checked={value?.IsSchoolNotified} onChange={HandleChange} />
-
                                         </div>
-                                    </> :
+                                    </>
+                                    :
                                     <></>
                             }
-
                         </div>
                     </div >
                     {
@@ -1716,7 +1716,6 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                 </>
             )}
         </>
-
     )
 }
 
