@@ -112,6 +112,7 @@ const TreeModal = (props) => {
                             ...prev,
                             DestinationStorageLocation: data[0].NodePath,
                             // StorageLocationID: data[0].StorageLocationID
+                            StorageLocationID: data[0].StorageLocationID
                         }));
                         setlocationStatus(false);
                     }
