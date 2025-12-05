@@ -1081,7 +1081,6 @@ const PropertyManagement = (props) => {
                                     </div>
                                 </div>
                             </div>
-
                         </div>
 
                         <fieldset style={{ width: "100%" }}>
