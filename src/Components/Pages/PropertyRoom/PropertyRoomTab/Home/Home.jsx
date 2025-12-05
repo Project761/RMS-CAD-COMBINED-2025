@@ -2536,7 +2536,7 @@ const Home = (props) => {
                     </div>
 
                     <div className="col-3 col-md-3 col-lg-2 ">
-                        <label htmlFor="" className='new-label mb-0'>Check in Date/Time{errors.CheckInDateTimeError !== 'true' ? (
+                        <label htmlFor="" className='new-label mb-0'>Check In Date/Time{errors.CheckInDateTimeError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.CheckInDateTimeError}</p>
                         ) : null}</label>
                     </div>

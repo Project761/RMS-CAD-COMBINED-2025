@@ -724,7 +724,7 @@ const VehicleManagement = (props) => {
                         </div>
 
                         <div className="col-3 col-md-3 col-lg-2 ">
-                            <label htmlFor="" className='new-label mb-0'>Check in Date/Time{errors.CheckInDateTimeError !== 'true' ? (
+                            <label htmlFor="" className='new-label mb-0'>Check In Date/Time{errors.CheckInDateTimeError !== 'true' ? (
                                 <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.CheckInDateTimeError}</p>
                             ) : null}</label>
                         </div>
@@ -806,14 +806,14 @@ const VehicleManagement = (props) => {
                                 options={agencyOfficerDrpData}
                                 onChange={(e) => ChangeDropDown(e, 'OfficerNameID')}
                                 placeholder="Select..."
-                                styles={{
-                                    control: (base) => ({
-                                        ...base,
-                                        backgroundColor: selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'
-                                            ? 'readonlyColor' // For Release or Destroy status
-                                            : (selectedStatus === 'CheckIn' ? '' : 'requiredColor') // Avoid requiredColor when status is CheckIn
-                                    })
-                                }}
+                                // styles={{
+                                //     control: (base) => ({
+                                //         ...base,
+                                //         backgroundColor: selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'
+                                //             ? 'readonlyColor'
+                                //             : (selectedStatus === 'CheckIn' ? '' : 'requiredColor') 
+                                //     })
+                                // }}
                                 // styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                                 isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                             />
@@ -921,7 +921,7 @@ const VehicleManagement = (props) => {
                                                 htmlFor="file-input"
                                                 style={{
                                                     padding: "5px 16px",
-                                                    backgroundColor: "#e9e9e9",
+                                                    backgroundColor: "#555",
                                                     color: "#fff",
                                                     borderRadius: "4px",
                                                     marginLeft: "4px",
@@ -931,8 +931,8 @@ const VehicleManagement = (props) => {
                                                     fontWeight: "bold",
                                                     transition: "background 0.3s",
                                                 }}
-                                                onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
-                                                onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                                onMouseOver={(e) => (e.target.style.backgroundColor = "#555")}
+                                                onMouseOut={(e) => (e.target.style.backgroundColor = "#555")}
                                             >
                                                 Choose File
                                             </label>
@@ -1376,7 +1376,7 @@ const VehicleManagement = (props) => {
                                         htmlFor="file-input"
                                         style={{
                                             padding: "5px 16px",
-                                            backgroundColor: "#e9e9e9",
+                                            backgroundColor: "#555",
                                             color: "#fff",
                                             borderRadius: "4px",
                                             marginLeft: "4px",
@@ -1386,8 +1386,8 @@ const VehicleManagement = (props) => {
                                             fontWeight: "bold",
                                             transition: "background 0.3s",
                                         }}
-                                        onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
-                                        onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                        onMouseOver={(e) => (e.target.style.backgroundColor = "#555")}
+                                        onMouseOut={(e) => (e.target.style.backgroundColor = "#555")}
                                     >
                                         Choose File
                                     </label>
@@ -1744,7 +1744,7 @@ const VehicleManagement = (props) => {
                                         htmlFor="file-input"
                                         style={{
                                             padding: "5px 16px",
-                                            backgroundColor: "#e9e9e9",
+                                            backgroundColor: "#555",
                                             color: "#fff",
                                             borderRadius: "4px",
                                             marginLeft: "4px",
@@ -1754,8 +1754,8 @@ const VehicleManagement = (props) => {
                                             fontWeight: "bold",
                                             transition: "background 0.3s",
                                         }}
-                                        onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
-                                        onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                        onMouseOver={(e) => (e.target.style.backgroundColor = "#555")}
+                                        onMouseOut={(e) => (e.target.style.backgroundColor = "#555")}
                                     >
                                         Choose File
                                     </label>
@@ -2148,7 +2148,7 @@ const VehicleManagement = (props) => {
                                         htmlFor="file-input"
                                         style={{
                                             padding: "5px 16px",
-                                            backgroundColor: "#e9e9e9",
+                                            backgroundColor: "#555",
                                             color: "#fff",
                                             borderRadius: "4px",
                                             marginLeft: "4px",
@@ -2158,8 +2158,8 @@ const VehicleManagement = (props) => {
                                             fontWeight: "bold",
                                             transition: "background 0.3s",
                                         }}
-                                        onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
-                                        onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                        onMouseOver={(e) => (e.target.style.backgroundColor = "#555")}
+                                        onMouseOut={(e) => (e.target.style.backgroundColor = "#555")}
                                     >
                                         Choose File
                                     </label>
@@ -2633,7 +2633,7 @@ const VehicleManagement = (props) => {
                                                 htmlFor="file-input"
                                                 style={{
                                                     padding: "5px 16px",
-                                                    backgroundColor: "#e9e9e9",
+                                                    backgroundColor: "#555",
                                                     color: "#fff",
                                                     borderRadius: "4px",
                                                     marginLeft: "4px",
@@ -2643,8 +2643,8 @@ const VehicleManagement = (props) => {
                                                     fontWeight: "bold",
                                                     transition: "background 0.3s",
                                                 }}
-                                                onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
-                                                onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                                onMouseOver={(e) => (e.target.style.backgroundColor = "#555")}
+                                                onMouseOut={(e) => (e.target.style.backgroundColor = "#555")}
                                             >
                                                 Choose File
                                             </label>
@@ -2957,7 +2957,7 @@ const VehicleManagement = (props) => {
                                         htmlFor="file-input"
                                         style={{
                                             padding: "5px 16px",
-                                            backgroundColor: "#e9e9e9",
+                                            backgroundColor: "#555",
                                             color: "#fff",
                                             borderRadius: "4px",
                                             marginLeft: "4px",
@@ -2967,8 +2967,8 @@ const VehicleManagement = (props) => {
                                             fontWeight: "bold",
                                             transition: "background 0.3s",
                                         }}
-                                        onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
-                                        onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                        onMouseOver={(e) => (e.target.style.backgroundColor = "#555")}
+                                        onMouseOut={(e) => (e.target.style.backgroundColor = "#555")}
                                     >
                                         Choose File
                                     </label>

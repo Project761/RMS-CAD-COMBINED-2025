@@ -762,7 +762,7 @@ const PropertyManagement = (props) => {
                         </div>
                     </div>
                 </div>
-                <div className="div ">
+                <div className="div">
                     {(selectedOption !== "CheckOut" && selectedOption !== "Release" && selectedOption !== "Destroy" && selectedOption !== "TransferLocation" && selectedOption !== "Update") && <div className='row align-items-center' style={{ rowGap: "8px" }}>
                         <div className="col-3 col-md-3 col-lg-2">
                             <label htmlFor="" className='new-label mb-0'>Reason{errors.ReasonError !== 'true' ? (
@@ -883,6 +883,26 @@ const PropertyManagement = (props) => {
                             ) : null}</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 ">
+                            {/* <Select
+                                name='"OfficerNameID"'
+                                value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.OfficerNameID)}
+                                isClearable
+                                options={agencyOfficerDrpData}
+                                onChange={(e) => ChangeDropDown(e, 'OfficerNameID')}
+                                placeholder="Select..."
+          
+                                styles={{
+                                    control: (base) => ({
+                                        ...base,
+                                        backgroundColor: selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'
+                                            ? '' 
+                                            : (selectedStatus === 'CheckIn' ? '' : 'requiredColor') 
+                                    })
+                                }}
+                                isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                            /> */}
+
+
                             <Select
                                 name='"OfficerNameID"'
                                 value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.OfficerNameID)}
@@ -890,15 +910,6 @@ const PropertyManagement = (props) => {
                                 options={agencyOfficerDrpData}
                                 onChange={(e) => ChangeDropDown(e, 'OfficerNameID')}
                                 placeholder="Select..."
-                                // styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
-                                styles={{
-                                    control: (base) => ({
-                                        ...base,
-                                        backgroundColor: selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'
-                                            ? 'readonlyColor' // For Release or Destroy status
-                                            : (selectedStatus === 'CheckIn' ? '' : 'requiredColor') // Avoid requiredColor when status is CheckIn
-                                    })
-                                }}
                                 isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                             />
                         </div>
@@ -1208,32 +1219,33 @@ const PropertyManagement = (props) => {
                         </fieldset>
                     </div>
                     }
-                    {selectedOption === "CheckOut" && <div className='row align-items-center' style={{ rowGap: "8px" }}>
-                        <div className="col-3 col-md-3 col-lg-2 ">
-                            <label htmlFor="" className='new-label mb-0'>Reason{errors.ReasonError !== 'true' ? (
-                                <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
-                            ) : null}</label>
-                        </div>
-                        <div className="col-3 col-md-3 col-lg-2 ">
-                            <Select
-                                name='ActivityReasonID'
-                                value={reasonIdDrp?.filter((obj) => obj.value === value?.ActivityReasonID)}
-                                isClearable
-                                options={reasonIdDrp}
-                                onChange={(e) => ChangeDropDown(e, 'ActivityReasonID')}
-                                placeholder="Select..."
-                                styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
-                                isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                            />
-                        </div>
+                    {selectedOption === "CheckOut" &&
+                        <div className='row align-items-center' style={{ rowGap: "8px" }}>
+                            <div className="col-3 col-md-3 col-lg-2 ">
+                                <label htmlFor="" className='new-label mb-0'>Reason{errors.ReasonError !== 'true' ? (
+                                    <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
+                                ) : null}</label>
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-2 ">
+                                <Select
+                                    name='ActivityReasonID'
+                                    value={reasonIdDrp?.filter((obj) => obj.value === value?.ActivityReasonID)}
+                                    isClearable
+                                    options={reasonIdDrp}
+                                    onChange={(e) => ChangeDropDown(e, 'ActivityReasonID')}
+                                    placeholder="Select..."
+                                    styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
+                                    isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                                />
+                            </div>
 
-                        <div className="col-3 col-md-3 col-lg-2 ">
-                            <label htmlFor="" className='new-label mb-0'>Check Out Date/Time{errors.CheckOutDateTimeError !== 'true' ? (
-                                <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.CheckOutDateTimeError}</p>
-                            ) : null}</label>
-                        </div>
-                        <div className="col-3 col-md-3 col-lg-2">
-                            {/* <DatePicker
+                            <div className="col-3 col-md-3 col-lg-2 ">
+                                <label htmlFor="" className='new-label mb-0'>Check Out Date/Time{errors.CheckOutDateTimeError !== 'true' ? (
+                                    <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.CheckOutDateTimeError}</p>
+                                ) : null}</label>
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-2">
+                                {/* <DatePicker
                                 name='activitydate'
                                 id='activitydate'
                                 onChange={(date) => {
@@ -1259,154 +1271,154 @@ const PropertyManagement = (props) => {
                                 disabled={selectedOption === null || selectedOption === ''}
                                 className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                             /> */}
-                            <DatePicker
-                                name='LastSeenDtTm'
-                                id='LastSeenDtTm'
-                                onChange={(date) => {
-                                    if (date) {
-                                        let selectedDate = new Date(date);
-                                        const currentDateTimeFromZone = new Date(datezone);
-                                        // If time is midnight (user selected only date), set time from `datezone`
-                                        if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0 && selectedDate.getSeconds() === 0) {
-                                            selectedDate.setHours(currentDateTimeFromZone.getHours()); selectedDate.setMinutes(currentDateTimeFromZone.getMinutes()); selectedDate.setSeconds(currentDateTimeFromZone.getSeconds());
+                                <DatePicker
+                                    name='LastSeenDtTm'
+                                    id='LastSeenDtTm'
+                                    onChange={(date) => {
+                                        if (date) {
+                                            let selectedDate = new Date(date);
+                                            const currentDateTimeFromZone = new Date(datezone);
+                                            // If time is midnight (user selected only date), set time from `datezone`
+                                            if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0 && selectedDate.getSeconds() === 0) {
+                                                selectedDate.setHours(currentDateTimeFromZone.getHours()); selectedDate.setMinutes(currentDateTimeFromZone.getMinutes()); selectedDate.setSeconds(currentDateTimeFromZone.getSeconds());
+                                            }
+                                            setactivitydate(selectedDate); setValue({ ...value, ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate), });
+                                        } else {
+                                            setactivitydate(null); setValue({ ...value, ['LastSeenDtTm']: null, });
                                         }
-                                        setactivitydate(selectedDate); setValue({ ...value, ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate), });
-                                    } else {
-                                        setactivitydate(null); setValue({ ...value, ['LastSeenDtTm']: null, });
-                                    }
-                                }}
-                                isClearable={ActivityDtTm ? true : false}
-                                selected={ActivityDtTm}
-                                placeholderText={ActivityDtTm ? ActivityDtTm : 'Select...'}
-                                dateFormat="MM/dd/yyyy HH:mm"
-                                timeFormat="HH:mm"
-                                is24Hour
-                                timeInputLabel
-                                showTimeSelect
-                                timeIntervals={1}
-                                timeCaption="Time"
-                                showMonthDropdown
-                                showYearDropdown
-                                dropdownMode="select"
-                                showDisabledMonthNavigation
-                                autoComplete='off'
-                                minDate={new Date(incidentReportedDate)}
-                                maxDate={new Date(datezone)}
-                                filterTime={(time) => {
-                                    const timeValue = new Date(time).getTime();
-                                    const minTime = new Date(incidentReportedDate).getTime();
-                                    const maxTime = new Date(datezone).getTime();
-                                    return timeValue > minTime && timeValue <= maxTime;
-                                }}
-                                disabled={selectedOption === null || selectedOption === ''}
-                                className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
-                            />
+                                    }}
+                                    isClearable={ActivityDtTm ? true : false}
+                                    selected={ActivityDtTm}
+                                    placeholderText={ActivityDtTm ? ActivityDtTm : 'Select...'}
+                                    dateFormat="MM/dd/yyyy HH:mm"
+                                    timeFormat="HH:mm"
+                                    is24Hour
+                                    timeInputLabel
+                                    showTimeSelect
+                                    timeIntervals={1}
+                                    timeCaption="Time"
+                                    showMonthDropdown
+                                    showYearDropdown
+                                    dropdownMode="select"
+                                    showDisabledMonthNavigation
+                                    autoComplete='off'
+                                    minDate={new Date(incidentReportedDate)}
+                                    maxDate={new Date(datezone)}
+                                    filterTime={(time) => {
+                                        const timeValue = new Date(time).getTime();
+                                        const minTime = new Date(incidentReportedDate).getTime();
+                                        const maxTime = new Date(datezone).getTime();
+                                        return timeValue > minTime && timeValue <= maxTime;
+                                    }}
+                                    disabled={selectedOption === null || selectedOption === ''}
+                                    className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                                />
 
-                        </div>
-                        <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
-                            <label htmlFor="" className='new-label mb-0'>Expected Return Date/Time
-                                {/* {errors.ExpectedReturnDateTimeError !== 'true' ? (
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
+                                <label htmlFor="" className='new-label mb-0'>Expected Return Date/Time
+                                    {/* {errors.ExpectedReturnDateTimeError !== 'true' ? (
                                 <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ExpectedReturnDateTimeError}</p>
                             ) : null} */}
-                            </label>
-                        </div>
-                        <div className="col-3 col-md-3 col-lg-2">
-                            <DatePicker
-                                name='ExpectedDate'
-                                id='ExpectedDate'
-                                onChange={(date) => {
-                                    setExpecteddate(date); setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
+                                </label>
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-2">
+                                <DatePicker
+                                    name='ExpectedDate'
+                                    id='ExpectedDate'
+                                    onChange={(date) => {
+                                        setExpecteddate(date); setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
 
-                                }}
-                                isClearable={expecteddate ? true : false}
-                                selected={expecteddate}
-                                placeholderText={expecteddate ? expecteddate : 'Select...'}
-                                dateFormat="MM/dd/yyyy HH:mm"
-                                timeFormat="HH:mm "
-                                is24Hour
-                                timeInputLabel
-                                showTimeSelect
-                                timeIntervals={1}
-                                timeCaption="Time"
-                                showMonthDropdown
-                                showYearDropdown
-                                dropdownMode="select"
-                                showDisabledMonthNavigation
-                                autoComplete='off'
-                                maxDate={new Date(datezone)}
-                                disabled={selectedOption === null || selectedOption === ''}
-                                className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : ''}
-                            />
+                                    }}
+                                    isClearable={expecteddate ? true : false}
+                                    selected={expecteddate}
+                                    placeholderText={expecteddate ? expecteddate : 'Select...'}
+                                    dateFormat="MM/dd/yyyy HH:mm"
+                                    timeFormat="HH:mm "
+                                    is24Hour
+                                    timeInputLabel
+                                    showTimeSelect
+                                    timeIntervals={1}
+                                    timeCaption="Time"
+                                    showMonthDropdown
+                                    showYearDropdown
+                                    dropdownMode="select"
+                                    showDisabledMonthNavigation
+                                    autoComplete='off'
+                                    maxDate={new Date(datezone)}
+                                    disabled={selectedOption === null || selectedOption === ''}
+                                    className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : ''}
+                                />
 
-                        </div>
-                        <div className="col-3 col-md-3 col-lg-2 ">
-                            <label htmlFor="" className='new-label px-0 mb-0'>Releasing Officer{errors.ReleasingOfficerError !== 'true' ? (
-                                <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReleasingOfficerError}</p>
-                            ) : null}</label>
-                        </div>
-                        <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-2 ">
+                                <label htmlFor="" className='new-label px-0 mb-0'>Releasing Officer{errors.ReleasingOfficerError !== 'true' ? (
+                                    <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReleasingOfficerError}</p>
+                                ) : null}</label>
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
 
-                            <Select
-                                name='ReleasingOfficerID'
-                                value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ReleasingOfficerID)}
-                                isClearable
-                                options={agencyOfficerDrpData}
-                                onChange={(e) => ChangeDropDown(e, 'ReleasingOfficerID')}
-                                placeholder="Select..."
-                                styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
-                                isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                            />
-
-
-                        </div>
-                        <div className="col-3 col-md-3 col-lg-2  ">
-                            <label htmlFor="" className='new-label px-0 mb-0'>Receipient Officer{errors.ReasonError !== 'true' ? (
-                                <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
-                            ) : null}</label>
-                        </div>
-                        <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
-
-                            <Select
-                                name='ReceipentOfficerID'
-                                value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ReceipentOfficerID)}
-                                isClearable
-                                options={agencyOfficerDrpData}
-                                onChange={(e) => ChangeDropDown(e, 'ReceipentOfficerID')}
-                                placeholder="Select..."
-                                styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
-                                isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
-                            />
+                                <Select
+                                    name='ReleasingOfficerID'
+                                    value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ReleasingOfficerID)}
+                                    isClearable
+                                    options={agencyOfficerDrpData}
+                                    onChange={(e) => ChangeDropDown(e, 'ReleasingOfficerID')}
+                                    placeholder="Select..."
+                                    styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
+                                    isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                                />
 
 
-                        </div>
-                        <div className="col-3 col-md-3 col-lg-2 ">
-                            <label htmlFor="" className='new-label mb-0'>Destination</label>
-                        </div>
-                        <div className="col-9 col-md-9 col-lg-2 text-field mt-0">
-                            <input type="text" name="Destination"
-                                className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.Destination} onChange={(e) => { handleChange(e) }} />
-                        </div>
-                        <div className="col-3 col-md-3 col-lg-2 ">
-                            <label htmlFor="" className='new-label mb-0'>Mode of Transport</label>
-                        </div>
-                        <div className="col-9 col-md-9 col-lg-2 text-field mt-0">
-                            <input type="text" name="ModeofTransport"
-                                className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ModeofTransport} onChange={(e) => { handleChange(e) }} />
-                        </div>
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-2  ">
+                                <label htmlFor="" className='new-label px-0 mb-0'>Receipient Officer{errors.ReasonError !== 'true' ? (
+                                    <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
+                                ) : null}</label>
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
 
-                        <div className="col-3 col-md-3 col-lg-2 ">
-                            <label htmlFor="" className='new-label px-0 mb-0'>Storage Location</label>
-                        </div>
-                        <div className="col-12 col-md-12 col-lg-5 ">
-                            <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} disabled className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
-                                ? 'requiredColor'
-                                : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
-                                    ? 'readonlyColor'
-                                    : ''
-                                }`}
-                            />
+                                <Select
+                                    name='ReceipentOfficerID'
+                                    value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.ReceipentOfficerID)}
+                                    isClearable
+                                    options={agencyOfficerDrpData}
+                                    onChange={(e) => ChangeDropDown(e, 'ReceipentOfficerID')}
+                                    placeholder="Select..."
+                                    styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
+                                    isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                                />
 
-                            {/* {value.location ? (
+
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-2 ">
+                                <label htmlFor="" className='new-label mb-0'>Destination</label>
+                            </div>
+                            <div className="col-9 col-md-9 col-lg-2 text-field mt-0">
+                                <input type="text" name="Destination"
+                                    className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.Destination} onChange={(e) => { handleChange(e) }} />
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-2 ">
+                                <label htmlFor="" className='new-label mb-0'>Mode of Transport</label>
+                            </div>
+                            <div className="col-9 col-md-9 col-lg-2 text-field mt-0">
+                                <input type="text" name="ModeofTransport"
+                                    className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ModeofTransport} onChange={(e) => { handleChange(e) }} />
+                            </div>
+
+                            <div className="col-3 col-md-3 col-lg-2 ">
+                                <label htmlFor="" className='new-label px-0 mb-0'>Storage Location</label>
+                            </div>
+                            <div className="col-12 col-md-12 col-lg-5 ">
+                                <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} disabled className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
+                                    ? 'requiredColor'
+                                    : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
+                                        ? 'readonlyColor'
+                                        : ''
+                                    }`}
+                                />
+
+                                {/* {value.location ? (
                                 <span style={{
                                     position: 'absolute',
                                     top: '40%',
@@ -1419,10 +1431,10 @@ const PropertyManagement = (props) => {
                                     <i className='fa fa-times'></i>
                                 </span>
                             ) : (null)} */}
-                        </div>
+                            </div>
 
 
-                        {/* <div className="col-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
+                            {/* <div className="col-1" data-toggle="modal" data-target="#MasterModal" style={{ cursor: 'pointer' }}>
                             <button disabled={!(value.IsCheckIn || value.IsTransferLocation || value.IsRelease || value.IsCheckOut || value.IsDestroy || value.IsUpdate) || selectedOption === null}
                                 className=" btn btn-sm bg-green text-white" data-toggle="modal" data-target="#PropertyRoomTreeModal" style={{ cursor: 'pointer' }} onClick={() => {
                                     setlocationStatus(true);
@@ -1433,117 +1445,115 @@ const PropertyManagement = (props) => {
                         </div> */}
 
 
-                        <div className="col-3 col-md-3 col-lg-2">
-                            <label htmlFor="" className='new-label text-nowrap mb-0'>Packaging Details</label>
-                        </div>
-                        <div className="col-9 col-md-9 col-lg-10 text-field mt-0">
-                            <input type="text" name="PackagingDetails" className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.PackagingDetails} onChange={(e) => { handleChange(e) }} />
-                        </div>
+                            <div className="col-3 col-md-3 col-lg-2">
+                                <label htmlFor="" className='new-label text-nowrap mb-0'>Packaging Details</label>
+                            </div>
+                            <div className="col-9 col-md-9 col-lg-10 text-field mt-0">
+                                <input type="text" name="PackagingDetails" className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.PackagingDetails} onChange={(e) => { handleChange(e) }} />
+                            </div>
 
-                        <div className="col-3 col-md-3 col-lg-2 ">
-                            <label htmlFor="" className='new-label mb-0'>Comments</label>
-                        </div>
-                        <div className="col-9 col-md-9 col-lg-10 text-field mt-0">
-                            <input type="text" name="ActivityComments"
-                                className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
-                        </div>
+                            <div className="col-3 col-md-3 col-lg-2 ">
+                                <label htmlFor="" className='new-label mb-0'>Comments</label>
+                            </div>
+                            <div className="col-9 col-md-9 col-lg-10 text-field mt-0">
+                                <input type="text" name="ActivityComments"
+                                    className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
+                            </div>
 
-                        <div className="col-3 col-md-3 col-lg-2 ">
-                            <label htmlFor="" className='new-label text-nowrap mb-0'>
-                                File Attachment
-                            </label>
-                        </div>
-                        <div className="col-3 col-md-3 col-lg-10 ">
-                            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px", }}
-                            >
-                                <div style={{ display: "flex", alignItems: "center", border: "1px solid #ccc", borderRadius: "6px", background: "#f9f9f9", width: "100%" }}>
-                                    <label
-                                        htmlFor="file-input"
-                                        style={{
-                                            padding: "5px 16px",
-                                            backgroundColor: "#e9e9e9",
-                                            color: "#fff",
-                                            borderRadius: "4px",
-                                            marginLeft: "4px",
-                                            marginTop: "8px",
-                                            cursor: "pointer",
-                                            fontSize: "14px",
-                                            fontWeight: "bold",
-                                            transition: "background 0.3s",
-                                        }}
-                                        onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
-                                        onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
-                                    >
-                                        Choose File
-                                    </label>
-                                    <input
-                                        type="file"
-                                        onChange={handleFileChange}
-                                        ref={fileInputRef}
-                                        multiple
-                                        style={{ display: "none" }}
-                                        id="file-input"
-                                    />
-                                    <div
-                                        style={{
-                                            borderRadius: "4px",
-                                            display: "flex",
-                                            flexWrap: "wrap",
-                                            minHeight: "38px",
-                                            flex: "1",
-                                            alignItems: "center",
-                                            gap: "6px",
-                                            marginLeft: "12px",
-                                            backgroundColor: "#fff",
-                                        }}
-                                    >
-                                        {selectedFiles.length > 0 ? (
-                                            selectedFiles.map((file, index) => (
-                                                <div
-                                                    key={index}
-                                                    style={{
-                                                        display: "inline-flex",
-                                                        alignItems: "center",
-                                                        backgroundColor: "#e9ecef",
-                                                        padding: "4px 10px",
-                                                        borderRadius: "4px",
-                                                        margin: "4px",
-                                                        fontSize: "13px",
-                                                        fontWeight: "500",
-                                                    }}
-                                                >
-                                                    <span>{file.name}</span>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => removeFile(index)}
+                            <div className="col-3 col-md-3 col-lg-2 ">
+                                <label htmlFor="" className='new-label text-nowrap mb-0'>
+                                    File Attachment
+                                </label>
+                            </div>
+                            <div className="col-3 col-md-3 col-lg-10 ">
+                                <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px", }}
+                                >
+                                    <div style={{ display: "flex", alignItems: "center", border: "1px solid #ccc", borderRadius: "6px", background: "#f9f9f9", width: "100%" }}>
+                                        <label
+                                            htmlFor="file-input"
+                                            style={{
+                                                padding: "5px 16px",
+                                                backgroundColor: "#555",
+                                                color: "#fff",
+                                                borderRadius: "4px",
+                                                marginLeft: "4px",
+                                                marginTop: "8px",
+                                                cursor: "pointer",
+                                                fontSize: "14px",
+                                                fontWeight: "bold",
+                                                transition: "background 0.3s",
+                                            }}
+                                            onMouseOver={(e) => (e.target.style.backgroundColor = "#555")}
+                                            onMouseOut={(e) => (e.target.style.backgroundColor = "#555")}
+                                        >
+                                            Choose File
+                                        </label>
+                                        <input
+                                            type="file"
+                                            onChange={handleFileChange}
+                                            ref={fileInputRef}
+                                            multiple
+                                            style={{ display: "none" }}
+                                            id="file-input"
+                                        />
+                                        <div
+                                            style={{
+                                                borderRadius: "4px",
+                                                display: "flex",
+                                                flexWrap: "wrap",
+                                                minHeight: "38px",
+                                                flex: "1",
+                                                alignItems: "center",
+                                                gap: "6px",
+                                                marginLeft: "12px",
+                                                backgroundColor: "#fff",
+                                            }}
+                                        >
+                                            {selectedFiles.length > 0 ? (
+                                                selectedFiles.map((file, index) => (
+                                                    <div
+                                                        key={index}
                                                         style={{
-                                                            marginLeft: "6px",
-                                                            border: "none",
-                                                            background: "none",
-                                                            cursor: "pointer",
-                                                            fontSize: "14px",
-                                                            fontWeight: "bold",
-                                                            color: "#d9534f",
+                                                            display: "inline-flex",
+                                                            alignItems: "center",
+                                                            backgroundColor: "#e9ecef",
+                                                            padding: "4px 10px",
+                                                            borderRadius: "4px",
+                                                            margin: "4px",
+                                                            fontSize: "13px",
+                                                            fontWeight: "500",
                                                         }}
                                                     >
-                                                        ×
-                                                    </button>
-                                                </div>
-                                            ))
-                                        ) : (
-                                            <span style={{ color: "#777", fontSize: "13px" }}>No files selected</span>
-                                        )}
+                                                        <span>{file.name}</span>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => removeFile(index)}
+                                                            style={{
+                                                                marginLeft: "6px",
+                                                                border: "none",
+                                                                background: "none",
+                                                                cursor: "pointer",
+                                                                fontSize: "14px",
+                                                                fontWeight: "bold",
+                                                                color: "#d9534f",
+                                                            }}
+                                                        >
+                                                            ×
+                                                        </button>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <span style={{ color: "#777", fontSize: "13px" }}>No files selected</span>
+                                            )}
+                                        </div>
                                     </div>
+
                                 </div>
-
                             </div>
+
                         </div>
+                    }
 
-
-
-
-
-                    </div>}
                     {selectedOption === "Release" && <div className='row align-items-center' style={{ rowGap: "8px" }}>
                         <div className="col-3 col-md-3 col-lg-2 ">
                             <label htmlFor="" className='new-label mb-0'>Reason{errors.ReasonError !== 'true' ? (
@@ -1798,7 +1808,7 @@ const PropertyManagement = (props) => {
                                         htmlFor="file-input"
                                         style={{
                                             padding: "5px 16px",
-                                            backgroundColor: "#e9e9e9",
+                                            backgroundColor: "#555",
                                             color: "#fff",
                                             borderRadius: "4px",
                                             marginLeft: "4px",
@@ -1808,8 +1818,8 @@ const PropertyManagement = (props) => {
                                             fontWeight: "bold",
                                             transition: "background 0.3s",
                                         }}
-                                        onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
-                                        onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                        onMouseOver={(e) => (e.target.style.backgroundColor = "#555")}
+                                        onMouseOut={(e) => (e.target.style.backgroundColor = "#555")}
                                     >
                                         Choose File
                                     </label>
@@ -2200,7 +2210,7 @@ const PropertyManagement = (props) => {
                                         htmlFor="file-input"
                                         style={{
                                             padding: "5px 16px",
-                                            backgroundColor: "#e9e9e9",
+                                            backgroundColor: "#555",
                                             color: "#fff",
                                             borderRadius: "4px",
                                             marginLeft: "4px",
@@ -2210,8 +2220,8 @@ const PropertyManagement = (props) => {
                                             fontWeight: "bold",
                                             transition: "background 0.3s",
                                         }}
-                                        onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
-                                        onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                        onMouseOver={(e) => (e.target.style.backgroundColor = "#555")}
+                                        onMouseOut={(e) => (e.target.style.backgroundColor = "#555")}
                                     >
                                         Choose File
                                     </label>
@@ -2683,7 +2693,7 @@ const PropertyManagement = (props) => {
                                                 htmlFor="file-input"
                                                 style={{
                                                     padding: "5px 16px",
-                                                    backgroundColor: "#e9e9e9",
+                                                    backgroundColor: "#555",
                                                     color: "#fff",
                                                     borderRadius: "4px",
                                                     marginLeft: "4px",
@@ -2693,8 +2703,8 @@ const PropertyManagement = (props) => {
                                                     fontWeight: "bold",
                                                     transition: "background 0.3s",
                                                 }}
-                                                onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
-                                                onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                                onMouseOver={(e) => (e.target.style.backgroundColor = "#555")}
+                                                onMouseOut={(e) => (e.target.style.backgroundColor = "#555")}
                                             >
                                                 Choose File
                                             </label>
@@ -3013,7 +3023,7 @@ const PropertyManagement = (props) => {
                                         htmlFor="file-input"
                                         style={{
                                             padding: "5px 16px",
-                                            backgroundColor: "#e9e9e9",
+                                            backgroundColor: "#555",
                                             color: "#fff",
                                             borderRadius: "4px",
                                             marginLeft: "4px",
@@ -3023,8 +3033,8 @@ const PropertyManagement = (props) => {
                                             fontWeight: "bold",
                                             transition: "background 0.3s",
                                         }}
-                                        onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
-                                        onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                        onMouseOver={(e) => (e.target.style.backgroundColor = "#555")}
+                                        onMouseOut={(e) => (e.target.style.backgroundColor = "#555")}
                                     >
                                         Choose File
                                     </label>
