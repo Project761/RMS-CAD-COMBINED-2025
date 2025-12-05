@@ -783,7 +783,7 @@ const PropertyManagement = (props) => {
                         </div>
 
                         <div className="col-3 col-md-3 col-lg-2 ">
-                            <label htmlFor="" className='new-label mb-0'>Check in Date/Time{errors.CheckInDateTimeError !== 'true' ? (
+                            <label htmlFor="" className='new-label mb-0'>Check In Date/Time{errors.CheckInDateTimeError !== 'true' ? (
                                 <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.CheckInDateTimeError}</p>
                             ) : null}</label>
                         </div>
@@ -989,8 +989,6 @@ const PropertyManagement = (props) => {
                                 className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
                         </div>
 
-
-
                         <div className='col-12 col-md-12 col-lg-12 '>
                             <div className="row align-items-center ">
                                 <div className="col-3 col-md-3 col-lg-2">
@@ -999,8 +997,7 @@ const PropertyManagement = (props) => {
                                     </label>
                                 </div>
                                 <div className="col-3 col-md-3 col-lg-10 ">
-                                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px", }}
-                                    >
+                                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px", }} >
                                         <div style={{ display: "flex", alignItems: "center", border: "1px solid #ccc", borderRadius: "6px", background: "#f9f9f9", width: "100%" }}>
                                             <label
                                                 htmlFor="file-input"
