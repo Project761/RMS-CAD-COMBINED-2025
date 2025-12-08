@@ -717,15 +717,15 @@ const Home = (props) => {
                         color = 'black';
                         break;
                     case 'Destroy':
-                        className  = 'destroy-dark';
+                        className = 'destroy-dark';
                         break;
                     default:
                         color = 'gray';
                 }
                 return (
                     <span
-                        style={className ? {} : { color }}  
-                        className={className}              
+                        style={className ? {} : { color }}
+                        className={className}
                     >
                         {row.Status}
                     </span>
@@ -1061,7 +1061,7 @@ const Home = (props) => {
             'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '',
             'MasterPropertyId': '', 'IsCheckIn': '', 'IsCheckOut': '', 'IsRelease': '', 'IsDestroy': '', 'IsTransferLocation': '', 'IsUpdate': '', 'CreatedByUserFK': '', 'PropertyTypeID': '',
             'OtherPersonNameID': '', 'LastSeenDtTm': '', 'PackagingDetails': '', 'ReleasingOfficerID': '', 'ReceipentOfficerID': '',
-            ['ReportedDate']: '', ['ReportedDateTo']: '', 'ModeOfTransport': '',
+            ['ReportedDate']: '', ['ReportedDateTo']: '', 'ModeOfTransport': '', 'DestinationStorageLocation': '',
         });
         setErrors({
             ...errors,
@@ -1121,6 +1121,7 @@ const Home = (props) => {
 
     function handleClickedCleared() {
         setValue({ ...value, 'location': '', });
+        setfunctiondone(!functiondone);
     }
 
     const filterTimeForDateZone = (time, datezone) => {
@@ -1332,6 +1333,8 @@ const Home = (props) => {
         setfunctiondone(!functiondone);
 
     }
+
+
 
 
 
@@ -3020,7 +3023,7 @@ const Home = (props) => {
 
                     </div>
                     <div className="col-3 col-md-3 col-lg-2  ">
-                        <label htmlFor="" className='new-label px-0 mb-0'>Receipient Officer{errors.ReasonError !== 'true' ? (
+                        <label htmlFor="" className='new-label px-0 mb-0'>Recipient Officer{errors.ReasonError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
                         ) : null}</label>
                     </div>
@@ -3315,7 +3318,8 @@ const Home = (props) => {
                     </div>
 
                     <div className="col-3 col-md-3 col-lg-2 ">
-                        <label htmlFor="" className='new-label px-0 mb-0'>Receipient Location</label>
+                        {/* <label htmlFor="" className='new-label px-0 mb-0'>Receipient Location</label> */}
+                        <label htmlFor="" className='new-label px-0 mb-0'>Recipient Location</label>
                     </div>
                     <div className="col-12 col-md-12 col-lg-2    ">
                         <input type="text" onChange={(e) => { handleChange(e) }} name="locationsdgf" style={{ position: 'relative' }} value={value.locationsdgf} className={`form-control`}
@@ -4727,7 +4731,7 @@ const Home = (props) => {
                 </div>
 
             </div>
-            <TreeModel {...{ proRoom, locationStatus, storagetype, setlocationStatus, locationPath, setfunctiondone, setLocationPath, setSearchStoragePath, searchStoStatus, setSearchStoStatus, setStorageLocationID, value, setValue, setPropertyNumber }} />
+            <TreeModel {...{ proRoom, locationStatus, storagetype, setlocationStatus, locationPath, functiondone, setfunctiondone, setLocationPath, setSearchStoragePath, searchStoStatus, setSearchStoStatus, setStorageLocationID, value, setValue, setPropertyNumber }} />
             <TreeComponent {...{ proRoom }} />
             {/* <MasterNameModel {...{ value, setValue, nameModalStatus, setNameModalStatus, loginPinID, loginAgencyID, type, possessionID, setPossessionID, possenSinglData, setPossenSinglData, GetSingleDataPassion }} />  */}
             <BarCode agencyID={loginAgencyID} propID={propertyId} masPropID={masterpropertyId} codeNo={propertyNumber} printStatus={printStatus} setPrintStatus={setPrintStatus} />
