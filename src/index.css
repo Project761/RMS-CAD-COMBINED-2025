@@ -3402,3 +3402,9 @@ icon-buttons {
   max-width: 15.18% !important;
   flex: 0 0 15.18% !important;
 }
+
+.input-full {
+    width: 100% !important;
+    min-width: 120px; /* jitna chaho set karo */
+}
+

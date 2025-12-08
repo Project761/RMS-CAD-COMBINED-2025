@@ -1292,11 +1292,12 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                 )}
                             </div>
 
-                            <div className="col-4 col-md-4 col-lg-2 d-flex align-items-center gap-2">
-                                <label htmlFor="" className='new-label mr-1 mb-0'>
-                                    DOB
-                                </label>
-                                <div>
+
+                            <div className="col-12 col-md-10 col-lg-5 d-flex align-items-center gap-2" style={{ gap: "5px" }}>
+                                <div className='d-flex align-items-center gap-2' style={{ gap: "5px" }}>
+                                    <label htmlFor="" className='new-label mr-1 mb-0'>
+                                        DOB
+                                    </label>
                                     <DatePicker
                                         id='DateOfBirth'
                                         name='DateOfBirth'
@@ -1320,17 +1321,14 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                         showYearDropdown
                                         dropdownMode="select"
                                         autoComplete="off"
-
-                                        className={'readonlyColor'}
+                                        className={'readonlyColor '}
                                         disabled
+                                        style={{ width: "70px" }}
 
-                                    // className={isLockOrRestrictModule("Lock", Editval[0]?.NameTypeID, isLocked) ? "LockFildsColor" : 'readonlyColor'}
-                                    // disabled={isLockOrRestrictModule("Lock", Editval[0]?.NameTypeID, isLocked) ? true : false}
                                     />
+
                                 </div>
-                            </div>
-                            <div className="col-12 col-md-10 col-lg-4 d-flex align-items-center gap-2">
-                                <label htmlFor="AgeFrom" className="label-name mr-1 mb-0">
+                                <label htmlFor="AgeFrom" className="label-name  mb-0" style={{ marginLeft: "8px" }}>
                                     Age
                                 </label>
                                 <div className="d-flex align-items-center gap-2">
@@ -1341,7 +1339,7 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                         readOnly
                                         placeholder="From"
                                         autoComplete="off"
-                                        style={{ width: "60px" }}
+                                        style={{ width: "50px" }}
                                         value={value?.AgeFrom}
                                         className={'form-control'}
 
@@ -1357,9 +1355,9 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                         maxLength={3}
                                         placeholder="To"
                                         autoComplete="off"
-                                        style={{ width: "45px" }}
+                                        style={{ width: "40px" }}
                                     />
-                                    <div className='ml-2'>
+                                    <div className='ml-2'  style={{ width: "125px" }}>
                                         <Select
                                             name='AgeUnitID'
                                             value={ageUnitDrpData?.find((obj) => obj.value === value?.AgeUnitID)}
@@ -1367,9 +1365,9 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                             onChange={(e) => ChangeDropDown(e, 'AgeUnitID')}
                                             isClearable
                                             placeholder="Age Unit..."
-
                                             isDisabled
                                             styles={customStylesWithOutColor}
+                                            
                                         // isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.AgeUnitID, isLocked) ? true : false}
                                         // styles={isLockOrRestrictModule("Lock", Editval[0]?.AgeUnitID, isLocked) ? LockFildscolour : value.AgeFrom ? Requiredcolour : customStylesWithOutColor}
                                         />
@@ -1377,27 +1375,27 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                 </div>
                             </div>
 
-                            <div className="col-6 col-md-3 col-lg-2 d-flex align-items-center gap-2 ">
-                                <div className="col-2 col-md-2 col-lg-1">
-                                    <label htmlFor="SexID" className="new-label mb-0 mr-1">
-                                        Gender
-                                    </label>
-                                </div>
-                                <div style={{ width: "100%" }}>
-                                    <Select
-                                        name='SexID'
-                                        value={sexIdDrp?.filter((obj) => obj.value === value?.SexID)}
-                                        options={sexIdDrp}
-                                        onChange={(e) => ChangeDropDown(e, 'SexID')}
-                                        isClearable
-                                        placeholder="Select..."
-                                        styles={customStylesWithOutColor}
-                                        isDisabled
-                                    // styles={isLockOrRestrictModule("Lock", Editval[0]?.SexID, isLocked) ? LockFildscolour : customStylesWithOutColor}
-                                    // isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.SexID, isLocked) ? true : false}
-                                    />
-                                </div>
+
+                            <div className="col-2 col-md-2 col-lg-1">
+                                <label htmlFor="SexID" className="new-label mb-0 mr-1">
+                                    Gender
+                                </label>
                             </div>
+                            <div className="col-4 col-md-4 col-lg-2">
+                                <Select
+                                    name='SexID'
+                                    value={sexIdDrp?.filter((obj) => obj.value === value?.SexID)}
+                                    options={sexIdDrp}
+                                    onChange={(e) => ChangeDropDown(e, 'SexID')}
+                                    isClearable
+                                    placeholder="Select..."
+                                    styles={customStylesWithOutColor}
+                                    isDisabled
+                                // styles={isLockOrRestrictModule("Lock", Editval[0]?.SexID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                                // isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.SexID, isLocked) ? true : false}
+                                />
+                            </div>
+
                             <div className="col-2 col-md-2 col-lg-1">
                                 <label className='new-label text-nowrap mb-0'> Race</label>
                             </div>
