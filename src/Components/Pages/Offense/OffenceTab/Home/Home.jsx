@@ -221,7 +221,8 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
 
   useEffect(() => {
     if (localStoreData) {
-      setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID); getScreenPermision(localStoreData?.AgencyID, localStoreData?.PINID);
+      setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
+       getScreenPermision(localStoreData?.AgencyID, localStoreData?.PINID);
       get_MethodOfEntry_DropDown(localStoreData?.AgencyID); setBaseDate(localStoreData?.BaseDate ? localStoreData?.BaseDate : null);
       setOriNumber(localStoreData?.ORI); get_Incident_Count(IncID);
     }
