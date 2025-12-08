@@ -384,7 +384,7 @@ const PropertyManagement = (props) => {
         const CheckOutDateTimeError = value.IsCheckOut ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
         // const ExpectedReturnDateTimeError = value.IsCheckOut ? RequiredFieldIncident(value.ExpectedDate) : 'true';
         const ReleasingOfficerError = (value.IsRelease || value.IsCheckOut) ? RequiredFieldIncident(value.ReleasingOfficerID) : 'true';
-        const ReceipientError = value.IsRelease ? RequiredFieldIncident(value.OfficerNameID) : 'true';
+        const ReceipientError = value.IsRelease ? RequiredFieldIncident(value.ReceipentID) : 'true';
         const ReleasedDateTimeError = value.IsRelease ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
         // const DestructionDateTimeError = value.IsDestroy ? RequiredFieldIncident(value.DestroyDate) : 'true';
         const DestructionDateTimeError = value.IsDestroy ? RequiredFieldIncident(value.activitydate) : 'true';
@@ -479,12 +479,12 @@ const PropertyManagement = (props) => {
         const ActivityType = selectedOption
         const CreatedByUserFK = loginPinID;
         const AgencyId = loginAgencyID;
-        const { ActivityReasonID, ExpectedDate, ActivityComments, IsInternalTransfer, ReleasingOfficerID, ReceipentOfficerID, IsExternalTransfer, DestinationStorageLocation, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
+        const { ActivityReasonID, ExpectedDate, ActivityComments, IsInternalTransfer, ReceipentID, ReleasingOfficerID, ReceipentOfficerID, IsExternalTransfer, DestinationStorageLocation, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
             CourtDate, ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId,
             IsCheckIn, IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, ActivityDtTm
         } = value;
         const val = {
-            PropertyID, ActivityType, ActivityReasonID, ExpectedDate, IsInternalTransfer, IsExternalTransfer, ReleasingOfficerID, ReceipentOfficerID, DestinationStorageLocation, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
+            PropertyID, ActivityType, ActivityReasonID, ExpectedDate, IsInternalTransfer, IsExternalTransfer, ReceipentID, ReleasingOfficerID, ReceipentOfficerID, DestinationStorageLocation, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
             CourtDate, ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId,
             MasterPropertyId, IsCheckIn, IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, CreatedByUserFK, AgencyId, ActivityDtTm
         };
@@ -698,6 +698,19 @@ const PropertyManagement = (props) => {
             IsExternalTransfer: selectedOption === 'IsExternalTransfer',
         }));
     };
+
+    const colourStyles = {
+        control: (styles) => ({
+            ...styles, backgroundColor: "#fce9bf",
+            height: 20,
+            minHeight: 31,
+            fontSize: 14,
+            margintop: 2,
+            boxShadow: 0,
+        }),
+    }
+
+    console.log(selectedStatus)
 
     console.log(selectedOption)
     return (
@@ -944,6 +957,7 @@ const PropertyManagement = (props) => {
                                         ? 'readonlyColor'
                                         : ''
                                     }`}
+                                readOnly={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                             />
 
                             {value.location ? (
@@ -988,7 +1002,7 @@ const PropertyManagement = (props) => {
                             <label htmlFor="" className='new-label text-nowrap  mb-0'>Packaging Details</label>
                         </div>
                         <div className="col-9 col-md-9 col-lg-4 text-field mt-0">
-                            <input type="text" name="PackagingDetails" className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.PackagingDetails} onChange={(e) => { handleChange(e) }} />
+                            <input type="text" name="PackagingDetails" readOnly={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'} className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.PackagingDetails} onChange={(e) => { handleChange(e) }} />
                         </div>
 
 
@@ -997,6 +1011,7 @@ const PropertyManagement = (props) => {
                         </div>
                         <div className="col-9 col-md-9 col-lg-10 text-field mt-0">
                             <input type="text" name="ActivityComments"
+                                readOnly={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                                 className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
                         </div>
 
@@ -1014,18 +1029,18 @@ const PropertyManagement = (props) => {
                                                 htmlFor="file-input"
                                                 style={{
                                                     padding: "5px 16px",
-                                                    backgroundColor: "#555",
+                                                    backgroundColor: selectedOption ? "#555" : "#ccc",
                                                     color: "#fff",
                                                     borderRadius: "4px",
                                                     marginLeft: "4px",
                                                     marginTop: "8px",
-                                                    cursor: "pointer",
+                                                    cursor: selectedOption ? "pointer" : "not-allowed",
                                                     fontSize: "14px",
                                                     fontWeight: "bold",
                                                     transition: "background 0.3s",
                                                 }}
-                                                onMouseOver={(e) => (e.target.style.backgroundColor = "#555")}
-                                                onMouseOut={(e) => (e.target.style.backgroundColor = "#555")}
+                                            // onMouseOver={(e) => (e.target.style.backgroundColor = "#555")}
+                                            // onMouseOut={(e) => (e.target.style.backgroundColor = "#555")}
                                             >
                                                 Choose File
                                             </label>
@@ -1036,6 +1051,7 @@ const PropertyManagement = (props) => {
                                                 multiple
                                                 style={{ display: "none" }}
                                                 id="file-input"
+                                                disabled={!selectedOption}
                                             />
                                             <div
                                                 style={{
@@ -1449,7 +1465,7 @@ const PropertyManagement = (props) => {
                                 <label htmlFor="" className='new-label text-nowrap mb-0'>Packaging Details</label>
                             </div>
                             <div className="col-9 col-md-9 col-lg-10 text-field mt-0">
-                                <input type="text" name="PackagingDetails" className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.PackagingDetails} onChange={(e) => { handleChange(e) }} />
+                                <input type="text" name="PackagingDetails" readOnly={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'} className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.PackagingDetails} onChange={(e) => { handleChange(e) }} />
                             </div>
 
                             <div className="col-3 col-md-3 col-lg-2 ">
@@ -1707,8 +1723,10 @@ const PropertyManagement = (props) => {
                                 options={agencyOfficerDrpData}
                                 onChange={(e) => ChangeDropDown(e, 'ReceipentID')}
                                 placeholder="Select..."
-                                styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
+                                styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
                                 isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                            // styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
+                            // isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                             />
 
 
@@ -3265,7 +3283,7 @@ const PropertyManagement = (props) => {
                         {/* <button disabled={!selectedOption} type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={(e) => { check_Validation_Error(); }}>
                                           Save
                                       </button> */}
-                        <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={() => { setStatusFalse(); conditionalRowStyles(''); }}>
+                        <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={() => { setStatusFalse(); }}>
                             Clear
                         </button>
                     </div>

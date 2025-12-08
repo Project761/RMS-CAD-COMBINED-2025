@@ -310,7 +310,7 @@ const Home = (props) => {
         const CheckOutDateTimeError = value.IsCheckOut ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
         const ExpectedReturnDateTimeError = value.IsCheckOut ? RequiredFieldIncident(value.ExpectedDate) : 'true';
         const ReleasingOfficerError = (value.IsRelease || value.IsCheckOut) ? RequiredFieldIncident(value.ReleasingOfficerID) : 'true';
-        const ReceipientError = value.IsRelease ? RequiredFieldIncident(value.OfficerNameID) : 'true';
+        const ReceipientError = value.IsRelease ? RequiredFieldIncident(value.ReceipentID) : 'true';
         const ReleasedDateTimeError = value.IsRelease ? RequiredFieldIncident(value.ReleaseDate) : 'true';
         // const DestructionDateTimeError = value.IsDestroy ? RequiredFieldIncident(value.DestroyDate) : 'true';
         const DestructionDateTimeError = value.IsDestroy ? RequiredFieldIncident(value.activitydate) : 'true';
@@ -548,12 +548,12 @@ const Home = (props) => {
         const ActivityType = selectedOption;
         const CreatedByUserFK = loginPinID;
 
-        const { ActivityReasonID, ExpectedDate, ActivityComments, DestinationStorageLocation, ModeOfTransport, ReceipentOfficerID, ReleasingOfficerID, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate, CourtDate,
+        const { ActivityReasonID, ExpectedDate, ActivityComments, DestinationStorageLocation, ReceipentID, ModeOfTransport, ReceipentOfficerID, ReleasingOfficerID, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate, CourtDate,
             ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId, IsCheckIn,
             IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, activitydate, AgencyID, PackagingDetails,
         } = value;
         const valuesArray = PropertyID.map((id, index) => ({
-            PropertyID: id, ActivityType, ActivityReasonID, ExpectedDate, activitydate, DestinationStorageLocation, ModeOfTransport, ReceipentOfficerID, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
+            PropertyID: id, ActivityType, ActivityReasonID, ExpectedDate, activitydate, DestinationStorageLocation, ReceipentID, ModeOfTransport, ReceipentOfficerID, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
             CourtDate, ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, ReleasingOfficerID, OfficerNameID, InvestigatorID, location, activityid, EventId,
             MasterPropertyId: MasterPropertyId[index], IsCheckIn, IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, CreatedByUserFK, AgencyID, PackagingDetails,
         }));
@@ -2633,7 +2633,7 @@ const Home = (props) => {
                         ) : null}</label>
                     </div>
                     <div className="col-12 col-md-12 col-lg-3 ">
-                        <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
+                        <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} readOnly={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'} className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
                             ? 'requiredColor'
                             : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
                                 ? 'readonlyColor'
@@ -2683,7 +2683,7 @@ const Home = (props) => {
                         <label htmlFor="" className='new-label text-nowrap  mb-0'>Packaging Details</label>
                     </div>
                     <div className="col-9 col-md-9 col-lg-4 text-field mt-0">
-                        <input type="text" name="PackagingDetails" className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.PackagingDetails} onChange={(e) => { handleChange(e) }} />
+                        <input type="text" name="PackagingDetails" readOnly={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'} className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.PackagingDetails} onChange={(e) => { handleChange(e) }} />
                     </div>
 
 
@@ -2692,6 +2692,7 @@ const Home = (props) => {
                     </div>
                     <div className="col-9 col-md-9 col-lg-10 text-field mt-0">
                         <input type="text" name="ActivityComments"
+                            readOnly={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                             className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
                     </div>
 
@@ -2705,25 +2706,25 @@ const Home = (props) => {
                                 </label>
                             </div>
                             <div className="col-3 col-md-3 col-lg-10 ">
-                                <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px", }}
+                                <div style={{ display: "flex", flexDirection: "row", background: selectedOption ? "#555" : "#ccc", alignItems: "center", gap: "8px", }}
                                 >
                                     <div style={{ display: "flex", alignItems: "center", border: "1px solid #ccc", borderRadius: "6px", background: "#f9f9f9", width: "100%" }}>
                                         <label
                                             htmlFor="file-input"
                                             style={{
                                                 padding: "5px 16px",
-                                                backgroundColor: "#e9e9e9",
+                                                backgroundColor: selectedOption ? "#555" : "#ccc",
                                                 color: "#fff",
                                                 borderRadius: "4px",
                                                 marginLeft: "4px",
                                                 marginTop: "8px",
-                                                cursor: "pointer",
+                                                cursor: selectedOption ? "pointer" : "not-allowed",
                                                 fontSize: "14px",
                                                 fontWeight: "bold",
                                                 transition: "background 0.3s",
                                             }}
-                                            onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
-                                            onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                        // onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                        // onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
                                         >
                                             Choose File
                                         </label>
@@ -2734,6 +2735,7 @@ const Home = (props) => {
                                             multiple
                                             style={{ display: "none" }}
                                             id="file-input"
+                                            disabled={!selectedOption}
                                         />
                                         <div
                                             style={{
