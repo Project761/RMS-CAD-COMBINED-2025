@@ -1369,7 +1369,7 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                         autoComplete="off"
                                         style={{ width: "40px" }}
                                     />
-                                    <div className='ml-2'  style={{ width: "125px" }}>
+                                    <div className='ml-2' style={{ width: "125px" }}>
                                         <Select
                                             name='AgeUnitID'
                                             value={ageUnitDrpData?.find((obj) => obj.value === value?.AgeUnitID)}
@@ -1379,7 +1379,7 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                             placeholder="Age Unit..."
                                             isDisabled
                                             styles={customStylesWithOutColor}
-                                            
+
                                         // isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.AgeUnitID, isLocked) ? true : false}
                                         // styles={isLockOrRestrictModule("Lock", Editval[0]?.AgeUnitID, isLocked) ? LockFildscolour : value.AgeFrom ? Requiredcolour : customStylesWithOutColor}
                                         />
@@ -1532,7 +1532,7 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                 </div>
                             </div>
                             <div className="col-2 col-md-2 col-lg-2">
-                                <label htmlFor="" className='new-label mb-0'>Parent Phone#  {errors.CellPhoneError !== 'true' ? (
+                                <label htmlFor="" className='new-label mb-0'>Parent Phone #  {errors.CellPhoneError !== 'true' ? (
                                     <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.CellPhoneError}</p>
                                 ) : null}</label>
                             </div>
