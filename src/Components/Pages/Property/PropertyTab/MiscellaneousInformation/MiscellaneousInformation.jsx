@@ -2315,10 +2315,10 @@ const MiscellaneousInformation = (props) => {
                             </div>
                           </>
 
-                          <div className="col-3 col-md-3 col-lg-1 mt-1 px-1 d-flex justify-content-end">
+                          <div className="col-3 col-md-3 col-lg-1 px-1 d-flex justify-content-end">
                             <button
                               type="button"
-                              className="btn btn-sm mb-2 mt-1"
+                              className="btn btn-sm "
                               data-toggle="modal" data-target="#myModal"
                               style={{
                                 backgroundColor: "#001f3f",
@@ -2368,7 +2368,7 @@ const MiscellaneousInformation = (props) => {
               </div>
             </fieldset>
             {!isViewEventDetails && (
-              <div className="col-12 col-md-12 col-lg-12 mt-2 mb-1 text-right">
+              <div className="col-12 col-md-12 col-lg-12  mb-1 text-right">
                 {effectiveScreenPermission ? (
                   effectiveScreenPermission[0]?.Changeok ? (
                     <button
