@@ -716,6 +716,9 @@ const Home = (props) => {
                     case 'Update':
                         color = 'black';
                         break;
+                    case 'Release':
+                        className = 'release-color';
+                        break;
                     case 'Destroy':
                         className = 'destroy-dark';
                         break;

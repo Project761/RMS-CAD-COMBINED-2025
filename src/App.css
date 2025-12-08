@@ -2769,3 +2769,8 @@ input.readonlyColor_MasterInput {
   color: #804400;
   font-weight: 500;
 }
+
+.release-color {
+  color: #0033cc !important;
+  font-weight: 500;
+}
