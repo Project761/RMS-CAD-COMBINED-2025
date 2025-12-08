@@ -182,7 +182,8 @@ const PropertyEvidenceReport = ({ isPreview }) => {
                 <div style={{
                     color: 'red', backgroundColor: 'rgba(255, 0, 0, 0.1)', padding: '4px 8px',
                     borderRadius: '4px', boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
-                }}> {row.Activity}
+                }}>   {row.Activity === 'CheckIn' ? 'Check In' :
+                    row.Activity === 'CheckOut' ? 'Check Out' : row.Activity}
                 </div>
             ),
             sortable: true

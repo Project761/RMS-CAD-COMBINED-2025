@@ -232,10 +232,13 @@ const PropertyManagement = (props) => {
             if (parsedData.Table && parsedData.Table.length > 0) {
 
                 setEditval(parsedData.Table[0]);
-
-                setcategoryStatus(parsedData.Table[0].Status);
+                setcategoryStatus(parsedData.Table[0].Status === 'Check In' ? 'CheckIn' :
+                    parsedData.Table[0].Status === 'Check Out' ? 'CheckOut' : parsedData.Table[0].Status);
+                // setcategoryStatus(parsedData.Table[0].Status);
                 setRowClicked(true);
-                setSelectedStatus(parsedData.Table[0].Status);
+                // setSelectedStatus(parsedData.Table[0].Status);
+                setSelectedStatus(parsedData.Table[0].Status === 'Check In' ? 'CheckIn' :
+                    parsedData.Table[0].Status === 'Check Out' ? 'CheckOut' : parsedData.Table[0].Status);
                 setTimeout(() => {
                     setreportStatus(true);
                 }, [1000])
@@ -484,7 +487,8 @@ const PropertyManagement = (props) => {
             IsCheckIn, IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, ActivityDtTm
         } = value;
         const val = {
-            PropertyID, ActivityType, ActivityReasonID, ExpectedDate, IsInternalTransfer, IsExternalTransfer, ReceipentID, ReleasingOfficerID, ReceipentOfficerID, DestinationStorageLocation, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
+            PropertyID, ActivityType: ActivityType === 'CheckIn' ? 'Check In' :
+                ActivityType === 'CheckOut' ? 'Check Out' : ActivityType, ActivityReasonID, ExpectedDate, IsInternalTransfer, IsExternalTransfer, ReceipentID, ReleasingOfficerID, ReceipentOfficerID, DestinationStorageLocation, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
             CourtDate, ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId,
             MasterPropertyId, IsCheckIn, IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, CreatedByUserFK, AgencyId, ActivityDtTm
         };
