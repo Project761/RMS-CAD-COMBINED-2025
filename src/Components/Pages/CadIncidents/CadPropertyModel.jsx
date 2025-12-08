@@ -92,7 +92,7 @@ const CadPropertyModel = (props) => {
     'ReleasingOfficerError': '', 'ExpectedReturnDateTimeError': '', 'CheckOutDateTimeError': '', 'SubmittingOfficerError': '', 'CheckInDateTimeError': '', 'PropertyRoomOfficerError': '', 'StorageLocationError': '',
   })
 
-  
+
 
 
   const colourStyles = {
@@ -106,11 +106,11 @@ const CadPropertyModel = (props) => {
     }),
   }
   useEffect(() => {
-    
-    const normalizedActivityStatus = modelActivityStatus.trim(); 
-    const transferLocation = "Transfer Location";  
 
-    const isTransferLocation = normalizedActivityStatus === transferLocation; 
+    const normalizedActivityStatus = modelActivityStatus.trim();
+    const transferLocation = "Transfer Location";
+
+    const isTransferLocation = normalizedActivityStatus === transferLocation;
     setValue((prev) => {
       const newState = {
         ...prev,
@@ -344,7 +344,7 @@ const CadPropertyModel = (props) => {
   }, [localStoreData, modalOpenStatus]);
 
   useEffect(() => {
-      setEditval([]);
+    setEditval([]);
     if (rowData?.Activity !== "CheckIn") {
       GetData_Propertyroom(MstPage === "MST-Property-Dash" ? rowData?.MasterPropertyID : rowData?.PropertyID, ProCategory, loginAgencyID);
     }
@@ -407,12 +407,15 @@ const CadPropertyModel = (props) => {
     const CreatedByUserFK = loginPinID;
     const AgencyId = loginAgencyID;
     const { ActivityReasonID, ExpectedDate, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
-      CourtDate, ReleaseDate, PropertyTag, RecoveryNumber, LastSeenDtTm , StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId,
+      CourtDate, ReleaseDate, PropertyTag, RecoveryNumber, LastSeenDtTm, StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId,
       IsCheckIn, IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, ReleasingOfficerID, ReceipentOfficerID, ReceipentID, DestructionOfficerID,
       ApprovalOfficerID, WitnessID, TransferDate, PackagingDetails, EvidenceType, UpdatingOfficerID, DestinationStorageLocation, CurrentStorageLocation
     } = value;
     const val = {
-      PropertyID, ActivityType, ActivityReasonID, ExpectedDate, LastSeenDtTm , ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
+      PropertyID,
+      ActivityType: ActivityType === 'CheckIn' ? 'Check In' :
+        ActivityType === 'CheckOut' ? 'Check Out' : ActivityType,
+      ActivityReasonID, ExpectedDate, LastSeenDtTm, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
       CourtDate, ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId,
       MasterPropertyId, IsCheckIn, IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, CreatedByUserFK, AgencyId,
       ReleasingOfficerID, ReceipentOfficerID, ReceipentID, DestructionOfficerID, EvidenceType, PackagingDetails,
@@ -500,7 +503,7 @@ const CadPropertyModel = (props) => {
       'MasterPropertyId': '', 'CreatedByUserFK': '', 'PropertyTypeID': '',
       'OtherPersonNameID': '', 'LastSeenDtTm': '', 'PackagingDetails': '', 'EvidenceType': '',
       'location': '',
-      'IsCheckIn': '', 'PackagingDetails': '', 'IsCheckOut': '', 'IsRelease': '', 'IsDestroy': '', 'IsTransferLocation': '', 
+      'IsCheckIn': '', 'PackagingDetails': '', 'IsCheckOut': '', 'IsRelease': '', 'IsDestroy': '', 'IsTransferLocation': '',
     });
     setErrors({
       ...errors,
@@ -524,14 +527,14 @@ const CadPropertyModel = (props) => {
     setToggleClear(!toggleClear);
   }
 
-   const resetdata = () => {
+  const resetdata = () => {
     setValue({
       ...value,
       'PropertyID': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
       'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '',
       'MasterPropertyId': '', 'CreatedByUserFK': '', 'PropertyTypeID': '',
       'OtherPersonNameID': '', 'LastSeenDtTm': '', 'PackagingDetails': '', 'EvidenceType': '',
-      
+
       'location': ''
     });
     setErrors({
@@ -587,11 +590,11 @@ const CadPropertyModel = (props) => {
 
   useEffect(() => {
     if (editval && selectedOption === 'Update') {
-       setErrors({
-      ...errors,
-      'ReasonError': '', 'UpdateDateTimeError': '', 'TransferDateTimeError': '', 'WitnessError': '', 'ApprovalOfficerError': '', 'UpdatingOfficerError': '', 'DestructionOfficerError': '', 'DestructionDateTimeError': '', 'ReleasedDateTimeError': '',
-      'ReleasingOfficerError': '', 'ExpectedReturnDateTimeError': '', 'CheckOutDateTimeError': '', 'SubmittingOfficerError': '', 'CheckInDateTimeError': '', 'PropertyRoomOfficerError': '', 'StorageLocationError': '',
-    })
+      setErrors({
+        ...errors,
+        'ReasonError': '', 'UpdateDateTimeError': '', 'TransferDateTimeError': '', 'WitnessError': '', 'ApprovalOfficerError': '', 'UpdatingOfficerError': '', 'DestructionOfficerError': '', 'DestructionDateTimeError': '', 'ReleasedDateTimeError': '',
+        'ReleasingOfficerError': '', 'ExpectedReturnDateTimeError': '', 'CheckOutDateTimeError': '', 'SubmittingOfficerError': '', 'CheckInDateTimeError': '', 'PropertyRoomOfficerError': '', 'StorageLocationError': '',
+      })
       setValue({
         ...value, PropertyID: editval?.PropertyID || '', ActivityType: editval?.ActivityType || '',
 
@@ -602,7 +605,7 @@ const CadPropertyModel = (props) => {
         ReceiveDate: editval?.ReceiveDate || '', OfficerNameID: editval?.OfficerNameID || '', InvestigatorID: editval?.InvestigatorID || '', location: editval?.location || '',
         activityid: editval?.activityid || '', EventId: editval?.EventId || '', MasterPropertyId: editval?.MasterPropertyId || '',
         CreatedByUserFK: editval?.CreatedByUserFK || '',
-        IsUpdate : editval?.Status
+        IsUpdate: editval?.Status
       });
 
       dispatch(get_AgencyOfficer_Data(loginAgencyID, IncID));
@@ -613,7 +616,7 @@ const CadPropertyModel = (props) => {
 
 
     } else if (editval && selectedOption === 'CheckOut' || editval && selectedOption === 'Release' || editval && selectedOption === 'Destroy' || editval && selectedOption === "Transfer Location" || editval && selectedOption === "Update") {
-      
+
       setValue({
         ...value, PropertyID: editval?.PropertyID || '',
         StorageLocationID: editval?.StorageLocationID || '',
@@ -622,25 +625,25 @@ const CadPropertyModel = (props) => {
       });
 
     }
-    else{
-       setValue({
-      ...value,
-      'PropertyID': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
-      'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '',
-      'MasterPropertyId': '', 'CreatedByUserFK': '', 'PropertyTypeID': '',
-      'OtherPersonNameID': '', 'LastSeenDtTm': '', 'PackagingDetails': '', 'EvidenceType': '',
-      
-    });
-     setErrors({
-      ...errors,
-      'ReasonError': '', 'UpdateDateTimeError': '', 'TransferDateTimeError': '', 'WitnessError': '', 'ApprovalOfficerError': '', 'UpdatingOfficerError': '', 'DestructionOfficerError': '', 'DestructionDateTimeError': '', 'ReleasedDateTimeError': '',
-      'ReleasingOfficerError': '', 'ExpectedReturnDateTimeError': '', 'CheckOutDateTimeError': '', 'SubmittingOfficerError': '', 'CheckInDateTimeError': '', 'PropertyRoomOfficerError': '', 'StorageLocationError': '',
-    })
-    
+    else {
+      setValue({
+        ...value,
+        'PropertyID': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
+        'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '',
+        'MasterPropertyId': '', 'CreatedByUserFK': '', 'PropertyTypeID': '',
+        'OtherPersonNameID': '', 'LastSeenDtTm': '', 'PackagingDetails': '', 'EvidenceType': '',
+
+      });
+      setErrors({
+        ...errors,
+        'ReasonError': '', 'UpdateDateTimeError': '', 'TransferDateTimeError': '', 'WitnessError': '', 'ApprovalOfficerError': '', 'UpdatingOfficerError': '', 'DestructionOfficerError': '', 'DestructionDateTimeError': '', 'ReleasedDateTimeError': '',
+        'ReleasingOfficerError': '', 'ExpectedReturnDateTimeError': '', 'CheckOutDateTimeError': '', 'SubmittingOfficerError': '', 'CheckInDateTimeError': '', 'PropertyRoomOfficerError': '', 'StorageLocationError': '',
+      })
+
     }
   }, [editval, selectedOption]);
 
-  
+
 
   return (
     modalOpenStatus &&
@@ -1568,8 +1571,8 @@ const CadPropertyModel = (props) => {
                         <label htmlFor="" className='new-label px-0 mb-0'>Recipient Location</label>
                       </div>
                       <div className="col-12 col-md-12 col-lg-2    ">
-                         <input type="text" onChange={(e) => { handleChange(e) }} name="locationsdgf" style={{ position: 'relative' }}  value={value.locationsdgf}  className={`form-control`}
-                            />
+                        <input type="text" onChange={(e) => { handleChange(e) }} name="locationsdgf" style={{ position: 'relative' }} value={value.locationsdgf} className={`form-control`}
+                        />
                         {/* <Select
                           name='ReceipentID'
                           // value={''}
@@ -1896,8 +1899,8 @@ const CadPropertyModel = (props) => {
                         <label htmlFor="" className='new-label mb-0'>Destruction Location</label>
                       </div>
                       <div className="col-3 col-md-3 col-lg-2">
-                         <input type="text" onChange={(e) => { handleChange(e) }} name="locationsdgf" style={{ position: 'relative' }}  value={value.locationsdgf}  className={`form-control`}
-                            />
+                        <input type="text" onChange={(e) => { handleChange(e) }} name="locationsdgf" style={{ position: 'relative' }} value={value.locationsdgf} className={`form-control`}
+                        />
                         {/* <Select
                           name='ActivityReasonID'
                           // value={reasonIdDrp?.filter((obj) => obj.value === value?.ActivityReasonID)}
@@ -2986,7 +2989,7 @@ const CadPropertyModel = (props) => {
               <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1">
                 Print Barcode
               </button>
-              <button type="button" aria-label="Close" onClick={() => {  setModalOpenStatus(false); }} ref={closeButtonRef} data-dismiss="modal" className="btn btn-sm btn-success mr-2 mb-2 mt-1" >
+              <button type="button" aria-label="Close" onClick={() => { setModalOpenStatus(false); }} ref={closeButtonRef} data-dismiss="modal" className="btn btn-sm btn-success mr-2 mb-2 mt-1" >
                 Close
               </button>
               <button onClick={() => { resetdata(); }} type="button" className="btn btn-sm btn-success  mb-2 mr-2 mt-1">

@@ -553,7 +553,8 @@ const Home = (props) => {
             IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, activitydate, AgencyID, PackagingDetails,
         } = value;
         const valuesArray = PropertyID.map((id, index) => ({
-            PropertyID: id, ActivityType, ActivityReasonID, ExpectedDate, activitydate, DestinationStorageLocation, ReceipentID, ModeOfTransport, ReceipentOfficerID, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
+            PropertyID: id, ActivityType: ActivityType === 'CheckIn' ? 'Check In' :
+                ActivityType === 'CheckOut' ? 'Check Out' : ActivityType, ActivityReasonID, ExpectedDate, activitydate, DestinationStorageLocation, ReceipentID, ModeOfTransport, ReceipentOfficerID, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
             CourtDate, ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, ReleasingOfficerID, OfficerNameID, InvestigatorID, location, activityid, EventId,
             MasterPropertyId: MasterPropertyId[index], IsCheckIn, IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, CreatedByUserFK, AgencyID, PackagingDetails,
         }));
@@ -707,10 +708,10 @@ const Home = (props) => {
                 let color = 'black';
                 let className = '';
                 switch (row.Status) {
-                    case 'CheckIn':
+                    case 'Check In':
                         color = 'green';
                         break;
-                    case 'CheckOut':
+                    case 'Check Out':
                         color = 'red';
                         break;
                     case 'Update':
@@ -730,7 +731,8 @@ const Home = (props) => {
                         style={className ? {} : { color }}
                         className={className}
                     >
-                        {row.Status}
+                        {row.Status === 'CheckIn' ? 'Check In' :
+                            row.Status === 'CheckOut' ? 'Check Out' : row.Status}
                     </span>
                 );
             }
@@ -1004,7 +1006,8 @@ const Home = (props) => {
             const propertyIds = tempSelectedRows.map(row => row.PropertyID);
             const masterpropertyIds = tempSelectedRows.map(row => row.MasterPropertyID);
             setSelectedCategory(PropertyCategoryCode); setDescription(Description);
-            setSelectedStatus(Status); setRowClicked(true);
+            setSelectedStatus(Status === 'Check In' ? 'CheckIn' :
+                Status === 'Check Out' ? 'CheckOut' : Status); setRowClicked(true);
             sessionStorage.setItem('selectedRows', JSON.stringify(tempSelectedRows));
             setPropertyId(propertyIds); setMasterPropertyId(masterpropertyIds); setStatus(!!Status);
             console.log(propertyIds, propertyIds)
