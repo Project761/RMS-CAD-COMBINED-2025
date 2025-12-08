@@ -387,7 +387,7 @@ const PropertyManagement = (props) => {
         const ReceipientError = value.IsRelease ? RequiredFieldIncident(value.OfficerNameID) : 'true';
         const ReleasedDateTimeError = value.IsRelease ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
         // const DestructionDateTimeError = value.IsDestroy ? RequiredFieldIncident(value.DestroyDate) : 'true';
-        const DestructionDateTimeError = 'true';
+        const DestructionDateTimeError = value.IsDestroy ? RequiredFieldIncident(value.activitydate) : 'true';
         const DestructionOfficerError = value.IsDestroy ? RequiredFieldIncident(value.DestructionOfficerID) : 'true';
         const UpdatingOfficerError = value.IsUpdate ? RequiredFieldIncident(value.UpdatingOfficerID) : 'true';
         const ApprovalOfficerError = (value.IsDestroy || value.IsTransferLocation || value.IsUpdate) ? RequiredFieldIncident(value.ApprovalOfficerID) : 'true';
@@ -1992,8 +1992,8 @@ const PropertyManagement = (props) => {
                                 className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                             /> */}
                             <DatePicker
-                                name='LastSeenDtTm'
-                                id='LastSeenDtTm'
+                                name='activitydate'
+                                id='activitydate'
                                 onChange={(date) => {
                                     if (date) {
                                         let selectedDate = new Date(date);
@@ -2002,9 +2002,9 @@ const PropertyManagement = (props) => {
                                         if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0 && selectedDate.getSeconds() === 0) {
                                             selectedDate.setHours(currentDateTimeFromZone.getHours()); selectedDate.setMinutes(currentDateTimeFromZone.getMinutes()); selectedDate.setSeconds(currentDateTimeFromZone.getSeconds());
                                         }
-                                        setactivitydate(selectedDate); setValue({ ...value, ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate), });
+                                        setactivitydate(selectedDate); setValue({ ...value, ['activitydate']: getShowingMonthDateYear(selectedDate), });
                                     } else {
-                                        setactivitydate(null); setValue({ ...value, ['LastSeenDtTm']: null, });
+                                        setactivitydate(null); setValue({ ...value, ['activitydate']: null, });
                                     }
                                 }}
                                 isClearable={ActivityDtTm ? true : false}
