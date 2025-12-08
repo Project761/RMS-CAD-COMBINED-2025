@@ -1533,7 +1533,7 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                 </div>
                             </div>
                             <div className="col-2 col-md-2 col-lg-2">
-                                <label htmlFor="" className='new-label mb-0'>Parent Phone#  {errors.CellPhoneError !== 'true' ? (
+                                <label htmlFor="" className='new-label mb-0'>Parent Phone #  {errors.CellPhoneError !== 'true' ? (
                                     <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.CellPhoneError}</p>
                                 ) : null}</label>
                             </div>
