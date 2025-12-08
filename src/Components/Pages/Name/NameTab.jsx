@@ -33,6 +33,7 @@ import { toastifySuccess } from '../../Common/AlertMsg';
 import DeleteNameModal from '../../Common/DeleteNameModel';
 import LockRestrictModule from '../../Common/LockRestrictModule';
 import { faLock, faUnlock, faBan, } from "@fortawesome/free-solid-svg-icons";
+import { get_ScreenPermissions_Data } from '../../../redux/actions/IncidentAction';
 
 
 const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = false }) => {
@@ -119,6 +120,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
     useEffect(() => {
         if (localStoreData) {
             setLoginPinID(localStoreData?.PINID); get_Data_Name(IncID);
+            dispatch(get_ScreenPermissions_Data("N046", localStoreData?.AgencyID, localStoreData?.PINID));
         }
     }, [localStoreData]);
 
@@ -154,6 +156,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
     }
 
     useEffect(() => {
+        console.log(effectiveScreenPermission);
         if (effectiveScreenPermission?.length > 0) {
             setaddUpdatePermission(effectiveScreenPermission[0]?.AddOK != 1 || effectiveScreenPermission[0]?.Changeok != 1 ? true : false);
         } else {
@@ -397,30 +400,12 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                     >
                                                         {/* Card Content */}
                                                         <div>
-
                                                             <p className=" small truncate-multiline mb-1" style={{ color: row?.NameID === nameID ? "white" : "black", fontWeight: "bold" }}>{row.FullName}</p>
-
-
                                                             <p className=" small truncate-multiline  mb-1" style={{ color: row?.NameID === nameID ? "white" : "black" }}> {row.DateOfBirth ? getShowingWithOutTime(row.DateOfBirth) : ""}</p>
-
-
                                                             <p className=" small truncate-multiline  mb-1" style={{ color: row?.NameID === nameID ? "white" : "black" }}>{row.Gender}</p>
-
                                                             <p
                                                                 className="mb-0 small truncate-multiline"
                                                                 style={{ color: row?.NameID === nameID ? "white" : "black" }}
-                                                            // style={{
-                                                            //     color:
-                                                            //         row?.NameID === nameID
-                                                            //             ? "white"
-                                                            //             : row.RoleName === "Other"
-                                                            //                 ? "orange"
-                                                            //                 : row.RoleName === "Victim"
-                                                            //                     ? "green"
-                                                            //                     : row.RoleName === "Offender"
-                                                            //                         ? "red"
-                                                            //                         : "black",
-                                                            // }}
                                                             >
                                                                 {row.NameReasonCode || ""}
                                                             </p>
@@ -428,7 +413,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                         </div>
                                                         <div className="d-flex flex-column align-items-center gap-2 flex-shrink-0">
                                                             {/* Edit Button */}
-                                                            {
+                                                            {/* {
                                                                 !isLockOrRestrictModule("Lock", nameFilterData, isLocked, true) &&
                                                                 <div
                                                                     style={{
@@ -443,7 +428,6 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                                         cursor: "pointer",
                                                                         boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
                                                                         marginBottom: "10px"
-                                                                        // transition: "transform 0.2s ease, box-shadow 0.2s ease",
                                                                     }}
                                                                     onClick={() => {
                                                                         set_Edit_Value(row);
@@ -453,10 +437,70 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                                 >
                                                                     <i className="fa fa-edit"></i>
                                                                 </div>
+                                                            } */}
+                                                            {
+                                                                effectiveScreenPermission ?
+                                                                    <>
+                                                                        {
+                                                                            effectiveScreenPermission[0]?.Changeok ?
+                                                                                <>
+                                                                                    <div
+                                                                                        style={{
+                                                                                            backgroundColor: "#001f3f",
+                                                                                            color: "white",
+                                                                                            width: "36px",
+                                                                                            height: "36px",
+                                                                                            borderRadius: "50%",
+                                                                                            display: "flex",
+                                                                                            alignItems: "center",
+                                                                                            justifyContent: "center",
+                                                                                            cursor: "pointer",
+                                                                                            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                                            marginBottom: "10px"
+                                                                                        }}
+                                                                                        onClick={() => {
+                                                                                            set_Edit_Value(row);
+                                                                                            setResetErrors(true);
+                                                                                        }}
+                                                                                        title="Edit"
+                                                                                    >
+                                                                                        <i className="fa fa-edit"></i>
+                                                                                    </div>
+                                                                                </>
+                                                                                :
+                                                                                <>
+                                                                                </>
+                                                                        }
+                                                                    </>
+                                                                    :
+                                                                    <>
+                                                                        <div
+                                                                            style={{
+                                                                                backgroundColor: "#001f3f",
+                                                                                color: "white",
+                                                                                width: "36px",
+                                                                                height: "36px",
+                                                                                borderRadius: "50%",
+                                                                                display: "flex",
+                                                                                alignItems: "center",
+                                                                                justifyContent: "center",
+                                                                                cursor: "pointer",
+                                                                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                                marginBottom: "10px"
+                                                                            }}
+                                                                            onClick={() => {
+                                                                                set_Edit_Value(row);
+                                                                                setResetErrors(true);
+                                                                            }}
+                                                                            title="Edit"
+                                                                        >
+                                                                            <i className="fa fa-edit"></i>
+                                                                        </div>
+                                                                    </>
                                                             }
 
                                                             {/* Delete Button */}
-                                                            {
+                                                            {/* {
                                                                 !isLockOrRestrictModule("Lock", nameFilterData, isLocked, true) &&
                                                                 <div
                                                                     style={{
@@ -470,7 +514,6 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                                         justifyContent: "center",
                                                                         cursor: "pointer",
                                                                         boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                                                        // transition: "transform 0.2s ease, box-shadow 0.2s ease",
                                                                     }}
                                                                     data-toggle="modal"
                                                                     data-target="#DeleteNameModal"
@@ -479,6 +522,65 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                                 >
                                                                     <i className="fa fa-trash"></i>
                                                                 </div>
+                                                            } */}
+                                                            {
+                                                                effectiveScreenPermission ?
+                                                                    <>
+                                                                        {
+                                                                            effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", nameFilterData, isLocked, true) ?
+                                                                                <>
+                                                                                    <div
+                                                                                        style={{
+                                                                                            backgroundColor: "#001f3f",
+                                                                                            color: "white",
+                                                                                            width: "36px",
+                                                                                            height: "36px",
+                                                                                            borderRadius: "50%",
+                                                                                            display: "flex",
+                                                                                            alignItems: "center",
+                                                                                            justifyContent: "center",
+                                                                                            cursor: "pointer",
+                                                                                            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                                        }}
+                                                                                        data-toggle="modal"
+                                                                                        data-target="#DeleteNameModal"
+                                                                                        onClick={() => setNameID(row.NameID)}
+                                                                                        title="Delete"
+                                                                                    >
+                                                                                        <i className="fa fa-trash"></i>
+                                                                                    </div>
+                                                                                </>
+                                                                                :
+                                                                                <>
+                                                                                </>
+                                                                        }
+                                                                    </>
+                                                                    :
+                                                                    <>
+                                                                        {
+                                                                            !isLockOrRestrictModule("Lock", nameFilterData, isLocked, true) &&
+                                                                            <div
+                                                                                style={{
+                                                                                    backgroundColor: "#001f3f",
+                                                                                    color: "white",
+                                                                                    width: "36px",
+                                                                                    height: "36px",
+                                                                                    borderRadius: "50%",
+                                                                                    display: "flex",
+                                                                                    alignItems: "center",
+                                                                                    justifyContent: "center",
+                                                                                    cursor: "pointer",
+                                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                                }}
+                                                                                data-toggle="modal"
+                                                                                data-target="#DeleteNameModal"
+                                                                                onClick={() => setNameID(row.NameID)}
+                                                                                title="Delete"
+                                                                            >
+                                                                                <i className="fa fa-trash"></i>
+                                                                            </div>
+                                                                        }
+                                                                    </>
                                                             }
                                                         </div>
                                                     </div>
@@ -527,7 +629,6 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                         </div>
                                     </div>
                                 )}
-
                                 {
                                     (status || isNew === "true" || isNew === true || NameCount === 0 || NameCount === "0") && (
                                         <div className="row" style={{ marginLeft: '-18px', marginRight: '-18px' }}>
@@ -570,24 +671,20 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                         <>
                                                             <span
                                                                 className={`nav-item ${nameShowPage === 'Contact_Details' ? 'active' : ''}${!status ? ' disabled' : ''}`}
-
                                                                 data-toggle={changesStatus ? "modal" : "pill"}
                                                                 data-target={changesStatus ? "#SaveModal" : ''}
                                                                 style={{ color: nameShowPage === 'Contact_Details' ? 'Red' : NameTabCount?.ContactDetailsCount > 0 ? 'blue' : '#000' }}
                                                                 aria-current="page"
-
                                                                 onClick={() => { if (!changesStatus) setNameShowPage('Contact_Details') }}
                                                             >
                                                                 Contact Details{`${NameTabCount?.ContactDetailsCount > 0 ? '(' + NameTabCount?.ContactDetailsCount + ')' : ''}`}
                                                             </span>
                                                             <span
                                                                 className={`nav-item ${nameShowPage === 'Address' ? 'active' : ''}${!status ? ' disabled' : ''}`}
-
                                                                 data-toggle={changesStatus ? "modal" : "pill"}
                                                                 data-target={changesStatus ? "#SaveModal" : ''}
                                                                 style={{ color: nameShowPage === 'Address' ? 'Red' : NameTabCount?.AddressCount > 0 ? 'blue' : '#000' }}
                                                                 aria-current="page"
-
                                                                 onClick={() => { if (!changesStatus) setNameShowPage('Address') }}
                                                             >
                                                                 Address{`${NameTabCount?.AddressCount > 0 ? '(' + NameTabCount?.AddressCount + ')' : ''}`}
@@ -595,12 +692,10 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
 
                                                             <span
                                                                 className={`nav-item ${nameShowPage === 'TransactionLog' ? 'active' : ''}${!status ? ' disabled' : ''}`}
-
                                                                 data-toggle={changesStatus ? "modal" : "pill"}
                                                                 data-target={changesStatus ? "#SaveModal" : ''}
                                                                 style={{ color: nameShowPage === 'TransactionLog' ? 'Red' : NameTabCount?.TransactionLogCount > 0 ? 'blue' : '#000' }}
                                                                 aria-current="page"
-
                                                                 onClick={() => { if (!changesStatus) setNameShowPage('TransactionLog') }}
                                                             >
                                                                 Involvement{`${NameTabCount?.TransactionLogCount > 0 ? '(' + NameTabCount?.TransactionLogCount + ')' : ''}`}
@@ -611,90 +706,74 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                         <>
                                                             <span
                                                                 className={`nav-item ${nameShowPage === 'general' ? 'active' : ''}${!status ? 'disabled' : ''}`}
-
                                                                 data-toggle={changesStatus ? "modal" : "pill"}
                                                                 data-target={changesStatus ? "#SaveModal" : ''}
                                                                 style={{ color: nameShowPage === 'general' ? 'Red' : countStatus === true ? 'blue' : '#000' }}
                                                                 aria-current="page"
-
                                                                 onClick={() => { if (!changesStatus) setNameShowPage('general') }}
                                                             >
                                                                 General{`${NameTabCount?.GeneralCount > 0 ? '(' + NameTabCount?.GeneralCount + ')' : ''}`}
                                                             </span>
                                                             <span
                                                                 className={`nav-item ${nameShowPage === 'Appearance' ? 'active' : ''}${!status ? ' disabled' : ''}`}
-
                                                                 data-toggle={changesStatus ? "modal" : "pill"}
                                                                 data-target={changesStatus ? "#SaveModal" : ''}
                                                                 style={{ color: nameShowPage === 'Appearance' ? 'Red' : countAppear === true ? 'blue' : '#000' }}
                                                                 aria-current="page"
-
                                                                 onClick={() => { if (!changesStatus) setNameShowPage('Appearance') }}
                                                             >
                                                                 Appearance{`${NameTabCount?.AppearanceCount > 0 ? '(' + NameTabCount?.AppearanceCount + ')' : ''}`}
                                                             </span>
                                                             <span
                                                                 className={`nav-item ${nameShowPage === 'aliases' ? 'active' : ''}${!status ? ' disabled' : ''}`}
-
                                                                 data-toggle={changesStatus ? "modal" : "pill"}
                                                                 data-target={changesStatus ? "#SaveModal" : ''}
                                                                 style={{ color: nameShowPage === 'aliases' ? 'Red' : NameTabCount?.AliasesCount > 0 ? 'blue' : '#000' }}
                                                                 aria-current="page"
-
                                                                 onClick={() => { if (!changesStatus) setNameShowPage('aliases') }}
                                                             >
                                                                 Aliases{`${NameTabCount?.AliasesCount > 0 ? '(' + NameTabCount?.AliasesCount + ')' : ''}`}
                                                             </span>
                                                             <span
                                                                 className={`nav-item ${nameShowPage === 'SMT' ? 'active' : ''}${!status ? ' disabled' : ''}`}
-
                                                                 data-toggle={changesStatus ? "modal" : "pill"}
                                                                 data-target={changesStatus ? "#SaveModal" : ''}
                                                                 style={{ color: nameShowPage === 'SMT' ? 'Red' : NameTabCount?.NameSMTCount > 0 ? 'blue' : '#000' }}
                                                                 aria-current="page"
-
                                                                 onClick={() => { if (!changesStatus) setNameShowPage('SMT') }}
                                                             >
                                                                 SMT{`${NameTabCount?.NameSMTCount > 0 ? '(' + NameTabCount?.NameSMTCount + ')' : ''}`}
                                                             </span>
                                                             <span
                                                                 className={`nav-item ${nameShowPage === 'Identification_Number' ? 'active' : ''}${!status ? ' disabled' : ''}`}
-
                                                                 data-toggle={changesStatus ? "modal" : "pill"}
                                                                 data-target={changesStatus ? "#SaveModal" : ''}
                                                                 style={{ color: nameShowPage === 'Identification_Number' ? 'Red' : NameTabCount?.IdentificationNumberCount > 0 ? 'blue' : '#000' }}
                                                                 aria-current="page"
-
                                                                 onClick={() => { if (!changesStatus) setNameShowPage('Identification_Number') }}
                                                             >
                                                                 Identification Number{`${NameTabCount?.IdentificationNumberCount > 0 ? '(' + NameTabCount?.IdentificationNumberCount + ')' : ''}`}
                                                             </span>
                                                             <span
                                                                 className={`nav-item ${nameShowPage === 'Contact_Details' ? 'active' : ''}${!status ? ' disabled' : ''}`}
-
                                                                 data-toggle={changesStatus ? "modal" : "pill"}
                                                                 data-target={changesStatus ? "#SaveModal" : ''}
                                                                 style={{ color: nameShowPage === 'Contact_Details' ? 'Red' : NameTabCount?.ContactDetailsCount > 0 ? 'blue' : '#000' }}
                                                                 aria-current="page"
-
                                                                 onClick={() => { if (!changesStatus) setNameShowPage('Contact_Details') }}
                                                             >
                                                                 Contact Details{`${NameTabCount?.ContactDetailsCount > 0 ? '(' + NameTabCount?.ContactDetailsCount + ')' : ''}`}
                                                             </span>
                                                             <span
                                                                 className={`nav-item ${nameShowPage === 'Address' ? 'active' : ''}${!status ? ' disabled' : ''}`}
-
                                                                 data-toggle={changesStatus ? "modal" : "pill"}
                                                                 data-target={changesStatus ? "#SaveModal" : ''}
                                                                 style={{ color: nameShowPage === 'Address' ? 'Red' : NameTabCount?.AddressCount > 0 ? 'blue' : '#000' }}
                                                                 aria-current="page"
-
                                                                 onClick={() => { if (!changesStatus) setNameShowPage('Address') }}
                                                             >
                                                                 Address{`${NameTabCount?.AddressCount > 0 ? '(' + NameTabCount?.AddressCount + ')' : ''}`}
                                                             </span>
-
-
                                                             <span
                                                                 className={`nav-item ${nameShowPage === 'Warrant' ? 'active' : ''}${!status ? ' disabled' : ''}`}
 
@@ -702,13 +781,10 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                                 data-target={changesStatus ? "#SaveModal" : ''}
                                                                 style={{ color: nameShowPage === 'Warrant' ? 'Red' : NameTabCount?.NameWarrantCount > 0 ? 'blue' : '#000' }}
                                                                 aria-current="page"
-
                                                                 onClick={() => { if (!changesStatus) setNameShowPage('Warrant') }}
                                                             >
                                                                 Warrant{`${NameTabCount?.NameWarrantCount > 0 ? '(' + NameTabCount?.NameWarrantCount + ')' : ''}`}
                                                             </span>
-
-
                                                             <span
                                                                 className={`nav-item ${nameShowPage === 'TransactionLog' ? 'active' : ''}${!status ? ' disabled' : ''}`}
 
@@ -716,7 +792,6 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                                 data-target={changesStatus ? "#SaveModal" : ''}
                                                                 style={{ color: nameShowPage === 'TransactionLog' ? 'Red' : NameTabCount?.TransactionLogCount > 0 ? 'blue' : '#000' }}
                                                                 aria-current="page"
-
                                                                 onClick={() => { if (!changesStatus) setNameShowPage('TransactionLog') }}
                                                             >
                                                                 Involvement{`${NameTabCount?.TransactionLogCount > 0 ? '(' + NameTabCount?.TransactionLogCount + ')' : ''}`}
@@ -725,7 +800,6 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                                 MstPage &&
                                                                 <span
                                                                     className={`nav-item ${nameShowPage === 'History' ? 'active' : ''}${!status ? 'disabled' : ''}`}
-
                                                                     data-toggle={changesStatus ? "modal" : "pill"}
                                                                     data-target={changesStatus ? "#SaveModal" : ''}
                                                                     style={{ color: nameShowPage === 'History' ? 'Red' : '#000' }}
