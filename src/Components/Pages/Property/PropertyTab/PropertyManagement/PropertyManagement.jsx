@@ -3272,7 +3272,7 @@ const PropertyManagement = (props) => {
                     }
                 </div >
             </div>
-            <TreeModel {...{ proRoom, locationStatus, storagetype, setlocationStatus, locationPath, setfunctiondone, setLocationPath, setSearchStoragePath, searchStoStatus, setSearchStoStatus, setStorageLocationID, value, setValue, setPropertyNumber }} />
+            <TreeModel {...{ proRoom, locationStatus, storagetype, setlocationStatus, functiondone, locationPath, setfunctiondone, setLocationPath, setSearchStoragePath, searchStoStatus, setSearchStoStatus, setStorageLocationID, value, setValue, setPropertyNumber }} />
 
 
 
