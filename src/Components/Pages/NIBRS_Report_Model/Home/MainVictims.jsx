@@ -4030,7 +4030,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                                             />
                                         </div>
 
-                                        <div className="col-2 col-md-2 col-lg-1 mt-3">
+                                        <div className="col-2 col-md-2 col-lg-1 mt-3 text-right">
                                             <span onClick={() => { setOpenPage('Justifiable Homicide') }} data-toggle="modal" data-target="#ListModel" className='new-link'>
                                                 Justifiable Homicide
                                                 {errors.JusifiableHomicideError !== 'true' ? (
