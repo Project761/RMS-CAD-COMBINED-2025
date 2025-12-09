@@ -3206,14 +3206,8 @@ const Home = (props) => {
                                     )}
                                 </div>
                             </div>
-
                         </div>
                     </div>
-
-
-
-
-
                 </div>}
                 {selectedOption === "Release" && <div className='row align-items-center' style={{ rowGap: "8px" }}>
                     <div className="col-3 col-md-3 col-lg-2 ">
@@ -3321,7 +3315,7 @@ const Home = (props) => {
                             styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
                             isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                         />
-    
+
 
                     </div>
 
