@@ -949,7 +949,7 @@ const Home = (props) => {
 
     const setStatusFalse = (e) => {
         reset();
-
+        setBarCodeStatus([]);
         setIsClearing(true);
         setSelectedRows([]); setSelectedStatus('');
         navigate(`/Property-room?&ProId=${0}&MProId=${0}&ProRomId=${0}&ProRoomStatus=${true}&selectedCategory=${''}&ProType=${''}&ProNumber=${''}&ProTransfer=${''}&CallStatus=${false}&SelectedOption=${''}`);
