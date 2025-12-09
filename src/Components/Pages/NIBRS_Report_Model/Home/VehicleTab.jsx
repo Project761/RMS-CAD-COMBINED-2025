@@ -418,7 +418,6 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                 setMasterPropertyID(res?.MasterPropertyID);
 
                 // Validate Vehicle 
-
                 ValidateVehicle(mainIncidentID);
                 NibrsErrorReturn(res?.PropertyID);
                 // validateIncSideBar

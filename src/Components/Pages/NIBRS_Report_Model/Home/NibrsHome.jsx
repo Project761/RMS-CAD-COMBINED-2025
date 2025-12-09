@@ -441,8 +441,6 @@ const NibrsHome = () => {
     transition: 'color 0.3s ease', fontWeight: 'bold', fontSize: '14px',
   }
 
-
-
   const getGroupBOffenseData = async (IncID) => {
     try {
 

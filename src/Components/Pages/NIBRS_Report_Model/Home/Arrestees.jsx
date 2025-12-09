@@ -66,7 +66,7 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false, isLocked, setIsLocked
     if (!NameID) { DecNameId = 0; }
     else { DecNameId = parseInt(base64ToString(NameID)); }
 
-    const { get_Arrest_Count, setArrestName, tabCount, arrestChargeData, updateCount, get_OffenseName_Data, setUpdateCount, incidentCount, setArrestChargeData, setIncidentNumber, get_Data_Arrest_Charge, get_ArrestCharge_Count, changesStatus, tabCountArrest, nibrsSubmittedStatus, setnibrsSubmittedStatus, nibrsSubmittedArrestee, setnibrsSubmittedArrestee, incidentNumber, ArresteName, arrestFilterData, get_Data_Arrest, policeForceDrpData, get_Police_Force, changesStatusCount, setChangesStatus, get_Incident_Count, setActiveArrest, datezone, GetDataTimeZone } = useContext(AgencyContext);
+    const { get_Arrest_Count, setArrestName, tabCount, arrestChargeData, updateCount, get_OffenseName_Data, setUpdateCount, incidentCount, setArrestChargeData, setIncidentNumber, get_Data_Arrest_Charge, get_ArrestCharge_Count, changesStatus, tabCountArrest, nibrsSubmittedStatus, setnibrsSubmittedStatus, nibrsSubmittedArrestee, setnibrsSubmittedArrestee, incidentNumber, ArresteName, arrestFilterData, get_Data_Arrest, policeForceDrpData, get_Police_Force, changesStatusCount, setChangesStatus, get_Incident_Count, setActiveArrest, datezone, GetDataTimeZone, validate_IncSideBar } = useContext(AgencyContext);
 
     const [status, setStatus] = useState();
     const [arrestDate, setArrestDate] = useState();
@@ -422,8 +422,10 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false, isLocked, setIsLocked
                     toastifySuccess(res.Message); get_Arrest_Count(ArrestID); get_Data_Arrest(MainIncidentID, MstPage === "MST-Arrest-Dash" ? true : false, loginPinID);
                     GetSingleData(res?.ArrestID, DecEIncID);
                     setArrestID(res.ArrestID); setStatus(false); setChangesStatus(false); setStatesChangeStatus(false)
-
-                    setErrors({ ...errors, ['ArresteeIDError']: '' }); get_Incident_Count(DecEIncID);
+                    setErrors({ ...errors, ['ArresteeIDError']: '' });
+                    get_Incident_Count(DecEIncID);
+                    // validateIncSideBar
+                    validate_IncSideBar(DecEIncID, IncNo, loginAgencyID);
 
                 }
             });
