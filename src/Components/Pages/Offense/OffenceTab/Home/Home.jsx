@@ -222,7 +222,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   useEffect(() => {
     if (localStoreData) {
       setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
-       getScreenPermision(localStoreData?.AgencyID, localStoreData?.PINID);
+      getScreenPermision(localStoreData?.AgencyID, localStoreData?.PINID);
       get_MethodOfEntry_DropDown(localStoreData?.AgencyID); setBaseDate(localStoreData?.BaseDate ? localStoreData?.BaseDate : null);
       setOriNumber(localStoreData?.ORI); get_Incident_Count(IncID);
     }
@@ -2475,7 +2475,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                         :
                         MultiSelectRequredColor
                   }
-                  menuPlacement='top'
+                // menuPlacement='top'
                 />
 
               </div>
@@ -2514,7 +2514,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
                   onChange={(e) => CrimeBiasCategorychange(e)}
                   value={filterArray(crimeBiasCategory, 'label')}
                   placeholder='Select Bias From List'
-                  menuPlacement='top'
+                  // menuPlacement='top'
 
                   isDisabled={isLockOrRestrictModule("Lock", crimeBiasCategoryEditVal, isLocked, true) || nibrsSubmittedOffenseMain === 1}
                   styles={
