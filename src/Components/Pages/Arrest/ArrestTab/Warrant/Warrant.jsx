@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { get_LocalStoreData } from '../../../../../redux/actions/Agency';
 import { AgencyContext } from '../../../../../Context/Agency/Index';
 import { get_AgencyOfficer_Data } from '../../../../../redux/actions/DropDownsData';
-import { Comman_changeArrayFormat } from '../../../../Common/ChangeArrayFormat';  
+import { Comman_changeArrayFormat } from '../../../../Common/ChangeArrayFormat';
 import { AddDeleteUpadate, fetchPostData } from '../../../../hooks/Api';
 import { RequiredFieldIncident } from '../../../Utility/Personnel/Validation';
 import { toastifyError, toastifySuccess } from '../../../../Common/AlertMsg';
@@ -232,8 +232,22 @@ const Warrant = (props) => {
     }
 
     const handleChange = (e) => {
-        !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-        setValue({ ...value, [e.target.name]: e.target.value });
+        if (e) {
+            !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
+            setValue({ ...value, [e.target.name]: e.target.value });
+        }
+        if (e.target.value === '') {
+            setErrors({
+                ...errors,
+                'WarrantTypeIDErrors': '',
+                'WarrantNumberErrors': '',
+                'DateTimeIssuedErrors': '',
+                'DateExpiredErrors': '',
+                'IssuingAgencyIDErrors': '',
+            });
+        }
+
+
     };
 
     useEffect(() => {
