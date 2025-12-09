@@ -3305,7 +3305,7 @@ const Home = (props) => {
 
                     </div>
                     <div className="col-3 col-md-3 col-lg-2 ">
-                        <label htmlFor="" className='new-label px-0 mb-0'>Receipient {errors.ReceipientError !== 'true' ? (
+                        <label htmlFor="" className='new-label px-0 mb-0'>Recipient {errors.ReceipientError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReceipientError}</p>
                         ) : null}</label>
                     </div>
@@ -3321,7 +3321,7 @@ const Home = (props) => {
                             styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
                             isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                         />
-
+    
 
                     </div>
 

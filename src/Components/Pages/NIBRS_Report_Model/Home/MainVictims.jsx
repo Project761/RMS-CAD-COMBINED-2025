@@ -2605,7 +2605,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                             toastifySuccess(message);
                             Get_Relationship_Data(DeNameID); setStatus(false); resetHooks(); get_NameVictim_Count(victimID)
                             get_Name_Count(DeNameID); setErrors1({ ...errors1, ['RelationshipTypeIDErrors']: '' });
-                            setStatesChangeStatus(false); setChangesStatus(false);
+                            // changes Status
+                            // setStatesChangeStatus(false); setChangesStatus(false);
                             // Validate Name
                             getNibrsErrorToolTip(DeNameID, mainIncidentID, IncNo);
                         }
@@ -2639,7 +2640,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                         const message = parsedData.Table[0].Message;
                         toastifySuccess(message);
                         Get_Relationship_Data(DeNameID); setStatus(true);
-                        setStatesChangeStatus(false); setChangesStatus(false)
+                        // changes Status 
+                        // setStatesChangeStatus(false); setChangesStatus(false)
                         get_Name_Count(DeNameID);
                         resetHooks();
                         setErrors1({

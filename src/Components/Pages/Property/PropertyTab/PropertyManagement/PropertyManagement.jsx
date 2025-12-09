@@ -1389,10 +1389,9 @@ const PropertyManagement = (props) => {
                                     isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                                 />
 
-
                             </div>
                             <div className="col-3 col-md-3 col-lg-2  ">
-                                <label htmlFor="" className='new-label px-0 mb-0'>Receipient Officer{errors.ReasonError !== 'true' ? (
+                                <label htmlFor="" className='new-label px-0 mb-0'>Recipient Officer{errors.ReasonError !== 'true' ? (
                                     <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
                                 ) : null}</label>
                             </div>
@@ -1408,7 +1407,6 @@ const PropertyManagement = (props) => {
                                     styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                                     isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                                 />
-
 
                             </div>
                             <div className="col-3 col-md-3 col-lg-2 ">
