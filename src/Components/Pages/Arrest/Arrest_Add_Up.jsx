@@ -823,7 +823,7 @@ const Arrest_Add_Up = () => {
                                             <Property {...{ DecArrestId, DecIncID, }} />
                                             :
                                             showPage === 'Charges' ?
-                                                <Charges {...{ DecArrestId, DecIncID, ListData, setListData, get_List, ArresteeID, isLocked, setIsLocked, setShowPage }} />
+                                                <Charges {...{ DecArrestId, DecIncID, ListData, setListData, get_List, GetSingleData, ArresteeID, isLocked, setIsLocked, setShowPage }} />
                                                 :
                                                 showPage === 'Warrant' ?
                                                     <Warrant {...{ DecArrestId, DecIncID, ListData, get_List, isLocked, setIsLocked, setShowPage }} />
