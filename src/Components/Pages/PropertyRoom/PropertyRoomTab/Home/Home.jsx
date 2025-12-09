@@ -3031,7 +3031,7 @@ const Home = (props) => {
 
                     </div>
                     <div className="col-3 col-md-3 col-lg-2  ">
-                        <label htmlFor="" className='new-label px-0 mb-0'>Recipient Officer{errors.ReasonError !== 'true' ? (
+                        <label htmlFor="" className='new-label px-0 mb-0'>Recepient Officer{errors.ReasonError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
                         ) : null}</label>
                     </div>
@@ -3305,7 +3305,7 @@ const Home = (props) => {
 
                     </div>
                     <div className="col-3 col-md-3 col-lg-2 ">
-                        <label htmlFor="" className='new-label px-0 mb-0'>Recipient {errors.ReceipientError !== 'true' ? (
+                        <label htmlFor="" className='new-label px-0 mb-0'>Recepient {errors.ReceipientError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReceipientError}</p>
                         ) : null}</label>
                     </div>
@@ -3321,13 +3321,13 @@ const Home = (props) => {
                             styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
                             isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                         />
-    
+
 
                     </div>
 
                     <div className="col-3 col-md-3 col-lg-2 ">
                         {/* <label htmlFor="" className='new-label px-0 mb-0'>Receipient Location</label> */}
-                        <label htmlFor="" className='new-label px-0 mb-0'>Recipient Location</label>
+                        <label htmlFor="" className='new-label px-0 mb-0'>Recepient Location</label>
                     </div>
                     <div className="col-12 col-md-12 col-lg-2    ">
                         <input type="text" onChange={(e) => { handleChange(e) }} name="locationsdgf" style={{ position: 'relative' }} value={value.locationsdgf} className={`form-control`}
