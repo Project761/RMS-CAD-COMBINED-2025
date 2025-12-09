@@ -26,7 +26,7 @@ const Home = (props) => {
 
     const { setStatus, DecPropID, DecMPropID, SelectedCategory, CallStatus, ProType, SelectedOption, ProNumber, VehNumber, ProTransfer, CheckboxStatus } = props
 
-    const { GetDataTimeZone, datezone, setChangesStatus } = useContext(AgencyContext);
+    const { GetDataTimeZone, datezone, setChangesStatus, BarCodeStatus, setBarCodeStatus } = useContext(AgencyContext);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -4708,7 +4708,7 @@ const Home = (props) => {
                             (propertyId || masterpropertyId) &&
                             <button type="button" className="btn btn-sm btn-success mx-1" onClick={() => { setPrintStatus(true) }}>Print Barcode</button>
                         } */}
-                    <button type="button" onClick={() => { setPrintStatus(true) }} className="btn btn-sm btn-success mr-2 mb-2 mt-1">
+                    <button type="button" disabled={BarCodeStatus?.length === 0 || !BarCodeStatus} onClick={() => { setPrintStatus(true) }} className="btn btn-sm btn-success mr-2 mb-2 mt-1">
                         Print Barcode
                     </button>
                     <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={GetChainCustodyReport} disabled={!selectedStatus}>
