@@ -171,6 +171,7 @@ const Offense = ({ offenseClick, isNibrsSummited = false, isLocked, setIsLocked,
   var IncSta = query?.get("IncSta");
   var OffId = query?.get("OffId");
   var OffSta = query?.get("OffSta");
+  var narrativeId = query?.get("narrativeId");
   if (!IncID) IncID = 0;
   else IncID = parseInt(base64ToString(IncID));
   if (!OffId) OffId = 0;
@@ -1112,7 +1113,7 @@ const Offense = ({ offenseClick, isNibrsSummited = false, isLocked, setIsLocked,
       if (res.success) {
         Reset();
         if (res?.CrimeID) {
-          navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${stringToBase64(res?.CrimeID)}&OffSta=${true}`);
+          navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${stringToBase64(res?.CrimeID)}&OffSta=${true}&narrativeId=${narrativeId}`);
           get_Offence_Data(mainIncidentID);
           get_Offence_Count(res?.CrimeID);
 
@@ -1183,7 +1184,7 @@ const Offense = ({ offenseClick, isNibrsSummited = false, isLocked, setIsLocked,
   };
 
   const setStatusFalse = (e) => {
-    navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${0}&OffSta=${false}`);
+    navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${0}&OffSta=${false}&narrativeId=${narrativeId}`);
     NIBRSCodeDrpDwnVal(loginAgencyID, 0);
     setStatus(false); Reset(); setnibrsSubmittedOffense(0);
   };
@@ -1326,7 +1327,7 @@ const Offense = ({ offenseClick, isNibrsSummited = false, isLocked, setIsLocked,
     get_Weapon_Data(row?.CrimeID);
     setOffenceID(row?.CrimeID);
     setStatesChangeStatus(false);
-    navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${stringToBase64(row?.CrimeID)}&OffSta=${true}`);
+    navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${stringToBase64(row?.CrimeID)}&OffSta=${true}&narrativeId=${narrativeId}`);
     setErrors({ ...errors, ChargeCodeIDError: "", NibrsIdError: "" });
     GetSingleData(row?.CrimeID);
     get_Offence_Count(row?.CrimeID);
@@ -1456,7 +1457,7 @@ const Offense = ({ offenseClick, isNibrsSummited = false, isLocked, setIsLocked,
 
 
           setStatesChangeStatus(false);
-          navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${stringToBase64(offenceError?.[0]?.CrimeID)}&OffSta=${true}`);
+          navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&OffId=${stringToBase64(offenceError?.[0]?.CrimeID)}&OffSta=${true}&narrativeId=${narrativeId}`);
           setErrors({ ...errors, ChargeCodeIDError: "", NibrsIdError: "" });
           get_Offence_Count(offenceError?.[0]?.CrimeID);
           setCrimeId(offenceError?.[0]?.CrimeID);

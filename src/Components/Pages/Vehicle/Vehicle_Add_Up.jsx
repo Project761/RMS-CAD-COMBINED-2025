@@ -312,7 +312,6 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
     const getPermissionLevelByLock = async (IncidentID, OfficerID, VehicleID) => {
         try {
             const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { 'IncidentID': IncidentID, 'OfficerID': OfficerID, 'ModuleName': "Property", 'ID': VehicleID || 0 });
-            console.log("🚀 ~ getPermissionLevelByLock ~ res:", res);
             if (res?.length > 0) {
                 setIsLocked(res[0]?.IsLocked === true || res[0]?.IsLocked === 1 ? true : false);
                 setPermissionToUnlock(res[0]?.IsUnLockPermission === true || res[0]?.IsUnLockPermission === 1 ? true : false);

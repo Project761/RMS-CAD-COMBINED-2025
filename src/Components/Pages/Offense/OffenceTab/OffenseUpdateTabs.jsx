@@ -153,7 +153,6 @@ const OffenceHomeTabs = () => {
     const getPermissionLevelByLock = async (IncidentID, OfficerID) => {
         try {
             const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { 'IncidentID': IncidentID, 'OfficerID': OfficerID, 'ModuleName': "Incident", 'ID': 0 });
-            console.log("🚀 ~ getPermissionLevelByLock ~ res:", res)
             if (res?.length > 0) {
                 setIsLocked(res[0]?.IsLocked === true || res[0]?.IsLocked === 1 ? true : false);
                 setPermissionToUnlock(res[0]?.IsUnLockPermission === true || res[0]?.IsUnLockPermission === 1 ? true : false);

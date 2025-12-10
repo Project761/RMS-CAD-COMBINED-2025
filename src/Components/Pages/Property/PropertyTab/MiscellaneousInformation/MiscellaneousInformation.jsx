@@ -31,7 +31,7 @@ const MultiValue = (props) => (
 
 const MiscellaneousInformation = (props) => {
 
-  const { ListData, DecPropID, DecMPropID, DecIncID, setIsNonPropertyRoomSelected, propertystatus, setPropertyStatus, isViewEventDetails = false, isLocked, setIsLocked } = props;
+  const { ListData, DecPropID, DecMPropID, DecIncID, setIsNonPropertyRoomSelected, propertystatus, setPropertyStatus, isViewEventDetails = false, isLocked, setIsLocked, isCaseManagement = false, refetchPropertyForCaseManagementData = () => { } } = props;
 
   const { setChangesStatus, get_Incident_Count, incidentCount, datezone, GetDataTimeZone, incidentReportedDate, } = useContext(AgencyContext);
   const reportApproveOfficer = useSelector((state) => state.Incident.reportApproveOfficer);
@@ -216,7 +216,7 @@ const MiscellaneousInformation = (props) => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         toastifyError(err?.message);
       });
   };
@@ -233,7 +233,7 @@ const MiscellaneousInformation = (props) => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         toastifyError(err?.message);
       });
   };
@@ -246,11 +246,11 @@ const MiscellaneousInformation = (props) => {
         if (res) {
           const obj = res.filter((item) => item?.PropertyID === PropertyID);
         } else {
-          console.log("res of Get_TaskList_Status::", res);
+          console.warn("res of Get_TaskList_Status::", res);
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         toastifyError(err?.message);
       });
   };
@@ -334,7 +334,6 @@ const MiscellaneousInformation = (props) => {
     files.forEach(file => formData.append("File", file));
 
     formData.append("Data", JSON.stringify(metadataArray));
-    console.log(metadataArray)
 
 
     try {
@@ -407,6 +406,10 @@ const MiscellaneousInformation = (props) => {
           const message = parsedData.Table[0].Message;
           toastifySuccess(message);
 
+          if (isCaseManagement) {
+            refetchPropertyForCaseManagementData();
+          }
+
           if (taskToSend && value.OfficerID) {
             InSertBasicInfo(
               value?.CollectingOfficer,
@@ -441,7 +444,7 @@ const MiscellaneousInformation = (props) => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         toastifyError(err?.message);
       });
   };
@@ -670,7 +673,6 @@ const MiscellaneousInformation = (props) => {
     }
 
     setIsSendButtonDisabled(false);
-    console.log(tasksInList, 'hello');
     if (tasksInList.includes("CheckIn") && selectedStatus === "CheckOut" || tasksInList.includes("CheckIn") && selectedStatus === "Release" || tasksInList.includes("CheckIn") && selectedStatus === "Destroy" || tasksInList.includes("CheckIn") && selectedStatus === "Update" || tasksInList.includes("CheckIn") && selectedStatus === "Transfer Location") {
       setTaskListStatus("Other task already pending in task list.");
       setChangesStatus(false);
@@ -773,11 +775,11 @@ const MiscellaneousInformation = (props) => {
           Get_SendTask_DrpVal(DecPropID, DecMPropID);
 
         } else {
-          console.log("Somthing Wrong");
+          console.warn("Somthing Wrong");
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         toastifyError(err?.message);
       });
   };
@@ -797,11 +799,11 @@ const MiscellaneousInformation = (props) => {
           Get_SendTask_Data(DecPropID, DecMPropID);
           Get_SendTask_DrpVal(DecPropID, DecMPropID);
         } else {
-          console.log("Somthing Wrong");
+          console.warn("Somthing Wrong");
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         toastifyError(err?.message);
       });
   };
@@ -865,14 +867,12 @@ const MiscellaneousInformation = (props) => {
       arr = StatusOption.filter((item) => !(item.label === PropertyRoomStatus));
       return arr;
     } else {
-      console.log("Task::", task);
       const status = LastTask;
       arr = [{ value: "1", label: "CheckIn" }];
       if (status) {
         const filteredvalue = StatusOption.filter(
           (item) => item.label !== LastTask
         );
-        console.log(filteredvalue);
         return filteredvalue;
         // return StatusOption;
       }
@@ -1529,11 +1529,6 @@ const MiscellaneousInformation = (props) => {
                                           setChangesStatus(true);
 
                                         if (date) {
-                                          console.log(
-                                            "occurred from date entered true::",
-                                            date
-                                          );
-
                                           let occurredFromTimestamp = new Date(
                                             value?.ReportedDate
                                           );
@@ -1559,10 +1554,6 @@ const MiscellaneousInformation = (props) => {
                                               ),
                                           });
                                         } else {
-                                          console.log(
-                                            "occurred from date entered false::",
-                                            date
-                                          );
                                           setdisPatchdate(date);
                                           setValue({
                                             ...value,

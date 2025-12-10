@@ -99,6 +99,7 @@ const NibrsHome = () => {
   else IncID = parseInt(base64ToString(IncID));
   var IncNo = query?.get("IncNo");
   var IncSta = query?.get("IncSta");
+  var narrativeId = query?.get("narrativeId");
 
 
   useEffect(() => {
@@ -116,7 +117,7 @@ const NibrsHome = () => {
   }, [localStoreData]);
 
   const toggleSection = (section) => {
-    navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}`);
+    navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&narrativeId=${narrativeId}`);
     setOpenSection(openSection === section ? null : section);
     getPermissionLevelByLock(IncID, loginPinID)
     switch (section) {
@@ -476,7 +477,6 @@ const NibrsHome = () => {
   const getPermissionLevelByLock = async (IncidentID, OfficerID) => {
     try {
       const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { 'IncidentID': IncidentID, 'OfficerID': OfficerID, 'ModuleName': "Incident", 'ID': 0 });
-      // console.log("🚀 ~ getPermissionLevelByLock ~ res:", res)
       if (res?.length > 0) {
         setIsLocked(res[0]?.IsLocked === true || res[0]?.IsLocked === 1 ? true : false);
         setPermissionToUnlock(res[0]?.IsUnLockPermission === true || res[0]?.IsUnLockPermission === 1 ? true : false);
@@ -600,21 +600,33 @@ const NibrsHome = () => {
             </div>
           ))}
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            validate_IncSideBar(incidentID, IncNo, loginAgencyID);
-            setNibrsErrModalStatus(true);
-          }}
-          data-toggle={"modal"}
-          data-target={"#NibrsAllModuleErrorShowModal"}
-          className={`btn text-white btn-sm mt-2`}
-          style={{
-            backgroundColor: `${incidentErrorStatus || offenderErrorStatus || propErrorStatus || vehErrorStatus || victimErrorStatus || offenseErrorStatus || isGroup_B_Offense_ArrestInc || isOffenseInc ? 'red' : 'teal'}`,
-          }}
-        >
-          Validate TIBRS Screen
-        </button>
+        <div className="d-flex justify-content-between">
+          <button
+            type="button"
+            onClick={() => {
+              validate_IncSideBar(incidentID, IncNo, loginAgencyID);
+              setNibrsErrModalStatus(true);
+            }}
+            data-toggle={"modal"}
+            data-target={"#NibrsAllModuleErrorShowModal"}
+            className={`btn text-white btn-sm mt-2`}
+            style={{
+              backgroundColor: `${incidentErrorStatus || offenderErrorStatus || propErrorStatus || vehErrorStatus || victimErrorStatus || offenseErrorStatus || isGroup_B_Offense_ArrestInc || isOffenseInc ? 'red' : 'teal'}`,
+            }}
+          >
+            Validate TIBRS Screen
+          </button>
+          {narrativeId && <button
+            type="button"
+            onClick={() => {
+              const urlParams = `/Inc-Report?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=true${narrativeId ? `&narrativeId=${narrativeId}` : ''}`;
+              navigate(urlParams);
+            }}
+            className="btn btn-sm btn-success mt-2"
+          >
+            Back to Report
+          </button>}
+        </div>
       </div>
       <NirbsAllModuleErrorShowModal
         incidentErrorStatus={incidentErrorStatus}

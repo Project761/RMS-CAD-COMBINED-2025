@@ -95,8 +95,7 @@ const CloseHistory = () => {
 
     return (
         <>
-
-            <div className="col-12 col-sm-12 mt-2">
+            <div className="col-12 col-sm-12">
                 <DataTable
                     dense
                     columns={columns}

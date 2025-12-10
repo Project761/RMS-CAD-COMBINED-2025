@@ -181,13 +181,14 @@ const TreeModal = (props) => {
 
 
     return (
-        TreeData &&
+        TreeData && locationStatus &&
         <div className="modal fade" style={{ background: "rgba(0,0,0, 0.5)" }} id="PropertyRoomTreeModal" tabIndex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-backdrop="false">
             <div className="modal-dialog modal-lg modal-dialog-centered rounded modal-dialog-scrollable">
                 <div className="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title model-color">Property Room Storage Location</h5>
                         <button type="button" className="border-0" aria-label="Close" data-dismiss="modal" onClick={() => {
+                            setlocationStatus(false);
                             setTreeData([]); if (value.location && locationStatus) {
                                 handleSelect(selectBranch);
                             } else if (value.location && searchStoStatus) {
@@ -219,6 +220,7 @@ const TreeModal = (props) => {
                             } else if (value.location && searchStoStatus) {
                                 handleSelectSearch(selectBranch);
                             }
+                            setlocationStatus(false);
                         }} class="btn btn-md btn-primary">Close</button>
                     </div>
                 </div>

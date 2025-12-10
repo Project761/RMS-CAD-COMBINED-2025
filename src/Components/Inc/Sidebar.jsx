@@ -10,11 +10,12 @@ import ConsolidationSidebar from "./SidebarCom/ConsolidationSidebar";
 import PropertyRoomSideBar from "./SidebarCom/PropertyRoomSidebar";
 import ExpungeSidebar from "./SidebarCom/ExpungeSidebar";
 import PropertyRoomStorageSidebar from "./SidebarCom/PropertyRoomStorageSidebar";
+import CaseManagementSidebar from "./SidebarCom/caseManagementSidebar";
 
 const Sidebar = (props) => {
 
   // useNoBackNavigation();
-  const { listManagementSideBar, agencySideBar, propertyStorageSideBar, propertyRoomSideBar, personnelSideBar, incidentSideBar, dashboardSidebar, reportSidebar, searchSidebar, consolidationSideBar, expungeSideBar } = props
+  const { listManagementSideBar, agencySideBar, propertyStorageSideBar, propertyRoomSideBar, personnelSideBar, incidentSideBar, dashboardSidebar, reportSidebar, searchSidebar, consolidationSideBar, expungeSideBar, caseManagementSideBar } = props
 
   const useQuery = () => new URLSearchParams(useLocation().search);
   const query = useQuery();
@@ -33,7 +34,10 @@ const Sidebar = (props) => {
               dashboardSidebar && <DashboardSidebar />
             }
             {
-              incidentSideBar && < IncSidebar />
+              incidentSideBar && <IncSidebar />
+            }
+            {
+              caseManagementSideBar && <CaseManagementSidebar />
             }
             {
               agencySideBar && <AgencySidebar />

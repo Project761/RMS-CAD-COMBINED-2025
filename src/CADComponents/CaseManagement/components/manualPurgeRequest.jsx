@@ -6,6 +6,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getShowingMonthDateYear, tableCustomStyles } from '../../../Components/Common/Utility';
 import { useDispatch } from 'react-redux';
 import { getDropDownReasonCase } from '../../../redux/actions/DropDownsData';
+import CaseManagementServices from '../../../CADServices/APIs/caseManagement';
+import { toastifyError, toastifySuccess } from '../../../Components/Common/AlertMsg';
 
 function ManualPurgeRequest(props) {
     const { isPreview } = props;
@@ -21,7 +23,7 @@ function ManualPurgeRequest(props) {
         if (localStoreData) {
             get_Data_Que_Report(localStoreData?.AgencyID, localStoreData?.PINID);
         }
-    }, [localStoreData]);
+    }, [localStoreData, modelStatus]);
 
     const get_Data_Que_Report = (agencyId, OfficerID) => {
         const val = { 'AgencyID': agencyId, OfficerID: OfficerID }
@@ -132,7 +134,7 @@ function ManualPurgeRequest(props) {
                                     />
                                 </div>
                                 <h5 className="mb-0 mr-3" style={{ fontSize: "18px", fontWeight: "600", color: '#334c65' }}>
-                                    {queData?.length}
+                                    {filteredData?.length > 0 ? filteredData?.length : queData?.length}
                                 </h5>
                                 <Link to="/manual-purge-request">
                                     <button className="see-all-btn mr-1 see_all-button" style={{ fontSize: "12px", padding: "4px 8px" }}>See All</button>
@@ -198,12 +200,28 @@ const ManualPurgeRequestModal = (props) => {
         setApprovalComments('');
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         // Handle save logic here
-        console.log('Save clicked', { approvalAction, approvalComments });
-        // Add your save API call here
+        const payload = {
+            "ManualPurgeID": editData?.ManualPurgeID,
+            "CaseID": editData?.CaseID,
+            "ManualDateTime": editData?.ManualDateTime,
+            "IsApprove": approvalAction === 'Approve' ? true : false,
+            "IsReject": approvalAction === 'Reject' ? true : false,
+            "AgencyID": localStoreData?.AgencyID,
+            "CreatedByUserFK": localStoreData?.PINID,
+            "Comments": approvalComments,
+        }
+        const response = await CaseManagementServices.addManualPurgeApprove(payload);
+        if (response) {
+            toastifySuccess("Request " + (approvalAction === 'Approve' ? 'approved' : 'rejected') + " successfully");
+            setModelStatus(false);
+            handleClear();
+        } else {
+            toastifyError("Failed to " + (approvalAction === 'Approve' ? 'approve' : 'reject') + " request");
+        }
     };
-    console.log("reasonCaseDrpData", reasonCaseDrpData)
+
     return (
         <div className="modal fade show d-block" style={{ background: "rgba(0,0,0,0.5)" }}>
             <div className="modal-dialog modal-xl modal-dialog-centered">
@@ -220,7 +238,7 @@ const ManualPurgeRequestModal = (props) => {
                     </div>
 
                     {/* Request Details Section */}
-                    <div className="mt-3">
+                    <div className="mt-1">
                         {/* Row 1: RMS Case #, Incident #, Submitted By, Submitted DT/TM */}
                         <div className="row mb-3">
                             <div className="col-md-3">
@@ -368,7 +386,7 @@ const ManualPurgeRequestModal = (props) => {
                         {/* Previous Comment */}
                         <div className="row">
                             <div className="col-6">
-                                <label className="form-label fw-bold mb-2">Previous Comment</label>
+                                <label className="form-label fw-bold mb-2">{approvalAction === 'Approve' ? 'Previous Comment' : 'Previous Rejection Reason'}</label>
                                 <textarea
                                     className="form-control py-1 new-input"
                                     rows="4"
@@ -379,7 +397,7 @@ const ManualPurgeRequestModal = (props) => {
                                 />
                             </div>
                             <div className="col-6">
-                                <label className="form-label fw-bold mb-2">Enter Approval Comments Here</label>
+                                <label className="form-label fw-bold mb-2">{approvalAction === 'Approve' ? 'Enter Approval Comments Here' : 'Enter Rejection Comments Here'}</label>
                                 <textarea
                                     className="form-control py-1 new-input requiredColor"
                                     rows="4"

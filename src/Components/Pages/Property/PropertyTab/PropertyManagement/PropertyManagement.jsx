@@ -27,7 +27,7 @@ const PropertyManagement = (props) => {
     const componentRefnew = useRef();
     const componentRef = useRef();
 
-    const { DecPropID, DecMPropID, DecIncID, ProCategory, isViewEventDetails = false } = props
+    const { DecPropID, DecMPropID, DecIncID, ProCategory, isViewEventDetails = false, isCaseManagement = false, refetchPropertyForCaseManagementData = () => { } } = props
     const { get_Property_Count, setChangesStatus, GetDataTimeZone, datezone, incidentReportedDate, setIncidentReportedDate, } = useContext(AgencyContext);
     const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
     const primaryOfficerID = useSelector((state) => state.DropDown.agencyOfficerDrpData)
@@ -134,7 +134,6 @@ const PropertyManagement = (props) => {
         { value: 4, label: 'Destroy' },
     ]
 
-    console.log(editval)
 
     useEffect(() => {
         if (localStoreData) {
@@ -243,14 +242,12 @@ const PropertyManagement = (props) => {
                     setreportStatus(true);
                 }, [1000])
                 setReportedDtTm(parsedData.Table[0]?.ReportedDtTm);
-                console.log("data::", parsedData.Table[0])
                 if (parsedData.Table[0].Status === 'Release' && shouldPrintForm === true) {
                     await new Promise(resolve => setTimeout(resolve, 0));
                     printForm();
                     setShouldPrintForm(false);
                 }
             } else {
-                console.log("No data available else executed");
                 toastifyError('No Data Available');
                 setRowClicked(true);
                 setcategoryStatus('');
@@ -323,7 +320,6 @@ const PropertyManagement = (props) => {
 
 
     useEffect(() => {
-        console.log(editval, selectedOption)
         if (editval && selectedOption === 'Update') {
             setValue({
                 ...value, PropertyID: editval?.PropertyID || '', ActivityType: editval?.ActivityType || '',
@@ -506,6 +502,9 @@ const PropertyManagement = (props) => {
             GetData_Propertyroom(MstPage === "MST-Property-Dash" ? DecMPropID : DecPropID, ProCategory, loginAgencyID);
             setReleaseStatus(selectedOption === 'Release' ? true : false)
             toastifySuccess(res.Message);
+            if (isCaseManagement) {
+                refetchPropertyForCaseManagementData();
+            }
         })
     }
     const GetChainCustodyReport = () => {
@@ -537,7 +536,7 @@ const PropertyManagement = (props) => {
     const chainForm = useReactToPrint({
         content: () => componentRefnew.current,
         documentTitle: 'Data',
-        onAfterPrint: () => { console.log(chainreport) }
+        onAfterPrint: () => { }
 
     })
 
@@ -548,7 +547,6 @@ const PropertyManagement = (props) => {
     })
 
     const ChangeDropDown = (e, name) => {
-        console.log("event::", e, "name::", name)
         if (e) {
             setChangesStatus(true);
             if (name === 'PropertyRoomPersonNameID') {

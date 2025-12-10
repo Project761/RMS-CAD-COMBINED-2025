@@ -58,6 +58,7 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
     var VehId = query?.get("VehId");
     var MVehId = query?.get('MVehId');
     var VehSta = query?.get('VehSta');
+    var narrativeId = query?.get("narrativeId");
 
     if (!IncID) IncID = 0;
     else IncID = parseInt(base64ToString(IncID));
@@ -406,7 +407,7 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
     const Insert_Vehicle = () => {
         AddDeleteUpadate('PropertyVehicle/Insert_PropertyVehicle', value).then((res) => {
             if (res.success) {
-                navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${stringToBase64(res?.PropertyID)}&MVehId=${stringToBase64(res?.MasterPropertyID)}&VehSta=${true}`)
+                navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${stringToBase64(res?.PropertyID)}&MVehId=${stringToBase64(res?.MasterPropertyID)}&VehSta=${true}&narrativeId=${narrativeId}`)
                 reset();
                 toastifySuccess(res.Message);
                 setErrors({ ...errors, ['LossCodeIDError']: '' })
@@ -800,10 +801,7 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
         } else {
 
             if (row.PropertyID || row.MasterPropertyID) {
-                // get Inc-Lock Status
-                getPermissionLevelByLock(IncID, loginPinID);
-
-                navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${stringToBase64(row?.PropertyID)}&MVehId=${stringToBase64(row?.MasterPropertyID)}&VehSta=${true}`)
+                navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${stringToBase64(row?.PropertyID)}&MVehId=${stringToBase64(row?.MasterPropertyID)}&VehSta=${true}&narrativeId=${narrativeId}`)
                 GetSingleData(row?.PropertyID, row?.MasterPropertyID);
                 get_vehicle_Count(row?.PropertyID, 0);
                 setMasterPropertyID(row.MasterPropertyID);
@@ -904,9 +902,9 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
         if (MstVehicle === 'MST-Vehicle-Dash') {
             if (isCad) {
                 if (isCADSearch) {
-                    navigate(`/cad/vehicle_search?page=MST-Vehicle-Dash&?VehId=${0}&?MVehId=${0}&ModNo=${''}`);
+                    navigate(`/cad/vehicle_search?page=MST-Vehicle-Dash&?VehId=${0}&?MVehId=${0}&ModNo=${''}&narrativeId=${narrativeId}`);
                 } else {
-                    navigate(`/cad/dispatcher?page=MST-Vehicle-Dash&?VehId=${0}&?MVehId=${0}&ModNo=${''}`)
+                    navigate(`/cad/dispatcher?page=MST-Vehicle-Dash&?VehId=${0}&?MVehId=${0}&ModNo=${''}&narrativeId=${narrativeId}`)
                 }
             }
             reset();
@@ -916,9 +914,9 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
 
         } else {
             if (isCad) {
-                navigate(`/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${0}&MVehId=${0}&VehSta=${false}`)
+                navigate(`/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${0}&MVehId=${0}&VehSta=${false}&narrativeId=${narrativeId}`)
             } else {
-                navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${0}&MVehId=${0}&VehSta=${false}`)
+                navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${0}&MVehId=${0}&VehSta=${false}&narrativeId=${narrativeId}`)
             }
             reset();
             setVehicleStatus(false); dispatch({ type: Master_Vehicle_Status, payload: false });

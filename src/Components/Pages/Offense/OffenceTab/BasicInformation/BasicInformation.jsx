@@ -772,9 +772,9 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, isLock
   };
 
   const { MethodOfEnrtyError, WeaponTypeError, CriminalActivityError, OffenderusingError, CrimeBiasCategoryError } = errors
-
+  console.log("errors", errors)
   useEffect(() => {
-    if (MethodOfEnrtyError === 'true' && WeaponTypeError === 'true' && CriminalActivityError === 'true' && OffenderusingError === 'true' && CrimeBiasCategoryError === 'true') {
+    if (MethodOfEnrtyError === 'true' && WeaponTypeError === 'true' && CriminalActivityError === 'true') {
       InSertBasicInfo();
     }
   }, [MethodOfEnrtyError, WeaponTypeError, CriminalActivityError, OffenderusingError, CrimeBiasCategoryError])

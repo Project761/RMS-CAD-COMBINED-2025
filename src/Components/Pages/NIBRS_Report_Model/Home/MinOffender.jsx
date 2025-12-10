@@ -66,7 +66,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, isLocked,
     var MasterNameID = query?.get("MasterNameID");
     let MstPage = query?.get('page');
     let ModNo = query?.get('ModNo');
-
+    var narrativeId = query?.get("narrativeId");
     if (!IncID) IncID = 0;
     else IncID = parseInt(base64ToString(IncID));
     if (!NameID) NameID = 0;
@@ -730,7 +730,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, isLocked,
             Get_Relationship_Data(row?.NameID);
             setStatesChangeStatus(false)
             GetSingleData(row?.NameID, row?.MasterNameID);
-            navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(row?.NameID)}&MasterNameID=${stringToBase64(row?.MasterNameID)}&NameStatus=${true}`)
+            navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(row?.NameID)}&MasterNameID=${stringToBase64(row?.MasterNameID)}&NameStatus=${true}&narrativeId=${narrativeId}`)
             get_Name_Count(row?.NameID, row?.MasterNameID, MstPage === "MST-Name-Dash" ? true : false);
             setNameID(row.NameID)
             setMasterNameID(row?.MasterNameID)
@@ -1140,12 +1140,12 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, isLocked,
                             if (res.success) {
                                 if (MstPage === "MST-Name-Dash") {
 
-                                    navigate(`/nibrs-Home?page=MST-Name-Dash&NameID=${stringToBase64(res?.NameID)}&MasterNameID=${stringToBase64(res?.MasterNameID)}&ModNo=${res?.NameNumber}&NameStatus=${true}`);
+                                    navigate(`/nibrs-Home?page=MST-Name-Dash&NameID=${stringToBase64(res?.NameID)}&MasterNameID=${stringToBase64(res?.MasterNameID)}&ModNo=${res?.NameNumber}&NameStatus=${true}&narrativeId=${narrativeId}`);
 
                                 }
                                 else {
 
-                                    navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(res?.NameID)}&MasterNameID=${stringToBase64(res?.MasterNameID)}&NameStatus=${true}`)
+                                    navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(res?.NameID)}&MasterNameID=${stringToBase64(res?.MasterNameID)}&NameStatus=${true}&narrativeId=${narrativeId}`)
 
                                 }
                                 toastifySuccess(res.Message);
@@ -1243,7 +1243,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, isLocked,
                                 const parseData = JSON.parse(res.data);
                                 toastifySuccess(parseData?.Table[0].Message);
                                 if (MstPage === "MST-Name-Dash") {
-                                    navigate(`/nibrs-Home?page=MST-Name-Dash&MasterNameID=${stringToBase64(MasterNameID)}&ModNo=${ModNo}&NameStatus=${true}`);
+                                    navigate(`/nibrs-Home?page=MST-Name-Dash&MasterNameID=${stringToBase64(MasterNameID)}&ModNo=${ModNo}&NameStatus=${true}&narrativeId=${narrativeId}`);
                                 }
                                 setChangesStatus(false);
                                 setValue({
@@ -1748,7 +1748,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, isLocked,
                         Get_Relationship_Data(row?.NameEventID);
                         setStatesChangeStatus(false)
                         GetSingleData(row?.NameEventID, row?.MasterNameID);
-                        navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(row?.NameEventID)}&MasterNameID=${stringToBase64(row?.MasterNameID)}&NameStatus=${true}`)
+                        navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(row?.NameEventID)}&MasterNameID=${stringToBase64(row?.MasterNameID)}&NameStatus=${true}&narrativeId=${narrativeId}`)
                         get_Name_Count(row?.NameEventID, row?.MasterNameID, MstPage === "MST-Name-Dash" ? true : false);
                         setNameID(row.NameEventID)
                         setMasterNameID(row?.MasterNameID)
@@ -1810,10 +1810,10 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, isLocked,
 
     const setStatusFalse = () => {
         if (MstPage === "MST-Name-Dash") {
-            navigate(`/nibrs-Home?page=MST-Name-Dash&IncId=${0}&IncNo=${0}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}`)
+            navigate(`/nibrs-Home?page=MST-Name-Dash&IncId=${0}&IncNo=${0}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}&narrativeId=${narrativeId}`)
         }
         else {
-            navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}`)
+            navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}&narrativeId=${narrativeId}`)
 
             setMasterNameID('');
             setNameID('');
@@ -2996,7 +2996,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, isLocked,
                                         width: 'fit-content', height: 'fit-content',
 
                                     }}
-                                    onClick={(e) => { navigate(`/Missing-Home?IncId=${stringToBase64(mainIncidentID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(nameID)}&MasterNameID=${stringToBase64(masterNameID)}&NameStatus=${true}`) }}
+                                    onClick={(e) => { navigate(`/Missing-Home?IncId=${stringToBase64(mainIncidentID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(nameID)}&MasterNameID=${stringToBase64(masterNameID)}&NameStatus=${true}&narrativeId=${narrativeId}`) }}
                                 >
                                     Missing Person
                                 </div>
@@ -3011,7 +3011,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, isLocked,
                                         cursor: 'pointer', fontSize: '14px', fontWeight: 500,
                                         width: 'fit-content', height: 'fit-content',
                                     }}
-                                    onClick={(e) => { navigate(`/Arrest-Home?IncId=${stringToBase64(mainIncidentID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(nameID)}&MasterNameID=${stringToBase64(masterNameID)}&NameStatus=${true}`) }}
+                                    onClick={(e) => { navigate(`/Arrest-Home?IncId=${stringToBase64(mainIncidentID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(nameID)}&MasterNameID=${stringToBase64(masterNameID)}&NameStatus=${true}&narrativeId=${narrativeId}`) }}
                                 >
                                     Adult Arrest
                                 </div>

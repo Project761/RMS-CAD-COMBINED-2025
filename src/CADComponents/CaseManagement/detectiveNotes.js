@@ -71,6 +71,7 @@ function DetectiveNotes({ CaseId }) {
             if (sourceTypeDrpData?.length === 0) dispatch(getData_DropDown_SourceType(localStoreData?.AgencyID))
             if (agencyOfficerDrpData?.length === 0) dispatch(get_AgencyOfficer_Data(localStoreData?.AgencyID));
             if (PriorityDrpData?.length === 0) dispatch(getData_DropDown_Priority(localStoreData?.AgencyID));
+            handleFormState("noteBy", agencyOfficerDrpData?.find(v => v?.value === parseInt(localStoreData?.PINID)));
             setLoginPinID(localStoreData?.PINID);
             setAgencyID(localStoreData?.AgencyID);
         }
@@ -85,7 +86,7 @@ function DetectiveNotes({ CaseId }) {
             "NoteByID": filterState?.filterNoteBy?.value,
             "ConfidenceID": filterState?.filterConfidence?.PriorityID,
             "IntelligenceText": filterState?.filterText,
-            "HasDocuments": filterState?.hasDocuments,
+            "HasDocuments": filterState?.hasDocuments ? true : "",
         },],
         CaseManagementServices.getAllDetectiveNotes,
         {
@@ -407,16 +408,36 @@ function DetectiveNotes({ CaseId }) {
         )
     };
 
+    // Helper function to convert hex to rgba with opacity
+    const hexToRgba = (hex, opacity = 0.1) => {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        if (!result) return hex; // Return original if not a valid hex
+        const r = parseInt(result[1], 16);
+        const g = parseInt(result[2], 16);
+        const b = parseInt(result[3], 16);
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    };
+
     const NoteCard = ({ note, index, showPinAction = true }) => {
         const image = JSON.parse(note?.Documents)
+        const backgroundColor = PriorityDrpData?.find(v => v?.PriorityID === note?.ConfidenceID)?.BackColor || '#007bff'
+
         return (
-            <div className="border rounded p-3" style={{ backgroundColor: note.isPinned ? "#FFFFE5" : '#f8f9fa' }}>
-                {note.isPinned && <div className='border-bottom mb-2'>
+            <div className=" rounded p-3" style={{
+                backgroundColor: note.isPinned ? "#FFFFE5" : '#ffff',
+                borderLeft: `4px solid ${backgroundColor}`
+            }}>
+                {/* {note.isPinned && <div className='border-bottom mb-2'>
                     <h5 style={{ color: "#B99900" }}>Pinned</h5>
-                </div>}
+                </div>} */}
                 <div className="d-flex justify-content-between align-items-start mb-2">
-                    <div className="d-flex align-items-center" style={{ gap: "10px" }}>
-                        <span className="fw-bold">{agencyOfficerDrpData?.find(v => v?.value === note?.NoteByID)?.label}</span>
+                    <div className="col-9 d-flex align-items-center py-1 rounded" style={{ gap: "10px", backgroundColor: hexToRgba(backgroundColor, 0.1) }}>
+                        <span className="fw-bold">
+                            {(() => {
+                                const label = agencyOfficerDrpData?.find(v => v?.value === note?.NoteByID)?.label;
+                                return label?.includes(' -') ? label.split(' -')[1] : label;
+                            })()}
+                        </span>
                         <span>•</span>
                         <span>Source: {sourceTypeDrpData?.find(v => v?.SourceTypeID === note?.SourceTypeID)?.Description}</span>
                         <span>•</span>
@@ -430,7 +451,7 @@ function DetectiveNotes({ CaseId }) {
                             {image?.map((image, index) => renderImage(image, index, note))}
                         </div>
                     </div>
-                    <div className="d-flex" style={{ gap: "10px" }}>
+                    <div className="col-3 d-flex justify-content-end" style={{ gap: "10px" }}>
                         <button
                             className="btn btn-sm btn-outline-primary"
                             onClick={() => handleEdit(note.DetectiveID)}
@@ -469,23 +490,26 @@ function DetectiveNotes({ CaseId }) {
     }
 
     return (
-        <>
-            <div className='col-12 col-md-12 col-lg-12 mt-2'>
+        <div className='d-flex justify-content-between'>
+            <div className='col-9 col-md-9 col-lg-9'>
                 {/* New Intelligence Note Form */}
                 <div>
                     <div className="row">
-                        <div className="col-md-3 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
-                            <label className="form-label text-nowrap"> <div className="text-nowrap">Note By</div> {errorState.noteBy && isEmptyObject(formState.noteBy) ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
+                        <div className="col-md-1 mb-2 d-flex align-items-center justify-content-end">
+                            <label className="form-label text-nowrap mb-0"> <div className="text-nowrap">Note By</div> {errorState.noteBy && isEmptyObject(formState.noteBy) ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
+                        </div>
+                        <div className="col-md-2 mb-2 d-flex align-items-center">
                             <Select
                                 isClearable
                                 options={activeTeamMembersData}
                                 placeholder="Select"
                                 styles={coloredStyle_Select}
                                 value={formState.noteBy}
+                                isDisabled
                                 onChange={(e) => handleFormState('noteBy', e)}
                             />
                         </div>
-                        <div className="col-md-3 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
+                        <div className="col-md-3 mb-2 d-flex align-items-center" style={{ gap: "10px" }}>
                             <label className="form-label text-nowrap">    <span className="text-nowrap new-link px-0" data-toggle="modal" data-target="#ListModel"
                                 onClick={() => { setOpenPage("Source Type"); }}>Source Type</span> {errorState.sourceType && isEmptyObject(formState.sourceType) ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
                             <Select
@@ -496,7 +520,7 @@ function DetectiveNotes({ CaseId }) {
                                 formatOptionLabel={(option, { context }) => {
                                     return context === 'menu'
                                         ? `${option?.SourceTypeCode} | ${option?.Description}`
-                                        : option?.SourceTypeCode;
+                                        : option?.Description;
                                 }}
                                 placeholder="Select"
                                 styles={coloredStyle_Select}
@@ -504,7 +528,7 @@ function DetectiveNotes({ CaseId }) {
                                 onChange={(e) => handleFormState('sourceType', e)}
                             />
                         </div>
-                        <div className="col-md-3 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
+                        <div className="col-md-3 mb-2 d-flex align-items-center" style={{ gap: "10px" }}>
                             <label className="form-label text-nowrap"> <div className="text-nowrap">Confidence</div> {errorState.confidence && isEmptyObject(formState.confidence) ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
                             <Select
                                 isClearable
@@ -514,7 +538,7 @@ function DetectiveNotes({ CaseId }) {
                                 formatOptionLabel={(option, { context }) => {
                                     return context === 'menu'
                                         ? `${option?.PriorityCode} | ${option?.Description}`
-                                        : option?.PriorityCode;
+                                        : option?.Description;
                                 }}
                                 placeholder="Select"
                                 styles={coloredStyle_Select}
@@ -522,7 +546,7 @@ function DetectiveNotes({ CaseId }) {
                                 onChange={(e) => handleFormState('confidence', e)}
                             />
                         </div>
-                        <div className="col-md-3 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>
+                        <div className="col-md-3 mb-2 d-flex align-items-center" style={{ gap: "10px" }}>
                             <label className="form-label text-nowrap"> <div className="text-nowrap">Date/Time</div> {errorState.dateTime && !formState.dateTime ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
                             <DatePicker
                                 selected={formState.dateTime}
@@ -538,8 +562,10 @@ function DetectiveNotes({ CaseId }) {
                         </div>
                     </div>
                     <div className="row">
-                        <div className="col-md-12 mb-3 d-flex" style={{ gap: "10px" }}>
-                            <label className="form-label text-nowrap"> <div className="text-nowrap">Intelligence Text</div> {errorState.intelligenceText && isEmpty(formState.intelligenceText) ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
+                        <div className="col-md-1 mb-2 d-flex align-items-center justify-content-end">
+                            <label className="form-label text-nowrap mb-0"> <div className="text-nowrap">Intelligence Text</div> {errorState.intelligenceText && isEmpty(formState.intelligenceText) ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
+                        </div>
+                        <div className="col-md-11 mb-2 d-flex">
                             <textarea
                                 className="form-control requiredColor"
                                 rows="3"
@@ -550,8 +576,10 @@ function DetectiveNotes({ CaseId }) {
                         </div>
                     </div>
                     <div className="row">
-                        <div className="col-12 d-flex align-items-center mb-3" style={{ gap: "10px" }}>
-                            <label className="tab-form-label d-flex justify-content-end mr-1 text-nowrap">Upload File</label>
+                        <div className="col-md-1 mb-3 d-flex align-items-center justify-content-end">
+                            <label className="form-label text-nowrap mb-0">Upload File</label>
+                        </div>
+                        <div className="col-11 d-flex align-items-center mb-3">
                             <div className="text-field mt-0 w-100">
                                 <input
                                     type="file"
@@ -705,7 +733,7 @@ function DetectiveNotes({ CaseId }) {
                                 formatOptionLabel={(option, { context }) => {
                                     return context === 'menu'
                                         ? `${option?.PriorityCode} | ${option?.Description}`
-                                        : option?.PriorityCode;
+                                        : option?.Description;
                                 }}
                                 onChange={(e) => handleFilterState('filterConfidence', e)}
                             />
@@ -797,8 +825,70 @@ function DetectiveNotes({ CaseId }) {
 
                 <ViewSingleImageModal isOpenViewSingleImageModal={isOpenViewSingleImageModal} setIsOpenViewSingleImageModal={setIsOpenViewSingleImageModal} viewSingleImage={viewSingleImage} id={viewSingleImage?.whiteBoardID} />
             </div>
+
+            <div className='col-3 col-md-3 col-lg-3'>
+                {/* PINNED NOTES Section */}
+                <div className="card mb-3" style={{ borderRadius: '8px', border: '1px solid #dee2e6' }}>
+                    <div className="card-body p-3">
+                        {/* Header */}
+                        <div className="d-flex align-items-center mb-3" style={{ gap: '10px' }}>
+                            <i class="fa fa-thumb-tack" aria-hidden="true"></i>
+                            <div className="text-uppercase text-muted small" style={{ fontSize: '11px', letterSpacing: '0.5px', fontWeight: 500 }}>
+                                PINNED NOTES
+                            </div>
+                        </div>
+
+                        {/* Miranda Warning Item */}
+                        {pinnedNotes.length > 0 && pinnedNotes.map((note, index) => (
+                            <div className="d-flex align-items-start mb-2 pb-2" style={{ borderBottom: '1px solid #f0f0f0', gap: '10px' }}>
+                                <i className="fa fa-sticky-note-o text-warning mt-1" style={{ fontSize: '18px' }}></i>
+                                <div style={{ flex: 1 }}>
+                                    <div className="text-dark fw-bold mb-1" style={{ fontSize: '14px' }}>
+                                        {sourceTypeDrpData?.find(v => v?.SourceTypeID === note?.SourceTypeID)?.Description}
+                                    </div>
+                                    <div className="text-muted small" style={{ fontSize: '12px' }}>
+                                        {(() => {
+                                            const label = agencyOfficerDrpData?.find(v => v?.value === note?.NoteByID)?.label;
+                                            return label?.includes(' -') ? label.split(' -')[1] : label;
+                                        })()}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* LINKED ENTITIES Section */}
+                <div className="card" style={{ borderRadius: '8px', border: '1px solid #dee2e6' }}>
+                    <div className="card-body p-3">
+                        {/* Header */}
+                        <div className="d-flex align-items-center mb-3" style={{ gap: '10px' }}>
+                            <i class="fa fa-link" aria-hidden="true"></i>
+                            <div className="text-uppercase text-muted small" style={{ fontSize: '11px', letterSpacing: '0.5px', fontWeight: 500 }}>
+                                LINKED ENTITIES
+                            </div>
+                        </div>
+
+                        {/* Benjamin Clark Item */}
+                        <div className="d-flex align-items-center mb-2 pb-2" style={{ borderBottom: '1px solid #f0f0f0', gap: '10px' }}>
+                            <i className="fa fa-user" style={{ fontSize: '18px', color: '#000' }}></i>
+                            <div className="text-dark fw-bold" style={{ fontSize: '14px' }}>
+                                Benjamin Clark
+                            </div>
+                        </div>
+
+                        {/* Ford F-150 Item */}
+                        <div className="d-flex align-items-center" style={{ gap: '10px' }}>
+                            <i className="fa fa-car" style={{ fontSize: '18px', color: '#000' }}></i>
+                            <div className="text-dark fw-bold" style={{ fontSize: '14px' }}>
+                                Ford F-150
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <ListModal {...{ openPage, setOpenPage }} />
-        </>
+        </div>
     )
 }
 

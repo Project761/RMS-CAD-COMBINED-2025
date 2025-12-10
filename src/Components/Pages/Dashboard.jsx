@@ -14,6 +14,7 @@ import IncompleteNibrsIncident from "./IncompleteNibrsIncident/IncompleteNibrsIn
 import PendingCaseReview from "./WhiteBoardTab/PendingCaseReview";
 import SupervisorCaseReview from "./DashboardTab/SupervisorCaseReview";
 import ManualPurgeRequest from "../../CADComponents/CaseManagement/components/manualPurgeRequest";
+import CaseEffortsDashboard from "../../CADComponents/CaseManagement/components/caseEffortsDashboard";
 // import 'bootstrap-icons/font/bootstrap-icons.css';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
@@ -281,6 +282,12 @@ const Dashboard = () => {
                   <div className="col-12 mb-3">
                     <div style={cardStyle} className="p-3">
                       <QueueReports isPreview={true} />
+                    </div>
+                  </div>
+
+                  <div className="col-12 mb-3">
+                    <div style={cardStyle} className="p-3">
+                      <CaseEffortsDashboard isPreview={true} />
                     </div>
                   </div>
                   <div className="col-12 mb-3">

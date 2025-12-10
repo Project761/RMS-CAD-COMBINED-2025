@@ -5,7 +5,7 @@ import "primereact/resources/themes/lara-light-cyan/theme.css";
 import 'react-quill/dist/quill.snow.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
-import DashboardPage from './Pages/DashboardPage';  
+import DashboardPage from './Pages/DashboardPage';
 import Auth from './Auth';
 import Login from './Components/Auth/Login';
 import Otp from './Components/Auth/Otp2FA';
@@ -199,7 +199,16 @@ import CaseManagement from './CADPage/CaseManagement';
 import MissingPersonForm from './Components/Pages/MissingPerson/MissingPersonForm/MissingPersonForm';
 import ReportModule from './Components/Pages/ReportModule/ReportModule';
 import HomeCaseManagement from './CADPage/HomeCaseManagement';
+import CaseReport from './Components/Pages/ReportPage/CaseManagementReport/CaseReport';
+import CaseNumberByDateReport from './Components/Pages/ReportPage/CaseManagementReport/CaseNumberByDateReport';
+import CaseTaskDetailReport from './Components/Pages/ReportPage/CaseManagementReport/CaseTaskDetailReport';
+import CaseManagementPerformanceRankingReport from './Components/Pages/ReportPage/CaseManagementReport/CaseManagementPerformanceRankingReport';
+import CaseSummaryByStatusAndDateReport from './Components/Pages/ReportPage/CaseManagementReport/CaseSummaryByStatusAndDateReport';
+import CaseAssignmentByPINReport from './Components/Pages/ReportPage/CaseManagementReport/CaseAssignmentByPINReport';
+import MasterInvestigationReport from './Components/Pages/ReportPage/CaseManagementReport/MasterInvestigationReport';
+
 import ManualPurgeRequest from './CADComponents/CaseManagement/components/manualPurgeRequest';
+import CaseEffortsDashboard from './CADComponents/CaseManagement/components/caseEffortsDashboard';
 // import PropertyAuditTab from './Components/Pages/PropertyRoom/Audit/Home';
 function App() {
   const [otp, setOtp] = useState("");
@@ -214,6 +223,7 @@ function App() {
   const [propertyRoomSideBar] = useState(true);
   const [expungeSideBar] = useState(true);
   const [propertyStorageSideBar] = useState(true);
+  const [caseManagementSideBar] = useState(true);
 
   const send_Otp = (otp, data) => {
     setOtp(otp); setLoginResData(data);
@@ -282,12 +292,12 @@ function App() {
             <Route exact path="/all" element={<Auth cmp={DashboardAll} path="/all" dashboardSidebar={dashboardSidebar} />} />
             <Route exact path="/assigned-Incompletenibrs" element={<Auth cmp={IncompleteNibrsIncident} path="/assigned-Incompletenibrs" dashboardSidebar={dashboardSidebar} />} />
             <Route exact path="/manual-purge-request" element={<Auth cmp={ManualPurgeRequest} path="/manual-purge-request" dashboardSidebar={dashboardSidebar} />} />
-
+            <Route exact path="/case-efforts-dashboard" element={<Auth cmp={CaseEffortsDashboard} path="/case-efforts-dashboard" dashboardSidebar={dashboardSidebar} />} />
             <Route exact path="/PoliceForceTask" element={<Auth cmp={PoliceForceTask} patIncompleteNibrsIncidenth="/PoliceForceTask" dashboardSidebar={dashboardSidebar} />} />
 
             <Route exact path="/Cadpropertymodal" element={<Auth cmp={CadPropertyModel} path="/Cadpropertymodal" dashboardSidebar={dashboardSidebar} />} />
             <Route exact path="/Inc-Home" element={<Auth cmp={IncidentTab} path="/Inc-Home" incidentSideBar={incidentSideBar} />} />
-            <Route exact path="/inc-case-management" element={<Auth cmp={CaseManagement} path="/inc-case-management" incidentSideBar={incidentSideBar} />} />
+            <Route exact path="/inc-case-management" element={<Auth cmp={CaseManagement} path="/inc-case-management" caseManagementSideBar={caseManagementSideBar} />} />
             <Route exact path="/case-management" element={<Auth cmp={HomeCaseManagement} path="case-management" incidentSideBar={incidentSideBar} />} />
             <Route exact path="/Missing-Home" element={<Auth cmp={MissingPersonTab} path="/Missing-Home" incidentSideBar={incidentSideBar} />} />
             <Route exact path="/Missing-Vehicle-Home" element={<Auth cmp={MissingPersonVehicle} path="/Missing-Vehicle-Home" incidentSideBar={incidentSideBar} />} />
@@ -341,7 +351,7 @@ function App() {
 
 
             {/* ---------------------------------------------- Incident-Reports ------------------------------------- */}
-            <Route exact path="/incident-DailyEvent" element={<Auth cmp={DailyEvent} reportSidebar={reportSidebar} path="/incident-DailyEvent" />} />  
+            <Route exact path="/incident-DailyEvent" element={<Auth cmp={DailyEvent} reportSidebar={reportSidebar} path="/incident-DailyEvent" />} />
             <Route exact path="/incident-Location" element={<Auth cmp={IncidentLocation} reportSidebar={reportSidebar} path="/incident-Location" />} />
             <Route exact path="/incident-Monthly" element={<Auth cmp={IncidentMonthly} reportSidebar={reportSidebar} path="/incident-Monthly" />} />
             <Route exact path="/incident-Master" element={<Auth cmp={MasterIncident} reportSidebar={reportSidebar} path="/incident-Master" />} />
@@ -361,6 +371,15 @@ function App() {
             <Route exact path="/arrest-monthly" element={<Auth cmp={ArrestMonthly} path="/arrest-monthly" reportSidebar={reportSidebar} />} />
             <Route exact path="/arrest-monthlyCharge" element={<Auth cmp={ArrestMonthlyCharge} path="/arrest-monthlyCharge" reportSidebar={reportSidebar} />} />
             <Route exact path="/arrest-summary" element={<Auth cmp={ArrestSummary} path="/arrest-summary" reportSidebar={reportSidebar} />} />
+
+            {/*------------------------------------------------ CaseManagement-Reports ----------------------------------- */}
+            <Route exact path="/cm-case-report" element={<Auth cmp={CaseReport} path="/cm-case-report" reportSidebar={reportSidebar} />} />
+            <Route exact path="/cm-case-number-by-date-report" element={<Auth cmp={CaseNumberByDateReport} path="/cm-case-number-by-date-report" reportSidebar={reportSidebar} />} />
+            <Route exact path="/cm-case-task-detail-report" element={<Auth cmp={CaseTaskDetailReport} path="/cm-case-task-detail-report" reportSidebar={reportSidebar} />} />
+            <Route exact path="/cm-case-management-performance-ranking-report" element={<Auth cmp={CaseManagementPerformanceRankingReport} path="/cm-case-management-performance-ranking-report" reportSidebar={reportSidebar} />} />
+            <Route exact path="/cm-case-summary-by-status-and-date-report" element={<Auth cmp={CaseSummaryByStatusAndDateReport} path="/cm-case-summary-by-status-and-date-report" reportSidebar={reportSidebar} />} />
+            <Route exact path="/cm-case-assignment-by-pin-report" element={<Auth cmp={CaseAssignmentByPINReport} path="/cm-case-assignment-by-pin-report" reportSidebar={reportSidebar} />} />
+            <Route exact path="/cm-master-investigation-report" element={<Auth cmp={MasterInvestigationReport} path="/cm-master-investigation-report" reportSidebar={reportSidebar} />} />
 
             {/*------------------------------------------------ Property-Reports ----------------------------------- */}
             <Route exact path="/property-reports" element={<Auth cmp={PropertyReport} path="/property-reports" reportSidebar={reportSidebar} />} />

@@ -196,7 +196,7 @@ const Pin = ({ isLocked }) => {
           <div className="row">
             <div className="col-3 col-md-3 col-lg-1 mt-2">
               <span className="new-label">
-                Primary Officer5465465
+                Primary Officer
                 {errors.OfficerIDError !== "true" ? (
                   <p style={{ color: "red", fontSize: "11px", margin: "0px", padding: "0px", }}>
                     {errors.OfficerIDError}
