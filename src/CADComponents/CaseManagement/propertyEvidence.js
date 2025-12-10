@@ -1,115 +1,42 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import DataTable from 'react-data-table-component';
-import { tableCustomStyles } from '../../Components/Common/Utility';
+import { base64ToString, stringToBase64, tableCustomStyles } from '../../Components/Common/Utility';
 import useObjState from '../../CADHook/useObjState';
 import Select from "react-select";
 import { colorLessStyle_Select } from '../Utility/CustomStylesForReact';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import Property_Tabs from '../../Components/Pages/Property/Property_Tabs';
+import { useNavigate, useLocation } from 'react-router-dom';
+import ChainOfCustody from '../../Components/Pages/Property/PropertyTab/ChainOfCustody/ChainOfCustody';
+import CaseManagementServices from '../../CADServices/APIs/caseManagement';
+import { useQuery } from 'react-query';
 
 function PropertyEvidence() {
     // Property/Evidence data
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('home');
-    const [propertyData, setPropertyData] = useState([
-        {
-            id: 1,
-            itemNumber: "VF-2025-0229",
-            description: "Category . Make",
-            physicalLocation: "Property Room A-13",
-            custodian: "Daniel D",
-            status: "Check In",
-            chain: "View"
-        },
-        {
-            id: 2,
-            itemNumber: "PRN-001241",
-            description: "Category . Classification",
-            physicalLocation: "",
-            custodian: "A K John",
-            status: "Evidence",
-            chain: ""
-        },
-        {
-            id: 3,
-            itemNumber: "PRN-001241",
-            description: "Household Goods . Waxer",
-            physicalLocation: "Property Room A-13",
-            custodian: "Smith John",
-            status: "Check Out",
-            chain: "View"
-        },
-        {
-            id: 4,
-            itemNumber: "PRN-001241",
-            description: "Category . Classification",
-            physicalLocation: "",
-            custodian: "A K John",
-            status: "Pending Review",
-            chain: ""
-        }
-    ])
+    const [propertyData, setPropertyData] = useState([])
+    const useRouterQuery = () => {
+        const params = new URLSearchParams(useLocation().search);
+        return {
+            get: (param) => params.get(param)
+        };
+    };
+
+    const query = useRouterQuery();
+
+    let IncId = query?.get('IncId');
+    let CaseId = query?.get('CaseId');
+    let IncSta = query?.get('IncSta');
+    let IncNo = query?.get('IncNo');
+
+    if (!IncId) IncId = 0;
+    else IncId = parseInt(base64ToString(IncId));
 
     const [isAddPropertyModalOpen, setIsAddPropertyModalOpen] = useState(false);
-    const [isEnterEvidenceModalOpen, setIsEnterEvidenceModalOpen] = useState(false);
-    const [categoryOptions] = useState([
-        { value: 'electronics', label: 'Electronics' },
-        { value: 'weapons', label: 'Weapons' },
-        { value: 'documents', label: 'Documents' },
-    ]);
-    const [custodianOptions] = useState([
-        { value: 'daniel', label: 'Daniel D' },
-        { value: 'smith', label: 'Smith John' },
-        { value: 'akjohn', label: 'A K John' },
-    ]);
-    const [statusOptions] = useState([
-        { value: 'checkin', label: 'Check In' },
-        { value: 'checkout', label: 'Check Out' },
-        { value: 'evidence', label: 'Evidence' },
-        { value: 'pending', label: 'Pending Review' },
-    ]);
-
-    const [newPropertyForm, , handleNewPropertyForm, clearNewPropertyForm] = useObjState({
-        itemNumber: '',
-        category: null,
-        classification: '',
-        physicalLocation: '',
-        custodian: null,
-        status: null,
-        description: '',
-        notes: '',
-    });
-
-    const [enterEvidenceForm, , handleEnterEvidenceForm, clearEnterEvidenceForm] = useObjState({
-        propertyItem: null,
-        evidenceTag: '',
-        collectedBy: null,
-        collectionDateTime: '',
-        evidenceType: null,
-        storageLocation: '',
-        custodyInfo: '',
-        additionalNotes: '',
-        createTimelineEntry: false,
-    });
-
-    const collectedByOptions = [
-        { value: 'officer1', label: 'Officer John D' },
-        { value: 'officer2', label: 'Officer Mary S' },
-        { value: 'officer3', label: 'Officer Alex K' },
-    ];
-
-    const evidenceTypeOptions = [
-        { value: 'physical', label: 'Physical' },
-        { value: 'digital', label: 'Digital' },
-        { value: 'biological', label: 'Biological' },
-    ];
-
-    const propertyItemOptions = useMemo(
-        () => propertyData.map(item => ({ value: item.id, label: `${item.itemNumber} - ${item.description}` })),
-        [propertyData]
-    );
-
-    const modalLabelStyle = { minWidth: '110px', marginBottom: 0, textAlign: 'right' };
-    const modalFormallyLabelStyle = { minWidth: '180px', marginBottom: 0, textAlign: 'right' };
+    const [isChainModalOpen, setIsChainModalOpen] = useState(false);
+    const [selectedChainId, setSelectedChainId] = useState(null);
 
     const [digitalEvidenceForm, , handleDigitalEvidenceForm, clearDigitalEvidenceForm] = useObjState({
         evidenceLink: '',
@@ -151,53 +78,54 @@ function PropertyEvidence() {
         { name: 'Access Restriction', selector: row => row.accessRestriction, width: '180px' },
     ];
 
+    const getAllCaseTeamKey = `/CaseManagement/GetPropertyForCaseManagement/${IncId}`;
+    const { data: getPropertyForCaseManagementData, isSuccess: isGetPropertyForCaseManagementDataSuccess, refetch: refetchPropertyForCaseManagementData } = useQuery(
+        [getAllCaseTeamKey, {
+            "IncidentID": IncId,
+        },],
+        CaseManagementServices.getPropertyForCaseManagement,
+        {
+            refetchOnWindowFocus: false,
+            retry: 0,
+            enabled: !!IncId
+        }
+    );
+
+    useEffect(() => {
+        if (getPropertyForCaseManagementData && isGetPropertyForCaseManagementDataSuccess) {
+            const data = JSON.parse(getPropertyForCaseManagementData?.data?.data)?.Table
+            setPropertyData(data)
+        } else {
+            setPropertyData([])
+        }
+    }, [getPropertyForCaseManagementData, isGetPropertyForCaseManagementDataSuccess])
+
     // Event handlers
     const handleAddNewProperty = () => {
         setIsAddPropertyModalOpen(true);
     }
 
-    const handleFormallyEnterEvidence = () => {
-        setIsEnterEvidenceModalOpen(true);
-    }
-
-    const handleViewItem = (itemId) => {
-        console.log('View item:', itemId)
+    const handleViewItem = (res) => {
+        setIsAddPropertyModalOpen(true);
+        navigate(`/inc-case-management?IncId=${stringToBase64(IncId)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${stringToBase64(res?.PropertyID)}&MProId=${stringToBase64(res?.MasterPropertyID)}&ProSta=${true}&ProCategory=${res.ProCatagory}${CaseId ? `&CaseId=${CaseId}` : ''}`)
         // Here you would typically open a modal or navigate to item details
     }
 
     const handleViewChain = (itemId) => {
-        console.log('View chain for item:', itemId)
-        // Here you would typically open a modal or navigate to chain of custody
+        setSelectedChainId(itemId);
+        setIsChainModalOpen(true);
+    }
+
+    const closeChainModal = () => {
+        setIsChainModalOpen(false);
+        setSelectedChainId(null);
     }
 
     const closeAddPropertyModal = () => {
         setIsAddPropertyModalOpen(false);
-        clearNewPropertyForm();
+        navigate(`/inc-case-management?IncId=${stringToBase64(IncId)}&IncNo=${IncNo}&IncSta=${IncSta}&CaseId=${CaseId}`)
     }
 
-    const closeEnterEvidenceModal = () => {
-        setIsEnterEvidenceModalOpen(false);
-        clearEnterEvidenceForm();
-    }
-
-    const saveNewProperty = () => {
-        const newItem = {
-            id: propertyData.length + 1,
-            itemNumber: newPropertyForm.itemNumber || `PRN-${propertyData.length + 1}`,
-            description: `${newPropertyForm.category?.label || 'Category'} . ${newPropertyForm.classification || 'Description'}`,
-            physicalLocation: newPropertyForm.physicalLocation,
-            custodian: newPropertyForm.custodian?.label || '',
-            status: newPropertyForm.status?.label || 'Pending Review',
-            chain: ''
-        };
-        setPropertyData(prev => [...prev, newItem]);
-        closeAddPropertyModal();
-    }
-
-    const submitEnterEvidence = () => {
-        console.log('Entering as evidence', enterEvidenceForm);
-        closeEnterEvidenceModal();
-    }
 
     const saveDigitalEvidence = () => {
         if (!digitalEvidenceForm.evidenceLink || !digitalEvidenceForm.fileType) return;
@@ -222,66 +150,55 @@ function PropertyEvidence() {
         clearDigitalEvidenceForm();
     }
 
-    const getStatusBadge = (status) => {
-        const statusConfig = {
-            'Check In': { color: '#22c55e', textColor: '#fff' }, // green
-            'Evidence': { color: '#3b82f6', textColor: '#fff' }, // blue
-            'Check Out': { color: '#ef4444', textColor: '#fff' }, // red
-            'Pending Review': { color: '#fbbf24', textColor: '#000' } // yellow
-        }
-
-        const config = statusConfig[status] || { color: '#6b7280', textColor: '#fff' }
-
-        return (
-            <span
-                className="badge px-3 py-2"
-                style={{
-                    backgroundColor: config.color,
-                    color: config.textColor,
-                    fontSize: '12px',
-                    fontWeight: '600',
-                    borderRadius: '4px'
-                }}
-            >
-                {status}
-            </span>
-        )
-    }
 
     const columns = [
         {
-            name: 'Item #',
-            selector: row => row.itemNumber,
-            sortable: true,
-            width: '150px',
+            name: 'Action',
+            selector: row => row.id,
+            width: '80px',
             cell: row => (
-                <span className="fw-bold">{row.itemNumber}</span>
+                <button
+                    className="btn btn-primary btn-sm"
+                    onClick={() => handleViewItem(row)}
+                    style={{ backgroundColor: '#001f3f' }}
+                    title="Edit"
+                ><i className="fa fa-edit"></i>
+                </button>
+
+            )
+        },
+        {
+            name: 'Item #',
+            selector: row => row.PropertyNumber,
+            sortable: true,
+            width: '120px',
+            cell: row => (
+                <span className="fw-bold">{row.PropertyNumber}</span>
             )
         },
         {
             name: 'Description',
-            selector: row => row.description,
+            selector: row => row.Description,
             sortable: true,
         },
         {
             name: 'Physical Location',
-            selector: row => row.physicalLocation,
+            selector: row => row.location,
             sortable: true,
             cell: row => (
-                <span>{row.physicalLocation || '-'}</span>
+                <span>{row.location || '-'}</span>
             )
         },
         {
-            name: 'Custodian',
-            selector: row => row.custodian,
+            name: 'Property Room Officer',
+            selector: row => row.PersonnelNames,
             sortable: true,
         },
         {
             name: 'Status',
-            selector: row => row.status,
+            selector: row => row.ActivityType,
             sortable: true,
-            width: '150px',
-            cell: row => getStatusBadge(row.status)
+            cell: row => <div style={{ color: row.ActivityType === 'CheckIn' ? '#22c55e' : row.ActivityType === 'CheckOut' ? '#ef4444' : '#000' }}>{row.ActivityType === 'CheckIn' ? 'Check In' : row.ActivityType === 'CheckOut' ? 'Check Out' : !row.IsEvidence ? "Not Marked as Evidence" : row.IsEvidence && !row.IsSendToPropertyRoom && row?.ActivityType === null ? "Not Send to Property Room" : row.IsEvidence && row.IsSendToPropertyRoom && row?.ActivityType === null ? "Sent to Property Room (Pending Check In)" : row.ActivityType}</div>
         },
         {
             name: 'Chain',
@@ -289,37 +206,23 @@ function PropertyEvidence() {
             sortable: true,
             width: '100px',
             cell: row => (
-                row.chain ? (
+                row.ActivityType === 'CheckIn' || row.ActivityType === 'CheckOut' || row.ActivityType === 'Release' || row.ActivityType === 'Destroy' ? (
                     <button
                         className="btn btn-link p-0 text-primary"
-                        onClick={() => handleViewChain(row.id)}
+                        onClick={() => handleViewChain(row.PropertyID)}
                         style={{ textDecoration: 'underline' }}
                     >
-                        {row.chain}
+                        View
                     </button>
                 ) : (
                     <span>-</span>
                 )
             )
         },
-        {
-            name: 'Action',
-            selector: row => row.id,
-            width: '100px',
-            cell: row => (
-                <button
-                    className="btn btn-primary btn-sm"
-                    onClick={() => handleViewItem(row.id)}
-                    style={{ backgroundColor: '#1e40af', borderColor: '#1e40af' }}
-                >
-                    View
-                </button>
-            )
-        }
     ];
 
     return (
-        <div className='col-12 col-md-12 col-lg-12 mt-2'>
+        <div className='col-12 col-md-12 col-lg-12'>
             <div className="row" style={{ marginLeft: '-18px', marginRight: '-18px' }}>
                 <div className="col-12 name-tab mb-2">
                     <ul className='nav nav-tabs'>
@@ -346,22 +249,13 @@ function PropertyEvidence() {
             {activeTab === 'home' && (
                 <>
                     {/* Action Buttons Header */}
-                    <div className="d-flex justify-content-start mb-3" style={{ gap: '15px' }}>
+                    <div className="d-flex justify-content-end mb-3" style={{ gap: '15px' }}>
                         <button
                             type="button"
                             className="btn btn-success px-4 py-2"
                             onClick={handleAddNewProperty}
-                            style={{ backgroundColor: '#20c997', borderColor: '#20c997' }}
                         >
                             Add New Property
-                        </button>
-                        <button
-                            type="button"
-                            className="btn btn-secondary px-4 py-2"
-                            onClick={handleFormallyEnterEvidence}
-                            style={{ backgroundColor: '#6c757d', borderColor: '#6c757d' }}
-                        >
-                            Formally Enter as Evidence
                         </button>
                     </div>
 
@@ -389,7 +283,7 @@ function PropertyEvidence() {
                 <fieldset className='mt-1'>
                     <legend>Digital Evidence Metadata</legend>
                     <div className="row mt-2">
-                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                        <div className="col-md-6 mb-1 d-flex align-items-center" style={{ gap: '10px' }}>
                             <label className="new-label" style={{ minWidth: '200px', marginBottom: 0, textAlign: 'right' }}>Evidence System Link</label>
                             <input
                                 type="url"
@@ -399,7 +293,7 @@ function PropertyEvidence() {
                                 onChange={(e) => handleDigitalEvidenceForm('evidenceLink', e.target.value)}
                             />
                         </div>
-                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                        <div className="col-md-6 mb-1 d-flex align-items-center" style={{ gap: '10px' }}>
                             <label className="new-label" style={{ minWidth: '200px', marginBottom: 0, textAlign: 'right' }}>File Type</label>
                             <Select
                                 classNamePrefix="react-select"
@@ -411,7 +305,7 @@ function PropertyEvidence() {
                                 isClearable
                             />
                         </div>
-                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                        <div className="col-md-6 mb-1 d-flex align-items-center" style={{ gap: '10px' }}>
                             <label className="new-label text-nowrap" style={{ minWidth: '200px', marginBottom: 0, textAlign: 'right' }}>File Hash / Checksum (SHA-256)</label>
                             <input
                                 type="text"
@@ -421,7 +315,7 @@ function PropertyEvidence() {
                                 onChange={(e) => handleDigitalEvidenceForm('fileHash', e.target.value)}
                             />
                         </div>
-                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                        <div className="col-md-6 mb-1 d-flex align-items-center" style={{ gap: '10px' }}>
                             <label className="new-label" style={{ minWidth: '200px', marginBottom: 0, textAlign: 'right' }}>File Size (MB/GB)</label>
                             <input
                                 type="text"
@@ -431,7 +325,7 @@ function PropertyEvidence() {
                                 onChange={(e) => handleDigitalEvidenceForm('fileSize', e.target.value)}
                             />
                         </div>
-                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                        <div className="col-md-6 mb-1 d-flex align-items-center" style={{ gap: '10px' }}>
                             <label className="new-label" style={{ minWidth: '200px', marginBottom: 0, textAlign: 'right' }}>Capture Source</label>
                             <Select
                                 classNamePrefix="react-select"
@@ -443,7 +337,7 @@ function PropertyEvidence() {
                                 isClearable
                             />
                         </div>
-                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                        <div className="col-md-6 mb-1 d-flex align-items-center" style={{ gap: '10px' }}>
                             <label className="new-label" style={{ minWidth: '200px', marginBottom: 0, textAlign: 'right' }}>Retention Date</label>
                             <DatePicker
                                 selected={digitalEvidenceForm.retentionDate}
@@ -454,7 +348,7 @@ function PropertyEvidence() {
                                 isClearable
                             />
                         </div>
-                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
+                        <div className="col-md-6 mb-1 d-flex align-items-center" style={{ gap: '10px' }}>
                             <label className="new-label" style={{ minWidth: '200px', marginBottom: 0, textAlign: 'right' }}>Access Restriction</label>
                             <Select
                                 classNamePrefix="react-select"
@@ -510,112 +404,10 @@ function PropertyEvidence() {
                                     <div>
                                         <h5 className="modal-title">Add New Property</h5>
                                     </div>
+                                    <button type="button" onClick={closeAddPropertyModal} className="close text-red" data-dismiss="modal" >×</button>
                                 </div>
                                 <div className="modal-body">
-                                    <div className="row">
-                                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
-                                            <label className="new-label fw-bold mb-0" style={modalLabelStyle}>Item Number</label>
-                                            <input
-                                                type="text"
-                                                className="form-control flex-grow-1"
-                                                placeholder="e.g., PRN-001241"
-                                                value={newPropertyForm.itemNumber}
-                                                onChange={(e) => handleNewPropertyForm('itemNumber', e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
-                                            <label className="new-label fw-bold mb-0" style={modalLabelStyle}>Category</label>
-                                            <div className="flex-grow-1">
-                                                <Select
-                                                    classNamePrefix="react-select"
-                                                    options={categoryOptions}
-                                                    placeholder="Select category"
-                                                    value={newPropertyForm.category}
-                                                    onChange={(option) => handleNewPropertyForm('category', option)}
-                                                    isClearable
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
-                                            <label className="new-label fw-bold mb-0" style={modalLabelStyle}>Classification</label>
-                                            <input
-                                                type="text"
-                                                className="form-control flex-grow-1"
-                                                placeholder="e.g., Waxer, Laptop, etc."
-                                                value={newPropertyForm.classification}
-                                                onChange={(e) => handleNewPropertyForm('classification', e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
-                                            <label className="new-label fw-bold mb-0" style={modalLabelStyle}>Physical Location</label>
-                                            <input
-                                                type="text"
-                                                className="form-control flex-grow-1"
-                                                placeholder="e.g., Property Room A-13"
-                                                value={newPropertyForm.physicalLocation}
-                                                onChange={(e) => handleNewPropertyForm('physicalLocation', e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
-                                            <label className="new-label fw-bold mb-0" style={modalLabelStyle}>Custodian</label>
-                                            <div className="flex-grow-1">
-                                                <Select
-                                                    classNamePrefix="react-select"
-                                                    options={custodianOptions}
-                                                    placeholder="Select custodian"
-                                                    value={newPropertyForm.custodian}
-                                                    onChange={(option) => handleNewPropertyForm('custodian', option)}
-                                                    isClearable
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
-                                            <label className="new-label fw-bold mb-0" style={modalLabelStyle}>Status</label>
-                                            <div className="flex-grow-1">
-                                                <Select
-                                                    classNamePrefix="react-select"
-                                                    options={statusOptions}
-                                                    placeholder="Select status"
-                                                    value={newPropertyForm.status}
-                                                    onChange={(option) => handleNewPropertyForm('status', option)}
-                                                    isClearable
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-12 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
-                                            <label className="new-label fw-bold" style={modalLabelStyle}>Description</label>
-                                            <textarea
-                                                className="form-control"
-                                                rows="3"
-                                                placeholder="Enter detailed description of the property item"
-                                                value={newPropertyForm.description}
-                                                onChange={(e) => handleNewPropertyForm('description', e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="col-12 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
-                                            <label className="new-label fw-bold" style={modalLabelStyle}>Notes</label>
-                                            <textarea
-                                                className="form-control"
-                                                rows="3"
-                                                placeholder="Additional notes or comments"
-                                                value={newPropertyForm.notes}
-                                                onChange={(e) => handleNewPropertyForm('notes', e.target.value)}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="modal-footer d-flex justify-content-end" style={{ gap: '12px' }}>
-                                    <button type="button" className="btn btn-light px-4" onClick={closeAddPropertyModal}>
-                                        Cancel
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-success px-4 py-2"
-                                        onClick={saveNewProperty}
-                                        style={{ backgroundColor: '#20c997', borderColor: '#20c997' }}
-                                    >
-                                        Add Property
-                                    </button>
+                                    <Property_Tabs isCaseManagement isAddPropertyModalOpen={isAddPropertyModalOpen} refetchPropertyForCaseManagementData={refetchPropertyForCaseManagementData} />
                                 </div>
                             </div>
                         </div>
@@ -623,9 +415,9 @@ function PropertyEvidence() {
                 )
             }
 
-            {/* Formally Enter as Evidence Modal */}
+            {/* Chain Modal */}
             {
-                isEnterEvidenceModalOpen && (
+                isChainModalOpen && (
                     <div
                         className="modal fade show"
                         style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}
@@ -635,122 +427,26 @@ function PropertyEvidence() {
                         <div className="modal-dialog modal-xl modal-dialog-centered" role="document">
                             <div className="modal-content" style={{ borderRadius: '6px' }}>
                                 <div className="modal-header">
-                                    <div>
-                                        <h5 className="modal-title">Formally Enter as Evidence</h5>
-                                    </div>
+                                    <h5 className="modal-title">Chain of Custody</h5>
+                                    <button
+                                        type="button"
+                                        onClick={closeChainModal}
+                                        className="close text-red"
+                                        data-dismiss="modal"
+                                    >
+                                        ×
+                                    </button>
                                 </div>
                                 <div className="modal-body">
-                                    <div className="row">
-                                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
-                                            <label className="new-label fw-bold mb-0" style={modalFormallyLabelStyle}>Property Number</label>
-                                            <div className="flex-grow-1">
-                                                <Select
-                                                    classNamePrefix="react-select"
-                                                    options={propertyItemOptions}
-                                                    placeholder="Select property item"
-                                                    value={enterEvidenceForm.propertyItem}
-                                                    onChange={(option) => handleEnterEvidenceForm('propertyItem', option)}
-                                                    isClearable
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
-                                            <label className="new-label fw-bold mb-0" style={modalFormallyLabelStyle}>Evidence Tag Number</label>
-                                            <input
-                                                type="text"
-                                                className="form-control flex-grow-1"
-                                                placeholder="e.g., EV-2025-001"
-                                                value={enterEvidenceForm.evidenceTag}
-                                                onChange={(e) => handleEnterEvidenceForm('evidenceTag', e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
-                                            <label className="new-label fw-bold mb-0" style={modalFormallyLabelStyle}>Collected By</label>
-                                            <div className="flex-grow-1">
-                                                <Select
-                                                    classNamePrefix="react-select"
-                                                    options={collectedByOptions}
-                                                    placeholder="Select officer"
-                                                    value={enterEvidenceForm.collectedBy}
-                                                    onChange={(option) => handleEnterEvidenceForm('collectedBy', option)}
-                                                    isClearable
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
-                                            <label className="new-label fw-bold mb-0" style={modalFormallyLabelStyle}>Collection Date &amp; Time</label>
-                                            <input
-                                                type="datetime-local"
-                                                className="form-control flex-grow-1"
-                                                value={enterEvidenceForm.collectionDateTime}
-                                                onChange={(e) => handleEnterEvidenceForm('collectionDateTime', e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
-                                            <label className="new-label fw-bold mb-0" style={modalFormallyLabelStyle}>Evidence Type</label>
-                                            <div className="flex-grow-1">
-                                                <Select
-                                                    classNamePrefix="react-select"
-                                                    options={evidenceTypeOptions}
-                                                    placeholder="Select type"
-                                                    value={enterEvidenceForm.evidenceType}
-                                                    onChange={(option) => handleEnterEvidenceForm('evidenceType', option)}
-                                                    isClearable
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
-                                            <label className="new-label fw-bold mb-0" style={modalFormallyLabelStyle}>Evidence Storage Location</label>
-                                            <input
-                                                type="text"
-                                                className="form-control flex-grow-1"
-                                                placeholder="e.g., Evidence Locker B-12"
-                                                value={enterEvidenceForm.storageLocation}
-                                                onChange={(e) => handleEnterEvidenceForm('storageLocation', e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="col-12 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
-                                            <label className="new-label fw-bold" style={modalFormallyLabelStyle}>Chain of Custody Information</label>
-                                            <textarea
-                                                className="form-control"
-                                                rows="3"
-                                                placeholder="Document the chain of custody from collection to storage"
-                                                value={enterEvidenceForm.custodyInfo}
-                                                onChange={(e) => handleEnterEvidenceForm('custodyInfo', e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="col-12 mb-3 d-flex align-items-center" style={{ gap: '10px' }}>
-                                            <label className="new-label fw-bold" style={modalFormallyLabelStyle}>Additional Notes</label>
-                                            <textarea
-                                                className="form-control"
-                                                rows="3"
-                                                placeholder="Any additional information about the evidence"
-                                                value={enterEvidenceForm.additionalNotes}
-                                                onChange={(e) => handleEnterEvidenceForm('additionalNotes', e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="col-12">
-                                            <div className="form-check">
-                                                <input
-                                                    className="form-check-input"
-                                                    type="checkbox"
-                                                    id="createTimelineEntry"
-                                                    checked={enterEvidenceForm.createTimelineEntry}
-                                                    onChange={(e) => handleEnterEvidenceForm('createTimelineEntry', e.target.checked)}
-                                                />
-                                                <label className="form-check-label" htmlFor="createTimelineEntry">
-                                                    Automatically create an entry in Case Timeline
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <ChainOfCustody DecPropID={selectedChainId} />
                                 </div>
-                                <div className="modal-footer d-flex justify-content-end" style={{ gap: '12px' }}>
-                                    <button type="button" className="btn btn-light px-4" onClick={closeEnterEvidenceModal}>
-                                        Cancel
-                                    </button>
-                                    <button type="button" className="btn btn-success px-4" onClick={submitEnterEvidence}>
-                                        Enter as Evidence
+                                <div className="modal-footer">
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary"
+                                        onClick={closeChainModal}
+                                    >
+                                        Close
                                     </button>
                                 </div>
                             </div>
@@ -758,7 +454,7 @@ function PropertyEvidence() {
                     </div>
                 )
             }
-        </div >
+        </div>
     )
 }
 

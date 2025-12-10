@@ -250,11 +250,11 @@ function CaseEffort({ CaseId }) {
         },
         {
             name: 'Completed',
-            selector: row => row?.Completed ? 'Yes' : 'No/Due',
+            selector: row => row?.IsCompleted ? 'Yes' : 'No/Due',
             cell: row => (
                 <span
                     style={{
-                        backgroundColor: row?.Completed ? '#22c55e' : '#ef4444',
+                        backgroundColor: row?.IsCompleted ? '#22c55e' : '#ef4444',
                         color: '#fff',
                         padding: '4px 10px',
                         borderRadius: '12px',
@@ -262,7 +262,7 @@ function CaseEffort({ CaseId }) {
                         fontWeight: '600',
                     }}
                 >
-                    {row?.Completed ? "Yes" : 'No/Due'}
+                    {row?.IsCompleted ? "Yes" : 'No/Due'}
                 </span>
             ),
             sortable: true,
@@ -327,7 +327,7 @@ function CaseEffort({ CaseId }) {
 
     return (
         <>
-            <div className='col-12 col-md-12 col-lg-12 mt-2'>
+            <div className='col-12 col-md-12 col-lg-12'>
                 {/* Task Management Form */}
                 <div className="row">
                     <div className="col-md-4 mb-3 d-flex align-items-center" style={{ gap: "10px" }}>

@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Decrypt_Id_Name, Requiredcolour, base64ToString, changeArrayFormat, changeArrayFormat_WithFilter, editorConfig, filterPassedDateTimeZone, getShowingDateText, getShowingMonthDateYear, stringToBase64, tableCustomStyles } from '../../Common/Utility';
+import { Decrypt_Id_Name, Requiredcolour, base64ToString, changeArrayFormat, changeArrayFormat_WithFilter, editorConfig, filterPassedDateTimeZone, getShowingDateText, getShowingMonthDateYear, getYearWithOutDateTime, stringToBase64, tableCustomStyles } from '../../Common/Utility';
 import { fetchPostData, AddDeleteUpadate, ScreenPermision, fetchPostDataNew, fetch_Post_Data } from '../../hooks/Api';
 import DataTable from 'react-data-table-component';
 import { toastifyError, toastifySuccess } from '../../Common/AlertMsg';
@@ -46,12 +46,15 @@ const ReportModule = (props) => {
     var NarrativeAssignId = query?.get("narrativeAssignId");
     var IncNo = query?.get("IncNo");
     var NarrativeAutoSaveID = query?.get("narrativeAutoSaveId");
+    var narrativeId = query?.get("narrativeId");
     if (!IncID) IncID = 0;
     else IncID = parseInt(base64ToString(IncID));
     if (!NarrativeAssignId) NarrativeAssignId = 0;
     else NarrativeAssignId = parseInt(base64ToString(NarrativeAssignId));
     if (!NarrativeAutoSaveID) NarrativeAutoSaveID = null;
     else NarrativeAutoSaveID = base64ToString(NarrativeAutoSaveID);
+    if (!narrativeId) narrativeId = null;
+    else narrativeId = base64ToString(narrativeId);
 
     const tabParam = query.get("tab");
     const assigned = query.get("Assigned");
@@ -87,6 +90,7 @@ const ReportModule = (props) => {
     const [showModalAssign, setshowModal] = useState(false);
     const [narrativeInformation, setNarrativeInformation] = useState('');
     const [editval, setEditval] = useState();
+    const [incidentData, setIncidentData] = useState();
     const [LastComments, SetLastComments] = useState([]);
     const [WrittenForDataDrp, setWrittenForDataDrp] = useState([]);
     const [IsSupervisor, setIsSupervisor] = useState(false);
@@ -133,7 +137,9 @@ const ReportModule = (props) => {
     const [degreeDrpDwnVal, setDegreeDrpDwnVal] = useState([]);
     const [vehicleCategoryIdDrp, setVehicleCategoryIdDrp] = useState([]);
     const [propertyCategoryData, setPropertyCategoryData] = useState([]);
+    console.log(">>>propertyCategoryData", propertyCategoryData)
     const [propertyLossCodeData, setPropertyLossCodeData] = useState([]);
+    console.log(">>>propertyLossCodeData", propertyLossCodeData)
     // Define keyword-based suggestions (using useMemo to avoid recreating on each render)
     const [narrativeAutoSaveID, setNarrativeAutoSaveID] = useState(NarrativeAutoSaveID);
     const autosaveIntervalRef = useRef(null);
@@ -168,10 +174,9 @@ const ReportModule = (props) => {
         'Vehicle Loss Code': vehicleLossCodeDrpData?.map(item => item.label),
         'Plate Type': plateTypeIdDrp?.map(item => item.label),
         'Plate State': stateList?.map(item => item.label),
-        'Property Type': propertyTypeData?.map(item => item.label),
         'Property Loss Code': propertyLossCodeData?.map(item => item.Description),
         'Property Category': propertyCategoryData?.map(item => item.Description),
-    }), [sexIdDrp, raceIdDrp, ethinicityDrpData, residentIDDrp, victimIdDrp, offenderIdDrp, otherIdDrp, vehicleCategoryIdDrp, vehicleLossCodeDrpData, plateTypeIdDrp, stateList, propertyTypeData, propertyLossCodeData, propertyCategoryData]);
+    }), [sexIdDrp, raceIdDrp, ethinicityDrpData, residentIDDrp, victimIdDrp, offenderIdDrp, otherIdDrp, vehicleCategoryIdDrp, vehicleLossCodeDrpData, plateTypeIdDrp, stateList, propertyLossCodeData, propertyCategoryData]);
     const [value, setValue] = useState({
         'IncidentId': '', 'NarrativeID': '', 'ReportedByPINActivityID': null, 'NarrativeTypeID': null, 'AsOfDate': null,
         'CreatedByUserFK': '', 'ModifiedByUserFK': '', 'ApprovingSupervisorID': '', 'NarrativeAssignedID': '', 'WrittenForID': '',
@@ -199,7 +204,9 @@ const ReportModule = (props) => {
     useEffect(() => {
         if (localStoreData) {
             setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(parseInt(localStoreData?.PINID));
-            getScreenPermision(localStoreData?.AgencyID, localStoreData?.PINID); GetDataTimeZone(localStoreData?.AgencyID); setnarrativeAssignId(NarrativeAssignId); get_NarrativesData(IncID, localStoreData?.PINID);
+            getScreenPermision(localStoreData?.AgencyID, localStoreData?.PINID); GetDataTimeZone(localStoreData?.AgencyID);
+            setnarrativeAssignId(NarrativeAssignId);
+            get_NarrativesData(IncID, localStoreData?.PINID);
             GetData_ReportWorkLevelCheck(localStoreData?.AgencyID, narrativeID);
             setIsSupervisor(localStoreData?.IsSupervisor); get_IncidentTab_Count(IncID, localStoreData?.PINID); setIsSuperadmin(localStoreData?.IsSuperadmin);
             if (NarrativeAssignId && tabParam && !assigned) { setNarrativeID(NarrativeAssignId); GetSingleData(NarrativeAssignId); }
@@ -209,6 +216,15 @@ const ReportModule = (props) => {
             get_Offence_Data(IncID);
         }
     }, [localStoreData, IncID]);
+
+
+    useEffect(() => {
+        if (NarrativeAssignId) {
+            setnarrativeAssignId(NarrativeAssignId);
+            GetData_ReportWorkLevelCheck(localStoreData?.AgencyID, NarrativeAssignId);
+            dispatch(get_Report_Approve_Officer_Data(localStoreData?.AgencyID, localStoreData?.PINID, NarrativeAssignId));
+        }
+    }, [NarrativeAssignId, localStoreData]);
 
     // Keep refs in sync with state
     useEffect(() => {
@@ -443,7 +459,7 @@ const ReportModule = (props) => {
 
     const GetDataPropertytypeWithLossCode = async (loginAgencyID) => {
         try {
-            const res = await fetchPostDataNew("PropertytypeWithLossCode/GetData_PropertytypeWithLossCode", {
+            const res = await fetchPostDataNew("PropertytypeWithLossCode/GetData_LossCodeList", {
                 "AgencyID": loginAgencyID,
                 IsArticleReason: 0,
                 IsBoatReason: 0,
@@ -466,7 +482,7 @@ const ReportModule = (props) => {
 
     const GetData_PropertytypeWithCategory = async (loginAgencyID) => {
         try {
-            const res = await fetchPostDataNew("PropertytypeWithLossCode/GetData_PropertytypeWithCategory", {
+            const res = await fetchPostDataNew("PropertytypeWithLossCode/GetData_CategoryList", {
                 "AgencyID": loginAgencyID,
 
             });
@@ -665,6 +681,7 @@ const ReportModule = (props) => {
         const val = { IncidentID: incidentID };
         fetchPostData("Incident/GetSingleData_Incident", val).then((res) => {
             if (res?.length > 0) {
+                setIncidentData(res[0]);
                 const primaryOfficerID = res[0]?.PrimaryOfficerID;
                 setprimaryOfficer(primaryOfficerID);
             }
@@ -768,20 +785,43 @@ const ReportModule = (props) => {
 
     const ChangeDropDownReportTemplateType = (e, name) => {
         !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-        const { Agency_Name, UserName, AgencyAddress, ORI } = localStoreData;
-
-        // const Offenses = `<p><br/>100 - ALCOHOLIC BEVERAGE CODE VIOLATION- Felonry - Completed - 2nd Degree<br/>102 - ALCOHOLIC BEVERAGE CODE VIOLATION- Felonry - Completed - 2nd Degree</p>`
+        const { Agency_Name, AgencyAddress, ORI, StateName, ZipCode, City, fullName } = localStoreData;
         const Offenses = offenceFillterData?.map(offense => {
-            return `<p><br/>${offense?.OffenseName_Description} - ${categoryIdDrp?.find(category => category.value === offense?.CategoryId)?.label} - ${offense?.AttemptComplete}</p>`;
-        });
+            const category = categoryIdDrp?.find(category => category.value === offense?.CategoryId);
+            const categoryLabel = category?.label;
+            const parts = [];
+
+            if (offense?.OffenseName_Description) {
+                parts.push(offense.OffenseName_Description);
+            }
+            if (categoryLabel) {
+                parts.push(categoryLabel);
+            }
+            if (offense?.AttemptComplete) {
+                parts.push(offense.AttemptComplete);
+            }
+
+            const offenseText = parts.join(' - ');
+            return offenseText;
+        }).filter(Boolean).join('<br/>');
         if (e) {
+            // Build address parts conditionally to avoid undefined
+            const addressParts = [];
+            if (AgencyAddress) addressParts.push(AgencyAddress);
+            if (City) addressParts.push(City);
+            if (StateName) addressParts.push(StateName);
+            if (ZipCode) addressParts.push(ZipCode);
+            const agencyAddress = addressParts.length > 0 ? addressParts.join(', ') + '.' : '';
 
             let updatedData = e?.templateContent
-                .replace("{{OfficerName}}", UserName || '')
-                .replace("{{AgencyName}}", Agency_Name || '')
-                .replace("{{AgencyAddress}}", AgencyAddress || '')
-                .replace("{{ORI}}", ORI || '')
-                .replace("{{Offenses}}", Offenses || '')
+                .replace(/{{OfficerName}}/g, (fullName || '') + (fullName ? ',' : ''))
+                .replace(/{{AgencyName}}/g, (Agency_Name || '') + (Agency_Name ? ',' : ''))
+                .replace(/{{AgencyAddress}}/g, agencyAddress)
+                .replace(/{{ORI}}/g, ORI || '')
+                .replace(/{{IncidentReportedDateTime}}/g, incidentData?.ReportedDate ? (getShowingMonthDateYear(incidentData.ReportedDate) || '') : '')
+                .replace(/{{IncidentNumber}}/g, incidentData?.IncidentNumber || '')
+                .replace(/{{IncidentCrimeLocation}}/g, incidentData?.CrimeLocation || '')
+                .replace(/{{Offenses}}/g, Offenses || '')
             setValue({ ...value, [name]: e.templateID, CommentsDoc: updatedData, Comments: updatedData });
         } else {
             setValue({ ...value, [name]: null, CommentsDoc: '', Comments: '' });
@@ -944,6 +984,8 @@ const ReportModule = (props) => {
             params.set('IncSta', true);
             params.set('IsCadInc', true);
             params.set('narrativeAssignId', stringToBase64(''));
+            params.set('narrativeId', stringToBase64(''));
+            params.set('narrativeAutoSaveId', stringToBase64(''));
             navigate(`/Inc-Report?${params.toString()}`);
         }
         setValue({
@@ -1194,13 +1236,23 @@ const ReportModule = (props) => {
         }
     ]
 
-    const editNarratives = (row) => {
+    useEffect(() => {
+        if (narrativeId && localStoreData) {
+            editNarratives(narrativeId);
+            setNarrativeID(narrativeId);
+            GetData_ReportWorkLevelCheck(localStoreData?.AgencyID, narrativeId);
+            dispatch(get_Report_Approve_Officer_Data(localStoreData?.AgencyID, localStoreData?.PINID, NarrativeAssignId));
+        }
+    }, [narrativeId, localStoreData]);
+
+    const editNarratives = (NarrativeID) => {
+
         if (changesStatus) {
             const modal = new window.bootstrap.Modal(document?.getElementById('SaveModal'));
             modal?.show();
 
         } else {
-            if (row) {
+            if (NarrativeID) {
                 // Clear autosave interval and remove autosave ID from URL when editing
                 if (autosaveIntervalRef.current) {
                     clearInterval(autosaveIntervalRef.current);
@@ -1211,15 +1263,18 @@ const ReportModule = (props) => {
                 if (!isCaseManagement) {
                     const params = new URLSearchParams(window.location.search);
                     params.delete('narrativeAutoSaveId');
+                    if (NarrativeID) {
+                        params.set('narrativeId', stringToBase64(NarrativeID));
+                    }
                     const newURL = `${window.location.pathname}?${params.toString()}`;
                     navigate(newURL, { replace: true });
                 }
 
-                setNarrativeID(row?.NarrativeID);
-                GetSingleData(row?.NarrativeID);
-                GetData_ReportWorkLevelCheck(loginAgencyID, row?.NarrativeID);
-                if (row?.NarrativeID) get_Group_List(loginAgencyID, loginPinID, row?.NarrativeID);
-                setUpDateCount(upDateCount + 1); dispatch(get_Report_Approve_Officer_Data(loginAgencyID, loginPinID, row?.NarrativeID));
+                setNarrativeID(NarrativeID);
+                GetSingleData(NarrativeID);
+                GetData_ReportWorkLevelCheck(loginAgencyID, NarrativeID);
+                if (NarrativeID) get_Group_List(loginAgencyID, loginPinID, NarrativeID);
+                setUpDateCount(upDateCount + 1); dispatch(get_Report_Approve_Officer_Data(loginAgencyID, loginPinID, NarrativeID));
                 setStatus(true);
                 setErrors({ ...errors, 'ReportedByPinError': '', 'AsOfDateError': '', 'NarrativeIDError': '', 'CommentsError': '', 'WrittenForIDError': '', }); setStatesChangeStatus(false);
             }
@@ -1237,7 +1292,7 @@ const ReportModule = (props) => {
                 const parsedData = JSON.parse(res.data);
                 const message = parsedData.Table[0].Message;
                 toastifySuccess(message);
-                get_IncidentTab_Count(incidentID, loginPinID); reset();
+                get_IncidentTab_Count(incidentID, loginPinID);
             } else { console.error("Somthing Wrong"); }
             get_NarrativesData(incidentID, loginPinID);
             // GetData_ReportWorkLevelCheck(loginAgencyID ,narrativeID);
@@ -1581,7 +1636,7 @@ const ReportModule = (props) => {
                 clearTimeout(missingFieldDebounceRef.current);
             }
 
-            // Set new timeout for debouncing (3 seconds delay)
+            // Set new timeout for debouncing (1 second delay - waits for user to stop typing)
             missingFieldDebounceRef.current = setTimeout(() => {
                 if (data?.length > 0) {
                     // Store the value we're about to send to API
@@ -1684,7 +1739,7 @@ const ReportModule = (props) => {
                     lastAPICallValue.current = '';
                     textSentToAPI.current = '';
                 }
-            }, 500); // 3 seconds debounce delay
+            }, 1500); // 1 second debounce delay - waits for user to stop typing
 
             // Cleanup function to clear timeout on unmount or dependency change
             return () => {
@@ -1824,7 +1879,6 @@ const ReportModule = (props) => {
             });
     };
 
-
     useEffect(() => {
         if (isUpdated && redactedComment && !isNormalReport) {
             const detectedWordsData = matchIncidentWords({
@@ -1851,7 +1905,6 @@ const ReportModule = (props) => {
             }
         }
     }, [detectedWords])
-
 
     const toggleRedactManualFromTextEditor = (quill, detectedWordsArr) => {
         if (!quill) return;
@@ -1893,7 +1946,6 @@ const ReportModule = (props) => {
             quill.formatText(index, length, { color: "#000000", background: "#000000" }, "user");
         }
     };
-
 
     const toggleRedactFromHeaderButton = (quill, word) => {
         if (!quill || !word) return;
@@ -1978,7 +2030,6 @@ const ReportModule = (props) => {
             searchFrom = endExclusive;
         }
     };
-
 
     const modules = useMemo(
         () => ({
@@ -2150,9 +2201,8 @@ const ReportModule = (props) => {
             const textBeforeLower = textBeforePattern.toLowerCase();
 
             // Check for Property context indicators
-            // Look for patterns like "Property (Property Type", "Property (property category", "Property (losscode", "Property (category"
+            // Look for patterns like "Property (property category", "Property (losscode", "Property (category"
             const propertyIndicators = [
-                'property (property type',
                 'property (property category',
                 'property (losscode',
                 'property (loss code',
@@ -2200,7 +2250,6 @@ const ReportModule = (props) => {
             { name: 'loss code', field: 'Vehicle Loss Code' },
             { name: 'plate type', field: 'Plate Type' },
             { name: 'plate state', field: 'Plate State' },
-            { name: 'property type', field: 'Property Type' },
             // Removed propertylosscode and propertycategory - now handled dynamically via 'loss code' and 'category' with context detection
         ];
 
@@ -2251,92 +2300,216 @@ const ReportModule = (props) => {
                 }
             }
 
-            // Special handling for Property Loss Code and Property Category - filter based on Property Type
+            // Special handling for Property Loss Code and Property Category - bidirectional filtering
             let filteredOptions = fieldOptions[actualFieldName];
             if (actualFieldName === 'Property Loss Code' || actualFieldName === 'Property Category') {
-                // Search backwards from the current field position for Property Type
                 const textBeforeCurrentField = text.substring(0, patternIndex);
-                const propertyTypePattern = 'property type:';
-                const propertyTypeIndex = textBeforeCurrentField.toLowerCase().lastIndexOf(propertyTypePattern);
 
-                if (propertyTypeIndex !== -1) {
-                    // Found Property Type before current field
-                    const propertyTypeColonIndex = propertyTypeIndex + propertyTypePattern.length;
-                    // Extract the Property Type value (text after colon until closing paren, next field pattern, or newline)
-                    // Property Type values can contain spaces, so we need to extract until we hit a closing paren or next field
-                    let propertyTypeEndIndex = propertyTypeColonIndex;
-                    while (propertyTypeEndIndex < textBeforeCurrentField.length &&
-                        textBeforeCurrentField[propertyTypeEndIndex] &&
-                        textBeforeCurrentField[propertyTypeEndIndex] !== ')' &&
-                        textBeforeCurrentField[propertyTypeEndIndex] !== '\n') {
-                        // Check if we've hit the start of another field pattern (like "Loss Code:" or "Category:")
-                        const remainingText = textBeforeCurrentField.substring(propertyTypeEndIndex).toLowerCase();
+                // Helper function to extract field value (case-insensitive)
+                const extractFieldValue = (pattern, textBefore) => {
+                    const textLower = textBefore.toLowerCase();
+                    const patternLower = pattern.toLowerCase();
+                    const patternIndex = textLower.lastIndexOf(patternLower);
+                    if (patternIndex === -1) return null;
+
+                    const colonIndex = patternIndex + pattern.length;
+                    let endIndex = colonIndex;
+
+                    // Skip whitespace after colon
+                    while (endIndex < textBefore.length &&
+                        textBefore[endIndex] &&
+                        (textBefore[endIndex] === ' ' || textBefore[endIndex] === '\t')) {
+                        endIndex++;
+                    }
+
+                    // Extract value until closing paren, next field pattern, or newline
+                    const startValueIndex = endIndex;
+                    while (endIndex < textBefore.length &&
+                        textBefore[endIndex] &&
+                        textBefore[endIndex] !== '\n') {
+                        // Check if we've hit a closing paren
+                        if (textBefore[endIndex] === ')') {
+                            // Check what comes after the closing paren
+                            const afterParen = textBefore.substring(endIndex + 1).trim();
+                            const afterParenLower = afterParen.toLowerCase();
+
+                            // If there's whitespace and then another field pattern, stop here
+                            // This handles cases like: "Category: Money) Loss Code:" or "Category: Money) (Loss Code:"
+                            if (afterParenLower.startsWith('loss code:') ||
+                                afterParenLower.startsWith('category:') ||
+                                afterParenLower.startsWith('(loss code:') ||
+                                afterParenLower.startsWith('(category:') ||
+                                afterParenLower.startsWith('property')) {
+                                break;
+                            }
+                            // If closing paren is followed by space and then another opening paren with field, stop
+                            if (afterParen.startsWith('(')) {
+                                const afterOpenParen = afterParen.substring(1).trim().toLowerCase();
+                                if (afterOpenParen.startsWith('loss code:') ||
+                                    afterOpenParen.startsWith('category:')) {
+                                    break;
+                                }
+                            }
+                        }
+
+                        const remainingText = textBefore.substring(endIndex).toLowerCase();
+                        // Check if we've hit the start of another field pattern (case-insensitive)
+                        // But only if it's not part of the current value
                         if (remainingText.startsWith('loss code:') ||
                             remainingText.startsWith('category:') ||
-                            remainingText.startsWith('property category:')) {
-                            break;
-                        }
-                        propertyTypeEndIndex++;
-                    }
-                    const propertyTypeValue = textBeforeCurrentField.substring(propertyTypeColonIndex, propertyTypeEndIndex).trim();
-
-                    if (propertyTypeValue) {
-                        // Find the matching PropertyTypeIDs from propertyTypeData
-                        // Try exact match first, then try partial match (in case of extra characters)
-                        let matchedPropertyType = propertyTypeData?.find(item =>
-                            item.label?.toLowerCase() === propertyTypeValue.toLowerCase()
-                        );
-
-                        // If exact match not found, try matching the beginning of the label
-                        if (!matchedPropertyType) {
-                            matchedPropertyType = propertyTypeData?.find(item =>
-                                propertyTypeValue.toLowerCase().startsWith(item.label?.toLowerCase()) ||
-                                item.label?.toLowerCase().startsWith(propertyTypeValue.toLowerCase())
-                            );
-                        }
-
-                        if (matchedPropertyType?.value) {
-                            // Filter based on field type
-                            // PropertyTypeIDs is now an array, check if it includes the selected property type's value
-                            const propertyTypeValueStr = String(matchedPropertyType.value);
-                            if (actualFieldName === 'Property Loss Code') {
-                                const filteredLossCodes = propertyLossCodeData?.filter(item => {
-                                    // Handle both array and string formats for backward compatibility
-                                    if (Array.isArray(item.PropertyTypeIDs)) {
-                                        return item.PropertyTypeIDs.includes(propertyTypeValueStr);
-                                    }
-                                    return item.PropertyTypeIDs === propertyTypeValueStr;
-                                });
-                                // If filtering results in empty list, show all options instead
-                                filteredOptions = filteredLossCodes?.length > 0
-                                    ? filteredLossCodes.map(item => item.Description)
-                                    : fieldOptions[actualFieldName];
-                            } else if (actualFieldName === 'Property Category') {
-                                const filteredCategories = propertyCategoryData?.filter(item => {
-                                    // Handle both array and string formats for backward compatibility
-                                    if (Array.isArray(item.PropertyTypeIDs)) {
-                                        return item.PropertyTypeIDs.includes(propertyTypeValueStr);
-                                    }
-                                    return item.PropertyTypeIDs === propertyTypeValueStr;
-                                });
-                                // If filtering results in empty list, show all options instead
-                                filteredOptions = filteredCategories?.length > 0
-                                    ? filteredCategories.map(item => item.Description)
-                                    : fieldOptions[actualFieldName];
+                            remainingText.startsWith('property category:') ||
+                            remainingText.startsWith('property loss code:') ||
+                            remainingText.startsWith('property (loss code:') ||
+                            remainingText.startsWith('property (category:') ||
+                            remainingText.startsWith('(loss code:') ||
+                            remainingText.startsWith('(category:')) {
+                            // Make sure this is actually a new field, not part of the value
+                            // Check if there's a space or opening paren before it
+                            if (endIndex > 0) {
+                                const charBefore = textBefore[endIndex - 1];
+                                if (charBefore === ' ' || charBefore === '(' || charBefore === ')') {
+                                    break;
+                                }
+                            } else {
+                                break;
                             }
+                        }
+                        endIndex++;
+                    }
+
+                    const extractedValue = textBefore.substring(startValueIndex, endIndex).trim();
+                    // Remove any trailing characters that might be part of the next field
+                    // Remove closing paren if it's at the end
+                    return extractedValue.replace(/\)\s*$/, '').trim();
+                };
+
+                if (actualFieldName === 'Property Loss Code') {
+                    // Filter Loss Codes based on selected Category
+                    // Since format is fixed as (Loss Code:) (Category:), Category comes AFTER Loss Code
+                    // We need to check the full text to find Category value that comes after Loss Code
+                    let categoryValue = null;
+
+                    // First, try to find Category before current position (in case user is editing)
+                    categoryValue = extractFieldValue('category:', textBeforeCurrentField);
+
+                    // If not found before, check the full text after current field position
+                    // This handles the case where Category is entered after Loss Code in the fixed format
+                    if (!categoryValue) {
+                        const fullText = text;
+                        // Look for Category pattern after the current Loss Code field
+                        // Pattern: (Category: value) or Category: value
+                        const categoryPattern = /(?:\(|\s)category:\s*([^()\n]+?)(?:\s*\)|(?=\s*(?:\(|loss code:|category:|\n|$)))/i;
+                        const textAfterPattern = fullText.substring(patternIndex);
+                        const categoryMatch = textAfterPattern.match(categoryPattern);
+                        if (categoryMatch && categoryMatch[1]) {
+                            categoryValue = categoryMatch[1].trim().replace(/\)\s*$/, '');
+                        }
+                    }
+
+                    if (categoryValue) {
+                        // Find matching category (case-insensitive, trim whitespace)
+                        const searchValue = categoryValue.toLowerCase().trim();
+                        let matchedCategory = propertyCategoryData?.find(item => {
+                            const itemDesc = item.Description?.toLowerCase().trim();
+                            return itemDesc === searchValue;
+                        });
+
+                        // If exact match not found, try partial match
+                        if (!matchedCategory) {
+                            matchedCategory = propertyCategoryData?.find(item => {
+                                const itemDesc = item.Description?.toLowerCase().trim();
+                                return itemDesc.includes(searchValue) || searchValue.includes(itemDesc);
+                            });
+                        }
+
+                        if (matchedCategory?.LossCodeID && Array.isArray(matchedCategory.LossCodeID) && matchedCategory.LossCodeID.length > 0) {
+                            // Filter loss codes that have IDs in the category's LossCodeID array
+                            const allowedLossCodeIDs = matchedCategory.LossCodeID
+                                .map(id => String(id).trim())
+                                .filter(id => id !== '' && id !== 'null' && id !== 'undefined');
+
+                            const filteredLossCodes = propertyLossCodeData?.filter(item => {
+                                const lossCodeID = String(item.PropertyReasonCodeID).trim();
+                                return allowedLossCodeIDs.includes(lossCodeID);
+                            });
+
+                            filteredOptions = filteredLossCodes?.length > 0
+                                ? filteredLossCodes.map(item => item.Description)
+                                : fieldOptions[actualFieldName];
                         } else {
-                            // Property Type value doesn't match any known type, show all options
-                            // Don't filter - show all available options
+                            // Category found but no LossCodeID or empty array - show all
                             filteredOptions = fieldOptions[actualFieldName];
                         }
                     } else {
-                        // Property Type value is empty, show all options
+                        // No category selected, show all loss codes
                         filteredOptions = fieldOptions[actualFieldName];
                     }
-                } else {
-                    // Property Type not found before current field - show all options (don't filter)
-                    // This allows Loss Code to be entered before Property Type
-                    filteredOptions = fieldOptions[actualFieldName];
+                } else if (actualFieldName === 'Property Category') {
+                    // Filter Categories based on selected Loss Code
+                    const lossCodeValue = extractFieldValue('loss code:', textBeforeCurrentField);
+
+                    if (lossCodeValue) {
+                        // Find matching loss code
+                        const searchValue = lossCodeValue.toLowerCase().trim();
+                        let matchedLossCode = propertyLossCodeData?.find(item => {
+                            const itemDesc = item.Description?.toLowerCase().trim();
+                            return itemDesc === searchValue;
+                        });
+
+                        // If exact match not found, try partial match
+                        if (!matchedLossCode) {
+                            matchedLossCode = propertyLossCodeData?.find(item => {
+                                const itemDesc = item.Description?.toLowerCase().trim();
+                                return itemDesc.includes(searchValue) || searchValue.includes(itemDesc);
+                            });
+                        }
+
+                        if (matchedLossCode?.CategoryID) {
+                            // Parse CategoryID (can be string or array)
+                            let categoryIDs = [];
+                            if (typeof matchedLossCode.CategoryID === 'string') {
+                                try {
+                                    // Clean up the string - remove extra spaces and trailing commas
+                                    const cleanedString = matchedLossCode.CategoryID
+                                        .replace(/,\s*]/g, ']')  // Remove trailing commas before ]
+                                        .replace(/\[\s+/g, '[')  // Remove spaces after [
+                                        .replace(/\s+\]/g, ']')  // Remove spaces before ]
+                                        .trim();
+                                    categoryIDs = JSON.parse(cleanedString);
+                                } catch (e) {
+                                    // If parsing fails, try to extract numbers manually
+                                    const numbers = matchedLossCode.CategoryID.match(/\d+/g);
+                                    categoryIDs = numbers ? numbers.map(n => parseInt(n, 10)) : [];
+                                }
+                            } else if (Array.isArray(matchedLossCode.CategoryID)) {
+                                categoryIDs = matchedLossCode.CategoryID;
+                            }
+
+                            // Normalize categoryIDs to numbers for comparison
+                            const normalizedCategoryIDs = categoryIDs.map(id => {
+                                const num = typeof id === 'string' ? parseInt(id, 10) : id;
+                                return isNaN(num) ? null : num;
+                            }).filter(id => id !== null);
+
+                            // Filter categories that have PropertyDescID in the loss code's CategoryID array
+                            const filteredCategories = propertyCategoryData?.filter(item => {
+                                const propertyDescID = typeof item.PropertyDescID === 'string'
+                                    ? parseInt(item.PropertyDescID, 10)
+                                    : item.PropertyDescID;
+                                return normalizedCategoryIDs.includes(propertyDescID);
+                            });
+
+                            filteredOptions = filteredCategories?.length > 0
+                                ? filteredCategories.map(item => item.Description)
+                                : fieldOptions[actualFieldName];
+                        } else {
+                            // Loss code found but no CategoryID - show all
+                            filteredOptions = fieldOptions[actualFieldName];
+                        }
+                    } else {
+                        // No loss code selected, show all categories
+                        filteredOptions = fieldOptions[actualFieldName];
+                    }
                 }
             }
 
@@ -2366,7 +2539,7 @@ const ReportModule = (props) => {
 
         setFieldDropdown(prev => prev.show ? { ...prev, show: false } : prev);
         return false;
-    }, [fieldOptions, value?.Status, propertyLossCodeData, propertyCategoryData, propertyTypeData]);
+    }, [fieldOptions, value?.Status, propertyLossCodeData, propertyCategoryData]);
 
     // Function to insert field value
     const insertFieldValue = useCallback((fieldValue) => {
@@ -2493,7 +2666,7 @@ const ReportModule = (props) => {
             // resets();
         })
     }
-
+    console.log("checkWebWorkFlowStatus", checkWebWorkFlowStatus)
     // editor end
     return (
         <>
@@ -2653,6 +2826,8 @@ const ReportModule = (props) => {
 
 
                                                 </div>
+                                            </div>
+                                            <div className="row">
                                                 <div className="col-2 col-md-2 col-lg-1 mt-2 pt-2">
                                                     <label htmlFor="" className='new-label'>Report Template</label>
 
@@ -2676,65 +2851,52 @@ const ReportModule = (props) => {
                                                             !IsSuperadmin &&
                                                             !(value.ReportedByPINActivityID === loginPinID || value.WrittenForID === loginPinID))}
                                                     />
-
-                                                    {/* <Select
-                                    id="IncidentID"
-                                    name="IncidentID"
-                                    styles={customStylesWithFixedHeight}
-                                    isClearable
-                                    options={incidentData}
-                                    value={boloState?.IncidentID ? incidentData?.find((i) => i?.IncidentID === boloState?.IncidentID) : ""}
-                                    getOptionLabel={(v) => v?.CADIncidentNumber}
-                                    getOptionValue={(v) => v?.IncidentID}
-                                    onChange={(e) => handleBoloState("IncidentID", e?.IncidentID)}
-                                    placeholder="Select..."
-                                    className="w-100"
-                                /> */}
                                                 </div>
-                                            </div>
-                                            {value.Status === "Rejected" &&
-                                                <div className="row">
+                                                {value.Status === "Rejected" &&
                                                     <>
-                                                        <div className="col-2 col-md-2 col-lg-1 mt-2 pt-2">
-                                                            <label htmlFor="" className='new-label'>Comment</label>
-                                                        </div>
-                                                        <div className="col-4 col-md-4 col-lg-4 mt-2 text-field">
-                                                            <textarea type="text" className="form-control" name='Justification'
-                                                                id="Justification"
-                                                                value={LastComments}
-                                                                readOnly />
+
+                                                        <>
+                                                            <div className="col-2 col-md-2 col-lg-1 mt-2 pt-2">
+                                                                <label htmlFor="" className='new-label'>Comment</label>
+                                                            </div>
+                                                            <div className="col-4 col-md-4 col-lg-4 mt-2 text-field">
+                                                                <textarea type="text" className="form-control" name='Justification'
+                                                                    id="Justification"
+                                                                    value={LastComments}
+                                                                    readOnly />
+                                                            </div>
+                                                        </>
+                                                        <div className={'col-4 text-right ml-auto'}>
+                                                            <div
+                                                                id="NIBRSStatus"
+                                                                className={
+                                                                    value.Status === "Draft"
+                                                                        ? "nibrs-draft-Nar"
+                                                                        : value.Status === "Approved"
+                                                                            ? "nibrs-submitted-Nar"
+                                                                            : value.Status === "Rejected"
+                                                                                ? "nibrs-rejected-Nar"
+                                                                                : value.Status === "Pending Review"
+                                                                                    ? "nibrs-reopened-Nar"
+                                                                                    : ""
+                                                                }
+                                                                style={{
+                                                                    color: "black",
+                                                                    opacity: 1,
+                                                                    height: "35px",
+                                                                    fontSize: "14px",
+                                                                    marginTop: "2px",
+                                                                    boxShadow: "none",
+                                                                    userSelect: "none",
+                                                                    padding: "5px", // optional for spacing
+                                                                }}
+                                                            >
+                                                                {value.Status}
+                                                            </div>
                                                         </div>
                                                     </>
-                                                    <div className={'col-4 text-right ml-auto'}>
-                                                        <div
-                                                            id="NIBRSStatus"
-                                                            className={
-                                                                value.Status === "Draft"
-                                                                    ? "nibrs-draft-Nar"
-                                                                    : value.Status === "Approved"
-                                                                        ? "nibrs-submitted-Nar"
-                                                                        : value.Status === "Rejected"
-                                                                            ? "nibrs-rejected-Nar"
-                                                                            : value.Status === "Pending Review"
-                                                                                ? "nibrs-reopened-Nar"
-                                                                                : ""
-                                                            }
-                                                            style={{
-                                                                color: "black",
-                                                                opacity: 1,
-                                                                height: "35px",
-                                                                fontSize: "14px",
-                                                                marginTop: "2px",
-                                                                boxShadow: "none",
-                                                                userSelect: "none",
-                                                                padding: "5px", // optional for spacing
-                                                            }}
-                                                        >
-                                                            {value.Status}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            }
+                                                }
+                                            </div>
                                             {(value.Status !== "Rejected" && value.Status) &&
                                                 <div className="row mt-2 align-items-center">
                                                     {value.Status === 'Approved' &&
@@ -2973,10 +3135,10 @@ const ReportModule = (props) => {
                                                                                     <Tooltip id="fmt-tip" className="wide-tooltip">
                                                                                         <div className="fw-bold mb-2" style={{ color: "red" }}><b>VALID FORMAT</b></div>
                                                                                         <div className="mb-1">
-                                                                                            <b>Please Enter Details In The Following Order:</b> Vehicle, Plate State & No, Loss Code, Category, Plate Type
+                                                                                            <b>Please Enter Details In The Following Order:</b> Vehicle, Plate State & No, Loss Code, Category, Plate Type, VIN
                                                                                         </div>
                                                                                         <div style={{ wordBreak: "break-word" }}>
-                                                                                            <b>Example:</b> Vehicle (TXLP#WHT7386) (Loss Code: Stolen) (Category: Automobile) (Plate Type: Ambulance)
+                                                                                            <b>Example:</b> Vehicle (TXLP#WHT7386) (Loss Code: Stolen) (Category: Automobile) (Plate Type: Ambulance) (VIN: 44HAHCFGHG2752755)
                                                                                         </div>
                                                                                     </Tooltip>
                                                                                 }
@@ -3040,7 +3202,7 @@ const ReportModule = (props) => {
                                                                         <div class="d-flex align-items-center justify-content-between">
                                                                             <div class="d-flex align-items-center">
                                                                                 <span class="badge-pill mr-2"><i class="fa fa-times"></i></span>
-                                                                                <span class="badge-title">Charge Code</span>
+                                                                                <span class="badge-title">Charge Code Modifier</span>
                                                                             </div>
 
                                                                         </div>
@@ -3543,6 +3705,14 @@ const ReportModule = (props) => {
                                                                     effectiveScreenPermission[0]?.Changeok ?
                                                                         <>
                                                                             <button type="button" disabled={!statesChangeStatus || value.Status === 'Pending Review' || value.Status === 'Approve'} onClick={() => check_Validation_Error()} className="btn btn-sm btn-success pl-2 ">{value.Status === "Approved" ? "Save Redact" : "Update"}</button>
+                                                                            {!isCaseManagement && <button
+                                                                                type="button"
+                                                                                onClick={() => navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=true&IsReport=true&narrativeId=${stringToBase64(narrativeID)}`)}
+                                                                                className="btn btn-sm btn-success pl-2 ml-2"
+                                                                                disabled={!narrativeID}
+                                                                            >
+                                                                                Next
+                                                                            </button>}
                                                                             <button
                                                                                 type="button"
                                                                                 className="btn btn-sm btn-success ml-2 "
@@ -3582,12 +3752,32 @@ const ReportModule = (props) => {
                                                                 :
                                                                 effectiveScreenPermission ?
                                                                     effectiveScreenPermission[0]?.AddOK ?
-                                                                        <button type="button" onClick={() => check_Validation_Error()} className="btn btn-sm btn-success pl-2 ">Save</button>
+                                                                        <>
+                                                                            <button type="button" onClick={() => check_Validation_Error()} className="btn btn-sm btn-success pl-2 ">Save</button>
+                                                                            {!isCaseManagement && <button
+                                                                                type="button"
+                                                                                onClick={() => navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=true&IsReport=true&narrativeId=${stringToBase64(narrativeID)}`)}
+                                                                                className="btn btn-sm btn-success pl-2 ml-2"
+                                                                                disabled={!narrativeID}
+                                                                            >
+                                                                                Next
+                                                                            </button>}
+                                                                        </>
                                                                         :
                                                                         <>
                                                                         </>
                                                                     :
-                                                                    <button type="button" onClick={() => check_Validation_Error()} className="btn btn-sm btn-success pl-2 ">Save</button>
+                                                                    <>
+                                                                        <button type="button" onClick={() => check_Validation_Error()} className="btn btn-sm btn-success pl-2 ">Save</button>
+                                                                        {!isCaseManagement && <button
+                                                                            type="button"
+                                                                            onClick={() => navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=true&IsReport=true&narrativeId=${stringToBase64(narrativeID)}`)}
+                                                                            className="btn btn-sm btn-success pl-2 ml-2"
+                                                                            disabled={!narrativeID}
+                                                                        >
+                                                                            Next
+                                                                        </button>}
+                                                                    </>
                                                         }
                                                     </li>
 
@@ -3620,7 +3810,7 @@ const ReportModule = (props) => {
                                                             )
                                                         }
                                                         else {
-                                                            setIsUpdated(false); setNormalReport(true); editNarratives(row);
+                                                            setIsUpdated(false); setNormalReport(true); editNarratives(row?.NarrativeID);
                                                         }
                                                     }}
                                                     pagination

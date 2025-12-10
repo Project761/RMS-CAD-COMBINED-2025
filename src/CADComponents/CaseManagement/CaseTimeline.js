@@ -80,7 +80,7 @@ function CaseTimeline() {
   }
 
   return (
-    <div className='mt-2'>
+    <div className=''>
       {/* Filter Bar */}
       <div className="row mb-2">
         <div className="col-12">

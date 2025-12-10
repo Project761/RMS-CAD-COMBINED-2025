@@ -101,7 +101,7 @@ function Discovery() {
     ];
 
     return (
-        <div className='col-12 col-md-12 col-lg-12 mt-2'>
+        <div className='col-12 col-md-12 col-lg-12'>
             <div className='border border-dark rounded p-2'>
                 <div className="d-flex justify-content-between align-items-center">
                     <h6 className="mb-0 fw-bold">Court & Filing Details</h6>

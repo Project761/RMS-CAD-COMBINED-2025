@@ -221,7 +221,7 @@ function QueueReports({ isPreview }) {
     //   )
     // },
     { name: 'Seq#', selector: row => row.sequence, sortable: true, grow: 0, width: '80px', },
-
+    { name: 'Report Source', selector: row => row.Iscase ? "Case Management" : 'Incident', sortable: true, width: '140px' },
     { name: 'Approving Officer/Group', selector: row => row.ApproverName || row.Approve_Officer, sortable: true },
     {
       name: 'Report Type',

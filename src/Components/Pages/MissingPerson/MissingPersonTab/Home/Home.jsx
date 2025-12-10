@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect, useMemo } from 'react'
 import { Decrypt_Id_Name, Requiredcolour, base64ToString, customStylesWithOutColor, getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime, stringToBase64, tableCustomStyles } from '../../../../Common/Utility'
 import Select from "react-select";
 import DatePicker from "react-datepicker";
@@ -20,7 +20,7 @@ import ListModal from '../../../Utility/ListManagementModel/ListModal';
 import { get_ScreenPermissions_Data } from '../../../../../redux/actions/IncidentAction';
 import { PhoneFieldNotReq } from '../../../Agency/AgencyValidation/validators';
 
-const Home = ({ DecMissPerID, DecIncID }) => {
+const Home = ({ DecMissPerID, DecIncID, get_List }) => {
 
     const useQuery = () => {
         const params = new URLSearchParams(useLocation().search);
@@ -93,7 +93,7 @@ const Home = ({ DecMissPerID, DecIncID }) => {
     const [errors, setErrors] = useState({
         'ReportingOfficerIDError': '', 'ReportedDttmError': '', 'PersonIDError': '', 'IncidentIDError': '', 'MissingPersonNameIDError': '', 'InvestigationOfficerTelephoneNumberError': ''
     })
-console.log("errors", errors)
+    console.log("errors", errors)
     useEffect(() => {
         if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
             if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
@@ -106,7 +106,14 @@ console.log("errors", errors)
             dispatch(get_ScreenPermissions_Data("M121", localStoreData?.AgencyID, localStoreData?.PINID)); get_MissingPerson_Count(DecMissPerID, localStoreData?.PINID);
             dispatch(GetData_MissingPerson(DecEIncID))
         }
+
     }, [localStoreData, nameModalStatus]);
+
+    useMemo(() => {
+        if (value?.MissingPersonNameID) {
+            get_List(value?.MissingPersonNameID, value?.MissingPersonNameID);
+        }
+    }, [value?.MissingPersonNameID]);
 
     useEffect(() => {
         if (effectiveScreenPermission?.length > 0) {
@@ -307,6 +314,8 @@ console.log("errors", errors)
                     }
                     setChangesStatus(false); setStatesChangeStatus(false); get_MissingPerson_Count(MissingPersonID, loginPinID)
                     setErrors({ ...errors, ['PersonIDError']: '' }); get_Incident_Count(DecEIncID);
+                    get_List(MissingPersonNameID, MissingPersonNameID);
+
                 }
             })
         }
@@ -320,6 +329,7 @@ console.log("errors", errors)
         AddDeleteUpadate('MissingPerson/Update_MissingPerson', val).then((res) => {
             const parsedData = JSON.parse(res.data);
             const message = parsedData.Table[0].Message;
+            get_List(MissingPersonNameID, MissingPersonNameID);
             toastifySuccess(message); setChangesStatus(false); setStatesChangeStatus(false); get_MissingPerson_Count(MissingPersonID, loginPinID)
             dispatch(GetData_MissingPerson(DecEIncID)); setErrors({ ...errors, ['PersonIDError']: '' })
         })
@@ -761,7 +771,7 @@ console.log("errors", errors)
                     </div>
                     <div className="col-4 col-md-4 col-lg-4 mt-0 text-field">
                         <input type="text"
-                        maxLength={10} className={errors.InvestigationOfficerTelephoneNumberError && errors.InvestigationOfficerTelephoneNumberError !== 'true' ? '' : ''} name='InvestigationOfficerTelephoneNumber' value={value?.InvestigationOfficerTelephoneNumber} onChange={HandleChange} required />
+                            maxLength={10} className={errors.InvestigationOfficerTelephoneNumberError && errors.InvestigationOfficerTelephoneNumberError !== 'true' ? '' : ''} name='InvestigationOfficerTelephoneNumber' value={value?.InvestigationOfficerTelephoneNumber} onChange={HandleChange} required />
                     </div>
 
                 </div>

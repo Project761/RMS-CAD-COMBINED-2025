@@ -3408,3 +3408,11 @@ icon-buttons {
     min-width: 120px; /* jitna chaho set karo */
 }
 
+.case-management-sidebar {
+  background-color: #001f3f;
+  color: #fff !important;
+}
+.case-management-sidebar-hover {
+  background-color: #245381;
+  color: #fff !important;
+}

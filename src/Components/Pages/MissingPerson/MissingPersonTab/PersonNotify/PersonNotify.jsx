@@ -22,8 +22,9 @@ import { Classification_Drp_Data } from '../../../../../redux/actionTypes';
 import { get_ScreenPermissions_Data } from '../../../../../redux/actions/IncidentAction';
 import CreatableSelect from 'react-select/creatable';
 import MissingTab from '../../../../Utility/Tab/MissingTab';
+import NameListing from '../../../ShowAllList/NameListing';
 
-const PersonNotify = () => {
+const PersonNotify = ({ ListData }) => {
 
     const useQuery = () => {
         const params = new URLSearchParams(useLocation().search);
@@ -241,7 +242,7 @@ const PersonNotify = () => {
             GetSingleDataVehicle(missingVehicleID);
         }
     }, [missingVehicleID]);
-console.log("@@@@@value >>", value)
+    console.log("@@@@@value >>", value)
     useEffect(() => {
         if (DecMissPerID) {
             Get_SingleDataPersonInfo();
@@ -337,6 +338,27 @@ console.log("@@@@@value >>", value)
         const { name, value, type, checked } = e.target;
         setPersonNotifyUIForm(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
     };
+
+    const handleChangePhoneNumber = (e) => {
+        const { name, value } = e.target;
+        let ele = e.target.value.replace(/\D/g, '');
+        if (ele.length === 10) {
+          const cleaned = ('' + ele).replace(/\D/g, '');
+          const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+          if (match) {
+            setPersonNotifyUIForm((prevState) => ({
+              ...prevState,
+              [name]: match[1] + '-' + match[2] + '-' + match[3]
+            }));
+          }
+        } else {
+          ele = e.target.value.split('-').join('').replace(/\D/g, '');
+          setPersonNotifyUIForm((prevState) => ({
+            ...prevState,
+            [name]: ele,
+          }));
+        }
+      };
 
     const ChangeDropDownMake = (e, name) => {
         !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
@@ -678,6 +700,7 @@ console.log("@@@@@value >>", value)
 
     return (
         <>
+            <NameListing {...{ ListData }} />
             <div className='col-12 child'>
                 <fieldset className='mt-2'>
                     <legend>Associated Person Information</legend>
@@ -1488,7 +1511,8 @@ console.log("@@@@@value >>", value)
                             </div>
                             <div className="col-3 col-md-3 col-lg-3">
                                 <div className="d-flex align-items-center">
-                                    <input type='text' name='phoneNumber' value={personNotifyUIForm.phoneNumber} onChange={handlePersonNotifyUIChange} className='form-control' placeholder='' />
+                                    <input type='text' name='phoneNumber'  maxLength={10} value={personNotifyUIForm.phoneNumber} onChange={handleChangePhoneNumber} className='form-control' placeholder='' />
+                                    
                                 </div>
                             </div>
                             <div className="col-1 col-md-1 col-lg-1 mt-2" >

@@ -13,10 +13,11 @@ import { RequiredFieldIncident } from '../../../Utility/Personnel/Validation';
 import DeletePopUpModal from '../../../../Common/DeleteModal';
 import ChangesModal from '../../../../Common/ChangesModal';
 import { get_ScreenPermissions_Data } from '../../../../../redux/actions/IncidentAction';
+import NameListing from '../../../ShowAllList/NameListing';
 
 export const Hobbies = (props) => {
 
-    const { DecMissPerID } = props;
+    const { DecMissPerID, ListData } = props;
     const useQuery = () => {
         const params = new URLSearchParams(useLocation().search);
         return {
@@ -217,6 +218,7 @@ export const Hobbies = (props) => {
 
     return (
         <>
+            <NameListing {...{ ListData }} />
             {/* Last Seen Info Section */}
             <fieldset className='mt-2'>
                 <legend>Last Seen Info</legend>
