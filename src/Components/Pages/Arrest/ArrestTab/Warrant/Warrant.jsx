@@ -245,6 +245,8 @@ const Warrant = (props) => {
                 'DateExpiredErrors': '',
                 'IssuingAgencyIDErrors': '',
             });
+            setValue({ ...value, [e.target.name]: '', ['DateTimeIssued']: '', ['DateExpired']: '', });
+            setDateExpired();
         }
 
 
