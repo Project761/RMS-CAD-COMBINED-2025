@@ -121,6 +121,8 @@ const ConfirmModal = (props) => {
                                                 !arresteeChange?.Gendre_Description
                                             ) && "cannot be empty"
                                         }
+                                        <br />
+                                        Do you want to enter
                                     </span>
                                 </h5>
                                 <div className="btn-box mt-2" data-toggle="modal" data-target="#MasterModal" >
