@@ -3103,6 +3103,7 @@ const Home = (props) => {
                             dropdownMode="select"
                             showDisabledMonthNavigation
                             openToDate={new Date(datezone)}
+                            
                             // openToDate={new Date(datezone)}
                               filterTime={filterExpectedTimes}
                             autoComplete='off'
