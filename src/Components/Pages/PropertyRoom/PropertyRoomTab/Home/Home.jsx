@@ -982,7 +982,7 @@ const Home = (props) => {
                     IsUpdate: false,
                 }));
                 setEnabledStatus("");
-                reset_field_data();
+                reset_Field_Data();
             }
         } else {
             // Add it
@@ -1061,7 +1061,7 @@ const Home = (props) => {
 
     })
 
-    const reset_field_data = () => {
+      const reset_Field_Data = () => {
         setValue({
             ...value,
             'PropertyID': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
@@ -1365,6 +1365,7 @@ const Home = (props) => {
 
     }
 
+
     const filterPassedTimes = (time) => {
         if (!activitydate) return false;
 
@@ -1399,8 +1400,6 @@ const Home = (props) => {
         timeInServerZone.setHours(time?.getHours(), time?.getMinutes(), 0, 0);
         return timeInServerZone <= now;
     }
-
-
 
 
 
@@ -3048,9 +3047,9 @@ const Home = (props) => {
                             dropdownMode="select"
                             showDisabledMonthNavigation
                             autoComplete='off'
+                            openToDate={new Date(datezone)}
                             maxDate={new Date(datezone)}
                             filterTime={filterPassedTimes}
-                            openToDate={new Date(datezone)}
                             disabled={selectedOption === null || selectedOption === ''}
                             className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                         />
@@ -3102,12 +3101,10 @@ const Home = (props) => {
                             showYearDropdown
                             dropdownMode="select"
                             showDisabledMonthNavigation
-                            openToDate={new Date(datezone)}
-                            
-                            // openToDate={new Date(datezone)}
-                              filterTime={filterExpectedTimes}
                             autoComplete='off'
                             maxDate={new Date(datezone)}
+                            filterTime={filterExpectedTimes}
+                             openToDate={new Date(datezone)}
                             disabled={selectedOption === null || selectedOption === ''}
                             className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                         />
