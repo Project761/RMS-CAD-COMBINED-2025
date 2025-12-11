@@ -1899,19 +1899,57 @@ input[type=number] {
 
   }
 
-  .printable-area {
+  /* .printable-area {
     padding-bottom: 0 !important;
     margin-bottom: 0 !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
-  }
+  } */
 
-  .section-item,
+  /* .section-item,
   .row,
   .print-section {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
+  } */
+
+
+
+
+
+  .print-table {
+    width: 100%;
+    border-collapse: collapse;
+    page-break-inside: auto;
   }
+
+  .print-table thead {
+    display: table-header-group;
+  }
+
+  .print-table thead .header-space {
+    height: 13mm !important;
+  }
+
+  .print-table tfoot {
+    display: table-footer-group;
+  }
+
+  .print-table tfoot .footer-space {
+    height: 13mm !important;
+  }
+
+ 
+
+  /* .content {
+    padding: 10mm 5mm;
+  } */
+
+  .footer-space {
+    height: 13mm !important;
+    display: block !important;
+  }
+
 
 
   .print-footer {
@@ -1923,9 +1961,12 @@ input[type=number] {
     text-align: center;
     font-size: 10px;
     background: white;
-    page-break-after: always !important;
-    break-after: page !important;
   }
+
+  /* .text-field:first-child {
+    margin-top: 7mm !important;
+  } */
+
 
 
 
@@ -1939,6 +1980,8 @@ input[type=number] {
       bottom: 5px !important;
     }
   }
+
+
 }
 
 .attemped__com {

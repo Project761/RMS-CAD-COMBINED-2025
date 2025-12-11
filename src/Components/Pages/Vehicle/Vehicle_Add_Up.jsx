@@ -341,9 +341,9 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                 <div className="dark-row" >
                     <div className="col-12 col-sm-12">
                         <div className={`card Agency ${isCad ? 'CAD-incident-card' : 'incident-card'}`}>
-                            <div className="card-body" >
+                            <div className="card-body py-1" >
                                 {VehicleFilterData && VehicleFilterData.length > 0 && MstVehicle != "MST-Vehicle-Dash" && (
-                                    <div className="card-carousel-container position-relative mb-3">
+                                    <div className="card-carousel-container position-relative mb-1">
                                         {/* Cards Wrapper */}
                                         {viewType === "card" ? (
                                             <div className="card-carousel" id="cardCarousel" ref={carouselRef}>
