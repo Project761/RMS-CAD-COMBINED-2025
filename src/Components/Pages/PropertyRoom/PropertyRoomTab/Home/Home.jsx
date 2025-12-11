@@ -20,7 +20,6 @@ import ChainOfModel from '../../PropertyReportRoom/ChainOfModel';
 import { TaskListModal } from '../../../Property/PropertyTab/MiscellaneousInformation/MiscellaneousInformation';
 import BarCode from '../../../../Common/BarCode';
 import SelectBox from '../../../../Common/SelectBox';
-import { da } from 'date-fns/locale';
 
 
 const Home = (props) => {
@@ -427,6 +426,7 @@ const Home = (props) => {
     };
 
 
+
     const GetData_PropertyroomRadio = (propertyId, category) => {
         const val = {
             'PropertyID': propertyId, 'PropertyCategoryCode': category, 'MasterPropertyID': 0, 'AgencyId': loginAgencyID,
@@ -576,6 +576,8 @@ const Home = (props) => {
             toastifySuccess(res.Message);
         });
     };
+
+
 
     const Get_SendTask_Data = (PropertyID, MasterPropertyID) => {
         const val = { "PropertyID": PropertyID.toString(), "MasterPropertyID": MasterPropertyID.toString() }
@@ -904,6 +906,8 @@ const Home = (props) => {
         }
     };
 
+
+
     const HandleStatusOption = () => {
         let arr = [];
         if (LastTask) {
@@ -978,7 +982,7 @@ const Home = (props) => {
                     IsUpdate: false,
                 }));
                 setEnabledStatus("");
-                reset_field_data();
+                reset_Field_Data();
             }
         } else {
             // Add it
@@ -1057,7 +1061,7 @@ const Home = (props) => {
 
     })
 
-     const reset_field_data = () => {
+      const reset_Field_Data = () => {
         setValue({
             ...value,
             'PropertyID': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
@@ -1321,6 +1325,7 @@ const Home = (props) => {
     };
 
     useEffect(() => {
+
         if (editval && selectedOption === 'Update') {
             setValue({
                 ...value, PropertyID: editval?.PropertyID || '', ActivityType: editval?.ActivityType || '',
@@ -1351,7 +1356,6 @@ const Home = (props) => {
 
         }
     }, [editval, selectedOption]);
-
     function handleClickedClearedDestination() {
         setValue({
             ...value,
@@ -1360,6 +1364,7 @@ const Home = (props) => {
         setfunctiondone(!functiondone);
 
     }
+
 
     const filterPassedTimes = (time) => {
         if (!activitydate) return false;
@@ -1395,12 +1400,6 @@ const Home = (props) => {
         timeInServerZone.setHours(time?.getHours(), time?.getMinutes(), 0, 0);
         return timeInServerZone <= now;
     }
-    // const selectedDay = selected.toDateString();
-    // const today = now.toDateString();
-    // if (selectedDay !== today) return true;
-    // return time.getTime() <= now.getTime();
-    // };
-
 
 
 
@@ -1432,6 +1431,7 @@ const Home = (props) => {
                                             ...value,
                                             'PropertyTypeID': '',
                                             'VehicleTypeID': '',
+
                                         })
                                     }}
                                     defaultValue={AddType[0]}
@@ -1698,7 +1698,7 @@ const Home = (props) => {
                                         </div>
                                     </> : <></>
                             }
-                        </div>
+                        </div >
 
 
 
@@ -2770,7 +2770,8 @@ const Home = (props) => {
                                 <div style={{ display: "flex", flexDirection: "row", background: selectedOption ? "#555" : "#ccc", alignItems: "center", gap: "8px", }}
                                 >
                                     <div style={{ display: "flex", alignItems: "center", border: "1px solid #ccc", borderRadius: "6px", background: "#f9f9f9", width: "100%" }}>
-                                        <label htmlFor="file-input"
+                                        <label
+                                            htmlFor="file-input"
                                             style={{
                                                 padding: "5px 16px",
                                                 backgroundColor: selectedOption ? "#555" : "#ccc",
@@ -2852,6 +2853,7 @@ const Home = (props) => {
                                 </div>
                             </div>
                         </div>
+
                     </div>
 
                     <fieldset style={{ width: "100%" }}>
@@ -2972,6 +2974,7 @@ const Home = (props) => {
                                     minDate={courtdate ? new Date(courtdate) : new Date()}
                                     disabled={value.IsCheckOut || value.IsRelease || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                                     className={value.IsCheckOut || value.IsRelease || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
+
                                 />
                             </div>
                         </div>
@@ -3006,6 +3009,10 @@ const Home = (props) => {
                         <DatePicker
                             name='activitydate'
                             id='activitydate'
+                            // onChange={(date) => {
+                            //     setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
+
+                            // }}
                             onChange={(date) => {
                                 if (date) {
                                     const now = new Date(datezone);
@@ -3038,14 +3045,15 @@ const Home = (props) => {
                             showMonthDropdown
                             showYearDropdown
                             dropdownMode="select"
+                            showDisabledMonthNavigation
+                            autoComplete='off'
                             openToDate={new Date(datezone)}
                             maxDate={new Date(datezone)}
                             filterTime={filterPassedTimes}
-                            showDisabledMonthNavigation
-                            autoComplete='off'
                             disabled={selectedOption === null || selectedOption === ''}
                             className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                         />
+
                     </div>
                     <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
                         <label htmlFor="" className='new-label mb-0'>Expected Return Date/Time{errors.ExpectedReturnDateTimeError !== 'true' ? (
@@ -3056,6 +3064,10 @@ const Home = (props) => {
                         <DatePicker
                             name='ExpectedDate'
                             id='ExpectedDate'
+                            // onChange={(date) => {
+                            //     setExpecteddate(date); setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
+
+                            // }}
                             onChange={(date) => {
                                 if (date) {
                                     const now = new Date(datezone);
@@ -3090,14 +3102,14 @@ const Home = (props) => {
                             dropdownMode="select"
                             showDisabledMonthNavigation
                             autoComplete='off'
-                            openToDate={new Date(datezone)}
                             maxDate={new Date(datezone)}
                             filterTime={filterExpectedTimes}
+                             openToDate={new Date(datezone)}
                             disabled={selectedOption === null || selectedOption === ''}
                             className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                         />
-                    </div>
 
+                    </div>
                     <div className="col-3 col-md-3 col-lg-2 ">
                         <label htmlFor="" className='new-label px-0 mb-0'>Releasing Officer{errors.ReleasingOfficerError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReleasingOfficerError}</p>
