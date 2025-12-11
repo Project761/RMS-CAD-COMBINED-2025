@@ -982,6 +982,7 @@ const Home = (props) => {
                     IsUpdate: false,
                 }));
                 setEnabledStatus("");
+                reset_field_data();
             }
         } else {
             // Add it
@@ -1059,6 +1060,30 @@ const Home = (props) => {
         onAfterPrint: () => { console.log(chainreport) }
 
     })
+
+     const reset_field_data = () => {
+        setValue({
+            ...value,
+            'PropertyID': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
+            'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '',
+            'MasterPropertyId': '', 'IsCheckIn': '', 'IsCheckOut': '', 'IsRelease': '', 'IsDestroy': '', 'IsTransferLocation': '', 'IsUpdate': '', 'CreatedByUserFK': '', 'PropertyTypeID': '',
+            'OtherPersonNameID': '', 'LastSeenDtTm': '', 'PackagingDetails': '', 'ReleasingOfficerID': '', 'ReceipentOfficerID': '',
+            ['ReportedDate']: '', ['ReportedDateTo']: '', 'ModeOfTransport': '', 'DestinationStorageLocation': '',
+        });
+        setErrors({
+            ...errors,
+            'ReasonError': '', 'ActivityDateError': '', 'InvestigatorError': '', 'PropertyError': '', 'PropertyRoomOfficerError': '', 'ExpectedDateError': '', 'OfficerNameError': '', 'NameError': '', 'CourtDateError': '', 'ReleaseDateError': '', 'DestroyDateError': '', 'TypeError': '', 'TransferError': '', 'LocationError': '', 'SearchError': '', 'ActivityDtTmError': '',
+        })
+        setradioButtonStatus(false);
+        setsearcherror(prevValues => { return { ...prevValues, 'SearchError': '', } })
+        setCourtdate(''); setreleasedate(''); setdestroydate(''); setExpecteddate('');
+        setSelectedStatus(''); setRowClicked(''); setSelectedOption(null); setactivitydate(''); setReasonIdDrp([]); setLocationPath('');
+        setDescription('');
+        // setRowClicked('');
+        // setSearchData([]);
+        // setSelectedRows([]);
+        setToggleClear(!toggleClear); setStatus(''); settransfer(null); setEditval([]);
+    }
 
     const reset = () => {
         setValue({
