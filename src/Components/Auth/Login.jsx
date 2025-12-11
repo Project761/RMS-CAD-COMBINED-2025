@@ -201,6 +201,8 @@ const Login = ({ login }) => {
             'IsLevel': data['IsLevel'],
             'IsCaseManagementVisible': data['IsCaseManagementVisible'] === "False" || data['IsCaseManagementVisible'] === "false" || data['IsCaseManagementVisible'] === false ? false : true,
             'AgencyAddress': data['Agency_Address'],
+            'City': data['CityName'],
+            'ZipCode': data['ZipCode'],
         }
         // StateName
         // StateCode

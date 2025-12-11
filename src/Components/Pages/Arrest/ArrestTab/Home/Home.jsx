@@ -1580,7 +1580,7 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                     style={{ resize: 'both' }}
                                     // isDisabled={value?.IsJuvenileArrest ? false : true}
                                     className={isLockOrRestrictModule("Lock", Editval[0]?.LocationOfSchool, isLocked) ? "form-control LockFildsColor" : "form-control"}
-                                    disabled={isLockOrRestrictModule("Lock", Editval[0]?.LocationOfSchool, isLocked) ? true : value?.IsJuvenileArrest ? false : true}
+                                    isDisabled={isLockOrRestrictModule("Lock", Editval[0]?.LocationOfSchool, isLocked) ? true : value?.IsJuvenileArrest ? false : true}
                                 />
                                 {/* <input type="text" name="LocationOfSchool"
                                     value={value?.LocationOfSchool}

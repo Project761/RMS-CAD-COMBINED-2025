@@ -595,7 +595,7 @@ function VictimWitness() {
 
     return (
         <>
-            <div className="container-fluid mt-2">
+            <div className="container-fluid">
                 <VictimManagementSection
                     data={victimData}
                     columns={victimColumns}

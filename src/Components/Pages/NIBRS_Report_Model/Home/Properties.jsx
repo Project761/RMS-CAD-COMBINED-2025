@@ -62,6 +62,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
     let FbiCode = query?.get('FbiCode');
     let AttComp = query?.get('AttComp');
     let MstPage = query?.get('page');
+    var narrativeId = query?.get("narrativeId");
 
     if (!IncID) IncID = 0;
     else IncID = parseInt(base64ToString(IncID));
@@ -781,9 +782,9 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                 if (res.success) {
 
                     if (MstPage === "MST-Property-Dash") {
-                        navigate(`/nibrs-Home?page=MST-Property-Dash&ProId=${stringToBase64(res?.PropertyID)}&MProId=${stringToBase64(res?.MasterPropertyID)}&ModNo=${res?.PropertyNumber?.trim()}&ProSta=${true}&ProCategory=${value.PropertyCategoryCode}`);
+                        navigate(`/nibrs-Home?page=MST-Property-Dash&ProId=${stringToBase64(res?.PropertyID)}&MProId=${stringToBase64(res?.MasterPropertyID)}&ModNo=${res?.PropertyNumber?.trim()}&ProSta=${true}&ProCategory=${value.PropertyCategoryCode}&narrativeId=${narrativeId}`);
                     } else {
-                        navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${stringToBase64(res?.PropertyID)}&MProId=${stringToBase64(res?.MasterPropertyID)}&ProSta=${true}&ProCategory=${value.PropertyCategoryCode}`)
+                        navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${stringToBase64(res?.PropertyID)}&MProId=${stringToBase64(res?.MasterPropertyID)}&ProSta=${true}&ProCategory=${value.PropertyCategoryCode}&narrativeId=${narrativeId}`)
                     }
 
                     Reset();
@@ -848,7 +849,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
     const newProperty = () => {
         if (MstPage === "MST-Property-Dash") {
 
-            navigate(`/nibrs-Home?page=MST-Property-Dash&ProId=${0}&MProId=${0}&ModNo=${''}&ProSta=${false}&ProCategory=${''}`);
+            navigate(`/nibrs-Home?page=MST-Property-Dash&ProId=${0}&MProId=${0}&ModNo=${''}&ProSta=${false}&ProCategory=${''}&narrativeId=${narrativeId}`);
 
             Reset();
 
@@ -856,7 +857,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
             get_Property_Count(''); setChangesStatus(false); setStatesChangeStatus(false);
         } else {
 
-            navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${0}&MProId=${0}&ProSta=${false}&ProCategory=${''}`)
+            navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${0}&MProId=${0}&ProSta=${false}&ProCategory=${''}&narrativeId=${narrativeId}`)
 
             Reset(); setPossessionID('');
 
@@ -1032,7 +1033,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
             // get Inc-Lock Status
             getPermissionLevelByLock(IncID, loginPinID);
 
-            navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${stringToBase64(row?.PropertyID)}&MProId=${stringToBase64(row?.MasterPropertyID)}&ProSta=${true}&ProCategory=${row.PropertyType_Description}`);
+            navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${stringToBase64(row?.PropertyID)}&MProId=${stringToBase64(row?.MasterPropertyID)}&ProSta=${true}&ProCategory=${row.PropertyType_Description}&narrativeId=${narrativeId}`);
 
             Reset();
             GetSingleData(row?.PropertyID, row?.MasterPropertyID);

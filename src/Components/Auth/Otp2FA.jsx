@@ -101,6 +101,8 @@ const Otp = ({ username, otp, loginResData, setOtp, timerOn, type, isMDT, isSupe
             'IsLevel': data['IsLevel'],
             'IsCaseManagementVisible': data['IsCaseManagementVisible'] === "False" || data['IsCaseManagementVisible'] === "false" || data['IsCaseManagementVisible'] === false ? false : true,
             'AgencyAddress': data['Agency_Address'],
+            'ZipCode': data['ZipCode'],
+            'City': data['CityName'],
         }
         const val = {
             // UniqueId: uniUserId,

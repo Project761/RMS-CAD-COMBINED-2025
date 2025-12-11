@@ -164,7 +164,9 @@ const AgencySetting = () => {
             'NCICORI': localStoreData?.NCICORI,
             'ReportApproval': value?.ReportApproval === 1 ? "Single" : 'Multi',
             'IsLevel': localStoreData?.IsLevel,
-            'IsCaseManagementVisible': value?.IsCaseManagementVisible
+            'IsCaseManagementVisible': value?.IsCaseManagementVisible,
+            'ZipCode': localStoreData?.ZipCode,
+            'City': localStoreData?.City,
         }
         const val = {
             UniqueId: uniqueId,

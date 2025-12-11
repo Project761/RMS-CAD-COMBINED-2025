@@ -15,7 +15,7 @@ import NameSearchModal from '../../../NameSearch/NameSearchModal';
 import { SSN_Field, Heights, Comparisionweight, Comparision2 } from '../../../PersonnelCom/Validation/PersonnelValidation';
 import DeletePopUpModal from '../../../../Common/DeleteModal';
 import { Carousel } from 'react-responsive-carousel';
-import defualtImage from '../../../../../img/uploadImage.png';  
+import defualtImage from '../../../../../img/uploadImage.png';
 import VerifyLocation from './VerifyLocation';
 import ChangesModal from '../../../../Common/ChangesModal';
 import DataTable from 'react-data-table-component';

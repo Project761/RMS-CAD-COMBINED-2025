@@ -21,8 +21,9 @@ import VehicleSearchTab from '../../VehicleSearchTab/VehicleSearchTab';
 import { Classification_Drp_Data } from '../../../../redux/actionTypes';
 import { get_ScreenPermissions_Data } from '../../../../redux/actions/IncidentAction';
 import CreatableSelect from 'react-select/creatable';
+import NameListing from '../../ShowAllList/NameListing';
 
-const MissingPersonVehicle = () => {
+const MissingPersonVehicle = ({ ListData }) => {
 
     const useQuery = () => {
         const params = new URLSearchParams(useLocation().search);
@@ -628,7 +629,7 @@ const MissingPersonVehicle = () => {
 
     return (
         <>
-
+            <NameListing {...{ ListData }} />
             <fieldset className='mt-2'>
                 <legend>Missing Person Vehicle</legend>
                 <div className="col-12 ">

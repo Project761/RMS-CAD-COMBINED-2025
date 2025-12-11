@@ -57,6 +57,7 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false, isLocked, setIsLocked
     let ChargeSta = query?.get('ChargeSta');
     var ArrestSta = query?.get('ArrestSta');
     var NameID = query?.get("NameID");
+    var narrativeId = query?.get("narrativeId");
 
     var SideBarStatus = query?.get("SideBarStatus");
 
@@ -66,7 +67,7 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false, isLocked, setIsLocked
     if (!NameID) { DecNameId = 0; }
     else { DecNameId = parseInt(base64ToString(NameID)); }
 
-    const { get_Arrest_Count, setArrestName, tabCount, arrestChargeData, updateCount, get_OffenseName_Data, setUpdateCount, incidentCount, setArrestChargeData, setIncidentNumber, get_Data_Arrest_Charge, get_ArrestCharge_Count, changesStatus, tabCountArrest, nibrsSubmittedStatus, setnibrsSubmittedStatus, nibrsSubmittedArrestee, setnibrsSubmittedArrestee, incidentNumber, ArresteName, arrestFilterData, get_Data_Arrest, policeForceDrpData, get_Police_Force, changesStatusCount, setChangesStatus, get_Incident_Count, setActiveArrest, datezone, GetDataTimeZone } = useContext(AgencyContext);
+    const { get_Arrest_Count, setArrestName, tabCount, arrestChargeData, updateCount, get_OffenseName_Data, setUpdateCount, incidentCount, setArrestChargeData, setIncidentNumber, get_Data_Arrest_Charge, get_ArrestCharge_Count, changesStatus, tabCountArrest, nibrsSubmittedStatus, setnibrsSubmittedStatus, nibrsSubmittedArrestee, setnibrsSubmittedArrestee, incidentNumber, ArresteName, arrestFilterData, get_Data_Arrest, policeForceDrpData, get_Police_Force, changesStatusCount, setChangesStatus, get_Incident_Count, setActiveArrest, datezone, GetDataTimeZone, validate_IncSideBar } = useContext(AgencyContext);
 
     const [status, setStatus] = useState();
     const [arrestDate, setArrestDate] = useState();
@@ -414,16 +415,18 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false, isLocked, setIsLocked
                     await SyncLocalChargesToServer(newArrestID, DecEIncID, loginPinID, loginAgencyID, ChargeLocalArr, setChargeLocalArr, get_Arrest_Count, get_Data_Arrest_Charge
                     );
                     if (MstPage === "MST-Arrest-Dash") {
-                        navigate(`/nibrs-Home?page=MST-Arrest-Dash&ArrNo=${res?.ArrestNumber}&IncNo=${incidentNumber}&Name=${ArresteName}&ArrestId=${stringToBase64(res?.ArrestID)}&ArrestSta=${true}&ChargeSta=${true}`);
+                        navigate(`/nibrs-Home?page=MST-Arrest-Dash&ArrNo=${res?.ArrestNumber}&IncNo=${incidentNumber}&Name=${ArresteName}&ArrestId=${stringToBase64(res?.ArrestID)}&ArrestSta=${true}&ChargeSta=${true}&narrativeId=${narrativeId}`);
                     } else {
-                        navigate(`/nibrs-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(res?.ArrestID)}&ArrNo=${res?.ArrestNumber}&Name=${ArresteName}&ArrestSta=${true}&ChargeSta=${false}`)
+                        navigate(`/nibrs-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(res?.ArrestID)}&ArrNo=${res?.ArrestNumber}&Name=${ArresteName}&ArrestSta=${true}&ChargeSta=${false}&narrativeId=${narrativeId}`)
                     }
                     reset_Value();
                     toastifySuccess(res.Message); get_Arrest_Count(ArrestID); get_Data_Arrest(MainIncidentID, MstPage === "MST-Arrest-Dash" ? true : false, loginPinID);
                     GetSingleData(res?.ArrestID, DecEIncID);
                     setArrestID(res.ArrestID); setStatus(false); setChangesStatus(false); setStatesChangeStatus(false)
-
-                    setErrors({ ...errors, ['ArresteeIDError']: '' }); get_Incident_Count(DecEIncID);
+                    setErrors({ ...errors, ['ArresteeIDError']: '' });
+                    get_Incident_Count(DecEIncID);
+                    // validateIncSideBar
+                    validate_IncSideBar(DecEIncID, IncNo, loginAgencyID);
 
                 }
             });
@@ -484,7 +487,7 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false, isLocked, setIsLocked
                 toastifySuccess(message); get_Data_Arrest(MainIncidentID, MstPage === "MST-Arrest-Dash" ? true : false, loginPinID);
                 get_Incident_Count(DecEIncID); get_Arrest_Count(ArrestID); reset_Value();
                 sessionStorage.removeItem('ChargeLocalData');
-                navigate(`/nibrs-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${('')}&ArrestSta=${false}&ChargeSta=${false}&SideBarStatus=${false}`)
+                navigate(`/nibrs-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${('')}&ArrestSta=${false}&ChargeSta=${false}&SideBarStatus=${false}&narrativeId=${narrativeId}`)
             } else console.log("Somthing Wrong");
         })
     }
@@ -573,7 +576,7 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false, isLocked, setIsLocked
                 // get Inc-Lock Status
                 getPermissionLevelByLock(DecEIncID, loginPinID);
                 Reset();
-                navigate(`/nibrs-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(row?.ArrestID)}&ArrNo=${row?.ArrestNumber}&Name=${row?.Arrestee_Name}&ArrestSta=${true}&ChargeSta=${false}&SideBarStatus=${!SideBarStatus}&ArrestStatus=${false} `)
+                navigate(`/nibrs-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(row?.ArrestID)}&ArrNo=${row?.ArrestNumber}&Name=${row?.Arrestee_Name}&ArrestSta=${true}&ChargeSta=${false}&SideBarStatus=${!SideBarStatus}&ArrestStatus=${false}&narrativeId=${narrativeId} `)
                 setArrestID(row?.ArrestID); setActiveArrest(row?.ArrestID); setErrors(''); setStatesChangeStatus(true); setChangesStatus(false); setStatus(true);
                 GetSingleData(row?.ArrestID, DecEIncID); get_Data_Arrest_Charge(row?.ArrestID); Reset()
             }
@@ -724,11 +727,11 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false, isLocked, setIsLocked
 
     const setStatusFalse = () => {
         if (MstPage === "MST-Arrest-Dash") {
-            navigate(`/nibrs-Home?page=MST-Arrest-Dash&ArrestId=${('')}&ArrestSta=${false}&ChargeSta=${false}&SideBarStatus=${false}`);
+            navigate(`/nibrs-Home?page=MST-Arrest-Dash&ArrestId=${('')}&ArrestSta=${false}&ChargeSta=${false}&SideBarStatus=${false}&narrativeId=${narrativeId}`);
             setClickedRow(null); reset_Value(); setErrors(''); setPossessionID(''); setPossenSinglData([]); setArrestID('');
             setnibrsSubmittedArrestee(0);
         } else {
-            navigate(`/nibrs-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${('')}&ArrestSta=${false}&ChargeSta=${false}&SideBarStatus=${false}`)
+            navigate(`/nibrs-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${('')}&ArrestSta=${false}&ChargeSta=${false}&SideBarStatus=${false}&narrativeId=${narrativeId}`)
 
             setClickedRow(null); setErrors(''); setPossessionID(''); setPossenSinglData([]);
             setActiveArrest(false); setRightGivenCode(false); setArrestID(''); reset_Value();

@@ -12,10 +12,11 @@ import Select from "react-select";
 import { get_BloodType_Drp_Data } from '../../../../../redux/actions/DropDownsData';
 import ChangesModal from '../../../../Common/ChangesModal';
 import { PhoneFieldNotReq } from '../../../Agency/AgencyValidation/validators';
+import NameListing from '../../../ShowAllList/NameListing';
 
 const MedicalInformation = (props) => {
     const dispatch = useDispatch();
-    const { DecMissPerID } = props
+    const { DecMissPerID, ListData } = props
 
     const useQuery = () => {
         const params = new URLSearchParams(useLocation().search);
@@ -417,6 +418,7 @@ const MedicalInformation = (props) => {
 
     return (
         <>
+            <NameListing {...{ ListData }} />
             <div className="col-12  child" >
                 {/* Detailed Medical Information UI (per mock) */}
                 <fieldset className='mt-2'>

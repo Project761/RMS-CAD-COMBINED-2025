@@ -20,7 +20,7 @@ const ChainOfCustody = (props) => {
 
     let MstPage = query?.get('page');
 
-    const { DecPropID, DecMPropID, } = props
+    const { DecPropID = 0, DecMPropID = 0, } = props
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
     const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
 

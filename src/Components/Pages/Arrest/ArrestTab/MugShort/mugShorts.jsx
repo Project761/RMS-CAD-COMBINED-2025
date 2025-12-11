@@ -126,6 +126,7 @@ const MugShorts = (props) => {
 
     useEffect(() => {
         if (Array?.isArray(editval) && editval?.length > 0) {
+            GetData_Mugshots_Data_Image(editval[0]?.MugshotID);
             setValue({
                 ...value,
                 MugshotID: editval[0]?.MugshotID, FrontMugshot: editval[0]?.FrontImage || '', LeftMugshot: editval[0]?.LeftImage || '', RightMugshot: editval[0]?.RightImage || '', EnterMugshot: editval[0]?.EnterImage || '', EyeColorID: editval[0]?.EyeColorID || '', Height: editval[0]?.Height || '',
@@ -443,6 +444,7 @@ const MugShorts = (props) => {
             setChangesStatus(false);
             setStatesChangeStatus(false);
             GetData_Mugshots_Data(DecArrestId);
+            GetData_Mugshots_Data_Image(MugshotID);
             setErrors({ ...errors, 'EyeColorIDErrors': '', });
             reset();
             setStatus(false);

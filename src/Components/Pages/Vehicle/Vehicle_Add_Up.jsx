@@ -312,7 +312,6 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
     const getPermissionLevelByLock = async (IncidentID, OfficerID, VehicleID) => {
         try {
             const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { 'IncidentID': IncidentID, 'OfficerID': OfficerID, 'ModuleName': "Property", 'ID': VehicleID || 0 });
-            console.log("🚀 ~ getPermissionLevelByLock ~ res:", res);
             if (res?.length > 0) {
                 setIsLocked(res[0]?.IsLocked === true || res[0]?.IsLocked === 1 ? true : false);
                 setPermissionToUnlock(res[0]?.IsUnLockPermission === true || res[0]?.IsUnLockPermission === 1 ? true : false);
@@ -342,9 +341,9 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                 <div className="dark-row" >
                     <div className="col-12 col-sm-12">
                         <div className={`card Agency ${isCad ? 'CAD-incident-card' : 'incident-card'}`}>
-                            <div className="card-body" >
+                            <div className="card-body py-1" >
                                 {VehicleFilterData && VehicleFilterData.length > 0 && MstVehicle != "MST-Vehicle-Dash" && (
-                                    <div className="card-carousel-container position-relative mb-3">
+                                    <div className="card-carousel-container position-relative mb-1">
                                         {/* Cards Wrapper */}
                                         {viewType === "card" ? (
                                             <div className="card-carousel" id="cardCarousel" ref={carouselRef}>

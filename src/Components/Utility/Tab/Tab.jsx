@@ -510,7 +510,7 @@ const Tab = () => {
                     {localStoreData?.IsCaseManagementVisible && <li className="nav-item">
                         <Link
                             className={`nav-link  ${active === `/inc-case-management?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}` ? 'active' : ''} ${incidentStatus ? '' : 'disabled'}`}
-                            to={changesStatus ? currentLocation : `/inc-case-management?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}${NarrativeAutoSaveID ? `&narrativeAutoSaveId=${NarrativeAutoSaveID}` : ''}`}
+                            to={changesStatus ? currentLocation : `/inc-case-management?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&page=home${NarrativeAutoSaveID ? `&narrativeAutoSaveId=${NarrativeAutoSaveID}` : ''}`}
                             style={{ color: currentTab === 'case-management' ? 'Red' : '#130e0e', fontWeight: '600' }}
                             data-toggle={changesStatus ? "modal" : "pill"}
                             data-target={changesStatus ? "#SaveModal" : ''}

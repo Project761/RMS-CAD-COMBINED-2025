@@ -30,7 +30,7 @@ const StatusOption = [
 
 const Charges = (props) => {
 
-  const { setStatus, DecChargeId, ListData, ArresteeID, setListData, get_List, isLocked, setIsLocked, setShowPage } = props
+  const { setStatus, DecChargeId, ListData, ArresteeID, setListData, GetSingleData, get_List, isLocked, setIsLocked, setShowPage } = props
 
   const useQuery = () => {
     const params = new URLSearchParams(useLocation().search);
@@ -248,13 +248,13 @@ const Charges = (props) => {
 
   useEffect(() => {
     if (DecChargeId) {
-      GetSingleData(DecChargeId);
+      GetSingleDataCharge(DecChargeId);
     } else {
       Reset()
     }
   }, [DecChargeId]);
 
-  const GetSingleData = (ChargeID) => {
+  const GetSingleDataCharge = (ChargeID) => {
     const val = { 'ChargeID': ChargeID };
     fetchPostData('ArrestCharge/GetSingleData_ArrestCharge', val).then((res) => {
       if (res) {
@@ -277,7 +277,8 @@ const Charges = (props) => {
         'LawTitleId': Editval[0]?.LawTitleId || Editval?.LawTitleId,
         'AttemptComplete': Editval[0]?.AttemptComplete || Editval?.AttemptComplete,
         'CategoryId': Editval[0]?.CategoryId || Editval?.CategoryID,
-        'OffenseDateTime': Editval[0]?.OffenseDateTime,
+        // 'OffenseDateTime': Editval[0]?.OffenseDateTime,
+        'OffenseDateTime': Editval[0]?.OffenseDateTime ? getShowingDateText(Editval[0]?.OffenseDateTime) : "",
         'ChargeDateTime': Editval[0]?.ChargeDateTime,
 
       });
@@ -502,7 +503,7 @@ const Charges = (props) => {
         navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(res?.ArrestID)}&ArrNo=${res?.ArrestNumber}&Name=${ArresteName}&ArrestSta=${true}&ChargeSta=${false}`)
         Add_Charge_Data(res.ArrestID);
         get_Incident_Count(DecEIncID);
-        GetSingleData(res?.ArrestID, DecEIncID);
+        GetSingleData(res.ArrestID, DecEIncID);
       }
     });
   }
@@ -611,7 +612,7 @@ const Charges = (props) => {
 
         }
         else {
-          get_ArrestCharge_Count(row?.ChargeID); setErrors(''); setChargeID(row.ChargeID); GetSingleData(row.ChargeID);
+          get_ArrestCharge_Count(row?.ChargeID); setErrors(''); setChargeID(row.ChargeID); GetSingleDataCharge(row.ChargeID);
 
         }
 
@@ -628,7 +629,7 @@ const Charges = (props) => {
           get_ArrestCharge_Count(row.ChargeID);
           setErrors(''); setStatesChangeStatus(false);
           //  setStatus(true); 
-          setChargeID(row.ChargeID); setChangesStatus(false); GetSingleData(row.ChargeID); get_Arrest_Count(row?.ArrestID); get_Property_Data(row?.ChargeID);
+          setChargeID(row.ChargeID); setChangesStatus(false); GetSingleDataCharge(row.ChargeID); get_Arrest_Count(row?.ArrestID); get_Property_Data(row?.ChargeID);
 
         }
 
@@ -890,6 +891,10 @@ const Charges = (props) => {
     }),
   };
 
+  const getValidDate = (date) => {
+    const d = new Date(date);
+    return !isNaN(d.getTime()) ? d : null;
+  };
 
   return (
     <>
@@ -1124,7 +1129,7 @@ const Charges = (props) => {
                 ) : null} */}
               </label>
             </div>
-            <div className="col-3 col-md-4 col-lg-2">
+            {/* <div className="col-3 col-md-4 col-lg-2">
               <DatePicker
                 id='OffenseDateTime'
                 name='OffenseDateTime'
@@ -1170,6 +1175,55 @@ const Charges = (props) => {
                 filterTime={(date) => filterPassedTimeZonesProperty(date, incReportedDate, datezone)}
                 timeFormat="HH:mm "
                 is24Hour
+              />
+            </div> */}
+
+            <div className="col-3 col-md-4 col-lg-2 ">
+              <DatePicker
+                id='OffenseDateTime'
+                name='OffenseDateTime'
+                ref={startRef}
+                onKeyDown={(e) => {
+                  if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                    e.preventDefault();
+                  } else {
+                    onKeyDown(e);
+                  }
+                }}
+                dateFormat="MM/dd/yyyy HH:mm"
+                timeFormat="HH:mm "
+                is24Hour
+                isClearable={false}
+                // selected={value?.ReportedDtTm && new Date(value?.ReportedDtTm)}
+                selected={getValidDate(value?.OffenseDateTime)}
+                autoComplete="Off"
+                onChange={(date) => {
+                  // setArrestDate(date ? getShowingMonthDateYear(date) : null);
+                  !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
+                  if (date > new Date(datezone)) {
+                    date = new Date(datezone);
+                  }
+                  if (date >= new Date()) {
+                    setValue({ ...value, ['OffenseDateTime']: new Date() ? getShowingDateText(new Date()) : null })
+                  } else if (date <= new Date(incReportedDate)) {
+                    setValue({ ...value, ['OffenseDateTime']: incReportedDate ? getShowingDateText(incReportedDate) : null })
+                  } else {
+                    setValue({ ...value, ['OffenseDateTime']: date ? getShowingDateText(date) : null })
+                  }
+                }}
+                timeInputLabel
+                showTimeSelect
+                timeIntervals={1}
+                timeCaption="Time"
+                showMonthDropdown
+                showYearDropdown
+                dropdownMode="select"
+                minDate={new Date(incReportedDate)}
+                maxDate={new Date(datezone)}
+                showDisabledMonthNavigation
+                filterTime={(date) => filterPassedTimeZonesProperty(date, incReportedDate, datezone)}
+                className={isLockOrRestrictModule("Lock", Editval[0]?.OffenseDateTime, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+                disabled={isLockOrRestrictModule("Lock", Editval[0]?.OffenseDateTime, isLocked)}
               />
             </div>
           </div>

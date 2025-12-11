@@ -9,7 +9,7 @@ const StatusBar = forwardRef((props, ref) => {
   const pathname = window.location.pathname;
   const navigate = useNavigate();
 
-  const { loading, incidentErrorStatus, offenseCount, offenseErrorStatus, NameCount, nameErrorStatus, NameRelationshipError, narrativeApprovedStatus, PropertyCount, PropErrorStatus } = props;
+  const { loading, incidentErrorStatus, offenseCount, offenseErrorStatus, NameCount, nameErrorStatus, NameRelationshipError, narrativeApprovedStatus, PropertyCount, VehicleCount, PropErrorStatus } = props;
 
   const useQuery = () => {
     const params = new URLSearchParams(useLocation().search);
@@ -81,7 +81,7 @@ const StatusBar = forwardRef((props, ref) => {
     // },
     {
       label: "Property",
-      value: loading ? "Loading..." : typeof PropertyCount === "number" && !PropErrorStatus ? `${PropertyCount} Added` : `${PropertyCount} Added`,
+      value: loading ? "Loading..." : typeof PropertyCount === "number" && !PropErrorStatus ? `${pathname === '/Vehicle-Home' ? VehicleCount : PropertyCount} Added` : `${pathname === '/Vehicle-Home' ? VehicleCount : PropertyCount} Added`,
       border: typeof PropertyCount === "number" && !PropErrorStatus ? "left-border-green" : "left-border-red",
       bg: typeof PropertyCount === "number" && !PropErrorStatus ? "bg-green" : "bg-red",
       icon: typeof PropertyCount === "number" && !PropErrorStatus ? faCheck : faTimes,

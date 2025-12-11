@@ -26,6 +26,7 @@ const ReportSidebar = () => {
         'Master Table5': false,
         'Master Table7': false,
         'Master Table8': false,
+        'Master Table9': false,
     });
 
     // incident
@@ -47,7 +48,8 @@ const ReportSidebar = () => {
     const [vehicleMasterReportPermission, setVehicleMasterReportPermission] = useState(false);
     // State
     const [stateReportPermission, setStateReportPermission] = useState(false);
-
+    // CaseManagement
+    const [caseManagementReportPermission, setCaseManagementReportPermission] = useState(false);
     useEffect(() => {
         if (!localStoreData?.Agency_Name) {
             if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
@@ -93,7 +95,7 @@ const ReportSidebar = () => {
     }
 
     const getReportPermission = async (AgencyID, PINID) => {
-        const [IncMasterReport, IncOfficerReport, IncMonthlyReport, IncDailyEventReport, IncTotalByCodeReport, NameMasterReport, PropertyMasterReport, ChainCustodyReport, PropertyInventoryReport, ArrestMasterReport, ArrestSummaryReport, VehicleMasterReport, StateReport] = await Promise.all([
+        const [IncMasterReport, IncOfficerReport, IncMonthlyReport, IncDailyEventReport, IncTotalByCodeReport, NameMasterReport, PropertyMasterReport, ChainCustodyReport, PropertyInventoryReport, ArrestMasterReport, ArrestSummaryReport, VehicleMasterReport, StateReport, CaseManagementReport] = await Promise.all([
             // Incident
             ScreenPermision("I097", AgencyID, PINID),
             ScreenPermision("I098", AgencyID, PINID),
@@ -113,6 +115,8 @@ const ReportSidebar = () => {
             ScreenPermision("V108", AgencyID, PINID),
             // State
             ScreenPermision("S111", AgencyID, PINID),
+            // CaseManagement
+            ScreenPermision("C112", AgencyID, PINID),
         ]);
         if (IncMasterReport?.length > 0) {
             setIncMasterReportPermission(IncMasterReport?.[0]?.DisplayOK === 1);
@@ -157,6 +161,10 @@ const ReportSidebar = () => {
         // State
         if (StateReport?.length > 0) {
             setStateReportPermission(StateReport?.[0]?.DisplayOK === 1);
+        }
+        // CaseManagement
+        if (CaseManagementReport?.length > 0) {
+            setCaseManagementReportPermission(CaseManagementReport?.[0]?.DisplayOK === 1);
         }
     }
 
@@ -361,7 +369,77 @@ const ReportSidebar = () => {
                 </ul>
             </li>
 
-
+            {/* CaseManagement */}
+            <li>
+                <Link to="#" className="has-arrow arrow-c" aria-expanded={plusMinus['Master Table9']} onClick={() => callReportModules('List', 'Master Table9')}>
+                    <span className='ml-3'> Case Management</span>
+                </Link>
+                <ul id="menu" role="menu" aria-expanded={expandList === 'Master Table9'} className={`${expandList === 'Master Table9' ? 'collapse in' : 'collapse'}`} style={{ marginLeft: '-22px' }}>
+                    {
+                        stateReportPermission && (
+                            <li className="ml-3 p-0">
+                                <Link to={`/cm-case-report?page=CaseReport`} style={{ cursor: 'pointer', background: openPage === 'CaseReport' ? '#EEE' : '' }}>
+                                    <span>Case Report</span>
+                                </Link>
+                            </li>
+                        )
+                    }
+                    {
+                        stateReportPermission && (
+                            <li className="ml-3 p-0">
+                                <Link to={`/cm-case-number-by-date-report?page=CaseNumberByDateReport`} style={{ cursor: 'pointer', background: openPage === 'CaseNumberByDateReport' ? '#EEE' : '' }}>
+                                    <span>Case Number By Date</span>
+                                </Link>
+                            </li>
+                        )
+                    }
+                    {
+                        stateReportPermission && (
+                            <li className="ml-3 p-0">
+                                <Link to={`/cm-case-task-detail-report?page=CaseTaskDetailReport`} style={{ cursor: 'pointer', background: openPage === 'CaseTaskDetailReport' ? '#EEE' : '' }}>
+                                    <span>Case Task Detail Report</span>
+                                </Link>
+                            </li>
+                        )
+                    }
+                    {
+                        stateReportPermission && (
+                            <li className="ml-3 p-0">
+                                <Link to={`/cm-case-management-performance-ranking-report?page=CaseManagementPerformanceRankingReport`} style={{ cursor: 'pointer', background: openPage === 'CaseManagementPerformanceRankingReport' ? '#EEE' : '' }}>
+                                    <span>Case Management Performance Ranking Report</span>
+                                </Link>
+                            </li>
+                        )
+                    }
+                    {
+                        stateReportPermission && (
+                            <li className="ml-3 p-0">
+                                <Link to={`/cm-case-summary-by-status-and-date-report?page=CaseSummaryByStatusAndDateReport`} style={{ cursor: 'pointer', background: openPage === 'CaseSummaryByStatusAndDateReport' ? '#EEE' : '' }}>
+                                    <span>Case Summary By Status and Date</span>
+                                </Link>
+                            </li>
+                        )
+                    }
+                    {
+                        stateReportPermission && (
+                            <li className="ml-3 p-0">
+                                <Link to={`/cm-case-assignment-by-pin-report?page=CaseAssignmentByPINReport`} style={{ cursor: 'pointer', background: openPage === 'CaseAssignmentByPINReport' ? '#EEE' : '' }}>
+                                    <span>Case Assignment By PIN</span>
+                                </Link>
+                            </li>
+                        )
+                    }
+                    {
+                        stateReportPermission && (
+                            <li className="ml-3 p-0">
+                                <Link to={`/cm-master-investigation-report?page=MasterInvestigationReport`} style={{ cursor: 'pointer', background: openPage === 'MasterInvestigationReport' ? '#EEE' : '' }}>
+                                    <span>Master Investigation Report</span>
+                                </Link>
+                            </li>
+                        )
+                    }
+                </ul>
+            </li>
         </>
     );
 }

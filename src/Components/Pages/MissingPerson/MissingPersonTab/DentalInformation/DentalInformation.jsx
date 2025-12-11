@@ -13,10 +13,11 @@ import { get_Jwellery_Drp_Data } from '../../../../../redux/actions/DropDownsDat
 import { get_ScreenPermissions_Data } from '../../../../../redux/actions/IncidentAction';
 import ChangesModal from '../../../../Common/ChangesModal';
 import { PhoneFieldNotReq } from '../../../Agency/AgencyValidation/validators';
+import NameListing from '../../../ShowAllList/NameListing';
 
 const DentalInformation = (props) => {
 
-    const { DecMissPerID } = props;
+    const { DecMissPerID, ListData } = props;
     const useQuery = () => {
         const params = new URLSearchParams(useLocation().search);
         return {
@@ -603,6 +604,7 @@ const DentalInformation = (props) => {
 
     return (
         <>
+            <NameListing {...{ ListData }} />
             <div className="col-12  child" >
                 {/* Detailed Dental Information UI (per mock) */}
                 <fieldset className='mt-2'>

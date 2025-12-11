@@ -146,6 +146,9 @@ const AgencyData = ({ children }) => {
     const [VehicleFilterData, setVehicleFilterData] = useState([]);
     const [vehicleStatus, setVehicleStatus] = useState(false);
     const [vehicleCount, setVehicleCount] = useState('')
+    //PropertyRoom
+    const [BarCodeStatus, setBarCodeStatus] = useState([]);
+
 
     // Warent
     const [warentData, setwarentData] = useState([]);
@@ -907,6 +910,8 @@ const AgencyData = ({ children }) => {
             nameData, nameSearchData, setNameSearchData, nameStatus, setNameStatus, nameSearchStatus, setNameSearchStatus, setcountStatus, countStatus, countAppear, setcountAppear, auditCount, setAuditCount, victimCount, setVictimCount, offenceCountStatus, setoffenceCountStatus, offenderCount, setOffenderCount, masterCountgenStatus, setMasterCountgenStatus, masterAppeaCountStatus, setmasterAppeaCountStatus,
             // vehicle
             get_Data_Vehicle, VehicleData, setVehicleData, vehicleStatus, setVehicleStatus, VehicleSearch, setVehicleSearch, vehicleCount, setVehicleCount,
+            // Property Room
+            BarCodeStatus, setBarCodeStatus,
             // Property
             propertyTypeData, setPropertyTypeData, propertyLossCodeData, setPropertyLossCodeData, get_PropertyLossCode, propertyStatus, setPropertyStatus,
             locationPath, setLocationPath, locationStatus, setlocationStatus, propertyCount, setPropertyCount, countmiscellinfo, setcountmiscellinfo,

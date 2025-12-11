@@ -11,9 +11,10 @@ import { toastifySuccess } from "../../../../Common/AlertMsg";
 import ListModal from "../../../Utility/ListManagementModel/ListModal";
 import ChangesModal from "../../../../Common/ChangesModal";
 import { get_ScreenPermissions_Data } from "../../../../../redux/actions/IncidentAction";
+import NameListing from "../../../ShowAllList/NameListing";
 
 const NCIC = (props) => {
-    const { DecMissPerID, DecIncID } = props;
+    const { DecMissPerID, DecIncID, ListData } = props;
 
     const dispatch = useDispatch()
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
@@ -238,6 +239,7 @@ const NCIC = (props) => {
     }
     return (
         <>
+            <NameListing {...{ ListData }} />
             <div className="col-12 mt-2">
 
                 <fieldset>

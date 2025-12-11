@@ -1,15 +1,17 @@
-import React, { memo, useEffect, useRef, useState } from 'react'
+import React, { memo, useContext, useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
 import Barcode from 'react-barcode';
 import { fetchPostData } from '../hooks/Api';
 import { toastifyError } from './AlertMsg';
 import { getShowingDateText } from './Utility';
+import { AgencyContext } from '../../Context/Agency/Index';
 
 
 const BarCode = (props) => {
 
     const { agencyID, propID, masPropID, codeNo, printStatus, setPrintStatus } = props;
+    const { GetDataTimeZone, datezone, setChangesStatus, BarCodeStatus, setBarCodeStatus } = useContext(AgencyContext);
 
     const useQuery = () => {
         const params = new URLSearchParams(useLocation().search);
@@ -44,6 +46,7 @@ const BarCode = (props) => {
         const val1 = { 'AgencyID': agencyID, 'PropertyID': 0, 'MasterPropertyID': masPropID }
         fetchPostData("PropertyBarCode/GetData_PropertyBarCode", isMaster ? val1 : val).then((res) => {
             if (res) {
+                setBarCodeStatus(res);
                 setBarCodeData(res);
             } else { setBarCodeData([]); }
         })

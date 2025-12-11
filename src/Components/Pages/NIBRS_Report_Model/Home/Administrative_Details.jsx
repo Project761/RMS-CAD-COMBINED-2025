@@ -92,6 +92,7 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false, isLocked
     var IncSta = query?.get("IncSta");
     if (!IncID) IncID = 0;
     else IncID = parseInt(base64ToString(IncID));
+    var narrativeId = query?.get("narrativeId");
 
     useEffect(() => {
         if (!localStoreData.AgencyID || !localStoreData.PINID) {
@@ -357,7 +358,7 @@ const IncidentHome = ({ incidentClick = false, isNibrsSummited = false, isLocked
                     // validateIncSideBar
                     validate_IncSideBar(res?.IncidentID, res?.IncidentNumber, loginAgencyID);
                 }
-                navigate(`/Inc-Home?IncId=${stringToBase64(res?.IncidentID?.trim())}&IncNo=${res?.IncidentNumber?.trim()}&IncSta=${true}`);
+                navigate(`/Inc-Home?IncId=${stringToBase64(res?.IncidentID?.trim())}&IncNo=${res?.IncidentNumber?.trim()}&IncSta=${true}&narrativeId=${narrativeId}`);
                 setErrors({ ...errors, ['OccuredError']: '', ['IncNumberError']: '', ['NIBRSclearancedateError']: '', });
             } else {
                 toastifyError("Error"); setErrors({ ...errors, ['OccuredError']: '', ['IncNumberError']: '', ['NIBRSclearancedateError']: '', });

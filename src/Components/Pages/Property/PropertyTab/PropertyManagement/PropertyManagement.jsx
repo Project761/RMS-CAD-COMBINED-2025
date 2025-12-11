@@ -27,7 +27,7 @@ const PropertyManagement = (props) => {
     const componentRefnew = useRef();
     const componentRef = useRef();
 
-    const { DecPropID, DecMPropID, DecIncID, ProCategory, isViewEventDetails = false } = props
+    const { DecPropID, DecMPropID, DecIncID, ProCategory, isViewEventDetails = false, isCaseManagement = false, refetchPropertyForCaseManagementData = () => { } } = props
     const { get_Property_Count, setChangesStatus, GetDataTimeZone, datezone, incidentReportedDate, setIncidentReportedDate, } = useContext(AgencyContext);
     const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
     const primaryOfficerID = useSelector((state) => state.DropDown.agencyOfficerDrpData)
@@ -134,7 +134,6 @@ const PropertyManagement = (props) => {
         { value: 4, label: 'Destroy' },
     ]
 
-    console.log(editval)
 
     useEffect(() => {
         if (localStoreData) {
@@ -232,22 +231,23 @@ const PropertyManagement = (props) => {
             if (parsedData.Table && parsedData.Table.length > 0) {
 
                 setEditval(parsedData.Table[0]);
-
-                setcategoryStatus(parsedData.Table[0].Status);
+                setcategoryStatus(parsedData.Table[0].Status === 'Check In' ? 'CheckIn' :
+                    parsedData.Table[0].Status === 'Check Out' ? 'CheckOut' : parsedData.Table[0].Status);
+                // setcategoryStatus(parsedData.Table[0].Status);
                 setRowClicked(true);
-                setSelectedStatus(parsedData.Table[0].Status);
+                // setSelectedStatus(parsedData.Table[0].Status);
+                setSelectedStatus(parsedData.Table[0].Status === 'Check In' ? 'CheckIn' :
+                    parsedData.Table[0].Status === 'Check Out' ? 'CheckOut' : parsedData.Table[0].Status);
                 setTimeout(() => {
                     setreportStatus(true);
                 }, [1000])
                 setReportedDtTm(parsedData.Table[0]?.ReportedDtTm);
-                console.log("data::", parsedData.Table[0])
                 if (parsedData.Table[0].Status === 'Release' && shouldPrintForm === true) {
                     await new Promise(resolve => setTimeout(resolve, 0));
                     printForm();
                     setShouldPrintForm(false);
                 }
             } else {
-                console.log("No data available else executed");
                 toastifyError('No Data Available');
                 setRowClicked(true);
                 setcategoryStatus('');
@@ -320,7 +320,6 @@ const PropertyManagement = (props) => {
 
 
     useEffect(() => {
-        console.log(editval, selectedOption)
         if (editval && selectedOption === 'Update') {
             setValue({
                 ...value, PropertyID: editval?.PropertyID || '', ActivityType: editval?.ActivityType || '',
@@ -384,10 +383,10 @@ const PropertyManagement = (props) => {
         const CheckOutDateTimeError = value.IsCheckOut ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
         // const ExpectedReturnDateTimeError = value.IsCheckOut ? RequiredFieldIncident(value.ExpectedDate) : 'true';
         const ReleasingOfficerError = (value.IsRelease || value.IsCheckOut) ? RequiredFieldIncident(value.ReleasingOfficerID) : 'true';
-        const ReceipientError = value.IsRelease ? RequiredFieldIncident(value.OfficerNameID) : 'true';
+        const ReceipientError = value.IsRelease ? RequiredFieldIncident(value.ReceipentID) : 'true';
         const ReleasedDateTimeError = value.IsRelease ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
         // const DestructionDateTimeError = value.IsDestroy ? RequiredFieldIncident(value.DestroyDate) : 'true';
-        const DestructionDateTimeError = 'true';
+        const DestructionDateTimeError = value.IsDestroy ? RequiredFieldIncident(value.activitydate) : 'true';
         const DestructionOfficerError = value.IsDestroy ? RequiredFieldIncident(value.DestructionOfficerID) : 'true';
         const UpdatingOfficerError = value.IsUpdate ? RequiredFieldIncident(value.UpdatingOfficerID) : 'true';
         const ApprovalOfficerError = (value.IsDestroy || value.IsTransferLocation || value.IsUpdate) ? RequiredFieldIncident(value.ApprovalOfficerID) : 'true';
@@ -479,12 +478,13 @@ const PropertyManagement = (props) => {
         const ActivityType = selectedOption
         const CreatedByUserFK = loginPinID;
         const AgencyId = loginAgencyID;
-        const { ActivityReasonID, ExpectedDate, ActivityComments, IsInternalTransfer, ReleasingOfficerID, ReceipentOfficerID, IsExternalTransfer, DestinationStorageLocation, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
+        const { ActivityReasonID, ExpectedDate, ActivityComments, IsInternalTransfer, ReceipentID, ReleasingOfficerID, ReceipentOfficerID, IsExternalTransfer, DestinationStorageLocation, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
             CourtDate, ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId,
             IsCheckIn, IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, ActivityDtTm
         } = value;
         const val = {
-            PropertyID, ActivityType, ActivityReasonID, ExpectedDate, IsInternalTransfer, IsExternalTransfer, ReleasingOfficerID, ReceipentOfficerID, DestinationStorageLocation, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
+            PropertyID, ActivityType: ActivityType === 'CheckIn' ? 'Check In' :
+                ActivityType === 'CheckOut' ? 'Check Out' : ActivityType, ActivityReasonID, ExpectedDate, IsInternalTransfer, IsExternalTransfer, ReceipentID, ReleasingOfficerID, ReceipentOfficerID, DestinationStorageLocation, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
             CourtDate, ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId,
             MasterPropertyId, IsCheckIn, IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, CreatedByUserFK, AgencyId, ActivityDtTm
         };
@@ -502,6 +502,9 @@ const PropertyManagement = (props) => {
             GetData_Propertyroom(MstPage === "MST-Property-Dash" ? DecMPropID : DecPropID, ProCategory, loginAgencyID);
             setReleaseStatus(selectedOption === 'Release' ? true : false)
             toastifySuccess(res.Message);
+            if (isCaseManagement) {
+                refetchPropertyForCaseManagementData();
+            }
         })
     }
     const GetChainCustodyReport = () => {
@@ -533,7 +536,7 @@ const PropertyManagement = (props) => {
     const chainForm = useReactToPrint({
         content: () => componentRefnew.current,
         documentTitle: 'Data',
-        onAfterPrint: () => { console.log(chainreport) }
+        onAfterPrint: () => { }
 
     })
 
@@ -544,7 +547,6 @@ const PropertyManagement = (props) => {
     })
 
     const ChangeDropDown = (e, name) => {
-        console.log("event::", e, "name::", name)
         if (e) {
             setChangesStatus(true);
             if (name === 'PropertyRoomPersonNameID') {
@@ -698,6 +700,19 @@ const PropertyManagement = (props) => {
             IsExternalTransfer: selectedOption === 'IsExternalTransfer',
         }));
     };
+
+    const colourStyles = {
+        control: (styles) => ({
+            ...styles, backgroundColor: "#fce9bf",
+            height: 20,
+            minHeight: 31,
+            fontSize: 14,
+            margintop: 2,
+            boxShadow: 0,
+        }),
+    }
+
+    console.log(selectedStatus)
 
     console.log(selectedOption)
     return (
@@ -944,6 +959,7 @@ const PropertyManagement = (props) => {
                                         ? 'readonlyColor'
                                         : ''
                                     }`}
+                                readOnly={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                             />
 
                             {value.location ? (
@@ -988,7 +1004,7 @@ const PropertyManagement = (props) => {
                             <label htmlFor="" className='new-label text-nowrap  mb-0'>Packaging Details</label>
                         </div>
                         <div className="col-9 col-md-9 col-lg-4 text-field mt-0">
-                            <input type="text" name="PackagingDetails" className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.PackagingDetails} onChange={(e) => { handleChange(e) }} />
+                            <input type="text" name="PackagingDetails" readOnly={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'} className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.PackagingDetails} onChange={(e) => { handleChange(e) }} />
                         </div>
 
 
@@ -997,6 +1013,7 @@ const PropertyManagement = (props) => {
                         </div>
                         <div className="col-9 col-md-9 col-lg-10 text-field mt-0">
                             <input type="text" name="ActivityComments"
+                                readOnly={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                                 className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
                         </div>
 
@@ -1014,18 +1031,18 @@ const PropertyManagement = (props) => {
                                                 htmlFor="file-input"
                                                 style={{
                                                     padding: "5px 16px",
-                                                    backgroundColor: "#555",
+                                                    backgroundColor: selectedOption ? "#555" : "#ccc",
                                                     color: "#fff",
                                                     borderRadius: "4px",
                                                     marginLeft: "4px",
                                                     marginTop: "8px",
-                                                    cursor: "pointer",
+                                                    cursor: selectedOption ? "pointer" : "not-allowed",
                                                     fontSize: "14px",
                                                     fontWeight: "bold",
                                                     transition: "background 0.3s",
                                                 }}
-                                                onMouseOver={(e) => (e.target.style.backgroundColor = "#555")}
-                                                onMouseOut={(e) => (e.target.style.backgroundColor = "#555")}
+                                            // onMouseOver={(e) => (e.target.style.backgroundColor = "#555")}
+                                            // onMouseOut={(e) => (e.target.style.backgroundColor = "#555")}
                                             >
                                                 Choose File
                                             </label>
@@ -1036,6 +1053,7 @@ const PropertyManagement = (props) => {
                                                 multiple
                                                 style={{ display: "none" }}
                                                 id="file-input"
+                                                disabled={!selectedOption}
                                             />
                                             <div
                                                 style={{
@@ -1369,10 +1387,9 @@ const PropertyManagement = (props) => {
                                     isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                                 />
 
-
                             </div>
                             <div className="col-3 col-md-3 col-lg-2  ">
-                                <label htmlFor="" className='new-label px-0 mb-0'>Receipient Officer{errors.ReasonError !== 'true' ? (
+                                <label htmlFor="" className='new-label px-0 mb-0'>Recepient Officer{errors.ReasonError !== 'true' ? (
                                     <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
                                 ) : null}</label>
                             </div>
@@ -1388,7 +1405,6 @@ const PropertyManagement = (props) => {
                                     styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : Requiredcolour}
                                     isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                                 />
-
 
                             </div>
                             <div className="col-3 col-md-3 col-lg-2 ">
@@ -1449,7 +1465,7 @@ const PropertyManagement = (props) => {
                                 <label htmlFor="" className='new-label text-nowrap mb-0'>Packaging Details</label>
                             </div>
                             <div className="col-9 col-md-9 col-lg-10 text-field mt-0">
-                                <input type="text" name="PackagingDetails" className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.PackagingDetails} onChange={(e) => { handleChange(e) }} />
+                                <input type="text" name="PackagingDetails" readOnly={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'} className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.PackagingDetails} onChange={(e) => { handleChange(e) }} />
                             </div>
 
                             <div className="col-3 col-md-3 col-lg-2 ">
@@ -1694,7 +1710,7 @@ const PropertyManagement = (props) => {
 
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 ">
-                            <label htmlFor="" className='new-label px-0 mb-0'>Recipient {errors.ReceipientError !== 'true' ? (
+                            <label htmlFor="" className='new-label px-0 mb-0'>Recepient {errors.ReceipientError !== 'true' ? (
                                 <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReceipientError}</p>
                             ) : null}</label>
                         </div>
@@ -1707,15 +1723,17 @@ const PropertyManagement = (props) => {
                                 options={agencyOfficerDrpData}
                                 onChange={(e) => ChangeDropDown(e, 'ReceipentID')}
                                 placeholder="Select..."
-                                styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
+                                styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
                                 isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
+                            // styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
+                            // isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                             />
 
 
                         </div>
 
                         <div className="col-3 col-md-3 col-lg-2 ">
-                            <label htmlFor="" className='new-label px-0 mb-0'>Recipient Location</label>
+                            <label htmlFor="" className='new-label px-0 mb-0'>Recepient Location</label>
                         </div>
                         <div className="col-12 col-md-12 col-lg-2    ">
                             <input type="text" onChange={(e) => { handleChange(e) }} name="locationsdgf" style={{ position: 'relative' }} value={value.locationsdgf} className={`form-control`}
@@ -1992,8 +2010,8 @@ const PropertyManagement = (props) => {
                                 className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                             /> */}
                             <DatePicker
-                                name='LastSeenDtTm'
-                                id='LastSeenDtTm'
+                                name='activitydate'
+                                id='activitydate'
                                 onChange={(date) => {
                                     if (date) {
                                         let selectedDate = new Date(date);
@@ -2002,9 +2020,9 @@ const PropertyManagement = (props) => {
                                         if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0 && selectedDate.getSeconds() === 0) {
                                             selectedDate.setHours(currentDateTimeFromZone.getHours()); selectedDate.setMinutes(currentDateTimeFromZone.getMinutes()); selectedDate.setSeconds(currentDateTimeFromZone.getSeconds());
                                         }
-                                        setactivitydate(selectedDate); setValue({ ...value, ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate), });
+                                        setactivitydate(selectedDate); setValue({ ...value, ['activitydate']: getShowingMonthDateYear(selectedDate), });
                                     } else {
-                                        setactivitydate(null); setValue({ ...value, ['LastSeenDtTm']: null, });
+                                        setactivitydate(null); setValue({ ...value, ['activitydate']: null, });
                                     }
                                 }}
                                 isClearable={ActivityDtTm ? true : false}
@@ -3265,7 +3283,7 @@ const PropertyManagement = (props) => {
                         {/* <button disabled={!selectedOption} type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={(e) => { check_Validation_Error(); }}>
                                           Save
                                       </button> */}
-                        <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={() => { setStatusFalse(); conditionalRowStyles(''); }}>
+                        <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={() => { setStatusFalse(); }}>
                             Clear
                         </button>
                     </div>

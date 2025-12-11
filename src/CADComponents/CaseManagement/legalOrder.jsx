@@ -209,7 +209,7 @@ function LegalOrder() {
 
     return (
         <>
-            <div className="container-fluid bg-white p-4 rounded shadow-sm mt-2">
+            <div className="container-fluid bg-white p-4 rounded shadow-sm">
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <h5 className="mb-0">Legal Orders</h5>
                     <button className="btn btn-primary px-4" onClick={handleOpenModal}>New Legal Order</button>

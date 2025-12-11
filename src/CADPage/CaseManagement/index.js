@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import Tab from '../../Components/Utility/Tab/Tab'
 import Home from '../../CADComponents/CaseManagement/home'
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import EvidenceDocs from '../../CADComponents/CaseManagement/evidenceDocs';
+import { useLocation, useNavigate } from 'react-router-dom';
 import CaseEffort from '../../CADComponents/CaseManagement/caseEffort';
-import Prosecution from '../../CADComponents/CaseManagement/prosecution';
 import Discovery from '../../CADComponents/CaseManagement/discovery';
 import CaseClosure from '../../CADComponents/CaseManagement/caseClosure';
 import CourtOutcome from '../../CADComponents/CaseManagement/courtOutcome';
@@ -21,15 +19,14 @@ import CloseHistory from '../../Components/Pages/CloseHistory/CloseHistory';
 import ChargingProsecution from '../../CADComponents/CaseManagement/chargingProsecution';
 import LegalOrder from '../../CADComponents/CaseManagement/legalOrder';
 import VictimWitness from '../../CADComponents/CaseManagement/victimWitness';
+import Entities from '../../CADComponents/CaseManagement/entities';
 
 function CaseManagement() {
     const navigate = useNavigate();
     const location = useLocation();
-    const [caseManagementPage, setCaseManagementPage] = useState('home');
     const [caseID, setCaseID] = useState(null)
     const [caseData, setCaseData] = useState(null)
     const [RMSCaseNumber, setRMSCaseNumber] = useState(null)
-    const iconHome = <i className="fa fa-home" style={{ fontSize: '20px' }}></i>
     const useRouterQuery = () => {
         const params = new URLSearchParams(location.search);
         return {
@@ -42,9 +39,12 @@ function CaseManagement() {
     let IncNo = query?.get("IncNo");
     let IncSta = query?.get("IncSta");
     let CaseId = query?.get("CaseId");
+    let pageParam = query?.get("page");
 
-    if (!IncID) IncID = 0;
-    else IncID = IncID;
+    if (!IncID) IncID = '0';
+
+    // Initialize caseManagementPage from URL parameter or default to 'home'
+    const [caseManagementPage, setCaseManagementPage] = useState(pageParam || 'home');
 
     const getCaseManagementCaseDataKey = `/CaseManagement/GetAllCaseManagementCaseData/${IncID}`;
     const { data: getCaseManagementCaseData, isSuccess: isGetCaseManagementCaseDataSuccess, refetch: refetchCaseManagementCaseData } = useQuery(
@@ -58,6 +58,21 @@ function CaseManagement() {
             enabled: !!IncID
         }
     );
+
+    // Update caseManagementPage when URL page parameter changes
+    useEffect(() => {
+        if (pageParam) {
+            setCaseManagementPage(pageParam);
+        } else if (!pageParam && location.search) {
+            // If no page param exists but there are other params, default to 'home' and add it to URL
+            const params = new URLSearchParams(location.search);
+            if (!params.get('page')) {
+                params.set('page', 'home');
+                navigate(`${location.pathname}?${params.toString()}`, { replace: true });
+                setCaseManagementPage('home');
+            }
+        }
+    }, [pageParam, location.search, location.pathname, navigate]);
 
     useEffect(() => {
         if (isGetCaseManagementCaseDataSuccess && getCaseManagementCaseData) {
@@ -73,10 +88,14 @@ function CaseManagement() {
             if (finalCaseID && (!CaseId || parseInt(CaseId) !== finalCaseID)) {
                 const params = new URLSearchParams(location.search);
                 params.set("CaseId", finalCaseID);
+                // Preserve page parameter if it exists
+                if (pageParam) {
+                    params.set("page", pageParam);
+                }
                 navigate(`${location.pathname}?${params.toString()}`, { replace: true });
             }
         }
-    }, [isGetCaseManagementCaseDataSuccess, getCaseManagementCaseData, IncID, IncNo, IncSta, CaseId, location.pathname, location.search, navigate])
+    }, [isGetCaseManagementCaseDataSuccess, getCaseManagementCaseData, IncID, IncNo, IncSta, CaseId, pageParam, location.pathname, location.search, navigate])
 
     return (
         <div className="section-body view_page_design pt-1 p-1 bt cad-css">
@@ -88,182 +107,27 @@ function CaseManagement() {
                     <div className="col-12">
                         <div className="card Agency incident-cards-agency">
                             <div className="card-body">
-                                <div className="row " style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
-                                    <div className="col-12 name-tab">
-                                        <ul className='nav nav-tabs'>
-                                            {/* Home tab - Updates URL with page=home parameter */}
-                                            <Link
-                                                className={`nav-item ${caseManagementPage === 'home' ? 'active' : ''}`}
-                                                to={
-                                                    `/inc-case-management?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}${caseID ? `&CaseId=${caseID}` : ''}`
-                                                }
-                                                style={{ color: caseManagementPage === 'home' ? 'Red' : '#000' }}
-                                                data-toggle={"pill"}
-                                                aria-current="page"
-                                                onClick={() => { setCaseManagementPage('home') }}
-
-                                            >
-                                                {iconHome}
-                                            </Link>
-                                            <>
-                                                {/* Navigation tabs - Each tab updates URL with corresponding page parameter */}
-                                                <span
-                                                    className={`nav-item ${caseManagementPage === 'evidence' ? 'active' : ''}`}
-                                                    data-toggle={"pill"}
-                                                    style={{ color: caseManagementPage === 'evidence' ? 'Red' : '#000', pointerEvents: caseID ? 'auto' : 'none', opacity: caseID ? 1 : 0.5, cursor: caseID ? 'pointer' : 'not-allowed' }}
-                                                    aria-current="page"
-                                                    onClick={() => { if (!caseID) return; setCaseManagementPage('evidence') }}
-                                                >
-                                                    Entities
-                                                </span>
-                                                <span
-                                                    className={`nav-item ${caseManagementPage === 'caseTeam' ? 'active' : ''}`}
-                                                    data-toggle={"pill"}
-                                                    style={{ color: caseManagementPage === 'caseTeam' ? 'Red' : '#000', pointerEvents: caseID ? 'auto' : 'none', opacity: caseID ? 1 : 0.5, cursor: caseID ? 'pointer' : 'not-allowed' }}
-                                                    aria-current="page"
-                                                    onClick={() => { if (!caseID) return; setCaseManagementPage('caseTeam') }}
-                                                >
-                                                    Case Team
-                                                </span>
-                                                <span
-                                                    className={`nav-item ${caseManagementPage === 'caseEffort' ? 'active' : ''}`}
-                                                    data-toggle={"pill"}
-                                                    style={{ color: caseManagementPage === 'caseEffort' ? 'Red' : '#000', pointerEvents: caseID ? 'auto' : 'none', opacity: caseID ? 1 : 0.5, cursor: caseID ? 'pointer' : 'not-allowed' }}
-                                                    aria-current="page"
-                                                    onClick={() => { if (!caseID) return; setCaseManagementPage('caseEffort') }}
-                                                >
-                                                    Case Effort
-                                                </span>
-                                                <span
-                                                    className={`nav-item ${caseManagementPage === 'detectiveNotes' ? 'active' : ''}`}
-                                                    data-toggle={"pill"}
-                                                    style={{ color: caseManagementPage === 'detectiveNotes' ? 'Red' : '#000', pointerEvents: caseID ? 'auto' : 'none', opacity: caseID ? 1 : 0.5, cursor: caseID ? 'pointer' : 'not-allowed' }}
-                                                    aria-current="page"
-                                                    onClick={() => { if (!caseID) return; setCaseManagementPage('detectiveNotes') }}
-                                                >
-                                                    Detective Notes
-                                                </span>
-                                                <span
-                                                    className={`nav-item ${caseManagementPage === 'propertyEvidence' ? 'active' : ''}`}
-                                                    data-toggle={"pill"}
-                                                    style={{ color: caseManagementPage === 'propertyEvidence' ? 'Red' : '#000', pointerEvents: caseID ? 'auto' : 'none', opacity: caseID ? 1 : 0.5, cursor: caseID ? 'pointer' : 'not-allowed' }}
-                                                    aria-current="page"
-                                                    onClick={() => { if (!caseID) return; setCaseManagementPage('propertyEvidence') }}
-                                                >
-                                                    Property and Evidence
-                                                </span>
-                                                <span
-                                                    className={`nav-item ${caseManagementPage === 'legalOrder' ? 'active' : ''}`}
-                                                    data-toggle={"pill"}
-                                                    style={{ color: caseManagementPage === 'legalOrder' ? 'Red' : '#000', pointerEvents: caseID ? 'auto' : 'none', opacity: caseID ? 1 : 0.5, cursor: caseID ? 'pointer' : 'not-allowed' }}
-                                                    aria-current="page"
-                                                    onClick={() => { if (!caseID) return; setCaseManagementPage('legalOrder') }}
-                                                >
-                                                    Legal Orders
-                                                </span>
-                                                <span
-                                                    className={`nav-item ${caseManagementPage === 'victimWitness' ? 'active' : ''}`}
-                                                    data-toggle={"pill"}
-                                                    style={{ color: caseManagementPage === 'victimWitness' ? 'Red' : '#000', pointerEvents: caseID ? 'auto' : 'none', opacity: caseID ? 1 : 0.5, cursor: caseID ? 'pointer' : 'not-allowed' }}
-                                                    aria-current="page"
-                                                    onClick={() => { if (!caseID) return; setCaseManagementPage('victimWitness') }}
-                                                >
-                                                    Victim & Witness Management
-                                                </span>
-                                                <span
-                                                    className={`nav-item ${caseManagementPage === 'caseReport' ? 'active' : ''}`}
-                                                    data-toggle={"pill"}
-                                                    style={{ color: caseManagementPage === 'caseReport' ? 'Red' : '#000', pointerEvents: caseID ? 'auto' : 'none', opacity: caseID ? 1 : 0.5, cursor: caseID ? 'pointer' : 'not-allowed' }}
-                                                    aria-current="page"
-                                                    onClick={() => { if (!caseID) return; setCaseManagementPage('caseReport') }}
-                                                >
-                                                    Case Report
-                                                </span>
-                                                <span
-                                                    className={`nav-item ${caseManagementPage === 'caseTimeline' ? 'active' : ''}`}
-                                                    data-toggle={"pill"}
-                                                    style={{ color: caseManagementPage === 'caseTimeline' ? 'Red' : '#000', pointerEvents: caseID ? 'auto' : 'none', opacity: caseID ? 1 : 0.5, cursor: caseID ? 'pointer' : 'not-allowed' }}
-                                                    aria-current="page"
-                                                    onClick={() => { if (!caseID) return; setCaseManagementPage('caseTimeline') }}
-                                                >
-                                                    Case Timeline
-                                                </span>
-                                                <span
-                                                    className={`nav-item ${caseManagementPage === 'chargingProsecution' ? 'active' : ''}`}
-                                                    data-toggle={"pill"}
-                                                    style={{ color: caseManagementPage === 'chargingProsecution' ? 'Red' : '#000', pointerEvents: caseID ? 'auto' : 'none', opacity: caseID ? 1 : 0.5, cursor: caseID ? 'pointer' : 'not-allowed' }}
-                                                    aria-current="page"
-                                                    onClick={() => { if (!caseID) return; setCaseManagementPage('chargingProsecution') }}
-                                                >
-                                                    Charging & Prosecution
-                                                </span>
-                                                <span
-                                                    className={`nav-item ${caseManagementPage === 'discovery' ? 'active' : ''}`}
-                                                    data-toggle={"pill"}
-                                                    style={{ color: caseManagementPage === 'discovery' ? 'Red' : '#000', pointerEvents: caseID ? 'auto' : 'none', opacity: caseID ? 1 : 0.5, cursor: caseID ? 'pointer' : 'not-allowed' }}
-                                                    aria-current="page"
-                                                    onClick={() => { if (!caseID) return; setCaseManagementPage('discovery') }}
-                                                >
-                                                    Discovery
-                                                </span>
-                                                <span
-                                                    className={`nav-item ${caseManagementPage === 'caseClosure' ? 'active' : ''}`}
-                                                    data-toggle={"pill"}
-                                                    style={{ color: caseManagementPage === 'caseClosure' ? 'Red' : '#000', pointerEvents: caseID ? 'auto' : 'none', opacity: caseID ? 1 : 0.5, cursor: caseID ? 'pointer' : 'not-allowed' }}
-                                                    aria-current="page"
-                                                    onClick={() => { if (!caseID) return; setCaseManagementPage('caseClosure') }}
-                                                >
-                                                    Case Closure
-                                                </span>
-                                                <span
-                                                    className={`nav-item ${caseManagementPage === 'courtOutcome' ? 'active' : ''}`}
-                                                    data-toggle={"pill"}
-                                                    style={{ color: caseManagementPage === 'courtOutcome' ? 'Red' : '#000', pointerEvents: caseID ? 'auto' : 'none', opacity: caseID ? 1 : 0.5, cursor: caseID ? 'pointer' : 'not-allowed' }}
-                                                    aria-current="page"
-                                                    onClick={() => { if (!caseID) return; setCaseManagementPage('courtOutcome') }}
-                                                >
-                                                    Court Outcome
-                                                </span>
-                                                <span
-                                                    className={`nav-item ${caseManagementPage === 'caseHistory' ? 'active' : ''}`}
-                                                    data-toggle={"pill"}
-                                                    style={{ color: caseManagementPage === 'caseHistory' ? 'Red' : '#000', pointerEvents: caseID ? 'auto' : 'none', opacity: caseID ? 1 : 0.5, cursor: caseID ? 'pointer' : 'not-allowed' }}
-                                                    aria-current="page"
-                                                    onClick={() => { if (!caseID) return; setCaseManagementPage('caseHistory') }}
-                                                >
-                                                    Case History
-                                                </span>
-                                            </>
-                                            <span
-                                                className={`nav-item ${caseManagementPage === 'auditLog' ? 'active' : ''}`}
-                                                data-toggle={"pill"}
-                                                style={{ color: caseManagementPage === 'auditLog' ? 'Red' : '#000', pointerEvents: caseID ? 'auto' : 'none', opacity: caseID ? 1 : 0.5, cursor: caseID ? 'pointer' : 'not-allowed' }}
-                                                aria-current="page"
-                                                onClick={() => { if (!caseID) return; setCaseManagementPage('auditLog') }}
-                                            >
-                                                {" Audit Log"}
-                                            </span>
-
-                                        </ul>
+                                <div className="row" style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
+                                    {/* Content Area */}
+                                    <div className="col-12" style={{ padding: '20px' }}>
+                                        {caseManagementPage === 'home' && <Home CaseId={caseID} RMSCaseNumber={RMSCaseNumber} refetchCaseManagementCaseData={refetchCaseManagementCaseData} caseData={caseData} />}
+                                        {caseManagementPage === 'entities' && <Entities CaseId={caseID} />}
+                                        {caseManagementPage === 'caseTeam' && <CaseTeam CaseId={caseID} />}
+                                        {caseManagementPage === 'caseEffort' && <CaseEffort CaseId={caseID} />}
+                                        {caseManagementPage === 'detectiveNotes' && <DetectiveNotes CaseId={caseID} />}
+                                        {caseManagementPage === 'propertyEvidence' && <PropertyEvidence />}
+                                        {caseManagementPage === 'legalOrder' && <LegalOrder />}
+                                        {caseManagementPage === 'victimWitness' && <VictimWitness />}
+                                        {caseManagementPage === 'caseReport' && <CaseReport CaseId={caseID} />}
+                                        {caseManagementPage === 'caseTimeline' && <CaseTimeline />}
+                                        {caseManagementPage === 'chargingProsecution' && <ChargingProsecution CaseId={caseID} />}
+                                        {caseManagementPage === 'discovery' && <Discovery />}
+                                        {caseManagementPage === 'caseClosure' && <CaseClosure CaseId={caseID} />}
+                                        {caseManagementPage === 'courtOutcome' && <CourtOutcome />}
+                                        {caseManagementPage === 'auditLog' && <AuditLog />}
+                                        {caseManagementPage === 'caseHistory' && <CloseHistory />}
                                     </div>
                                 </div>
-
-                                {caseManagementPage === 'home' && <Home CaseId={caseID} RMSCaseNumber={RMSCaseNumber} refetchCaseManagementCaseData={refetchCaseManagementCaseData} caseData={caseData} />}
-                                {caseManagementPage === 'evidence' && <EvidenceDocs CaseId={caseID} />}
-                                {caseManagementPage === 'caseTeam' && <CaseTeam CaseId={caseID} />}
-                                {caseManagementPage === 'caseEffort' && <CaseEffort CaseId={caseID} />}
-                                {caseManagementPage === 'detectiveNotes' && <DetectiveNotes CaseId={caseID} />}
-                                {caseManagementPage === 'propertyEvidence' && <PropertyEvidence />}
-                                {caseManagementPage === 'legalOrder' && <LegalOrder />}
-                                {caseManagementPage === 'victimWitness' && <VictimWitness />}
-                                {caseManagementPage === 'caseReport' && <CaseReport CaseId={caseID} />}
-                                {caseManagementPage === 'caseTimeline' && <CaseTimeline />}
-                                {caseManagementPage === 'chargingProsecution' && <ChargingProsecution CaseId={caseID} />}
-                                {caseManagementPage === 'discovery' && <Discovery />}
-                                {caseManagementPage === 'caseClosure' && <CaseClosure CaseId={caseID} />}
-                                {caseManagementPage === 'courtOutcome' && <CourtOutcome />}
-                                {caseManagementPage === 'auditLog' && <AuditLog />}
-                                {caseManagementPage === 'caseHistory' && <CloseHistory />}
                             </div>
                         </div>
                     </div>

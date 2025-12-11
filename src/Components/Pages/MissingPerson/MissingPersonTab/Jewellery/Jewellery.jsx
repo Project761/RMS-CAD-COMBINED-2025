@@ -15,10 +15,11 @@ import { get_Jwellery_Drp_Data } from '../../../../../redux/actions/DropDownsDat
 import ListModal from '../../../Utility/ListManagementModel/ListModal';
 import ChangesModal from '../../../../Common/ChangesModal';
 import { get_ScreenPermissions_Data } from '../../../../../redux/actions/IncidentAction';
+import NameListing from '../../../ShowAllList/NameListing';
 
 const Jewellery = (props) => {
 
-    const { DecMissPerID } = props;
+    const { DecMissPerID, ListData } = props;
     const useQuery = () => {
         const params = new URLSearchParams(useLocation().search);
         return {
@@ -299,6 +300,7 @@ const Jewellery = (props) => {
 
     return (
         <>
+            <NameListing {...{ ListData }} />
             <fieldset className='mt-2'>
                 <legend>Jewellery</legend>
                 <div className="col-12 ">

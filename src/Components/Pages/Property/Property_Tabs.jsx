@@ -36,7 +36,7 @@ import LockRestrictModule from '../../Common/LockRestrictModule';
 
 
 
-const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch = false }) => {
+const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch = false, isCaseManagement = false, refetchPropertyForCaseManagementData = () => { } }) => {
 
     const { changesStatus, propertyCount, get_Property_Count, countoffaduit, get_Incident_Count, incidentCount, propertyValidateNibrsData } = useContext(AgencyContext);
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
@@ -307,7 +307,7 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                 if (propertyID == delPropertyID) {
                     setStatusFalse()
                 }
-            } else { console.log("Somthing Wrong"); }
+            } else { console.warn("Somthing Wrong"); }
         })
     }
 
@@ -335,7 +335,6 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
         try {
             // const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { 'IncidentID': IncidentID, 'OfficerID': OfficerID, 'ModuleName': "Property", 'ID': PropertyID || 0 });
             const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { 'IncidentID': IncidentID, 'OfficerID': OfficerID, 'ModuleName': "Incident", 'ID': 0 });
-            // console.log("🚀 ~ getPermissionLevelByLock ~ res:", res);
             if (res?.length > 0) {
                 setIsLocked(res[0]?.IsLocked === true || res[0]?.IsLocked === 1 ? true : false);
                 setPermissionToUnlock(res[0]?.IsUnLockPermission === true || res[0]?.IsUnLockPermission === 1 ? true : false);
@@ -352,20 +351,19 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
         }
     }
 
-
     return (
         <div className="section-body  pt-1 p-1 bt" >
             <div className="div">
-                {!isCad && <div className="col-12  inc__tabs">
+                {(!isCaseManagement && !isCad) && <div className="col-12  inc__tabs">
                     {
                         !openPage && <Tab />
                     }
                 </div>}
                 <div className="dark-row" >
                     <div className="col-12 col-sm-12">
-                        <div className={`card Agency ${isCad ? 'CAD-incident-card' : 'incident-card'} ${openPage ? 'name-card' : ''}`}>
+                        <div className={`card Agency ${isCad ? 'CAD-incident-card' : 'incident-cards-agency'} ${openPage ? 'name-card' : ''}`}>
                             <div className="card-body">
-                                {propertyMainModuleData && propertyMainModuleData.length > 0 && MstPage != "MST-Property-Dash" && (
+                                {!isCaseManagement && propertyMainModuleData && propertyMainModuleData.length > 0 && MstPage != "MST-Property-Dash" && (
 
                                     <div className="card-carousel-container position-relative mb-3">
                                         {/* Cards Wrapper */}
@@ -602,44 +600,60 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
 
                                 )}
                                 {
-                                    (status || isNew === "true" || isNew === true || PropertyCount === 0 || PropertyCount === "0") && (
+                                    (status || isNew === "true" || isNew === true || PropertyCount === 0 || PropertyCount === "0" || isCaseManagement) && (
                                         <div className="row mt-1 " style={{ marginTop: '-18px', marginLeft: '-18px', marginRight: '-18px' }}>
                                             <div className="col-12  name-tab">
                                                 <ul className='nav nav-tabs'>
-                                                    {isCad ? <Link
-                                                        className={`nav-item ${showPage === 'home' ? 'active' : ''} `}
-                                                        to={isCADSearch ? `cad/property_search?page=MST-Property-Dash&ProId=${ProId}&MProId=${MProId}&ModNo=${ModNo}&ProSta=${ProSta}&ProCategory=${ProCategory}` :
-                                                            openPage ?
-                                                                `/cad/dispatcher?page=MST-Property-Dash&ProId=${ProId}&MProId=${MProId}&ModNo=${ModNo}&ProSta=${ProSta}&ProCategory=${ProCategory}`
-                                                                :
-                                                                `/cad/dispatcher?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${ProId}&MProId=${MProId}&ProSta=${ProSta}&ProCategory=${ProCategory}`
-                                                        }
-                                                        data-toggle={changesStatus ? "modal" : "pill"}
-                                                        data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: showPage === 'home' ? 'Red' : '#000' }}
-                                                        aria-current="page"
-                                                        onClick={() => {
-                                                            if (!changesStatus) { setShowPage('home'); setPropertyStatus(false); }
+                                                    {isCaseManagement ?
+                                                        <Link
+                                                            className={`nav-item ${showPage === 'home' ? 'active' : ''} `}
+                                                            to={
+                                                                `/inc-case-management?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${ProId}&MProId=${MProId}&ProSta=${ProSta}&ProCategory=${ProCategory}`
+                                                            }
+                                                            data-toggle={changesStatus ? "modal" : "pill"}
+                                                            data-target={changesStatus ? "#SaveModal" : ''}
+                                                            style={{ color: showPage === 'home' ? 'Red' : '#000' }}
+                                                            aria-current="page"
+                                                            onClick={() => { if (!changesStatus) { setShowPage('home'); setPropertyStatus(false); } }}
+                                                        >
+                                                            {iconHome}
+                                                        </Link>
+                                                        : isCad ? <Link
+                                                            className={`nav-item ${showPage === 'home' ? 'active' : ''} `}
+                                                            to={isCADSearch ? `cad/property_search?page=MST-Property-Dash&ProId=${ProId}&MProId=${MProId}&ModNo=${ModNo}&ProSta=${ProSta}&ProCategory=${ProCategory}` :
+                                                                openPage ?
+                                                                    `/cad/dispatcher?page=MST-Property-Dash&ProId=${ProId}&MProId=${MProId}&ModNo=${ModNo}&ProSta=${ProSta}&ProCategory=${ProCategory}`
+                                                                    :
+                                                                    `/cad/dispatcher?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${ProId}&MProId=${MProId}&ProSta=${ProSta}&ProCategory=${ProCategory}`
+                                                            }
+                                                            data-toggle={changesStatus ? "modal" : "pill"}
+                                                            data-target={changesStatus ? "#SaveModal" : ''}
+                                                            style={{ color: showPage === 'home' ? 'Red' : '#000' }}
+                                                            aria-current="page"
+                                                            onClick={() => {
+                                                                if (!changesStatus) { setShowPage('home'); setPropertyStatus(false); }
 
-                                                        }}
-                                                    >
-                                                        {iconHome}
-                                                    </Link> : <Link
-                                                        className={`nav-item ${showPage === 'home' ? 'active' : ''} `}
-                                                        to={
-                                                            openPage ?
-                                                                `/Prop-Home?page=MST-Property-Dash&ProId=${ProId}&MProId=${MProId}&ModNo=${ModNo}&ProSta=${ProSta}&ProCategory=${ProCategory}`
-                                                                :
-                                                                `/Prop-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${ProId}&MProId=${MProId}&ProSta=${ProSta}&ProCategory=${ProCategory}`
-                                                        }
-                                                        data-toggle={changesStatus ? "modal" : "pill"}
-                                                        data-target={changesStatus ? "#SaveModal" : ''}
-                                                        style={{ color: showPage === 'home' ? 'Red' : '#000' }}
-                                                        aria-current="page"
-                                                        onClick={() => { if (!changesStatus) { setShowPage('home'); setPropertyStatus(false); } }}
-                                                    >
-                                                        {iconHome}
-                                                    </Link>}
+                                                            }}
+                                                        >
+                                                            {iconHome}
+                                                        </Link> :
+                                                            <Link
+                                                                className={`nav-item ${showPage === 'home' ? 'active' : ''} `}
+                                                                to={
+                                                                    openPage ?
+                                                                        `/Prop-Home?page=MST-Property-Dash&ProId=${ProId}&MProId=${MProId}&ModNo=${ModNo}&ProSta=${ProSta}&ProCategory=${ProCategory}`
+                                                                        :
+                                                                        `/Prop-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${ProId}&MProId=${MProId}&ProSta=${ProSta}&ProCategory=${ProCategory}`
+                                                                }
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: showPage === 'home' ? 'Red' : '#000' }}
+                                                                aria-current="page"
+                                                                onClick={() => { if (!changesStatus) { setShowPage('home'); setPropertyStatus(false); } }}
+                                                            >
+                                                                {iconHome}
+                                                            </Link>
+                                                    }
                                                     <span
                                                         className={`nav-item ${showPage === 'Miscellaneous Information' ? 'active' : ''}${!status ? 'disabled' : ''}`}
                                                         data-toggle={changesStatus ? "modal" : "pill"}
@@ -791,10 +805,12 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                                 }
                                 {
                                     showPage === 'home' ?
-                                        <Home {...{ showRecovered, setShowRecovered, get_List, showOtherTab, setShowOtherTab, setPropertyStatus, setShowPage, propertystatus, isCad, isViewEventDetails, isCADSearch, status, isLocked, setIsLocked }} />
+                                        <>
+                                            <Home {...{ showRecovered, setShowRecovered, get_List, showOtherTab, setShowOtherTab, setPropertyStatus, setShowPage, propertystatus, isCad, isViewEventDetails, isCADSearch, status, isLocked, setIsLocked, isCaseManagement, refetchPropertyForCaseManagementData }} />
+                                        </>
                                         :
                                         showPage === 'Miscellaneous Information' ?
-                                            <MiscellaneousInformation {...{ ListData, setIsNonPropertyRoomSelected, DecPropID, DecMPropID, DecIncID, propertystatus, setPropertyStatus, isCad, isViewEventDetails, isCADSearch, isLocked, setIsLocked }} />
+                                            <MiscellaneousInformation {...{ ListData, setIsNonPropertyRoomSelected, DecPropID, DecMPropID, DecIncID, propertystatus, setPropertyStatus, isCad, isViewEventDetails, isCADSearch, isLocked, setIsLocked, isCaseManagement, refetchPropertyForCaseManagementData }} />
                                             :
                                             showPage === 'Owner' ?
                                                 <Owner {...{ ListData, DecPropID, DecMPropID, DecIncID, isViewEventDetails, isLocked, setIsLocked }} />
@@ -831,7 +847,7 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                                                                     <PropertyNotes {...{ ListData, DecPropID, DecMPropID, DecIncID, isViewEventDetails }} />
                                                                     :
                                                                     showPage === 'PropertyManagement' ?
-                                                                        <PropertyManagement {...{ DecPropID, DecMPropID, DecIncID, ProCategory, isViewEventDetails }} />
+                                                                        <PropertyManagement {...{ DecPropID, DecMPropID, DecIncID, ProCategory, isViewEventDetails, isCaseManagement, refetchPropertyForCaseManagementData }} />
                                                                         :
                                                                         showPage === 'ChainOfCustody' ?
                                                                             <ChainOfCustody {...{ DecPropID, DecMPropID, DecIncID, isViewEventDetails, }} />

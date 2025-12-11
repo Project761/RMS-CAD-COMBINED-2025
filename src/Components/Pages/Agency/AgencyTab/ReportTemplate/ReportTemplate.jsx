@@ -32,11 +32,16 @@ const ReportTemplate = ({ aId }) => {
     const [isChange, setIsChange] = useState(false);
     const [reportTemplateData, setReportTemplateData] = useState([])
 
-    const [tags, setTags] = useState([{ value: "OfficerName", label: "Officer Name" },
-    { value: "AgencyName", label: "Agency Name" },
-    { value: "AgencyAddress", label: "Agency Address" },
-    { value: "ORI", label: "ORI" },
-    { value: "Offenses", label: "Offenses" }]);
+    const [tags, setTags] = useState([
+        { value: "OfficerName", label: "Officer Name" },
+        { value: "ORI", label: "ORI" },
+        { value: "AgencyName", label: "Agency Name" },
+        { value: "AgencyAddress", label: "Agency Address" },
+        { value: "IncidentNumber", label: "Incident Number" },
+        { value: "IncidentCrimeLocation", label: "Incident Crime Location" },
+        { value: "IncidentReportedDateTime", label: "Incident Reported Date/Time" },
+        { value: "Offenses", label: "Offenses" },
+    ]);
 
     const [
         reportTemplateState,

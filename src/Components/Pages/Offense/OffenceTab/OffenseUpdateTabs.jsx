@@ -153,7 +153,6 @@ const OffenceHomeTabs = () => {
     const getPermissionLevelByLock = async (IncidentID, OfficerID) => {
         try {
             const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { 'IncidentID': IncidentID, 'OfficerID': OfficerID, 'ModuleName': "Incident", 'ID': 0 });
-            console.log("🚀 ~ getPermissionLevelByLock ~ res:", res)
             if (res?.length > 0) {
                 setIsLocked(res[0]?.IsLocked === true || res[0]?.IsLocked === 1 ? true : false);
                 setPermissionToUnlock(res[0]?.IsUnLockPermission === true || res[0]?.IsUnLockPermission === 1 ? true : false);
@@ -280,7 +279,6 @@ const OffenceHomeTabs = () => {
             ),
             cell: (row) => (
                 <div >
-
                     {row.ArrestChargeCount === "0" && (
                         effectiveScreenPermission ? (
                             effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", offenceFillterData, isLocked, true) ? (
@@ -413,10 +411,14 @@ const OffenceHomeTabs = () => {
                                                         <div
                                                             className="info-card position-relative d-flex align-items-center justify-content-between"
                                                             key={index}
+                                                            //    ----------- change by dinesh---------------
+                                                            // onClick={() => { setEditValOffense(row); setshowOffPage('home'); }}
+                                                            ///--------------------//---------------------
                                                             style={{
                                                                 cursor: "pointer",
                                                                 borderLeft: nibrsValidateOffenseData?.some(item => item?.CrimeID === row?.CrimeID) ? "5px solid #EB0101" : "5px solid #2DEB7A",
                                                                 backgroundColor: row?.CrimeID === crimeId ? "#425971" : "#ffffff",
+
                                                             }}
                                                         >
                                                             {/* Card Content */}
@@ -467,25 +469,11 @@ const OffenceHomeTabs = () => {
                                                                                                 marginBottom: "10px"
                                                                                                 // transition: "transform 0.2s ease, box-shadow 0.2s ease",
                                                                                             }}
-                                                                                            // onMouseEnter={(e) => {
-                                                                                            //     e.currentTarget.style.transform = "scale(1.1)";
-                                                                                            //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
-                                                                                            // }}
-                                                                                            // onMouseLeave={(e) => {
-                                                                                            //     e.currentTarget.style.transform = "scale(1)";
-                                                                                            //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
-                                                                                            // }}
-                                                                                            onClick={() => {
-                                                                                                setEditValOffense(row);
-
-                                                                                                setshowOffPage('home');
-                                                                                            }}
-
+                                                                                            onClick={() => { setEditValOffense(row); setshowOffPage('home'); }}
                                                                                             title="Edit"
                                                                                         >
                                                                                             <i className="fa fa-edit"></i>
                                                                                         </div>
-
                                                                                     </>
                                                                                     :
                                                                                     <>
@@ -507,27 +495,12 @@ const OffenceHomeTabs = () => {
                                                                                     cursor: "pointer",
                                                                                     boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
                                                                                     marginBottom: "10px"
-                                                                                    // transition: "transform 0.2s ease, box-shadow 0.2s ease",
                                                                                 }}
-                                                                                // onMouseEnter={(e) => {
-                                                                                //     e.currentTarget.style.transform = "scale(1.1)";
-                                                                                //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
-                                                                                // }}
-                                                                                // onMouseLeave={(e) => {
-                                                                                //     e.currentTarget.style.transform = "scale(1)";
-                                                                                //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
-                                                                                // }}
-                                                                                onClick={() => {
-                                                                                    setEditValOffense(row);
-
-                                                                                    setshowOffPage('home');
-                                                                                }}
-
+                                                                                onClick={() => { setEditValOffense(row); setshowOffPage('home'); }}
                                                                                 title="Edit"
                                                                             >
                                                                                 <i className="fa fa-edit"></i>
                                                                             </div>
-
                                                                         </>
                                                                 }
 
@@ -609,9 +582,6 @@ const OffenceHomeTabs = () => {
                                                                         ></div>
                                                                     )
                                                                 }
-
-
-
                                                             </div>
                                                         </div>
                                                     ))}

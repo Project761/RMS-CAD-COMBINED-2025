@@ -555,7 +555,7 @@ function CaseClosure(props) {
 
     return (
         <>
-            <div className="py-3">
+            <div className="">
                 {/* Closure Checklist Section */}
                 <div className="border border-dark rounded p-3 mb-3">
                     <h6 className="fw-bold mb-3">Closure Checklist</h6>
@@ -651,7 +651,7 @@ function CaseClosure(props) {
                     </div>
 
                     <div className="row">
-                        <div className="col-md-4 d-flex align-items-center" style={{ gap: '10px' }}>
+                        <div className="col-md-7 d-flex align-items-center" style={{ gap: '10px' }}>
                             <label className="form-label text-nowrap" style={{ marginLeft: '57px' }}>
                                 <div className="fw-bold">Hold Reason</div>
                                 {errorState.holdReason && onHold && !holdReason ? <span style={{ color: 'red' }}>Required</span> : ''}
@@ -664,7 +664,7 @@ function CaseClosure(props) {
                                 onChange={(e) => setHoldReason(e.target.value)}
                             />
                         </div>
-                        <div className="col-md-4 d-flex align-items-center" style={{ gap: '10px' }}>
+                        <div className="col-md-3 d-flex align-items-center" style={{ gap: '10px' }}>
                             <label className="form-label text-nowrap">
                                 <div className="fw-bold">Hold Date</div> {errorState.holdDate && onHold && !holdDate ? <span style={{ color: 'red' }}>Required</span> : ''}
                             </label>
@@ -678,7 +678,7 @@ function CaseClosure(props) {
                                 className={classNames("form-control", { "requiredColor": onHold })}
                             />
                         </div>
-                        <div className="col-md-4 d-flex align-items-center" style={{ gap: '10px' }}>
+                        <div className="col-md-2 d-flex align-items-center" style={{ gap: '10px' }}>
                             <div className="form-check">
                                 <input
                                     className="form-check-input"
@@ -702,9 +702,8 @@ function CaseClosure(props) {
                     <legend>Victim Notification Log</legend>
                     <div className="d-flex justify-content-end">
                         <button
-                            className="btn btn-info btn-sm mt-2 "
+                            className="btn btn-sm btn-success mt-2 "
                             onClick={handleSendNotification}
-                            style={{ backgroundColor: '#17a2b8', borderColor: '#17a2b8' }}
                         >
                             Send Notification
                         </button>
@@ -775,9 +774,8 @@ function CaseClosure(props) {
                             />
                         </div>
                         <button
-                            className="btn btn-info btn-sm"
+                            className="btn btn-sm btn-success"
                             onClick={handleRequestManualPurge}
-                            style={{ backgroundColor: '#17a2b8', borderColor: '#17a2b8' }}
                         >
                             Request Manual Purge
                         </button>
@@ -810,23 +808,6 @@ function CaseClosure(props) {
                             >
                                 {purgeForm.Status}
                             </div>
-                        </div>
-                        <div className="d-flex justify-content-end mt-1" style={{ gap: '10px' }}>
-                            <button
-                                className="btn btn-info btn-sm"
-                                onClick={handleClear}
-                                style={{ backgroundColor: '#17a2b8', borderColor: '#17a2b8' }}
-                            >
-                                Clear
-                            </button>
-                            <button
-                                className="btn btn-info btn-sm"
-                                onClick={handleSave}
-                                disabled={purgeForm.Status !== "Draft"}
-                                style={{ backgroundColor: '#17a2b8', borderColor: '#17a2b8' }}
-                            >
-                                {closureID ? "Update" : "Save"}
-                            </button>
                         </div>
                     </div>
                 </fieldset>
@@ -863,18 +844,31 @@ function CaseClosure(props) {
                     {/* Action Buttons */}
                     <div className="d-flex justify-content-end mt-3" style={{ gap: '10px' }}>
                         <button
-                            className="btn btn-info btn-sm"
+                            className="btn btn-sm btn-success"
                             onClick={() => alert("Submit for Closure Review")}
-                            style={{ backgroundColor: '#17a2b8' }}
                         >
                             Submit for Closure Review
                         </button>
                         <button
-                            className="btn btn-info btn-sm"
+                            className="btn btn-sm btn-success"
                             onClick={() => alert("Finalize & Archive")}
-                            style={{ backgroundColor: '#17a2b8' }}
                         >
                             Finalize & Archive
+                        </button>
+                    </div>
+                    <div className="d-flex justify-content-end mt-2" style={{ gap: '10px' }}>
+                        <button
+                            className="btn btn-sm btn-success"
+                            onClick={handleClear}
+                        >
+                            Clear
+                        </button>
+                        <button
+                            className="btn btn-sm btn-success"
+                            onClick={handleSave}
+                            disabled={purgeForm.Status && purgeForm.Status !== "Draft"}
+                        >
+                            {closureID ? "Update" : "Save"}
                         </button>
                     </div>
                 </fieldset>
@@ -963,28 +957,25 @@ function CaseClosure(props) {
                                 <div className="modal-footer" style={{ borderTop: "1px solid #dee2e6" }}>
                                     <button
                                         type="button"
-                                        className="btn text-white"
+                                        className="btn btn-sm btn-success"
                                         onClick={handleCloseNotificationModal}
-                                        style={{ backgroundColor: '#17a2b8', borderColor: '#17a2b8' }}
                                     >
                                         Close
                                     </button>
                                     <button
                                         type="button"
-                                        className="btn text-white"
+                                        className="btn btn-sm btn-success"
                                         onClick={() => {
                                             clearNotificationForm();
                                             clearNotificationErrorState();
                                         }}
-                                        style={{ backgroundColor: '#17a2b8', borderColor: '#17a2b8' }}
                                     >
                                         Clear
                                     </button>
                                     <button
                                         type="button"
-                                        className="btn text-white"
+                                        className="btn btn-sm btn-success"
                                         onClick={handleSendNotificationSubmit}
-                                        style={{ backgroundColor: '#17a2b8', borderColor: '#17a2b8' }}
                                     >
                                         Send
                                     </button>
@@ -1223,7 +1214,6 @@ function CaseClosure(props) {
                                                 handlePurgeFormChange('officer', localStoreData?.fullName);
                                                 setMultiSelected({ optionSelected: null });
                                             }}
-                                            style={{ backgroundColor: '#17a2b8', borderColor: '#17a2b8' }}
                                         >
                                             Clear
                                         </button>

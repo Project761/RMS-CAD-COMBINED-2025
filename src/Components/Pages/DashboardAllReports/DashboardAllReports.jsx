@@ -231,7 +231,7 @@ function DashboardAllReports({ isPreview }) {
                                                 navigate(`/Inc-Report?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${row?.IncidentNumber}&IncSta=true&isFromDashboard=true`)
                                         )
                                     ) : (
-                                        navigate(`/Inc-Report?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&IsCadInc=${true}&narrativeAssignId=${stringToBase64(row?.NarrativeID)}&tab=Report`)
+                                        navigate(`/Inc-Home?IncId=${stringToBase64(row?.IncidentID)}&IncNo=${(row?.IncidentNumber)}&IncSta=${true}&IsCadInc=${true}&narrativeAssignId=${stringToBase64(row?.NarrativeID)}`)
                                     )}
                             </>
                         }}
@@ -300,6 +300,7 @@ function DashboardAllReports({ isPreview }) {
                 );
             },
         },
+        { name: 'Report Source', selector: row => row.Iscase ? "Case Management" : 'Incident', sortable: true },
         { name: 'Summitted Date/Time', selector: row => row.CreatedDtTm ? getShowingDateText(row.CreatedDtTm) : '', sortable: true },
         {
             name: 'Status',

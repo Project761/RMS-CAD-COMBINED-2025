@@ -32,7 +32,7 @@ export const DrpFunctionNameObj = [
     { ListName: 'Training Course', Myfunction: getData_DropDown_TrainingCourse },
     { ListName: 'Case Task', Myfunction: getData_DropDown_CaseTask },
     { ListName: 'Source Type', Myfunction: getData_DropDown_SourceType },
-    { ListName: 'Reason Case', Myfunction: getDropDownReasonCase },
+    { ListName: 'Reason', Myfunction: getDropDownReasonCase },
 
 
 

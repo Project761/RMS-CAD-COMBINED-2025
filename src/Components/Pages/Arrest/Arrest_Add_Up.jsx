@@ -284,7 +284,6 @@ const Arrest_Add_Up = () => {
     const getPermissionLevelByLock = async (IncidentID, OfficerID) => {
         try {
             const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { 'IncidentID': IncidentID, 'OfficerID': OfficerID, 'ModuleName': "Incident", 'ID': 0 });
-            console.log("🚀 ~ getPermissionLevelByLock ~ res:", res)
             if (res?.length > 0) {
                 setIsLocked(res[0]?.IsLocked === true || res[0]?.IsLocked === 1 ? true : false);
                 setPermissionToUnlock(res[0]?.IsUnLockPermission === true || res[0]?.IsUnLockPermission === 1 ? true : false);
@@ -719,7 +718,8 @@ const Arrest_Add_Up = () => {
                                                             if (!changesStatus) { setShowPage('MugShorts') }
                                                         }}>
 
-                                                        Mugshot{`${tabCountArrest?.ArrestMugshots > 0 ? '(' + tabCountArrest?.ArrestMugshots + ')' : ''}`}
+                                                        {/* Mugshot{`${tabCountArrest?.ArrestMugshots > 0 ? '(' + tabCountArrest?.ArrestMugshots + ')' : ''}`} */}
+                                                        Mugshot
                                                     </span>
                                                     <span
                                                         className={`nav-item ${showPage === 'Fingerprint' ? 'active' : ''}${!status ? 'disabled' : ''}`}
@@ -822,7 +822,7 @@ const Arrest_Add_Up = () => {
                                             <Property {...{ DecArrestId, DecIncID, }} />
                                             :
                                             showPage === 'Charges' ?
-                                                <Charges {...{ DecArrestId, DecIncID, ListData, setListData, get_List, ArresteeID, isLocked, setIsLocked, setShowPage }} />
+                                                <Charges {...{ DecArrestId, DecIncID, ListData, setListData, get_List, GetSingleData, ArresteeID, isLocked, setIsLocked, setShowPage }} />
                                                 :
                                                 showPage === 'Warrant' ?
                                                     <Warrant {...{ DecArrestId, DecIncID, ListData, get_List, isLocked, setIsLocked, setShowPage }} />

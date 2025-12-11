@@ -296,6 +296,23 @@ class CaseManagementServices {
         return null;
     };
 
+    updateDashboardCaseEfforts = async (payload) => {
+        if (payload) {
+            return await axios.post(`/CaseManagement/UpdateDashboardCaseEfforts`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.updateDashboardCaseEffortsData");
+        return null;
+    };
+
+    getPropertyForCaseManagement = async ({ queryKey }) => {
+        const [_key, payload] = queryKey;
+        if (payload) {
+            return await axios.post(`/CaseManagement/GetPropertyForCaseManagement`, payload);
+        }
+        console.warn("payload not provided, CaseManagementServices.getPropertyForCaseManagement");
+        return null;
+    };
+
 }
 
 const instance = new CaseManagementServices();

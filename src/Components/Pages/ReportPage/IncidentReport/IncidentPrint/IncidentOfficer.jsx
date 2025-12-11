@@ -384,109 +384,114 @@ const IncidentOfficer = () => {
                         </div>
                     </div>
                     <div className="container mt-1 ">
-                        <div className="row" ref={componentRef} style={{ border: '1px solid #80808085', pageBreakAfter: 'always' }} >
-                            <>
-                                <ReportAddress {...{ multiImage, masterReportData }} />
-                            </>
-                            {showWatermark && (
-                                <div className="watermark-print">Confidential</div>
-                            )}
-                            <div className="col-12">
-                                <hr style={{ border: '1px solid rgb(3, 105, 184)' }} />
-                                <h5 className="text-center text-white text-bold bg-green  py-1" >Incident By Officer Report</h5>
+                        <div className="row" ref={componentRef}>
+                            <table className="print-table" >
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div className='content row '>
+                                                <>
+                                                    <ReportAddress {...{ multiImage, masterReportData }} />
+                                                </>
+                                                {showWatermark && (
+                                                    <div className="watermark-print">Confidential</div>
+                                                )}
+                                                <div className="col-12">
+                                                    <hr style={{ border: '1px solid rgb(3, 105, 184)' }} />
+                                                    <h5 className="text-center text-white text-bold bg-green  py-1" >Incident By Officer Report</h5>
 
-                            </div>
-                            <div className="col-12"  >
-                                <fieldset>
-                                    <legend>Search Criteria</legend>
-                                    <div className="row">
-                                        {showFields.showReportedDateFrom && (
-                                            <>
-                                                <div className="col-3 col-md-3 col-lg-2 mt-2">
-                                                    <label className='new-label'>Reported Date From</label>
                                                 </div>
-                                                <div className="col-3 col-md-3 col-lg-4 text-field mt-1">
-                                                    <input type="text" className='readonlyColor'
-                                                        //  value={searchValue.ReportedDate || ''}
-                                                        readOnly
-                                                        value={searchValue.ReportedDate && getShowingWithOutTime(searchValue.ReportedDate)}
-                                                    />
-                                                    {/* <input type="text" className='readonlyColor' value={searchValue.ReportedDate ? getShowingWithOutTime(searchValue.ReportedDate) : ''} readOnly /> */}
-                                                </div>
-                                            </>
-                                        )}
+                                                <div className="col-12"  >
+                                                    <fieldset>
+                                                        <legend>Search Criteria</legend>
+                                                        <div className="row">
+                                                            {showFields.showReportedDateFrom && (
+                                                                <>
+                                                                    <div className="col-3 col-md-3 col-lg-2 mt-2">
+                                                                        <label className='new-label'>Reported Date From</label>
+                                                                    </div>
+                                                                    <div className="col-3 col-md-3 col-lg-4 text-field mt-1">
+                                                                        <input type="text" className='readonlyColor'
+                                                                            //  value={searchValue.ReportedDate || ''}
+                                                                            readOnly
+                                                                            value={searchValue.ReportedDate && getShowingWithOutTime(searchValue.ReportedDate)}
+                                                                        />
+                                                                        {/* <input type="text" className='readonlyColor' value={searchValue.ReportedDate ? getShowingWithOutTime(searchValue.ReportedDate) : ''} readOnly /> */}
+                                                                    </div>
+                                                                </>
+                                                            )}
 
-                                        {showFields.showReportedDateTo && (
-                                            <>
-                                                <div className="col-3 col-md-3 col-lg-2 mt-2">
-                                                    <label className='new-label'>Reported Date To</label>
-                                                </div>
-                                                <div className="col-3 col-md-3 col-lg-4 text-field mt-1">
-                                                    <input type="text" className='readonlyColor'
-                                                        //  value={searchValue.ReportedDateTo || ''} 
-                                                        value={searchValue.ReportedDateTo && getShowingWithOutTime(searchValue.ReportedDateTo)}
-                                                        readOnly />
-                                                    {/* <input type="text" className='readonlyColor' value={searchValue.ReportedDateTo ? getShowingWithOutTime(searchValue.ReportedDateTo) : ''} readOnly /> */}
-                                                </div>
-                                            </>
-                                        )}
+                                                            {showFields.showReportedDateTo && (
+                                                                <>
+                                                                    <div className="col-3 col-md-3 col-lg-2 mt-2">
+                                                                        <label className='new-label'>Reported Date To</label>
+                                                                    </div>
+                                                                    <div className="col-3 col-md-3 col-lg-4 text-field mt-1">
+                                                                        <input type="text" className='readonlyColor'
+                                                                            //  value={searchValue.ReportedDateTo || ''} 
+                                                                            value={searchValue.ReportedDateTo && getShowingWithOutTime(searchValue.ReportedDateTo)}
+                                                                            readOnly />
+                                                                        {/* <input type="text" className='readonlyColor' value={searchValue.ReportedDateTo ? getShowingWithOutTime(searchValue.ReportedDateTo) : ''} readOnly /> */}
+                                                                    </div>
+                                                                </>
+                                                            )}
 
-                                        {showFields.showOfficerName && (
-                                            <>
-                                                <div className="col-3 col-md-3 col-lg-2 mt-2">
-                                                    <label className='new-label'>Officer Name</label>
-                                                </div>
-                                                <div className="col-3 col-md-3 col-lg-4 text-field mt-1">
-                                                    <input type="text" className='readonlyColor' value={headOfAgency.find((obj) => obj.value === searchValue.OfficerPINID)?.label || ''} readOnly />
-                                                </div>
-                                            </>
-                                        )}
-                                    </div>
-                                </fieldset>
-                                {masterReportData?.Incident?.map((obj) => (
-                                    obj?.Incident && JSON.parse(obj?.Incident).length > 0 ? (
-                                        <>
-                                            <div className="container-fluid " style={{ pageBreakAfter: 'always' }}>
-                                                <div className="col-12 ">
-                                                    <div className="table-responsive">
-                                                        <table className="table table-bordered">
-                                                            <thead className='text-dark master-table'>
-                                                                <tr>
-                                                                    <th scope="col" colSpan='2' style={{ width: '100px' }}>
-                                                                        Officer Name:- <span style={{ color: '#000', fontWeight: 'bold' }}>
-                                                                            {obj?.Officer_Name}
-                                                                        </span>
-                                                                    </th>
-                                                                    <th scope="col">Total Incident: <span style={{ color: '#000', fontWeight: 'bold' }}>
-                                                                        {JSON.parse(obj?.Incident).length}
-                                                                    </span></th>
-                                                                </tr>
-                                                            </thead>
-                                                        </table>
-                                                        <table className="table table-bordered ">
-                                                            <thead className='text-dark master-table'>
-                                                                <tr>
-                                                                    <th className=''>Incident Number:</th>
-                                                                    <th className=''>Reported Date/Time:</th>
-                                                                    <th className=''>Offense:</th>
-                                                                    <th className=''>Exceptional Clearance(Yes/No):</th>
-                                                                    <th className=''>CAD Disposition:</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody className='master-tbody'>
-                                                                {
-                                                                    JSON.parse(obj?.Incident)?.map((incident, key) => (
-                                                                        <tr key={key}>
-                                                                            <td className='text-list'>{incident?.IncidentNumber}</td>
-                                                                            <td className='text-list'>{incident?.ReportedDate && getShowingDateText(incident?.ReportedDate)}</td>
-                                                                            <td className='text-list'>{incident?.RMSCFSCode_Description}</td>
-                                                                            <td className='text-list'>{incident?.RMS_Disposition}</td>
-                                                                            <td className='text-list'>{incident?.CADDispositions_Description}</td>
-                                                                        </tr>
-                                                                    ))
-                                                                }
-                                                            </tbody>
-                                                            {/* <tfoot className="table-footer ">
+                                                            {showFields.showOfficerName && (
+                                                                <>
+                                                                    <div className="col-3 col-md-3 col-lg-2 mt-2">
+                                                                        <label className='new-label'>Officer Name</label>
+                                                                    </div>
+                                                                    <div className="col-3 col-md-3 col-lg-4 text-field mt-1">
+                                                                        <input type="text" className='readonlyColor' value={headOfAgency.find((obj) => obj.value === searchValue.OfficerPINID)?.label || ''} readOnly />
+                                                                    </div>
+                                                                </>
+                                                            )}
+                                                        </div>
+                                                    </fieldset>
+                                                    {masterReportData?.Incident?.map((obj) => (
+                                                        obj?.Incident && JSON.parse(obj?.Incident).length > 0 ? (
+                                                            <>
+                                                                <div className="container-fluid ">
+                                                                    <div className="col-12 ">
+                                                                        <div className="table-responsive">
+                                                                            <table className="table table-bordered">
+                                                                                <thead className='text-dark master-table'>
+                                                                                    <tr>
+                                                                                        <th scope="col" colSpan='2' style={{ width: '100px' }}>
+                                                                                            Officer Name:- <span style={{ color: '#000', fontWeight: 'bold' }}>
+                                                                                                {obj?.Officer_Name}
+                                                                                            </span>
+                                                                                        </th>
+                                                                                        <th scope="col">Total Incident: <span style={{ color: '#000', fontWeight: 'bold' }}>
+                                                                                            {JSON.parse(obj?.Incident).length}
+                                                                                        </span></th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                            </table>
+                                                                            <table className="table table-bordered ">
+                                                                                <thead className='text-dark master-table'>
+                                                                                    <tr>
+                                                                                        <th className=''>Incident Number:</th>
+                                                                                        <th className=''>Reported Date/Time:</th>
+                                                                                        <th className=''>Offense:</th>
+                                                                                        <th className=''>Exceptional Clearance(Yes/No):</th>
+                                                                                        <th className=''>CAD Disposition:</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody className='master-tbody'>
+                                                                                    {
+                                                                                        JSON.parse(obj?.Incident)?.map((incident, key) => (
+                                                                                            <tr key={key}>
+                                                                                                <td className='text-list'>{incident?.IncidentNumber}</td>
+                                                                                                <td className='text-list'>{incident?.ReportedDate && getShowingDateText(incident?.ReportedDate)}</td>
+                                                                                                <td className='text-list'>{incident?.RMSCFSCode_Description}</td>
+                                                                                                <td className='text-list'>{incident?.RMS_Disposition}</td>
+                                                                                                <td className='text-list'>{incident?.CADDispositions_Description}</td>
+                                                                                            </tr>
+                                                                                        ))
+                                                                                    }
+                                                                                </tbody>
+                                                                                {/* <tfoot className="table-footer ">
                                                                 <tr style={{ textAlign: 'center', fontSize: '45px', color: '#000', }}>
                                                                     <td colSpan={5}>
                                                                         {showFooter && `Officer Name:${LoginUserName} - Date/Time:${datezone} - IP Address:${ipAddress}`}
@@ -495,16 +500,30 @@ const IncidentOfficer = () => {
 
                                                                 </tr>
                                                             </tfoot> */}
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                                <hr />
-                                            </div>
-                                        </>
-                                    ) : null
-                                ))}
+                                                                            </table>
+                                                                        </div>
+                                                                    </div>
+                                                                    <hr />
+                                                                </div>
+                                                            </>
+                                                        ) : null
+                                                    ))}
 
-                            </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+
+                                <tfoot>
+                                    <tr>
+                                        <div className="footer-space"></div>
+                                    </tr>
+                                </tfoot>
+                            </table>
+
+
+
                             {showFooter && (
                                 <footer className="print-footer">
                                     <p> Officer Name: {LoginUserName || ''} | Date/Time: {getShowingWithFixedTime01(datezone || '')}| IP Address: {ipAddress || ''}</p>
@@ -528,3 +547,6 @@ const IncidentOfficer = () => {
 }
 
 export default IncidentOfficer
+
+
+

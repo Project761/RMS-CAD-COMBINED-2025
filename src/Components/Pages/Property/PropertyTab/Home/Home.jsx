@@ -35,7 +35,7 @@ import CreatableSelect from 'react-select/creatable';
 import NCICModal from '../../../../../CADComponents/NCICModal';
 
 
-const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List, propertystatus, setPropertyStatus, isCad = false, isViewEventDetails = false, isCADSearch = false, isLocked, setIsLocked }) => {
+const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List, propertystatus, setPropertyStatus, isCad = false, isViewEventDetails = false, isCADSearch = false, isLocked, setIsLocked, isCaseManagement = false, refetchPropertyForCaseManagementData = () => { } }) => {
 
 
   const dispatch = useDispatch();
@@ -89,6 +89,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
   let FbiCode = query?.get('FbiCode');
   let AttComp = query?.get('AttComp');
   let MstPage = query?.get('page');
+  let CaseId = query?.get('CaseId');
 
   if (!IncID) IncID = 0;
   else IncID = parseInt(base64ToString(IncID));
@@ -407,32 +408,32 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
       if (Get_Property_Code(editval, propertyTypeData) === 'A') {
         get_PropertyArticle_Single_Data(editval[0]?.MasterPropertyID, propertyID, Get_Property_Code(editval, propertyTypeData))
         setPropertOther([]); setPropertyBoat([]); setPropertyWeapon([]); setPropertySecurity([])
-        dispatch(get_PropertyLossCode_Drp_Data(loginAgencyID, '1', '', '', '', '', '')); console.log("Call  Type === A")
+        dispatch(get_PropertyLossCode_Drp_Data(loginAgencyID, '1', '', '', '', '', ''));
 
       } else if (Get_Property_Code(editval, propertyTypeData) === 'B') {
         get_PropertyBoat_Single_Data(editval[0]?.MasterPropertyID, propertyID, Get_Property_Code(editval, propertyTypeData))
         setPropertOther([]); setPropertyArticle([]); setPropertyWeapon([]); setPropertySecurity([])
-        dispatch(get_PropertyLossCode_Drp_Data(loginAgencyID, '', '1', '', '', '', '')); console.log("Call  Type === B")
+        dispatch(get_PropertyLossCode_Drp_Data(loginAgencyID, '', '1', '', '', '', ''));
 
       } else if (Get_Property_Code(editval, propertyTypeData) === 'O') {
         get_PropertOther_Single_Data(editval[0]?.MasterPropertyID, propertyID, Get_Property_Code(editval, propertyTypeData))
         setPropertyArticle([]); setPropertyBoat([]); setPropertyWeapon([]); setPropertySecurity([])
-        dispatch(get_PropertyLossCode_Drp_Data(loginAgencyID, '', '', '', '1', '', '')); console.log("Call  Type === O")
+        dispatch(get_PropertyLossCode_Drp_Data(loginAgencyID, '', '', '', '1', '', ''));
 
       } else if (Get_Property_Code(editval, propertyTypeData) === 'S') {
         get_PropertySecurity_Single_Data(editval[0]?.MasterPropertyID, propertyID, Get_Property_Code(editval, propertyTypeData))
         setPropertOther([]); setPropertyBoat([]); setPropertyWeapon([]); setPropertyArticle([])
-        dispatch(get_PropertyLossCode_Drp_Data(loginAgencyID, '', '', '1', '', '', '')); console.log("Call  Type === S")
+        dispatch(get_PropertyLossCode_Drp_Data(loginAgencyID, '', '', '1', '', '', ''));
 
       } else if (Get_Property_Code(editval, propertyTypeData) === 'G') {
         get_PropertyWeapon_Single_Data(editval[0]?.MasterPropertyID, propertyID, Get_Property_Code(editval, propertyTypeData))
         setPropertOther([]); setPropertyBoat([]); setPropertyArticle([]); setPropertySecurity([]);
-        dispatch(get_PropertyLossCode_Drp_Data(loginAgencyID, '', '', '', '', '', '1')); console.log("Call  Type === G")
+        dispatch(get_PropertyLossCode_Drp_Data(loginAgencyID, '', '', '', '', '', '1'));
 
       } else if (Get_Property_Code(editval, propertyTypeData) === 'D') {
         get_Data_Drug_Modal(editval[0]?.MasterPropertyID, propertyID);
         setPropertOther([]); setPropertyBoat([]); setPropertyArticle([]); setPropertySecurity([]); setPropertyWeapon([]);
-        dispatch(get_PropertyLossCode_Drp_Data(loginAgencyID, '', '', '', '', '1', '')); console.log("Call  Type === D")
+        dispatch(get_PropertyLossCode_Drp_Data(loginAgencyID, '', '', '', '', '1', ''));
       }
 
       setLossCode(Get_LossCode(editval, propertyLossCodeDrpData));
@@ -485,11 +486,13 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
         SetNavigateStatus(true);
       }
     } else {
-      Reset();
-      setIncidentReportedDate(getShowingMonthDateYear(new Date()));
-      if (FbiCode && AttComp) { setStatesAccordingTo_FbiCode(FbiCode, AttComp); }
+      if (!isCaseManagement) {
+        Reset();
+        setIncidentReportedDate(getShowingMonthDateYear(new Date()));
+        if (FbiCode && AttComp) { setStatesAccordingTo_FbiCode(FbiCode, AttComp); }
+      }
     }
-  }, [editval, propertyTypeData])
+  }, [editval, propertyTypeData, isCaseManagement])
 
   useEffect(() => {
     propertyLossCodeDrpData?.filter(val => {
@@ -1230,12 +1233,21 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
             } else {
               navigate(`/cad/dispatcher?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${stringToBase64(res?.PropertyID)}&MProId=${stringToBase64(res?.MasterPropertyID)}&ProSta=${true}&ProCategory=${''}`)
             }
+          } else if (isCaseManagement) {
+            if (MstPage === "MST-Property-Dash") {
+              navigate(`/inc-case-management?page=MST-Property-Dash&ProId=${stringToBase64(res?.PropertyID)}&MProId=${stringToBase64(res?.MasterPropertyID)}&ModNo=${res?.PropertyNumber?.trim()}&ProSta=${true}&ProCategory=${value.PropertyCategoryCode}${CaseId ? `&CaseId=${CaseId}` : ''}`)
+            } else {
+              navigate(`/inc-case-management?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${stringToBase64(res?.PropertyID)}&MProId=${stringToBase64(res?.MasterPropertyID)}&ProSta=${true}&ProCategory=${value.PropertyCategoryCode}${CaseId ? `&CaseId=${CaseId}` : ''}`)
+            }
           } else {
             if (MstPage === "MST-Property-Dash") {
               navigate(`/Prop-Home?page=MST-Property-Dash&ProId=${stringToBase64(res?.PropertyID)}&MProId=${stringToBase64(res?.MasterPropertyID)}&ModNo=${res?.PropertyNumber?.trim()}&ProSta=${true}&ProCategory=${value.PropertyCategoryCode}`);
             } else {
               navigate(`/Prop-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${stringToBase64(res?.PropertyID)}&MProId=${stringToBase64(res?.MasterPropertyID)}&ProSta=${true}&ProCategory=${value.PropertyCategoryCode}`)
             }
+          }
+          if (isCaseManagement) {
+            refetchPropertyForCaseManagementData();
           }
           Reset();
           if (uploadImgFiles?.length > 0) {
@@ -1304,7 +1316,9 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
         dispatch(get_PropertyMainModule_Data(mainIncidentID, MstPage === "MST-Property-Dash" ? true : false));
         setChangesStatus(false); setStatesChangeStatus(false);
         setErrors({ ...errors, ['PropertyTypeIDError']: '', })
-
+        if (isCaseManagement) {
+          refetchPropertyForCaseManagementData();
+        }
         sessionStorage.setItem("propertyStolenValue", Encrypted_Id_Name(previousValue, 'SForStolenValue'));
         GetSingleData(DecPropID, DecMPropID);
         if (value?.PropertyCategoryCode === 'B') { dispatch(get_BoatModel_Drp_Data(loginAgencyID)) }
@@ -1346,7 +1360,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
         dispatch(get_PropertyMainModule_Data(mainIncidentID, MstPage === "MST-Property-Dash" ? true : false));
 
         if (propertyID == delPropertyID) { newProperty() }
-      } else { console.log("Somthing Wrong"); }
+      } else { console.warn("Somthing Wrong"); }
     })
   }
 
@@ -1576,7 +1590,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
       setDrugLocalArr([]);
 
     } catch (error) {
-      console.log(error); setDrugLocalArr([]);
+      console.error(error); setDrugLocalArr([]);
     }
   }
 
@@ -1674,7 +1688,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
           get_Data_Drug_Modal(masterPropertyID, propertyID,);
           setChangesStatus(false); setStatesChangeStatus(false); onDrugClose()
           dispatch(get_PropertyMainModule_Data(mainIncidentID, MstPage === "MST-Property-Dash" ? true : false));
-        } else console.log("Somthing Wrong");
+        } else console.warn("Somthing Wrong");
       })
     }
   }
@@ -1771,7 +1785,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
         get_Name_MultiImage(propertyID ? propertyID : propID, masterPropertyID ? masterPropertyID : propMID);
         setuploadImgFiles('')
       }
-    }).catch(err => console.log(err))
+    }).catch(err => console.error(err))
   }
 
   const delete_Image_File = (e) => {
@@ -1943,7 +1957,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
 
   return (
     <>
-      {((PropertyCount === 0 || PropertyCount === "0") || (ProSta === true || ProSta === 'true') || isNew === "true" || isNew === true) && (
+      {((PropertyCount === 0 || PropertyCount === "0") || (ProSta === true || ProSta === 'true') || isNew === "true" || isNew === true || isCaseManagement) && (
 
         <>
           <div className="col-12">
@@ -3477,7 +3491,6 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                         type="button"
                         className="btn btn-sm btn-success mx-1"
                         onClick={() => {
-                          console.log("New button clicked");
                           // Add your new property logic here
                           newProperty();
                           setIsLocked(false);

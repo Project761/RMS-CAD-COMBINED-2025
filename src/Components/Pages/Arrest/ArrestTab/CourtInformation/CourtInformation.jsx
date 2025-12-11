@@ -64,6 +64,8 @@ const CourtInformation = (props) => {
     }
   }, []);
 
+  console.log(Editval)
+
   useEffect(() => {
     if (localStoreData) {
       // setArrestName(Editval[0]?.Arrestee_Name ? Editval[0]?.Arrestee_Name : '');
@@ -367,6 +369,8 @@ const CourtInformation = (props) => {
       style: { backgroundColor: '#001f3fbd', color: 'white', cursor: 'pointer', },
     },
   ];
+
+  console.log(value?.Name)
 
   return (
     <>

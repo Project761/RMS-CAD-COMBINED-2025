@@ -16,9 +16,10 @@ import MissingTab from '../../Utility/Tab/MissingTab';
 import DentalInformation from './MissingPersonTab/DentalInformation/DentalInformation';
 import Tab from '../../Utility/Tab/Tab';
 import MissingPersonVehicle from './MissingPersonVehicle/MissingPersonVehicle';
+import { fetchPostData } from '../../hooks/Api';
 
 const MissingPersonTab = () => {
-
+    const [ListData, setListData] = useState([]);
     const useQuery = () => {
         const params = new URLSearchParams(useLocation().search);
         return {
@@ -100,6 +101,18 @@ const MissingPersonTab = () => {
         setShowIncPage('home');
     }, [MissPerSta, localStoreData]);
 
+    const get_List = (DecNameID, DecMasterNameID) => {
+        const val = { NameID: DecNameID, MasterNameID: DecMasterNameID, }
+        if (DecNameID) {
+            fetchPostData('TabBasicInformation/NameInformation', val).then((res) => {
+                if (res) {
+                    setListData(res);
+                } else {
+                    setListData([]);
+                }
+            })
+        }
+    }
 
     return (
         <>
@@ -234,31 +247,31 @@ const MissingPersonTab = () => {
                                     </div>
                                     {
                                         showIncPage === 'home' ?
-                                            <Home {...{ DecMissPerID, DecIncID }} />
+                                            <Home {...{ DecMissPerID, DecIncID, get_List }} />
                                             :
                                             showIncPage === 'NCIC' ?
-                                                <NCIC {...{ DecMissPerID, DecIncID }} />
+                                                <NCIC {...{ DecMissPerID, DecIncID, ListData }} />
                                                 :
                                                 showIncPage === 'Hobbies' ?
-                                                    <Hobbies {...{ DecMissPerID, DecIncID }} />
+                                                    <Hobbies {...{ DecMissPerID, DecIncID, ListData }} />
                                                     :
                                                     showIncPage === 'Jewellery' ?
-                                                        <Jewellery {...{ DecMissPerID, DecIncID }} />
+                                                        <Jewellery {...{ DecMissPerID, DecIncID, ListData }} />
                                                         :
                                                         showIncPage === 'MedicalInformation' ?
-                                                            <MedicalInformation {...{ DecMissPerID, DecIncID }} />
+                                                            <MedicalInformation {...{ DecMissPerID, DecIncID, ListData }} />
                                                             :
                                                             showIncPage === 'DentalInfo' ?
-                                                                <DentalInformation {...{ DecMissPerID, DecIncID }} />
+                                                                <DentalInformation {...{ DecMissPerID, DecIncID, ListData }} />
                                                                 :
                                                                 showIncPage === 'LastSeenInformation' ?
-                                                                    <LastSeenInformation {...{ DecMissPerID, DecIncID }} />
+                                                                    <LastSeenInformation {...{ DecMissPerID, DecIncID, ListData }} />
                                                                     :
                                                                     showIncPage === 'PersonNotify' ?
-                                                                        <PersonNotify {...{ DecMissPerID, DecIncID }} />
+                                                                        <PersonNotify {...{ DecMissPerID, DecIncID, ListData }} />
                                                                         :
                                                                         showIncPage === 'MissingPersonVehicle' ?
-                                                                            <MissingPersonVehicle {...{ DecMissPerID, DecIncID }} />
+                                                                            <MissingPersonVehicle {...{ DecMissPerID, DecIncID, ListData }} />
                                                                             :
                                                                             showIncPage === 'Involvement' ?
                                                                                 <Involvement {...{ DecMissPerID, DecIncID }} />

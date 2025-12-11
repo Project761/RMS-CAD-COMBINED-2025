@@ -24,7 +24,7 @@ const Warrant = (props) => {
 
     const { ListData, DecNameID, DecArrestId, DecMasterNameID, DecIncID, isViewEventDetails = false, get_List, isLocked, setIsLocked, setShowPage } = props
 
-    const { get_Name_Count, get_Arrest_Count, setChangesStatus, GetDataTimeZone, datezone, NameId } = useContext(AgencyContext)
+    const { get_Name_Count, get_Arrest_Count, setChangesStatus, GetDataTimeZone, datezone, NameId } = useContext(AgencyContext);
 
     const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -232,8 +232,24 @@ const Warrant = (props) => {
     }
 
     const handleChange = (e) => {
-        !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-        setValue({ ...value, [e.target.name]: e.target.value });
+        if (e) {
+            !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
+            setValue({ ...value, [e.target.name]: e.target.value });
+        }
+        if (e.target.value === '') {
+            setErrors({
+                ...errors,
+                'WarrantTypeIDErrors': '',
+                'WarrantNumberErrors': '',
+                'DateTimeIssuedErrors': '',
+                'DateExpiredErrors': '',
+                'IssuingAgencyIDErrors': '',
+            });
+            setValue({ ...value, [e.target.name]: '', ['DateTimeIssued']: '', ['DateExpired']: '', });
+            setDateExpired();
+        }
+
+
     };
 
     useEffect(() => {

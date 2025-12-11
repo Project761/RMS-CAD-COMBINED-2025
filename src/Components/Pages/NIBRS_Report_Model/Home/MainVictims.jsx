@@ -71,6 +71,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
     var MasterNameID = query?.get("MasterNameID");
     let MstPage = query?.get('page');
     let ModNo = query?.get('ModNo');
+    var narrativeId = query?.get("narrativeId");
 
     if (!IncID) IncID = 0;
     else IncID = parseInt(base64ToString(IncID));
@@ -129,6 +130,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
     const [possenSinglData, setPossenSinglData] = useState([]);
     const [availableAlert, setAvailableAlert] = useState([]);
     const [statesChangeStatus, setStatesChangeStatus] = useState(false);
+    const [statesChangeStatusRel, setstatesChangeStatusRel] = useState(false);
+
     const [saveValue, setsaveValue] = useState(false);
     const [isAdultArrest, setIsAdultArrest] = useState(false);
     const [isMissing, setisMissing] = useState(false);
@@ -938,7 +941,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                 get_Offense_DropDown(mainIncidentID, row.NameID);
                 setStatesChangeStatus(false);
                 GetSingleData(row.NameID, row.MasterNameID);
-                navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(row?.NameID)}&MasterNameID=${stringToBase64(row?.MasterNameID)}&NameStatus=${true}`);
+                navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(row?.NameID)}&MasterNameID=${stringToBase64(row?.MasterNameID)}&NameStatus=${true}&narrativeId=${narrativeId}`);
                 get_Name_Count(row.NameID, row.MasterNameID, MstPage === "MST-Name-Dash" ? true : false);
                 setNameID(row.NameID);
                 setMasterNameID(row?.MasterNameID);
@@ -957,10 +960,10 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
 
     const setStatusFalse = () => {
         if (MstPage === "MST-Name-Dash") {
-            navigate(`/nibrs-Home?page=MST-Name-Dash&IncId=${0}&IncNo=${0}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}`)
+            navigate(`/nibrs-Home?page=MST-Name-Dash&IncId=${0}&IncNo=${0}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}&narrativeId=${narrativeId}`)
         }
         else {
-            navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}`)
+            navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${0}&MasterNameID=${0}&NameStatus=${false}&narrativeId=${narrativeId}`)
             setMasterNameID('');
             setNameID('');
             setClickedRow(null); Reset();
@@ -1438,10 +1441,10 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                         AddDeleteUpadate('NIBRSData/Insert_NameNIBRSData', val).then((res) => {
                             if (res.success) {
                                 if (MstPage === "MST-Name-Dash") {
-                                    navigate(`/nibrs-Home?page=MST-Name-Dash&NameID=${stringToBase64(res?.NameID)}&MasterNameID=${stringToBase64(res?.MasterNameID)}&ModNo=${res?.NameNumber}&NameStatus=${true}`);
+                                    navigate(`/nibrs-Home?page=MST-Name-Dash&NameID=${stringToBase64(res?.NameID)}&MasterNameID=${stringToBase64(res?.MasterNameID)}&ModNo=${res?.NameNumber}&NameStatus=${true}&narrativeId=${narrativeId}`);
                                 }
                                 else {
-                                    navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(res?.NameID)}&MasterNameID=${stringToBase64(res?.MasterNameID)}&NameStatus=${true}`)
+                                    navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(res?.NameID)}&MasterNameID=${stringToBase64(res?.MasterNameID)}&NameStatus=${true}&narrativeId=${narrativeId}`)
                                 }
                                 toastifySuccess(res.Message);
                                 setsaveValue(false);
@@ -1561,7 +1564,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                                     toastifySuccess(res.Message);
                                 }
                                 if (MstPage === "MST-Name-Dash") {
-                                    navigate(`/Name-Home?page=MST-Name-Dash&MasterNameID=${stringToBase64(MasterNameID)}&ModNo=${ModNo}&NameStatus=${true}`);
+                                    navigate(`/Name-Home?page=MST-Name-Dash&MasterNameID=${stringToBase64(MasterNameID)}&ModNo=${ModNo}&NameStatus=${true}&narrativeId=${narrativeId}`);
                                 }
                                 setChangesStatus(false);
                                 setValue({
@@ -1582,11 +1585,10 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                                 GetSingleData(nameID, masterNameID);
                                 // get Victim Single Data
                                 GetVictimSingleData(nameID);
-
                                 get_Name_Count(nameID, masterNameID, MstPage === "MST-Name-Dash" ? true : false);
                                 get_Data_Name(mainIncidentID, MstPage === "MST-Name-Dash" ? true : false);
                                 get_Offense_DropDown(incidentID, nameID);
-                                setStatesChangeStatus(true);
+                                setStatesChangeStatus(false);
                                 if (uploadImgFiles?.length > 0) {
                                     setuploadImgFiles('')
                                 }
@@ -2550,7 +2552,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
     }
 
     const ChangeDropDown1 = (e, name) => {
-        setChangesStatus(true); setStatesChangeStatus(true);
+        setChangesStatus(true); setstatesChangeStatusRel(true);
         if (e) {
             if (name === 'OffenderNameID') {
                 setValue1({ ...value1, [name]: e.value });
@@ -2605,7 +2607,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                             toastifySuccess(message);
                             Get_Relationship_Data(DeNameID); setStatus(false); resetHooks(); get_NameVictim_Count(victimID)
                             get_Name_Count(DeNameID); setErrors1({ ...errors1, ['RelationshipTypeIDErrors']: '' });
-                            setStatesChangeStatus(false); setChangesStatus(false);
+                            // changes Status
+                            // setStatesChangeStatus(false); setChangesStatus(false);
                             // Validate Name
                             getNibrsErrorToolTip(DeNameID, mainIncidentID, IncNo);
                         }
@@ -2639,7 +2642,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                         const message = parsedData.Table[0].Message;
                         toastifySuccess(message);
                         Get_Relationship_Data(DeNameID); setStatus(true);
-                        setStatesChangeStatus(false); setChangesStatus(false)
+                        // changes Status 
+                        // setStatesChangeStatus(false); setChangesStatus(false)
                         get_Name_Count(DeNameID);
                         resetHooks();
                         setErrors1({
@@ -2661,7 +2665,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
 
     const resetHooks = () => {
         setValue1({ ...value1, RelationshipTypeID: '', VictimNameID: '', OffenderNameID: '', ModifiedByUserFK: '', RelationshipID: '', });
-        setStatesChangeStatus(false); setChangesStatus(false); setRelationshipID(''); setStatus(false);
+        setstatesChangeStatusRel(false); setChangesStatus(false); setRelationshipID(''); setStatus(false);
         setErrors1({ ...errors1, 'RelationshipTypeIDErrors': '', ' VictimNameIDErrors': '', });
         setSelectedNameData([]); setRelationTypeCode('');
     }
@@ -2990,7 +2994,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                         get_Offense_DropDown(mainIncidentID, row?.NameEventID);
                         setStatesChangeStatus(false);
                         GetSingleData(row?.NameEventID, row?.MasterNameID);
-                        navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(row?.NameEventID)}&MasterNameID=${stringToBase64(row?.MasterNameID)}&NameStatus=${true}`)
+                        navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(row?.NameEventID)}&MasterNameID=${stringToBase64(row?.MasterNameID)}&NameStatus=${true}&narrativeId=${narrativeId}`)
                         setNameID(row.NameEventID);
                         setMasterNameID(row?.MasterNameID);
                         setUpdateStatus(updateStatus + 1);
@@ -3910,7 +3914,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                                         width: 'fit-content', height: 'fit-content',
 
                                     }}
-                                    onClick={(e) => { navigate(`/Missing-Home?IncId=${stringToBase64(mainIncidentID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(nameID)}&MasterNameID=${stringToBase64(masterNameID)}&NameStatus=${true}`) }}
+                                    onClick={(e) => { navigate(`/Missing-Home?IncId=${stringToBase64(mainIncidentID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(nameID)}&MasterNameID=${stringToBase64(masterNameID)}&NameStatus=${true}&narrativeId=${narrativeId}`) }}
                                 >
                                     Missing Person
                                 </div>
@@ -3927,7 +3931,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
 
                                     }}
 
-                                    onClick={(e) => { navigate(`/Arrest-Home?IncId=${stringToBase64(mainIncidentID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(nameID)}&MasterNameID=${stringToBase64(masterNameID)}&NameStatus=${true}`) }}
+                                    onClick={(e) => { navigate(`/Arrest-Home?IncId=${stringToBase64(mainIncidentID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(nameID)}&MasterNameID=${stringToBase64(masterNameID)}&NameStatus=${true}&narrativeId=${narrativeId}`) }}
                                 >
                                     Adult Arrest
                                 </div>
@@ -4028,7 +4032,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                                             />
                                         </div>
 
-                                        <div className="col-2 col-md-2 col-lg-1 mt-3">
+                                        <div className="col-2 col-md-2 col-lg-1 mt-3 text-right">
                                             <span onClick={() => { setOpenPage('Justifiable Homicide') }} data-toggle="modal" data-target="#ListModel" className='new-link'>
                                                 Justifiable Homicide
                                                 {errors.JusifiableHomicideError !== 'true' ? (
@@ -4310,7 +4314,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                                                                         <button
                                                                             type="button"
                                                                             className="btn btn-sm btn-success mr-1"
-                                                                            disabled={!statesChangeStatus}
+                                                                            disabled={!statesChangeStatusRel}
                                                                             onClick={(e) => { check_Validation_Error1(); }}
                                                                         >
                                                                             Update

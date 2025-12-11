@@ -12,7 +12,7 @@ import { get_LocalStoreData } from '../../../../../redux/api';
 import NameListing from '../../../ShowAllList/NameListing';
 import ListModal from '../../../Utility/ListManagementModel/ListModal';
 import { get_ScreenPermissions_Data } from '../../../../../redux/actions/IncidentAction';
-import ChangesModal from '../../../../Common/ChangesModal';
+import ChangesModal from '../../../../Common/ChangesModal';  
 import { get_Eye_Color_Drp_Data, get_Hair_Color_Drp_Data } from '../../../../../redux/actions/DropDownsData';
 
 const General = (props) => {

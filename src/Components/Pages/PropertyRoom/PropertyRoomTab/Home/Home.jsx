@@ -20,14 +20,13 @@ import ChainOfModel from '../../PropertyReportRoom/ChainOfModel';
 import { TaskListModal } from '../../../Property/PropertyTab/MiscellaneousInformation/MiscellaneousInformation';
 import BarCode from '../../../../Common/BarCode';
 import SelectBox from '../../../../Common/SelectBox';
-import { da } from 'date-fns/locale';
 
 
 const Home = (props) => {
 
     const { setStatus, DecPropID, DecMPropID, SelectedCategory, CallStatus, ProType, SelectedOption, ProNumber, VehNumber, ProTransfer, CheckboxStatus } = props
 
-    const { GetDataTimeZone, datezone, setChangesStatus } = useContext(AgencyContext);
+    const { GetDataTimeZone, datezone, setChangesStatus, BarCodeStatus, setBarCodeStatus } = useContext(AgencyContext);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -311,10 +310,10 @@ const Home = (props) => {
         const CheckOutDateTimeError = value.IsCheckOut ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
         const ExpectedReturnDateTimeError = value.IsCheckOut ? RequiredFieldIncident(value.ExpectedDate) : 'true';
         const ReleasingOfficerError = (value.IsRelease || value.IsCheckOut) ? RequiredFieldIncident(value.ReleasingOfficerID) : 'true';
-        const ReceipientError = value.IsRelease ? RequiredFieldIncident(value.OfficerNameID) : 'true';
+        const ReceipientError = value.IsRelease ? RequiredFieldIncident(value.ReceipentID) : 'true';
         const ReleasedDateTimeError = value.IsRelease ? RequiredFieldIncident(value.ReleaseDate) : 'true';
         // const DestructionDateTimeError = value.IsDestroy ? RequiredFieldIncident(value.DestroyDate) : 'true';
-        const DestructionDateTimeError = 'true';
+        const DestructionDateTimeError = value.IsDestroy ? RequiredFieldIncident(value.activitydate) : 'true';
         const DestructionOfficerError = value.IsDestroy ? RequiredFieldIncident(value.DestructionOfficerID) : 'true';
         const UpdatingOfficerError = value.IsUpdate ? RequiredFieldIncident(value.UpdatingOfficerID) : 'true';
         const ApprovalOfficerError = (value.IsDestroy || value.IsTransferLocation || value.IsUpdate) ? RequiredFieldIncident(value.ApprovalOfficerID) : 'true';
@@ -425,6 +424,7 @@ const Home = (props) => {
             // toastifyError('No Data Available');
         });
     };
+
 
 
     const GetData_PropertyroomRadio = (propertyId, category) => {
@@ -548,12 +548,13 @@ const Home = (props) => {
         const ActivityType = selectedOption;
         const CreatedByUserFK = loginPinID;
 
-        const { ActivityReasonID, ExpectedDate, ActivityComments, DestinationStorageLocation, ModeOfTransport, ReceipentOfficerID, ReleasingOfficerID, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate, CourtDate,
+        const { ActivityReasonID, ExpectedDate, ActivityComments, DestinationStorageLocation, ReceipentID, ModeOfTransport, ReceipentOfficerID, ReleasingOfficerID, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate, CourtDate,
             ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, OfficerNameID, InvestigatorID, location, activityid, EventId, IsCheckIn,
             IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, activitydate, AgencyID, PackagingDetails,
         } = value;
         const valuesArray = PropertyID.map((id, index) => ({
-            PropertyID: id, ActivityType, ActivityReasonID, ExpectedDate, activitydate, DestinationStorageLocation, ModeOfTransport, ReceipentOfficerID, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
+            PropertyID: id, ActivityType: ActivityType === 'CheckIn' ? 'Check In' :
+                ActivityType === 'CheckOut' ? 'Check Out' : ActivityType, ActivityReasonID, ExpectedDate, activitydate, DestinationStorageLocation, ReceipentID, ModeOfTransport, ReceipentOfficerID, ActivityComments, OtherPersonNameID, PropertyRoomPersonNameID, ChainDate, DestroyDate,
             CourtDate, ReleaseDate, PropertyTag, RecoveryNumber, StorageLocationID, ReceiveDate, ReleasingOfficerID, OfficerNameID, InvestigatorID, location, activityid, EventId,
             MasterPropertyId: MasterPropertyId[index], IsCheckIn, IsCheckOut, IsRelease, IsDestroy, IsTransferLocation, IsUpdate, CreatedByUserFK, AgencyID, PackagingDetails,
         }));
@@ -575,6 +576,8 @@ const Home = (props) => {
             toastifySuccess(res.Message);
         });
     };
+
+
 
     const Get_SendTask_Data = (PropertyID, MasterPropertyID) => {
         const val = { "PropertyID": PropertyID.toString(), "MasterPropertyID": MasterPropertyID.toString() }
@@ -705,10 +708,10 @@ const Home = (props) => {
                 let color = 'black';
                 let className = '';
                 switch (row.Status) {
-                    case 'CheckIn':
+                    case 'Check In':
                         color = 'green';
                         break;
-                    case 'CheckOut':
+                    case 'Check Out':
                         color = 'red';
                         break;
                     case 'Update':
@@ -728,7 +731,8 @@ const Home = (props) => {
                         style={className ? {} : { color }}
                         className={className}
                     >
-                        {row.Status}
+                        {row.Status === 'CheckIn' ? 'Check In' :
+                            row.Status === 'CheckOut' ? 'Check Out' : row.Status}
                     </span>
                 );
             }
@@ -902,6 +906,8 @@ const Home = (props) => {
         }
     };
 
+
+
     const HandleStatusOption = () => {
         let arr = [];
         if (LastTask) {
@@ -943,7 +949,7 @@ const Home = (props) => {
 
     const setStatusFalse = (e) => {
         reset();
-
+        setBarCodeStatus([]);
         setIsClearing(true);
         setSelectedRows([]); setSelectedStatus('');
         navigate(`/Property-room?&ProId=${0}&MProId=${0}&ProRomId=${0}&ProRoomStatus=${true}&selectedCategory=${''}&ProType=${''}&ProNumber=${''}&ProTransfer=${''}&CallStatus=${false}&SelectedOption=${''}`);
@@ -976,6 +982,7 @@ const Home = (props) => {
                     IsUpdate: false,
                 }));
                 setEnabledStatus("");
+                reset_Field_Data();
             }
         } else {
             // Add it
@@ -1000,7 +1007,8 @@ const Home = (props) => {
             const propertyIds = tempSelectedRows.map(row => row.PropertyID);
             const masterpropertyIds = tempSelectedRows.map(row => row.MasterPropertyID);
             setSelectedCategory(PropertyCategoryCode); setDescription(Description);
-            setSelectedStatus(Status); setRowClicked(true);
+            setSelectedStatus(Status === 'Check In' ? 'CheckIn' :
+                Status === 'Check Out' ? 'CheckOut' : Status); setRowClicked(true);
             sessionStorage.setItem('selectedRows', JSON.stringify(tempSelectedRows));
             setPropertyId(propertyIds); setMasterPropertyId(masterpropertyIds); setStatus(!!Status);
             console.log(propertyIds, propertyIds)
@@ -1052,6 +1060,30 @@ const Home = (props) => {
         onAfterPrint: () => { console.log(chainreport) }
 
     })
+
+      const reset_Field_Data = () => {
+        setValue({
+            ...value,
+            'PropertyID': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
+            'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '',
+            'MasterPropertyId': '', 'IsCheckIn': '', 'IsCheckOut': '', 'IsRelease': '', 'IsDestroy': '', 'IsTransferLocation': '', 'IsUpdate': '', 'CreatedByUserFK': '', 'PropertyTypeID': '',
+            'OtherPersonNameID': '', 'LastSeenDtTm': '', 'PackagingDetails': '', 'ReleasingOfficerID': '', 'ReceipentOfficerID': '',
+            ['ReportedDate']: '', ['ReportedDateTo']: '', 'ModeOfTransport': '', 'DestinationStorageLocation': '',
+        });
+        setErrors({
+            ...errors,
+            'ReasonError': '', 'ActivityDateError': '', 'InvestigatorError': '', 'PropertyError': '', 'PropertyRoomOfficerError': '', 'ExpectedDateError': '', 'OfficerNameError': '', 'NameError': '', 'CourtDateError': '', 'ReleaseDateError': '', 'DestroyDateError': '', 'TypeError': '', 'TransferError': '', 'LocationError': '', 'SearchError': '', 'ActivityDtTmError': '',
+        })
+        setradioButtonStatus(false);
+        setsearcherror(prevValues => { return { ...prevValues, 'SearchError': '', } })
+        setCourtdate(''); setreleasedate(''); setdestroydate(''); setExpecteddate('');
+        setSelectedStatus(''); setRowClicked(''); setSelectedOption(null); setactivitydate(''); setReasonIdDrp([]); setLocationPath('');
+        setDescription('');
+        // setRowClicked('');
+        // setSearchData([]);
+        // setSelectedRows([]);
+        setToggleClear(!toggleClear); setStatus(''); settransfer(null); setEditval([]);
+    }
 
     const reset = () => {
         setValue({
@@ -1293,6 +1325,7 @@ const Home = (props) => {
     };
 
     useEffect(() => {
+
         if (editval && selectedOption === 'Update') {
             setValue({
                 ...value, PropertyID: editval?.PropertyID || '', ActivityType: editval?.ActivityType || '',
@@ -1323,7 +1356,6 @@ const Home = (props) => {
 
         }
     }, [editval, selectedOption]);
-
     function handleClickedClearedDestination() {
         setValue({
             ...value,
@@ -1332,6 +1364,7 @@ const Home = (props) => {
         setfunctiondone(!functiondone);
 
     }
+
 
     const filterPassedTimes = (time) => {
         if (!activitydate) return false;
@@ -1367,12 +1400,6 @@ const Home = (props) => {
         timeInServerZone.setHours(time?.getHours(), time?.getMinutes(), 0, 0);
         return timeInServerZone <= now;
     }
-    // const selectedDay = selected.toDateString();
-    // const today = now.toDateString();
-    // if (selectedDay !== today) return true;
-    // return time.getTime() <= now.getTime();
-    // };
-
 
 
 
@@ -1404,6 +1431,7 @@ const Home = (props) => {
                                             ...value,
                                             'PropertyTypeID': '',
                                             'VehicleTypeID': '',
+
                                         })
                                     }}
                                     defaultValue={AddType[0]}
@@ -1670,7 +1698,7 @@ const Home = (props) => {
                                         </div>
                                     </> : <></>
                             }
-                        </div>
+                        </div >
 
 
 
@@ -2666,7 +2694,7 @@ const Home = (props) => {
                         ) : null}</label>
                     </div>
                     <div className="col-12 col-md-12 col-lg-3 ">
-                        <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
+                        <input type="text" name="location" style={{ position: 'relative' }} id="StorageLocationID" value={locationStatus ? '' : value.location} readOnly={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'} className={`form-control ${value.IsCheckIn || value.IsTransferLocation || value.IsRelease
                             ? 'requiredColor'
                             : (selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy')
                                 ? 'readonlyColor'
@@ -2716,7 +2744,7 @@ const Home = (props) => {
                         <label htmlFor="" className='new-label text-nowrap  mb-0'>Packaging Details</label>
                     </div>
                     <div className="col-9 col-md-9 col-lg-4 text-field mt-0">
-                        <input type="text" name="PackagingDetails" className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.PackagingDetails} onChange={(e) => { handleChange(e) }} />
+                        <input type="text" name="PackagingDetails" readOnly={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'} className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.PackagingDetails} onChange={(e) => { handleChange(e) }} />
                     </div>
 
 
@@ -2725,6 +2753,7 @@ const Home = (props) => {
                     </div>
                     <div className="col-9 col-md-9 col-lg-10 text-field mt-0">
                         <input type="text" name="ActivityComments"
+                            readOnly={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                             className={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''} value={value.ActivityComments} onChange={(e) => { handleChange(e) }} />
                     </div>
 
@@ -2738,23 +2767,25 @@ const Home = (props) => {
                                 </label>
                             </div>
                             <div className="col-3 col-md-3 col-lg-10 ">
-                                <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px", }}>
+                                <div style={{ display: "flex", flexDirection: "row", background: selectedOption ? "#555" : "#ccc", alignItems: "center", gap: "8px", }}
+                                >
                                     <div style={{ display: "flex", alignItems: "center", border: "1px solid #ccc", borderRadius: "6px", background: "#f9f9f9", width: "100%" }}>
-                                        <label htmlFor="file-input"
+                                        <label
+                                            htmlFor="file-input"
                                             style={{
                                                 padding: "5px 16px",
-                                                backgroundColor: "#e9e9e9",
+                                                backgroundColor: selectedOption ? "#555" : "#ccc",
                                                 color: "#fff",
                                                 borderRadius: "4px",
                                                 marginLeft: "4px",
                                                 marginTop: "8px",
-                                                cursor: "pointer",
+                                                cursor: selectedOption ? "pointer" : "not-allowed",
                                                 fontSize: "14px",
                                                 fontWeight: "bold",
                                                 transition: "background 0.3s",
                                             }}
-                                            onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
-                                            onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                        // onMouseOver={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
+                                        // onMouseOut={(e) => (e.target.style.backgroundColor = "#e9e9e9")}
                                         >
                                             Choose File
                                         </label>
@@ -2765,6 +2796,7 @@ const Home = (props) => {
                                             multiple
                                             style={{ display: "none" }}
                                             id="file-input"
+                                            disabled={!selectedOption}
                                         />
                                         <div
                                             style={{
@@ -2821,6 +2853,7 @@ const Home = (props) => {
                                 </div>
                             </div>
                         </div>
+
                     </div>
 
                     <fieldset style={{ width: "100%" }}>
@@ -2941,6 +2974,7 @@ const Home = (props) => {
                                     minDate={courtdate ? new Date(courtdate) : new Date()}
                                     disabled={value.IsCheckOut || value.IsRelease || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                                     className={value.IsCheckOut || value.IsRelease || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
+
                                 />
                             </div>
                         </div>
@@ -2975,6 +3009,10 @@ const Home = (props) => {
                         <DatePicker
                             name='activitydate'
                             id='activitydate'
+                            // onChange={(date) => {
+                            //     setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
+
+                            // }}
                             onChange={(date) => {
                                 if (date) {
                                     const now = new Date(datezone);
@@ -3007,14 +3045,15 @@ const Home = (props) => {
                             showMonthDropdown
                             showYearDropdown
                             dropdownMode="select"
+                            showDisabledMonthNavigation
+                            autoComplete='off'
                             openToDate={new Date(datezone)}
                             maxDate={new Date(datezone)}
                             filterTime={filterPassedTimes}
-                            showDisabledMonthNavigation
-                            autoComplete='off'
                             disabled={selectedOption === null || selectedOption === ''}
                             className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                         />
+
                     </div>
                     <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
                         <label htmlFor="" className='new-label mb-0'>Expected Return Date/Time{errors.ExpectedReturnDateTimeError !== 'true' ? (
@@ -3025,6 +3064,10 @@ const Home = (props) => {
                         <DatePicker
                             name='ExpectedDate'
                             id='ExpectedDate'
+                            // onChange={(date) => {
+                            //     setExpecteddate(date); setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
+
+                            // }}
                             onChange={(date) => {
                                 if (date) {
                                     const now = new Date(datezone);
@@ -3059,14 +3102,14 @@ const Home = (props) => {
                             dropdownMode="select"
                             showDisabledMonthNavigation
                             autoComplete='off'
-                            openToDate={new Date(datezone)}
                             maxDate={new Date(datezone)}
                             filterTime={filterExpectedTimes}
+                             openToDate={new Date(datezone)}
                             disabled={selectedOption === null || selectedOption === ''}
                             className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                         />
-                    </div>
 
+                    </div>
                     <div className="col-3 col-md-3 col-lg-2 ">
                         <label htmlFor="" className='new-label px-0 mb-0'>Releasing Officer{errors.ReleasingOfficerError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReleasingOfficerError}</p>
@@ -3088,7 +3131,7 @@ const Home = (props) => {
 
                     </div>
                     <div className="col-3 col-md-3 col-lg-2  ">
-                        <label htmlFor="" className='new-label px-0 mb-0'>Recipient Officer{errors.ReasonError !== 'true' ? (
+                        <label htmlFor="" className='new-label px-0 mb-0'>Recepient Officer{errors.ReasonError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
                         ) : null}</label>
                     </div>
@@ -3263,14 +3306,8 @@ const Home = (props) => {
                                     )}
                                 </div>
                             </div>
-
                         </div>
                     </div>
-
-
-
-
-
                 </div>}
                 {selectedOption === "Release" && <div className='row align-items-center' style={{ rowGap: "8px" }}>
                     <div className="col-3 col-md-3 col-lg-2 ">
@@ -3362,7 +3399,7 @@ const Home = (props) => {
 
                     </div>
                     <div className="col-3 col-md-3 col-lg-2 ">
-                        <label htmlFor="" className='new-label px-0 mb-0'>Receipient {errors.ReceipientError !== 'true' ? (
+                        <label htmlFor="" className='new-label px-0 mb-0'>Recepient {errors.ReceipientError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReceipientError}</p>
                         ) : null}</label>
                     </div>
@@ -3384,7 +3421,7 @@ const Home = (props) => {
 
                     <div className="col-3 col-md-3 col-lg-2 ">
                         {/* <label htmlFor="" className='new-label px-0 mb-0'>Receipient Location</label> */}
-                        <label htmlFor="" className='new-label px-0 mb-0'>Recipient Location</label>
+                        <label htmlFor="" className='new-label px-0 mb-0'>Recepient Location</label>
                     </div>
                     <div className="col-12 col-md-12 col-lg-2    ">
                         <input type="text" onChange={(e) => { handleChange(e) }} name="locationsdgf" style={{ position: 'relative' }} value={value.locationsdgf} className={`form-control`}
@@ -3651,7 +3688,7 @@ const Home = (props) => {
                             name='activitydate'
                             id='activitydate'
                             onChange={(date) => {
-                                setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
+                                setactivitydate(date); setValue({ ...value, ['activitydate']: date ? getShowingMonthDateYear(date) : null, });
 
                             }}
                             isClearable={activitydate ? true : false}
@@ -4765,7 +4802,7 @@ const Home = (props) => {
                             (propertyId || masterpropertyId) &&
                             <button type="button" className="btn btn-sm btn-success mx-1" onClick={() => { setPrintStatus(true) }}>Print Barcode</button>
                         } */}
-                    <button type="button" onClick={() => { setPrintStatus(true) }} className="btn btn-sm btn-success mr-2 mb-2 mt-1">
+                    <button type="button" disabled={BarCodeStatus?.length === 0 || !BarCodeStatus} onClick={() => { setPrintStatus(true) }} className="btn btn-sm btn-success mr-2 mb-2 mt-1">
                         Print Barcode
                     </button>
                     <button type="button" className="btn btn-sm btn-success mr-2 mb-2 mt-1" onClick={GetChainCustodyReport} disabled={!selectedStatus}>

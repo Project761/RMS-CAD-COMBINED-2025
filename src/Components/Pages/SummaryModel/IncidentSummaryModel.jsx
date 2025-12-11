@@ -85,7 +85,7 @@ const IncidentSummaryModel = (props) => {
                             <div className="modal-content">
                                 <div className="modal-header">
                                     <h6 className="modal-title text-dark">Incident Summary</h6>
-                                    <button type="button" onClick={() => { setListData([]); }} className="close text-red" data-dismiss="modal" >×</button>
+                                    <button type="button" onClick={() => { setListData([]); setIncSummModal(false); }} className="close text-red" data-dismiss="modal" >×</button>
                                 </div>
                                 <div class="modal-body">
 

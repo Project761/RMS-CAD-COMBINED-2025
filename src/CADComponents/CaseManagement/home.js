@@ -1,4 +1,4 @@
-﻿import React, { useContext, useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import Select from "react-select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -31,9 +31,11 @@ function Home({ CaseId = null, RMSCaseNumber = null, refetchCaseManagementCaseDa
     const [showPotentialIncidentsModal, setShowPotentialIncidentsModal] = useState(false);
     const [showAttachIncidentModal, setShowAttachIncidentModal] = useState(false);
     const [selectedIncident, setSelectedIncident] = useState(null);
+    const [caseTeamData, setCaseTeamData] = useState(null);
     const [supervisorsByAgencyID, setSupervisorsByAgencyID] = useState([]);
     const [prosecutor, setProsecutor] = useState([]);
     const [primaryOfficerHistory, setPrimaryOfficerHistory] = useState([]);
+
     const [
         caseFormState,
         setCaseFormState,
@@ -55,6 +57,7 @@ function Home({ CaseId = null, RMSCaseNumber = null, refetchCaseManagementCaseDa
         masterCaseNumber: "",
         caseNotes: ""
     });
+
     const [
         errorCaseFormState,
         ,
@@ -164,6 +167,31 @@ function Home({ CaseId = null, RMSCaseNumber = null, refetchCaseManagementCaseDa
             enabled: !!CaseId
         }
     );
+    const getAllCaseTeamKey = `/CaseManagement/GetAllCaseTeam/${localStoreData?.AgencyID}/${CaseId}`;
+    const { data: getCaseTeamData, isSuccess: isGetCaseTeamDataSuccess } = useQuery(
+        [getAllCaseTeamKey, {
+            "AgencyID": localStoreData?.AgencyID,
+            "CaseID": parseInt(CaseId),
+        },],
+        CaseManagementServices.getAllCaseTeam,
+        {
+            refetchOnWindowFocus: false,
+            retry: 0,
+            enabled: !!CaseId
+        }
+    );
+
+
+    useEffect(() => {
+        if (getCaseTeamData && isGetCaseTeamDataSuccess) {
+            const data = JSON.parse(getCaseTeamData?.data?.data)?.Table
+            // Filter to only include items where RemovedDateTime is null
+            const filteredData = data?.filter(item => !item.RemovedDateTime) || []
+            setCaseTeamData(filteredData)
+        } else {
+            setCaseTeamData(null)
+        }
+    }, [getCaseTeamData, isGetCaseTeamDataSuccess])
 
     useEffect(() => {
         if (getPrimaryOfficerHistory && isGetPrimaryOfficerHistorySuccess) {
@@ -209,7 +237,7 @@ function Home({ CaseId = null, RMSCaseNumber = null, refetchCaseManagementCaseDa
                 casePriority: priorityDrpData?.find(item => item?.value === caseData?.CasePriorityID),
                 primeInvestigator: agencyOfficerDrpData?.find(item => item?.value === caseData?.PrimeInvestigatorID),
                 supervisor: agencyOfficerDrpData?.find(item => item?.value === caseData?.SupervisorID),
-                assignedProsecutor: agencyOfficerDrpData?.find(item => item?.value === caseData?.AssignedProsecutorID),
+                assignedProsecutor: prosecutor?.find(item => item?.value === parseInt(caseData?.AssignedProsecutorID)),
                 masterCaseNumber: "",
                 caseNotes: caseData?.CaseNotes,
                 crimeCode: chargeCodeDrp?.find(item => item?.value === caseData?.CrimeCodeID),
@@ -415,97 +443,98 @@ function Home({ CaseId = null, RMSCaseNumber = null, refetchCaseManagementCaseDa
     ];
 
     return (
-        <div className="container-fluid">
-            {/* Case Identity & Offense Details */}
-            <div className="row mt-4">
-                <div className="col-12">
-                    <fieldset>
-                        <legend>Case Identity & Offense Details</legend>
-                        <div className="mt-3">
-                            <div className="row">
-                                <div className="col-md-4 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
-                                    <label className="form-label fw-bold text-nowrap" style={{ marginLeft: '90px' }}>RMS Case #</label>
-                                    <input type="text" className="form-control py-1 new-input" value={RMSCaseNumber ? RMSCaseNumber : "Auto Generated"} readOnly />
+        <div className="container-fluid d-flex" style={{ gap: '10px' }}>
+            <div className="col-9">
+                {/* Case Identity & Offense Details */}
+                <div className="row">
+                    <div className="col-12">
+                        <fieldset>
+                            <legend>Case Identity & Offense Details</legend>
+                            <div className="mt-3">
+                                <div className="row">
+                                    <div className="col-md-4 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
+                                        <label className="form-label fw-bold text-nowrap" style={{ marginLeft: '90px' }}>RMS Case #</label>
+                                        <input type="text" className="form-control py-1 new-input" value={RMSCaseNumber ? RMSCaseNumber : "Auto Generated"} readOnly />
+                                    </div>
+                                    <div className="col-md-4 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
+                                        <label className="form-label fw-bold"><span className="fw-bold text-nowrap">Reported Date/Time</span> {errorCaseFormState.reportedDateTime && !caseFormState.reportedDateTime ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
+                                        <DatePicker
+                                            id='reportedDateTime'
+                                            name='reportedDateTime'
+                                            ref={startRef}
+                                            selected={caseFormState.reportedDateTime}
+                                            onChange={(date) => handleCaseFormState("reportedDateTime", date)}
+                                            showTimeSelect
+                                            timeFormat="HH:mm"
+                                            timeIntervals={1}
+                                            timeCaption="time"
+                                            timeInputLabel
+                                            autoComplete="Off"
+                                            dropdownMode="select"
+                                            showYearDropdown
+                                            showMonthDropdown
+                                            showDisabledMonthNavigation
+                                            minDate={new Date(incReportedDate)}
+                                            maxDate={new Date(datezone)}
+                                            filterTime={(date) => filterPassedTimeZonesProperty(date, caseFormState.reportedDateTime, incReportedDate)}
+                                            dateFormat="MM/dd/yyyy HH:mm"
+                                            className="form-control py-1 new-input requiredColor"
+                                            placeholderText="Select Date/Time"
+                                            is24Hour
+                                        />
+                                    </div>
+                                    <div className="col-md-4 mb-2 d-flex align-items-center" style={{ gap: '10px' }}    >
+                                        <label className="form-label fw-bold text-nowrap">Primary Officer</label>
+                                        <input
+                                            type="text"
+                                            className="form-control py-1 new-input"
+                                            placeholder="Placeholder"
+                                            value={caseFormState.primaryOfficer}
+                                            readOnly
+                                        />
+                                    </div>
                                 </div>
-                                <div className="col-md-4 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
-                                    <label className="form-label fw-bold"><span className="fw-bold text-nowrap">Reported Date/Time</span> {errorCaseFormState.reportedDateTime && !caseFormState.reportedDateTime ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
-                                    <DatePicker
-                                        id='reportedDateTime'
-                                        name='reportedDateTime'
-                                        ref={startRef}
-                                        selected={caseFormState.reportedDateTime}
-                                        onChange={(date) => handleCaseFormState("reportedDateTime", date)}
-                                        showTimeSelect
-                                        timeFormat="HH:mm"
-                                        timeIntervals={1}
-                                        timeCaption="time"
-                                        timeInputLabel
-                                        autoComplete="Off"
-                                        dropdownMode="select"
-                                        showYearDropdown
-                                        showMonthDropdown
-                                        showDisabledMonthNavigation
-                                        minDate={new Date(incReportedDate)}
-                                        maxDate={new Date(datezone)}
-                                        filterTime={(date) => filterPassedTimeZonesProperty(date, caseFormState.reportedDateTime, incReportedDate)}
-                                        dateFormat="MM/dd/yyyy HH:mm"
-                                        className="form-control py-1 new-input requiredColor"
-                                        placeholderText="Select Date/Time"
-                                        is24Hour
-                                    />
-                                </div>
-                                <div className="col-md-4 mb-2 d-flex align-items-center" style={{ gap: '10px' }}    >
-                                    <label className="form-label fw-bold text-nowrap">Primary Officer</label>
-                                    <input
-                                        type="text"
-                                        className="form-control py-1 new-input"
-                                        placeholder="Placeholder"
-                                        value={caseFormState.primaryOfficer}
-                                        readOnly
-                                    />
+                                <div className="row">
+                                    <div className="col-md-6 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
+                                        <Link to={'/ListManagement?page=Charge%20Code&call=/Arr-Charge-Home'} className='new-link text-nowrap' style={{ marginLeft: '45px' }}> Offense Code/Name</Link>
+                                        <Select
+                                            placeholder="Select"
+                                            options={chargeCodeDrp}
+                                            isClearable
+                                            styles={colorLessStyle_Select}
+                                            value={caseFormState.crimeCode}
+                                            onChange={(selectedOption) => handleCaseFormState("crimeCode", selectedOption)}
+                                        />
+                                    </div>
+                                    <div className="col-md-6 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
+                                        <label className="form-label fw-bold text-nowrap">Category</label>
+                                        <Select
+                                            placeholder="Select"
+                                            options={categoryIdDrp}
+                                            isClearable
+                                            styles={colorLessStyle_Select}
+                                            value={caseFormState.crimeClass}
+                                            onChange={(selectedOption) => handleCaseFormState("crimeClass", selectedOption)}
+                                        />
+                                    </div>
+                                    <div className="col-md-12 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
+                                        <label className="form-label fw-bold text-nowrap" style={{ marginLeft: '60px' }}>Incident Address</label>
+                                        <input
+                                            type="text"
+                                            className="form-control py-1 new-input"
+                                            placeholder="Placeholder"
+                                            value={caseFormState.incidentAddress}
+                                            readOnly
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                            <div className="row">
-                                <div className="col-md-6 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
-                                    <Link to={'/ListManagement?page=Charge%20Code&call=/Arr-Charge-Home'} className='new-link text-nowrap'> Offense Code/Name</Link>
-                                    <Select
-                                        placeholder="Select"
-                                        options={chargeCodeDrp}
-                                        isClearable
-                                        styles={colorLessStyle_Select}
-                                        value={caseFormState.crimeCode}
-                                        onChange={(selectedOption) => handleCaseFormState("crimeCode", selectedOption)}
-                                    />
-                                </div>
-                                <div className="col-md-6 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
-                                    <label className="form-label fw-bold text-nowrap">Category</label>
-                                    <Select
-                                        placeholder="Select"
-                                        options={categoryIdDrp}
-                                        isClearable
-                                        styles={colorLessStyle_Select}
-                                        value={caseFormState.crimeClass}
-                                        onChange={(selectedOption) => handleCaseFormState("crimeClass", selectedOption)}
-                                    />
-                                </div>
-                                <div className="col-md-12 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
-                                    <label className="form-label fw-bold text-nowrap" style={{ marginLeft: '60px' }}>Incident Address</label>
-                                    <input
-                                        type="text"
-                                        className="form-control py-1 new-input"
-                                        placeholder="Placeholder"
-                                        value={caseFormState.incidentAddress}
-                                        readOnly
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </fieldset>
+                        </fieldset>
+                    </div>
                 </div>
-            </div>
 
-            {/* Potential Related Incidents */}
-            <div className="row mb-4">
+                {/* Potential Related Incidents */}
+                {/* <div className="row mb-4">
                 <div className="col-12 d-flex justify-content-end">
                     <button
                         className="btn btn-success px-4 py-2"
@@ -514,192 +543,397 @@ function Home({ CaseId = null, RMSCaseNumber = null, refetchCaseManagementCaseDa
                         Potential Related Incidents
                     </button>
                 </div>
-            </div>
-
-            {/* Assignment & Priority Management */}
-            <div className="row">
-                <div className="col-12">
-                    <fieldset className="">
-                        <legend>Assignment & Priority Management</legend>
-                        <div className="mt-3">
-                            <div className="row">
-                                <div className="col-md-4 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
-                                    <label className="form-label" style={{ marginLeft: '50px' }}><span className="fw-bold text-nowrap">Case Priority</span> {errorCaseFormState.casePriority && isEmptyObject(caseFormState.casePriority) ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
-                                    <Select
-                                        placeholder="Select"
-                                        styles={coloredStyle_Select}
-                                        value={caseFormState.casePriority}
-                                        options={priorityDrpData}
-                                        onChange={(selectedOption) => handleCaseFormState("casePriority", selectedOption)}
-                                    />
-                                </div>
-                                <div className="col-md-4 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
-                                    <label className="form-label"><span className="fw-bold text-nowrap">Prime Investigator</span> {errorCaseFormState.primeInvestigator && isEmptyObject(caseFormState.primeInvestigator) ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
-                                    <Select
-                                        placeholder="Select"
-                                        styles={coloredStyle_Select}
-                                        options={agencyOfficerDrpData}
-                                        value={caseFormState.primeInvestigator}
-                                        isClearable
-                                        onChange={(selectedOption) => handleCaseFormState("primeInvestigator", selectedOption)}
-                                    />
-                                </div>
-                                <div className="col-md-4 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
-                                    <label className="form-label"><span className="fw-bold text-nowrap">Supervisor</span> {errorCaseFormState.supervisor && isEmptyObject(caseFormState.supervisor) ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
-                                    <Select
-                                        placeholder="Select"
-                                        styles={coloredStyle_Select}
-                                        options={supervisorsByAgencyID}
-                                        value={caseFormState.supervisor}
-                                        isClearable
-                                        onChange={(selectedOption) => handleCaseFormState("supervisor", selectedOption)}
-                                        name="PrimaryOfficerID"
-                                    />
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-md-4 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
-                                    <label className="form-label"><span className="fw-bold text-nowrap">Assigned Date/Time</span> {errorCaseFormState.assignedDateTime && !caseFormState.assignedDateTime ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
-                                    <DatePicker
-                                        selected={caseFormState.assignedDateTime}
-                                        onChange={(date) => handleCaseFormState("assignedDateTime", date)}
-                                        showTimeSelect
-                                        timeFormat="HH:mm"
-                                        timeIntervals={15}
-                                        timeCaption="time"
-                                        dateFormat="MM/dd/yyyy h:mm aa"
-                                        minDate={new Date(incReportedDate)}
-                                        maxDate={new Date(datezone)}
-                                        filterTime={(date) => filterPassedTimeZonesProperty(date, caseFormState.assignedDateTime, incReportedDate)}
-                                        className="form-control py-1 new-input requiredColor"
-                                        placeholderText="Select Date/Time"
-                                    />
-                                </div>
-                                <div className="col-md-4 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
-                                    <label className="form-label"><span className="fw-bold text-nowrap">Assigned Prosecutor</span> {errorCaseFormState.assignedProsecutor && isEmptyObject(caseFormState.assignedProsecutor) ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
-                                    <Select
-                                        placeholder="Select"
-                                        styles={coloredStyle_Select}
-                                        options={prosecutor}
-                                        value={caseFormState.assignedProsecutor}
-                                        isClearable
-                                        onChange={(selectedOption) => handleCaseFormState("assignedProsecutor", selectedOption)}
-                                        name="assignedProsecutor"
-                                    />
-                                </div>
-                                <div className="col-md-4 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
-                                    <label className="form-label fw-bold text-nowrap">Master Case # (Link) </label>
-                                    <div className="input-group d-flex align-items-center" style={{ gap: '10px' }}>
-                                        <input
-                                            type="text"
-                                            className="form-control py-1 new-input"
-                                            placeholder="Enter Master Case"
-                                            value={caseFormState.masterCaseNumber}
-                                            onChange={(e) => handleCaseFormState("masterCaseNumber", e.target.value)}
-                                        />
-                                        <button className="btn btn-outline-primary" type="button">Generate</button>
-                                    </div>
-                                </div>
-                            </div>
+            </div> */}
+                <div className="modal-body px-4 py-3 mb-3">
+                    <fieldset>
+                        <legend>Potential Related Incidents</legend>
+                        <div className="mb-2 d-flex align-items-center mt-3" style={{ gap: '10px', flexWrap: 'wrap' }}>
+                            <DataTable
+                                dense
+                                columns={potentialIncidentsTableColumns}
+                                data={incidentList}
+                                customStyles={tableCustomStyles}
+                                pagination={false}
+                                responsive
+                                noDataComponent={'There are no data to display'}
+                                striped
+                                persistTableHead={true}
+                                fixedHeaderScrollHeight='200px'
+                                highlightOnHover
+                                fixedHeader
+                            />
                         </div>
+                        <p className="text-muted mb-0">Review these incidents before assigning a Master Case #.</p>
                     </fieldset>
                 </div>
-            </div>
-
-            {/* Review Schedule & Case Log */}
-            <div className="row">
-                <div className="col-12">
-                    <fieldset>
-                        <legend>Review Schedule & Case Log</legend>
-                        <div className="mt-3">
-                            <div className="">
+                {/* Assignment & Priority Management */}
+                <div className="row">
+                    <div className="col-12">
+                        <fieldset className="">
+                            <legend>Assignment & Priority Management</legend>
+                            <div className="mt-3">
                                 <div className="row">
                                     <div className="col-md-4 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
-                                        <label className="form-label fw-bold text-nowrap" style={{ marginLeft: '38px' }}>Next Status Review Due</label>
+                                        <label className="form-label" style={{ marginLeft: '50px' }}><span className="fw-bold text-nowrap">Case Priority</span> {errorCaseFormState.casePriority && isEmptyObject(caseFormState.casePriority) ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
+                                        <Select
+                                            placeholder="Select"
+                                            styles={coloredStyle_Select}
+                                            value={caseFormState.casePriority}
+                                            options={priorityDrpData}
+                                            onChange={(selectedOption) => handleCaseFormState("casePriority", selectedOption)}
+                                        />
+                                    </div>
+                                    <div className="col-md-4 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
+                                        <label className="form-label"><span className="fw-bold text-nowrap">Prime Investigator</span> {errorCaseFormState.primeInvestigator && isEmptyObject(caseFormState.primeInvestigator) ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
+                                        <Select
+                                            placeholder="Select"
+                                            styles={coloredStyle_Select}
+                                            options={agencyOfficerDrpData}
+                                            value={caseFormState.primeInvestigator}
+                                            isClearable
+                                            onChange={(selectedOption) => handleCaseFormState("primeInvestigator", selectedOption)}
+                                        />
+                                    </div>
+                                    <div className="col-md-4 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
+                                        <label className="form-label"><span className="fw-bold text-nowrap">Supervisor</span> {errorCaseFormState.supervisor && isEmptyObject(caseFormState.supervisor) ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
+                                        <Select
+                                            placeholder="Select"
+                                            styles={coloredStyle_Select}
+                                            options={supervisorsByAgencyID}
+                                            value={caseFormState.supervisor}
+                                            isClearable
+                                            onChange={(selectedOption) => handleCaseFormState("supervisor", selectedOption)}
+                                            name="PrimaryOfficerID"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-4 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
+                                        <label className="form-label"><span className="fw-bold text-nowrap">Assigned Date/Time</span> {errorCaseFormState.assignedDateTime && !caseFormState.assignedDateTime ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
                                         <DatePicker
-                                            selected={caseFormState.nextStatusReviewDue}
-                                            onChange={(date) => handleCaseFormState("nextStatusReviewDue", date)}
+                                            selected={caseFormState.assignedDateTime}
+                                            onChange={(date) => handleCaseFormState("assignedDateTime", date)}
                                             showTimeSelect
                                             timeFormat="HH:mm"
                                             timeIntervals={15}
                                             timeCaption="time"
                                             dateFormat="MM/dd/yyyy h:mm aa"
                                             minDate={new Date(incReportedDate)}
-                                            className="form-control py-1 new-input"
+                                            maxDate={new Date(datezone)}
+                                            filterTime={(date) => filterPassedTimeZonesProperty(date, caseFormState.assignedDateTime, incReportedDate)}
+                                            className="form-control py-1 new-input requiredColor"
                                             placeholderText="Select Date/Time"
                                         />
                                     </div>
                                     <div className="col-md-4 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
-                                        <label className="form-label fw-bold text-nowrap">Next Formal Report Due</label>
-                                        <DatePicker
-                                            selected={caseFormState.nextFormalReportDue}
-                                            onChange={(date) => handleCaseFormState("nextFormalReportDue", date)}
-                                            showTimeSelect
-                                            timeFormat="HH:mm"
-                                            timeIntervals={15}
-                                            timeCaption="time"
-                                            dateFormat="MM/dd/yyyy h:mm aa"
-                                            minDate={new Date(incReportedDate)}
-                                            className="form-control py-1 new-input"
-                                            placeholderText="Select Date/Time"
+                                        <label className="form-label"><span className="fw-bold text-nowrap">Assigned Prosecutor</span> {errorCaseFormState.assignedProsecutor && isEmptyObject(caseFormState.assignedProsecutor) ? <span style={{ color: 'red' }}>Required</span> : ''}</label>
+                                        <Select
+                                            placeholder="Select"
+                                            styles={coloredStyle_Select}
+                                            options={prosecutor}
+                                            value={caseFormState.assignedProsecutor}
+                                            isClearable
+                                            onChange={(selectedOption) => handleCaseFormState("assignedProsecutor", selectedOption)}
+                                            name="assignedProsecutor"
                                         />
                                     </div>
-                                    <div className="col-md-12 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
-                                        <label className="form-label fw-bold text-nowrap">Case Notes / Investigator Log</label>
-                                        <textarea
-                                            className="form-control py-1 new-input"
-                                            rows="3"
-                                            placeholder="Placeholder"
-                                            value={caseFormState.caseNotes}
-                                            onChange={(e) => handleCaseFormState("caseNotes", e.target.value)}
-                                        ></textarea>
+                                    <div className="col-md-4 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
+                                        <label className="form-label fw-bold text-nowrap">Master Case # (Link) </label>
+                                        <div className="input-group d-flex align-items-center" style={{ gap: '10px' }}>
+                                            <input
+                                                type="text"
+                                                className="form-control py-1 new-input"
+                                                placeholder="Enter Master Case"
+                                                value={caseFormState.masterCaseNumber}
+                                                onChange={(e) => handleCaseFormState("masterCaseNumber", e.target.value)}
+                                            />
+                                            <button className="btn btn-outline-primary" type="button">Generate</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </fieldset>
+                        </fieldset>
+                    </div>
                 </div>
-            </div>
-            {/* Action Buttons */}
-            <div className="row">
-                <div className="col-12">
-                    <div className="d-flex justify-content-end" style={{ gap: '10px' }}>
-                        <button
-                            className="cancel-button"
-                            onClick={() => { clearCaseFormState(); clearErrorCaseFormState(); }}
-                        >
-                            Clear
-                        </button>
-                        <button className="btn btn-success px-4 py-2" onClick={handleSave}>
-                            {CaseId ? 'Update' : 'Save'}
-                        </button>
+
+                {/* Review Schedule & Case Log */}
+                <div className="row">
+                    <div className="col-12">
+                        <fieldset>
+                            <legend>Review Schedule & Case Log</legend>
+                            <div className="mt-3">
+                                <div className="">
+                                    <div className="row">
+                                        <div className="col-md-4 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
+                                            <label className="form-label fw-bold text-nowrap" style={{ marginLeft: '38px' }}>Next Status Review Due</label>
+                                            <DatePicker
+                                                selected={caseFormState.nextStatusReviewDue}
+                                                onChange={(date) => handleCaseFormState("nextStatusReviewDue", date)}
+                                                showTimeSelect
+                                                timeFormat="HH:mm"
+                                                timeIntervals={15}
+                                                timeCaption="time"
+                                                dateFormat="MM/dd/yyyy h:mm aa"
+                                                minDate={new Date(incReportedDate)}
+                                                className="form-control py-1 new-input"
+                                                placeholderText="Select Date/Time"
+                                            />
+                                        </div>
+                                        <div className="col-md-4 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
+                                            <label className="form-label fw-bold text-nowrap">Next Formal Report Due</label>
+                                            <DatePicker
+                                                selected={caseFormState.nextFormalReportDue}
+                                                onChange={(date) => handleCaseFormState("nextFormalReportDue", date)}
+                                                showTimeSelect
+                                                timeFormat="HH:mm"
+                                                timeIntervals={15}
+                                                timeCaption="time"
+                                                dateFormat="MM/dd/yyyy h:mm aa"
+                                                minDate={new Date(incReportedDate)}
+                                                className="form-control py-1 new-input"
+                                                placeholderText="Select Date/Time"
+                                            />
+                                        </div>
+                                        <div className="col-md-12 mb-2 d-flex align-items-center" style={{ gap: '10px' }}>
+                                            <label className="form-label fw-bold text-nowrap">Case Notes / Investigator Log</label>
+                                            <textarea
+                                                className="form-control py-1 new-input"
+                                                rows="3"
+                                                placeholder="Placeholder"
+                                                value={caseFormState.caseNotes}
+                                                onChange={(e) => handleCaseFormState("caseNotes", e.target.value)}
+                                            ></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+                {/* Action Buttons */}
+                <div className="row">
+                    <div className="col-12">
+                        <div className="d-flex justify-content-end" style={{ gap: '10px' }}>
+                            <button
+                                className="cancel-button"
+                                onClick={() => { clearCaseFormState(); clearErrorCaseFormState(); }}
+                            >
+                                Clear
+                            </button>
+                            <button className="btn btn-success px-4 py-2" onClick={handleSave}>
+                                {CaseId ? 'Update' : 'Save'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Personnel Assignment History */}
+                <div className="row mb-4">
+                    <div className="col-12">
+                        <fieldset>
+                            <legend>Primary Officer History</legend>
+                            <div className="mt-3">
+                                <div className="table-responsive">
+                                    <DataTable
+                                        dense
+                                        columns={tableColumns}
+                                        data={primaryOfficerHistory}
+                                        customStyles={tableCustomStyles}
+                                        pagination={false}
+                                        responsive
+                                        noDataComponent={'There are no data to display'}
+                                        striped
+                                        persistTableHead={true}
+                                        highlightOnHover
+                                        fixedHeader
+                                    />
+                                </div>
+                            </div>
+                        </fieldset>
                     </div>
                 </div>
             </div>
+            <div className="col-3">
+                <div className="row">
+                    {/* Case Overview Card */}
+                    <div className="col-12 mb-3">
+                        <div className="card" style={{ borderRadius: '8px', border: '1px solid #dee2e6' }}>
+                            {/* Orange top border */}
+                            <div style={{ height: '4px', backgroundColor: '#FFA500', borderRadius: '8px 8px 0 0' }}></div>
+                            <div className="card-body p-3">
+                                {/* Statute of Limitations */}
+                                <div className="d-flex align-items-center justify-content-between">
+                                    <div className="mb-3">
+                                        <div className="text-uppercase text-muted small mb-1" style={{ fontSize: '11px', letterSpacing: '0.5px' }}>
+                                            STATUTE OF LIMITATIONS
+                                        </div>
+                                        <div className="text-dark fw-bold" style={{ fontSize: '14px' }}>
+                                            {caseFormState.reportedDateTime
+                                                ? new Date(new Date(caseFormState.reportedDateTime).setFullYear(new Date(caseFormState.reportedDateTime).getFullYear() + 5)).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
+                                                : 'Oct 24, 2030'}
+                                        </div>
+                                    </div>
 
-            {/* Personnel Assignment History */}
-            <div className="row mb-4">
-                <div className="col-12">
-                    <fieldset>
-                        <legend>Primary Officer History</legend>
-                        <div className="mt-3">
-                            <div className="table-responsive">
-                                <DataTable
-                                    dense
-                                    columns={tableColumns}
-                                    data={primaryOfficerHistory}
-                                    customStyles={tableCustomStyles}
-                                    pagination={false}
-                                    responsive
-                                    noDataComponent={'There are no data to display'}
-                                    striped
-                                    persistTableHead={true}
-                                    highlightOnHover
-                                    fixedHeader
-                                />
+                                    {/* Next Formal Report */}
+                                    <div className="mb-3">
+                                        <div className="text-uppercase text-muted small mb-1" style={{ fontSize: '11px', letterSpacing: '0.5px' }}>
+                                            NEXT FORMAL REPORT
+                                        </div>
+                                        <div className="text-danger fw-bold" style={{ fontSize: '14px' }}>
+                                            {caseFormState.nextFormalReportDue
+                                                ? (() => {
+                                                    const reportDate = new Date(caseFormState.nextFormalReportDue);
+                                                    const today = new Date();
+                                                    today.setHours(0, 0, 0, 0);
+                                                    const tomorrow = new Date(today);
+                                                    tomorrow.setDate(tomorrow.getDate() + 1);
+                                                    reportDate.setHours(0, 0, 0, 0);
+
+                                                    const dateStr = reportDate.toLocaleDateString('en-US', { month: 'short', day: '2-digit' });
+                                                    let dayLabel = '';
+
+                                                    if (reportDate.getTime() === today.getTime()) {
+                                                        dayLabel = 'Today';
+                                                    } else if (reportDate.getTime() === tomorrow.getTime()) {
+                                                        dayLabel = 'Tomorrow';
+                                                    } else {
+                                                        dayLabel = reportDate.toLocaleDateString('en-US', { weekday: 'short' });
+                                                    }
+
+                                                    return `${dateStr} • ${dayLabel}`;
+                                                })()
+                                                : 'Dec 05 • Tomorrow'}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="d-flex align-items-center justify-content-between">
+                                    {/* Priority */}
+                                    <div className="">
+                                        <div className="text-uppercase text-muted small mb-1" style={{ fontSize: '11px', letterSpacing: '0.5px' }}>
+                                            PRIORITY
+                                        </div>
+                                        <Select
+                                            placeholder="Select Priority"
+                                            styles={coloredStyle_Select}
+                                            value={caseFormState.casePriority}
+                                            options={priorityDrpData}
+                                            onChange={(selectedOption) => handleCaseFormState("casePriority", selectedOption || {})}
+                                            isClearable
+                                        />
+                                    </div>
+
+                                    {/* Case Aging */}
+                                    <div>
+                                        <div className="text-uppercase text-muted small mb-1" style={{ fontSize: '11px', letterSpacing: '0.5px' }}>
+                                            CASE AGING
+                                        </div>
+                                        <div className="text-dark fw-bold" style={{ fontSize: '16px' }}>
+                                            {caseFormState.reportedDateTime
+                                                ? (() => {
+                                                    const reportedDate = new Date(caseFormState.reportedDateTime);
+                                                    const today = new Date();
+                                                    const diffTime = Math.abs(today - reportedDate);
+                                                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                                    return `${diffDays} / 45 days`;
+                                                })()
+                                                : '12 / 45 days'}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </fieldset>
+                    </div>
+
+                    {/* Command Chain Card */}
+                    <div className="col-12">
+                        <div className="card" style={{ borderRadius: '8px', border: '1px solid #dee2e6' }}>
+                            <div className="card-body p-3">
+                                {/* Title */}
+                                <div className="fw-bold mb-3" style={{ fontSize: '14px', color: '#495057' }}>
+                                    COMMAND CHAIN
+                                </div>
+
+                                {/* Approving Supervisor */}
+                                <div className="d-flex align-items-center justify-content-between mb-3 pb-3" style={{ borderBottom: '1px solid #f0f0f0' }}>
+                                    <div className="d-flex align-items-center" style={{ gap: '12px', flex: 1 }}>
+                                        <div className="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" style={{ width: '40px', height: '40px', backgroundColor: '#343a40', fontSize: '11px' }}>
+                                            {caseFormState.supervisor?.label ? caseFormState.supervisor.label.split(',').map(part => {
+                                                const firstLetter = part.match(/[a-zA-Z]/);
+                                                return firstLetter ? firstLetter[0].toUpperCase() : '';
+                                            }).join('') : 'S'}
+                                        </div>
+                                        <div style={{ flex: 1 }}>
+                                            <div className="text-dark" style={{ fontSize: '14px', fontWeight: 400 }}>
+                                                {caseFormState.supervisor?.label || ''}
+                                            </div>
+                                            <div className="text-muted small" style={{ fontSize: '12px' }}>
+                                                Supervisor                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Primary Investigator */}
+                                <div className="d-flex align-items-center justify-content-between mb-3 pb-3" style={{ borderBottom: '1px solid #f0f0f0' }}>
+                                    <div className="d-flex align-items-center" style={{ gap: '12px', flex: 1 }}>
+                                        <div className="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" style={{ width: '40px', height: '40px', backgroundColor: '#343a40', fontSize: '11px' }}>
+                                            {caseFormState.primeInvestigator?.label ? caseFormState.primeInvestigator.label.split(',').map(part => {
+                                                const firstLetter = part.match(/[a-zA-Z]/);
+                                                return firstLetter ? firstLetter[0].toUpperCase() : '';
+                                            }).join('') : 'PI'}
+                                        </div>
+                                        <div style={{ flex: 1 }}>
+                                            <div className="text-dark d-flex align-items-center" style={{ fontSize: '14px', fontWeight: 400, gap: '6px' }}>
+                                                {caseFormState.primeInvestigator?.label || ''}
+                                                {caseFormState.primeInvestigator?.label && (
+                                                    <span style={{ color: '#ffd700', fontSize: '16px' }}>👑</span>
+                                                )}
+                                            </div>
+                                            <div className="text-muted small" style={{ fontSize: '12px' }}>
+                                                Primary Investigator
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Assigned Prosecutor */}
+                                <div className="d-flex align-items-center justify-content-between mb-3 pb-3" style={{ borderBottom: '1px solid #f0f0f0' }}>
+                                    <div className="d-flex align-items-center" style={{ gap: '12px', flex: 1 }}>
+                                        <div className="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" style={{ width: '40px', height: '40px', backgroundColor: '#343a40', fontSize: '11px' }}>
+                                            {caseFormState.assignedProsecutor?.label ? caseFormState.assignedProsecutor.label.split(',').map(part => part.trim().charAt(0).toUpperCase()).join('') : ''}
+                                        </div>
+                                        <div style={{ flex: 1 }}>
+                                            <div className="text-dark" style={{ fontSize: '14px', fontWeight: 400 }}>
+                                                {caseFormState.assignedProsecutor?.label || ''}
+                                            </div>
+                                            <div className="text-muted small" style={{ fontSize: '12px' }}>
+                                                Assigned Prosecutor
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {caseTeamData?.length > 0 && (
+                                    caseTeamData?.map((item, index) => (
+                                        <div className="d-flex align-items-center justify-content-between mb-3 pb-3" style={{ borderBottom: '1px solid #f0f0f0' }}>
+                                            <div className="d-flex align-items-center" style={{ gap: '12px', flex: 1 }}>
+                                                <div className="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" style={{ width: '40px', height: '40px', backgroundColor: '#343a40', fontSize: '11px' }}>
+                                                    {item?.OfficerName ? item.OfficerName.split(/[.\s]+/).map(part => part.charAt(0).toUpperCase()).join('') : ""}
+                                                </div>
+                                                <div style={{ flex: 1 }}>
+                                                    <div className="text-dark" style={{ fontSize: '14px', fontWeight: 400 }}>
+                                                        {item?.OfficerName || ''}
+                                                    </div>
+                                                    <div className="text-muted small" style={{ fontSize: '12px' }}>
+                                                        {"Case Team Member"}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

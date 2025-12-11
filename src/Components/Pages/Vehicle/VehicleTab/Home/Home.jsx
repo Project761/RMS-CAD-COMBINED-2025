@@ -1141,8 +1141,8 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
             {((incidentCount[0]?.VehicleCount === 0 || incidentCount[0]?.VehicleCount === "0") || (VehSta === true || VehSta === 'true') || isNew === "true" || isNew === true) && (
                 <>
                     <div className="col-12 col-md-12 col-lg-12 p-0">
-                        <div className="col-12 ">
-                            <div className="row align-items-center mt-1" style={{ rowGap: "8px" }}>
+                        <div className="col-12 Offense_child">
+                            <div className="row align-items-center mt-1" style={{ rowGap: "5px" }}>
                                 <div className="col-2 col-md-2 col-lg-1">
                                     <label htmlFor="" className='new-label mb-0'>Vehicle No.</label>
                                 </div>
@@ -1700,7 +1700,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                     <input style={{ padding: '5px 9px 7px 8px' }} type="text" name='Inspection_Sticker' id='Inspection_Sticker' value={value?.Inspection_Sticker} onChange={HandleChanges} className='h-100' required autoComplete='off' />
                                 </div>
                                 <div className='col-3 col-lg-2'></div>
-                                <div className="col-2 col-md-2 col-lg-1">
+                                <div className="col-2 col-md-2 col-lg-1 text-right">
                                     <label htmlFor="" className='new-label mb-0'>Inspection Expires</label>
                                 </div>
                                 <div className="col-4 col-md-4 col-lg-3">

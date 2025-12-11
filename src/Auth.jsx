@@ -15,7 +15,7 @@ const CryptoJS = require("crypto-js");
 const Auth = (props) => {
 
   useNoBackNavigation();
-  const { cmp, listManagementSideBar, agencySideBar, propertyRoomSideBar, personnelSideBar, path, incidentSideBar, dashboardSidebar, nameSearchSideBar, arrestSearchSideBar, progressData, progressStatus, propertyStorageSideBar, reportSidebar, searchSidebar, consolidationSideBar, expungeSideBar } = props
+  const { cmp, listManagementSideBar, agencySideBar, propertyRoomSideBar, personnelSideBar, path, incidentSideBar, dashboardSidebar, nameSearchSideBar, arrestSearchSideBar, progressData, progressStatus, propertyStorageSideBar, reportSidebar, searchSidebar, consolidationSideBar, expungeSideBar, caseManagementSideBar } = props
 
   const Com = cmp;
   const TIMESTAMP_KEY = 'lastTimestamp';
@@ -175,7 +175,7 @@ const Auth = (props) => {
       {
         !IsLoginSession ? navigate('/')
           : <>
-            <Sidebar {...{ listManagementSideBar, agencySideBar, propertyRoomSideBar, propertyStorageSideBar, personnelSideBar, path, incidentSideBar, dashboardSidebar, nameSearchSideBar, arrestSearchSideBar, reportSidebar, searchSidebar, consolidationSideBar, expungeSideBar }} />
+            <Sidebar {...{ listManagementSideBar, agencySideBar, propertyRoomSideBar, propertyStorageSideBar, personnelSideBar, path, incidentSideBar, dashboardSidebar, nameSearchSideBar, arrestSearchSideBar, reportSidebar, searchSidebar, consolidationSideBar, expungeSideBar, caseManagementSideBar }} />
             <div className="page">
               <Header {...{ listManagementSideBar, agencySideBar, personnelSideBar }} />
               {/* Component */}

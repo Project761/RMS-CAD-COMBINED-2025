@@ -473,7 +473,7 @@ function ChargingProsecution({ CaseId = null }) {
 
     return (
         <>
-            <div className="mt-2">
+            <div>
                 <fieldset className='mt-1'>
                     <legend>Charge Recommendation</legend>
                     <div className="row align-items-center mt-2" style={{ rowGap: "8px" }}>
