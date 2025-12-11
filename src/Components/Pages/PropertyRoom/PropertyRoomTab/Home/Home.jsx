@@ -1061,7 +1061,7 @@ const Home = (props) => {
 
     })
 
-     const reset_field_data = () => {
+    const reset_field_data = () => {
         setValue({
             ...value,
             'PropertyID': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
@@ -1365,6 +1365,40 @@ const Home = (props) => {
 
     }
 
+    const filterPassedTimes = (time) => {
+        if (!activitydate) return false;
+
+        const zone = new Date(datezone);
+        const selected = new Date(activitydate);
+
+        const isSameDay =
+            selected?.getDate() === zone?.getDate() &&
+            selected?.getMonth() === zone?.getMonth() &&
+            selected?.getFullYear() === zone?.getFullYear();
+
+        if (!isSameDay) return true;
+
+        const timeInServerZone = new Date(zone);
+        timeInServerZone.setHours(time?.getHours(), time?.getMinutes(), 0, 0);
+        return timeInServerZone <= zone;
+        // return selected;
+    };
+
+    const filterExpectedTimes = (time) => {
+        if (!expecteddate) return false;
+
+        const now = new Date(datezone);
+        const selected = new Date(expecteddate);
+
+        const isSameDay =
+            selected?.getDate() === now?.getDate() &&
+            selected?.getMonth() === now?.getMonth() &&
+            selected?.getFullYear() === now?.getFullYear();
+        if (!isSameDay) return true;
+        const timeInServerZone = new Date(now);
+        timeInServerZone.setHours(time?.getHours(), time?.getMinutes(), 0, 0);
+        return timeInServerZone <= now;
+    }
 
 
 
@@ -2976,9 +3010,28 @@ const Home = (props) => {
                         <DatePicker
                             name='activitydate'
                             id='activitydate'
-                            onChange={(date) => {
-                                setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
+                            // onChange={(date) => {
+                            //     setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
 
+                            // }}
+                            onChange={(date) => {
+                                if (date) {
+                                    const now = new Date(datezone);
+                                    const selectedDateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                                    const todayOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+                                    if (selectedDateOnly.getTime() === todayOnly.getTime()) {
+                                        if (date.getTime() > now.getTime()) {
+                                            date.setHours(now.getHours(), now.getMinutes(), 0, 0);
+                                        }
+                                    }
+                                    const isOnlyTimeSelect = date.getHours() === 0 && date.getMinutes() === 0 && date.getSeconds() === 0;
+                                    if (isOnlyTimeSelect) {
+                                        date.setHours(now.getHours(), now.getMinutes(), 0);
+                                    }
+                                }
+                                setactivitydate(date);
+                                setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
                             }}
                             isClearable={activitydate ? true : false}
                             selected={activitydate}
@@ -2996,6 +3049,8 @@ const Home = (props) => {
                             showDisabledMonthNavigation
                             autoComplete='off'
                             maxDate={new Date(datezone)}
+                            filterTime={filterPassedTimes}
+                            openToDate={new Date(datezone)}
                             disabled={selectedOption === null || selectedOption === ''}
                             className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                         />
@@ -3010,9 +3065,28 @@ const Home = (props) => {
                         <DatePicker
                             name='ExpectedDate'
                             id='ExpectedDate'
-                            onChange={(date) => {
-                                setExpecteddate(date); setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
+                            // onChange={(date) => {
+                            //     setExpecteddate(date); setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
 
+                            // }}
+                            onChange={(date) => {
+                                if (date) {
+                                    const now = new Date(datezone);
+                                    const selectedDateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                                    const todayOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+                                    if (selectedDateOnly.getTime() === todayOnly.getTime()) {
+                                        if (date.getTime() > now.getTime()) {
+                                            date.setHours(now.getHours(), now.getMinutes(), 0, 0);
+                                        }
+                                    }
+                                    const isOnlyTimeSelect = date.getHours() === 0 && date.getMinutes() === 0 && date.getSeconds() === 0;
+                                    if (isOnlyTimeSelect) {
+                                        date.setHours(now.getHours(), now.getMinutes(), 0);
+                                    }
+                                }
+                                setExpecteddate(date);
+                                setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
                             }}
                             isClearable={expecteddate ? true : false}
                             selected={expecteddate}
@@ -3028,6 +3102,9 @@ const Home = (props) => {
                             showYearDropdown
                             dropdownMode="select"
                             showDisabledMonthNavigation
+                            openToDate={new Date(datezone)}
+                            // openToDate={new Date(datezone)}
+                              filterTime={filterExpectedTimes}
                             autoComplete='off'
                             maxDate={new Date(datezone)}
                             disabled={selectedOption === null || selectedOption === ''}
