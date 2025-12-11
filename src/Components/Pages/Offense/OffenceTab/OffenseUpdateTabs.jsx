@@ -412,7 +412,7 @@ const OffenceHomeTabs = () => {
                                                             className="info-card position-relative d-flex align-items-center justify-content-between"
                                                             key={index}
                                                             //    ----------- change by dinesh---------------
-                                                            onClick={() => { setEditValOffense(row); setshowOffPage('home'); }}
+                                                            // onClick={() => { setEditValOffense(row); setshowOffPage('home'); }}
                                                             ///--------------------//---------------------
                                                             style={{
                                                                 cursor: "pointer",

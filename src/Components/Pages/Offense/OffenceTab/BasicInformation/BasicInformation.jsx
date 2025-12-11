@@ -130,6 +130,8 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, isLock
   const [permissionForEdit, setPermissionForEdit] = useState(false);
   // Add Update Permission
   const [addUpdatePermission, setaddUpdatePermission] = useState();
+  const [statesChangeStatus, setStatesChangeStatus] = useState(false);
+
   const [errors, setErrors] = useState({ 'MethodOfEnrtyError': '', 'WeaponTypeError': '', 'CriminalActivityError': '', 'OffenderusingError': '', 'CrimeBiasCategoryError': '' });
 
   useEffect(() => {
@@ -394,9 +396,7 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, isLock
 
   // Onchange Fuction
   const Agencychange = (multiSelected) => {
-    !addUpdatePermission && setChangesStatus(true);
-
-
+    !addUpdatePermission && setChangesStatus(true); setStatesChangeStatus(true)
     setPretendToBeID(multiSelected)
     const len = multiSelected.length - 1
     if (multiSelected?.length < editval?.length) {
@@ -413,7 +413,7 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, isLock
   }
 
   const poinOfExitchange = (multiSelected) => {
-    !addUpdatePermission && setChangesStatus(true);
+    !addUpdatePermission && setChangesStatus(true); setStatesChangeStatus(true)
     setCrimePointOfExitID(multiSelected)
     const len = multiSelected.length - 1
     if (multiSelected?.length < pointExitEditVal?.length) {
@@ -430,7 +430,7 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, isLock
   }
 
   const poinOfEntrychange = (multiSelected) => {
-    !addUpdatePermission && setChangesStatus(true);
+    !addUpdatePermission && setChangesStatus(true); setStatesChangeStatus(true)
     setCrimePointOfEntry(multiSelected)
     const len = multiSelected.length - 1
     if (multiSelected?.length < pointEntryEditVal?.length) {
@@ -501,7 +501,7 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, isLock
   }
 
   const CrimeToolsUsechange = (multiSelected) => {
-    !addUpdatePermission && setChangesStatus(true);
+    !addUpdatePermission && setChangesStatus(true); setStatesChangeStatus(true)
     setCrimeToolsUse(multiSelected)
     const len = multiSelected.length - 1
     if (multiSelected?.length < crimeToolsUseEditVal?.length) {
@@ -518,7 +518,7 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, isLock
   }
 
   const CrimeTargetchange = (multiSelected) => {
-    !addUpdatePermission && setChangesStatus(true);
+    !addUpdatePermission && setChangesStatus(true); setStatesChangeStatus(true)
     setCrimeTarget(multiSelected)
     const len = multiSelected.length - 1
     if (multiSelected?.length < crimeTargeteEditVal?.length) {
@@ -535,7 +535,7 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, isLock
   }
 
   const CrimeSuspectchange = (multiSelected) => {
-    !addUpdatePermission && setChangesStatus(true);
+    !addUpdatePermission && setChangesStatus(true); setStatesChangeStatus(true)
     setCrimeSuspect(multiSelected)
     const len = multiSelected.length - 1
     if (multiSelected?.length < crimeSuspectEditVal?.length) {
@@ -544,15 +544,13 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, isLock
       while (i) {
         missing = (~multiSelected.indexOf(crimeSuspectEditVal[--i])) ? missing : crimeSuspectEditVal[i];
       }
-
     } else {
-
     }
     checkOffenderCount();
   }
 
   const SecurityViolatedchange = (multiSelected) => {
-    !addUpdatePermission && setChangesStatus(true);
+    !addUpdatePermission && setChangesStatus(true); setStatesChangeStatus(true)
     setSecurityViolated(multiSelected)
     const len = multiSelected.length - 1
     if (multiSelected?.length < securityViolatedEditVal?.length) {
@@ -561,9 +559,7 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, isLock
       while (i) {
         missing = (~multiSelected.indexOf(securityViolatedEditVal[--i])) ? missing : securityViolatedEditVal[i];
       }
-
     } else {
-
     }
     checkOffenderCount();
   }
@@ -579,10 +575,8 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, isLock
       while (i) {
         missing = (~multiSelected.indexOf(methodOfEntryEditVal[--i])) ? missing : methodOfEntryEditVal[i];
       }
-
     } else {
       if (len < 1) {
-
       } else {
         toastifyError('please select only one');
       }
@@ -592,19 +586,14 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, isLock
   const Weaponchange = (multiSelected) => {
     !addUpdatePermission && setChangesStatus(true);
     setWeaponID(multiSelected)
-
     const len = multiSelected.length - 1
-
     if (multiSelected?.length < weaponEditVal?.length) {
       let missing = null;
       let i = weaponEditVal.length;
       while (i) {
         missing = (~multiSelected.indexOf(weaponEditVal[--i])) ? missing : weaponEditVal[i];
       }
-
-
     } else {
-
     }
     checkOffenderCount();
   }
@@ -677,7 +666,6 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, isLock
     const val = { AgencyID: loginAgencyID, }
     fetchPostData('CrimeBias/GetDataDropDown_CrimeBias', val).then((data) => {
       if (data) {
-
         setCrimeBiasCategoryDrp(threeColArrayWithCode(data, 'BiasID', 'Description', 'BiasCode'))
       } else {
         setCrimeBiasCategoryDrp([]);
@@ -731,8 +719,7 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, isLock
   }
 
   const CrimeMethodOfOpeationchange = (multiSelected) => {
-    !addUpdatePermission && setChangesStatus(true);
-
+    !addUpdatePermission && setChangesStatus(true); setStatesChangeStatus(true)
     setMethodOfOperation(multiSelected);
     const len = multiSelected.length - 1
     if (multiSelected?.length < methodOfOperationEditVal?.length) {
@@ -803,7 +790,7 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, isLock
         const parsedData = JSON.parse(res.data);
         const message = parsedData.Table[0].Message;
         toastifySuccess(message);
-        GetBasicInfoData();
+        GetBasicInfoData(); setStatesChangeStatus(false)
         get_Point_Exit_Data();
         get_Point_Entry_Data();
         get_Crime_OffenderUse_Data();
@@ -1370,12 +1357,12 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, isLock
             {
               effectiveScreenPermission ? (
                 effectiveScreenPermission[0]?.Changeok ? (
-                  <button type="button" className="btn btn-sm btn-success" onClick={() => { check_Validation_Error() }}>Update</button>
+                  <button type="button" disabled={!statesChangeStatus} className="btn btn-sm btn-success" onClick={() => { check_Validation_Error() }}>Update</button>
                 ) : (
                   <></>
                 )
               ) : (
-                <button type="button" className="btn btn-sm btn-success" onClick={() => { check_Validation_Error() }}>Update</button>
+                <button type="button" disabled={!statesChangeStatus} className="btn btn-sm btn-success" onClick={() => { check_Validation_Error() }}>Update</button>
               )
             }
             {/* <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => { check_Validation_Error() }}>Update</button> */}
