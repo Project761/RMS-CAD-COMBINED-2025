@@ -947,33 +947,6 @@ const Home = (props) => {
         }
     };
 
-     const resetFieldData = () => {
-        setValue({
-            ...value,
-            'PropertyID': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
-            'CourtDate': '', 'ReleaseDate': '', 'PropertyTag': '', 'RecoveryNumber': '', 'StorageLocationID': '', 'ReceiveDate': '', 'OfficerNameID': '', 'InvestigatorID': '', 'location': '', 'activityid': '', 'EventId': '',
-            'MasterPropertyId': '', 'IsCheckIn': '', 'IsCheckOut': '', 'IsRelease': '', 'IsDestroy': '', 'IsTransferLocation': '', 'IsUpdate': '', 'CreatedByUserFK': '', 'PropertyTypeID': '',
-            'OtherPersonNameID': '', 'LastSeenDtTm': '', 'PackagingDetails': '', 'ReleasingOfficerID': '', 'ReceipentOfficerID': '',
-            ['ReportedDate']: '', ['ReportedDateTo']: '', 'ModeOfTransport': '', 'DestinationStorageLocation': '',
-        });
-        setErrors({
-            ...errors,
-            'ReasonError': '', 'ActivityDateError': '', 'InvestigatorError': '', 'PropertyError': '', 'ExpectedDateError': '', 'OfficerNameError': '', 'NameError': '', 'CourtDateError': '', 'ReleaseDateError': '', 'DestroyDateError': '', 'TypeError': '', 'TransferError': '', 'LocationError': '', 'SearchError': '', 'ActivityDtTmError': '',
-        })
-        setradioButtonStatus(false);
-        setsearcherror(prevValues => { return { ...prevValues, 'SearchError': '', } })
-        setCourtdate(''); setreleasedate(''); setdestroydate(''); setExpecteddate('');
-        setSelectedStatus('');
-         setRowClicked(''); 
-         setSelectedOption(null); 
-         setactivitydate(''); setReasonIdDrp([]); setLocationPath('');
-        setDescription('');
-        // setRowClicked('');
-        // setSearchData([]);
-        // setSelectedRows([]);
-        setToggleClear(!toggleClear); setStatus(''); settransfer(null); setEditval([]);
-    }
-
     const setStatusFalse = (e) => {
         reset();
         setBarCodeStatus([]);
@@ -1009,7 +982,6 @@ const Home = (props) => {
                     IsUpdate: false,
                 }));
                 setEnabledStatus("");
-                resetFieldData();
             }
         } else {
             // Add it
