@@ -130,6 +130,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
     const [possenSinglData, setPossenSinglData] = useState([]);
     const [availableAlert, setAvailableAlert] = useState([]);
     const [statesChangeStatus, setStatesChangeStatus] = useState(false);
+    const [statesChangeStatusRel, setstatesChangeStatusRel] = useState(false);
+
     const [saveValue, setsaveValue] = useState(false);
     const [isAdultArrest, setIsAdultArrest] = useState(false);
     const [isMissing, setisMissing] = useState(false);
@@ -1583,11 +1585,10 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                                 GetSingleData(nameID, masterNameID);
                                 // get Victim Single Data
                                 GetVictimSingleData(nameID);
-
                                 get_Name_Count(nameID, masterNameID, MstPage === "MST-Name-Dash" ? true : false);
                                 get_Data_Name(mainIncidentID, MstPage === "MST-Name-Dash" ? true : false);
                                 get_Offense_DropDown(incidentID, nameID);
-                                setStatesChangeStatus(true);
+                                setStatesChangeStatus(false);
                                 if (uploadImgFiles?.length > 0) {
                                     setuploadImgFiles('')
                                 }
@@ -2551,7 +2552,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
     }
 
     const ChangeDropDown1 = (e, name) => {
-        setChangesStatus(true); setStatesChangeStatus(true);
+        setChangesStatus(true); setstatesChangeStatusRel(true);
         if (e) {
             if (name === 'OffenderNameID') {
                 setValue1({ ...value1, [name]: e.value });
@@ -2664,7 +2665,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
 
     const resetHooks = () => {
         setValue1({ ...value1, RelationshipTypeID: '', VictimNameID: '', OffenderNameID: '', ModifiedByUserFK: '', RelationshipID: '', });
-        setStatesChangeStatus(false); setChangesStatus(false); setRelationshipID(''); setStatus(false);
+        setstatesChangeStatusRel(false); setChangesStatus(false); setRelationshipID(''); setStatus(false);
         setErrors1({ ...errors1, 'RelationshipTypeIDErrors': '', ' VictimNameIDErrors': '', });
         setSelectedNameData([]); setRelationTypeCode('');
     }
@@ -4313,7 +4314,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                                                                         <button
                                                                             type="button"
                                                                             className="btn btn-sm btn-success mr-1"
-                                                                            disabled={!statesChangeStatus}
+                                                                            disabled={!statesChangeStatusRel}
                                                                             onClick={(e) => { check_Validation_Error1(); }}
                                                                         >
                                                                             Update

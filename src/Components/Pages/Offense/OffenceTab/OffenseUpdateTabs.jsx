@@ -411,10 +411,14 @@ const OffenceHomeTabs = () => {
                                                         <div
                                                             className="info-card position-relative d-flex align-items-center justify-content-between"
                                                             key={index}
+                                                            //    ----------- change by dinesh---------------
+                                                            // onClick={() => { setEditValOffense(row); setshowOffPage('home'); }}
+                                                            ///--------------------//---------------------
                                                             style={{
                                                                 cursor: "pointer",
                                                                 borderLeft: nibrsValidateOffenseData?.some(item => item?.CrimeID === row?.CrimeID) ? "5px solid #EB0101" : "5px solid #2DEB7A",
                                                                 backgroundColor: row?.CrimeID === crimeId ? "#425971" : "#ffffff",
+
                                                             }}
                                                         >
                                                             {/* Card Content */}
