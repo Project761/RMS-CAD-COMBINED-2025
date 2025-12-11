@@ -20,6 +20,7 @@ import ChainOfModel from '../../PropertyReportRoom/ChainOfModel';
 import { TaskListModal } from '../../../Property/PropertyTab/MiscellaneousInformation/MiscellaneousInformation';
 import BarCode from '../../../../Common/BarCode';
 import SelectBox from '../../../../Common/SelectBox';
+import { da } from 'date-fns/locale';
 
 
 const Home = (props) => {
@@ -426,7 +427,6 @@ const Home = (props) => {
     };
 
 
-
     const GetData_PropertyroomRadio = (propertyId, category) => {
         const val = {
             'PropertyID': propertyId, 'PropertyCategoryCode': category, 'MasterPropertyID': 0, 'AgencyId': loginAgencyID,
@@ -576,8 +576,6 @@ const Home = (props) => {
             toastifySuccess(res.Message);
         });
     };
-
-
 
     const Get_SendTask_Data = (PropertyID, MasterPropertyID) => {
         const val = { "PropertyID": PropertyID.toString(), "MasterPropertyID": MasterPropertyID.toString() }
@@ -905,8 +903,6 @@ const Home = (props) => {
             setIsSendButtonDisabled(false);
         }
     };
-
-
 
     const HandleStatusOption = () => {
         let arr = [];
@@ -1325,7 +1321,6 @@ const Home = (props) => {
     };
 
     useEffect(() => {
-
         if (editval && selectedOption === 'Update') {
             setValue({
                 ...value, PropertyID: editval?.PropertyID || '', ActivityType: editval?.ActivityType || '',
@@ -1356,6 +1351,7 @@ const Home = (props) => {
 
         }
     }, [editval, selectedOption]);
+
     function handleClickedClearedDestination() {
         setValue({
             ...value,
@@ -1365,7 +1361,45 @@ const Home = (props) => {
 
     }
 
+    const filterPassedTimes = (time) => {
+        if (!activitydate) return false;
 
+        const zone = new Date(datezone);
+        const selected = new Date(activitydate);
+
+        const isSameDay =
+            selected?.getDate() === zone?.getDate() &&
+            selected?.getMonth() === zone?.getMonth() &&
+            selected?.getFullYear() === zone?.getFullYear();
+
+        if (!isSameDay) return true;
+
+        const timeInServerZone = new Date(zone);
+        timeInServerZone.setHours(time?.getHours(), time?.getMinutes(), 0, 0);
+        return timeInServerZone <= zone;
+        // return selected;
+    };
+
+    const filterExpectedTimes = (time) => {
+        if (!expecteddate) return false;
+
+        const now = new Date(datezone);
+        const selected = new Date(expecteddate);
+
+        const isSameDay =
+            selected?.getDate() === now?.getDate() &&
+            selected?.getMonth() === now?.getMonth() &&
+            selected?.getFullYear() === now?.getFullYear();
+        if (!isSameDay) return true;
+        const timeInServerZone = new Date(now);
+        timeInServerZone.setHours(time?.getHours(), time?.getMinutes(), 0, 0);
+        return timeInServerZone <= now;
+    }
+    // const selectedDay = selected.toDateString();
+    // const today = now.toDateString();
+    // if (selectedDay !== today) return true;
+    // return time.getTime() <= now.getTime();
+    // };
 
 
 
@@ -1398,7 +1432,6 @@ const Home = (props) => {
                                             ...value,
                                             'PropertyTypeID': '',
                                             'VehicleTypeID': '',
-
                                         })
                                     }}
                                     defaultValue={AddType[0]}
@@ -1665,7 +1698,7 @@ const Home = (props) => {
                                         </div>
                                     </> : <></>
                             }
-                        </div >
+                        </div>
 
 
 
@@ -2737,8 +2770,7 @@ const Home = (props) => {
                                 <div style={{ display: "flex", flexDirection: "row", background: selectedOption ? "#555" : "#ccc", alignItems: "center", gap: "8px", }}
                                 >
                                     <div style={{ display: "flex", alignItems: "center", border: "1px solid #ccc", borderRadius: "6px", background: "#f9f9f9", width: "100%" }}>
-                                        <label
-                                            htmlFor="file-input"
+                                        <label htmlFor="file-input"
                                             style={{
                                                 padding: "5px 16px",
                                                 backgroundColor: selectedOption ? "#555" : "#ccc",
@@ -2820,7 +2852,6 @@ const Home = (props) => {
                                 </div>
                             </div>
                         </div>
-
                     </div>
 
                     <fieldset style={{ width: "100%" }}>
@@ -2941,7 +2972,6 @@ const Home = (props) => {
                                     minDate={courtdate ? new Date(courtdate) : new Date()}
                                     disabled={value.IsCheckOut || value.IsRelease || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                                     className={value.IsCheckOut || value.IsRelease || value.IsTransferLocation || selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : ''}
-
                                 />
                             </div>
                         </div>
@@ -2977,8 +3007,23 @@ const Home = (props) => {
                             name='activitydate'
                             id='activitydate'
                             onChange={(date) => {
-                                setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
+                                if (date) {
+                                    const now = new Date(datezone);
+                                    const selectedDateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                                    const todayOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
+                                    if (selectedDateOnly.getTime() === todayOnly.getTime()) {
+                                        if (date.getTime() > now.getTime()) {
+                                            date.setHours(now.getHours(), now.getMinutes(), 0, 0);
+                                        }
+                                    }
+                                    const isOnlyTimeSelect = date.getHours() === 0 && date.getMinutes() === 0 && date.getSeconds() === 0;
+                                    if (isOnlyTimeSelect) {
+                                        date.setHours(now.getHours(), now.getMinutes(), 0);
+                                    }
+                                }
+                                setactivitydate(date);
+                                setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
                             }}
                             isClearable={activitydate ? true : false}
                             selected={activitydate}
@@ -2993,13 +3038,14 @@ const Home = (props) => {
                             showMonthDropdown
                             showYearDropdown
                             dropdownMode="select"
+                            openToDate={new Date(datezone)}
+                            maxDate={new Date(datezone)}
+                            filterTime={filterPassedTimes}
                             showDisabledMonthNavigation
                             autoComplete='off'
-                            maxDate={new Date(datezone)}
                             disabled={selectedOption === null || selectedOption === ''}
                             className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                         />
-
                     </div>
                     <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
                         <label htmlFor="" className='new-label mb-0'>Expected Return Date/Time{errors.ExpectedReturnDateTimeError !== 'true' ? (
@@ -3011,8 +3057,23 @@ const Home = (props) => {
                             name='ExpectedDate'
                             id='ExpectedDate'
                             onChange={(date) => {
-                                setExpecteddate(date); setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
+                                if (date) {
+                                    const now = new Date(datezone);
+                                    const selectedDateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                                    const todayOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
+                                    if (selectedDateOnly.getTime() === todayOnly.getTime()) {
+                                        if (date.getTime() > now.getTime()) {
+                                            date.setHours(now.getHours(), now.getMinutes(), 0, 0);
+                                        }
+                                    }
+                                    const isOnlyTimeSelect = date.getHours() === 0 && date.getMinutes() === 0 && date.getSeconds() === 0;
+                                    if (isOnlyTimeSelect) {
+                                        date.setHours(now.getHours(), now.getMinutes(), 0);
+                                    }
+                                }
+                                setExpecteddate(date);
+                                setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
                             }}
                             isClearable={expecteddate ? true : false}
                             selected={expecteddate}
@@ -3029,12 +3090,14 @@ const Home = (props) => {
                             dropdownMode="select"
                             showDisabledMonthNavigation
                             autoComplete='off'
+                            openToDate={new Date(datezone)}
                             maxDate={new Date(datezone)}
+                            filterTime={filterExpectedTimes}
                             disabled={selectedOption === null || selectedOption === ''}
                             className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                         />
-
                     </div>
+
                     <div className="col-3 col-md-3 col-lg-2 ">
                         <label htmlFor="" className='new-label px-0 mb-0'>Releasing Officer{errors.ReleasingOfficerError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReleasingOfficerError}</p>
