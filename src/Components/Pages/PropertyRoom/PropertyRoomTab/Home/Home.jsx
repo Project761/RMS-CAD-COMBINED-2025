@@ -1380,7 +1380,7 @@ const Home = (props) => {
         if (!isSameDay) return true;
 
         const timeInServerZone = new Date(zone);
-        timeInServerZone.setHours(time?.getHours(), time?.getMinutes(), 0, 0);
+        timeInServerZone?.setHours(time?.getHours(), time?.getMinutes(), 0, 0);
         return timeInServerZone <= zone;
         // return selected;
     };
@@ -1397,7 +1397,7 @@ const Home = (props) => {
             selected?.getFullYear() === now?.getFullYear();
         if (!isSameDay) return true;
         const timeInServerZone = new Date(now);
-        timeInServerZone.setHours(time?.getHours(), time?.getMinutes(), 0, 0);
+        timeInServerZone?.setHours(time?.getHours(), time?.getMinutes(), 0, 0);
         return timeInServerZone <= now;
     }
 
