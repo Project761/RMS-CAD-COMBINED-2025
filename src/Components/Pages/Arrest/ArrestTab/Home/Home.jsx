@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Select from "react-select";
 import DatePicker from "react-datepicker";
-import { Aes256Encrypt, Decrypt_Id_Name, LockFildscolour, Requiredcolour, base64ToString, filterPassedTimeZoneArrest, filterPassedTimeZonesProperty, getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime, isLockOrRestrictModule, stringToBase64, } from '../../../../Common/Utility';
+import { Aes256Encrypt, Decrypt_Id_Name, LockFildscolour, Requiredcolour, base64ToString, filterPassedTimeZonesProperty, getShowingDateText, getShowingMonthDateYear, getShowingWithOutTime, isLockOrRestrictModule, } from '../../../../Common/Utility';
 import { AddDeleteUpadate, AddDelete_Img, fetchPostData } from '../../../../hooks/Api';
 import { toastifyError, toastifySuccess } from '../../../../Common/AlertMsg';
 import { AgencyContext } from '../../../../../Context/Agency/Index';
@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { get_Inc_ReportedDate, get_LocalStoreData } from '../../../../../redux/actions/Agency';
 import ImageModel from '../../../ImageModel/ImageModel';
 import { get_AgencyOfficer_Data, get_ArrestJuvenileDis_DrpData, get_ArrestType_Drp, get_ArresteeName_Data, get_Masters_Name_Drp_Data } from '../../../../../redux/actions/DropDownsData';
-import { Comman_changeArrayFormat, threeColArray, threeColArrayWithCode } from '../../../../Common/ChangeArrayFormat';
+import { Comman_changeArrayFormat, threeColArray, } from '../../../../Common/ChangeArrayFormat';
 import { get_ScreenPermissions_Data } from '../../../../../redux/actions/IncidentAction';
 import ListModal from '../../../Utility/ListManagementModel/ListModal';
 import { PhoneField } from '../../../Agency/AgencyValidation/validators';
@@ -23,10 +23,7 @@ import { ErrorTooltip } from '../../ArrestNibrsErrors';
 import CurrentArrestMasterReport from './CurrentArrestMasterReport';
 import Location from '../../../../../CADComponents/Common/Location';
 
-
-
-
-const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce, ResetErrors, DecArrestId, setStatus, isEnabled, setIsEnabled, Agencystatus, setAgencystatus, arrestID, setArrestID, matchedAgency, setmatchedAgency, delChargeID, ChargeLocalArr, setChargeLocalArr, setDelChargeID, isChargeDel, setIsChargeDel, possessionID, setPossessionID, offenseNameID, setoffenseNameID, RestStatus, Editval, setEditval, incExceDate, setincExceDate, GetSingleData, get_List, isLocked, setIsLocked }) => {
+const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce, ResetErrors, DecArrestId, setStatus, isEnabled, setIsEnabled, Agencystatus, setAgencystatus, arrestID, setArrestID, setmatchedAgency, ChargeLocalArr, possessionID, setPossessionID, RestStatus, Editval, incExceDate, GetSingleData, get_List, isLocked, }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -72,12 +69,10 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
     if (!NameID) { DecNameId = 0; }
     else { DecNameId = parseInt(base64ToString(NameID)); }
 
-    const { get_Arrest_Count, setArrestName, setIncidentNumber, setoffenseChargeCount, get_OffenseName_Data, arrestChargeData, changesStatus, setArrestChargeData, updateCount, setUpdateCount, get_ArrestCharge_Count, get_Data_Arrest_Charge, nibrsSubmittedArrestMain, tabCountArrest, incidentNumber, ArresteName, arrestFilterData, get_Data_Arrest, policeForceDrpData, get_Police_Force, changesStatusCount, setChangesStatus, get_Incident_Count, setActiveArrest, datezone, GetDataTimeZone, setNameID, NameId, incidentCount } = useContext(AgencyContext);
+    const { get_Arrest_Count, setArrestName, setIncidentNumber, setoffenseChargeCount, get_OffenseName_Data, arrestChargeData, setArrestChargeData, get_Data_Arrest_Charge, nibrsSubmittedArrestMain, tabCountArrest, get_Data_Arrest, policeForceDrpData, get_Police_Force, changesStatusCount, setChangesStatus, get_Incident_Count, setActiveArrest, datezone, GetDataTimeZone, setNameID, NameId, incidentCount } = useContext(AgencyContext);
 
     const [arrestDate, setArrestDate] = useState();
     const [rightGivenCode, setRightGivenCode] = useState('N');
-    // const [ArrestID, setArrestID] = useState('');
-    // const [Editval, setEditval] = useState();
     const [showModal, setShowModal] = useState(false);
     const [arresteeChange, setArresteeChange] = useState();
     const [modalStatus, setModalStatus] = useState(false);
@@ -88,7 +83,6 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
     const [loginPinID, setloginPinID,] = useState('');
     const [JuvenileCleared, setIsJuvenileCleared] = useState();
     const [nameModalStatus, setNameModalStatus] = useState(false);
-    // const [possessionID, setPossessionID] = useState('');
     const [possenSinglData, setPossenSinglData] = useState([]);
     const [uploadImgFiles, setuploadImgFiles] = useState([]);
     const [imageModalStatus, setImageModalStatus] = useState(false);
@@ -96,8 +90,6 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
     const [isDatePickerRequiredColor, setDatePickerRequiredColor] = useState(false);
     const [openPage, setOpenPage] = useState('');
     const [statesChangeStatus, setStatesChangeStatus] = useState(false);
-    // const [incExceDate, setincExceDate] = useState();
-
     const [AgencyCode, setAgencyCode] = useState('');
     const [printIncReport, setIncMasterReport] = useState(false);
     const [IncReportCount, setIncReportCount] = useState(1);
@@ -107,8 +99,6 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
     const [confirmInsertArrest, setConfirmInsertArrest] = useState(false);
     const [insertArrest, setInsertArrest] = useState([]);
     const [incidentReportedDate, setincidentReportedDate] = useState('');
-    // const [offenseNameID, setoffenseNameID] = useState();
-
     const [addUpdatePermission, setaddUpdatePermission] = useState();
 
     const [raceIdDrp, setRaceIdDrp] = useState([]);
@@ -146,7 +136,6 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
 
     useEffect(() => {
         if (localStoreData) {
-            // dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
             setloginAgencyID(localStoreData?.AgencyID); setloginPinID(localStoreData?.PINID);
             get_Arrest_Count(DecArrestId); dispatch(get_ScreenPermissions_Data("A067", localStoreData?.AgencyID, localStoreData?.PINID));
             get_Single_PersonnelList(localStoreData?.PINID); GetDataTimeZone(localStoreData?.AgencyID); setAgencyCode(localStoreData?.ORI);
@@ -173,13 +162,8 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
 
     useEffect(() => {
         if (ResetErrors) {
-            console.log('hello')
-            setoffenseChargeCount('');
-            dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
-            setPossessionID('');
-            setResetErrors(false)
-            setIsEditvalProcessed(false);
-
+            setoffenseChargeCount(''); dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
+            setPossessionID(''); setResetErrors(false); setIsEditvalProcessed(false);
             setValue({ ...value, ['RaceID']: '', ['SexID']: '', ['AgeFrom']: '', ['AgeUnitID']: '', ['DateOfBirth']: '', ArrestNumber: '', IsJuvenileArrest: '', ArrestDtTm: '', ArrestingAgency: '', ArrestTypeID: '', SupervisorID: '', PoliceForceID: '', ArresteeID: '', RightsGivenID: '', JuvenileDispositionID: '', PhoneNo: '', GivenByID: '', PrimaryOfficerID: '', ModifiedByUserFK: '', IsMultipleArrestees: '', ArrestingAgencyID: '', 'IsSchoolNotified': '', 'Grade': '', 'LocationOfSchool': '', 'NameOfSchool': '', 'ParentPhone': '', 'ParentNameID': '', 'ResponseID': '', })
         }
     }, [ResetErrors]);
@@ -203,7 +187,6 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
     useEffect(() => {
         if (DecEIncID) {
             setMainIncidentID(DecEIncID);
-            // dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
             if (!incReportedDate) { dispatch(get_Inc_ReportedDate(DecEIncID)) }
         }
         if (MstPage === "MST-Arrest-Dash" && possessionID) {
@@ -1083,20 +1066,55 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                     // selected={value?.ReportedDtTm && new Date(value?.ReportedDtTm)}
                                     selected={getValidDate(value?.ArrestDtTm)}
                                     autoComplete="Off"
+                                    // onChange={(date) => {
+                                    //     setArrestDate(date ? getShowingMonthDateYear(date) : null);
+                                    //     !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
+                                    //     if (date > new Date(datezone)) {
+                                    //         date = new Date(datezone);
+                                    //     }
+                                    //     if (date >= new Date()) {
+                                    //         setValue({ ...value, ['ArrestDtTm']: new Date() ? getShowingDateText(new Date()) : null })
+                                    //     } else if (date <= new Date(incReportedDate)) {
+                                    //         setValue({ ...value, ['ArrestDtTm']: incReportedDate ? getShowingDateText(incReportedDate) : null })
+                                    //     } else {
+                                    //         setValue({ ...value, ['ArrestDtTm']: date ? getShowingDateText(date) : null })
+                                    //     }
+                                    // }}
                                     onChange={(date) => {
-                                        setArrestDate(date ? getShowingMonthDateYear(date) : null);
-                                        !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
-                                        if (date > new Date(datezone)) {
-                                            date = new Date(datezone);
+                                        if (!date) return;
+                                        const oldDate = getValidDate(value?.ArrestDtTm);
+                                        const isSameDay =
+                                            oldDate &&
+                                            date.getFullYear() === oldDate.getFullYear() &&
+                                            date.getMonth() === oldDate.getMonth() &&
+                                            date.getDate() === oldDate.getDate();
+                                        let finalDate = date;
+                                        if (!isSameDay) {
+                                            const inc = new Date(incReportedDate);
+                                            finalDate = new Date(
+                                                date.getFullYear(),
+                                                date.getMonth(),
+                                                date.getDate(),
+                                                inc.getHours(),
+                                                inc.getMinutes(),
+                                                0
+                                            );
                                         }
-                                        if (date >= new Date()) {
-                                            setValue({ ...value, ['ArrestDtTm']: new Date() ? getShowingDateText(new Date()) : null })
-                                        } else if (date <= new Date(incReportedDate)) {
-                                            setValue({ ...value, ['ArrestDtTm']: incReportedDate ? getShowingDateText(incReportedDate) : null })
-                                        } else {
-                                            setValue({ ...value, ['ArrestDtTm']: date ? getShowingDateText(date) : null })
+                                        if (finalDate > new Date(datezone)) {
+                                            finalDate = new Date(datezone);
                                         }
+                                        if (finalDate < new Date(incReportedDate)) {
+                                            finalDate = new Date(incReportedDate);
+                                        }
+                                        setArrestDate(getShowingMonthDateYear(finalDate));
+                                        setValue({
+                                            ...value,
+                                            ArrestDtTm: getShowingDateText(finalDate)
+                                        });
+                                        !addUpdatePermission && setChangesStatus(true);
+                                        !addUpdatePermission && setStatesChangeStatus(true);
                                     }}
+
                                     timeInputLabel
                                     showTimeSelect
                                     timeIntervals={1}
@@ -1108,9 +1126,6 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
                                     maxDate={new Date(datezone)}
                                     showDisabledMonthNavigation
                                     filterTime={(date) => filterPassedTimeZonesProperty(date, incReportedDate, datezone)}
-
-                                    // disabled={isLockOrRestrictModule("Lock", Editval[0]?.ArrestDtTm, isLocked) || nibrsSubmittedArrestMain === 1}
-                                    // className={nibrsSubmittedArrestMain === 1 || isLockOrRestrictModule("Lock", Editval[0]?.ArrestDtTm, isLocked) ? 'LockFildsColor' : 'requiredColor'}
                                     disabled={nibrsSubmittedArrestMain === 1 || arrestID || isLockOrRestrictModule("Lock", Editval[0]?.ArrestDtTm, isLocked)}
                                     className={nibrsSubmittedArrestMain === 1 || isLockOrRestrictModule("Lock", Editval[0]?.ArrestDtTm, isLocked) ? 'LockFildsColor' : arrestID ? "readonlyColor" : 'requiredColor'}
                                 />
