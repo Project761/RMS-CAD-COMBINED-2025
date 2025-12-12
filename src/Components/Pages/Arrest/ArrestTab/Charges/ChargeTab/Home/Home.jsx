@@ -1179,7 +1179,7 @@ const Charges = (props) => {
             </div> */}
 
             <div className="col-3 col-md-4 col-lg-2 ">
-              <DatePicker
+              {/* <DatePicker
                 id='OffenseDateTime'
                 name='OffenseDateTime'
                 ref={startRef}
@@ -1211,6 +1211,71 @@ const Charges = (props) => {
                     setValue({ ...value, ['OffenseDateTime']: date ? getShowingDateText(date) : null })
                   }
                 }}
+                timeInputLabel
+                showTimeSelect
+                timeIntervals={1}
+                timeCaption="Time"
+                showMonthDropdown
+                showYearDropdown
+                dropdownMode="select"
+                minDate={new Date(incReportedDate)}
+                maxDate={new Date(datezone)}
+                showDisabledMonthNavigation
+                filterTime={(date) => filterPassedTimeZonesProperty(date, incReportedDate, datezone)}
+                className={isLockOrRestrictModule("Lock", Editval[0]?.OffenseDateTime, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+                disabled={isLockOrRestrictModule("Lock", Editval[0]?.OffenseDateTime, isLocked)}
+              /> */}
+              <DatePicker
+                id='OffenseDateTime'
+                name='OffenseDateTime'
+                ref={startRef}
+                onKeyDown={(e) => {
+                  if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
+                    e.preventDefault();
+                  } else {
+                    onKeyDown(e);
+                  }
+                }}
+                dateFormat="MM/dd/yyyy HH:mm"
+                timeFormat="HH:mm "
+                is24Hour
+                isClearable={false}
+                selected={getValidDate(value?.OffenseDateTime)}
+                autoComplete="Off"
+                onChange={(date) => {
+                  if (!date) return;
+                  const oldDate = getValidDate(value?.OffenseDateTime);
+                  const isSameDay =
+                    oldDate &&
+                    date.getFullYear() === oldDate.getFullYear() &&
+                    date.getMonth() === oldDate.getMonth() &&
+                    date.getDate() === oldDate.getDate();
+                  let finalDate = date;
+                  if (!isSameDay) {
+                    const inc = new Date(incReportedDate);
+                    finalDate = new Date(
+                      date.getFullYear(),
+                      date.getMonth(),
+                      date.getDate(),
+                      inc.getHours(),
+                      inc.getMinutes(),
+                      0
+                    );
+                  }
+                  if (finalDate > new Date(datezone)) {
+                    finalDate = new Date(datezone);
+                  }
+                  if (finalDate < new Date(incReportedDate)) {
+                    finalDate = new Date(incReportedDate);
+                  }
+                  setValue({
+                    ...value,
+                    OffenseDateTime: getShowingDateText(finalDate)
+                  });
+                  !addUpdatePermission && setChangesStatus(true);
+                  !addUpdatePermission && setStatesChangeStatus(true);
+                }}
+
                 timeInputLabel
                 showTimeSelect
                 timeIntervals={1}
