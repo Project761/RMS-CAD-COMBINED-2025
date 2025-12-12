@@ -362,10 +362,10 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                 <div className="dark-row" >
                     <div className="col-12 col-sm-12">
                         <div className={`card Agency ${isCad ? 'CAD-incident-card' : 'incident-cards-agency'} ${openPage ? 'name-card' : ''}`}>
-                            <div className="card-body">
+                            <div className="card-body py-1">
                                 {!isCaseManagement && propertyMainModuleData && propertyMainModuleData.length > 0 && MstPage != "MST-Property-Dash" && (
 
-                                    <div className="card-carousel-container position-relative mb-3">
+                                    <div className="card-carousel-container position-relative mb-1">
                                         {/* Cards Wrapper */}
                                         {viewType === "card" ? (
                                             <div className="card-carousel" id="cardCarousel" ref={carouselRef}>
