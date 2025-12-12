@@ -1372,7 +1372,7 @@ const Home = (props) => {
         const zone = new Date(datezone);
         const selected = new Date(activitydate);
 
-        const isSameDay =
+        const isSameDay = 
             selected?.getDate() === zone?.getDate() &&
             selected?.getMonth() === zone?.getMonth() &&
             selected?.getFullYear() === zone?.getFullYear();
@@ -1385,23 +1385,81 @@ const Home = (props) => {
         // return selected;
     };
 
+// const filterExpectedTimes = (time) => {
+//         if (!activitydate) return false;
+
+//     const checkout = new Date(activitydate);
+//     const serverNow = new Date(datezone);
+//     if(checkout.getTime() === serverNow.getTime()){
+//         return false;
+//     }
+//     const baseDay = expecteddate ? new Date(expecteddate) : new Date(checkout);
+//     const picked = new Date(baseDay);
+//     picked.setHours(time.getHours(), time.getMinutes(), 0, 0);
+
+//     const isSameDayAsCheckout =
+//         picked.getDate() === checkout.getDate() &&
+//         picked.getMonth() === checkout.getMonth() &&
+//         picked.getFullYear() === checkout.getFullYear();
+
+//     const isSameDayAsNow =
+//         picked.getDate() === serverNow.getDate() &&
+//         picked.getMonth() === serverNow.getMonth() &&
+//         picked.getFullYear() === serverNow.getFullYear();
+
+//     if (isSameDayAsCheckout) {
+//         return picked > checkout;
+//     }
+//     if (isSameDayAsNow) {
+//         return picked <= serverNow;
+//     }
+//     return true;
+// };
+
+    const sameMinute = (a, b) => {
+        return (
+            a.getFullYear() === b.getFullYear() &&
+            a.getMonth() === b.getMonth() &&
+            a.getDate() === b.getDate() &&
+            a.getHours() === b.getHours() &&
+            a.getMinutes() === b.getMinutes()
+        );
+    };
+
     const filterExpectedTimes = (time) => {
-        if (!expecteddate) return false;
+        if (!activitydate) return false;
 
-        const now = new Date(datezone);
-        const selected = new Date(expecteddate);
+        const checkout = new Date(activitydate);
+        const serverNow = new Date(datezone);
 
-        const isSameDay =
-            selected?.getDate() === now?.getDate() &&
-            selected?.getMonth() === now?.getMonth() &&
-            selected?.getFullYear() === now?.getFullYear();
-        if (!isSameDay) return true;
-        const timeInServerZone = new Date(now);
-        timeInServerZone.setHours(time?.getHours(), time?.getMinutes(), 0, 0);
-        return timeInServerZone <= now;
-    }
+        const baseDay = expecteddate ? new Date(expecteddate) : new Date(checkout);
+        const picked = new Date(baseDay);
+        picked.setHours(time.getHours(), time.getMinutes(), 0, 0);
 
+        if (sameMinute(checkout, serverNow)) {
+            return false;
+        }
 
+        const isSameDayAsCheckout =
+            picked.getFullYear() === checkout.getFullYear() &&
+            picked.getMonth() === checkout.getMonth() &&
+            picked.getDate() === checkout.getDate();
+
+        const isSameDayAsNow =
+            picked.getFullYear() === serverNow.getFullYear() &&
+            picked.getMonth() === serverNow.getMonth() &&
+            picked.getDate() === serverNow.getDate();
+
+        if (isSameDayAsCheckout) {
+            if (!(picked > checkout)) return false;
+            return picked <= serverNow;
+        }
+
+        if (isSameDayAsNow) {
+            return picked <= serverNow;
+        }
+        return picked <= serverNow;
+    };
 
     return (
         <>
@@ -1431,7 +1489,6 @@ const Home = (props) => {
                                             ...value,
                                             'PropertyTypeID': '',
                                             'VehicleTypeID': '',
-
                                         })
                                     }}
                                     defaultValue={AddType[0]}
@@ -3011,9 +3068,16 @@ const Home = (props) => {
                             id='activitydate'
                             // onChange={(date) => {
                             //     setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
-
                             // }}
                             onChange={(date) => {
+                                if(!date){
+                                    setactivitydate(null);
+                                    setValue({ ...value, LastSeenDtTm: null});
+
+                                    setExpecteddate(null);
+                                    setValue({ ...value, ExpectedDate: null });
+                                    return;
+                                }
                                 if (date) {
                                     const now = new Date(datezone);
                                     const selectedDateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -3053,20 +3117,18 @@ const Home = (props) => {
                             disabled={selectedOption === null || selectedOption === ''}
                             className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                         />
-
                     </div>
                     <div className="col-3 col-md-3 col-lg-2 mt-2 px-1">
                         <label htmlFor="" className='new-label mb-0'>Expected Return Date/Time{errors.ExpectedReturnDateTimeError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ExpectedReturnDateTimeError}</p>
                         ) : null}</label>
-                    </div>
+                    </div> 
                     <div className="col-3 col-md-3 col-lg-2">
                         <DatePicker
                             name='ExpectedDate'
                             id='ExpectedDate'
                             // onChange={(date) => {
                             //     setExpecteddate(date); setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
-
                             // }}
                             onChange={(date) => {
                                 if (date) {
@@ -3102,14 +3164,16 @@ const Home = (props) => {
                             dropdownMode="select"
                             showDisabledMonthNavigation
                             autoComplete='off'
+                            minDate={activitydate}
                             maxDate={new Date(datezone)}
                             filterTime={filterExpectedTimes}
-                             openToDate={new Date(datezone)}
-                            disabled={selectedOption === null || selectedOption === ''}
+                            openToDate={new Date(datezone)}
+                            // disabled={selectedOption === null || selectedOption === ''}
+                            disabled={!activitydate || selectedOption === null || selectedOption === ''}
                             className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                         />
-
                     </div>
+
                     <div className="col-3 col-md-3 col-lg-2 ">
                         <label htmlFor="" className='new-label px-0 mb-0'>Releasing Officer{errors.ReleasingOfficerError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReleasingOfficerError}</p>
@@ -3127,8 +3191,6 @@ const Home = (props) => {
                             styles={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy' ? 'readonlyColor' : colourStyles}
                             isDisabled={selectedOption === null || selectedOption === '' || selectedStatus === 'Release' || selectedStatus === 'Destroy'}
                         />
-
-
                     </div>
                     <div className="col-3 col-md-3 col-lg-2  ">
                         <label htmlFor="" className='new-label px-0 mb-0'>Recepient Officer{errors.ReasonError !== 'true' ? (
