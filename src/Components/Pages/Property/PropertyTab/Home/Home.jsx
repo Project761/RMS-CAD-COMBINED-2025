@@ -1960,7 +1960,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
       {((PropertyCount === 0 || PropertyCount === "0") || (ProSta === true || ProSta === 'true') || isNew === "true" || isNew === true || isCaseManagement) && (
 
         <>
-          <div className="col-12">
+          <div className="col-12 Offense_child">
             <div className="row">
               <div className="col-12 col-md-12 col-lg-11 pt-1 p-0" >
                 <div className="row ">
