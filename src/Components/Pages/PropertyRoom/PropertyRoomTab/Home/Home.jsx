@@ -1061,7 +1061,7 @@ const Home = (props) => {
 
     })
 
-      const reset_Field_Data = () => {
+    const reset_Field_Data = () => {
         setValue({
             ...value,
             'PropertyID': '', 'ActivityType': '', 'ActivityReasonID': '', 'ExpectedDate': '', 'ActivityComments': '', 'PropertyRoomPersonNameID': '', 'ChainDate': '', 'DestroyDate': '',
@@ -1385,21 +1385,53 @@ const Home = (props) => {
         // return selected;
     };
 
+
+     const sameMinute = (a, b) => {
+        return (
+            a.getFullYear() === b.getFullYear() &&
+            a.getMonth() === b.getMonth() &&
+            a.getDate() === b.getDate() &&
+            a.getHours() === b.getHours() &&
+            a.getMinutes() === b.getMinutes()
+        );
+    };
+ 
+
     const filterExpectedTimes = (time) => {
-        if (!expecteddate) return false;
+        if (!activitydate) return false;
 
-        const now = new Date(datezone);
-        const selected = new Date(expecteddate);
+        const checkout = new Date(activitydate);
+        const serverNow = new Date(datezone);
 
-        const isSameDay =
-            selected?.getDate() === now?.getDate() &&
-            selected?.getMonth() === now?.getMonth() &&
-            selected?.getFullYear() === now?.getFullYear();
-        if (!isSameDay) return true;
-        const timeInServerZone = new Date(now);
-        timeInServerZone?.setHours(time?.getHours(), time?.getMinutes(), 0, 0);
-        return timeInServerZone <= now;
-    }
+        const baseDay = expecteddate ? new Date(expecteddate) : new Date(checkout);
+        const picked = new Date(baseDay);
+        picked.setHours(time?.getHours(), time?.getMinutes(), 0, 0);
+
+        if (sameMinute(checkout, serverNow)) {
+            return false;
+        }
+
+        const isSameDayAsCheckout =
+            picked?.getFullYear() === checkout?.getFullYear() &&
+            picked?.getMonth() === checkout?.getMonth() &&
+            picked?.getDate() === checkout?.getDate();
+
+        const isSameDayAsNow =
+            picked?.getFullYear() === serverNow?.getFullYear() &&
+            picked?.getMonth() === serverNow?.getMonth() &&
+            picked?.getDate() === serverNow?.getDate();
+
+        if (isSameDayAsCheckout) {
+            if (!(picked > checkout)) return false;
+            return picked <= serverNow;
+        }
+
+        if (isSameDayAsNow) {
+            return picked <= serverNow;
+        }
+        return picked <= serverNow;
+    };
+
 
 
 
@@ -3014,6 +3046,14 @@ const Home = (props) => {
 
                             // }}
                             onChange={(date) => {
+                                if(!date){
+                                    setactivitydate(null);
+                                    setValue({ ...value, LastSeenDtTm: null});
+ 
+                                    setExpecteddate(null);
+                                    setValue({ ...value, ExpectedDate: null });
+                                    return;
+                                }
                                 if (date) {
                                     const now = new Date(datezone);
                                     const selectedDateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -3103,10 +3143,11 @@ const Home = (props) => {
                             showDisabledMonthNavigation
                             autoComplete='off'
                             maxDate={new Date(datezone)}
+                             minDate={activitydate}
                             filterTime={filterExpectedTimes}
-                             openToDate={new Date(datezone)}
-                            disabled={selectedOption === null || selectedOption === ''}
-                            className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
+                            openToDate={new Date(datezone)}
+                            disabled={!activitydate || selectedOption === null || selectedOption === ''}
+                            className={!activitydate || selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                         />
 
                     </div>
