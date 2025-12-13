@@ -22,6 +22,7 @@ import { PhoneField } from '../../../Agency/AgencyValidation/validators';
 import { ErrorTooltip } from '../../ArrestNibrsErrors';
 import CurrentArrestMasterReport from './CurrentArrestMasterReport';
 import Location from '../../../../../CADComponents/Common/Location';
+import { classRegistry } from 'fabric';
 
 const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce, ResetErrors, DecArrestId, setStatus, isEnabled, setIsEnabled, Agencystatus, setAgencystatus, arrestID, setArrestID, setmatchedAgency, ChargeLocalArr, possessionID, setPossessionID, RestStatus, Editval, incExceDate, GetSingleData, get_List, isLocked, }) => {
 
@@ -62,6 +63,8 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
     var NameStatus = query?.get("NameStatus");
     let isNew = query?.get('isNew');
     var SideBarStatus = query?.get("SideBarStatus");
+    var localStatus = query?.get("localStorageStatus");
+
 
     if (!IncID) { DecEIncID = 0; }
     else { DecEIncID = parseInt(base64ToString(IncID)); }
@@ -114,6 +117,7 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
     const [locationStatus, setLocationStatus] = useState(false);
     const [updateStatus, setUpdateStatus] = useState(0);
     const [onSelectLocation, setOnSelectLocation] = useState(false);
+    const [localArrData, setlocalArrData] = useState();
 
 
     const [value, setValue] = useState({
@@ -139,6 +143,17 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
             setloginAgencyID(localStoreData?.AgencyID); setloginPinID(localStoreData?.PINID);
             get_Arrest_Count(DecArrestId); dispatch(get_ScreenPermissions_Data("A067", localStoreData?.AgencyID, localStoreData?.PINID));
             get_Single_PersonnelList(localStoreData?.PINID); GetDataTimeZone(localStoreData?.AgencyID); setAgencyCode(localStoreData?.ORI);
+            if (localStatus) {
+                console.log('hello1')
+                localStorage.removeItem('insertedArrestVal')
+            }
+            if (!arrestID) {
+                dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
+                const storedVal = JSON.parse(localStorage.getItem('insertedArrestVal'));
+                setlocalArrData(storedVal);
+                console.log(storedVal)
+            }
+
         }
     }, [localStoreData]);
 
@@ -162,7 +177,8 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
 
     useEffect(() => {
         if (ResetErrors) {
-            setoffenseChargeCount(''); dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
+            setoffenseChargeCount('');
+            // dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
             setPossessionID(''); setResetErrors(false); setIsEditvalProcessed(false);
             setValue({ ...value, ['RaceID']: '', ['SexID']: '', ['AgeFrom']: '', ['AgeUnitID']: '', ['DateOfBirth']: '', ArrestNumber: '', IsJuvenileArrest: '', ArrestDtTm: '', ArrestingAgency: '', ArrestTypeID: '', SupervisorID: '', PoliceForceID: '', ArresteeID: '', RightsGivenID: '', JuvenileDispositionID: '', PhoneNo: '', GivenByID: '', PrimaryOfficerID: '', ModifiedByUserFK: '', IsMultipleArrestees: '', ArrestingAgencyID: '', 'IsSchoolNotified': '', 'Grade': '', 'LocationOfSchool': '', 'NameOfSchool': '', 'ParentPhone': '', 'ParentNameID': '', 'ResponseID': '', })
         }
@@ -240,6 +256,7 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
     useEffect(() => {
         // console.log(possessionID, isEditvalProcessed, type)
         if (possessionID && (isEditvalProcessed === false) && type === "ArrestMod") {
+            console.log('hello2')
             // console.log(possessionID)
             const newvalue = arresteeNameData?.filter((val) => val?.NameID == possessionID);
             setNameID(newvalue[0]?.NameID)
@@ -392,31 +409,31 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
 
     useEffect(() => {
         // console.log("🚀 ~ Home ~ Editval:", Editval)
-        if (Editval?.length > 0) {
-            const newvalue = arresteeNameData?.filter((val) => val?.NameID == Editval[0]?.ArresteeID);
-
+        if (Editval?.length > 0 || localArrData) {
+            const newvalue = arresteeNameData?.filter((val) => val?.NameID == (Editval[0]?.ArresteeID || localArrData?.ArresteeID));
+            console.log(newvalue, arresteeNameData, Editval[0]?.ArresteeID, localArrData?.ArresteeID)
             setNameID(newvalue[0]?.NameID);
             get_Arrest_MultiImage(arrestID);
             setValue({
                 ...value,
-                'ArrestID': Editval[0]?.ArrestID, 'ArrestNumber': Editval[0]?.ArrestNumber, 'IsJuvenileArrest': Editval[0]?.IsJuvenileArrest,
-                'ArrestDtTm': Editval[0]?.ArrestDtTm ? getShowingDateText(Editval[0]?.ArrestDtTm) : "", 'IsMultipleArrestees': Editval[0]?.IsMultipleArrestees,
-                'ArrestingAgencyID': Editval[0]?.ArrestingAgencyID, 'ArrestingAgency': Editval[0]?.ArrestingAgency ? Editval[0]?.ArrestingAgency : '',
-                'PhoneNo': Editval[0]?.PhoneNo ? Editval[0]?.PhoneNo : '', 'ArrestTypeID': Editval[0]?.ArrestTypeID, 'SupervisorID': Editval[0]?.SupervisorID, 'PoliceForceID': Editval[0]?.PoliceForceID ? Editval[0]?.PoliceForceID : '',
+                'ArrestID': Editval[0]?.ArrestID || localArrData?.ArrestID, 'ArrestNumber': Editval[0]?.ArrestNumber || localArrData?.ArrestNumber, 'IsJuvenileArrest': Editval[0]?.IsJuvenileArrest || localArrData?.IsJuvenileArrest,
+                'ArrestDtTm': Editval[0]?.ArrestDtTm ? getShowingDateText(Editval[0]?.ArrestDtTm) : "" || localArrData?.ArrestDtTm ? getShowingDateText(localArrData?.ArrestDtTm) : "", 'IsMultipleArrestees': Editval[0]?.IsMultipleArrestees || Editval[0]?.IsMultipleArrestees,
+                'ArrestingAgencyID': Editval[0]?.ArrestingAgencyID || localArrData?.ArrestingAgencyID, 'ArrestingAgency': Editval[0]?.ArrestingAgency ? Editval[0]?.ArrestingAgency : '' || localArrData?.ArrestingAgency ? localArrData?.ArrestingAgency : '',
+                'PhoneNo': Editval[0]?.PhoneNo ? Editval[0]?.PhoneNo : '' || localArrData?.PhoneNo ? localArrData?.PhoneNo : '', 'ArrestTypeID': Editval[0]?.ArrestTypeID || localArrData?.ArrestTypeID, 'SupervisorID': Editval[0]?.SupervisorID || localArrData?.SupervisorID, 'PoliceForceID': Editval[0]?.PoliceForceID ? Editval[0]?.PoliceForceID : '' || localArrData?.PoliceForceID ? localArrData?.PoliceForceID : '',
 
-                'RightsGivenID': Editval[0]?.RightsGivenID, 'JuvenileDispositionID': Editval[0]?.JuvenileDispositionID, 'GivenByID': Editval[0]?.GivenByID, 'PrimaryOfficerID': Editval[0]?.PrimaryOfficerID, 'ModifiedByUserFK': loginPinID,
+                'RightsGivenID': Editval[0]?.RightsGivenID || localArrData?.RightsGivenID, 'JuvenileDispositionID': Editval[0]?.JuvenileDispositionID || localArrData?.JuvenileDispositionID, 'GivenByID': Editval[0]?.GivenByID || localArrData?.GivenByID, 'PrimaryOfficerID': Editval[0]?.PrimaryOfficerID || localArrData?.PrimaryOfficerID, 'ModifiedByUserFK': loginPinID,
                 // new add 
-                'IsSchoolNotified': Editval[0]?.IsSchoolNotified, 'Grade': Editval[0]?.Grade, 'LocationOfSchool': Editval[0]?.LocationOfSchool, 'LocationOfSchool': Editval[0]?.LocationOfSchool, 'NameOfSchool': Editval[0]?.NameOfSchool, 'ParentPhone': Editval[0]?.ParentPhone,
-                'ParentNameID': Editval[0]?.ParentNameID, 'ResponseID': Editval[0]?.ResponseID,
-                ['ArresteeID']: Editval[0]?.ArresteeID,
+                'IsSchoolNotified': Editval[0]?.IsSchoolNotified || localArrData?.IsSchoolNotified, 'Grade': Editval[0]?.Grade || localArrData?.Grade, 'LocationOfSchool': Editval[0]?.LocationOfSchool || localArrData?.LocationOfSchool, 'LocationOfSchool': Editval[0]?.LocationOfSchool || localArrData?.LocationOfSchool, 'NameOfSchool': Editval[0]?.NameOfSchool || localArrData?.NameOfSchool, 'ParentPhone': Editval[0]?.ParentPhone || localArrData?.ParentPhone,
+                'ParentNameID': Editval[0]?.ParentNameID || localArrData?.ParentNameID, 'ResponseID': Editval[0]?.ResponseID || localArrData?.ResponseID,
+                ['ArresteeID']: Editval[0]?.ArresteeID || localArrData?.ArresteeID,
 
                 // Arrestee Data
                 ['RaceID']: newvalue[0]?.RaceID, ['SexID']: newvalue[0]?.SexID, ['AgeFrom']: newvalue[0]?.AgeFrom, ['AgeUnitID']: newvalue[0]?.AgeUnitID,
-                ['DateOfBirth']: newvalue[0]?.DateOfBirth ? getShowingWithOutTime(newvalue[0].DateOfBirth) : null, 'IsJuvenileArrest': newvalue[0]?.IsJuvenile,
+                ['DateOfBirth']: newvalue[0]?.DateOfBirth ? getShowingWithOutTime(newvalue[0].DateOfBirth) : null || newvalue[0]?.DateOfBirth ? getShowingWithOutTime(newvalue[0].DateOfBirth) : null, 'IsJuvenileArrest': newvalue[0]?.IsJuvenile,
 
             });
-            setPossessionID(Editval[0]?.ArresteeID);
-            setArrestParentID(Editval[0]?.ParentNameID);
+            setPossessionID(Editval[0]?.ArresteeID || localArrData?.ArresteeID);
+            setArrestParentID(Editval[0]?.ParentNameID || localArrData?.ArresteeID);
             setIsEditvalProcessed(true);
             // setPossessionID(Editval[0]?.ArresteeID);
             setArrestName(Editval[0]?.Arrestee_Name ? Editval[0]?.Arrestee_Name : '');
@@ -452,7 +469,7 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
             });
             setArrestDate();
         }
-    }, [Editval, changesStatusCount])
+    }, [Editval, changesStatusCount, localArrData])
 
     const HandleChange = (e) => {
         if (e.target.name === "IsJuvenileArrest") {
@@ -526,6 +543,7 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
             'ArrestID': DecArrestId, 'AgencyID': loginAgencyID, 'IncidentID': DecEIncID, 'ArrestNumber': ArrestNumber, 'CreatedByUserFK': loginPinID, 'IsJuvenileArrest': IsJuvenileArrest, 'ArrestDtTm': ArrestDtTm, 'ArrestingAgency': ArrestingAgency, 'ArrestTypeID': ArrestTypeID, 'SupervisorID': SupervisorID, 'PoliceForceID': PoliceForceID, 'RightsGivenID': RightsGivenID, 'JuvenileDispositionID': JuvenileDispositionID, 'PhoneNo': PhoneNo, 'PrimaryOfficerID': PrimaryOfficerID, 'GivenByID': GivenByID, 'ArresteeID': ArresteeID, 'ArresteeLable': 0, 'ModifiedByUserFK': '', 'IsMultipleArrestees': IsMultipleArrestees, 'ArrestingAgencyID': ArrestingAgencyID,
             'IsSchoolNotified': IsSchoolNotified, 'Grade': Grade, 'LocationOfSchool': LocationOfSchool, 'NameOfSchool': NameOfSchool, 'ParentPhone': ParentPhone, 'ParentNameID': ParentNameID, 'ResponseID': ResponseID,
         }
+        const storedVal = JSON.parse(localStorage.getItem('insertedArrestVal'));
         localStorage.setItem('insertedArrestVal', JSON.stringify(val));
         setShowPage('Charges');
         //  setStatus(true)
