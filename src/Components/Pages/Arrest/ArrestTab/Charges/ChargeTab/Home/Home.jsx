@@ -5,7 +5,7 @@ import { Decrypt_Id_Name, LockFildscolour, MultiSelectLockedStyle, MultiSelectRe
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AddDeleteUpadate, fetchPostData } from '../../../../../../hooks/Api';
 import { Comman_changeArrayFormat, threeColArray, threeColArrayWithCode } from '../../../../../../Common/ChangeArrayFormat';
-import { toastifySuccess } from '../../../../../../Common/AlertMsg';
+import { toastifyError, toastifySuccess } from '../../../../../../Common/AlertMsg';
 import { AgencyContext } from '../../../../../../../Context/Agency/Index';
 import { RequiredFieldIncident } from '../../../../../Utility/Personnel/Validation';
 import DataTable from 'react-data-table-component';
@@ -169,6 +169,7 @@ const Charges = (props) => {
         'IncidentID': DecEIncID, 'ArrestID': ArrestID, 'ChargeID': DecChargeId, 'CreatedByUserFK': LoginPinID, 'AgencyID': LoginAgencyID,
         'Name': Name, 'IncidentNumber': IncNo, 'ArrestNumber': ArrNo, 'LawTitleId': '', 'AttemptComplete': '',
       });
+      get_Data_Arrest_Charge(DecArrestId);
       if (!incReportedDate) { dispatch(get_Inc_ReportedDate(IncID)); }
       // get_Property_Data(ArrestID);
       get_Security_DropDown(DecChargeId); get_Security_Data(ChargeID);
@@ -216,6 +217,16 @@ const Charges = (props) => {
     }
   }, [DecArrestId])
 
+
+  const isDuplicateCharge = () => {
+    return arrestChargeData.some(item =>
+      item.NIBRSID === value.NIBRSID &&
+      item.ChargeCodeID === value.ChargeCodeID &&
+      item.ChargeID !== value.ChargeID
+    );
+  };
+
+
   const check_Validation_Error = (e) => {
     const NIBRSIDError = RequiredFieldIncident(value.NIBRSID);
     const ChargeCodeIDError = RequiredFieldIncident(value.ChargeCodeID);
@@ -235,16 +246,23 @@ const Charges = (props) => {
   const { ChargeCodeIDError, NIBRSIDError, AttemptRequiredError, ChargeDateTimeError } = errors
 
   useEffect(() => {
-    if (ChargeCodeIDError === 'true' && NIBRSIDError === 'true' && AttemptRequiredError === 'true' && ChargeDateTimeError == 'true') {
-      if ((ChargeSta === true || ChargeSta === 'true') && ChargeID) { update_Arrest_Charge() }
-      else {
-        if (DecArrestId) { Add_Charge_Data(); }
-        else {
-          insert_Arrest_Data()
-        }
+    if (ChargeCodeIDError === 'true' && NIBRSIDError === 'true' && AttemptRequiredError === 'true' && ChargeDateTimeError === 'true') {
+      // 🔴 DUPLICATE CHECK
+      if (isDuplicateCharge()) {
+        toastifyError("Offense Code/Name & TIBRS Code Already Exists!");
+        setErrors({ ...errors, ['ChargeCodeIDError']: '' });
+        return;
+      }
+      if ((ChargeSta === true || ChargeSta === 'true') && ChargeID) {
+        update_Arrest_Charge();
+      } else {
+        if (DecArrestId) Add_Charge_Data();
+        else { insert_Arrest_Data(); }
       }
     }
-  }, [ChargeCodeIDError, NIBRSIDError, AttemptRequiredError, ChargeDateTimeError])
+  }, [ChargeCodeIDError, NIBRSIDError, AttemptRequiredError, ChargeDateTimeError]);
+
+
 
   useEffect(() => {
     if (DecChargeId) {
@@ -501,9 +519,7 @@ const Charges = (props) => {
         setArrestID(res.ArrestID)
         toastifySuccess(res.Message);
         navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(res?.ArrestID)}&ArrNo=${res?.ArrestNumber}&Name=${ArresteName}&ArrestSta=${true}&ChargeSta=${false}`)
-        Add_Charge_Data(res.ArrestID);
-        get_Incident_Count(DecEIncID);
-        GetSingleData(res.ArrestID, DecEIncID);
+        Add_Charge_Data(res.ArrestID); get_Incident_Count(DecEIncID); GetSingleData(res.ArrestID, DecEIncID);
       }
     });
   }
