@@ -361,7 +361,7 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                 </div>}
                 <div className="dark-row" >
                     <div className="col-12 col-sm-12">
-                        <div className={`card Agency ${isCad ? 'CAD-incident-card' : 'incident-cards-agency'} ${openPage ? 'name-card' : ''}`}>
+                        <div className={`card Agency ${isCad ? 'CAD-incident-card' : 'incident-card'} ${openPage ? 'name-card' : ''}`}>
                             <div className="card-body py-1">
                                 {!isCaseManagement && propertyMainModuleData && propertyMainModuleData.length > 0 && MstPage != "MST-Property-Dash" && (
 

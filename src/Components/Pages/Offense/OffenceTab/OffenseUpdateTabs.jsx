@@ -395,7 +395,7 @@ const OffenceHomeTabs = () => {
                 </div>
                 <div className="dark-row" >
                     <div className="col-12 col-sm-12">
-                        <div className="card Agency incident-card">
+                        <div className="card Agency incident-main-card">
                             <div className="card-body py-1">
 
 

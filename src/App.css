@@ -1939,7 +1939,7 @@ input[type=number] {
     height: 13mm !important;
   }
 
- 
+
 
   /* .content {
     padding: 10mm 5mm;
@@ -1975,7 +1975,7 @@ input[type=number] {
       content: counter(page) " of " counter(pages);
       font-size: 12px;
       position: absolute !important;
-      right: 5px !important;
+      right: 30px !important;
       z-index: 99;
       bottom: 5px !important;
     }
@@ -2380,15 +2380,19 @@ input.nibrs-reopened:disabled {
 
 .incident-card:has(.Offense_child) {
   height: auto !important;
+  background-color: #f2f2f2 !important;
   /* min-height: 100vh; */
 }
 
-
-
-.incident-card:has(.Offense_child) {
+.incident-main-card {
   height: auto !important;
-  /* min-height: 100vh; */
+  background-color: #f2f2f2 !important;
+
 }
+
+
+
+
 
 .nibrs-rejected-PoliceF {
   font-size: 27px !important;
