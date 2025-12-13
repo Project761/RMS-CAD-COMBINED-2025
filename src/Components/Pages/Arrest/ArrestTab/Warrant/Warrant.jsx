@@ -154,7 +154,7 @@ const Warrant = (props) => {
             dispatch(get_AgencyOfficer_Data(localStoreData?.AgencyID, DecIncID))
         }
     }, [loginAgencyID]);
-
+    console.log(DecArrestId)
     useEffect(() => {
         if (NameId || DecMasterNameID) {
             setValue(pre => { return { ...pre, 'CreatedByUserFK': loginPinID, 'MasterNameID': DecMasterNameID, 'NameID': NameId } });

@@ -90,7 +90,7 @@ const Charges = (props) => {
   const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
   const incReportedDate = useSelector((state) => state.Agency.incReportedDate);
 
-  const { get_Arrest_Count, arrestChargeData, datezone, NameId, setArrestName, get_OffenseName_Data, changesStatusCount, changesStatus, get_Incident_Count, get_Data_Arrest_Charge, get_ArrestCharge_Count, setChangesStatus, updateCount, setUpdateCount, ArresteName } = useContext(AgencyContext);
+  const { get_Arrest_Count, arrestChargeData, datezone, NameId, setArrestName, get_OffenseName_Data, changesStatusCount, changesStatus, get_Incident_Count, get_Data_Arrest_Charge, get_ArrestCharge_Count, setChangesStatus, updateCount, setUpdateCount, ArresteName, get_Data_Arrest } = useContext(AgencyContext);
   const SelectedValue = useRef();
 
   const [chargeCodeDrp, setChargeCodeDrp] = useState([]);
@@ -513,11 +513,11 @@ const Charges = (props) => {
   }
 
   const insert_Arrest_Data = async () => {
-    const storedVal = JSON.parse(localStorage.getItem('insertedArrestVal'));
+    const storedVal = JSON.parse(localStorage?.getItem('insertedArrestVal'));
     AddDeleteUpadate('Arrest/Insert_Arrest', storedVal).then(async (res) => {
-      if (res.success) {
-        setArrestID(res.ArrestID)
-        toastifySuccess(res.Message);
+      if (res?.success) {
+        setArrestID(res?.ArrestID)
+        toastifySuccess(res?.Message);
         navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(res?.ArrestID)}&ArrNo=${res?.ArrestNumber}&Name=${ArresteName}&ArrestSta=${true}&ChargeSta=${false}`)
         Add_Charge_Data(res.ArrestID); get_Incident_Count(DecEIncID); GetSingleData(res.ArrestID, DecEIncID);
       }
@@ -536,7 +536,7 @@ const Charges = (props) => {
         const message = parsedData.Table[0].Message;
         toastifySuccess(message); get_Arrest_Count(MainArrestID || DecArrestId);
         Reset(); get_Data_Arrest_Charge(MainArrestID || DecArrestId);
-        setChargeID(res.ChargeID);
+        setChargeID(res.ChargeID); get_Incident_Count(DecEIncID); get_Data_Arrest(DecEIncID, LoginPinID);
         setChangesStatus(false); get_ArrestCharge_Count(ChargeID); setStatesChangeStatus(false);
         // if (res.ChargeID || res.ArrestID) {
         //   setChargeID(res.ChargeID);
@@ -575,7 +575,7 @@ const Charges = (props) => {
       toastifySuccess(message); setStatesChangeStatus(false);
       get_Data_Arrest_Charge(DecArrestId); setErrors({ ...errors, ['ChargeCodeIDError']: '' }); setChangesStatus(false);
       // lawTitle
-      LawTitleIdDrpDwnVal(LoginAgencyID, null);
+      LawTitleIdDrpDwnVal(LoginAgencyID, null); get_Incident_Count(DecEIncID);
       // nibrs code
       get_NIBRS_Drp_Data(LoginAgencyID, null);
       // charge code
@@ -590,7 +590,7 @@ const Charges = (props) => {
         const parsedData = JSON.parse(res.data);
         const message = parsedData.Table[0].Message;
         toastifySuccess(message); get_Data_Arrest_Charge(DecArrestId); get_Arrest_Count(ArrestID);
-        Reset(); get_ArrestCharge_Count(ChargeID); setErrors(''); setStatusFalse()
+        Reset(); get_ArrestCharge_Count(ChargeID); setErrors(''); setStatusFalse(); get_Incident_Count(DecEIncID);
       } else { console.log("Somthing Wrong"); }
     })
   }

@@ -180,7 +180,11 @@ const Home = ({ setShowJuvinile, setShowPage, setResetErrors, setShowPoliceForce
             setoffenseChargeCount('');
             // dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
             setPossessionID(''); setResetErrors(false); setIsEditvalProcessed(false);
-            setValue({ ...value, ['RaceID']: '', ['SexID']: '', ['AgeFrom']: '', ['AgeUnitID']: '', ['DateOfBirth']: '', ArrestNumber: '', IsJuvenileArrest: '', ArrestDtTm: '', ArrestingAgency: '', ArrestTypeID: '', SupervisorID: '', PoliceForceID: '', ArresteeID: '', RightsGivenID: '', JuvenileDispositionID: '', PhoneNo: '', GivenByID: '', PrimaryOfficerID: '', ModifiedByUserFK: '', IsMultipleArrestees: '', ArrestingAgencyID: '', 'IsSchoolNotified': '', 'Grade': '', 'LocationOfSchool': '', 'NameOfSchool': '', 'ParentPhone': '', 'ParentNameID': '', 'ResponseID': '', })
+            setValue({ ...value, ['RaceID']: '', ['SexID']: '', ['AgeFrom']: '', ['AgeUnitID']: '', ['DateOfBirth']: '', ArrestNumber: '', IsJuvenileArrest: '', ArrestDtTm: '', ArrestingAgency: '', ArrestTypeID: '', SupervisorID: '', PoliceForceID: '', ArresteeID: '', RightsGivenID: '', JuvenileDispositionID: '', PhoneNo: '', GivenByID: '', PrimaryOfficerID: '', ModifiedByUserFK: '', IsMultipleArrestees: '', ArrestingAgencyID: '', 'IsSchoolNotified': '', 'Grade': '', 'LocationOfSchool': '', 'NameOfSchool': '', 'ParentPhone': '', 'ParentNameID': '', 'ResponseID': '', });
+            setErrors({
+                ...errors,
+                'ArrestNumberError': '', 'IsJuvenileArrestError': '', 'ArrestDtTmError': '', 'ArrestTypeIDError': '', 'SupervisorIDError': '', 'PoliceForceIDError': '', 'RightsGivenIDError': '', 'JuvenileDispositionIDError': '', 'PhoneNoError': '', 'PrimaryOfficerIDError': '', 'GivenByIDError': '', 'ArresteeIDError': '', 'ArresteeLableError': '', 'ModifiedByUserFKError': '', 'IsMultipleArresteesError': '', 'ArrestingAgencyIDError': '',
+            })
         }
     }, [ResetErrors]);
 
