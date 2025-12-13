@@ -742,7 +742,7 @@ const Home = ({ DecMissPerID, DecIncID, get_List }) => {
                     <div className="col-4 col-md-4 col-lg-4 mt-0 text-field">
                         <input type="text" className='' name='CloseFriends' value={value?.CloseFriends} onChange={HandleChange} required />
                     </div>
-                    <div className="col-2 col-md-2 col-lg-2">
+                    <div className="col-2 col-md-2 col-lg-2 text-right">
                         <label htmlFor="" className='new-label mb-0'>Places Missing Person Frequented </label>
                     </div>
                     <div className="col-4 col-md-4 col-lg-4 mt-0 text-field">
@@ -762,7 +762,7 @@ const Home = ({ DecMissPerID, DecIncID, get_List }) => {
                             placeholder="Select..."
                         />
                     </div>
-                    <div className="col-2 col-md-2 col-lg-2">
+                    <div className="col-2 col-md-2 col-lg-2 text-right">
                         <label htmlFor="" className='new-label mb-0'>Investigating Officer's Telephone Number
                             {errors.InvestigationOfficerTelephoneNumberError && errors.InvestigationOfficerTelephoneNumberError !== 'true' ? (
                                 <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.InvestigationOfficerTelephoneNumberError}</p>
