@@ -7,11 +7,10 @@ import CourtInformation from './ArrestTab/CourtInformation/CourtInformation'
 import Narratives from './ArrestTab/Narratives/Narratives'
 import PoliceForce from './ArrestTab/PoliceForce/PoliceForce'
 import Juvenile from './ArrestTab/Juvenile/Juvenile'
-import { base64ToString, Decrypt_Id_Name, isLockOrRestrictModule, stringToBase64, tableCustomStyle, tableCustomStyles } from '../../Common/Utility'
+import { base64ToString, Decrypt_Id_Name, isLockOrRestrictModule, stringToBase64, tableCustomStyles } from '../../Common/Utility'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import Log from '../Log/Log'
-import ChargeAddUp from './ArrestTab/Charges/ChargeAddUp'
 import Tab from '../../Utility/Tab/Tab';
 import Warrant from './ArrestTab/Warrant/Warrant'
 import MugShorts from './ArrestTab/MugShort/mugShorts'
@@ -114,7 +113,6 @@ const Arrest_Add_Up = () => {
 
     useEffect(() => {
         if (localStoreData) {
-
             setloginAgencyID(localStoreData?.AgencyID); setloginPinID(localStoreData?.PINID);
             dispatch(get_ScreenPermissions_Data("A067", localStoreData?.AgencyID, localStoreData?.PINID));
         }
@@ -123,10 +121,6 @@ const Arrest_Add_Up = () => {
     useEffect(() => {
         setoffenseChargeCount(arrestChargeData?.length)
     }, [arrestChargeData])
-
-
-
-
 
     useEffect(() => {
         if (ArresteeID) {
@@ -138,15 +132,13 @@ const Arrest_Add_Up = () => {
         if (ArrestSta === 'true' || ArrestSta === true) {
             setStatus(true);
         } else if (ArrestSta === 'false' || ArrestSta === false) {
-            setStatus(false);
-            get_Arrest_Count();
+            setStatus(false); get_Arrest_Count();
         }
     }, [ArrestSta, localStoreData, updateCount]);
 
     useEffect(() => {
         if (isFromDashboard === 'true' || isFromDashboard === true) {
-            setShowPoliceForce(true);
-            setShowPage("PoliceForce")
+            setShowPoliceForce(true); setShowPage("PoliceForce")
         }
     }, [isFromDashboard]);
 
@@ -196,9 +188,6 @@ const Arrest_Add_Up = () => {
         {
             name: 'Charges(Count)', selector: (row) => row.ChargeCount, sortable: true
         },
-        // {
-        //     name: 'Juvenile Flag', selector: (row) => row.IsJuvenileArrest, sortable: true
-        // },
         {
             name: 'Juvenile Flag',
             selector: row => (
@@ -215,9 +204,7 @@ const Arrest_Add_Up = () => {
             selector: (row) => <>{row?.Supervisor_Name ? row?.Supervisor_Name.substring(0, 60) : ''}{row?.Supervisor_Name?.length > 40 ? '  . . .' : null} </>,
             sortable: true
         },
-        // {
-        //     name: 'Police Force Description', selector: (row) => row.PoliceForce_Description, sortable: true
-        // },
+
         {
             name: <p className='text-end' style={{ position: 'absolute', top: '7px', right: 10 }}>Delete</p>,
             cell: row =>
@@ -243,7 +230,6 @@ const Arrest_Add_Up = () => {
         fetchPostData('Arrest/GetSingleData_Arrest', val).then((res) => {
             if (res.length > 0) {
                 if (res[0]?.NIBRSClearanceID) { setincExceDate(new Date(res[0]?.NIBRSclearancedate)); }
-                // setStatus(true);
                 setEditval(res);
             } else {
                 setEditval([]); setincExceDate('');
@@ -252,8 +238,7 @@ const Arrest_Add_Up = () => {
     }
 
     const set_Edit_Value = (row) => {
-        get_List(row.ArresteeID)
-        setArresteeID(row.ArresteeID)
+        get_List(row.ArresteeID); setArresteeID(row.ArresteeID)
         get_Arrest_Count(row.ArrestID); setRestStatus(true); GetSingleData(row.ArrestID, DecIncID)
         if (row?.PoliceForce_Description === "Yes") {
             setIsEnabled(true);
@@ -270,9 +255,7 @@ const Arrest_Add_Up = () => {
             modal.show();
         } else {
             if (row.ArrestID) {
-                // Reset();
                 navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(row?.ArrestID)}&ArrNo=${row?.ArrestNumber}&Name=${row?.Arrestee_Name}&ArrestSta=${true}&ChargeSta=${false}&SideBarStatus=${!SideBarStatus}&ArrestStatus=${false}&isNew=${true} `);
-
                 getPermissionLevelByLock(DecIncID, loginPinID)
                 // setArrestID(row?.ArrestID); setActiveArrest(row?.ArrestID); setErrors(''); setStatesChangeStatus(false); setChangesStatus(false); setStatus(true);
                 // GetSingleData(row.ArrestID, DecEIncID); get_Arrest_Count(row?.ArrestID);
@@ -287,16 +270,12 @@ const Arrest_Add_Up = () => {
             if (res?.length > 0) {
                 setIsLocked(res[0]?.IsLocked === true || res[0]?.IsLocked === 1 ? true : false);
                 setPermissionToUnlock(res[0]?.IsUnLockPermission === true || res[0]?.IsUnLockPermission === 1 ? true : false);
-
             } else {
-                setPermissionToUnlock(false);
-                setIsLocked(false);
-
+                setPermissionToUnlock(false); setIsLocked(false);
             }
         } catch (error) {
             console.error('There was an error!', error);
-            setPermissionToUnlock(false);
-            setIsLocked(false);
+            setPermissionToUnlock(false); setIsLocked(false);
         }
     }
 
@@ -307,8 +286,7 @@ const Arrest_Add_Up = () => {
             if (ArrestSta === 'true' || ArrestSta === true) {
                 setStatus(true);
             } else if (ArrestSta === 'false' || ArrestSta === false) {
-                setStatus(false);
-                get_Arrest_Count();
+                setStatus(false); get_Arrest_Count();
             }
         } else {
             setShowPage('home')
@@ -319,8 +297,7 @@ const Arrest_Add_Up = () => {
             if (ArrestSta === 'true' || ArrestSta === true) {
                 setStatus(true);
             } else if (ArrestSta === 'false' || ArrestSta === false) {
-                setStatus(false);
-                get_Arrest_Count();
+                setStatus(false); get_Arrest_Count();
             }
         }
     }
@@ -340,8 +317,7 @@ const Arrest_Add_Up = () => {
                 const message = parsedData.Table[0].Message;
                 toastifySuccess(message); get_Data_Arrest(DecIncID, MstPage === "MST-Arrest-Dash" ? true : false, loginPinID);
                 // get_Incident_Count(DecIncID); 
-                get_Arrest_Count(DecArrestId);
-                setStatusFalse(); setRestStatus(false);
+                get_Arrest_Count(DecArrestId); setStatusFalse(); setRestStatus(false);
                 //   Reset()
                 navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${('')}&ArrestSta=${false}&ChargeSta=${false}&SideBarStatus=${false}&isNew=${true}`)
                 // if (DecIncID) {
