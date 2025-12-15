@@ -414,12 +414,11 @@ const AgencySetting = () => {
                                             required
                                         />
                                     </div> */}
-                                    <div className='col-12 col-md-12 col-lg-12'>
+                                    {/* <div className='col-12 col-md-12 col-lg-12'>
                                         <div className='row align-items-center'>
                                             <div className="col-8 col-md-8 col-lg-4">
                                                 <label htmlFor="" className='new-label mb-0'>Report Approve</label>
                                             </div>
-                                            {/* ReportApproval  ReportApprovalLevel */}
                                             <div className="col-4 col-md-4 col-lg-4 mt-0 text-field">
                                                 <Select
                                                     styles={customStylesWithOutColor}
@@ -447,12 +446,12 @@ const AgencySetting = () => {
                                                 />
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> */}
                                     <div className="col-12 col-md-12 col-lg-12">
                                         <div className="row">
                                             <div className="col-12 col-md-12 col-lg-12 ml-lg-5 pl-lg-5 ml-md-0 pl-md-0 mt-1">
                                                 <input type="checkbox" name='IsEnhancedNameIndex' checked={value?.IsEnhancedNameIndex} value={value?.IsEnhancedNameIndex} onChange={HandleChanges} />
-                                                <label className='ml-2' >Enhanced Name Index</label>
+                                                <label className='ml-2'>Enhanced Name Index</label>
                                             </div>
                                             <div className="col-12 col-md-12 col-lg-12 mt-1 ml-lg-5 pl-lg-5 ml-md-0 pl-md-0">
                                                 <input type="checkbox" name='IsAliasReqForConsolidating' checked={value?.IsAliasReqForConsolidating} value={value?.IsAliasReqForConsolidating} onChange={HandleChanges} />
@@ -520,7 +519,6 @@ const AgencySetting = () => {
                                         </div>
 
                                         <div className="row align-items-center mt-3">
-
                                             <div className="col-12 col-md-2">
                                                 <label className="new-label">Lock Level</label>
                                             </div>
@@ -538,7 +536,6 @@ const AgencySetting = () => {
                                                     }}
                                                 />
                                             </div>
-
 
                                             <div className="col-12 col-md-2">
 
@@ -569,17 +566,14 @@ const AgencySetting = () => {
                                                     </div>
                                                     <div className="col-8  col-md-8 col-lg-3 mt-2 text-field">
                                                         <input type="text" name='ReleaseTask' maxLength={4} value={value.ReleaseTask} onChange={HandleChanges}
-
                                                         />
                                                     </div>
-
                                                     <div className="d-flex col-6 col-md-6 col-lg-6">
                                                         <div className="col-2 col-md-4 col-lg-4 mt-2">
                                                             <label htmlFor="" className='new-label'>Destroy Task</label>
                                                         </div>
                                                         <div className="col-4  col-md-7 col-lg-7 mt-2 text-field">
                                                             <input type="text" name='DestroyTask' maxLength={4} value={value.DestroyTask} autocomplete="off" className={''}
-
                                                                 onChange={HandleChanges}
                                                             />
                                                         </div>
@@ -589,8 +583,6 @@ const AgencySetting = () => {
                                                         <label className='ml-2' >Supervisor Can Edit Report</label>
                                                     </div>
                                                 </div>
-
-
                                             </fieldset>
 
                                         </div>
