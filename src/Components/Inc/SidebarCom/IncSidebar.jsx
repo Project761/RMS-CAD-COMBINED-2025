@@ -60,7 +60,8 @@ const IncSidebar = () => {
 
     const { changesStatus, incidentCount, arrestData, updateCount, setUpdateCount, setIncStatus, get_Incident_Count, setActiveArrest, activeArrest, CaseStatus,
 
-        validate_IncSideBar, incidentErrorStatus, offenseErrorStatus, nameErrorStatus, NameRelationshipError, narrativeApprovedStatus, PropErrorStatus, nibrsSideBarLoading, setNibrsSideBarLoading, caseManagementDataIncidentRecent
+        validate_IncSideBar, incidentErrorStatus, offenseErrorStatus, nameErrorStatus, NameRelationshipError, narrativeApprovedStatus, PropErrorStatus, vehErrorStatus, setVehErrorStatus, nibrsSideBarLoading,
+        setNibrsSideBarLoading, caseManagementDataIncidentRecent
     } = useContext(AgencyContext);
 
     const [plusMinus, setPlusMinus] = useState(false)
@@ -85,11 +86,11 @@ const IncSidebar = () => {
 
     // const [loading, setLoading] = useState(false);
     const [showStatus, setShowStatus] = useState(true);
+
     const [isUserClosed, setIsUserClosed] = useState(() => {
         const savedPreference = localStorage.getItem('statusBarClosed');
         return savedPreference === 'true';
     });
-
 
     useEffect(() => {
         if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
@@ -447,8 +448,10 @@ const IncSidebar = () => {
                                             narrativeApprovedStatus={narrativeApprovedStatus}
 
                                             PropertyCount={PropertyCount}
-                                            VehicleCount={VehicleCount}
                                             PropErrorStatus={PropErrorStatus}
+
+                                            VehicleCount={VehicleCount}
+                                            vehErrorStatus={vehErrorStatus}
 
                                         />
                                     </li>

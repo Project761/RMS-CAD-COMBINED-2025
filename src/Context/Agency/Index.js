@@ -714,6 +714,8 @@ const AgencyData = ({ children }) => {
     const [nibrsSideBarLoading, setNibrsSideBarLoading] = useState(false);
     // nibrs Name Validate Array
     const [nibrsNameValidateArray, setNibrsNameValidateArray] = useState([]);
+    // vehicle
+    const [vehErrorStatus, setVehErrorStatus] = useState(false);
 
 
     // Update both state and localStorage
@@ -732,8 +734,6 @@ const AgencyData = ({ children }) => {
                 fetchPostDataNibrs('NIBRS/GetPropertyNIBRSError', { 'gIncidentID': incidentID, 'IncidentNumber': incidentNumber, 'PropertyId': 0, 'gIntAgencyID': loginAgencyID }),
             ])
 
-
-
             if (incidentError?.Administrative) {
                 setIncidentValidateNibrsData(incidentError);
                 const incObj = incidentError?.Administrative ? incidentError?.Administrative : [];
@@ -744,7 +744,6 @@ const AgencyData = ({ children }) => {
                 setIncidentErrorStatus(false);
 
             }
-
 
             if (offenseError) {
                 setOffenseValidateNibrsData(offenseError);
@@ -790,7 +789,7 @@ const AgencyData = ({ children }) => {
                 setNarrativeApprovedStatus(Narrative > 0);
 
             } else {
-                setNameRelationshipError(false)
+                setNameRelationshipError(false);
                 setNarrativeApprovedStatus(false);
             }
 
@@ -823,6 +822,22 @@ const AgencyData = ({ children }) => {
                         setPropErrorStatus(false);
 
                     }
+
+
+                    if (VehArr?.length > 0) {
+                        const VehErrorArray = VehArr || []
+                        if (VehErrorArray.every(item => item === null || item === undefined)) {
+                            setVehErrorStatus(false);
+
+                        } else {
+                            setVehErrorStatus(true);
+
+                        }
+                    } else {
+                        setVehErrorStatus(false);
+                    }
+
+
                 }
             } else {
                 setPropErrorStatus(false);
@@ -950,7 +965,7 @@ const AgencyData = ({ children }) => {
             // sideBar Nibrs Validate function
             validate_IncSideBar,
             // sideBar Nibrs Error Status
-            incidentErrorStatus, offenseErrorStatus, nameErrorStatus, NameRelationshipError, narrativeApprovedStatus, PropErrorStatus,
+            incidentErrorStatus, offenseErrorStatus, nameErrorStatus, NameRelationshipError, narrativeApprovedStatus, PropErrorStatus, vehErrorStatus, setVehErrorStatus,
             // sideBar Nibrs Loading
             nibrsSideBarLoading, setNibrsSideBarLoading,
             // sideBar Nibrs Name Validate Array
