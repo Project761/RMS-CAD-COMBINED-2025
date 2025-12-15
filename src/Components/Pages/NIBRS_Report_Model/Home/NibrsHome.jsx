@@ -189,23 +189,30 @@ const NibrsHome = () => {
 
   useEffect(() => {
     const validateNibrs = async (incidentValidateNibrsData, offenseValidateNibrsData, victimValidateNibrsData, offenderValidateNibrsData, propertyValidateNibrsData) => {
-      console.count()
+      // console.count()
       // // loader
       setnibrsValidateLoder(true);
       // Administrative
       setAdministrativeErrorString(''); setIsOffenseInc(false);
       // incident
-      setIncidentErrorStatus(false); setIncidentErrorString('');
+      // setIncidentErrorStatus(false); 
+      setIncidentErrorString('');
       // property
-      setSuspectedDrugTypeErrorStatus(false); setIsCrimeAgainstPropertyError(false); setIsPropertyIdZeroError(false); setPropErrorStatus(false); setPropertyErrorString('');
+      setSuspectedDrugTypeErrorStatus(false);
+      // setPropErrorStatus(false);
+      setIsCrimeAgainstPropertyError(false); setIsPropertyIdZeroError(false); setPropertyErrorString('');
       // vehicle
-      setVehErrorStatus(false); setVehicleErrorString(''); setIsOffense240VehError(false);
+      // setVehErrorStatus(false);
+      setVehicleErrorString(''); setIsOffense240VehError(false);
       // offense
-      setOffenseErrorStatus(false); setOffenseErrorString('');
+      // setOffenseErrorStatus(false); 
+      setOffenseErrorString('');
       // offender
-      setOffenderErrorStatus(false); setOffenderErrorString('');
+      // setOffenderErrorStatus(false);
+      setOffenderErrorString('');
       // victim
-      setVictimErrorStatus(false); setVictimErrorString(''); setIsVictimConnectedError(false);
+      // setVictimErrorStatus(false);
+      setVictimErrorString(''); setIsVictimConnectedError(false);
       // arrest
       setArrestErrorString(''); setIsGroup_B_Offense_ArrestInc(false);
 
@@ -257,6 +264,7 @@ const NibrsHome = () => {
           setOffenseErrorStatus(false);
           setOffenseErrorString('');
           setIsOffenseInc(false);
+
         }
 
         // if (offenseValidateNibrsData) {
@@ -518,6 +526,16 @@ const NibrsHome = () => {
     }
   }
 
+  // Don't remove code Dev kashyap
+  // const [offenseSectionStatus, setOffenseSectionStatus] = useState("completed");
+
+  // useEffect(() => {
+  //   const nextStatus = !offenseErrorStatus && !isOffenseInc ? "completed" : "attention highlighted";
+
+  //   setOffenseSectionStatus(prev => prev === nextStatus ? prev : nextStatus);
+  // }, [offenseErrorStatus, isOffenseInc]);
+
+
   const sectionData = [
     {
       title: "Administrative Details",
@@ -525,6 +543,16 @@ const NibrsHome = () => {
       sectionKey: "admin",
       list: <Administrative_Details incidentClick={incidentClick} isNibrsSummited={isNibrsSummited} isLocked={isLocked} setIsLocked={setIsLocked} />
     },
+    // {
+    //   title: !isOffenseInc ? `Offense (${offenseCount})` : (
+    //     <span className="text-center" style={TitleErrorStyle}>
+    //       {`Offense (${offenseCount}) --- This Incident does not have any TIBRS reportable Crime(s)`}
+    //     </span>
+    //   ),
+    //   status: offenseSectionStatus,
+    //   sectionKey: "offenses",
+    //   list: (<Offense offenseClick={offenseClick} isNibrsSummited={isNibrsSummited} isLocked={isLocked} setIsLocked={setIsLocked} getPermissionLevelByLock={getPermissionLevelByLock} />)
+    // },
     {
       title: !isOffenseInc ? `Offense (${offenseCount})` : <span className="text-center" style={TitleErrorStyle} > {`Offense (${offenseCount}) --- This Incident does not have any TIBRS reportable Crime(s)`} </span>,
       status: !offenseErrorStatus && !isOffenseInc ? "completed" : "attention highlighted",

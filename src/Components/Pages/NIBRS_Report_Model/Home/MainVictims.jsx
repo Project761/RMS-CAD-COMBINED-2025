@@ -3,7 +3,7 @@ import Select, { components } from "react-select";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import DataTable from 'react-data-table-component';
 import { useDispatch, useSelector } from 'react-redux';
-import { Decrypt_Id_Name, DecryptedList, filterPassedTime, EncryptedList, getShowingDateText, base64ToString, getShowingMonthDateYear, stringToBase64, getShowingWithOutTime, tableCustomStyles, Aes256Encrypt, Requiredcolour, nibrscolourStyles, nibrsErrorMultiSelectStyles, LockFildscolour, isLockOrRestrictModule, MultiSelectLockedStyle } from '../../../Common/Utility';
+import { Decrypt_Id_Name, DecryptedList, filterPassedTime, EncryptedList, getShowingDateText, base64ToString, getShowingMonthDateYear, stringToBase64, getShowingWithOutTime, tableCustomStyles, Aes256Encrypt, Requiredcolour, nibrscolourStyles, nibrsErrorMultiSelectStyles, LockFildscolour, isLockOrRestrictModule, MultiSelectLockedStyle, MultiSelectRequiredStyle } from '../../../Common/Utility';
 import { AddDeleteUpadate, AddDelete_Img, fetchData, fetchPostData, fetchPostDataNibrs } from '../../../hooks/Api';
 import { Comman_changeArrayFormat, Comman_changeArrayFormatBasicInfo, Comman_changeArrayFormatBasicInfowithoutcode, Comman_changeArrayFormatJustfiableHomicide, Comman_changeArrayFormat_With_Name, changeArray, fourColArray, fourColArrayReasonCode, offenseArray, sixColArray, threeColArray, threeColArrayWithCode, threeColVictimInjuryArray, threeColVictimOffenseArray } from '../../../Common/ChangeArrayFormat';
 import { toastifyError, toastifySuccess } from '../../../Common/AlertMsg';
@@ -4045,7 +4045,6 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                                             {nibrsFieldError?.JustHomicide && showJustifyHomicideError && (
                                                 <div className="nibrs-tooltip-error" style={{ left: '-80px' }}>
                                                     <div className="tooltip-arrow"></div>
-
                                                     <div className="tooltip-content">
                                                         <span className="text-danger">⚠️ {nibrsFieldError.JustHomicideError || ''}</span>
                                                     </div>
@@ -4064,7 +4063,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                                                 className="basic-multi-select"
                                                 isMulti
                                                 // styles={assaultID20Or21 ? nibrsErrorMultiSelectStyles : customStylesWithOutColor1}
-                                                styles={isLockOrRestrictModule("Lock", justifiableHomiEditVal, isLocked, true) ? MultiSelectLockedStyle : assaultID20Or21 ? nibrsErrorMultiSelectStyles : customStylesWithOutColor1}
+                                                // styles={isLockOrRestrictModule("Lock", justifiableHomiEditVal, isLocked, true) ? MultiSelectLockedStyle : assaultID20Or21 ? nibrsErrorMultiSelectStyles : customStylesWithOutColor1}
+                                                styles={isLockOrRestrictModule("Lock", justifiableHomiEditVal, isLocked, true) ? MultiSelectLockedStyle : assaultID20Or21 ? MultiSelectRequiredStyle : customStylesWithOutColor1}
                                                 isDisabled={isLockOrRestrictModule("Lock", justifiableHomiEditVal, isLocked, true)}
                                             />
                                         </div>
