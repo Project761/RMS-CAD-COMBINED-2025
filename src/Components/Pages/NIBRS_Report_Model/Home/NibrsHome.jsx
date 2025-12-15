@@ -189,6 +189,7 @@ const NibrsHome = () => {
 
   useEffect(() => {
     const validateNibrs = async (incidentValidateNibrsData, offenseValidateNibrsData, victimValidateNibrsData, offenderValidateNibrsData, propertyValidateNibrsData) => {
+      console.count()
       // // loader
       setnibrsValidateLoder(true);
       // Administrative
@@ -234,31 +235,55 @@ const NibrsHome = () => {
         }
 
         // set offense error string
-        if (offenseValidateNibrsData) {
-          const incObj = incidentValidateNibrsData?.Incident ? incidentValidateNibrsData?.Incident : [];
-          const offenseObj = offenseValidateNibrsData?.Offense ? offenseValidateNibrsData?.Offense : [];
+        const incObj = incidentValidateNibrsData?.Incident ?? [];
+        const offenseObj = offenseValidateNibrsData?.Offense ?? [];
 
-          if (offenseObj?.length > 0) {
+        if (!offenseValidateNibrsData) {
+          setOffenseErrorStatus(false);
+          setOffenseErrorString('');
+          setIsOffenseInc(false);
 
-            setOffenseErrorString(offenseObj[0]?.OnPageError ? offenseObj[0]?.OnPageError : '');
-            setOffenseErrorStatus(true);
+        } else if (offenseObj.length > 0) {
+          setOffenseErrorString(offenseObj[0]?.OnPageError ?? '');
+          setOffenseErrorStatus(true);
+          setIsOffenseInc(false);
 
-          } else {
-
-            if (incObj?.IsOffence) {
-              setOffenseErrorString(incObj?.IsOffenceError ? incObj?.IsOffenceError : '');
-              setIsOffenseInc(true); setOffenseErrorStatus(true);
-
-            } else {
-              setIsOffenseInc(false); setOffenseErrorStatus(false); setOffenseErrorString('');
-
-            }
-          }
+        } else if (incObj?.IsOffence) {
+          setOffenseErrorString(incObj?.IsOffenceError ?? '');
+          setOffenseErrorStatus(true);
+          setIsOffenseInc(true);
 
         } else {
-          setOffenseErrorStatus(false); setOffenseErrorString('');
-
+          setOffenseErrorStatus(false);
+          setOffenseErrorString('');
+          setIsOffenseInc(false);
         }
+
+        // if (offenseValidateNibrsData) {
+        //   const incObj = incidentValidateNibrsData?.Incident ? incidentValidateNibrsData?.Incident : [];
+        //   const offenseObj = offenseValidateNibrsData?.Offense ? offenseValidateNibrsData?.Offense : [];
+
+        //   if (offenseObj?.length > 0) {
+
+        //     setOffenseErrorString(offenseObj[0]?.OnPageError ? offenseObj[0]?.OnPageError : '');
+        //     setOffenseErrorStatus(true);
+
+        //   } else {
+
+        //     if (incObj?.IsOffence) {
+        //       setOffenseErrorString(incObj?.IsOffenceError ? incObj?.IsOffenceError : '');
+        //       setIsOffenseInc(true); setOffenseErrorStatus(true);
+
+        //     } else {
+        //       setIsOffenseInc(false); setOffenseErrorStatus(false); setOffenseErrorString('');
+
+        //     }
+        //   }
+
+        // } else {
+        //   setOffenseErrorStatus(false); setOffenseErrorString('');
+
+        // }
 
         if (propertyValidateNibrsData) {
           const proObj = propertyValidateNibrsData?.Properties ? propertyValidateNibrsData?.Properties : [];

@@ -2470,10 +2470,10 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
 
     const check_Validation_Error1 = () => {
 
-        const RelationshipTypeIDErr = isCrimeAgainstPerson ? RequiredFieldIncident(value1.RelationshipTypeID) : 'true';
-        const OffenderNameIDErr = isCrimeAgainstPerson ? RequiredFieldIncident(value1.OffenderNameID) : 'true';
-        // const RelationshipTypeIDErr = isCrimeAgainstPerson || has120RoberyOffense ? RequiredFieldIncident(value1.RelationshipTypeID) : 'true';
-        // const OffenderNameIDErr = isCrimeAgainstPerson || has120RoberyOffense ? RequiredFieldIncident(value1.OffenderNameID) : 'true';
+        // const RelationshipTypeIDErr = isCrimeAgainstPerson ? RequiredFieldIncident(value1.RelationshipTypeID) : 'true';
+        // const OffenderNameIDErr = isCrimeAgainstPerson ? RequiredFieldIncident(value1.OffenderNameID) : 'true';
+        const RelationshipTypeIDErr = isCrimeAgainstPerson || has120RoberyOffense ? RequiredFieldIncident(value1.RelationshipTypeID) : 'true';
+        const OffenderNameIDErr = isCrimeAgainstPerson || has120RoberyOffense ? RequiredFieldIncident(value1.OffenderNameID) : 'true';
 
         setErrors1(prevValues => {
             return {
@@ -2852,7 +2852,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
             if (res) {
                 setTypeOfSecurityEditVal(offenseArray(res, 'NameOffenseID', 'OffenseID', 'NameID', 'NameID', 'Offense_Description', 'PretendToBeID'));
 
-                setHas120RoberyOffense(res.some(item => item.FBICode === "220"));
+                // setHas120RoberyOffense(res.some(item => item.FBICode === "220"));
+                setHas120RoberyOffense(res.some(item => item.FBICode === "120"));
                 const hasPropertyCrime = res.some(item => item.IsCrimeAgains_Person === true);
                 setIsCrimeAgainstPerson(hasPropertyCrime);
 
@@ -4260,8 +4261,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                                                         name='OffenderNameID'
                                                         styles={
                                                             loginAgencyState === 'TX' ?
-                                                                isCrimeAgainstPerson ? colourStyles1 : withOutColorStyle1
-                                                                // isCrimeAgainstPerson || has120RoberyOffense ? colourStyles1 : withOutColorStyle1
+                                                                // isCrimeAgainstPerson ? colourStyles1 : withOutColorStyle1
+                                                                isCrimeAgainstPerson || has120RoberyOffense ? colourStyles1 : withOutColorStyle1
                                                                 :
                                                                 colourStyles1
                                                         }
