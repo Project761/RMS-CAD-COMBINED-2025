@@ -636,9 +636,9 @@ const Arrest_Add_Up = () => {
                                                         className={`nav-item ${showPage === 'home' ? 'active' : ''}`}
                                                         to={
                                                             MstPage ?
-                                                                `/Arrest-Home?page=MST-Arrest-Dash&ArrestId=${ArrestID}&Name=${Name}&IncId=${IncID}&ArrNo=${ArrNo}&ArrestSta=${ArrestSta}&ChargeSta=${true}&SideBarStatus=${false}&ArrestStatus=${false}&isNew=${true}`
+                                                                `/Arrest-Home?page=MST-Arrest-Dash&ArrestId=${ArrestID}&Name=${Name}&IncId=${IncID}&ArrNo=${ArrNo}&ArrestSta=${ArrestSta}&ChargeSta=${true}&SideBarStatus=${false}&ArrestStatus=${false}`
                                                                 :
-                                                                `/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&Name=${Name}&ArrestId=${ArrestID}&ArrestSta=${ArrestSta}&ArrNo=${ArrNo}&ChargeSta=${ChargeSta}&SideBarStatus=${false}&ArrestStatus=${false}&isNew=${true}`
+                                                                `/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&Name=${Name}&ArrestId=${ArrestID}&ArrestSta=${ArrestSta}&ArrNo=${ArrNo}&ChargeSta=${ChargeSta}&SideBarStatus=${false}&ArrestStatus=${false}`
                                                         }
                                                         style={{ color: showPage === 'home' ? 'Red' : '#000' }}
                                                         data-toggle={changesStatus ? "modal" : "pill"}

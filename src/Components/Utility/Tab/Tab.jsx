@@ -420,10 +420,10 @@ const Tab = () => {
                             onClick={() => { if (!changesStatus) { setCurrentTab('Arrest'); } }}
                             //------------page=MST-Arrest-Dash ke liye condiction---------
                             to={
-                                MstPage ? `/Arrest-Home?page=MST-Arrest-Dash&ArrestId=${ArrestId}&ArrNo=${ArrNo}&Name=${ArresteName}&IncId=${IncID}&IncNo=${incidentNumber}&SideBarStatus=${false}&ArrestSta=${ArrestSta}&ChargeSta=false&localStorageStatus=${true}`
+                                MstPage ? `/Arrest-Home?page=MST-Arrest-Dash&ArrestId=${ArrestId}&ArrNo=${ArrNo}&Name=${ArresteName}&IncId=${IncID}&IncNo=${incidentNumber}&SideBarStatus=${false}&ArrestSta=${ArrestSta}&ChargeSta=false`
                                     : changesStatus
                                         ? currentLocation
-                                        : `/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${ArrestId}&ArrestSta=${ArrestSta}&ArrNo=${ArrNo}&Name=${Name}&SideBarStatus=${false}&ChargeSta=false&localStorageStatus=${true}`
+                                        : `/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${ArrestId}&ArrestSta=${ArrestSta}&ArrNo=${ArrNo}&Name=${Name}&SideBarStatus=${false}&ChargeSta=false`
                             }
                         >Arrest {`${incidentCount[0]?.ArrestCount > 0 ? '(' + incidentCount[0]?.ArrestCount + ')' : ''}`}
                         </Link>
