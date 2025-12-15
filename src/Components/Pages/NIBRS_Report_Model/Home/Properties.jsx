@@ -116,24 +116,11 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
     const [nibrsErrModalStatus, setNibrsErrModalStatus] = useState(false);
     const [nibrsFieldError, setnibrsFieldError] = useState({});
     const [showLossCodeError, setShowLossCodeError] = useState({});
-
     const [suspectedDrugTypeErrorStatus, setSuspectedDrugTypeErrorStatus] = useState(false);
     const [isPropertyIdZeroError, setIsPropertyIdZeroError] = useState(false);
 
     const [value, setValue] = useState({
-        'MasterPropertyID': '', 'PropertyID': '', 'AgencyID': '', 'IncidentID': '', 'CreatedByUserFK': '', 'ReportedDtTm': '', 'DestroyDtTm': '', 'Value': '',
-        'PropertyCategoryCode': '', 'PropertyTypeID': null, 'CategoryID': null, 'ClassificationID': null, 'OfficerID': null, 'LossCodeID': null, 'PossessionOfID': null,
-        'PropertyTag': '', 'NICB': '', 'Description': '', 'IsEvidence': '', 'IsSendToPropertyRoom': '', 'IsPropertyRecovered': '', 'MaterialID': null,
-        'PropertyArticleID': null, 'SerialID': '', 'ModelID': '', 'OAN': '', 'Quantity': '', 'Brand': '', 'TopColorID': null, 'BottomColorID': null,
-        'PropertyBoatID': null, 'BoatIDNumber': '', 'HIN': '', 'RegistrationNumber': '', 'VODID': null, 'Length': '', 'Comments': '', 'ManufactureYear': '',
-        'MakeID': null, 'RegistrationExpiryDtTm': '', 'PropulusionID': null, 'RegistrationStateID': null, 'SuspectedDrugTypeID': null, 'SecurityDtTm': '',
-        'OtherID': null, 'PropertyOtherID': null, 'PropertySecurityID': null, 'SecurityIDNumber': '', 'Denomination': '', 'IssuingAgency': '', 'MeasureTypeID': null,
-        'WeaponIDNumber': '', 'Style': '', 'Finish': '', 'Caliber': '', 'Handle': '', 'IsAuto': '', 'BarrelLength': '', 'WeaponModelID': null, 'PropertyWeaponID': null,
-        'EstimatedDrugQty': '', 'FractionDrugQty': '', 'MeasurementTypeID': null, 'ModifiedByUserFK': '', 'PropertyDrugID': 0, 'PropertySourceDrugTypeID': null,
-        'MarijuanaTypeID': null, 'MarijuanaNumber': '', 'DrugManufacturedID': null, 'ClandistineLabsNumber': '', 'MasterID': null,
-        'IsMaster': MstPage === "MST-Property-Dash" ? true : false, 'PropertyNumber': 'Auto Genrated', 'QuantityUnitID': null,
-        'ArticleIDNumber': '',
-        'Items': '', 'DoseUnits': '', 'LiquidOunces': '', 'SolidGrams': '', 'SolidOunces': '', 'MeasurementUnitID': null, 'MeasurementTypeID': null, 'SolidPounds': '', 'PropertyDrugMeasure_Description': '', 'SuspectedDrugType_Description': '', 'ManufactureYearFrom': ''
+        'MasterPropertyID': '', 'PropertyID': '', 'AgencyID': '', 'IncidentID': '', 'CreatedByUserFK': '', 'ReportedDtTm': '', 'DestroyDtTm': '', 'Value': '', 'PropertyCategoryCode': '', 'PropertyTypeID': null, 'CategoryID': null, 'ClassificationID': null, 'OfficerID': null, 'LossCodeID': null, 'PossessionOfID': null, 'PropertyTag': '', 'NICB': '', 'Description': '', 'IsEvidence': '', 'IsSendToPropertyRoom': '', 'IsPropertyRecovered': '', 'MaterialID': null, 'PropertyArticleID': null, 'SerialID': '', 'ModelID': '', 'OAN': '', 'Quantity': '', 'Brand': '', 'TopColorID': null, 'BottomColorID': null, 'PropertyBoatID': null, 'BoatIDNumber': '', 'HIN': '', 'RegistrationNumber': '', 'VODID': null, 'Length': '', 'Comments': '', 'ManufactureYear': '', 'MakeID': null, 'RegistrationExpiryDtTm': '', 'PropulusionID': null, 'RegistrationStateID': null, 'SuspectedDrugTypeID': null, 'SecurityDtTm': '', 'OtherID': null, 'PropertyOtherID': null, 'PropertySecurityID': null, 'SecurityIDNumber': '', 'Denomination': '', 'IssuingAgency': '', 'MeasureTypeID': null, 'WeaponIDNumber': '', 'Style': '', 'Finish': '', 'Caliber': '', 'Handle': '', 'IsAuto': '', 'BarrelLength': '', 'WeaponModelID': null, 'PropertyWeaponID': null, 'EstimatedDrugQty': '', 'FractionDrugQty': '', 'MeasurementTypeID': null, 'ModifiedByUserFK': '', 'PropertyDrugID': 0, 'PropertySourceDrugTypeID': null, 'MarijuanaTypeID': null, 'MarijuanaNumber': '', 'DrugManufacturedID': null, 'ClandistineLabsNumber': '', 'MasterID': null, 'IsMaster': MstPage === "MST-Property-Dash" ? true : false, 'PropertyNumber': 'Auto Genrated', 'QuantityUnitID': null, 'ArticleIDNumber': '', 'Items': '', 'DoseUnits': '', 'LiquidOunces': '', 'SolidGrams': '', 'SolidOunces': '', 'MeasurementUnitID': null, 'MeasurementTypeID': null, 'SolidPounds': '', 'PropertyDrugMeasure_Description': '', 'SuspectedDrugType_Description': '', 'ManufactureYearFrom': ''
     });
 
     const [errors, setErrors] = useState({
@@ -176,17 +163,13 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
 
     useEffect(() => {
         if (DecPropID || DecMPropID) {
-            setPropertyID(DecPropID); GetSingleData(DecPropID, DecMPropID); setMasterPropertyID(DecMPropID); get_Property_Count(DecPropID, DecMPropID, MstPage === "MST-Property-Dash" ? true : false);
-            get_Data_Porperty_Offence(DecPropID, DecMPropID, IncID)
-
-            getEditOffenseData(DecPropID, DecMPropID, IncID)
+            setPropertyID(DecPropID); GetSingleData(DecPropID, DecMPropID); setMasterPropertyID(DecMPropID); get_Property_Count(DecPropID, DecMPropID, MstPage === "MST-Property-Dash" ? true : false); get_Data_Porperty_Offence(DecPropID, DecMPropID, IncID); getEditOffenseData(DecPropID, DecMPropID, IncID)
         }
     }, [DecPropID, DecMPropID]);
 
     useEffect(() => {
         if (propertyTypeData?.length != 0) {
             const Id = propertyTypeData?.filter((val) => { if (val?.id === "A") return val });
-
             if (Id.length > 0 && (ProSta == 'false' || ProSta == false) && !FbiCode) {
                 setValue({ ...value, ['PropertyTypeID']: Id[0]?.value, ['PropertyCategoryCode']: Id[0]?.id, })
                 PropertyCategory(Id[0]?.value);
@@ -197,10 +180,8 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
     useEffect(() => {
         if (IncID) {
             if (!incReportedDate) { dispatch(get_Inc_ReportedDate(IncID)) }
-            setMainIncidentID(IncID);
-            dispatch(get_PropertyMainModule_Data(IncID, MstPage === "MST-Property-Dash" ? true : false));
+            setMainIncidentID(IncID); dispatch(get_PropertyMainModule_Data(IncID, MstPage === "MST-Property-Dash" ? true : false));
             dispatch(get_ArresteeName_Data('', '', IncID));
-
         }
     }, [IncID, possessionID]);
 
@@ -262,7 +243,6 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
         const val2 = { 'MasterPropertyID': masterPropertyId, 'PropertyID': 0, 'PINID': loginPinID, 'IncidentID': 0, 'IsMaster': MstPage === "MST-Property-Dash" ? true : false, }
         fetchPostData('Property/GetSingleData_Property', MstPage === "MST-Property-Dash" ? val2 : val).then((res) => {
             if (res) {
-
                 setEditval(res);
             } else { setEditval([]); }
         })
@@ -285,49 +265,31 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
 
             if (Get_Property_Code(editval, propertyTypeData) === 'A') {
                 dispatch(get_PropertyLossCode_Drp_Data(loginAgencyID, '1', '', '', '', '', ''));
-
             } else if (Get_Property_Code(editval, propertyTypeData) === 'B') {
                 dispatch(get_PropertyLossCode_Drp_Data(loginAgencyID, '', '1', '', '', '', ''));
-
             } else if (Get_Property_Code(editval, propertyTypeData) === 'O') {
                 dispatch(get_PropertyLossCode_Drp_Data(loginAgencyID, '', '', '', '1', '', ''));
-
             } else if (Get_Property_Code(editval, propertyTypeData) === 'S') {
                 dispatch(get_PropertyLossCode_Drp_Data(loginAgencyID, '', '', '1', '', '', ''));
-
             } else if (Get_Property_Code(editval, propertyTypeData) === 'G') {
                 dispatch(get_PropertyLossCode_Drp_Data(loginAgencyID, '', '', '', '', '', '1'));
-
             } else if (Get_Property_Code(editval, propertyTypeData) === 'D') {
                 get_Data_Drug_Modal(editval[0]?.MasterPropertyID, propertyID);
                 dispatch(get_PropertyLossCode_Drp_Data(loginAgencyID, '', '', '', '', '1', ''));
             }
-
             setLossCode(Get_LossCode(editval, propertyLossCodeDrpData));
             setValue({
                 ...value,
                 'PropertyID': MstPage === "MST-Property-Dash" ? '' : editval[0]?.PropertyID, 'PropertyTypeID': editval[0]?.PropertyTypeID,
-                'ModifiedByUserFK': loginPinID, 'PropertyNumber': editval[0]?.PropertyNumber, 'CategoryID': editval[0]?.CategoryID,
-                'ClassificationID': editval[0]?.ClassificationID, 'ReportedDtTm': editval[0]?.ReportedDtTm ? getShowingDateText(editval[0]?.ReportedDtTm) : '',
-                'DestroyDtTm': editval[0]?.DestroyDtTm ? getShowingDateText(editval[0]?.DestroyDtTm) : '',
-                'Value': editval[0]?.Value === null && (editval[0].CategoryID === 2 || editval[0].CategoryID === 5 || editval[0].CategoryID === 600013 || editval[0].CategoryID === 600014 || editval[0].CategoryID === 31 || editval[0].CategoryID === 600026) ? '0' : editval[0]?.Value === null ? '0' : editval[0]?.Value,
-                'OfficerID': editval[0]?.OfficerID, 'LossCodeID': editval[0]?.LossCodeID, 'PropertyTag': editval[0]?.PropertyTag,
-                'NICB': editval[0]?.NICB, 'Description': editval[0]?.Description, 'IsEvidence': editval[0]?.IsEvidence, 'IsSendToPropertyRoom': editval[0]?.IsSendToPropertyRoom,
-                'IsPropertyRecovered': editval[0]?.IsPropertyRecovered, 'PossessionOfID': editval[0]?.PossessionOfID, 'PropertyCategoryCode': Get_Property_Code(editval, propertyTypeData),
+                'ModifiedByUserFK': loginPinID, 'PropertyNumber': editval[0]?.PropertyNumber, 'CategoryID': editval[0]?.CategoryID, 'ClassificationID': editval[0]?.ClassificationID, 'ReportedDtTm': editval[0]?.ReportedDtTm ? getShowingDateText(editval[0]?.ReportedDtTm) : '', 'DestroyDtTm': editval[0]?.DestroyDtTm ? getShowingDateText(editval[0]?.DestroyDtTm) : '', 'Value': editval[0]?.Value === null && (editval[0].CategoryID === 2 || editval[0].CategoryID === 5 || editval[0].CategoryID === 600013 || editval[0].CategoryID === 600014 || editval[0].CategoryID === 31 || editval[0].CategoryID === 600026) ? '0' : editval[0]?.Value === null ? '0' : editval[0]?.Value, 'OfficerID': editval[0]?.OfficerID, 'LossCodeID': editval[0]?.LossCodeID, 'PropertyTag': editval[0]?.PropertyTag, 'NICB': editval[0]?.NICB, 'Description': editval[0]?.Description, 'IsEvidence': editval[0]?.IsEvidence, 'IsSendToPropertyRoom': editval[0]?.IsSendToPropertyRoom, 'IsPropertyRecovered': editval[0]?.IsPropertyRecovered, 'PossessionOfID': editval[0]?.PossessionOfID, 'PropertyCategoryCode': Get_Property_Code(editval, propertyTypeData),
             });
-            setnibrsSubmittedProperty(editval[0]?.IsNIBRSSummited);
-            setPorpCategoryCode(Get_LossCodes(editval, propertyCategoryData)); PropertyClassification(editval[0]?.CategoryID);
-            setPropertyNumber(editval[0]?.PropertyNumber);
-            setIncidentReportedDate(editval[0]?.ReportedDtTm ? new Date(editval[0]?.ReportedDtTm) : null);
-
+            setnibrsSubmittedProperty(editval[0]?.IsNIBRSSummited); setPorpCategoryCode(Get_LossCodes(editval, propertyCategoryData)); PropertyClassification(editval[0]?.CategoryID); setPropertyNumber(editval[0]?.PropertyNumber); setIncidentReportedDate(editval[0]?.ReportedDtTm ? new Date(editval[0]?.ReportedDtTm) : null);
             // validate property
             if (editval[0]?.PropertyID) {
                 NibrsErrorReturn(editval[0]?.PropertyID);
             }
-
         } else {
-            Reset();
-            setIncidentReportedDate(getShowingMonthDateYear(new Date())); if (FbiCode && AttComp) { setStatesAccordingTo_FbiCode(FbiCode, AttComp); }
+            Reset(); setIncidentReportedDate(getShowingMonthDateYear(new Date())); if (FbiCode && AttComp) { setStatesAccordingTo_FbiCode(FbiCode, AttComp); }
         }
     }, [editval, propertyTypeData])
 
@@ -346,7 +308,6 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
         const val = { 'PropertyID': propertyID, 'MasterPropertyID': masterPropertyId, 'IsMaster': MstPage === "MST-Property-Dash" ? true : false, }
         fetchPostData('PropertyDrug/GetData_PropertyDrug', val).then((res) => {
             if (res) {
-
                 setDrugData(res);
             } else {
                 setDrugData([]);
@@ -391,12 +352,10 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
 
     const getDrugMeasureUnit = (drugTypeID) => {
         const val = {
-            'AgencyID': loginAgencyID,
-            'DrugTypeID': drugTypeID,
+            'AgencyID': loginAgencyID, 'DrugTypeID': drugTypeID,
         }
         fetchPostData('MeasurementUnit/GetDataDropDown_MeasurementUnit', val).then((data) => {
             if (data) {
-
                 setDrugMeasureUnitData(Comman_changeArrayFormat(data, 'MeasurementUnitID', 'Description'))
             } else {
                 setDrugMeasureUnitData([]);
@@ -406,13 +365,10 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
 
     const getDrugMeasureType = (drugTypeID, measurementUnitID) => {
         const val = {
-            'AgencyID': loginAgencyID,
-            'DrugTypeID': drugTypeID,
-            'MeasurementUnitID': measurementUnitID,
+            'AgencyID': loginAgencyID, 'DrugTypeID': drugTypeID, 'MeasurementUnitID': measurementUnitID,
         }
         fetchPostData('PropertyDrugMeasureType/GetDataDropDown_PropertyDrugMeasureType', val).then((data) => {
             if (data) {
-
                 setDrugMeasureTypeData(Comman_changeArrayFormat(data, 'DrugMeasureTypeID', 'Description'))
             } else {
                 setDrugMeasureTypeData([]);
@@ -425,31 +381,22 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
         if (e) {
             if (name === 'SuspectedDrugTypeID') {
                 setValue({ ...value, [name]: e.value, 'SuspectedDrugType_Description': e.label, 'MeasurementUnitID': null, 'MeasurementUnit_Description': '', 'MeasurementTypeID': null, });
-                setDrugMeasureUnitData([]); setDrugMeasureTypeData([]);
-                getDrugMeasureUnit(e.value);
-
+                setDrugMeasureUnitData([]); setDrugMeasureTypeData([]); getDrugMeasureUnit(e.value);
             } else if (name === 'MeasurementUnitID') {
                 setValue({ ...value, [name]: e.value, 'MeasurementTypeID': null, 'MeasurementUnit_Description': e.label });
-                setDrugMeasureTypeData([]);
-                getDrugMeasureType(value.SuspectedDrugTypeID, e.value);
-
+                setDrugMeasureTypeData([]); getDrugMeasureType(value.SuspectedDrugTypeID, e.value);
             } else if (name === 'MeasurementTypeID') {
                 setValue({ ...value, [name]: e.value, 'PropertyDrugMeasure_Description': e.label });
             } else {
                 setValue({ ...value, [name]: e.value });
             }
         } else {
-
             if (name === 'SuspectedDrugTypeID') {
                 setValue({ ...value, [name]: null, 'SuspectedDrugType_Description': '', 'MeasurementUnitID': null, 'MeasurementUnit_Description': '', 'MeasurementTypeID': null, });
                 setDrugMeasureUnitData([]); setDrugMeasureTypeData([]);
-
-
             } else if (name === 'MeasurementUnitID') {
                 setValue({ ...value, [name]: null, 'MeasurementTypeID': null, 'MeasurementUnit_Description': '' });
                 setDrugMeasureTypeData([]);
-
-
             } else if (name === 'MeasurementTypeID') {
                 setValue({ ...value, [name]: null, 'PropertyDrugMeasure_Description': '' });
             } else {
@@ -462,30 +409,18 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
         setValue({
             ...value,
             'PropertyID': '', 'MasterPropertyID': '', 'PropertyNumber': 'Auto Generated', 'PropertyCategoryCode': 'A', 'PossessionOfID': null, 'OfficerID': null,
-
             // Dropdown
-            'CategoryID': null, 'ClassificationID': null, 'LossCodeID': null,
-
-            'DestroyDtTm': '', 'Value': '', 'PropertyTag': '', 'NICB': '', 'Description': '',
-            'ReportedDtTm': MstPage === "MST-Property-Dash" ? getShowingMonthDateYear(new Date(datezone)) : incReportedDate ? getShowingDateText(incReportedDate) : getShowingMonthDateYear(new Date()),
+            'CategoryID': null, 'ClassificationID': null, 'LossCodeID': null, 'DestroyDtTm': '', 'Value': '', 'PropertyTag': '', 'NICB': '', 'Description': '', 'ReportedDtTm': MstPage === "MST-Property-Dash" ? getShowingMonthDateYear(new Date(datezone)) : incReportedDate ? getShowingDateText(incReportedDate) : getShowingMonthDateYear(new Date()),
             // checkbox
             'IsEvidence': '', 'IsSendToPropertyRoom': '', 'IsPropertyRecovered': '',
             //drug Fields
-            'SuspectedDrugTypeID': null, 'EstimatedDrugQty': '', 'FractionDrugQty': '', 'MarijuanaTypeID': null, 'MarijuanaNumber': '', 'DrugManufacturedID': null, '  ClandistineLabsNumber': null,
-            'MasterID': null, 'Clandestine': '',
+            'SuspectedDrugTypeID': null, 'EstimatedDrugQty': '', 'FractionDrugQty': '', 'MarijuanaTypeID': null, 'MarijuanaNumber': '', 'DrugManufacturedID': null, '  ClandistineLabsNumber': null, 'MasterID': null, 'Clandestine': '',
             'Items': '', 'DoseUnits': '', 'LiquidOunces': '', 'SolidGrams': '', 'SolidOunces': '', 'SolidPounds': '',
         });
-
-        setnibrsSubmittedProperty(0);
-        setErrors({ ...errors, 'PropertyTypeIDError': '', 'CategoryIDError': '', 'LossCodeIDError': '', 'OfficerIDError': '', 'ContactError': '' });
-        setPropertyNumber(''); setLossCode('');
-        setDrugData([]); setPropertyClassificationData([]);
+        setnibrsSubmittedProperty(0); setErrors({ ...errors, 'PropertyTypeIDError': '', 'CategoryIDError': '', 'LossCodeIDError': '', 'OfficerIDError': '', 'ContactError': '' }); setPropertyNumber(''); setLossCode(''); setDrugData([]); setPropertyClassificationData([]);
         setMasterPropertyID(''); setPropertyID(''); setPorpRecType(''); setPorpCategoryCode('');
-        dispatch({ type: MasterProperty_ID, payload: '' });
-        dispatch({ type: Property_ID, payload: '' });
-        setPossessionID('');
-        setShowLossCodeError(false);
-        dispatch(get_Masters_Name_Drp_Data(''));
+        dispatch({ type: MasterProperty_ID, payload: '' }); dispatch({ type: Property_ID, payload: '' });
+        setPossessionID(''); setShowLossCodeError(false); dispatch(get_Masters_Name_Drp_Data(''));
         if (propertyTypeData?.length != 0 && !FbiCode) {
             const typeArticleArr = propertyTypeData?.filter((val) => { if (val?.id === "A") return val });
             if (typeArticleArr.length > 0) {
@@ -494,8 +429,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
             }
             setIsDrugOffense(false);
         }
-        setShowLossCodeError(false);
-        setnibrsFieldError([]);
+        setShowLossCodeError(false); setnibrsFieldError([]);
     }
 
     const setStatesAccordingTo_FbiCode = (FbiCode, AttComp) => {
@@ -538,8 +472,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                     const typeArticleArr = propertyTypeData?.filter((val) => { if (val?.id === "A") return val });
                     if (typeArticleArr.length > 0) {
                         setValue(prevValues => { return { ...prevValues, ['PropertyTypeID']: typeArticleArr[0]?.value, ['PropertyCategoryCode']: typeArticleArr[0]?.id, } })
-                        PropertyCategory(typeArticleArr[0]?.value);
-                        setIsDrugOffense(false);
+                        PropertyCategory(typeArticleArr[0]?.value); setIsDrugOffense(false);
                     }
                 }
                 break; // Added break
@@ -551,8 +484,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
         setStatesChangeStatus(true)
         if (e) {
             if (name === 'SuspectedDrugTypeID') {
-                setDrugTypecode(e.id);
-                setChangesStatus(true);
+                setDrugTypecode(e.id); setChangesStatus(true);
                 if (e.id === 'E') {
                     setValue({
                         ...value,
@@ -574,46 +506,33 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                     case 'G': dispatch(get_PropertyLossCode_Drp_Data(loginAgencyID, '', '', '', '', '', '1')); break;
                     default: dispatch(get_PropertyLossCode_Drp_Data(loginAgencyID, '1', '', '', '', '', ''));;
                 }
-                PropertyCategory(e.value);
-                PropertyClassification('');
-                setChangesStatus(true);
+                PropertyCategory(e.value); PropertyClassification(''); setChangesStatus(true);
                 setValue({ ...value, ['PropertyCategoryCode']: e.id, ['PropertyTypeID']: e.value, ['CategoryID']: '', ['ClassificationID']: null, ['LossCodeID']: null, ['Value']: '', });
                 setLossCode('');
             } else if (name === 'CategoryID') {
-                setPorpCategoryCode(e.code);
-                PropertyClassification(e.value);
-                setChangesStatus(true);
-
+                setPorpCategoryCode(e.code); PropertyClassification(e.value); setChangesStatus(true);
                 if (e.code === '09' || e.code === '22' || e.code === '65' || e.code === '66' || e.code === '77' || e.code === '11' || e.code === '10' || e.code === '48') {
                     setValue({ ...value, [name]: e.value, ['Value']: '0.00' });
                 } else if (e.code === '88') {
                     setValue({ ...value, [name]: e.value, ['Value']: '1' });
-
                 } else {
                     setValue({ ...value, [name]: e.value, ['Value']: '' });
                 }
-
             } else if (name === "PossessionOfID") {
                 setPossessionID(e.value); setValue({ ...value, [name]: e.value });
             } else if (name === "MeasurementTypeID") {
-
                 if (e.id === 'XX') {
                     setValue({ ...value, [name]: e.value, 'PropertyDrugMeasure_Description': e.label, 'EstimatedDrugQty': '' });
                 } else {
                     setValue({ ...value, [name]: e.value, 'PropertyDrugMeasure_Description': e.label, });
                 }
-
-
             } else {
-                setChangesStatus(true)
-                setValue({ ...value, [name]: e.value });
+                setChangesStatus(true); setValue({ ...value, [name]: e.value });
             }
 
         } else {
             if (name === 'SuspectedDrugTypeID') {
-                setChangesStatus(true); setDrugTypecode('');
-                setValue({ ...value, [name]: null, 'MeasurementTypeID': '', });
-
+                setChangesStatus(true); setDrugTypecode(''); setValue({ ...value, [name]: null, 'MeasurementTypeID': '', });
             } else if (name === 'PropertyTypeID') {
                 setChangesStatus(true);
                 setValue({
@@ -622,21 +541,13 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                 });
                 setPropertyCategoryData([]); setPropertyClassificationData([]); setLossCode('');
                 dispatch({ type: Property_LossCode_Drp_Data, payload: [] });
-
             } else if (name === 'CategoryID') {
-
-                setChangesStatus(true); setPorpCategoryCode('');
-                setPropertyClassificationData([]);
-
+                setChangesStatus(true); setPorpCategoryCode(''); setPropertyClassificationData([]);
                 setValue({ ...value, ['CategoryID']: null, ['ClassificationID']: null, ['Value']: '' });
-
             } else if (name === "PossessionOfID") {
-                setPossessionID('');
-                setChangesStatus(true);
-                setValue({ ...value, [name]: null });
+                setPossessionID(''); setChangesStatus(true); setValue({ ...value, [name]: null });
             } else {
-                setChangesStatus(true);
-                setValue({ ...value, [name]: null });
+                setChangesStatus(true); setValue({ ...value, [name]: null });
             }
             void 0;
         }
@@ -644,60 +555,31 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
 
     const HandleChanges = (e) => {
         setStatesChangeStatus(true)
-        if (e.target.name === 'IsEvidence' || e.target.name === 'IsSendToPropertyRoom' || e.target.name === 'IsPropertyRecovered' || e.target.name === 'IsAuto') {
-            setChangesStatus(true)
-            setValue({
-                ...value,
-                [e.target.name]: e.target.checked
-            })
-        }
+        if (e.target.name === 'IsEvidence' || e.target.name === 'IsSendToPropertyRoom' || e.target.name === 'IsPropertyRecovered' || e.target.name === 'IsAuto') { setChangesStatus(true); setValue({ ...value, [e.target.name]: e.target.checked }) }
         else if (e.target.name === 'EstimatedDrugQty' || e.target.name === 'SolidPounds' || e.target.name === 'SolidOunces' || e.target.name === 'SolidGrams' || e.target.name === 'LiquidOunces' || e.target.name === 'DoseUnits' || e.target.name === 'Items') {
             let ele = e.target.value.replace(/[^0-9]/g, "")
             if (ele.length === 10) {
                 const cleaned = ('' + ele).replace(/[^0-9]/g, '');
-                setChangesStatus(true)
-                setValue({
-                    ...value,
-                    [e.target.name]: cleaned
-                });
+                setChangesStatus(true); setValue({ ...value, [e.target.name]: cleaned });
             } else {
                 ele = e.target.value.split('$').join('').replace(/[^0-9]/g, "");
-                setChangesStatus(true)
-                setValue({
-                    ...value,
-                    [e.target.name]: ele
-                });
+                setChangesStatus(true); setValue({ ...value, [e.target.name]: ele });
             }
         } else if (e.target.name === 'Quantity' || e.target.name === 'Length' || e.target.name === 'BarrelLength' || e.target.name === 'FractionDrugQty' || e.target.name === 'MarijuanaNumber' || e.target.name === 'ClandistineLabsNumber') {
             const checkNumber = e.target.value.replace(/[^0-9\s]/g, "");
-            setChangesStatus(true)
-            setValue({
-                ...value,
-                [e.target.name]: checkNumber
-            });
+            setChangesStatus(true); setValue({ ...value, [e.target.name]: checkNumber });
         }
         else if (e.target.name === 'Denomination') {
             var ele = e.target.value.replace(/[^0-9\.]/g, "")
-
-
             if (ele === "") {
-                setValue({
-                    ...value,
-                    [e.target.name]: ele,
-                    MeasureTypeID: null
-                });
+                setValue({ ...value, [e.target.name]: ele, MeasureTypeID: null });
                 setChangesStatus(true);
                 return;
             }
-
-
-
             if (ele.includes('.')) {
                 if (ele.length === 16) {
-                    setChangesStatus(true)
-                    setValue({ ...value, [e.target.name]: ele });
+                    setChangesStatus(true); setValue({ ...value, [e.target.name]: ele });
                 } else {
-
                     if (ele.substr(ele.indexOf('.') + 1).slice(0, 2)) {
                         const checkDot = ele.substr(ele.indexOf('.') + 1).slice(0, 2).match(/\./g)
                         if (!checkDot) {
@@ -705,32 +587,20 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                             setValue({ ...value, [e.target.name]: ele.substring(0, ele.indexOf(".")) + '.' + ele.substr(ele.indexOf('.') + 1).slice(0, 2) });
                         }
                     } else {
-                        setChangesStatus(true)
-                        setValue({ ...value, [e.target.name]: ele })
+                        setChangesStatus(true); setValue({ ...value, [e.target.name]: ele })
                     }
                 }
             }
             else {
                 if (ele.length === 16) {
-                    setChangesStatus(true)
-                    setValue({
-                        ...value,
-                        [e.target.name]: ele
-                    });
+                    setChangesStatus(true); setValue({ ...value, [e.target.name]: ele });
                 } else {
-                    setChangesStatus(true)
-                    setValue({
-                        ...value,
-                        [e.target.name]: ele
-                    });
+                    setChangesStatus(true); setValue({ ...value, [e.target.name]: ele });
                 }
             }
         } else if (e.target.name === 'HIN' || e.target.name === 'RegistrationNumber') {
             var ele = e.target.value.replace(/[^0-9a-zA-Z]/g, "")
-            setValue({
-                ...value,
-                [e.target.name]: ele
-            });
+            setValue({ ...value, [e.target.name]: ele });
         }
         else if (e.target.name === 'Value') {
             setChangesStatus(true);
@@ -738,7 +608,6 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
             if (ele.startsWith('.')) {
                 return;
             }
-
             if (ele.includes('.')) {
                 if (ele.length === 16) {
                     setValue({ ...value, [e.target.name]: ele });
@@ -747,8 +616,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                         const checkDot = ele.substr(ele.indexOf('.') + 1).slice(0, 2).match(/\./g);
                         if (!checkDot) {
                             setValue({
-                                ...value,
-                                [e.target.name]: ele.substring(0, ele.indexOf(".")) + '.' + ele.substr(ele.indexOf('.') + 1).slice(0, 2)
+                                ...value, [e.target.name]: ele.substring(0, ele.indexOf(".")) + '.' + ele.substr(ele.indexOf('.') + 1).slice(0, 2)
                             });
                             return;
                         } else {
@@ -763,11 +631,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
             }
         }
         else {
-            setChangesStatus(true);
-            setValue({
-                ...value,
-                [e.target.name]: e.target.value
-            })
+            setChangesStatus(true); setValue({ ...value, [e.target.name]: e.target.value })
         }
     }
 
@@ -776,37 +640,24 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
             toastifyError('Add atleast one drug type');
             setErrors({ ...errors, ['PropertyTypeIDError']: '', })
             return
-
         } else {
             AddDeleteUpadate('Property/Insert_Property', value).then((res) => {
                 if (res.success) {
-
                     if (MstPage === "MST-Property-Dash") {
                         navigate(`/nibrs-Home?page=MST-Property-Dash&ProId=${stringToBase64(res?.PropertyID)}&MProId=${stringToBase64(res?.MasterPropertyID)}&ModNo=${res?.PropertyNumber?.trim()}&ProSta=${true}&ProCategory=${value.PropertyCategoryCode}&narrativeId=${narrativeId}`);
                     } else {
                         navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${stringToBase64(res?.PropertyID)}&MProId=${stringToBase64(res?.MasterPropertyID)}&ProSta=${true}&ProCategory=${value.PropertyCategoryCode}&narrativeId=${narrativeId}`)
                     }
-
                     Reset();
-                    if (drugLocalArr?.length > 0 && value.PropertyCategoryCode === 'D') {
-                        Add_Drug(true, res.PropertyID, res.MasterPropertyID);
-                    }
-                    toastifySuccess(res.Message);
-                    setErrors({ ...errors, ['LossCodeIDError']: '', }); setUpdateCount(updateCount + 1)
-                    get_Incident_Count(mainIncidentID, loginPinID);
-                    dispatch(get_PropertyMainModule_Data(mainIncidentID, MstPage === "MST-Property-Dash" ? true : false));
-                    setChangesStatus(false); setStatesChangeStatus(true); setDrugLocalArr([]);
-
+                    if (drugLocalArr?.length > 0 && value.PropertyCategoryCode === 'D') { Add_Drug(true, res.PropertyID, res.MasterPropertyID); }
+                    toastifySuccess(res.Message); setErrors({ ...errors, ['LossCodeIDError']: '', }); setUpdateCount(updateCount + 1)
+                    get_Incident_Count(mainIncidentID, loginPinID); dispatch(get_PropertyMainModule_Data(mainIncidentID, MstPage === "MST-Property-Dash" ? true : false)); setChangesStatus(false); setStatesChangeStatus(true); setDrugLocalArr([]);
                     // Validate Property
-
-                    ValidateIncidentProperty(mainIncidentID);
-                    NibrsErrorReturn(res?.PropertyID);
+                    ValidateIncidentProperty(mainIncidentID); NibrsErrorReturn(res?.PropertyID);
                     // validateIncSideBar
                     validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
-
                 } else {
-                    toastifyError('error');
-                    setErrors({ ...errors, ['PropertyTypeIDError']: '', })
+                    toastifyError('error'); setErrors({ ...errors, ['PropertyTypeIDError']: '', })
                 }
             })
 
@@ -822,22 +673,15 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                 const message = parsedData.Table[0].Message;
                 toastifySuccess(message);
                 dispatch(get_PropertyMainModule_Data(mainIncidentID, MstPage === "MST-Property-Dash" ? true : false));
-                setChangesStatus(false); setStatesChangeStatus(true);
-                setErrors({ ...errors, ['PropertyTypeIDError']: '', })
-
+                setChangesStatus(false); setStatesChangeStatus(true); setErrors({ ...errors, ['PropertyTypeIDError']: '', })
                 sessionStorage.setItem("propertyStolenValue", Encrypted_Id_Name(previousValue, 'SForStolenValue'));
                 GetSingleData(DecPropID, DecMPropID);
-
                 // Validate Property
-
-                ValidateIncidentProperty(mainIncidentID);
-                NibrsErrorReturn(DecPropID);
+                ValidateIncidentProperty(mainIncidentID); NibrsErrorReturn(DecPropID);
                 // validateIncSideBar
                 validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
-
             } else {
-                toastifyError('error');
-                setErrors({ ...errors, ['PropertyTypeIDError']: '', })
+                toastifyError('error'); setErrors({ ...errors, ['PropertyTypeIDError']: '', })
             }
         })
     }
@@ -848,22 +692,12 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
 
     const newProperty = () => {
         if (MstPage === "MST-Property-Dash") {
-
             navigate(`/nibrs-Home?page=MST-Property-Dash&ProId=${0}&MProId=${0}&ModNo=${''}&ProSta=${false}&ProCategory=${''}&narrativeId=${narrativeId}`);
-
-            Reset();
-
-            dispatch({ type: Master_Property_Status, payload: false })
+            Reset(); dispatch({ type: Master_Property_Status, payload: false })
             get_Property_Count(''); setChangesStatus(false); setStatesChangeStatus(false);
         } else {
-
-            navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${0}&MProId=${0}&ProSta=${false}&ProCategory=${''}&narrativeId=${narrativeId}`)
-
-            Reset(); setPossessionID('');
-
-            dispatch({ type: Master_Property_Status, payload: false })
-            get_Property_Count(''); setChangesStatus(false); setStatesChangeStatus(false);
-            setErrors({});
+            navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${0}&MProId=${0}&ProSta=${false}&ProCategory=${''}&narrativeId=${narrativeId}`); Reset(); setPossessionID(''); dispatch({ type: Master_Property_Status, payload: false })
+            get_Property_Count(''); setChangesStatus(false); setStatesChangeStatus(false); setErrors({});
         }
     }
 
@@ -933,47 +767,25 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
 
     const columns1 = [
         {
-            width: '250px',
-            name: 'Property Number',
-            selector: (row) => row.PropertyNumber,
-            sortable: true
+            width: '250px', name: 'Property Number', selector: (row) => row.PropertyNumber, sortable: true
         },
         {
-            name: 'Property Type',
-            selector: (row) => row.PropertyType_Description,
-            sortable: true
+            name: 'Property Type', selector: (row) => row.PropertyType_Description, sortable: true
         },
         {
-            name: 'Category',
-            selector: (row) => row.PropertyCategory_Description,
-            sortable: true
+            name: 'Category', selector: (row) => row.PropertyCategory_Description, sortable: true
         },
         {
-            name: 'Loss Code',
-            selector: (row) => row.PropertyLossCode_Description,
-            sortable: true
+            name: 'Loss Code', selector: (row) => row.PropertyLossCode_Description, sortable: true
         },
         {
-            name: 'Owner Name',
-            selector: (row) => row.Owner,
-            sortable: true
-        },
-        // {
-        //   name: 'Evidence Flag',
-        //   selector: (row) => row.Evidence,
-        //   sortable: true
-        // },
-        {
-            name: 'Evidence Flag',
-            selector: row => (
-                <input type="checkbox" checked={row.Evidence === true} disabled />
-            ),
-            sortable: true
+            name: 'Owner Name', selector: (row) => row.Owner, sortable: true
         },
         {
-            width: '100px',
-            name: 'View',
-
+            name: 'Evidence Flag', selector: row => (<input type="checkbox" checked={row.Evidence === true} disabled />), sortable: true
+        },
+        {
+            width: '100px', name: 'View',
             cell: row =>
                 <div style={{ position: 'absolute', top: 4, right: 30 }}>
                     {
@@ -1031,15 +843,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
         setStatesChangeStatus(false); setShowLossCodeError(false);
         if (row?.PropertyID || row?.MasterPropertyID) {
             // get Inc-Lock Status
-            getPermissionLevelByLock(IncID, loginPinID);
-
-            navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${stringToBase64(row?.PropertyID)}&MProId=${stringToBase64(row?.MasterPropertyID)}&ProSta=${true}&ProCategory=${row.PropertyType_Description}&narrativeId=${narrativeId}`);
-
-            Reset();
-            GetSingleData(row?.PropertyID, row?.MasterPropertyID);
-            get_Property_Count(row?.PropertyID, row?.MasterPropertyID, MstPage === "MST-Property-Dash" ? true : false);
-            setMasterPropertyID(row?.MasterPropertyID); dispatch({ type: MasterProperty_ID, payload: row?.MasterPropertyID });
-            setPropertyID(row?.PropertyID); dispatch({ type: Property_ID, payload: row.PropertyID });
+            getPermissionLevelByLock(IncID, loginPinID); navigate(`/nibrs-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&ProId=${stringToBase64(row?.PropertyID)}&MProId=${stringToBase64(row?.MasterPropertyID)}&ProSta=${true}&ProCategory=${row.PropertyType_Description}&narrativeId=${narrativeId}`); Reset(); GetSingleData(row?.PropertyID, row?.MasterPropertyID); get_Property_Count(row?.PropertyID, row?.MasterPropertyID, MstPage === "MST-Property-Dash" ? true : false); setMasterPropertyID(row?.MasterPropertyID); dispatch({ type: MasterProperty_ID, payload: row?.MasterPropertyID }); setPropertyID(row?.PropertyID); dispatch({ type: Property_ID, payload: row.PropertyID });
         }
     }
 
@@ -1059,36 +863,26 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
 
     const columns = [
         {
-            name: 'Suspected Drug Type',
-            selector: (row) => row.SuspectedDrugType_Description,
-            sortable: true
+            name: 'Suspected Drug Type', selector: (row) => row.SuspectedDrugType_Description, sortable: true
         },
         {
-            name: 'Measurement Unit',
-            selector: (row) => row.MeasurementUnit_Description,
-            sortable: true
+            name: 'Measurement Unit', selector: (row) => row.MeasurementUnit_Description, sortable: true
         },
         {
-            name: 'Measurement Type',
-            selector: (row) => row.PropertyDrugMeasure_Description,
-            sortable: true
+            name: 'Measurement Type', selector: (row) => row.PropertyDrugMeasure_Description, sortable: true
         },
         {
-            name: 'Estimated Qty',
-            selector: (row) => row.EstimatedDrugQty,
-            sortable: true
+            name: 'Estimated Qty', selector: (row) => row.EstimatedDrugQty, sortable: true
         },
         {
             name: <p className='text-end' style={{ position: 'absolute', top: 8, right: 10 }}>Action</p>,
             cell: row =>
                 <div className="div" style={{ position: 'absolute', top: 0, right: 0 }}>
-
                     <button onClick={() => { setIsProperty(false); setPropertyDrugID(row.PropertyDrugID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
                         <i className="fa fa-trash"></i>
                     </button>
                 </div>
         },
-
     ]
 
     const set_Edit_Value = (row) => {
@@ -1097,8 +891,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
 
     const setStatusFalse = (e) => {
         setChangesStatus(false); setStatesChangeStatus(false);
-        setPropertyDrugID(''); setDrugTypecode('');
-        setDrugModal(true);
+        setPropertyDrugID(''); setDrugTypecode(''); setDrugModal(true);
         setValue({
             ...value,
             'SuspectedDrugTypeID': null, 'EstimatedDrugQty': '', 'FractionDrugQty': '', 'MeasurementTypeID': '', 'PropertyDrugID': '',
@@ -1109,7 +902,6 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
 
     const [drugErrors, setDrugErrors] = useState({
         'SuspectedDrugTypeIDError': '', 'EstimatedDrugQtyError': '', 'MeasurementUnitIDError': '', 'MeasurementTypeIDError': '',
-
     })
 
     const check_Drug_Validation_Error = () => {
@@ -1117,8 +909,6 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
         const EstimatedDrugQtyErr = RequiredFieldIncident(value.EstimatedDrugQty);
         const MeasurementUnitIDErr = RequiredFieldIncident(value.MeasurementUnitID);
         const MeasurementTypeIDErr = RequiredFieldIncident(value.MeasurementTypeID);
-
-
         setDrugErrors(prevValues => {
             return {
                 ...prevValues,
@@ -1126,12 +916,9 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                 ['EstimatedDrugQtyError']: EstimatedDrugQtyErr || prevValues['EstimatedDrugQtyError'],
                 ['MeasurementUnitIDError']: MeasurementUnitIDErr || prevValues['MeasurementUnitIDError'],
                 ['MeasurementTypeIDError']: MeasurementTypeIDErr || prevValues['MeasurementTypeIDError'],
-
-
             }
         })
     }
-
     // Check All Field Format is True Then Submit 
     const { SuspectedDrugTypeIDError, EstimatedDrugQtyError, MeasurementUnitIDError, MeasurementTypeIDError } = drugErrors
 
@@ -1152,42 +939,20 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
         if (propertyDrugID) {
             setValue({
                 ...value,
-                'SuspectedDrugTypeID': parseInt(drugEditData?.SuspectedDrugTypeID),
-
-                'EstimatedDrugQty': drugEditData?.EstimatedDrugQty,
-                'FractionDrugQty': drugEditData?.FractionDrugQty,
-                'MeasurementTypeID': drugEditData?.MeasurementTypeID,
-                'MasterPropertyID': drugEditData?.MasterPropertyID,
-                'PropertyDrugID': drugEditData?.PropertyDrugID,
-                'PropertySourceDrugTypeID': drugEditData?.PropertySourceDrugTypeID,
-                'MarijuanaTypeID': drugEditData?.MarijuanaTypeID,
-                'MarijuanaNumber': drugEditData?.MarijuanaNumber,
-                'DrugManufacturedID': drugEditData?.DrugManufacturedID,
-                'ClandistineLabsNumber': drugEditData?.ClandistineLabsNumber,
-                'MeasurementUnitID': drugEditData?.MeasurementUnitID,
-
-                'Items': drugEditData?.Items,
-                'DoseUnits': drugEditData?.DoseUnits,
-                'LiquidOunces': drugEditData?.LiquidOunces,
-                'SolidGrams': drugEditData?.SolidGrams,
-                'SolidOunces': drugEditData?.SolidOunces,
-                'SolidPounds': drugEditData?.SolidPounds,
+                'SuspectedDrugTypeID': parseInt(drugEditData?.SuspectedDrugTypeID), 'EstimatedDrugQty': drugEditData?.EstimatedDrugQty, 'FractionDrugQty': drugEditData?.FractionDrugQty,
+                'MeasurementTypeID': drugEditData?.MeasurementTypeID, 'MasterPropertyID': drugEditData?.MasterPropertyID, 'PropertyDrugID': drugEditData?.PropertyDrugID, 'PropertySourceDrugTypeID': drugEditData?.PropertySourceDrugTypeID, 'MarijuanaTypeID': drugEditData?.MarijuanaTypeID, 'MarijuanaNumber': drugEditData?.MarijuanaNumber,
+                'DrugManufacturedID': drugEditData?.DrugManufacturedID, 'ClandistineLabsNumber': drugEditData?.ClandistineLabsNumber, 'MeasurementUnitID': drugEditData?.MeasurementUnitID, 'Items': drugEditData?.Items, 'DoseUnits': drugEditData?.DoseUnits, 'LiquidOunces': drugEditData?.LiquidOunces, 'SolidGrams': drugEditData?.SolidGrams, 'SolidOunces': drugEditData?.SolidOunces, 'SolidPounds': drugEditData?.SolidPounds,
             })
-            setDrugTypecode(Get_Drug_Code(drugEditData, suspectedDrugDrpData));
-            getDrugMeasureUnit(drugEditData?.SuspectedDrugTypeID);
-            getDrugMeasureType(drugEditData?.SuspectedDrugTypeID, drugEditData?.MeasurementUnitID);
-
+            setDrugTypecode(Get_Drug_Code(drugEditData, suspectedDrugDrpData)); getDrugMeasureUnit(drugEditData?.SuspectedDrugTypeID); getDrugMeasureType(drugEditData?.SuspectedDrugTypeID, drugEditData?.MeasurementUnitID);
         } else {
             setValue({
                 ...value,
                 'SuspectedDrugTypeID': null, 'EstimatedDrugQty': '', 'FractionDrugQty': '', 'MeasurementUnitID': null, 'MeasurementTypeID': '', 'PropertySourceDrugTypeID': '',
-                'MarijuanaTypeID': null, 'MarijuanaNumber': '', 'DrugManufacturedID': null, '  ClandistineLabsNumber': '',
-                'Items': '', 'DoseUnits': '', 'LiquidOunces': '', 'SolidGrams': '', 'SolidOunces': '', 'SolidPounds': '',
+                'MarijuanaTypeID': null, 'MarijuanaNumber': '', 'DrugManufacturedID': null, '  ClandistineLabsNumber': '', 'Items': '', 'DoseUnits': '', 'LiquidOunces': '', 'SolidGrams': '', 'SolidOunces': '', 'SolidPounds': '',
             });
             setDrugErrors({
                 ...drugErrors,
-                'SuspectedDrugTypeIDError': '', 'EstimatedDrugQtyError': '', 'MeasurementUnitIDError': '', 'MeasurementTypeIDError': '',
-                'solidPoundsError': '', 'solidOunceError': '', 'solidGramError': '', 'liquidOunceError': '', 'doseUnitsError': '', 'ItemsError': '',
+                'SuspectedDrugTypeIDError': '', 'EstimatedDrugQtyError': '', 'MeasurementUnitIDError': '', 'MeasurementTypeIDError': '', 'solidPoundsError': '', 'solidOunceError': '', 'solidGramError': '', 'liquidOunceError': '', 'doseUnitsError': '', 'ItemsError': '',
             })
         }
     }, [drugEditData, drugModal])
@@ -1195,7 +960,6 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
     const Add_Drug = (ProStatus, proID, MstProID) => {
         if (ProStatus) {
             if (proID || MstProID) {
-
                 const oldArr = drugLocalArr
                 const newArr = oldArr.map(obj => ({
                     MasterPropertyID: MstProID,
@@ -1261,12 +1025,8 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
         if (drugLocalArr?.length > 0) {
             const newArray = drugLocalArr?.filter(item => item.PropertyDrugID == propertyDrugID);
             const ModifyArr = newArray?.map(obj => ({
-                'SuspectedDrugTypeID': value?.SuspectedDrugTypeID,
-                'EstimatedDrugQty': value?.EstimatedDrugQty,
-                'MeasurementUnitID': value?.MeasurementUnitID,
-                'FractionDrugQty': value?.FractionDrugQty, 'MeasurementTypeID': value?.MeasurementTypeID, 'PropertyCategoryCode': value?.PropertyCategoryCode, 'PropertySourceDrugTypeID': value?.PropertySourceDrugTypeID, 'CreatedByUserFK': value?.CreatedByUserFK,
-                'MarijuanaTypeID': value?.MarijuanaTypeID, 'MarijuanaNumber': value?.MarijuanaNumber, 'DrugManufacturedID': value?.DrugManufacturedID, 'ClandistineLabsNumber': value?.ClandistineLabsNumber, 'SolidPounds': value?.SolidPounds, 'SolidOunces': value?.SolidOunces, 'SolidGrams': value?.SolidGrams, 'LiquidOunces': value?.LiquidOunces,
-                'DoseUnits': value?.DoseUnits, 'Items': value?.Items, 'PropertyDrugMeasure_Description': value.PropertyDrugMeasure_Description, 'SuspectedDrugType_Description': value.SuspectedDrugType_Description, 'IsMaster': obj.IsMaster, 'PropertyDrugID': obj.PropertyDrugID,
+                'SuspectedDrugTypeID': value?.SuspectedDrugTypeID, 'EstimatedDrugQty': value?.EstimatedDrugQty,
+                'MeasurementUnitID': value?.MeasurementUnitID, 'FractionDrugQty': value?.FractionDrugQty, 'MeasurementTypeID': value?.MeasurementTypeID, 'PropertyCategoryCode': value?.PropertyCategoryCode, 'PropertySourceDrugTypeID': value?.PropertySourceDrugTypeID, 'CreatedByUserFK': value?.CreatedByUserFK, 'MarijuanaTypeID': value?.MarijuanaTypeID, 'MarijuanaNumber': value?.MarijuanaNumber, 'DrugManufacturedID': value?.DrugManufacturedID, 'ClandistineLabsNumber': value?.ClandistineLabsNumber, 'SolidPounds': value?.SolidPounds, 'SolidOunces': value?.SolidOunces, 'SolidGrams': value?.SolidGrams, 'LiquidOunces': value?.LiquidOunces, 'DoseUnits': value?.DoseUnits, 'Items': value?.Items, 'PropertyDrugMeasure_Description': value.PropertyDrugMeasure_Description, 'SuspectedDrugType_Description': value.SuspectedDrugType_Description, 'IsMaster': obj.IsMaster, 'PropertyDrugID': obj.PropertyDrugID,
             }));
             const result = drugLocalArr?.find(item => {
                 if (item?.PropertyDrugID != ModifyArr[0]?.PropertyDrugID) {
@@ -1314,8 +1074,6 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
         if (e) {
             if (name === 'LossCodeID') {
                 setLossCode(e.id); setPorpRecType(e.code);
-
-
                 if (propCategoryCode === '09' || propCategoryCode === '22' || propCategoryCode === '65' || propCategoryCode === '66' || propCategoryCode === '77' || propCategoryCode === '11' || propCategoryCode === '10' || propCategoryCode === '48') {
                     setValue({ ...value, [name]: e.value, });
                 }
@@ -1332,7 +1090,6 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
         } else {
             if (name === 'LossCodeID') {
                 setLossCode(''); setPorpRecType('');
-
                 if (propCategoryCode === '09' || propCategoryCode === '22' || propCategoryCode === '65' || propCategoryCode === '66' || propCategoryCode === '77' || propCategoryCode === '11' || propCategoryCode === '10' || propCategoryCode === '48') {
                     setValue({ ...value, [name]: null, });
                 }
@@ -1382,11 +1139,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
             when: () => true,
             style: (row) => ({
                 ...getStatusColors(row.PropertyID, nibrsValidateData),
-                ...(row.PropertyID === DecPropID ? {
-                    backgroundColor: '#001f3fbd',
-                    color: 'white',
-                    cursor: 'pointer',
-                } : {})
+                ...(row.PropertyID === DecPropID ? { backgroundColor: '#001f3fbd', color: 'white', cursor: 'pointer', } : {})
             }),
         },
     ];
@@ -1411,13 +1164,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
 
     const customStylesWithOutColor = {
         control: base => ({
-            ...base,
-            height: 20,
-
-            minHeight: 35,
-            fontSize: 14,
-            margintop: 2,
-            boxShadow: 0,
+            ...base, height: 20, minHeight: 35, fontSize: 14, margintop: 2, boxShadow: 0,
         }),
     };
 
@@ -1440,59 +1187,31 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                 if (data) {
                     if (data?.Properties?.length > 0) {
                         const propArr = data?.Properties?.filter((item) => item?.PropertyType !== 'V' && item?.PropertyType !== null);
-
-
                         if (propArr?.length > 0) {
-
                             const propErrorArray = propArr || []
                             if (propErrorArray.every(item => item === null || item === undefined)) {
                                 setnibrsValidateData([]); setclickNibLoder(false);
-
                             } else {
                                 const isSuspectedDrugType = propArr[0]?.OnPageError?.includes("{352} Add at least one suspected drug type(create a property with type 'Drug')");
                                 const isPropertyIdZeroError = propArr[0]?.OnPageError?.includes("{074} Need a property loss code of 5,7 for offense  23B");
-
                                 if (isSuspectedDrugType) {
-                                    setSuspectedDrugTypeErrorStatus(true);
-                                    setIsPropertyIdZeroError(false);
-
+                                    setSuspectedDrugTypeErrorStatus(true); setIsPropertyIdZeroError(false);
                                 } else if (isPropertyIdZeroError) {
-                                    setIsPropertyIdZeroError(true);
-                                    setSuspectedDrugTypeErrorStatus(false);
-
+                                    setIsPropertyIdZeroError(true); setSuspectedDrugTypeErrorStatus(false);
                                 } else {
-                                    setSuspectedDrugTypeErrorStatus(false);
-                                    setIsPropertyIdZeroError(false);
-
-                                    setclickNibLoder(false);
-
+                                    setSuspectedDrugTypeErrorStatus(false); setIsPropertyIdZeroError(false); setclickNibLoder(false);
                                 }
-
                                 const row = propArr[0];
-
-                                isDefaultSelected && set_EditRow(row);
-
-                                setnibrsValidateData(propArr || []);
-                                setclickNibLoder(false);
-
-
-
-
+                                isDefaultSelected && set_EditRow(row); setnibrsValidateData(propArr || []); setclickNibLoder(false);
                             }
-
                         } else {
                             setnibrsValidateData([]); setclickNibLoder(false);
-
                         }
-
                     } else {
                         setnibrsValidateData([]); setclickNibLoder(false);
-
                     }
-
                 } else {
                     setnibrsValidateData([]); setclickNibLoder(false);
-
                 }
             })
         } catch (error) {
@@ -1505,21 +1224,16 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
         try {
             fetchPostDataNibrs('NIBRS/GetPropertyNIBRSError', { 'gIncidentID': mainIncidentID, 'IncidentNumber': IncNo, 'PropertyId': propertyID, 'gIntAgencyID': loginAgencyID }).then((data) => {
                 if (data) {
-
                     const propArr = data?.Properties?.filter((item) => item?.PropertyType !== 'V');
-
                     if (propArr?.length > 0) {
                         console.log("🚀 ~ Validate Particular Property :", propArr);
                         setclickNibLoder(false); setnibrsFieldError(propArr[0]); setNibrsErrStr(propArr[0]?.OnPageError);
-
                     } else {
                         setclickNibLoder(false); setNibrsErrStr(''); setnibrsFieldError([]);
                     }
-
                 } else {
                     setNibrsErrStr(''); setnibrsFieldError([]); setShowLossCodeError(false); setclickNibLoder(false);
                 }
-
             })
         } catch (error) {
             console.log("🚀 ~ ValidateProperty ~ error:", error);
@@ -1535,7 +1249,6 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
             const val = { 'PropertyDrugID': propertyDrugID, 'DeletedByUserFK': loginPinID }
             AddDeleteUpadate('PropertyDrug/Delete_PropertyDrug', val).then((res) => {
                 if (res) {
-
                     const parsedData = JSON.parse(res.data);
                     const message = parsedData.Table[0].Message;
                     toastifySuccess(message);
@@ -1551,13 +1264,10 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
         setDrugModal(false);
         setValue({
             ...value,
-            'SuspectedDrugTypeID': null, 'EstimatedDrugQty': null, 'FractionDrugQty': null, 'MeasurementTypeID': '', 'ClandistineLabsNumber': '',
-            'PropertySourceDrugTypeID': '', 'MarijuanaTypeID': null, 'MarijuanaNumber': '', 'DrugManufacturedID': null,
-            'Items': '', 'DoseUnits': '', 'LiquidOunces': '', 'SolidGrams': '', 'SolidOunces': '', 'SolidPounds': '',
+            'SuspectedDrugTypeID': null, 'EstimatedDrugQty': null, 'FractionDrugQty': null, 'MeasurementTypeID': '', 'ClandistineLabsNumber': '', 'PropertySourceDrugTypeID': '', 'MarijuanaTypeID': null, 'MarijuanaNumber': '', 'DrugManufacturedID': null, 'Items': '', 'DoseUnits': '', 'LiquidOunces': '', 'SolidGrams': '', 'SolidOunces': '', 'SolidPounds': '',
         })
         setDrugErrors({
-            ...drugErrors,
-            'SuspectedDrugTypeIDError': '', 'EstimatedDrugQtyError': '', 'MeasurementUnitIDError': '', 'MeasurementTypeIDError': '',
+            ...drugErrors, 'SuspectedDrugTypeIDError': '', 'EstimatedDrugQtyError': '', 'MeasurementUnitIDError': '', 'MeasurementTypeIDError': '',
         })
         setDrugEditData({}); setPropertyDrugID('');
     }
@@ -1626,10 +1336,8 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
             console.log("🚀 ~ get_Offense_DropDown ~ data:", data)
             if (data) {
                 setOffenseDrp(threeColVictimOffenseArray(data, 'CrimeID', 'Offense_Description'));
-
             } else {
                 setOffenseDrp([]);
-
             }
         }).catch((err) => {
             console.log("🚀 ~get_Offense_DropDown fetchpostdata error ~ err:", err);
@@ -1643,10 +1351,8 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
             if (res) {
                 // data, Id, Code, type, col3, col4, NIBRSCode, AttmComp
                 setOffenseEditVal(offenseArray(res, 'PropertyOffenseID', 'OffenseID', 'PropertyID', 'PropertyID', 'Offense_Description', 'NIBRSCode', 'AttemptComplete'));
-
             } else {
                 setOffenseEditVal([]);
-
             }
         });
     }
@@ -1681,10 +1387,8 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
 
     const DeleteOffense = (id, col1, url) => {
         const val = {
-            'PropertyOffenseID': id,
-            'DeletedByUserFK': loginPinID,
-            'MasterPropertyID': masterPropertyID,
-            'PropertyID': propertyID,
+            'PropertyOffenseID': id, 'DeletedByUserFK': loginPinID,
+            'MasterPropertyID': masterPropertyID, 'PropertyID': propertyID,
             'IsMaster': MstPage === "MST-Property-Dash" ? true : false
         }
         AddDeleteUpadate(url, val).then((res) => {
@@ -1692,9 +1396,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                 const parsedData = JSON.parse(res.data);
                 const message = parsedData.Table[0].Message;
                 toastifySuccess(message);
-                get_Offense_DropDown(mainIncidentID, propertyID);
-                getEditOffenseData(propertyID, masterPropertyID, mainIncidentID);
-
+                get_Offense_DropDown(mainIncidentID, propertyID); getEditOffenseData(propertyID, masterPropertyID, mainIncidentID);
             } else {
                 console.log("Somthing Wrong");
             }
@@ -1705,13 +1407,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
 
     const InsertOffense = (id, col1, url) => {
         const val = {
-            'IncidentID': mainIncidentID,
-            'PropertyID': propertyID,
-            'CreatedByUserFK': loginPinID,
-            'IsMaster': MstPage === "MST-Property-Dash" ? true : false,
-            'MasterPropertyID': masterPropertyID,
-            'labal': '',
-            'OffenseID': id,
+            'IncidentID': mainIncidentID, 'PropertyID': propertyID, 'CreatedByUserFK': loginPinID, 'IsMaster': MstPage === "MST-Property-Dash" ? true : false, 'MasterPropertyID': masterPropertyID, 'labal': '', 'OffenseID': id,
         }
         AddDeleteUpadate(url, val).then((res) => {
             if (res) {
@@ -1720,10 +1416,8 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                 toastifySuccess(message);
                 get_Offense_DropDown(mainIncidentID, propertyID);
                 getEditOffenseData(propertyID, masterPropertyID, mainIncidentID);
-
             } else {
                 console.log("Somthing Wrong");
-
             }
         }).catch((err) => {
             console.log("🚀 ~ Insert AddDeleteUpadate ~ err:", err);
@@ -1796,7 +1490,6 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                             <div className="col-3 col-md-3 col-lg-3 mt-1">
                                 {
                                     nibrsFieldError?.OnPageError && !nibrsFieldError?.IsCategory && (
-
                                         nibrsFieldError?.OnPageError?.includes("{201} Criminal Activity must be present - Mandatory field") ?
                                             <></>
                                             :
@@ -1906,7 +1599,6 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                                                 Requiredcolour
                                     }
                                     isDisabled={isLockOrRestrictModule("Lock", editval[0]?.CategoryID, isLocked)}
-
                                     value={propertyCategoryData?.filter((obj) => obj.value === value?.CategoryID)}
                                     options={propertyCategoryData}
                                     onChange={(e) => ChangeDropDown(e, 'CategoryID')}
@@ -1921,7 +1613,6 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                                 <Select
                                     styles={isLockOrRestrictModule("Lock", editval[0]?.ClassificationID, isLocked) ? LockFildscolour : customStylesWithOutColor}
                                     isDisabled={isLockOrRestrictModule("Lock", editval[0]?.ClassificationID, isLocked)}
-
                                     name='ClassificationID'
                                     value={propertyClassificationData?.filter((obj) => obj.value === value?.ClassificationID)}
                                     options={propertyClassificationData}
@@ -1947,7 +1638,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                                     }}
                                     dateFormat="MM/dd/yyyy HH:mm"
                                     isClearable={false}
-                                    disabled={true}
+                                    // disabled={true}
                                     selected={value?.ReportedDtTm && new Date(value?.ReportedDtTm)}
                                     onChange={(date) => {
                                         setChangesStatus(true); setStatesChangeStatus(true);
