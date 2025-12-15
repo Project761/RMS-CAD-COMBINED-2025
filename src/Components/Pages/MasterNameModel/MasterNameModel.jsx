@@ -3237,7 +3237,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                                                                                     <p style={{ color: 'red', fontSize: '9px', margin: '0px', padding: '0px' }}>{errors.AgeFromError}</p>
                                                                                 ) : null}</label>
                                                                             </div>
-                                                                            <div className="col-2 col-md-3 col-lg-4 mt-1  text-field px-0" >
+                                                                            <div className=" mt-1  text-field px-0" style={{ flex: "0 0 auto", width: "31%" }} >
                                                                                 <input type="text"
                                                                                     name='AgeFrom'
                                                                                     maxLength={3}
@@ -3249,7 +3249,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                                                                                     placeholder='From' autoComplete='off' />
                                                                             </div>
                                                                             <span className='dash-name mt-1'>_</span>
-                                                                            <div className="col-2 col-md-2 col-lg-4 mt-1  text-field " >
+                                                                            <div className=" mt-1  text-field " style={{ flex: "0 0 auto", width: "20%" }} >
                                                                                 <input type="text"
                                                                                     name='AgeTo'
                                                                                     maxLength={3} value={masterNameValues?.AgeTo}
