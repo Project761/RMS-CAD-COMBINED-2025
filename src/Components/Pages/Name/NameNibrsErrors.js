@@ -84,8 +84,6 @@ export const NibrsStylesRelationShip = (status) => {
 
 export const victimNibrsErrors = (victimCode, offenceCodes, type = 'Color', isCrimeAgainsPerson, isCrimeAgainstProperty, isCrimeAgainstSociety, nameSingleData) => {
 
-    
-
     // policeOfficer
     const policeOfficerCodeArr = ['09A', '09B', '09C', '11A', '11B', '11C', '11D', '100', '36A', '36B', '13A', '64A', '64B', '13B', '13C'];
     const policeOfficerCodeSet = new Set(policeOfficerCodeArr);
@@ -103,9 +101,10 @@ export const victimNibrsErrors = (victimCode, offenceCodes, type = 'Color', isCr
 
     switch (victimCode) {
         case 'I': {
-            if (!isCrimeAgainsPerson) {
-                return type === 'Color' ? ErrorStyle(true) : ErrorTooltip(CrimeAgainstPersonError);
-            } else if (!nameSingleData[0]?.ResidentID) {
+            // if (!isCrimeAgainsPerson) {
+            //     return type === 'Color' ? ErrorStyle(true) : ErrorTooltip(CrimeAgainstPersonError);
+            // } else
+            if (!nameSingleData[0]?.ResidentID) {
                 return type === 'Color' ? ErrorStyle(true) : ErrorTooltip(ResidentStatusError);
             } else if (!nameSingleData[0]?.Gender_Code || !nameSingleData[0]?.Race_Code || !nameSingleData[0]?.AgeFrom) {
                 return type === 'Color' ? ErrorStyle(true) : ErrorTooltip(SocietyPublicError);
@@ -114,10 +113,11 @@ export const victimNibrsErrors = (victimCode, offenceCodes, type = 'Color', isCr
             }
         }
         case 'L': {
-            if (!isCrimeAgainsPerson) {
-                return type === 'Color' ? ErrorStyle(true) : ErrorTooltip(CrimeAgainstPersonError);
+            // if (!isCrimeAgainsPerson) {
+            //     return type === 'Color' ? ErrorStyle(true) : ErrorTooltip(CrimeAgainstPersonError);
 
-            } else if (!PoliceOfficerCommanCodes || PoliceOfficerCommanCodes?.length === 0) {
+            // } else 
+            if (!PoliceOfficerCommanCodes || PoliceOfficerCommanCodes?.length === 0) {
                 return type === 'Color' ? ErrorStyle(true) : ErrorTooltip(policeOfficerError);
 
             } else if (!lawOfficerCommanCodes || lawOfficerCommanCodes?.length === 0) {
@@ -212,7 +212,7 @@ export const assult_Type_Nibrs_Errors = (assultCodeArr, offenceCodesArr, type = 
 }
 
 export const check_justifiy_Homicide = (assultCodeArr, justifiyArr, offenceCodes, type = 'Color') => {
-    
+
     const justifyHomicideCodeArr = justifiyArr?.map((item) => item?.code)
     if (offenceCodes?.includes('09A')) {
         const arr = justifyHomicideCodeArr?.filter((val) => {
@@ -228,7 +228,7 @@ export const check_justifiy_Homicide = (assultCodeArr, justifiyArr, offenceCodes
             type === 'Color' ? ErrorStyle_VictimHome(true) : <ErrorTooltipComp ErrorStr={'Justifiable Homicide is mandatory with a 20 or 21 entered in Assault Code'} />
             : type === 'Color' ? ErrorStyle_VictimHome(false) : <> </>
     } else {
-        return  false
+        return false
     }
 
 }
@@ -253,7 +253,7 @@ export const check_injuryType_Nibrs = (offenceCodes, victimInjuryID, victimCode,
 }
 
 export const checkOffenderIsUnknown = (RelationCode, SelectedNameData, type = 'Color') => {
-  
+
     if (RelationCode) {
         if (SelectedNameData?.Race_Code === 'U' && SelectedNameData?.Gender_Code === 'U' && !SelectedNameData?.AgeFrom && RelationCode != 'RU') {
             return type === 'Color' ? NibrsStylesRelationShip(true) : <ErrorTooltipComp ErrorStr={'Offender Age/Sex/Race Are Unknown relationship Must Be Unknown.'} />

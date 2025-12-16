@@ -23,6 +23,7 @@ const NibrsHome = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { incidentCount, get_Incident_Count, validate_IncSideBar, nibrsSideBarLoading, incidentValidateNibrsData, offenseValidateNibrsData, victimValidateNibrsData, offenderValidateNibrsData, propertyValidateNibrsData, } = useContext(AgencyContext);
+  console.log("🚀 ~ NibrsHome ~ incidentCount:", incidentCount)
 
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
   const incReportedDate = useSelector((state) => state.Agency.incReportedDate);
@@ -341,6 +342,7 @@ const NibrsHome = () => {
               }
             } else {
               setVehErrorStatus(false); setVehicleErrorString('');
+
             }
 
             // set property error string
@@ -367,6 +369,7 @@ const NibrsHome = () => {
             }
 
           } else {
+            console.log("Property Object Missing (Else)");
 
           }
 

@@ -229,12 +229,14 @@ const Offense = (props) => {
       sortable: true
     },
     {
-      name: 'Attempt/Complete',
+      // name: 'Attempt/Complete',
+      name: 'Attempted/Completed',
       selector: (row) => row.AttemptComplete,
       sortable: true
     },
     {
-      name: 'OffenseCode',
+      // name: 'OffenseCode',
+      name: 'TIBRS Code',
       selector: (row) => row.NIBRSCode ? row.NIBRSCode : '',
       sortable: true,
       width: "140px",
@@ -285,7 +287,8 @@ const Offense = (props) => {
       sortable: true
     },
     {
-      name: 'Attempt/Complete',
+      // name: 'Attempt/Complete',
+      name: 'Attempted/Completed',
       selector: (row) => row.AttemptComplete,
       sortable: true
     },

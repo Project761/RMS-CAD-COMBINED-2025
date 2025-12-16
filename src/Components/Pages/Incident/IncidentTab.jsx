@@ -118,7 +118,7 @@ const IncidentTab = () => {
     const getPermissionLevelByRestrict = async (IncidentID, OfficerID) => {
         try {
             const res = await fetchPostData("Restricted/GetPermissionLevelBy_Restricted", { IncidentID, OfficerID, 'ModuleName': "Incident", 'ID': 0 });
-            console.log("🚀 ~ getPermissionLevelByRestrict ~ res:", res)
+            // console.log("🚀 ~ getPermissionLevelByRestrict ~ res:", res)
             if (res?.length > 0) {
                 setIsRestricted(res[0]?.IsRestricted === true || res[0]?.IsRestricted === 1 ? true : false);
                 setPermissionToUnrestrict(res[0]?.IsUnRestrictPermission === true || res[0]?.IsUnRestrictPermission === 1 ? true : false);
