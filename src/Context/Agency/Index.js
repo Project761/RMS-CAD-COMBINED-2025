@@ -691,8 +691,6 @@ const AgencyData = ({ children }) => {
     };
 
 
-
-
     // nibrs incident error
     const [incidentErrorStatus, setIncidentErrorStatus] = useState(false);
     const [incidentValidateNibrsData, setIncidentValidateNibrsData] = useState([]);

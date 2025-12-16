@@ -4293,8 +4293,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                                                     )}
                                                     <Select
                                                         name='RelationshipTypeID'
-                                                        // styles={isCrimeAgainstPerson || has120RoberyOffense ? colourStyles1 : withOutColorStyle1}
-                                                        styles={isCrimeAgainstPerson ? colourStyles1 : withOutColorStyle1}
+                                                        styles={isCrimeAgainstPerson || has120RoberyOffense ? colourStyles1 : withOutColorStyle1}
+                                                        // styles={isCrimeAgainstPerson ? colourStyles1 : withOutColorStyle1}
                                                         isClearable
                                                         value={relationShipDrp?.filter((obj) => obj.value === value1.RelationshipTypeID)}
                                                         options={relationShipDrp}
