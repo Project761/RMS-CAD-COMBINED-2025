@@ -395,8 +395,8 @@ const Identification = (props) => {
     <>
       <NameListing  {...{ ListData }} />
       <div className="col-md-12 mt-2">
-        <div className="row">
-          <div className="col-3 col-md-3 col-lg-2 mt-3">
+        <div className="row mt-1" style={{rowGap:"8px"}}>
+          <div className="col-3 col-md-3 col-lg-2">
             <span data-toggle="modal" onClick={() => {
               setOpenPage('ID Types')
             }} data-target="#ListModel" className='new-link'>
@@ -405,7 +405,7 @@ const Identification = (props) => {
               ) : null}
             </span>
           </div>
-          <div className="col-4 col-md-4 col-lg-3  mt-2" >
+          <div className="col-4 col-md-4 col-lg-3" >
             <Select
               name='IdentificationTypeID'
               value={identification?.filter((obj) => obj.value === value?.IdentificationTypeID)}
@@ -418,13 +418,13 @@ const Identification = (props) => {
               isDisabled={isLockOrRestrictModule("Lock", editval[0]?.IdentificationTypeID, isLocked)}
             />
           </div>
-          <div className="col-3 col-md-3 col-lg-2 mt-3">
-            <label htmlFor="" className='label-name '>Identification Number{errors.IdentificationNumberErrors !== 'true' ? (
+          <div className="col-3 col-md-3 col-lg-2">
+            <label htmlFor="" className='label-name mb-0 '>Identification Number{errors.IdentificationNumberErrors !== 'true' ? (
               <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.IdentificationNumberErrors}</p>
             ) : null}
             </label>
           </div>
-          <div className="col-4 col-md-4 col-lg-2 text-field mt-2" >
+          <div className="col-4 col-md-4 col-lg-2 text-field mt-0" >
             <input
               type="text"
               style={{ textTransform: "uppercase" }}
@@ -438,8 +438,8 @@ const Identification = (props) => {
               isDisabled={isLockOrRestrictModule("Lock", editval[0]?.IdentificationNumber, isLocked)}
             />
           </div>
-          <div className="col-3 col-md-3 col-lg-1 mt-3">
-            <label htmlFor="" className='label-name '>ID Expiry</label>
+          <div className="col-3 col-md-3 col-lg-1">
+            <label htmlFor="" className='label-name mb-0'>ID Expiry</label>
           </div>
           <div className="col-4 col-md-4 col-lg-2 " >
             <DatePicker
@@ -468,12 +468,12 @@ const Identification = (props) => {
               disabled={isLockOrRestrictModule("Lock", editval[0]?.ExpiryDate, isLocked)}
             />
           </div>
-          <div className="col-3 col-md-3 col-lg-2 mt-3">
-            <label htmlFor="" className='label-name '>Country{errors.CountryIDErrors !== 'true' && errors.CountryIDErrors ? (
+          <div className="col-3 col-md-3 col-lg-2">
+            <label htmlFor="" className='label-name mb-0 '>Country{errors.CountryIDErrors !== 'true' && errors.CountryIDErrors ? (
               <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.CountryIDErrors}</p>
             ) : null}</label>
           </div>
-          <div className="col-4 col-md-4 col-lg-3  mt-2" >
+          <div className="col-4 col-md-4 col-lg-3" >
             <Select
               name="CountryID"
               value={countryList?.filter((obj) => obj.value === value?.CountryID)}
@@ -485,12 +485,12 @@ const Identification = (props) => {
               isDisabled={isLockOrRestrictModule("Lock", editval[0]?.CountryID, isLocked)}
             />
           </div>
-          <div className="col-3 col-md-3 col-lg-2 mt-3">
-            <label htmlFor="" className='label-name '>State{errors.StateIDErrors !== 'true' ? (
+          <div className="col-3 col-md-3 col-lg-2">
+            <label htmlFor="" className='label-name mb-0 '>State{errors.StateIDErrors !== 'true' ? (
               <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.StateIDErrors}</p>
             ) : null}</label>
           </div>
-          <div className="col-4 col-md-4 col-lg-4  mt-2" >
+          <div className="col-4 col-md-4 col-lg-4" >
             <Select
               name="StateID"
               value={value?.CountryID ? (value.StateID ? stateList.find(obj => obj.value === value.StateID) : null) : null}
