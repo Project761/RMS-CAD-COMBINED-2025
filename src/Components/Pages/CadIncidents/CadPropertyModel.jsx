@@ -645,9 +645,9 @@ const CadPropertyModel = (props) => {
 
 
   const filterExpectedTimes = (time) => {
-    if (!ActivityDtTm) return false;
+    if (!activitydate) return false;
 
-    const checkout = new Date(ActivityDtTm);
+    const checkout = new Date(activitydate);
     const serverNow = new Date(datezone);
 
     const baseDay = expecteddate ? new Date(expecteddate) : new Date(checkout);
