@@ -1001,7 +1001,7 @@ const Charges = (props) => {
       </div>
       <div className="col-12">
         <fieldset className="p-2">
-          <legend className="w-auto px-2">Charge information</legend>
+          <legend className="w-auto px-2">Charge Information</legend>
           <div className="row align-items-center mt-2" style={{ rowGap: "8px" }}>
             <div className="col-2 col-md-2 col-lg-1 ">
               <label htmlFor="" className='new-label mb-0'>
