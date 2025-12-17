@@ -13,7 +13,7 @@ import { get_LocalStoreData } from '../../../redux/actions/Agency';
 
 const Involvements = (props) => {
 
-    const { idColName, masterID, SideBarStatus, tabID, ProSta, incId, IncSta, IncNo, NameStatus, NameID, url, scrCode, para, IsMaster } = props
+    const { idColName, dateTimeFieldName = 'Create DT/TM', masterID, SideBarStatus, tabID, ProSta, incId, IncSta, IncNo, NameStatus, NameID, url, scrCode, para, IsMaster } = props
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -68,7 +68,7 @@ const Involvements = (props) => {
         const val2 = { [idColName]: masterID, 'IsMaster': IsMaster, }
         const val1 = { [para]: tabID, [idColName]: 0, 'IsMaster': IsMaster, }
         fetchPostData('TransactionLog/GetData_TransactionLog', MstPage ? val2 : val1).then((res) => {
-            console.log(res)
+            // console.log(res)
             if (res) {
                 setTransactionData(res)
             } else {
@@ -223,7 +223,8 @@ const Involvements = (props) => {
         },
         {
             // width: '100px',
-            name: ' Create DT/TM',
+            // name: ' Create DT/TM',
+            name: dateTimeFieldName,
             selector: (row) => row.CreatedDtTm ? getShowingWithOutTime(row.CreatedDtTm) : '',
             sortable: true
         },
@@ -277,9 +278,7 @@ const Involvements = (props) => {
                         responsive
                         showPaginationBottom={10}
                         customStyles={tableCustomStyles}
-                        onRowClicked={(row) => {
-                            onClickedRow(row);
-                        }}
+                        onRowClicked={(row) => { onClickedRow(row); }}
                         fixedHeader
                         persistTableHead={true}
                         fixedHeaderScrollHeight='330px'

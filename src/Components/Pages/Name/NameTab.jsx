@@ -955,6 +955,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                                                                 nameShowPage === 'TransactionLog' ?
                                                                                                     <Involvements
                                                                                                         idColName={'MasterNameID'}
+                                                                                                        dateTimeFieldName={'Reported DT/TM'}
                                                                                                         para={'NameID'}
                                                                                                         url={''}
                                                                                                         NameStatus={NameStatus}
