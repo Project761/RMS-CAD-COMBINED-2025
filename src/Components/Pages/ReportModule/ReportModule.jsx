@@ -3452,7 +3452,8 @@ const ReportModule = (props) => {
                                         {/* Approval  */}
                                         <div className="row ">
                                             {
-                                                narrativeID && value.Status !== null && !IsSelfApproved && !skipApproverAuthor ?
+                                                // narrativeID && value.Status !== null && !IsSelfApproved && !skipApproverAuthor ?
+                                                 ((narrativeID && value.Status !== null && !IsSelfApproved) || (narrativeID && value.Status !== null && !IsSelfApproved && skipApproverAuthor)) ?
                                                     <>
                                                         <div className="col-12 col-md-12 col-lg-12">
                                                             <div className="row ">
@@ -3594,7 +3595,8 @@ const ReportModule = (props) => {
                                                 <></>
                                             } */}
                                                         {
-                                                            (checkWebWorkFlowStatus && (skipApproverAuthor === false || skipApproverAuthor === null)) ? (
+                                                            // (checkWebWorkFlowStatus && (skipApproverAuthor === false || skipApproverAuthor === null)) ? (
+                                                             (checkWebWorkFlowStatus || (checkWebWorkFlowStatus && (skipApproverAuthor === true || skipApproverAuthor === null))) ? (    
                                                                 narrativeID && (
                                                                     (value.Status !== "Pending Review" &&
                                                                         value.Status !== "Rejected" &&
