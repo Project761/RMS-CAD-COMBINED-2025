@@ -761,7 +761,7 @@ const AgencySetting = () => {
                                         </div>
                                         <div className="col-12 col-md-12 col-lg-12 mt-1 ml-lg-5 pl-lg-5 ml-md-0 pl-md-0">
                                             <input type="checkbox" name='IsAliasReqForConsolidating' checked={value?.IsAliasReqForConsolidating} value={value?.IsAliasReqForConsolidating} onChange={HandleChanges} />
-                                            <label className='ml-2' >Alias Requried For Consolidating</label>
+                                            <label className='ml-2' >Alias Required For Consolidating</label>
                                         </div>
 
                                     </div>
