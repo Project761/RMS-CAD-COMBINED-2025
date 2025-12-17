@@ -427,7 +427,7 @@ const AgencyContact = () => {
                         <input type="text" className='requiredColor' id="LastName" name='LastName' value={value.LastName} onChange={handlChanges} required />
                     </div>
                     <div className="col-2 col-md-2 col-lg-1 mt-2 pt-1">
-                        <label htmlFor="" className='new-label'>Phone 1 {errors.Phone1Error !== 'true' ? (
+                        <label htmlFor="" className='new-label'>Phone. No 1 {errors.Phone1Error !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.Phone1Error}</p>
                         ) : null}</label>
                     </div>
@@ -435,7 +435,7 @@ const AgencyContact = () => {
                         <input type="text" maxLength={10} id="Phone1" name='Phone1' value={value.Phone1} onChange={handlChanges} required />
                     </div>
                     <div className="col-2 col-md-2 col-lg-1 mt-2 pt-1">
-                        <label htmlFor="" className='new-label'>Phone 2 {errors.Phone2Error !== 'true' ? (
+                        <label htmlFor="" className='new-label'>Phone. No 2 {errors.Phone2Error !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.Phone2Error}</p>
                         ) : null}</label>
                     </div>
