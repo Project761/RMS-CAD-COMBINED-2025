@@ -212,7 +212,7 @@ const Member = ({ allowMultipleLogin }) => {
         <div className="col-12">
             <div className="row mt-2">
                 <div className="col-2 col-md-2 col-lg-1 mt-2 pt-1">
-                    <label htmlFor="" className='new-label'>Group Name</label>
+                    <label htmlFor="" className='new-label text-nowrap'>Group Name</label>
                 </div>
                 <div className="col-10 col-md-10 col-lg-10 mt-1 ">
                     {
