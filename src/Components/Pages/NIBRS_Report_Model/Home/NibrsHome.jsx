@@ -23,7 +23,7 @@ const NibrsHome = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { incidentCount, get_Incident_Count, validate_IncSideBar, nibrsSideBarLoading, incidentValidateNibrsData, offenseValidateNibrsData, victimValidateNibrsData, offenderValidateNibrsData, propertyValidateNibrsData, } = useContext(AgencyContext);
-  console.log("🚀 ~ NibrsHome ~ incidentCount:", incidentCount)
+  // console.log("🚀 ~ NibrsHome ~ incidentCount:", incidentCount)
 
   const localStoreData = useSelector((state) => state.Agency.localStoreData);
   const incReportedDate = useSelector((state) => state.Agency.incReportedDate);
@@ -593,6 +593,8 @@ const NibrsHome = () => {
       list: <Arrestees arrestClick={arrestClick} isNibrsSummited={isNibrsSummited} isLocked={isLocked} setIsLocked={setIsLocked} getPermissionLevelByLock={getPermissionLevelByLock} />
     },
   ];
+
+
 
   return (
     <>
