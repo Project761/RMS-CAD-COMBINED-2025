@@ -17,7 +17,7 @@ import { useReactToPrint } from "react-to-print";
 const CadPropertyModel = (props) => {
 
   const { modelActivityStatus, DecPropID, DecMPropID, setModalType, SetQueData, selectedReportType, getIncidentSearchData, modalType, masterModalRef, setAllProRoomFilterData, rowData, getIncidentSearchDataProperty, setDataSaved, SelectedCategory, CallStatus, ProType, ProNumber, ProTransfer, CheckboxStatus, ProCategory, taskListID, modalOpenStatus, setModalOpenStatus } = props
-  const { GetDataTimeZone, datezone, } = useContext(AgencyContext);
+  const { GetDataTimeZone, datezone, incidentReportedDate } = useContext(AgencyContext);
   const componentRef = useRef();
 
   const dispatch = useDispatch();
@@ -644,6 +644,52 @@ const CadPropertyModel = (props) => {
   }, [editval, selectedOption]);
 
 
+  const filterExpectedTimes = (time) => {
+    if (!ActivityDtTm) return false;
+
+    const checkout = new Date(ActivityDtTm);
+    const serverNow = new Date(datezone);
+
+    const baseDay = expecteddate ? new Date(expecteddate) : new Date(checkout);
+    const picked = new Date(baseDay);
+    picked.setHours(time?.getHours(), time?.getMinutes(), 0, 0);
+
+    if (sameMinute(checkout, serverNow)) {
+      return false;
+    }
+
+    const isSameDayAsCheckout =
+      picked?.getFullYear() === checkout?.getFullYear() &&
+      picked?.getMonth() === checkout?.getMonth() &&
+      picked?.getDate() === checkout?.getDate();
+
+    const isSameDayAsNow =
+      picked?.getFullYear() === serverNow?.getFullYear() &&
+      picked?.getMonth() === serverNow?.getMonth() &&
+      picked?.getDate() === serverNow?.getDate();
+
+    if (isSameDayAsCheckout) {
+      if (!(picked > checkout)) return false;
+      return picked <= serverNow;
+    }
+
+    if (isSameDayAsNow) {
+      return picked <= serverNow;
+    }
+    return picked <= serverNow;
+  };
+
+
+  const sameMinute = (a, b) => {
+    return (
+      a.getFullYear() === b.getFullYear() &&
+      a.getMonth() === b.getMonth() &&
+      a.getDate() === b.getDate() &&
+      a.getHours() === b.getHours() &&
+      a.getMinutes() === b.getMinutes()
+    );
+  };
+
 
   return (
     modalOpenStatus &&
@@ -744,9 +790,22 @@ const CadPropertyModel = (props) => {
                         <DatePicker
                           name='activitydate'
                           id='activitydate'
-                          onChange={(date) => {
-                            setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
+                          // onChange={(date) => {
+                          //   setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
 
+                          // }}
+                          onChange={(date) => {
+                            if (date) {
+                              let selectedDate = new Date(date);
+                              const currentDateTimeFromZone = new Date(datezone);
+                              // If time is midnight (user selected only date), set time from `datezone`
+                              if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0 && selectedDate.getSeconds() === 0) {
+                                selectedDate.setHours(currentDateTimeFromZone.getHours()); selectedDate.setMinutes(currentDateTimeFromZone.getMinutes()); selectedDate.setSeconds(currentDateTimeFromZone.getSeconds());
+                              }
+                              setactivitydate(selectedDate); setValue({ ...value, ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate), });
+                            } else {
+                              setactivitydate(null); setValue({ ...value, ['LastSeenDtTm']: null, });
+                            }
                           }}
                           isClearable={activitydate ? true : false}
                           selected={activitydate}
@@ -763,7 +822,14 @@ const CadPropertyModel = (props) => {
                           dropdownMode="select"
                           showDisabledMonthNavigation
                           autoComplete='off'
+                          minDate={new Date(incidentReportedDate)}
                           maxDate={new Date(datezone)}
+                          filterTime={(time) => {
+                            const timeValue = new Date(time).getTime();
+                            const minTime = new Date(incidentReportedDate).getTime();
+                            const maxTime = new Date(datezone).getTime();
+                            return timeValue > minTime && timeValue <= maxTime;
+                          }}
                           disabled={selectedOption === null || selectedOption === ''}
                           className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                         />
@@ -1090,9 +1156,30 @@ const CadPropertyModel = (props) => {
                             <DatePicker
                               name='activitydate'
                               id='activitydate'
-                              onChange={(date) => {
-                                setactivitydate(date); setValue({ ...value, ['activitydate']: date ? getShowingMonthDateYear(date) : null, });
+                              // onChange={(date) => {
+                              //   setactivitydate(date); setValue({ ...value, ['activitydate']: date ? getShowingMonthDateYear(date) : null, });
 
+                              // }}
+                              onChange={(date) => {
+                                if (date) {
+                                  const selectedDate = new Date(date);
+                                  const now = new Date();
+                                  if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0) {
+                                    selectedDate.setHours(now.getHours());
+                                    selectedDate.setMinutes(now.getMinutes());
+                                  }
+                                  setactivitydate(selectedDate);
+                                  setValue({
+                                    ...value,
+                                    ['activitydate']: getShowingMonthDateYear(selectedDate),
+                                  });
+                                } else {
+                                  setactivitydate(null);
+                                  setValue({
+                                    ...value,
+                                    ['activitydate']: null,
+                                  });
+                                }
                               }}
                               isClearable={activitydate ? true : false}
                               selected={activitydate}
@@ -1109,7 +1196,14 @@ const CadPropertyModel = (props) => {
                               dropdownMode="select"
                               showDisabledMonthNavigation
                               autoComplete='off'
+                              minDate={new Date(incidentReportedDate)}
                               maxDate={new Date(datezone)}
+                              filterTime={(time) => {
+                                const timeValue = new Date(time).getTime();
+                                const minTime = new Date(incidentReportedDate).getTime();
+                                const maxTime = new Date(datezone).getTime();
+                                return timeValue > minTime && timeValue <= maxTime;
+                              }}
                               disabled={selectedOption === null || selectedOption === ''}
                               className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : ''}
                             />
@@ -1187,9 +1281,30 @@ const CadPropertyModel = (props) => {
                         <DatePicker
                           name='activitydate'
                           id='activitydate'
-                          onChange={(date) => {
-                            setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
+                          // onChange={(date) => {
+                          //   setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
 
+                          // }}
+                          onChange={(date) => {
+                            if (!date) {
+                              setactivitydate(null);
+                              setValue({ ...value, LastSeenDtTm: null });
+
+                              setExpecteddate(null);
+                              setValue({ ...value, ExpectedDate: null });
+                              return;
+                            }
+                            if (date) {
+                              let selectedDate = new Date(date);
+                              const currentDateTimeFromZone = new Date(datezone);
+                              // If time is midnight (user selected only date), set time from `datezone`
+                              if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0 && selectedDate.getSeconds() === 0) {
+                                selectedDate.setHours(currentDateTimeFromZone.getHours()); selectedDate.setMinutes(currentDateTimeFromZone.getMinutes()); selectedDate.setSeconds(currentDateTimeFromZone.getSeconds());
+                              }
+                              setactivitydate(selectedDate); setValue({ ...value, ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate), });
+                            } else {
+                              setactivitydate(null); setValue({ ...value, ['LastSeenDtTm']: null, });
+                            }
                           }}
                           isClearable={activitydate ? true : false}
                           selected={activitydate}
@@ -1206,7 +1321,14 @@ const CadPropertyModel = (props) => {
                           dropdownMode="select"
                           showDisabledMonthNavigation
                           autoComplete='off'
+                          minDate={new Date(incidentReportedDate)}
                           maxDate={new Date(datezone)}
+                          filterTime={(time) => {
+                            const timeValue = new Date(time).getTime();
+                            const minTime = new Date(incidentReportedDate).getTime();
+                            const maxTime = new Date(datezone).getTime();
+                            return timeValue > minTime && timeValue <= maxTime;
+                          }}
                           disabled={selectedOption === null || selectedOption === ''}
                           className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                         />
@@ -1223,9 +1345,28 @@ const CadPropertyModel = (props) => {
                         <DatePicker
                           name='ExpectedDate'
                           id='ExpectedDate'
-                          onChange={(date) => {
-                            setExpecteddate(date); setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
+                          // onChange={(date) => {
+                          //   setExpecteddate(date); setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
 
+                          // }}
+                          onChange={(date) => {
+                            if (date) {
+                              const now = new Date(datezone);
+                              const selectedDateOnly = new Date(date?.getFullYear(), date?.getMonth(), date?.getDate());
+                              const todayOnly = new Date(now.getFullYear(), now?.getMonth(), now?.getDate());
+
+                              if (selectedDateOnly?.getTime() === todayOnly?.getTime()) {
+                                if (date?.getTime() > now?.getTime()) {
+                                  date?.setHours(now?.getHours(), now?.getMinutes(), 0, 0);
+                                }
+                              }
+                              const isOnlyTimeSelect = date?.getHours() === 0 && date?.getMinutes() === 0 && date?.getSeconds() === 0;
+                              if (isOnlyTimeSelect) {
+                                date.setHours(now?.getHours(), now?.getMinutes(), 0);
+                              }
+                            }
+                            setExpecteddate(date);
+                            setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
                           }}
                           isClearable={expecteddate ? true : false}
                           selected={expecteddate}
@@ -1242,9 +1383,11 @@ const CadPropertyModel = (props) => {
                           dropdownMode="select"
                           showDisabledMonthNavigation
                           autoComplete='off'
+                          filterTime={filterExpectedTimes}
                           maxDate={new Date(datezone)}
-                          disabled={selectedOption === null || selectedOption === ''}
-                          className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : ''}
+                          minDate={activitydate}
+                          disabled={!activitydate || selectedOption === null || selectedOption === ''}
+                          className={!activitydate || selectedOption === null || selectedOption === '' ? 'readonlyColor' : ''}
                         />
 
                       </div>
@@ -1482,9 +1625,30 @@ const CadPropertyModel = (props) => {
                         <DatePicker
                           name='ReleaseDate'
                           id='ReleaseDate'
-                          onChange={(date) => {
-                            setactivitydate(date); setValue({ ...value, ['ReleaseDate']: date ? getShowingMonthDateYear(date) : null, });
+                          // onChange={(date) => {
+                          //   setactivitydate(date); setValue({ ...value, ['ReleaseDate']: date ? getShowingMonthDateYear(date) : null, });
 
+                          // }}
+                          onChange={(date) => {
+                            if (date) {
+                              const selectedDate = new Date(date);
+                              const now = new Date();
+                              if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0) {
+                                selectedDate.setHours(now.getHours());
+                                selectedDate.setMinutes(now.getMinutes());
+                              }
+                              setactivitydate(selectedDate);
+                              setValue({
+                                ...value,
+                                ['ReleaseDate']: getShowingMonthDateYear(selectedDate),
+                              });
+                            } else {
+                              setactivitydate(null);
+                              setValue({
+                                ...value,
+                                ['ReleaseDate']: null,
+                              });
+                            }
                           }}
                           isClearable={activitydate ? true : false}
                           selected={activitydate}
@@ -1501,7 +1665,14 @@ const CadPropertyModel = (props) => {
                           dropdownMode="select"
                           showDisabledMonthNavigation
                           autoComplete='off'
+                          minDate={new Date(incidentReportedDate)}
                           maxDate={new Date(datezone)}
+                          filterTime={(time) => {
+                            const timeValue = new Date(time).getTime();
+                            const minTime = new Date(incidentReportedDate).getTime();
+                            const maxTime = new Date(datezone).getTime();
+                            return timeValue > minTime && timeValue <= maxTime;
+                          }}
                           disabled={selectedOption === null || selectedOption === ''}
                           className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                         />
@@ -2592,9 +2763,22 @@ const CadPropertyModel = (props) => {
                         <DatePicker
                           name='activitydate'
                           id='activitydate'
-                          onChange={(date) => {
-                            setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
+                          // onChange={(date) => {
+                          //   setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
 
+                          // }}
+                          onChange={(date) => {
+                            if (date) {
+                              let selectedDate = new Date(date);
+                              const currentDateTimeFromZone = new Date(datezone);
+                              // If time is midnight (user selected only date), set time from `datezone`
+                              if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0 && selectedDate.getSeconds() === 0) {
+                                selectedDate.setHours(currentDateTimeFromZone.getHours()); selectedDate.setMinutes(currentDateTimeFromZone.getMinutes()); selectedDate.setSeconds(currentDateTimeFromZone.getSeconds());
+                              }
+                              setactivitydate(selectedDate); setValue({ ...value, ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate), });
+                            } else {
+                              setactivitydate(null); setValue({ ...value, ['LastSeenDtTm']: null, });
+                            }
                           }}
                           isClearable={activitydate ? true : false}
                           selected={activitydate}
@@ -2611,7 +2795,14 @@ const CadPropertyModel = (props) => {
                           dropdownMode="select"
                           showDisabledMonthNavigation
                           autoComplete='off'
+                          minDate={new Date(incidentReportedDate)}
                           maxDate={new Date(datezone)}
+                          filterTime={(time) => {
+                            const timeValue = new Date(time).getTime();
+                            const minTime = new Date(incidentReportedDate).getTime();
+                            const maxTime = new Date(datezone).getTime();
+                            return timeValue > minTime && timeValue <= maxTime;
+                          }}
                           disabled={selectedOption === null || selectedOption === ''}
                           className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : 'requiredColor'}
                         />

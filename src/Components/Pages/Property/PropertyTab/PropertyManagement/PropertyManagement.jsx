@@ -712,9 +712,53 @@ const PropertyManagement = (props) => {
         }),
     }
 
-    console.log(selectedStatus)
+    const filterExpectedTimes = (time) => {
+        if (!ActivityDtTm) return false;
 
-    console.log(selectedOption)
+        const checkout = new Date(ActivityDtTm);
+        const serverNow = new Date(datezone);
+
+        const baseDay = expecteddate ? new Date(expecteddate) : new Date(checkout);
+        const picked = new Date(baseDay);
+        picked.setHours(time?.getHours(), time?.getMinutes(), 0, 0);
+
+        if (sameMinute(checkout, serverNow)) {
+            return false;
+        }
+
+        const isSameDayAsCheckout =
+            picked?.getFullYear() === checkout?.getFullYear() &&
+            picked?.getMonth() === checkout?.getMonth() &&
+            picked?.getDate() === checkout?.getDate();
+
+        const isSameDayAsNow =
+            picked?.getFullYear() === serverNow?.getFullYear() &&
+            picked?.getMonth() === serverNow?.getMonth() &&
+            picked?.getDate() === serverNow?.getDate();
+
+        if (isSameDayAsCheckout) {
+            if (!(picked > checkout)) return false;
+            return picked <= serverNow;
+        }
+
+        if (isSameDayAsNow) {
+            return picked <= serverNow;
+        }
+        return picked <= serverNow;
+    };
+
+
+    const sameMinute = (a, b) => {
+        return (
+            a.getFullYear() === b.getFullYear() &&
+            a.getMonth() === b.getMonth() &&
+            a.getDate() === b.getDate() &&
+            a.getHours() === b.getHours() &&
+            a.getMinutes() === b.getMinutes()
+        );
+    };
+
+
     return (
         <>
             <div className="col-12">
@@ -1293,6 +1337,14 @@ const PropertyManagement = (props) => {
                                     name='LastSeenDtTm'
                                     id='LastSeenDtTm'
                                     onChange={(date) => {
+                                        if (!date) {
+                                            setactivitydate(null);
+                                            setValue({ ...value, LastSeenDtTm: null });
+
+                                            setExpecteddate(null);
+                                            setValue({ ...value, ExpectedDate: null });
+                                            return;
+                                        }
                                         if (date) {
                                             let selectedDate = new Date(date);
                                             const currentDateTimeFromZone = new Date(datezone);
@@ -1344,9 +1396,28 @@ const PropertyManagement = (props) => {
                                 <DatePicker
                                     name='ExpectedDate'
                                     id='ExpectedDate'
-                                    onChange={(date) => {
-                                        setExpecteddate(date); setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
+                                    // onChange={(date) => {
+                                    //     setExpecteddate(date); setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
 
+                                    // }}
+                                    onChange={(date) => {
+                                        if (date) {
+                                            const now = new Date(datezone);
+                                            const selectedDateOnly = new Date(date?.getFullYear(), date?.getMonth(), date?.getDate());
+                                            const todayOnly = new Date(now.getFullYear(), now?.getMonth(), now?.getDate());
+
+                                            if (selectedDateOnly?.getTime() === todayOnly?.getTime()) {
+                                                if (date?.getTime() > now?.getTime()) {
+                                                    date?.setHours(now?.getHours(), now?.getMinutes(), 0, 0);
+                                                }
+                                            }
+                                            const isOnlyTimeSelect = date?.getHours() === 0 && date?.getMinutes() === 0 && date?.getSeconds() === 0;
+                                            if (isOnlyTimeSelect) {
+                                                date.setHours(now?.getHours(), now?.getMinutes(), 0);
+                                            }
+                                        }
+                                        setExpecteddate(date);
+                                        setValue({ ...value, ['ExpectedDate']: date ? getShowingMonthDateYear(date) : null, });
                                     }}
                                     isClearable={expecteddate ? true : false}
                                     selected={expecteddate}
@@ -1363,9 +1434,12 @@ const PropertyManagement = (props) => {
                                     dropdownMode="select"
                                     showDisabledMonthNavigation
                                     autoComplete='off'
+                                    filterTime={filterExpectedTimes}
                                     maxDate={new Date(datezone)}
-                                    disabled={selectedOption === null || selectedOption === ''}
-                                    className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : ''}
+                                    minDate={ActivityDtTm}
+                                    openToDate={new Date(datezone)}
+                                    disabled={!ActivityDtTm || selectedOption === null || selectedOption === ''}
+                                    className={!ActivityDtTm || selectedOption === null || selectedOption === '' ? 'readonlyColor' : ''}
                                 />
 
                             </div>
