@@ -323,7 +323,7 @@ input[type="file"] {
   color: #333;
 }
 
-.index-select label {
+.index-select label {  
   position: absolute;
   top: -18px;
   left: 3px;
@@ -1005,11 +1005,11 @@ input[type="file"] {
 } */
 
 .name-tab {
-    display: flex;
-    align-items: center;
-    border: 1px solid #8392a1 !important;
-    padding: 8px 6px !important;
-    background-color: white;
+  display: flex;
+  align-items: center;
+  border: 1px solid #8392a1 !important;
+  padding: 8px 6px !important;
+  background-color: white;
 }
 
 
@@ -1498,12 +1498,12 @@ input[type="file"] {
 
 
 .nav-tabs span {
-    font-weight: 600 !important;
-    font-size: 14px !important;
-    border-right: 1px solid #a1a3a4;
-    padding: 0px 10px !important;
-    display: flex;
-    align-items: center;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  border-right: 1px solid #a1a3a4;
+  padding: 0px 10px !important;
+  display: flex;
+  align-items: center;
 }
 
 
@@ -3405,14 +3405,16 @@ icon-buttons {
 }
 
 .input-full {
-    width: 100% !important;
-    min-width: 120px; /* jitna chaho set karo */
+  width: 100% !important;
+  min-width: 120px;
+  /* jitna chaho set karo */
 }
 
 .case-management-sidebar {
   background-color: #001f3f;
   color: #fff !important;
 }
+
 .case-management-sidebar-hover {
   background-color: #245381;
   color: #fff !important;

@@ -498,7 +498,7 @@ const Document = () => {
             <DeletePopUpModal func={DeleteDocumentManagement} />
             <ChangesModal func={check_Validation_Error} setToReset={setToReset} />
             <ListModal {...{ openPage, setOpenPage }} />
-            <IdentifyFieldColor />
+            {/* <IdentifyFieldColor /> */}
         </>
     )
 }

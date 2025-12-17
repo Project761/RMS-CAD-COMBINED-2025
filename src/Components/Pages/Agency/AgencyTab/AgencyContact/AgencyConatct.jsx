@@ -405,7 +405,7 @@ const AgencyContact = () => {
             <div className="col-12 ">
                 <div className="row " >
                     <div className="col-2 col-md-2 col-lg-1 mt-2 pt-1">
-                        <label htmlFor="" className='new-label'>First Name {errors.FirstNameError !== 'true' ? (
+                        <label htmlFor="" className='new-label'>Firstname {errors.FirstNameError !== 'true' ? (
                             <span style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.FirstNameError}</span>
                         ) : null}</label>
                     </div>
@@ -413,13 +413,13 @@ const AgencyContact = () => {
                         <input type="text" className='requiredColor' id="FirstName" name='FirstName' value={value.FirstName} onChange={handlChanges} required />
                     </div>
                     <div className="col-2 col-md-2 col-lg-1 mt-2 pt-1 px-0">
-                        <label htmlFor="" className='new-label px-0'>Middle Name</label>
+                        <label htmlFor="" className='new-label px-0'>Middlename</label>
                     </div>
                     <div className="col-10 col-md-10 col-lg-3 mt-2 text-field">
                         <input type="text" id="MiddleName" name='MiddleName' value={value.MiddleName} onChange={handlChanges} required />
                     </div>
                     <div className="col-2 col-md-2 col-lg-1 mt-2 pt-1">
-                        <label htmlFor="" className='new-label'>Last Name  {errors.LastNameError !== 'true' ? (
+                        <label htmlFor="" className='new-label'>Lastname  {errors.LastNameError !== 'true' ? (
                             <span style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.LastNameError}</span>
                         ) : null}</label>
                     </div>
@@ -521,7 +521,7 @@ const AgencyContact = () => {
             <DeletePopUpModal func={delete_Agency_Contact} />
             <ChangesModal func={check_Validation_Error} />
             {/* <ChangesModal hasPermission={status ? permissionForEditAgencyContact : permissionForAddAgencyContact} func={check_Validation_Error} /> */}
-            <IdentifyFieldColor />
+            {/* <IdentifyFieldColor /> */}
 
 
         </>

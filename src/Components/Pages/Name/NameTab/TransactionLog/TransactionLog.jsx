@@ -162,7 +162,7 @@ const TransactionLog = (props) => {
                     />
                 </div>
             </div>
-            <IdentifyFieldColor />
+            {/* <IdentifyFieldColor /> */}
             <IncidentSummaryModel />
         </>
     )

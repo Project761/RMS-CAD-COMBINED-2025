@@ -408,7 +408,7 @@ const Ranks = ({ aId, }) => {
             </div>
 
             <DeletePopUpModal func={delete_Rank} />
-            <IdentifyFieldColor />
+            {/* <IdentifyFieldColor /> */}
 
         </>
     )

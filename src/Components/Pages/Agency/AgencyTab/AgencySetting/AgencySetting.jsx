@@ -304,7 +304,7 @@ const AgencySetting = () => {
 
     const handleReportApprover = (e, name) => {
         !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-        console.log("🚀 ~ handleCaseStatus ~ e:", e)
+        // console.log("🚀 ~ handleCaseStatus ~ e:", e)
         if (e) {
             setValue({ ...value, [name]: e.value, });
         }

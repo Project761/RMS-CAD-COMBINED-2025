@@ -324,7 +324,7 @@ const PasswordSetting = ({ allowMultipleLogin }) => {
             {effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ?
                 <div className="row mt-2 p-1 px-3">
                     <div className="col-6 col-md-6 col-lg-4 d-flex">
-                        <label className='pass-label mt-3 pr-5 mr-1'>Max Password Age (days)
+                        <label className='new-label mt-3 pr-5 mr-1'>Max Password Age (days)
                         </label>
                         <div className="col-4 col-md-4 col-lg-3 pl-1   text-field">
                             <input type="text"
@@ -339,14 +339,14 @@ const PasswordSetting = ({ allowMultipleLogin }) => {
                                     fieldPermissionAgency?.MaxPasswordAge[0]?.Changeok === 0 && fieldPermissionAgency?.MaxPasswordAge[0]?.AddOK === 0 && status ? '' : fieldPermissionAgency?.MaxPasswordAge[0]?.Changeok === 0 && fieldPermissionAgency?.MaxPasswordAge[0]?.AddOK === 1 && passwordSettingList?.MaxPasswordAge === '' && status ? handleInput : fieldPermissionAgency?.MaxPasswordAge[0]?.AddOK === 1 && !status ? handleInput : fieldPermissionAgency?.MaxPasswordAge[0]?.Changeok === 1 && status ? handleInput : '' : handleInput
                                 }
                             />
-                            <p ><span className='hovertext-small' data-hover="Max valid for 90 days" ><i className='fa fa-exclamation-circle'></i></span></p>
+                            <p ><span className='hovertext-small' data-hover="Max Valid For 90 Days" ><i className='fa fa-exclamation-circle'></i></span></p>
                             {errors.MaxPasswordAge !== 'true' ? (
                                 <span style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.MaxPasswordAge}</span>
                             ) : null}
                         </div>
                     </div>
                     <div className="col-6 col-md-6 col-lg-4  d-flex">
-                        <label className='pass-label mt-3 pr-5 mr-1'>Min Password Length</label>
+                        <label className='new-label mt-3 pr-5 mr-1'>Min Password Length</label>
                         <div className="col-4 col-md-4 col-lg-3 text-field">
 
                             <input type="text"
@@ -359,14 +359,14 @@ const PasswordSetting = ({ allowMultipleLogin }) => {
                                     fieldPermissionAgency?.MinPasswordLength[0]?.Changeok === 0 && fieldPermissionAgency?.MinPasswordLength[0]?.AddOK === 0 && status ? '' : fieldPermissionAgency?.MinPasswordLength[0]?.Changeok === 0 && fieldPermissionAgency?.MinPasswordLength[0]?.AddOK === 1 && passwordSettingList?.MinPasswordLength === '' && status ? handleInput : fieldPermissionAgency?.MinPasswordLength[0]?.AddOK === 1 && !status ? handleInput : fieldPermissionAgency?.MinPasswordLength[0]?.Changeok === 1 && status ? handleInput : '' : handleInput
                                 }
                                 name='MinPasswordLength' value={value.MinPasswordLength} />
-                            <p ><span className='hovertext-small-1' data-hover="Min length (8)" ><i className='fa fa-exclamation-circle'></i></span></p>
+                            <p ><span className='hovertext-small-1' data-hover="Min Length (8)" ><i className='fa fa-exclamation-circle'></i></span></p>
                             {errors.MinPasswordLength !== 'true' ? (
                                 <span style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.MinPasswordLength}</span>
                             ) : null}
                         </div>
                     </div>
                     <div className="col-6 col-md-6 col-lg-4 d-flex ">
-                        <label className='pass-label  mt-3 pr-4'>Min Password Uppercase Letters</label>
+                        <label className='new-label  mt-3 pr-4'>Min Password Uppercase Letters</label>
                         <div className="col-4 col-md-4 col-lg-3 text-field ">
                             <input type="text" maxLength={2}
                                 className={`form-control form-control-sm  requiredColor
@@ -377,14 +377,14 @@ const PasswordSetting = ({ allowMultipleLogin }) => {
                                     fieldPermissionAgency?.MinUpperCaseInPassword[0]?.Changeok === 0 && fieldPermissionAgency?.MinUpperCaseInPassword[0]?.AddOK === 0 && status ? '' : fieldPermissionAgency?.MinUpperCaseInPassword[0]?.Changeok === 0 && fieldPermissionAgency?.MinUpperCaseInPassword[0]?.AddOK === 1 && passwordSettingList?.MinUpperCaseInPassword === '' && status ? handleInput : fieldPermissionAgency?.MinUpperCaseInPassword[0]?.AddOK === 1 && !status ? handleInput : fieldPermissionAgency?.MinUpperCaseInPassword[0]?.Changeok === 1 && status ? handleInput : '' : handleInput
                                 }
                                 name='MinUpperCaseInPassword' value={value.MinUpperCaseInPassword} />
-                            <p ><span className='hovertext-small' data-hover="Min uppercase char (1)" ><i className='fa fa-exclamation-circle'></i></span></p>
+                            <p ><span className='hovertext-small' data-hover="Min Uppercase Char (1)" ><i className='fa fa-exclamation-circle'></i></span></p>
                             {errors.MinUpperCaseInPassword !== 'true' ? (
                                 <span style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.MinUpperCaseInPassword}</span>
                             ) : null}
                         </div>
                     </div>
                     <div className="col-6 col-md-6 col-lg-4 mt-2 d-flex">
-                        <label className='pass-label mt-3 pr-3'>Min Password Lowercase Letters</label>
+                        <label className='new-label mt-3 pr-3'>Min Password Lowercase Letters</label>
                         <div className="col-4 col-md-4 col-lg-3 pl-1  text-field">
                             <input type="text" maxLength={2}
                                 className={`form-control form-control-sm  requiredColor
@@ -403,7 +403,7 @@ const PasswordSetting = ({ allowMultipleLogin }) => {
                         </div>
                     </div>
                     <div className="col-6 col-md-6 col-lg-4 mt-2 d-flex">
-                        <label className='pass-label mt-3 pr-2'>Min Password Numeric Digits</label>
+                        <label className='new-label mt-3 pr-2'>Min Password Numeric Digits</label>
                         <div className="col-4 col-md-4 col-lg-3  text-field">
                             <input type="text" maxLength={2}
                                 className={`form-control form-control-sm requiredColor 
@@ -421,7 +421,7 @@ const PasswordSetting = ({ allowMultipleLogin }) => {
                         </div>
                     </div>
                     <div className="col-6 col-md-6 col-lg-4 mt-1 d-flex">
-                        <label className='pass-label mt-3 pr-4'>Min Password Special Characters</label>
+                        <label className='new-label mt-3 pr-4'>Min Password Special Characters</label>
                         <div className="col-4 col-md-4 col-lg-3 pl-1 text-field mt-3">
                             <input type="text" maxLength={2}
                                 className={`form-control form-control-sm requiredColor
@@ -439,7 +439,7 @@ const PasswordSetting = ({ allowMultipleLogin }) => {
                         </div>
                     </div>
                     <div className="col-6 col-md-6 col-lg-4 mt-2 d-flex">
-                        <label className='pass-label mt-3 pr-5'>History Uniqueness Depth</label>
+                        <label className='new-label mt-3 pr-5'>History Uniqueness Depth</label>
                         <div className="col-4 col-md-4 col-lg-3 text-field ">
                             <input type="text"
                                 maxLength={2}
@@ -458,7 +458,7 @@ const PasswordSetting = ({ allowMultipleLogin }) => {
                         </div>
                     </div>
                     <div className="col-6 col-md-6 col-lg-4  mt-2 d-flex">
-                        <label className='pass-label mt-3 pr-4 mr-3'>Password Message Days</label>
+                        <label className='new-label mt-3 pr-4 mr-3'>Password Message Days</label>
                         <div className="col-4 col-md-4 col-lg-3  text-field ">
                             <input type="text"
                                 maxLength={2}
@@ -477,7 +477,7 @@ const PasswordSetting = ({ allowMultipleLogin }) => {
                         </div>
                     </div>
                     <div className="col-6 col-md-6 col-lg-4 mt-2 d-flex">
-                        <label className='pass-label mt-3 pr-5 mr-5 '>Max Login Attempts</label>
+                        <label className='new-label mt-3 pr-5 mr-5 '>Max Login Attempts</label>
                         <div className="col-4 col-md-4 col-lg-3 text-field" >
                             <input type="text"
                                 maxLength={1}
@@ -515,7 +515,7 @@ const PasswordSetting = ({ allowMultipleLogin }) => {
                     </div>
                     <ChangesModal func={check_Validation_Error} />
                     {/* <ChangesModal hasPermission={status ? permissionForEditPasswordSetting : permissionForAddPasswordSetting} func={check_Validation_Error} /> */}
-                    <IdentifyFieldColor />
+                    {/* <IdentifyFieldColor /> */}
                 </div>
                 :
                 <p className='text-center mt-2'>You don’t have permission to view data</p>
