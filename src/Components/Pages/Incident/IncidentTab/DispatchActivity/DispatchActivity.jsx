@@ -491,7 +491,7 @@ const DispatchActivity = (props) => {
             <Loader />
         }
       </div>
-      <IdentifyFieldColor />
+      {/* <IdentifyFieldColor /> */}
       <ChangesModal func={check_Validation_Error} setToReset={setToReset} />
       <DeletePopUpModal func={DeleteDispatch} />
     </>

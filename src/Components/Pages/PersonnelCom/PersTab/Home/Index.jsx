@@ -1445,7 +1445,7 @@ const Home = (props) => {
                 </div >
             </div >
             <DeletePopUpModal func={delete_Personnel} />
-            <IdentifyFieldColor />
+            {/* <IdentifyFieldColor /> */}
 
             <ChangesModal hasPermission={perId || (perSta === true || perSta === 'true') ? permissionForEditPersonnel : permissionForAddPersonnel} func={check_Validation_Error} />
 

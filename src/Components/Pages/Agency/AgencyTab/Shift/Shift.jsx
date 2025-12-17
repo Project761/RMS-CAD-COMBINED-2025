@@ -512,7 +512,7 @@ const Shift = () => {
             <DeletePopUpModal func={deleteShift} />
             <ChangesModal func={check_Validation_Error} />
             {/* <ChangesModal hasPermission={status ? permissionForEditShift : permissionForAddShift} func={check_Validation_Error} /> */}
-            <IdentifyFieldColor />
+            {/* <IdentifyFieldColor /> */}
 
 
         </>

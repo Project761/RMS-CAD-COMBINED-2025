@@ -405,7 +405,7 @@ const CitationDocument = () => {
                 </div>
             </div>
             <DeletePopUpModal func={DeleteDocumentManagement} />
-            <IdentifyFieldColor />
+            {/* <IdentifyFieldColor /> */}
         </>
     )
 }

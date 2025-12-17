@@ -355,7 +355,7 @@ function CitationTab() {
                                     </fieldset>
                                 </fieldset>
                             </div>
-                            <IdentifyFieldColor />
+                            {/* <IdentifyFieldColor /> */}
                         </div>
                     </div>
                 </div>

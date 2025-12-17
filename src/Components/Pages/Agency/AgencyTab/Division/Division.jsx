@@ -530,7 +530,7 @@ const Division = ({ aId }) => {
                 </div>
             </div>
             <DeletePopUpModal func={delete_Division} />
-            <IdentifyFieldColor />
+            {/* <IdentifyFieldColor /> */}
         </>
     )
 }

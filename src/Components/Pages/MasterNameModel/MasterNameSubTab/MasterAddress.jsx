@@ -585,7 +585,7 @@ const MasterAddress = (props) => {
                 </div>
             </div>
             <AddressVerify {...{ loginAgencyID, loginPinID, modalStatus, setModalStatus, value, setValue, addVerifySingleData, setAddVerifySingleData, get_Add_Single_Data }} />
-            <IdentifyFieldColor />
+            {/* <IdentifyFieldColor /> */}
             <MasterChangesModal func={check_Validation_Error} />
         </div>
     )

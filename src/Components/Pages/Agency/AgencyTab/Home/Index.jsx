@@ -987,7 +987,7 @@ const Home = ({ allowMultipleLogin }) => {
                     />
                 </div>
             </div>
-            <IdentifyFieldColor />
+            {/* <IdentifyFieldColor /> */}
             <DeletePopUpModal func={!isProperty ? delete_Agency : delete_Image_File} />
             <ChangesModal func={check_Validation_Error} inActiveCheckBox={inActiveCheckBox} />
             {/* <ChangesModal hasPermission={Aid || (AgySta === true || AgySta === 'true') ? permissionForEditAgency : permissionForAddAgency} func={check_Validation_Error} inActiveCheckBox={inActiveCheckBox} /> */}

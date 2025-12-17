@@ -124,7 +124,7 @@ const Home = () => {
                             <button type="button" className="btn btn-sm btn-success mx-1" >Close</button>
                         </Link>
                     </div>
-                    <IdentifyFieldColor />
+                    {/* <IdentifyFieldColor /> */}
                 </div>
             </div>
      
