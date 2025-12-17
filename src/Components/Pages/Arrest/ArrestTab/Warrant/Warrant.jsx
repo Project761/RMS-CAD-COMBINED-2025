@@ -178,7 +178,7 @@ const Warrant = (props) => {
         const WarrantTypeIDErrors = value.WarrantNumber ? RequiredFieldIncident(value.WarrantTypeID) : 'true';
         const WarrantNumberErrors = RequiredFieldIncident(value.WarrantNumber);
         const DateTimeIssuedErrors = value.WarrantNumber ? RequiredFieldIncident(value.DateTimeIssued) : 'true';
-        const DateExpiredErrors = value?.DateTimeIssued ? RequiredFieldIncident(value.DateExpired) : 'true';
+        // const DateExpiredErrors = value?.DateTimeIssued ? RequiredFieldIncident(value.DateExpired) : 'true';
         const IssuingAgencyIDErrors = value.WarrantNumber ? RequiredFieldIncident(value.IssuingAgencyID || value.WarrantIssuingAgency) : 'true';
 
         setErrors(pre => {
@@ -187,21 +187,21 @@ const Warrant = (props) => {
                 ['WarrantTypeIDErrors']: WarrantTypeIDErrors || pre['WarrantTypeIDErrors'],
                 ['WarrantNumberErrors']: WarrantNumberErrors || pre['WarrantNumberErrors'],
                 ['DateTimeIssuedErrors']: DateTimeIssuedErrors || pre['DateTimeIssuedErrors'],
-                ['DateExpiredErrors']: DateExpiredErrors || pre['DateExpiredErrors'],
+                // ['DateExpiredErrors']: DateExpiredErrors || pre['DateExpiredErrors'],
                 ['IssuingAgencyIDErrors']: IssuingAgencyIDErrors || pre['IssuingAgencyIDErrors'],
 
             }
         });
     }
 
-    const { WarrantTypeIDErrors, IssuingAgencyIDErrors, DateExpiredErrors, DateTimeIssuedErrors, WarrantNumberErrors } = errors
+    const { WarrantTypeIDErrors, IssuingAgencyIDErrors, DateTimeIssuedErrors, WarrantNumberErrors } = errors
 
     useEffect(() => {
-        if (WarrantTypeIDErrors === 'true' && IssuingAgencyIDErrors === 'true' && DateExpiredErrors === 'true' && DateTimeIssuedErrors === 'true' && WarrantNumberErrors === 'true') {
+        if (WarrantTypeIDErrors === 'true' && IssuingAgencyIDErrors === 'true' && DateTimeIssuedErrors === 'true' && WarrantNumberErrors === 'true') {
             if (warrantID && status) { update_Activity() }
             else { Add_Type() }
         }
-    }, [WarrantTypeIDErrors, IssuingAgencyIDErrors, DateExpiredErrors, DateTimeIssuedErrors, WarrantNumberErrors])
+    }, [WarrantTypeIDErrors, IssuingAgencyIDErrors, DateTimeIssuedErrors, WarrantNumberErrors])
 
     const DropDownIssuingAgency = (e, name) => {
         //  !addUpdatePermission && setChangesStatus(true)
@@ -248,9 +248,36 @@ const Warrant = (props) => {
             setValue({ ...value, [e.target.name]: '', ['DateTimeIssued']: '', ['DateExpired']: '', });
             setDateExpired();
         }
+    }
 
 
-    };
+    // };
+    // const handleChange = (e) => {
+    //     const { name, value } = e.target;
+    //     // Leading space remove
+    //     const trimmedValue = value.replace(/^\s+/, '');
+    //     !addUpdatePermission && setStatesChangeStatus(true);
+    //     !addUpdatePermission && setChangesStatus(true);
+    //     setValue({ ...value, [name]: trimmedValue });
+    //     if (trimmedValue === '') {
+    //         setErrors({
+    //             ...errors,
+    //             WarrantTypeIDErrors: '',
+    //             WarrantNumberErrors: '',
+    //             DateTimeIssuedErrors: '',
+    //             // DateExpiredErrors: '',
+    //             IssuingAgencyIDErrors: '',
+    //         });
+    //         setValue({
+    //             ...value,
+    //             [name]: '',
+    //             DateTimeIssued: '',
+    //             DateExpired: '',
+    //         });
+    //         setDateExpired();
+    //     }
+    // };
+
 
     useEffect(() => {
         if (openPage || loginAgencyID || loginPinID) {
@@ -498,17 +525,34 @@ const Warrant = (props) => {
                         ) : null}</label>
                     </div>
                     <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
-                        <input
+                        {/* <input
                             type="text"
                             maxLength={10}
                             value={value?.WarrantNumber}
                             onChange={handleChange}
                             name='WarrantNumber'
                             required
-                            // className='requiredColor'
                             className={isLockOrRestrictModule("Lock", editval[0]?.WarrantNumber, isLocked) ? 'LockFildsColor' : 'requiredColor'}
                             disabled={isLockOrRestrictModule("Lock", editval[0]?.WarrantNumber, isLocked)}
+                        /> */}
+                        <input
+                            type="text"
+                            maxLength={10}
+                            value={value?.WarrantNumber}
+                            name="WarrantNumber"
+                            onChange={handleChange}
+                            onKeyDown={(e) => {
+                                if (e.key === ' ' && e.target.selectionStart === 0) {
+                                    e.preventDefault();
+                                }
+                            }}
+                            required
+                            className={isLockOrRestrictModule("Lock", editval[0]?.WarrantNumber, isLocked)
+                                ? 'LockFildsColor'
+                                : 'requiredColor'}
+                            disabled={isLockOrRestrictModule("Lock", editval[0]?.WarrantNumber, isLocked)}
                         />
+
                     </div>
                     <div className="col-3 col-md-3 col-lg-2 mt-2">
 
@@ -596,20 +640,21 @@ const Warrant = (props) => {
                             name='DateTimeIssued'
                             id='DateTimeIssued'
                             onChange={(date) => {
+                                !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
                                 if (date) {
                                     let currDate = new Date(date);
                                     let prevDate = new Date(value?.DateTimeIssued);
                                     let maxDate = new Date();
                                     if ((currDate.getDate() === maxDate.getDate() && currDate.getMonth() === maxDate.getMonth() && currDate.getFullYear() === maxDate.getFullYear()) && !(currDate.getDate() === prevDate.getDate() && currDate.getMonth() === prevDate.getMonth() && currDate.getFullYear() === prevDate.getFullYear())) {
-                                        setDateTimeIssued(new Date()); !addUpdatePermission && setStatesChangeStatus(true);
+                                        setDateTimeIssued(new Date());
                                         setValue({ ...value, ['DateTimeIssued']: new Date() ? getShowingMonthDateYear(new Date()) : null })
                                     }
                                     else if (date >= new Date()) {
-                                        setDateTimeIssued(new Date()); !addUpdatePermission && setStatesChangeStatus(true); setValue({ ...value, ['DateTimeIssued']: new Date() ? getShowingMonthDateYear(new Date()) : null })
+                                        setDateTimeIssued(new Date()); setValue({ ...value, ['DateTimeIssued']: new Date() ? getShowingMonthDateYear(new Date()) : null })
                                     } else if (date <= new Date(incReportedDate)) {
-                                        setDateTimeIssued(incReportedDate); !addUpdatePermission && setStatesChangeStatus(true); setValue({ ...value, ['DateTimeIssued']: incReportedDate ? getShowingMonthDateYear(incReportedDate) : null })
+                                        setDateTimeIssued(incReportedDate); setValue({ ...value, ['DateTimeIssued']: incReportedDate ? getShowingMonthDateYear(incReportedDate) : null })
                                     } else {
-                                        setDateTimeIssued(date); !addUpdatePermission && setStatesChangeStatus(true); setValue({ ...value, ['DateTimeIssued']: date ? getShowingMonthDateYear(date) : null })
+                                        setDateTimeIssued(date); setValue({ ...value, ['DateTimeIssued']: date ? getShowingMonthDateYear(date) : null })
                                     }
                                 } else {
                                     setDateTimeIssued(null);
@@ -636,15 +681,14 @@ const Warrant = (props) => {
 
                     </div>
                     <div className="col-3 col-md-3 col-lg-2 mt-2">
-                        <label htmlFor="" className='label-name '>Expired Date/Time{errors.DateExpiredErrors !== 'true' ? (
-                            <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.DateExpiredErrors}</p>
-                        ) : null}</label>
+                        <label htmlFor="" className='label-name '></label>
                     </div>
                     <div className="col-3 col-md-3 col-lg-2 mt-2">
                         <DatePicker
                             id="DateExpired"
                             name="DateExpired"
                             onChange={(date) => {
+                                !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
                                 if (date) {
                                     const selectedDate = new Date(date);
                                     const isMidnight = selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0;
@@ -685,7 +729,7 @@ const Warrant = (props) => {
                             minDate={new Date(DateTimeIssued)}
 
                             disabled={isLockOrRestrictModule("Lock", editval[0]?.DateExpired, isLocked) || !value?.DateTimeIssued}
-                            className={isLockOrRestrictModule("Lock", editval[0]?.DateExpired, isLocked) ? "LockFildsColor" : `requiredColor ${!value?.DateTimeIssued ? 'readonlyColor' : ''}`}
+                            className={isLockOrRestrictModule("Lock", editval[0]?.DateExpired, isLocked) ? "LockFildsColor" : `'' ${!value?.DateTimeIssued ? 'readonlyColor' : ''}`}
 
                         />
                     </div>

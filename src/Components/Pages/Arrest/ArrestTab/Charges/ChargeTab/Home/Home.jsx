@@ -172,7 +172,6 @@ const Charges = (props) => {
       get_Data_Arrest_Charge(DecArrestId);
       if (!incReportedDate) { dispatch(get_Inc_ReportedDate(IncID)); }
       // get_Property_Data(ArrestID);
-      get_Security_DropDown(DecChargeId); get_Security_Data(ChargeID);
 
       if (DecArrestId) { get_Data_Arrest_Charge(DecArrestId); }
 
@@ -194,10 +193,15 @@ const Charges = (props) => {
   useEffect(() => {
     if (ChargeID) {
       // setArrestID(ArrestID);
-      get_ArrestCharge_Count(ChargeID); get_Security_Data(ChargeID);
-      get_Security_Data(ChargeID); get_Security_DropDown(ChargeID); get_Property_Data(ChargeID);
+      get_ArrestCharge_Count(ChargeID);
     }
   }, [ChargeID])
+
+  useEffect(() => {
+    if (DecArrestId) {
+      get_Property_Data(DecArrestId); get_Security_Data(DecArrestId); get_Security_DropDown(DecArrestId);
+    }
+  }, [DecArrestId])
 
   useEffect(() => {
     if (DecEIncID) {
@@ -320,7 +324,8 @@ const Charges = (props) => {
   const Reset = () => {
     setEditval([]);
     setValue({ ...value, 'CreatedByUserFK': '', 'Count': '', 'ChargeCodeID': '', 'NIBRSID': '', 'UCRClearID': '', 'WarrantID': '', 'LawTitleId': '', 'AttemptComplete': '', 'CategoryId': '', 'OffenseDateTime': '', });
-    setStatesChangeStatus(false); setChangesStatus(false); setErrors({}); setMultiSelected([]); setMultiSelected(prevValues => { return { ...prevValues, ['PropertyID']: '' } })
+    setStatesChangeStatus(false); setChangesStatus(false); setErrors({});
+    // setMultiSelected([]); setMultiSelected(prevValues => { return { ...prevValues, ['PropertyID']: '' } })
 
     // lawTitle
     LawTitleIdDrpDwnVal(LoginAgencyID, null);
@@ -645,7 +650,8 @@ const Charges = (props) => {
           get_ArrestCharge_Count(row.ChargeID);
           setErrors(''); setStatesChangeStatus(false);
           //  setStatus(true); 
-          setChargeID(row.ChargeID); setChangesStatus(false); GetSingleDataCharge(row.ChargeID); get_Arrest_Count(row?.ArrestID); get_Property_Data(row?.ChargeID);
+          setChargeID(row.ChargeID); setChangesStatus(false); GetSingleDataCharge(row.ChargeID); get_Arrest_Count(row?.ArrestID);
+          get_Property_Data(row?.ArrestID);
 
         }
 
@@ -655,11 +661,11 @@ const Charges = (props) => {
 
   const setStatusFalse = () => {
     if (MstPage === "MST-Arrest-Dash") {
-      navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${ArrestId}&Name=${Name}&ArrNo=${ArrNo}&ArrestSta=${true}&ChargeId=${('')}&ChargeSta=${false}&SideBarStatus=${false}`)
+      navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${DecArrestId}&Name=${Name}&ArrNo=${ArrNo}&ArrestSta=${true}&ChargeId=${('')}&ChargeSta=${false}&SideBarStatus=${false}`)
       setErrors(''); setChargeID('');
       Reset();
     } else {
-      navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(ArrestID)}&Name=${Name}&ArrNo=${ArrNo}&ChargeId=${('')}&ChargeSta=${false}&SideBarStatus=${false}`)
+      navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(DecArrestId)}&Name=${Name}&ArrNo=${ArrNo}&ChargeId=${('')}&ChargeSta=${false}&SideBarStatus=${false}`)
       setErrors(''); setChargeID(''); Reset();
     }
   }
@@ -733,8 +739,8 @@ const Charges = (props) => {
 
   }
 
-  const get_Security_Data = (ChargeID) => {
-    const val = { 'ChargeID': ChargeID }
+  const get_Security_Data = (ArrestID) => {
+    const val = { 'ArrestID': ArrestID }
     fetchPostData('ChargeWeaponType/GetData_ChargeWeaponType', val).then((res) => {
       if (res) {
         setTypeOfSecurityEditVal(Comman_changeArrayFormatChargeWeapon(res, 'ChargeWeaponID', 'WeaponCode', 'PretendToBeID', 'Weapon_Description', 'Weapon_Description', 'ChargeWeaponTypeID'));
@@ -757,8 +763,8 @@ const Charges = (props) => {
     }
   }
 
-  const get_Security_DropDown = (chargeID) => {
-    const val = { 'ChargeID': chargeID }
+  const get_Security_DropDown = (ArrestID) => {
+    const val = { 'ArrestID': ArrestID }
     fetchPostData('ChargeWeaponType/GetData_InsertChargeWeaponType', val).then((data) => {
       if (data) {
         setTypeOfSecurityList(threeColArray(data, 'WeaponID', 'Description', 'WeaponCode'));
@@ -769,13 +775,13 @@ const Charges = (props) => {
   }
 
   const InSertBasicInfo = (id, col1, url) => {
-    const val = { 'ChargeID': ChargeID, [col1]: id, 'CreatedByUserFK': LoginPinID, }
+    const val = { 'ArrestID': DecArrestId, [col1]: id, 'CreatedByUserFK': LoginPinID, }
     AddDeleteUpadate(url, val).then((res) => {
       if (res) {
         const parsedData = JSON.parse(res.data);
         const message = parsedData.Table[0].Message;
         toastifySuccess(message);
-        col1 === 'ChargeWeaponTypeID' && get_Security_Data(ChargeID); get_ArrestCharge_Count(ChargeID); get_Security_DropDown(ChargeID);
+        col1 === 'ChargeWeaponTypeID' && get_Security_Data(DecArrestId); get_ArrestCharge_Count(ChargeID); get_Security_DropDown(DecArrestId);
       } else { console.log("Somthing Wrong"); }
     })
   }
@@ -787,7 +793,7 @@ const Charges = (props) => {
         const parsedData = JSON.parse(res.data);
         const message = parsedData.Table[0].Message;
         toastifySuccess(message);
-        col1 === 'ChargeWeaponID' && get_Security_Data(ChargeID); get_ArrestCharge_Count(ChargeID); get_Security_DropDown(ChargeID);
+        col1 === 'ChargeWeaponID' && get_Security_Data(DecArrestId); get_ArrestCharge_Count(ChargeID); get_Security_DropDown(DecArrestId);
       }
     })
   }
@@ -817,9 +823,9 @@ const Charges = (props) => {
     if (propertyEditVal) { setMultiSelected(prevValues => { return { ...prevValues, ['PropertyID']: propertyEditVal } }) }
   }, [propertyEditVal])
 
-  const get_Property_Data = (ChargeID) => {
+  const get_Property_Data = (ArrestID) => {
     const val = {
-      'ChargeID': ChargeID,
+      'ArrestID': ArrestID,
     }
     fetchPostData('ArrestProperty/GetData_ArrestProperty', val).then((res) => {
       if (res) {
@@ -873,7 +879,7 @@ const Charges = (props) => {
         const parsedData = JSON.parse(res.data);
         const message = parsedData.Table[0].Message;
         toastifySuccess(message);
-        col1 === 'PropertyID' && get_Property_Data(ChargeID); get_Property_DropDown(DecEIncID); get_Arrest_Count(ArrestID)
+        col1 === 'PropertyID' && get_Property_Data(DecArrestId); get_Security_Data(DecArrestId); get_Property_DropDown(DecEIncID); get_Arrest_Count(ArrestID)
       } else {
         console.log("Somthing Wrong");
       }
@@ -890,7 +896,7 @@ const Charges = (props) => {
         const parsedData = JSON.parse(res.data);
         const message = parsedData.Table[0].Message;
         toastifySuccess(message);
-        col1 === 'ArrestPropertyID' && get_Property_Data(ChargeID); get_Property_DropDown(DecEIncID); get_Arrest_Count(DecArrestId)
+        col1 === 'ArrestPropertyID' && get_Property_Data(DecArrestId); get_Security_Data(DecArrestId); get_Property_DropDown(DecEIncID); get_Arrest_Count(DecArrestId)
       } else {
         console.log("Somthing Wrong");
       }
@@ -941,7 +947,7 @@ const Charges = (props) => {
                     // styles={customStylesWithOutColorMulti}
                     // isDisabled={!value?.ChargeID}
                     styles={isLockOrRestrictModule("Lock", typeOfSecurityEditVal, isLocked, true) ? MultiSelectLockedStyle : customStylesWithOutColorMulti}
-                    isDisabled={!value?.ChargeID || isLockOrRestrictModule("Lock", typeOfSecurityEditVal, isLocked, true)}
+                    isDisabled={!DecArrestId || isLockOrRestrictModule("Lock", typeOfSecurityEditVal, isLocked, true)}
 
                   />
                   :
@@ -960,7 +966,7 @@ const Charges = (props) => {
                     // styles={customStylesWithOutColorMulti}
                     // isDisabled={!value?.ChargeID}
                     styles={isLockOrRestrictModule("Lock", typeOfSecurityEditVal, isLocked, true) ? MultiSelectLockedStyle : customStylesWithOutColorMulti}
-                    isDisabled={!value?.ChargeID || isLockOrRestrictModule("Lock", typeOfSecurityEditVal, isLocked, true)}
+                    isDisabled={!DecArrestId || isLockOrRestrictModule("Lock", typeOfSecurityEditVal, isLocked, true)}
 
                   />
               }
@@ -985,7 +991,7 @@ const Charges = (props) => {
                 name='PropertyID'
                 noDataComponent={'There are no data to display'}
                 styles={isLockOrRestrictModule("Lock", propertyEditVal, isLocked, true) ? MultiSelectLockedStyle : customStylesWithOutColorMulti}
-                isDisabled={!value?.ChargeID || isLockOrRestrictModule("Lock", propertyEditVal, isLocked, true)}
+                isDisabled={!DecArrestId || isLockOrRestrictModule("Lock", propertyEditVal, isLocked, true)}
               // isDisabled={!value?.ChargeID}
               // styles={customStylesWithOutColorMulti}
               />
@@ -1352,5 +1358,8 @@ const Charges = (props) => {
   )
 }
 export default Charges
+
+
+
 
 

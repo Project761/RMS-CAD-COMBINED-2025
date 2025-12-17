@@ -1,47 +1,50 @@
 import React, { useContext, useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component';
-import { Decrypt_Id_Name, getShowingDateText, getShowingMonthDateYear, isLockOrRestrictModule, LockFildscolour, Requiredcolour, tableCustomStyles } from '../../../../Common/Utility';
-import NameListing from '../../../ShowAllList/NameListing';
 import Select from "react-select";
 import DatePicker from "react-datepicker";
+import { useLocation } from 'react-router-dom';
+import CreatableSelect from 'react-select/creatable';
+import { Decrypt_Id_Name, filterPassedDateTime, getShowingDateText, getShowingMonthDateYear, isLockOrRestrictModule, LockFildscolour, Requiredcolour, tableCustomStyles } from '../../../../Common/Utility';
+import NameListing from '../../../ShowAllList/NameListing';
 import { useDispatch, useSelector } from 'react-redux';
-import { get_LocalStoreData } from '../../../../../redux/api';
+import { get_LocalStoreData } from '../../../../../redux/actions/Agency';
 import { AgencyContext } from '../../../../../Context/Agency/Index';
 import { get_AgencyOfficer_Data } from '../../../../../redux/actions/DropDownsData';
 import { Comman_changeArrayFormat } from '../../../../Common/ChangeArrayFormat';
 import { AddDeleteUpadate, fetchPostData } from '../../../../hooks/Api';
 import { RequiredFieldIncident } from '../../../Utility/Personnel/Validation';
 import { toastifyError, toastifySuccess } from '../../../../Common/AlertMsg';
-import { useLocation } from 'react-router-dom';
 import DeletePopUpModal from '../../../../Common/DeleteModal';
 import ChangesModal from '../../../../Common/ChangesModal';
 import ListModal from '../../../Utility/ListManagementModel/ListModal';
-import CreatableSelect from 'react-select/creatable';
 import { get_ScreenPermissions_Data } from '../../../../../redux/actions/IncidentAction';
+import ArresList from '../../../ShowAllList/ArrestList';
 
 const Warrant = (props) => {
 
-    const { ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails = false, isLocked } = props
+    const { DecArrestId, get_List, setIsLocked, setShowPage, ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails = false, isLocked
+    } = props
 
-    const { get_Name_Count, setChangesStatus, GetDataTimeZone, datezone } = useContext(AgencyContext)
+    const { get_Name_Count, get_Arrest_Count, setChangesStatus, GetDataTimeZone, datezone, NameId } = useContext(AgencyContext);
 
     const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
     const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
     const agencyOfficerDrpData = useSelector((state) => state.DropDown.agencyOfficerDrpData);
+    const incReportedDate = useSelector((state) => state.Agency.incReportedDate);
 
     const [status, setStatus] = useState(false);
     const [statesChangeStatus, setStatesChangeStatus] = useState(false);
     const [clickedRow, setClickedRow] = useState(null);
     const [loginAgencyID, setLoginAgencyID] = useState('');
     const [loginPinID, setLoginPinID,] = useState('');
-    const [updateStatus, setUpdateStatus] = useState(0)
-    const [WarrentTypeDrp, setWarrentTypeDrp] = useState([])
-    const [warrantStatus, setWarrantStatus] = useState([])
-    const [agencyData, setAgencyData] = useState([])
-    const [warrantID, setWarrantID] = useState([])
-    const [warrentTypeData, setWarrentTypeData] = useState([])
+    const [updateStatus, setUpdateStatus] = useState(0);
+    const [WarrentTypeDrp, setWarrentTypeDrp] = useState([]);
+    const [warrantStatus, setWarrantStatus] = useState([]);
+    const [agencyData, setAgencyData] = useState([]);
+    const [warrantID, setWarrantID] = useState([]);
+    const [warrentTypeData, setWarrentTypeData] = useState([]);
     const [DateTimeIssued, setDateTimeIssued] = useState(new Date());
     const [DateExpired, setDateExpired] = useState(false);
     const [editval, setEditval] = useState([]);
@@ -49,6 +52,7 @@ const Warrant = (props) => {
     const [permissionForAdd, setPermissionForAdd] = useState(false);
     const [permissionForEdit, setPermissionForEdit] = useState(false);
     const [addUpdatePermission, setaddUpdatePermission] = useState();
+
 
     const useQuery = () => {
         const params = new URLSearchParams(useLocation().search);
@@ -70,22 +74,6 @@ const Warrant = (props) => {
         'WarrantTypeIDErrors': '', 'WarrantNumberErrors': '', 'DateTimeIssuedErrors': '', 'DateExpiredErrors': '', 'IssuingAgencyIDErrors': '',
     })
 
-
-
-    useEffect(() => {
-        if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
-            if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
-        }
-    }, []);
-
-    useEffect(() => {
-        if (localStoreData) {
-            setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
-            GetDataTimeZone(localStoreData?.AgencyID);
-        }
-
-    }, [localStoreData]);
-
     useEffect(() => {
         if (localStoreData) {
             setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
@@ -95,13 +83,31 @@ const Warrant = (props) => {
 
     useEffect(() => {
         if (effectiveScreenPermission?.length > 0) {
-            setPermissionForAdd(effectiveScreenPermission[0]?.AddOK);
-            setPermissionForEdit(effectiveScreenPermission[0]?.Changeok);
             setaddUpdatePermission(effectiveScreenPermission[0]?.AddOK != 1 || effectiveScreenPermission[0]?.Changeok != 1 ? true : false);
         } else {
             setaddUpdatePermission(false);
         }
     }, [effectiveScreenPermission]);
+
+
+
+    const reset = () => {
+        setValue({
+            ...value,
+            'WarrantNumber': '', 'WarrantTypeID': '', 'WarrantStatusID': '', 'AssignedOfficerID': '', 'WarrantIssuingAgency': '',
+            'IssuingAgencyID': '', 'WarrantIssuingAgency': '', 'DateTimeIssued': '', 'DateExpired': '',
+        }); setErrors({ ...errors, 'WarrantTypeIDErrors': '', 'WarrantNumberErrors': '', 'DateTimeIssuedErrors': '', 'DateExpiredErrors': '', 'IssuingAgencyIDErrors': '', }); setDateTimeIssued(''); setDateExpired(''); setEditval([])
+    }
+
+    const GetSingleData = (warrantID) => {
+        const val = { WarrantID: warrantID, }
+        fetchPostData('NameWarrant/GetSingleData_NameWarrant', val)
+            .then((res) => {
+                if (res) setEditval(res)
+                else setEditval([])
+            }
+            )
+    }
 
     useEffect(() => {
         if (status) {
@@ -127,39 +133,30 @@ const Warrant = (props) => {
     }, [editval])
 
     useEffect(() => {
+        if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
+            if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
+        }
+    }, []);
+
+    useEffect(() => {
+        if (localStoreData) {
+            setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
+            GetDataTimeZone(localStoreData?.AgencyID);
+        }
+    }, [localStoreData]);
+
+    useEffect(() => {
         if (loginAgencyID) {
-            dispatch(get_AgencyOfficer_Data(localStoreData?.AgencyID, DecIncID));
+            dispatch(get_AgencyOfficer_Data(localStoreData?.AgencyID, DecIncID))
         }
     }, [loginAgencyID]);
-
+    console.log(DecArrestId)
     useEffect(() => {
         if (DecNameID || DecMasterNameID) {
             setValue(pre => { return { ...pre, 'CreatedByUserFK': loginPinID, 'MasterNameID': DecMasterNameID, 'NameID': DecNameID } });
             get_WarrentType_Data(DecNameID, DecMasterNameID);
         }
     }, [DecNameID, DecMasterNameID, loginPinID]);
-
-    const reset = () => {
-        setValue({
-            ...value,
-            'WarrantNumber': '', 'WarrantTypeID': '', 'WarrantStatusID': '', 'AssignedOfficerID': '', 'WarrantIssuingAgency': '',
-            'IssuingAgencyID': '', 'WarrantIssuingAgency': '', 'DateTimeIssued': '', 'DateExpired': '',
-        });
-        setErrors({ ...errors, 'WarrantTypeIDErrors': '', 'WarrantNumberErrors': '', 'DateTimeIssuedErrors': '', 'DateExpiredErrors': '', 'IssuingAgencyIDErrors': '', });
-        setDateTimeIssued('');
-        setDateExpired('');
-        setEditval([]);
-    }
-
-    const GetSingleData = (warrantID) => {
-        const val = { WarrantID: warrantID, }
-        fetchPostData('NameWarrant/GetSingleData_NameWarrant', val)
-            .then((res) => {
-                if (res) setEditval(res)
-                else setEditval([])
-            }
-            )
-    }
 
     const get_WarrentType_Data = (DecNameID, DecMasterNameID) => {
         const val = { NameID: DecNameID, MasterNameID: DecMasterNameID, }
@@ -174,11 +171,11 @@ const Warrant = (props) => {
     }
 
     const check_Validation_Error = (e) => {
-        const WarrantTypeIDErrors = RequiredFieldIncident(value.WarrantTypeID);
+        const WarrantTypeIDErrors = value.WarrantNumber ? RequiredFieldIncident(value.WarrantTypeID) : 'true';
         const WarrantNumberErrors = RequiredFieldIncident(value.WarrantNumber);
-        const DateTimeIssuedErrors = RequiredFieldIncident(value.DateTimeIssued);
-        const DateExpiredErrors = RequiredFieldIncident(value.DateExpired);
-        const IssuingAgencyIDErrors = RequiredFieldIncident(value.IssuingAgencyID || value.WarrantIssuingAgency);
+        const DateTimeIssuedErrors = value.WarrantNumber ? RequiredFieldIncident(value.DateTimeIssued) : 'true';
+        // const DateExpiredErrors = value?.DateTimeIssued ? RequiredFieldIncident(value.DateExpired) : 'true';
+        const IssuingAgencyIDErrors = value.WarrantNumber ? RequiredFieldIncident(value.IssuingAgencyID || value.WarrantIssuingAgency) : 'true';
 
         setErrors(pre => {
             return {
@@ -186,7 +183,7 @@ const Warrant = (props) => {
                 ['WarrantTypeIDErrors']: WarrantTypeIDErrors || pre['WarrantTypeIDErrors'],
                 ['WarrantNumberErrors']: WarrantNumberErrors || pre['WarrantNumberErrors'],
                 ['DateTimeIssuedErrors']: DateTimeIssuedErrors || pre['DateTimeIssuedErrors'],
-                ['DateExpiredErrors']: DateExpiredErrors || pre['DateExpiredErrors'],
+                // ['DateExpiredErrors']: DateExpiredErrors || pre['DateExpiredErrors'],
                 ['IssuingAgencyIDErrors']: IssuingAgencyIDErrors || pre['IssuingAgencyIDErrors'],
 
             }
@@ -196,15 +193,14 @@ const Warrant = (props) => {
     const { WarrantTypeIDErrors, IssuingAgencyIDErrors, DateExpiredErrors, DateTimeIssuedErrors, WarrantNumberErrors } = errors
 
     useEffect(() => {
-        if (WarrantTypeIDErrors === 'true' && IssuingAgencyIDErrors === 'true' && DateExpiredErrors === 'true' && DateTimeIssuedErrors === 'true' && WarrantNumberErrors === 'true') {
+        if (WarrantTypeIDErrors === 'true' && IssuingAgencyIDErrors === 'true' && DateTimeIssuedErrors === 'true' && WarrantNumberErrors === 'true') {
             if (warrantID && status) { update_Activity() }
             else { Add_Type() }
         }
-    }, [WarrantTypeIDErrors, IssuingAgencyIDErrors, DateExpiredErrors, DateTimeIssuedErrors, WarrantNumberErrors])
+    }, [WarrantTypeIDErrors, IssuingAgencyIDErrors, DateTimeIssuedErrors, WarrantNumberErrors])
 
     const DropDownIssuingAgency = (e, name) => {
         //  !addUpdatePermission && setChangesStatus(true)
-        console.log(e, name)
         if (name === 'WarrantIssuingAgencyID') {
             !addUpdatePermission && setChangesStatus(true);
             !addUpdatePermission && setStatesChangeStatus(true);
@@ -232,16 +228,30 @@ const Warrant = (props) => {
     }
 
     const handleChange = (e) => {
-        !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-        setValue({ ...value, [e.target.name]: e.target.value });
+        if (e) {
+            !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
+            setValue({ ...value, [e.target.name]: e.target.value });
+        }
+        if (e.target.value === '') {
+            setErrors({
+                ...errors,
+                'WarrantTypeIDErrors': '',
+                'WarrantNumberErrors': '',
+                'DateTimeIssuedErrors': '',
+                // 'DateExpiredErrors': '',
+                'IssuingAgencyIDErrors': '',
+            });
+            setValue({ ...value, [e.target.name]: '', ['DateTimeIssued']: '', ['DateExpired']: '', });
+            setDateExpired();
+        }
     };
+
 
     useEffect(() => {
         if (openPage || loginAgencyID || loginPinID) {
             GetWarrentType(loginAgencyID); GetwarrantStatus(loginAgencyID); getAgency(loginAgencyID)
         }
     }, [loginAgencyID, loginPinID, openPage])
-
 
     const GetWarrentType = (loginAgencyID) => {
         const val = { AgencyID: loginAgencyID, }
@@ -269,7 +279,6 @@ const Warrant = (props) => {
         const value = { AgencyID: loginAgencyID, }
         fetchPostData("WarrantIssuingAgency/GetDataDropDown_WarrantIssuingAgency", value).then((data) => {
             if (data) {
-                console.log(data)
                 setAgencyData(Comman_changeArrayFormat(data, 'WarrantIssuingAgencyID', 'Description'))
             } else {
                 setAgencyData();
@@ -288,7 +297,6 @@ const Warrant = (props) => {
             selector: (row) => row.WarrantType_Description,
             sortable: true
         },
-
         {
             name: 'Assigned Officer',
             selector: (row) => row.AssignedOfficer,
@@ -329,7 +337,9 @@ const Warrant = (props) => {
                                 <i className="fa fa-trash"></i>
                             </span>
                     }
+
                 </div>
+
         }
     ]
 
@@ -428,7 +438,8 @@ const Warrant = (props) => {
                 const parseData = JSON.parse(res.data);
                 toastifySuccess(parseData?.Table[0].Message); setChangesStatus(false);
                 get_Name_Count(DecNameID, DecMasterNameID, MstPage === "MST-Name-Dash" ? true : false);
-                get_WarrentType_Data(DecNameID, DecMasterNameID); setStatus(false); reset()
+                get_WarrentType_Data(DecNameID, DecMasterNameID); setStatus(false);
+                reset();
             } else console.log("Somthing Wrong");
         })
     }
@@ -446,9 +457,14 @@ const Warrant = (props) => {
         }),
     }
 
-    const startRef = React.useRef();
     const startRef1 = React.useRef();
+    const startRef = React.useRef();
 
+    const onKeyDown = (e) => {
+        if (e.keyCode === 9 || e.which === 9) {
+            startRef.current.setOpen(false);
+        }
+    };
 
     const filterTimeForDateZone = (time, datezone) => {
         const zoneDate = new Date(datezone);
@@ -464,33 +480,38 @@ const Warrant = (props) => {
         return true;
     };
 
-    const NameDateExpired = ListData[0]?.DateOfBirth
-
-
     return (
         <>
-            <NameListing  {...{ ListData }} />
+            <NameListing {...{ ListData }} />
+
             <div className="col-md-12 mt-1">
-                <div className="row align-items-center" style={{ rowGap: "8px" }}>
-                    <div className="col-3 col-md-3 col-lg-1">
-                        <label htmlFor="" className='label-name mb-0 '>Warrant No.{errors.WarrantNumberErrors !== 'true' ? (
+                <div className="row">
+                    <div className="col-3 col-md-3 col-lg-1 mt-2">
+                        <label htmlFor="" className='label-name '>Warrant No.{errors.WarrantNumberErrors !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.WarrantNumberErrors}</p>
                         ) : null}</label>
                     </div>
-                    <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
+                    <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
                         <input
                             type="text"
-                            // className='requiredColor'
-                            className={isLockOrRestrictModule("Lock", editval[0]?.WarrantNumber, isLocked) ? 'LockFildsColor' : 'requiredColor'}
-                            disabled={isLockOrRestrictModule("Lock", editval[0]?.WarrantNumber, isLocked)}
                             maxLength={10}
                             value={value?.WarrantNumber}
+                            name="WarrantNumber"
                             onChange={handleChange}
-                            name='WarrantNumber'
+                            onKeyDown={(e) => {
+                                if (e.key === ' ' && e.target.selectionStart === 0) {
+                                    e.preventDefault();
+                                }
+                            }}
                             required
+                            className={isLockOrRestrictModule("Lock", editval[0]?.WarrantNumber, isLocked)
+                                ? 'LockFildsColor'
+                                : 'requiredColor'}
+                            disabled={isLockOrRestrictModule("Lock", editval[0]?.WarrantNumber, isLocked)}
                         />
                     </div>
-                    <div className="col-3 col-md-3 col-lg-2">
+                    <div className="col-3 col-md-3 col-lg-2 mt-2">
+
                         <span data-toggle="modal" onClick={() => {
                             setOpenPage('Warrant Type')
                         }} data-target="#ListModel" className='new-link'>
@@ -499,38 +520,38 @@ const Warrant = (props) => {
                             ) : null}
                         </span>
                     </div>
-
-                    <div className="col-3 col-md-3 col-lg-3" >
+                    <div className="col-3 col-md-3 col-lg-3 mt-1" >
                         <Select
                             name='WarrantTypeID'
-                            // styles={Requiredcolour}
-                            styles={isLockOrRestrictModule("Lock", editval[0]?.WarrantTypeID, isLocked) ? LockFildscolour : Requiredcolour}
-                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.WarrantTypeID, isLocked)}
-
                             value={WarrentTypeDrp?.filter((obj) => obj.value === value?.WarrantTypeID)}
                             isClearable
                             options={WarrentTypeDrp}
                             onChange={(e) => ChangeDropDown(e, 'WarrantTypeID')}
                             placeholder="Select..."
+
+                            // styles={Requiredcolour}
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.WarrantTypeID, isLocked) ? LockFildscolour : value.WarrantNumber ? Requiredcolour : ''}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.WarrantTypeID, isLocked)}
                         />
                     </div>
-                    <div className="col-3 col-md-3 col-lg-2">
-                        <label htmlFor="" className='label-name mb-0'>Assigned Officer</label>
+                    <div className="col-3 col-md-3 col-lg-2 mt-2">
+                        <label htmlFor="" className='label-name '>Assigned Officer</label>
                     </div>
-                    <div className="col-3 col-md-3 col-lg-2" >
+                    <div className="col-3 col-md-3 col-lg-2 mt-1" >
                         <Select
                             name='AssignedOfficerID'
-                            styles={isLockOrRestrictModule("Lock", editval[0]?.AssignedOfficerID, isLocked) ? LockFildscolour : customStylesWithOutColor}
-                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.AssignedOfficerID, isLocked)}
-
                             value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.AssignedOfficerID)}
                             isClearable
                             options={agencyOfficerDrpData}
                             onChange={(e) => ChangeDropDown(e, 'AssignedOfficerID')}
                             placeholder="Select..."
+                            // styles={customStylesWithOutColor}
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.AssignedOfficerID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.AssignedOfficerID, isLocked)}
                         />
                     </div>
-                    <div className="col-3 col-md-3 col-lg-1">
+                    <div className="col-3 col-md-3 col-lg-1 mt-2">
+
                         <span data-toggle="modal" onClick={() => {
                             setOpenPage('Warrant Status')
                         }} data-target="#ListModel" className='new-link'>
@@ -538,93 +559,92 @@ const Warrant = (props) => {
                         </span>
                     </div>
 
-                    <div className="col-3 col-md-3 col-lg-2">
+                    <div className="col-3 col-md-3 col-lg-2  mt-1">
                         <Select
                             name='WarrantStatusID'
-                            styles={isLockOrRestrictModule("Lock", editval[0]?.WarrantStatusID, isLocked) ? LockFildscolour : customStylesWithOutColor}
-                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.WarrantStatusID, isLocked)}
                             value={warrantStatus?.filter((obj) => obj.value === value?.WarrantStatusID)}
                             isClearable
                             options={warrantStatus}
                             onChange={(e) => ChangeDropDown(e, 'WarrantStatusID')}
                             placeholder="Select..."
+                            // styles={customStylesWithOutColor}
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.WarrantStatusID, isLocked) ? LockFildscolour : customStylesWithOutColor}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.WarrantStatusID, isLocked)}
                         />
                     </div>
-                    <div className="col-3 col-md-3 col-lg-2">
-                        <label htmlFor="" className='label-name mb-0'>Issued Date/Time{errors.DateTimeIssuedErrors !== 'true' ? (
+                    <div className="col-3 col-md-3 col-lg-2 mt-3">
+                        <label htmlFor="" className='label-name '>Issued Date/Time{errors.DateTimeIssuedErrors !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.DateTimeIssuedErrors}</p>
                         ) : null}</label>
                     </div>
-                    <div className="col-3 col-md-3 col-lg-3">
+                    <div className="col-3 col-md-3 col-lg-3 mt-2">
                         <DatePicker
-                            id='DateTimeIssued'
-                            name='DateTimeIssued'
-                            ref={startRef1}
-                            // className='requiredColor'
-                            className={isLockOrRestrictModule("Lock", editval[0]?.DateTimeIssued, isLocked) ? 'LockFildsColor' : 'requiredColor'}
-                            disabled={isLockOrRestrictModule("Lock", editval[0]?.DateTimeIssued, isLocked)}
-
-                            dateFormat="MM/dd/yyyy HH:mm"
-                            selected={value?.DateTimeIssued ? new Date(value?.DateTimeIssued) : null}
-                            isClearable={Boolean(value?.DateTimeIssued)}
-                            placeholderText={value?.DateTimeIssued || 'Select...'}
-                            showTimeSelect
-                            timeInputLabel="Time"
-                            timeIntervals={1}
-                            timeCaption="Time"
-                            showMonthDropdown
-                            showYearDropdown
-                            dropdownMode="select"
-                            // minDate={new Date(NameDateExpired)}
-                            // maxDate={new Date(datezone)}
-                            autoComplete='off'
-                            timeFormat="HH:mm"
-                            is24Hour
+                            ref={startRef}
                             onKeyDown={(e) => {
                                 if (!((e.key >= '0' && e.key <= '9') || e.key === 'Backspace' || e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Delete' || e.key === ':' || e.key === '/' || e.key === ' ' || e.key === 'F5')) {
-                                    e.preventDefault();
-                                }
+                                    e?.preventDefault();
+                                } else { onKeyDown(e); }
                             }}
+                            dateFormat="MM/dd/yyyy HH:mm"
+                            timeFormat="HH:mm"
+                            // className='requiredColor'
+                            className={isLockOrRestrictModule("Lock", editval[0]?.DateTimeIssued, isLocked) ? "LockFildsColor" : value.WarrantNumber ? 'requiredColor' : ''}
+                            disabled={isLockOrRestrictModule("Lock", editval[0]?.DateTimeIssued, isLocked)}
+                            is24Hour
+                            timeInputLabel
+                            isClearable
+                            name='DateTimeIssued'
+                            id='DateTimeIssued'
                             onChange={(date) => {
-                                !addUpdatePermission && setStatesChangeStatus(true);
-                                !addUpdatePermission && setChangesStatus(true);
+                                !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
                                 if (date) {
-                                    const currentTime = new Date();
-                                    const updatedDate = new Date(date);
-
-                                    if (updatedDate.getHours() === 0 && updatedDate.getMinutes() === 0) {
-                                        updatedDate.setHours(currentTime.getHours());
-                                        updatedDate.setMinutes(currentTime.getMinutes());
+                                    let currDate = new Date(date);
+                                    let prevDate = new Date(value?.DateTimeIssued);
+                                    let maxDate = new Date();
+                                    if ((currDate.getDate() === maxDate.getDate() && currDate.getMonth() === maxDate.getMonth() && currDate.getFullYear() === maxDate.getFullYear()) && !(currDate.getDate() === prevDate.getDate() && currDate.getMonth() === prevDate.getMonth() && currDate.getFullYear() === prevDate.getFullYear())) {
+                                        setDateTimeIssued(new Date());
+                                        setValue({ ...value, ['DateTimeIssued']: new Date() ? getShowingMonthDateYear(new Date()) : null })
                                     }
-
-                                    setDateTimeIssued(updatedDate);
-                                    setValue({
-                                        ...value,
-                                        ['DateTimeIssued']: getShowingMonthDateYear(updatedDate),
-                                        ['DateExpired']: ''
-                                    });
-                                    setDateExpired(); // optionally you can also pass null here: setDateExpired(null);
+                                    else if (date >= new Date()) {
+                                        setDateTimeIssued(new Date()); setValue({ ...value, ['DateTimeIssued']: new Date() ? getShowingMonthDateYear(new Date()) : null })
+                                    } else if (date <= new Date(incReportedDate)) {
+                                        setDateTimeIssued(incReportedDate); setValue({ ...value, ['DateTimeIssued']: incReportedDate ? getShowingMonthDateYear(incReportedDate) : null })
+                                    } else {
+                                        setDateTimeIssued(date); setValue({ ...value, ['DateTimeIssued']: date ? getShowingMonthDateYear(date) : null })
+                                    }
                                 } else {
                                     setDateTimeIssued(null);
-                                    setDateExpired(null); // <-- Clear Expired date
-                                    setValue({ ...value, ['DateTimeIssued']: null, ['DateExpired']: null }); // <-- Clear both fields in value
+                                    setDateExpired(null);
+                                    setValue({
+                                        ...value, ['DateTimeIssued']: null, ['DateExpired']: null,
+                                    });
                                 }
                             }}
-
-                        // filterTime={(time) => filterTimeForDateZone(time, datezone)}
+                            selected={value.DateTimeIssued ? new Date(value.DateTimeIssued) : null}
+                            placeholderText={'Select...'}
+                            showTimeSelect
+                            filterTime={(time) => filterPassedDateTime(time, DateTimeIssued, incReportedDate)}
+                            timeIntervals={1}
+                            dropdownMode="select"
+                            timeCaption="Time"
+                            popperPlacement="bottom"
+                            maxDate={new Date()}
+                            minDate={new Date(incReportedDate)}
+                            autoComplete='off'
+                            showMonthDropdown
+                            showYearDropdown
                         />
 
                     </div>
-                    <div className="col-3 col-md-3 col-lg-2">
-                        <label htmlFor="" className='label-name '>Expired Date/Time{errors.DateExpiredErrors !== 'true' ? (
-                            <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.DateExpiredErrors}</p>
-                        ) : null}</label>
+                    <div className="col-3 col-md-3 col-lg-2 mt-3">
+                        <label htmlFor="" className='label-name '>Expired Date/Time</label>
                     </div>
-                    <div className="col-3 col-md-3 col-lg-2">
+                    <div className="col-3 col-md-3 col-lg-2 mt-2">
                         <DatePicker
                             id="DateExpired"
                             name="DateExpired"
                             onChange={(date) => {
+                                !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
                                 if (date) {
                                     const selectedDate = new Date(date);
                                     const isMidnight = selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0;
@@ -647,7 +667,6 @@ const Warrant = (props) => {
                                     setValue({ ...value, ["DateExpired"]: null });
                                 }
                             }}
-
                             isClearable={value?.DateExpired ? true : false}
                             selected={DateExpired}
                             placeholderText={"Select..."}
@@ -660,17 +679,19 @@ const Warrant = (props) => {
                             timeFormat="HH:mm "
                             is24Hour
                             showTimeSelect
-                            // className='requiredColor'
-                            // disabled={value?.DateTimeIssued ? false : true}
-                            className={isLockOrRestrictModule("Lock", editval[0]?.DateExpired, isLocked) ? 'LockFildsColor' : 'requiredColor'}
-                            disabled={isLockOrRestrictModule("Lock", editval[0]?.DateExpired, isLocked) ? true : value?.DateTimeIssued ? false : true}
                             timeCaption="Time"
+                            // isDisabled={!value?.DateTimeIssued}
                             timeIntervals={1}
                             minDate={new Date(DateTimeIssued)}
 
+                            disabled={isLockOrRestrictModule("Lock", editval[0]?.DateExpired, isLocked) || !value?.DateTimeIssued}
+                            className={isLockOrRestrictModule("Lock", editval[0]?.DateExpired, isLocked) ? "LockFildsColor" : `"" ${!value?.DateTimeIssued ? 'readonlyColor' : ''}`}
+
                         />
                     </div>
-                    <div className="col-3 col-md-3 col-lg-1">
+
+
+                    <div className="col-3 col-md-3 col-lg-1 mt-2">
                         <span data-toggle="modal" onClick={() => {
                             setOpenPage('Warrant Issuing Agency')
                         }} data-target="#ListModel" className='new-link'>
@@ -680,7 +701,7 @@ const Warrant = (props) => {
                         </span>
                     </div>
 
-                    <div className="col-9 col-md-9 col-lg-11" >
+                    <div className="col-9 col-md-9 col-lg-11 mt-1" >
                         <CreatableSelect
                             name="IssuingAgencyID"
                             isClearable
@@ -693,14 +714,16 @@ const Warrant = (props) => {
                             }
                             onChange={(e) => DropDownIssuingAgency(e, "WarrantIssuingAgencyID")}
                             // styles={Requiredcolour}
-                            styles={isLockOrRestrictModule("Lock", editval[0]?.IssuingAgencyID, isLocked) ? LockFildscolour : Requiredcolour}
-                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.IssuingAgencyID, isLocked) ? true : false}
+                            styles={isLockOrRestrictModule("Lock", editval[0]?.IssuingAgencyID, isLocked) ? LockFildscolour : value.WarrantNumber ? Requiredcolour : ''}
+                            isDisabled={isLockOrRestrictModule("Lock", editval[0]?.IssuingAgencyID, isLocked)}
                         />
                     </div>
 
                 </div>
                 {!isViewEventDetails &&
                     <div className="btn-box text-right mr-1 mb-2 mt-3">
+                        {/* <button type="button" className="btn btn-sm btn-success mx-1 py-1 text-center" onClick={() => { setShowPage('Charges'); }}>Back</button>
+                        <button type="button" className="btn btn-sm btn-success mx-1 py-1 text-center" onClick={() => { setShowPage('Narratives'); }}>Next</button> */}
                         <button type="button" data-dismiss="modal" onClick={() => {
                             setStatusFalse();
                         }} className="btn btn-sm btn-success mr-1" >New</button>
@@ -734,7 +757,6 @@ const Warrant = (props) => {
                 <DataTable
                     dense
                     columns={columns}
-
                     data={warrentTypeData}
                     pagination
                     highlightOnHover
