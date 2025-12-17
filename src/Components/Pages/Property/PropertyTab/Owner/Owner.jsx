@@ -210,13 +210,13 @@ const Owner = (props) => {
       sortable: true
     },
     {
-      width: '140px',
+      // width: '140px',
       name: 'Address',
       selector: (row) => row.Address,
       sortable: true
     },
     {
-      width: '150px',
+      // width: '150px',
       name: 'Phone Number',
       selector: (row) => row.Contact,
       sortable: true

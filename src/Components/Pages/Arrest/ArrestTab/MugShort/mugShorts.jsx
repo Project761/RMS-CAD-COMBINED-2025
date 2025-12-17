@@ -758,9 +758,9 @@ const MugShorts = (props) => {
                 <div className="col-md-12 mt-2">
                     <div className="row">
                         {[ // Static sections for Front, Left, Right
-                            { label: 'Front', name: 'FrontMugshot' },
-                            { label: 'Left', name: 'LeftMugshot' },
-                            { label: 'Right', name: 'RightMugshot' },
+                            { label: 'Front View', name: 'FrontMugshot' },
+                            { label: 'Left View', name: 'LeftMugshot' },
+                            { label: 'Right View', name: 'RightMugshot' },
                         ].map((item, index) => (
                             <div key={index} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-3 d-flex align-items-stretch">
                                 <div className="card shadow-sm w-100 border-0">
@@ -771,7 +771,7 @@ const MugShorts = (props) => {
                                             {value[item.name] ? (
                                                 <img src={typeof value[item.name] === 'string' ? value[item.name] : URL.createObjectURL(value[item.name])}
                                                     alt={`${item.label} preview`} className="img-fluid rounded mugshot-img" />
-                                            ) : (<span className="text-muted">{item.label} Mugshot preview</span>)}
+                                            ) : (<span className="text-muted">{item.label} Mugshot Preview</span>)}
                                         </div>
                                         <div className="d-flex justify-content-center gap-2">
                                             <button type="button" className="btn btn-sm mr-2" style={{ border: "1px solid #1A5089" }} onClick={() => handleUpload(item.name)}>
@@ -810,7 +810,7 @@ const MugShorts = (props) => {
                                                     className="img-fluid rounded mugshot-img"
                                                 />
                                             ) : (
-                                                <span className="text-muted">Enter Mugshot preview</span>
+                                                <span className="text-muted">Enter Mugshot Preview</span>
                                             )}
                                         </div>
                                         <div className="d-flex justify-content-center gap-2">
