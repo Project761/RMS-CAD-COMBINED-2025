@@ -4,7 +4,7 @@ import Select from "react-select";
 import DatePicker from "react-datepicker";
 import { useLocation } from 'react-router-dom';
 import CreatableSelect from 'react-select/creatable';
-import { Decrypt_Id_Name, filterPassedDateTime, getShowingDateText, getShowingMonthDateYear, isLockOrRestrictModule, LockFildscolour, Requiredcolour, tableCustomStyles } from '../../../../Common/Utility';
+import { Decrypt_Id_Name, filterPassedDateTime, filterPassedTimeZonesProperty, getShowingDateText, getShowingMonthDateYear, isLockOrRestrictModule, LockFildscolour, Requiredcolour, tableCustomStyles } from '../../../../Common/Utility';
 import NameListing from '../../../ShowAllList/NameListing';
 import { useDispatch, useSelector } from 'react-redux';
 import { get_LocalStoreData } from '../../../../../redux/actions/Agency';
@@ -514,7 +514,59 @@ const Warrant = (props) => {
     };
 
 
-    console.log(incReportedDate)
+    const getValidDate = (date) => {
+        const d = new Date(date);
+        return !isNaN(d.getTime()) ? d : null;
+    };
+
+    const sameMinute = (a, b) => {
+        return (
+            a.getFullYear() === b.getFullYear() &&
+            a.getMonth() === b.getMonth() &&
+            a.getDate() === b.getDate() &&
+            a.getHours() === b.getHours() &&
+            a.getMinutes() === b.getMinutes()
+        );
+    };
+
+
+    const filterExpectedTimes = (time) => {
+        if (!DateTimeIssued) return false;
+
+        const checkout = new Date(DateTimeIssued);
+        const serverNow = new Date(datezone);
+
+        const baseDay = DateExpired ? new Date(DateExpired) : new Date(checkout);
+        const picked = new Date(baseDay);
+        picked.setHours(time?.getHours(), time?.getMinutes(), 0, 0);
+
+        if (sameMinute(checkout, serverNow)) {
+            return false;
+        }
+
+        const isSameDayAsCheckout =
+            picked?.getFullYear() === checkout?.getFullYear() &&
+            picked?.getMonth() === checkout?.getMonth() &&
+            picked?.getDate() === checkout?.getDate();
+
+        const isSameDayAsNow =
+            picked?.getFullYear() === serverNow?.getFullYear() &&
+            picked?.getMonth() === serverNow?.getMonth() &&
+            picked?.getDate() === serverNow?.getDate();
+
+        if (isSameDayAsCheckout) {
+            if (!(picked > checkout)) return false;
+            return picked <= serverNow;
+        }
+
+        if (isSameDayAsNow) {
+            return picked <= serverNow;
+        }
+        return picked <= serverNow;
+    };
+
+
+
     return (
         <>
             <ArresList {...{ ListData }} />
@@ -631,35 +683,78 @@ const Warrant = (props) => {
                             isClearable
                             name='DateTimeIssued'
                             id='DateTimeIssued'
+                            // onChange={(date) => {
+                            //     !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
+                            //     if (date) {
+                            //         let currDate = new Date(date);
+                            //         let prevDate = new Date(value?.DateTimeIssued);
+                            //         let maxDate = new Date();
+                            //         if ((currDate.getDate() === maxDate.getDate() && currDate.getMonth() === maxDate.getMonth() && currDate.getFullYear() === maxDate.getFullYear()) && !(currDate.getDate() === prevDate.getDate() && currDate.getMonth() === prevDate.getMonth() && currDate.getFullYear() === prevDate.getFullYear())) {
+                            //             setDateTimeIssued(new Date());
+                            //             setValue({ ...value, ['DateTimeIssued']: new Date() ? getShowingMonthDateYear(new Date()) : null })
+                            //         }
+                            //         else if (date >= new Date()) {
+                            //             setDateTimeIssued(new Date()); setValue({ ...value, ['DateTimeIssued']: new Date() ? getShowingMonthDateYear(new Date()) : null })
+                            //         } else if (date <= new Date(incReportedDate)) {
+                            //             setDateTimeIssued(incReportedDate); setValue({ ...value, ['DateTimeIssued']: incReportedDate ? getShowingMonthDateYear(incReportedDate) : null })
+                            //         } else {
+                            //             setDateTimeIssued(date); setValue({ ...value, ['DateTimeIssued']: date ? getShowingMonthDateYear(date) : null })
+                            //         }
+                            //     } else {
+                            //         setDateTimeIssued(null);
+                            //         setDateExpired(null);
+                            //         setValue({
+                            //             ...value, ['DateTimeIssued']: null, ['DateExpired']: null,
+                            //         });
+                            //     }
+                            // }}
                             onChange={(date) => {
-                                !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-                                if (date) {
-                                    let currDate = new Date(date);
-                                    let prevDate = new Date(value?.DateTimeIssued);
-                                    let maxDate = new Date();
-                                    if ((currDate.getDate() === maxDate.getDate() && currDate.getMonth() === maxDate.getMonth() && currDate.getFullYear() === maxDate.getFullYear()) && !(currDate.getDate() === prevDate.getDate() && currDate.getMonth() === prevDate.getMonth() && currDate.getFullYear() === prevDate.getFullYear())) {
-                                        setDateTimeIssued(new Date());
-                                        setValue({ ...value, ['DateTimeIssued']: new Date() ? getShowingMonthDateYear(new Date()) : null })
-                                    }
-                                    else if (date >= new Date()) {
-                                        setDateTimeIssued(new Date()); setValue({ ...value, ['DateTimeIssued']: new Date() ? getShowingMonthDateYear(new Date()) : null })
-                                    } else if (date <= new Date(incReportedDate)) {
-                                        setDateTimeIssued(incReportedDate); setValue({ ...value, ['DateTimeIssued']: incReportedDate ? getShowingMonthDateYear(incReportedDate) : null })
-                                    } else {
-                                        setDateTimeIssued(date); setValue({ ...value, ['DateTimeIssued']: date ? getShowingMonthDateYear(date) : null })
-                                    }
-                                } else {
-                                    setDateTimeIssued(null);
-                                    setDateExpired(null);
+                                if (!date) {
                                     setValue({
-                                        ...value, ['DateTimeIssued']: null, ['DateExpired']: null,
+                                        ...value,
+                                        DateTimeIssued: null, ["DateExpired"]: null,
                                     });
+                                    setDateExpired(null);
+                                    setDateTimeIssued(null);
+                                    return;
                                 }
+
+                                const oldDate = getValidDate(value?.DateTimeIssued);
+                                const isSameDay =
+                                    oldDate &&
+                                    date.getFullYear() === oldDate.getFullYear() &&
+                                    date.getMonth() === oldDate.getMonth() &&
+                                    date.getDate() === oldDate.getDate();
+                                let finalDate = date;
+                                if (!isSameDay) {
+                                    const inc = new Date(incReportedDate);
+                                    finalDate = new Date(
+                                        date.getFullYear(),
+                                        date.getMonth(),
+                                        date.getDate(),
+                                        inc.getHours(),
+                                        inc.getMinutes(),
+                                        0
+                                    );
+                                }
+                                if (finalDate > new Date(datezone)) {
+                                    finalDate = new Date(datezone);
+                                }
+                                if (finalDate < new Date(incReportedDate)) {
+                                    finalDate = new Date(incReportedDate);
+                                }
+                                setDateTimeIssued(finalDate);
+                                setValue({
+                                    ...value,
+                                    DateTimeIssued: getShowingDateText(finalDate)
+                                });
+                                !addUpdatePermission && setChangesStatus(true);
+                                !addUpdatePermission && setStatesChangeStatus(true);
                             }}
                             selected={value.DateTimeIssued ? new Date(value.DateTimeIssued) : null}
                             placeholderText={'Select...'}
                             showTimeSelect
-                            filterTime={(time) => filterPassedDateTime(time, DateTimeIssued, incReportedDate)}
+                            filterTime={(date) => filterPassedTimeZonesProperty(date, incReportedDate, datezone)}
                             timeIntervals={1}
                             dropdownMode="select"
                             timeCaption="Time"
@@ -688,7 +783,7 @@ const Warrant = (props) => {
                                     const selectedDate = new Date(date);
                                     const isMidnight = selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0;
                                     if (isMidnight) {
-                                        const now = new Date();
+                                        const now = new Date(datezone);
                                         selectedDate.setHours(now.getHours());
                                         selectedDate.setMinutes(now.getMinutes());
                                         selectedDate.setSeconds(0);
@@ -721,7 +816,10 @@ const Warrant = (props) => {
                             timeCaption="Time"
                             // isDisabled={!value?.DateTimeIssued}
                             timeIntervals={1}
-                            minDate={new Date(DateTimeIssued)}
+                            maxDate={new Date(datezone)}
+                            minDate={DateTimeIssued}
+                            filterTime={filterExpectedTimes}
+                            openToDate={new Date(datezone)}
 
                             // disabled={isLockOrRestrictModule("Lock", editval[0]?.DateExpired, isLocked) || !value?.DateTimeIssued}
                             // className={isLockOrRestrictModule("Lock", editval[0]?.DateExpired, isLocked) ? "LockFildsColor" : `'' ${!value?.DateTimeIssued ? 'readonlyColor' : ''}`}
