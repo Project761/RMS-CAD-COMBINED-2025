@@ -290,6 +290,7 @@ const VehicleManagement = (props) => {
         // const ExpectedReturnDateTimeError = value.IsCheckOut ? RequiredFieldIncident(value.ExpectedDate) : 'true';
         const ReleasingOfficerError = (value.IsRelease || value.IsCheckOut) ? RequiredFieldIncident(value.ReleasingOfficerID) : 'true';
         const ReceipientError = value.IsRelease ? RequiredFieldIncident(value.ReceipentID) : 'true';
+         const ReceipientOfficerError = value.IsCheckOut ? RequiredFieldIncident(value.ReceipentOfficerID) : 'true';
         const ReleasedDateTimeError = value.IsRelease ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
         // const DestructionDateTimeError = value.IsDestroy ? RequiredFieldIncident(value.DestroyDate) : 'true';
         const DestructionDateTimeError = value.IsDestroy ? RequiredFieldIncident(value.activitydate) : 'true';
@@ -321,15 +322,16 @@ const VehicleManagement = (props) => {
                 ['UpdateDateTimeError']: UpdateDateTimeError || prevValues['UpdateDateTimeError'],
                 ['StorageLocationError']: StorageLocationError || prevValues['StorageLocationError'],
                 ['NewStorageLocationError']: NewStorageLocationError || prevValues['NewStorageLocationError'],
+                  ['ReceipientOfficerError']: ReceipientOfficerError || prevValues['ReceipientOfficerError'],
             }
         })
     }
-    const { ReasonError, PropertyRoomOfficerError, NewStorageLocationError, CheckInDateTimeError, SubmittingOfficerError, StorageLocationError, CheckOutDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
+    const { ReasonError, PropertyRoomOfficerError, NewStorageLocationError, CheckInDateTimeError, ReceipientOfficerError , SubmittingOfficerError, StorageLocationError, CheckOutDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
         DestructionDateTimeError, DestructionOfficerError, UpdatingOfficerError, ApprovalOfficerError, WitnessError, TransferDateTimeError, UpdateDateTimeError } = errors
 
     useEffect(() => {
 
-        if (ReasonError === 'true' && PropertyRoomOfficerError === 'true' && NewStorageLocationError === 'true' && StorageLocationError === 'true' && CheckInDateTimeError === 'true' && SubmittingOfficerError === 'true' && CheckOutDateTimeError === 'true' && ReleasingOfficerError === 'true' && ReceipientError === 'true' && ReleasedDateTimeError === 'true'
+        if (ReasonError === 'true' && PropertyRoomOfficerError === 'true' && ReceipientOfficerError === 'true' && NewStorageLocationError === 'true' && StorageLocationError === 'true' && CheckInDateTimeError === 'true' && SubmittingOfficerError === 'true' && CheckOutDateTimeError === 'true' && ReleasingOfficerError === 'true' && ReceipientError === 'true' && ReleasedDateTimeError === 'true'
             && DestructionDateTimeError === 'true' && DestructionOfficerError === 'true' && UpdatingOfficerError === 'true' && ApprovalOfficerError === 'true' && WitnessError === 'true' && TransferDateTimeError === 'true' && UpdateDateTimeError === 'true'
         ) {
 
@@ -1367,8 +1369,8 @@ const VehicleManagement = (props) => {
 
                         </div>
                         <div className="col-3 col-md-3 col-lg-2  ">
-                            <label htmlFor="" className='new-label px-0 mb-0'>Recepient Officer{errors.ReasonError !== 'true' ? (
-                                <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
+                            <label htmlFor="" className='new-label px-0 mb-0'>Recepient Officer{errors.ReceipientOfficerError !== 'true' ? (
+                                <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReceipientOfficerError}</p>
                             ) : null}</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 text-field mt-0">

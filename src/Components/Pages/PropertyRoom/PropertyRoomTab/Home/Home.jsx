@@ -311,6 +311,7 @@ const Home = (props) => {
         const ExpectedReturnDateTimeError = value.IsCheckOut ? RequiredFieldIncident(value.ExpectedDate) : 'true';
         const ReleasingOfficerError = (value.IsRelease || value.IsCheckOut) ? RequiredFieldIncident(value.ReleasingOfficerID) : 'true';
         const ReceipientError = value.IsRelease ? RequiredFieldIncident(value.ReceipentID) : 'true';
+        const ReceipientOfficerError = value.IsCheckOut ? RequiredFieldIncident(value.ReceipentOfficerID) : 'true';
         const ReleasedDateTimeError = value.IsRelease ? RequiredFieldIncident(value.ReleaseDate) : 'true';
         // const DestructionDateTimeError = value.IsDestroy ? RequiredFieldIncident(value.DestroyDate) : 'true';
         const DestructionDateTimeError = value.IsDestroy ? RequiredFieldIncident(value.activitydate) : 'true';
@@ -342,22 +343,23 @@ const Home = (props) => {
                 ['UpdateDateTimeError']: UpdateDateTimeError || prevValues['UpdateDateTimeError'],
                 ['StorageLocationError']: StorageLocationError || prevValues['StorageLocationError'],
                 ['NewStorageLocationError']: NewStorageLocationError || prevValues['NewStorageLocationError'],
+                ['ReceipientOfficerError']: ReceipientOfficerError || prevValues['ReceipientOfficerError'],
             }
         })
     }
 
-    const { ReasonError, PropertyRoomOfficerError, CheckInDateTimeError, NewStorageLocationError, StorageLocationError, SubmittingOfficerError, CheckOutDateTimeError, ExpectedReturnDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
+    const { ReasonError, PropertyRoomOfficerError, CheckInDateTimeError, NewStorageLocationError, ReceipientOfficerError , StorageLocationError, SubmittingOfficerError, CheckOutDateTimeError, ExpectedReturnDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
         DestructionDateTimeError, DestructionOfficerError, UpdatingOfficerError, ApprovalOfficerError, WitnessError, TransferDateTimeError, UpdateDateTimeError } = errors
 
     useEffect(() => {
 
-        if (ReasonError === 'true' && PropertyRoomOfficerError === 'true' && NewStorageLocationError === 'true' && StorageLocationError === 'true' && CheckInDateTimeError === 'true' && SubmittingOfficerError === 'true' && CheckOutDateTimeError === 'true' && ExpectedReturnDateTimeError === 'true' && ReleasingOfficerError === 'true' && ReceipientError === 'true' && ReleasedDateTimeError === 'true'
+        if (ReasonError === 'true' && PropertyRoomOfficerError === 'true' && ReceipientOfficerError === 'true' && NewStorageLocationError === 'true' && StorageLocationError === 'true' && CheckInDateTimeError === 'true' && SubmittingOfficerError === 'true' && CheckOutDateTimeError === 'true' && ExpectedReturnDateTimeError === 'true' && ReleasingOfficerError === 'true' && ReceipientError === 'true' && ReleasedDateTimeError === 'true'
             && DestructionDateTimeError === 'true' && DestructionOfficerError === 'true' && UpdatingOfficerError === 'true' && ApprovalOfficerError === 'true' && WitnessError === 'true' && TransferDateTimeError === 'true' && UpdateDateTimeError === 'true'
         ) {
 
             { Add_Type() }
         }
-    }, [ReasonError, PropertyRoomOfficerError, CheckInDateTimeError, NewStorageLocationError, StorageLocationError, SubmittingOfficerError, CheckOutDateTimeError, ExpectedReturnDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
+    }, [ReasonError, PropertyRoomOfficerError, CheckInDateTimeError, NewStorageLocationError, ReceipientOfficerError , StorageLocationError, SubmittingOfficerError, CheckOutDateTimeError, ExpectedReturnDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
         DestructionDateTimeError, DestructionOfficerError, UpdatingOfficerError, ApprovalOfficerError, WitnessError, TransferDateTimeError, UpdateDateTimeError
     ])
 
@@ -1433,7 +1435,7 @@ const Home = (props) => {
     };
 
 
-
+    console.log(value)
 
     return (
         <>
@@ -3066,14 +3068,14 @@ const Home = (props) => {
 
                             // }}
                             onChange={(date) => {
-                                if (!date) {
-                                    setactivitydate(null);
-                                    setValue({ ...value, LastSeenDtTm: null });
+                                // if (!date) {
+                                //     setactivitydate(null);
+                                //     setValue({ ...value, LastSeenDtTm: null });
 
-                                    setExpecteddate(null);
-                                    setValue({ ...value, ExpectedDate: null });
-                                    return;
-                                }
+                                //     setExpecteddate(null);
+                                //     setValue({ ...value, ExpectedDate: null });
+                                //     return;
+                                // }
                                 if (date) {
                                     const now = new Date(datezone);
                                     const selectedDateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -3088,9 +3090,15 @@ const Home = (props) => {
                                     if (isOnlyTimeSelect) {
                                         date.setHours(now.getHours(), now.getMinutes(), 0);
                                     }
+                                    setactivitydate(date);
+                                    setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
                                 }
-                                setactivitydate(date);
-                                setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
+                                else {
+                                    setactivitydate(null);
+                                    setExpecteddate(null);
+                                    setValue({ ...value, ['LastSeenDtTm']: null, ['ExpectedDate']: null });
+                                }
+
                             }}
                             isClearable={activitydate ? true : false}
                             selected={activitydate}
@@ -3192,8 +3200,8 @@ const Home = (props) => {
 
                     </div>
                     <div className="col-3 col-md-3 col-lg-2  ">
-                        <label htmlFor="" className='new-label px-0 mb-0'>Recepient Officer{errors.ReasonError !== 'true' ? (
-                            <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
+                        <label htmlFor="" className='new-label px-0 mb-0'>Recepient Officer{errors.ReceipientOfficerError !== 'true' ? (
+                            <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReceipientOfficerError}</p>
                         ) : null}</label>
                     </div>
                     <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
@@ -3401,10 +3409,11 @@ const Home = (props) => {
                             //     setreleasedate(date); setValue({ ...value, ['ReleaseDate']: date ? getShowingMonthDateYear(date) : null, });
 
                             // }}
+
                             onChange={(date) => {
                                 if (date) {
                                     const selectedDate = new Date(date);
-                                    const now = new Date();
+                                    const now = new Date(datezone);
                                     if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0) {
                                         selectedDate.setHours(now.getHours());
                                         selectedDate.setMinutes(now.getMinutes());

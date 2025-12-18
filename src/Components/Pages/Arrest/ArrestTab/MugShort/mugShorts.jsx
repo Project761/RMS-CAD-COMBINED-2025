@@ -771,7 +771,7 @@ const MugShorts = (props) => {
                                             {value[item.name] ? (
                                                 <img src={typeof value[item.name] === 'string' ? value[item.name] : URL.createObjectURL(value[item.name])}
                                                     alt={`${item.label} preview`} className="img-fluid rounded mugshot-img" />
-                                            ) : (<span className="text-muted">{item.label} Mugshot Preview</span>)}
+                                            ) : (<span className="text-muted"> {item.label.replace(' View', '')} Mugshot Preview</span>)}
                                         </div>
                                         <div className="d-flex justify-content-center gap-2">
                                             <button type="button" className="btn btn-sm mr-2" style={{ border: "1px solid #1A5089" }} onClick={() => handleUpload(item.name)}>

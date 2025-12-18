@@ -384,6 +384,7 @@ const PropertyManagement = (props) => {
         // const ExpectedReturnDateTimeError = value.IsCheckOut ? RequiredFieldIncident(value.ExpectedDate) : 'true';
         const ReleasingOfficerError = (value.IsRelease || value.IsCheckOut) ? RequiredFieldIncident(value.ReleasingOfficerID) : 'true';
         const ReceipientError = value.IsRelease ? RequiredFieldIncident(value.ReceipentID) : 'true';
+        const ReceipientOfficerError = value.IsCheckOut ? RequiredFieldIncident(value.ReceipentOfficerID) : 'true';
         const ReleasedDateTimeError = value.IsRelease ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
         // const DestructionDateTimeError = value.IsDestroy ? RequiredFieldIncident(value.DestroyDate) : 'true';
         const DestructionDateTimeError = value.IsDestroy ? RequiredFieldIncident(value.activitydate) : 'true';
@@ -415,21 +416,22 @@ const PropertyManagement = (props) => {
                 ['UpdateDateTimeError']: UpdateDateTimeError || prevValues['UpdateDateTimeError'],
                 ['StorageLocationError']: StorageLocationError || prevValues['StorageLocationError'],
                 ['NewStorageLocationError']: NewStorageLocationError || prevValues['NewStorageLocationError'],
+                ['ReceipientOfficerError']: ReceipientOfficerError || prevValues['ReceipientOfficerError'],
             }
         })
     }
-    const { ReasonError, PropertyRoomOfficerError, StorageLocationError, NewStorageLocationError, CheckInDateTimeError, SubmittingOfficerError, CheckOutDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
+    const { ReasonError, PropertyRoomOfficerError, StorageLocationError, NewStorageLocationError, ReceipientOfficerError, CheckInDateTimeError, SubmittingOfficerError, CheckOutDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
         DestructionDateTimeError, DestructionOfficerError, UpdatingOfficerError, ApprovalOfficerError, WitnessError, TransferDateTimeError, UpdateDateTimeError } = errors
 
     useEffect(() => {
 
-        if (ReasonError === 'true' && PropertyRoomOfficerError === 'true' && NewStorageLocationError === 'true' && StorageLocationError === 'true' && CheckInDateTimeError === 'true' && SubmittingOfficerError === 'true' && CheckOutDateTimeError === 'true' && ReleasingOfficerError === 'true' && ReceipientError === 'true' && ReleasedDateTimeError === 'true'
+        if (ReasonError === 'true' && PropertyRoomOfficerError === 'true' && ReceipientOfficerError === 'true' && NewStorageLocationError === 'true' && StorageLocationError === 'true' && CheckInDateTimeError === 'true' && SubmittingOfficerError === 'true' && CheckOutDateTimeError === 'true' && ReleasingOfficerError === 'true' && ReceipientError === 'true' && ReleasedDateTimeError === 'true'
             && DestructionDateTimeError === 'true' && DestructionOfficerError === 'true' && UpdatingOfficerError === 'true' && ApprovalOfficerError === 'true' && WitnessError === 'true' && TransferDateTimeError === 'true' && UpdateDateTimeError === 'true'
         ) {
 
             { Add_Type() }
         }
-    }, [ReasonError, PropertyRoomOfficerError, StorageLocationError, CheckInDateTimeError, NewStorageLocationError, SubmittingOfficerError, CheckOutDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
+    }, [ReasonError, PropertyRoomOfficerError, StorageLocationError, ReceipientOfficerError, CheckInDateTimeError, NewStorageLocationError, SubmittingOfficerError, CheckOutDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
         DestructionDateTimeError, DestructionOfficerError, UpdatingOfficerError, ApprovalOfficerError, WitnessError, TransferDateTimeError, UpdateDateTimeError
     ])
 
@@ -1213,9 +1215,30 @@ const PropertyManagement = (props) => {
                                     <DatePicker
                                         name='activitydate'
                                         id='activitydate'
-                                        onChange={(date) => {
-                                            setactivitydate(date); setValue({ ...value, ['activitydate']: date ? getShowingMonthDateYear(date) : null, });
+                                        // onChange={(date) => {
+                                        //     setactivitydate(date); setValue({ ...value, ['activitydate']: date ? getShowingMonthDateYear(date) : null, });
 
+                                        // }}
+                                        onChange={(date) => {
+                                            if (date) {
+                                                const selectedDate = new Date(date);
+                                                const now = new Date(datezone);
+                                                if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0) {
+                                                    selectedDate.setHours(now.getHours());
+                                                    selectedDate.setMinutes(now.getMinutes());
+                                                }
+                                                setreleasedate(selectedDate);
+                                                setValue({
+                                                    ...value,
+                                                    ['activitydate']: getShowingMonthDateYear(selectedDate),
+                                                });
+                                            } else {
+                                                setreleasedate(null);
+                                                setValue({
+                                                    ...value,
+                                                    ['activitydate']: null,
+                                                });
+                                            }
                                         }}
                                         isClearable={ActivityDtTm ? true : false}
                                         selected={ActivityDtTm}
@@ -1233,6 +1256,12 @@ const PropertyManagement = (props) => {
                                         showDisabledMonthNavigation
                                         autoComplete='off'
                                         maxDate={new Date(datezone)}
+                                        filterTime={(time) => {
+                                            const timeValue = new Date(time).getTime();
+                                            const minTime = new Date(incidentReportedDate).getTime();
+                                            const maxTime = new Date(datezone).getTime();
+                                            return timeValue > minTime && timeValue <= maxTime;
+                                        }}
                                         disabled={selectedOption === null || selectedOption === ''}
                                         className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : ''}
                                     />
@@ -1463,8 +1492,8 @@ const PropertyManagement = (props) => {
 
                             </div>
                             <div className="col-3 col-md-3 col-lg-2  ">
-                                <label htmlFor="" className='new-label px-0 mb-0'>Recepient Officer{errors.ReasonError !== 'true' ? (
-                                    <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReasonError}</p>
+                                <label htmlFor="" className='new-label px-0 mb-0'>Recepient Officer{errors.ReceipientOfficerError !== 'true' ? (
+                                    <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReceipientOfficerError}</p>
                                 ) : null}</label>
                             </div>
                             <div className="col-3 col-md-3 col-lg-2 text-field mt-0">
@@ -1700,7 +1729,7 @@ const PropertyManagement = (props) => {
                                 onChange={(date) => {
                                     if (date) {
                                         const selectedDate = new Date(date);
-                                        const now = new Date();
+                                        const now = new Date(datezone);
                                         if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0) {
                                             selectedDate.setHours(now.getHours());
                                             selectedDate.setMinutes(now.getMinutes());
