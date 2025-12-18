@@ -519,52 +519,36 @@ const Warrant = (props) => {
         return !isNaN(d.getTime()) ? d : null;
     };
 
-    const sameMinute = (a, b) => {
-        return (
-            a.getFullYear() === b.getFullYear() &&
-            a.getMonth() === b.getMonth() &&
-            a.getDate() === b.getDate() &&
-            a.getHours() === b.getHours() &&
-            a.getMinutes() === b.getMinutes()
-        );
+    const getMaxTimeForOccurredTo = (datezone) => {
+        if (!datezone) return new Date();
+        const maxTime = new Date(datezone);
+        return maxTime;
     };
 
+     const getMinTimeForOccurredTo = (occuredFromDate) => {
+    const minTime = new Date(occuredFromDate);
+    minTime.setHours(occuredFromDate?.getHours());
+    minTime.setMinutes(occuredFromDate?.getMinutes());
+    minTime.setSeconds(occuredFromDate?.getSeconds());
+    minTime.setMilliseconds(0);
+    return minTime;
+  };
 
-    const filterExpectedTimes = (time) => {
-        if (!DateTimeIssued) return false;
+  const filterTimeAfterOccurredFromAndBeforeMaxDate = (time, occuredFromDate, datezone) => {
+    const occurredFromTimestamp = occuredFromDate?.getTime();
+    const maxTimestamp = new Date(datezone)?.getTime();
+    if (time?.getTime() <= occurredFromTimestamp) {
+      return false;
+    }
+    if (time?.getTime() >= maxTimestamp) {
+      return false;
+    }
+    return true;
+  };
 
-        const checkout = new Date(DateTimeIssued);
-        const serverNow = new Date(datezone);
 
-        const baseDay = DateExpired ? new Date(DateExpired) : new Date(checkout);
-        const picked = new Date(baseDay);
-        picked.setHours(time?.getHours(), time?.getMinutes(), 0, 0);
 
-        if (sameMinute(checkout, serverNow)) {
-            return false;
-        }
-
-        const isSameDayAsCheckout =
-            picked?.getFullYear() === checkout?.getFullYear() &&
-            picked?.getMonth() === checkout?.getMonth() &&
-            picked?.getDate() === checkout?.getDate();
-
-        const isSameDayAsNow =
-            picked?.getFullYear() === serverNow?.getFullYear() &&
-            picked?.getMonth() === serverNow?.getMonth() &&
-            picked?.getDate() === serverNow?.getDate();
-
-        if (isSameDayAsCheckout) {
-            if (!(picked > checkout)) return false;
-            return picked <= serverNow;
-        }
-
-        if (isSameDayAsNow) {
-            return picked <= serverNow;
-        }
-        return picked <= serverNow;
-    };
-
+   
 
 
     return (
@@ -759,7 +743,7 @@ const Warrant = (props) => {
                             dropdownMode="select"
                             timeCaption="Time"
                             popperPlacement="bottom"
-                            maxDate={new Date()}
+                            maxDate={new Date(datezone)}
                             minDate={new Date(incReportedDate)}
                             autoComplete='off'
                             showMonthDropdown
@@ -777,28 +761,93 @@ const Warrant = (props) => {
                         <DatePicker
                             id="DateExpired"
                             name="DateExpired"
-                            onChange={(date) => {
-                                !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
-                                if (date) {
-                                    const selectedDate = new Date(date);
-                                    const isMidnight = selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0;
-                                    if (isMidnight) {
-                                        const now = new Date(datezone);
-                                        selectedDate.setHours(now.getHours());
-                                        selectedDate.setMinutes(now.getMinutes());
-                                        selectedDate.setSeconds(0);
-                                        selectedDate.setMilliseconds(0);
-                                    }
+                            // onChange={(date) => {
+                            //     !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
+                            //     if (date) {
+                            //         const selectedDate = new Date(date);
+                            //         const isMidnight = selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0;
+                            //         if (isMidnight) {
+                            //             const now = new Date(datezone);
+                            //             selectedDate.setHours(now.getHours());
+                            //             selectedDate.setMinutes(now.getMinutes());
+                            //             selectedDate.setSeconds(0);
+                            //             selectedDate.setMilliseconds(0);
+                            //         }
 
-                                    setDateExpired(selectedDate);
-                                    setStatesChangeStatus(true);
+                            //         setDateExpired(selectedDate);
+                            //         setStatesChangeStatus(true);
+                            //         setValue({
+                            //             ...value,
+                            //             ["DateExpired"]: getShowingDateText(selectedDate),
+                            //         });
+                            //     } else {
+                            //         setDateExpired(null);
+                            //         setValue({ ...value, ["DateExpired"]: null });
+                            //     }
+                            // }}
+                            onChange={(date) => {
+                                const isSameDate = (date1, date2) => {
+                                    return (
+                                        date1.getFullYear() === date2.getFullYear() &&
+                                        date1.getMonth() === date2.getMonth() &&
+                                        date1.getDate() === date2.getDate()
+                                    );
+                                };
+
+                                if (date) {
+                                    !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
+
+                                    const maxTime = datezone ? new Date(datezone) : null;
+                                    const minTime = DateTimeIssued ? new Date(DateTimeIssued) : null;
+                                    let selectedDate = new Date(date);
+                                    if (maxTime && isSameDate(selectedDate, maxTime)) {
+                                        if (!selectedDate.getHours() && !selectedDate.getMinutes()) {
+                                            selectedDate.setHours(maxTime.getHours());
+                                            selectedDate.setMinutes(maxTime.getMinutes());
+                                            selectedDate.setSeconds(maxTime.getSeconds());
+                                            selectedDate.setMilliseconds(maxTime.getMilliseconds());
+                                        }
+                                    }
+                                    else if (minTime && isSameDate(selectedDate, minTime)) {
+                                        if (!selectedDate.getHours() && !selectedDate.getMinutes()) {
+                                            const newTime = new Date(minTime.getTime() + 60000);
+                                            selectedDate.setHours(newTime.getHours());
+                                            selectedDate.setMinutes(newTime.getMinutes());
+                                            selectedDate.setSeconds(newTime.getSeconds());
+                                            selectedDate.setMilliseconds(newTime.getMilliseconds());
+                                        }
+                                    }
+                                    else {
+                                        if (maxTime && selectedDate.getTime() > maxTime.getTime()) {
+                                            selectedDate.setHours(maxTime.getHours());
+                                            selectedDate.setMinutes(maxTime.getMinutes());
+                                            selectedDate.setSeconds(maxTime.getSeconds());
+                                            selectedDate.setMilliseconds(maxTime.getMilliseconds());
+                                        } else if (minTime && selectedDate.getTime() < minTime.getTime()) {
+                                            selectedDate = new Date(minTime.getTime() + 60000);
+                                        }
+                                    }
+                                    if (minTime && selectedDate.getTime() < minTime.getTime()) {
+                                        selectedDate = new Date(minTime.getTime() + 60000);
+                                    }
+                                    if (maxTime && selectedDate.getTime() > maxTime.getTime()) {
+                                        selectedDate.setHours(maxTime.getHours());
+                                        selectedDate.setMinutes(maxTime.getMinutes());
+                                        selectedDate.setSeconds(maxTime.getSeconds());
+                                        selectedDate.setMilliseconds(maxTime.getMilliseconds());
+                                    }
                                     setValue({
                                         ...value,
-                                        ["DateExpired"]: getShowingDateText(selectedDate),
+                                        ["DateExpired"]: selectedDate
+                                            ? getShowingMonthDateYear(selectedDate)
+                                            : null,
                                     });
+                                    setDateExpired(selectedDate)
+                                    // setOccuredToDate(selectedDate);
                                 } else {
-                                    setDateExpired(null);
+                                    !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
                                     setValue({ ...value, ["DateExpired"]: null });
+                                    setDateExpired(null)
                                 }
                             }}
                             isClearable={value?.DateExpired ? true : false}
@@ -816,9 +865,21 @@ const Warrant = (props) => {
                             timeCaption="Time"
                             // isDisabled={!value?.DateTimeIssued}
                             timeIntervals={1}
-                            maxDate={new Date(datezone)}
-                            minDate={DateTimeIssued}
-                            filterTime={filterExpectedTimes}
+                            minDate={
+                                DateTimeIssued
+                                    ? getMinTimeForOccurredTo(DateTimeIssued)
+                                    : null
+                            }
+                            maxDate={getMaxTimeForOccurredTo(datezone)}
+
+
+                            filterTime={(time) =>
+                                filterTimeAfterOccurredFromAndBeforeMaxDate(
+                                    time,
+                                    DateTimeIssued,
+                                    datezone
+                                )
+                            }
                             openToDate={new Date(datezone)}
 
                             // disabled={isLockOrRestrictModule("Lock", editval[0]?.DateExpired, isLocked) || !value?.DateTimeIssued}
