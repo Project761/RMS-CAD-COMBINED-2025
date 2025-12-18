@@ -478,7 +478,7 @@ const PasswordSetting = ({ allowMultipleLogin }) => {
                     </div>
                     <div className="col-6 col-md-6 col-lg-4 mt-2 d-flex">
                         <label className='pass-label mt-3 pr-5 mr-5 '>Max Login Attempts</label>
-                        <div className="col-4 col-md-4 col-lg-3 text-field" >
+                        <div className="col-4 col-md-4 col-lg-3 text-field">
                             <input type="text"
                                 maxLength={1}
                                 className={`form-control form-control-sm  requiredColor
@@ -509,8 +509,10 @@ const PasswordSetting = ({ allowMultipleLogin }) => {
                                 effectiveScreenPermission ?
                                     effectiveScreenPermission[0]?.AddOK ?
                                         <button className='btn btn-success' type='button' onClick={check_Validation_Error}>Save</button>
-                                        : <></>
-                                    : <button className='btn btn-success' type='button' onClick={check_Validation_Error}>Save</button>
+                                        :
+                                        <></>
+                                    :
+                                    <button className='btn btn-success' type='button' onClick={check_Validation_Error}>Save</button>
                         }
                     </div>
                     <ChangesModal func={check_Validation_Error} />
