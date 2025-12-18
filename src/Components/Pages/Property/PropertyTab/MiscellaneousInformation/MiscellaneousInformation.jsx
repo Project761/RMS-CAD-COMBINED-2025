@@ -1145,7 +1145,7 @@ const MiscellaneousInformation = (props) => {
                               className="form-check-label"
                               htmlFor="sendToPropertyRoom"
                             >
-                              Send to Property Room
+                              Send To Property Room
                             </label>
                           </div>
                         </div>
@@ -2185,7 +2185,7 @@ const MiscellaneousInformation = (props) => {
                         <div className="row px-0 align-items-center">
                           <div className="col-3 col-md-3 col-lg-2 ">
                             <label htmlFor="" className="new-label mb-0">
-                              Send Task to List
+                              Send Task To List
                               {errors.tasklistError && (<p style={{ color: "red", fontSize: "13px", margin: "0px", padding: "0px", }}>{errors.tasklistError}</p>)}
                             </label>
                           </div>
