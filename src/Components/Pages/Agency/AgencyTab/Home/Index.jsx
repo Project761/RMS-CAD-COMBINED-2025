@@ -682,13 +682,13 @@ const Home = ({ allowMultipleLogin }) => {
                 <div className="col-12 " id='display-not-form'>
                     <div className="row px-1">
                         <div className="col-12 col-md-12 col-lg-10 pt-2 p-0" >
-                            <div className="row">
-                                <div className="col-2 col-md-2 col-lg-1 mt-2">
-                                    <label htmlFor="" className='new-label'>ORI{errors.ORI !== 'true' ? (
+                            <div className="row align-items-center" style={{rowGap: "8px"}}>
+                                <div className="col-2 col-md-2 col-lg-1">
+                                    <label htmlFor="" className='new-label mb-0'>ORI{errors.ORI !== 'true' ? (
                                         <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ORI}</p>
                                     ) : null}</label>
                                 </div>
-                                <div className="col-4  col-md-4 col-lg-2 mt-2 text-field">
+                                <div className="col-4  col-md-4 col-lg-2 mt-0 text-field">
                                     <input type="text" maxLength="9" name='ORI' style={{ textTransform: "uppercase" }}
                                         className={'requiredColor'}
                                         onChange={handleChange}
@@ -698,12 +698,12 @@ const Home = ({ allowMultipleLogin }) => {
                                     />
                                     <p><span className='hovertext' data-hover="ORI : Enter a 9 digit code starting with first two capital characters and ending with 00" ><i className='fa fa-exclamation-circle'></i></span></p>
                                 </div>
-                                <div className="col-2 col-md-2 col-lg-2 mt-2">
-                                    <label htmlFor="" className='new-label'>Agency Code{errors.ShortName !== 'true' ? (
+                                <div className="col-2 col-md-2 col-lg-2">
+                                    <label htmlFor="" className='new-label mb-0'>Agency Code{errors.ShortName !== 'true' ? (
                                         <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.ShortName}</p>
                                     ) : null}</label>
                                 </div>
-                                <div className="col-4  col-md-4 col-lg-3 mt-2 text-field">
+                                <div className="col-4  col-md-4 col-lg-3 mt-0 text-field">
                                     <input type="text"
                                         maxLength={10}
                                         style={{ textTransform: "uppercase" }}
@@ -715,18 +715,18 @@ const Home = ({ allowMultipleLogin }) => {
                                         disabled={inActiveCheckBox}
                                     />
                                 </div>
-                                <div className="col-2 col-md-2 col-lg-2 mt-2">
+                                <div className="col-2 col-md-2 col-lg-2">
 
                                 </div>
-                                <div className="col-4  col-md-4 col-lg-2 mt-2 text-field">
+                                <div className="col-4  col-md-4 col-lg-2 mt-0 text-field">
 
                                 </div>
-                                <div className="col-2 col-md-2 col-lg-1 mt-2 px-0">
-                                    <label htmlFor="" className='new-label px-0'>Agency&nbsp;Name{errors.Agency_Name !== 'true' ? (
+                                <div className="col-2 col-md-2 col-lg-1  px-0">
+                                    <label htmlFor="" className='new-label mb-0 px-0'>Agency&nbsp;Name{errors.Agency_Name !== 'true' ? (
                                         <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.Agency_Name}</p>
                                     ) : null}</label>
                                 </div>
-                                <div className="col-4  col-md-4 col-lg-11 mt-2 text-field">
+                                <div className="col-4  col-md-4 col-lg-11 mt-0 text-field">
                                     <input type="text"
                                         name='Agency_Name' value={value.Agency_Name}
                                         className={'requiredColor'}
@@ -736,12 +736,12 @@ const Home = ({ allowMultipleLogin }) => {
                                         disabled={inActiveCheckBox}
                                     />
                                 </div>
-                                <div className="col-2 col-md-2 col-lg-1 mt-2 ">
-                                    <label htmlFor="" className='new-label '>Address{errors.Agency_Address1 !== 'true' ? (
+                                <div className="col-2 col-md-2 col-lg-1 ">
+                                    <label htmlFor="" className='new-label mb-0 '>Address{errors.Agency_Address1 !== 'true' ? (
                                         <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.Agency_Address1}</p>
                                     ) : null}</label>
                                 </div>
-                                <div className="col-4  col-md-4 col-lg-11 mt-2 text-field">
+                                <div className="col-4  col-md-4 col-lg-11 mt-0 text-field">
                                     <textarea
                                         className={'requiredColor'}
                                         name='Agency_Address1' value={value.Agency_Address1}
@@ -751,12 +751,12 @@ const Home = ({ allowMultipleLogin }) => {
                                         disabled={inActiveCheckBox}
                                         style={{ resize: 'none' }} ></textarea>
                                 </div>
-                                <div className="col-2 col-md-2 col-lg-1 mt-2 ">
-                                    <label htmlFor="" className='new-label '>State {errors.Agency_StateId !== 'true' ? (
+                                <div className="col-2 col-md-2 col-lg-1 ">
+                                    <label htmlFor="" className='new-label mb-0 '>State {errors.Agency_StateId !== 'true' ? (
                                         <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.Agency_StateId}</p>
                                     ) : null}</label>
                                 </div>
-                                <div className="col-4  col-md-4 col-lg-2 mt-1">
+                                <div className="col-4  col-md-4 col-lg-2">
                                     <Select
                                         styles={colourStyles}
                                         className="basic-single"
@@ -771,12 +771,12 @@ const Home = ({ allowMultipleLogin }) => {
 
                                     />
                                 </div>
-                                <div className="col-2 col-md-2 col-lg-2 mt-2 ">
-                                    <label htmlFor="" className='new-label '>City{errors.Agency_CityId !== 'true' ? (
+                                <div className="col-2 col-md-2 col-lg-2">
+                                    <label htmlFor="" className='new-label mb-0 '>City{errors.Agency_CityId !== 'true' ? (
                                         <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.Agency_CityId}</p>
                                     ) : null}</label>
                                 </div>
-                                <div className="col-4  col-md-4 col-lg-3 mt-1">
+                                <div className="col-4 col-md-4 col-lg-3">
                                     <Select
                                         styles={colourStyles}
 
@@ -795,10 +795,10 @@ const Home = ({ allowMultipleLogin }) => {
 
                                     />
                                 </div>
-                                <div className="col-2 col-md-2 col-lg-2 mt-2 ">
-                                    <label htmlFor="" className='new-label '>Zip</label>
+                                <div className="col-2 col-md-2 col-lg-2  ">
+                                    <label htmlFor="" className='new-label mb-0 '>Zip</label>
                                 </div>
-                                <div className="col-4  col-md-4 col-lg-2 mt-1">
+                                <div className="col-4 col-md-4 col-lg-2">
                                     <Select
                                         className="basic-single"
                                         value={zipList?.filter((obj) => obj.value === value?.Agency_ZipId)}
@@ -815,15 +815,15 @@ const Home = ({ allowMultipleLogin }) => {
 
                                     />
                                 </div>
-                                <div className="col-2 col-md-2 col-lg-1 mt-3 ">
-                                    <label htmlFor="" className='new-label '>Phone</label>
+                                <div className="col-2 col-md-2 col-lg-1">
+                                    <label htmlFor="" className='new-label mb-0 '>Phone</label>
                                 </div>
-                                <div className="col-4  col-md-4 col-lg-1 mt-3">
+                                <div className="col-4  col-md-4 col-lg-1">
                                     <select name="" id="" className="form-control requiredColor" style={{ height: '32px', width: '70px' }}>
                                         <option value="">+1</option>
                                     </select>
                                 </div>
-                                <div className="col-4  col-md-5 col-lg-2 mt-3 text-field">
+                                <div className="col-4  col-md-5 col-lg-2 mt-0 text-field">
                                     <input type="text" maxLength={10}
                                         className={'requiredColor'}
                                         name='Agency_Phone' value={value.Agency_Phone}
@@ -837,12 +837,12 @@ const Home = ({ allowMultipleLogin }) => {
                                         <span style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.Agency_Phone}</span>
                                     ) : null}
                                 </div>
-                                <div className="col-2 col-md-2 col-lg-1 mt-3 ">
-                                    <label htmlFor="" className='new-label '>Fax{errors.Agency_Fax !== 'true' ? (
+                                <div className="col-2 col-md-2 col-lg-1">
+                                    <label htmlFor="" className='new-label mb-0'>Fax{errors.Agency_Fax !== 'true' ? (
                                         <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.Agency_Fax}</p>
                                     ) : null}</label>
                                 </div>
-                                <div className="col-4  col-md-4 col-lg-3 mt-3 text-field">
+                                <div className="col-4  col-md-4 col-lg-3 mt-0 text-field">
                                     <input type="text" maxLength="10"
                                         name='Agency_Fax' value={value.Agency_Fax}
 
@@ -852,12 +852,12 @@ const Home = ({ allowMultipleLogin }) => {
                                     />
                                     <p><span className='hovertext-small' data-hover="Enter a 10 digit Number " ><i className='fa fa-exclamation-circle'></i></span></p>
                                 </div>
-                                <div className="col-2 col-md-2 col-lg-1 mt-3 ">
-                                    <label htmlFor="" className='new-label '>Time Zone {errors.Time_Zone !== 'true' ? (
+                                <div className="col-2 col-md-2 col-lg-1">
+                                    <label htmlFor="" className='new-label mb-0 '>Time Zone {errors.Time_Zone !== 'true' ? (
                                         <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.Time_Zone}</p>
                                     ) : null}</label>
                                 </div>
-                                <div className="col-4  col-md-4 col-lg-3 mt-3">
+                                <div className="col-4  col-md-4 col-lg-3">
                                     <Select
                                         styles={colourStyles}
                                         className="basic-single"

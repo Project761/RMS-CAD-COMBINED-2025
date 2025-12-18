@@ -306,17 +306,17 @@ const Group = ({ allowMultipleLogin }) => {
             sortable: true
         },
         {
-            name: 'Allow Multiple Agency',
+            name: 'Allow Multiple Agencies',
             selector: (row) => <input type="checkbox" checked={row.IsAllowMultipleAgency} disabled />,
             sortable: true
         },
         {
-            name: 'Is Allow Seal',
+            name: 'Allow Seal',
             selector: (row) => <input type="checkbox" checked={row.IsAllowSeal} disabled />,
             sortable: true
         },
         {
-            name: 'Is Allow UnSeal',
+            name: 'Allow UnSeal',
             selector: (row) => <input type="checkbox" checked={row.IsAllowUnSeal} disabled />,
             sortable: true
         },
@@ -406,7 +406,7 @@ const Group = ({ allowMultipleLogin }) => {
                     <div className="col-2 col-md-2 col-lg-1 mt-2 pt-1">
                         <label htmlFor="" className='new-label text-nowrap'>Group Name </label>
                     </div>
-                    <div className="col-10 col-md-10 col-lg-11 mt-2 text-field">
+                    <div className="col-10 col-md-10 col-lg-5 mt-2 text-field">
                         <input type="text"
                             className={fieldPermissionAgency?.GroupName[0] ?
                                 fieldPermissionAgency?.GroupName[0]?.Changeok === 0 && fieldPermissionAgency?.GroupName[0]?.AddOK === 0 && status ? 'readonlyColor' : fieldPermissionAgency?.GroupName[0]?.Changeok === 0 && fieldPermissionAgency?.GroupName[0]?.AddOK === 1 && groupEditData?.GroupName === '' && status ? 'requiredColor' : fieldPermissionAgency?.GroupName[0]?.AddOK === 1 && !status ? 'requiredColor' : fieldPermissionAgency?.GroupName[0]?.Changeok === 1 && status ? 'requiredColor' : 'readonlyColor' : ''
@@ -417,7 +417,21 @@ const Group = ({ allowMultipleLogin }) => {
                             value={value.GroupName}
                             name='GroupName' required />
                     </div>
-                    <div className="col-12 col-md-12 col-lg-5 mt-2 ml-lg-5 pl-lg-5 ml-md-1 pl-md-0">
+
+                    <div className="col-2 col-md-4 col-lg-1 mt-2 pt-1 text-right">
+                        <label htmlFor="" className='new-label text-nowrap'> Group Level</label>
+                    </div>
+                    <div className="col-4  col-md-7 col-lg-5 mt-2 text-field">
+                        <input type="text" name='level'
+                            value={value.level}
+                            autocomplete="off" className={''}
+                            onChange={handleChange}
+                            maxLength={1}
+
+                        />
+                    </div>
+
+                    <div className="col-12 col-md-12 col-lg-4 mt-2">
                         <input type="checkbox" name="IsAllowMultipleAgency" checked={value.IsAllowMultipleAgency} value={value.IsAllowMultipleAgency}
                             onChange={fieldPermissionAgency?.IsAllowMultipleAgency[0] ?
                                 fieldPermissionAgency?.IsAllowMultipleAgency[0]?.Changeok === 0 && fieldPermissionAgency?.IsAllowMultipleAgency[0]?.AddOK === 0 && status ? '' : fieldPermissionAgency?.IsAllowMultipleAgency[0]?.Changeok === 0 && fieldPermissionAgency?.IsAllowMultipleAgency[0]?.AddOK === 1 && groupEditData?.IsAllowMultipleAgency === '' && status ? handlChange : fieldPermissionAgency?.IsAllowMultipleAgency[0]?.AddOK === 1 && !status ? handlChange : fieldPermissionAgency?.IsAllowMultipleAgency[0]?.Changeok === 1 && status ? handlChange : ''
@@ -430,7 +444,7 @@ const Group = ({ allowMultipleLogin }) => {
                         <label className='ml-2' htmlFor="IsAllowMultipleAgency">Allow Multiple Agencies</label>
                     </div>
 
-                    <div className="col-12 col-md-12 col-lg-5 mt-2 ml-lg-5 pl-lg-5 ml-md-1 pl-md-0">
+                    <div className="col-12 col-md-12 col-lg-4 mt-2">
                         <input type="checkbox" name="IsAllowSeal" checked={value.IsAllowSeal} value={value.IsAllowSeal}
 
                             onChange={fieldPermissionAgency?.IsAllowSeal[0] ?
@@ -444,7 +458,7 @@ const Group = ({ allowMultipleLogin }) => {
                         <label className='ml-2' htmlFor="IsAllowSeal">Allow Unseal</label>
                     </div>
 
-                    <div className="col-12 col-md-12 col-lg-5 mt-2 ml-lg-5 pl-lg-5 ml-md-1 pl-md-0 ">
+                    <div className="col-12 col-md-12 col-lg-4 mt-2 ">
                         <input type="checkbox" name="IsAllowUnSeal" checked={value.IsAllowUnSeal} value={value.IsAllowUnSeal}
 
                             onChange={fieldPermissionAgency?.IsAllowUnSeal[0] ?
@@ -457,20 +471,8 @@ const Group = ({ allowMultipleLogin }) => {
                             id="IsAllowUnSeal" />
                         <label className='ml-2' htmlFor="IsAllowUnSeal">Allow Seal</label>
                     </div>
-                    <div className="d-flex col-6 col-md-6 col-lg-6 mr-3">
-                        <div className="col-2 col-md-4 col-lg-3 mt-2 pt-1 text-right">
-                            <label htmlFor="" className='new-labels '> Group Level</label>
-                        </div>
-                        <div className="col-4  col-md-7 col-lg-8 mt-2 text-field">
-                            <input type="text" name='level'
-                                value={value.level}
-                                autocomplete="off" className={''}
-                                onChange={handleChange}
-                                maxLength={1}
 
-                            />
-                        </div>
-                    </div>
+
 
 
                 </div>
