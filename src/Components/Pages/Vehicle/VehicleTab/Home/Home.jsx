@@ -1483,7 +1483,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
 
                                 </div>
                                 <div className="col-2 col-md-2 col-lg-2">
-                                    <label htmlFor="" className='new-label mb-0'>OAN Id</label>
+                                    <label htmlFor="" className='new-label mb-0'>OAN ID</label>
                                 </div>
                                 <div className="col-4 col-md-4 col-lg-3 mt-0 text-field ">
                                     <input
@@ -1825,7 +1825,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
                                 </div>
 
                                 <div className="col-2 col-md-2 col-lg-1">
-                                    <label htmlFor="" className='new-label mb-0'>Manu. Year</label>
+                                    <label htmlFor="" className='new-label mb-0'>Manuf. Year</label>
                                 </div>
                                 <div className="col-4 col-md-4 col-lg-1">
                                     <DatePicker
