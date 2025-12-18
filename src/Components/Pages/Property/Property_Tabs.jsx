@@ -699,7 +699,7 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                                                             aria-current="page"
                                                             onClick={() => { if (!changesStatus) { setShowPage('Recoveredproperty') } }}
                                                         >
-                                                            Recovered property{`${propertyCount?.RecoveredCount > 0 ? '(' + propertyCount?.RecoveredCount + ')' : ''}`}
+                                                            Recovered Property{`${propertyCount?.RecoveredCount > 0 ? '(' + propertyCount?.RecoveredCount + ')' : ''}`}
                                                         </span>
                                                     }
 
