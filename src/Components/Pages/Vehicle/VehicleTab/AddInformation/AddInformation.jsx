@@ -746,7 +746,7 @@ const AddInformation = (props) => {
               ></textarea>
             </div>
           </div>
-          <div className="row">
+          {/* <div className="row">
             <div className="col-5 col-md-4 col-lg-4 mt-2">
               <div className="form-check ">
                 <input
@@ -785,7 +785,7 @@ const AddInformation = (props) => {
                 </label>
               </div>
             </div>
-          </div>
+          </div> */}
         </fieldset>
 
         <fieldset className="px-0">

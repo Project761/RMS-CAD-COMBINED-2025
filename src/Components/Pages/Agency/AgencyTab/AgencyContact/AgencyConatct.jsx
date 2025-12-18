@@ -303,27 +303,27 @@ const AgencyContact = () => {
 
     const Columns = [
         {
-            name: 'First Name',
-            selector: (row) => row.FirstName,
-            sortable: true
-        },
-        {
             name: 'Last Name',
             selector: (row) => row.LastName,
             sortable: true
         },
         {
-            name: 'Phone 1',
+            name: 'First Name',
+            selector: (row) => row.FirstName,
+            sortable: true
+        },
+        {
+            name: 'Phone No. 1',
             selector: (row) => row.Phone1,
             sortable: true
         },
         {
-            name: 'Phone 2',
+            name: 'Phone No. 2',
             selector: (row) => row.Phone2,
             sortable: true
         },
         {
-            name: 'Cell',
+            name: 'Cell No.',
             selector: (row) => row.Cell,
             sortable: true
         },
@@ -405,7 +405,16 @@ const AgencyContact = () => {
             <div className="col-12 ">
                 <div className="row " >
                     <div className="col-2 col-md-2 col-lg-1 mt-2 pt-1">
-                        <label htmlFor="" className='new-label'>Firstname {errors.FirstNameError !== 'true' ? (
+                        <label htmlFor="" className='new-label'>Last Name  {errors.LastNameError !== 'true' ? (
+                            <span style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.LastNameError}</span>
+                        ) : null}</label>
+                    </div>
+                    <div className="col-10 col-md-10 col-lg-3 mt-2 text-field">
+                        <input type="text" className='requiredColor' id="LastName" name='LastName' value={value.LastName} onChange={handlChanges} required />
+                    </div>
+
+                    <div className="col-2 col-md-2 col-lg-1 mt-2 pt-1">
+                        <label htmlFor="" className='new-label'>First Name {errors.FirstNameError !== 'true' ? (
                             <span style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.FirstNameError}</span>
                         ) : null}</label>
                     </div>
@@ -413,21 +422,14 @@ const AgencyContact = () => {
                         <input type="text" className='requiredColor' id="FirstName" name='FirstName' value={value.FirstName} onChange={handlChanges} required />
                     </div>
                     <div className="col-2 col-md-2 col-lg-1 mt-2 pt-1 px-0">
-                        <label htmlFor="" className='new-label px-0'>Middlename</label>
+                        <label htmlFor="" className='new-label px-0'>Middle Name</label>
                     </div>
                     <div className="col-10 col-md-10 col-lg-3 mt-2 text-field">
                         <input type="text" id="MiddleName" name='MiddleName' value={value.MiddleName} onChange={handlChanges} required />
                     </div>
+
                     <div className="col-2 col-md-2 col-lg-1 mt-2 pt-1">
-                        <label htmlFor="" className='new-label'>Lastname  {errors.LastNameError !== 'true' ? (
-                            <span style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.LastNameError}</span>
-                        ) : null}</label>
-                    </div>
-                    <div className="col-10 col-md-10 col-lg-3 mt-2 text-field">
-                        <input type="text" className='requiredColor' id="LastName" name='LastName' value={value.LastName} onChange={handlChanges} required />
-                    </div>
-                    <div className="col-2 col-md-2 col-lg-1 mt-2 pt-1">
-                        <label htmlFor="" className='new-label'>Phone No 1 {errors.Phone1Error !== 'true' ? (
+                        <label htmlFor="" className='new-label'>Phone No. 1 {errors.Phone1Error !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.Phone1Error}</p>
                         ) : null}</label>
                     </div>
@@ -435,7 +437,7 @@ const AgencyContact = () => {
                         <input type="text" maxLength={10} id="Phone1" name='Phone1' value={value.Phone1} onChange={handlChanges} required />
                     </div>
                     <div className="col-2 col-md-2 col-lg-1 mt-2 pt-1">
-                        <label htmlFor="" className='new-label'>Phone No 2 {errors.Phone2Error !== 'true' ? (
+                        <label htmlFor="" className='new-label'>Phone No. 2 {errors.Phone2Error !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.Phone2Error}</p>
                         ) : null}</label>
                     </div>
@@ -451,7 +453,7 @@ const AgencyContact = () => {
                         <input type="text" maxLength={10} id="Fax" name='Fax' value={value.Fax} onChange={handlChanges} required />
                     </div>
                     <div className="col-2 col-md-2 col-lg-1 mt-2 pt-1">
-                        <label htmlFor="" className='new-label'>Cell {errors.CellError !== 'true' ? (
+                        <label htmlFor="" className='new-label'>Cell No.{errors.CellError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.CellError}</p>
                         ) : null}</label>
                     </div>
