@@ -395,8 +395,8 @@ const Identification = (props) => {
     <>
       <NameListing  {...{ ListData }} />
       <div className="col-md-12 mt-2">
-        <div className="row mt-1" style={{rowGap:"8px"}}>
-          <div className="col-3 col-md-3 col-lg-2">
+        <div className="row mt-1" style={{ rowGap: "8px" }}>
+          <div className="col-3 col-md-3 col-lg-2 mt-1">
             <span data-toggle="modal" onClick={() => {
               setOpenPage('ID Types')
             }} data-target="#ListModel" className='new-link'>
@@ -418,7 +418,7 @@ const Identification = (props) => {
               isDisabled={isLockOrRestrictModule("Lock", editval[0]?.IdentificationTypeID, isLocked)}
             />
           </div>
-          <div className="col-3 col-md-3 col-lg-2">
+          <div className="col-3 col-md-3 col-lg-2 mt-1">
             <label htmlFor="" className='label-name mb-0 '>Identification Number{errors.IdentificationNumberErrors !== 'true' ? (
               <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.IdentificationNumberErrors}</p>
             ) : null}
@@ -438,7 +438,7 @@ const Identification = (props) => {
               isDisabled={isLockOrRestrictModule("Lock", editval[0]?.IdentificationNumber, isLocked)}
             />
           </div>
-          <div className="col-3 col-md-3 col-lg-1">
+          <div className="col-3 col-md-3 col-lg-1 mt-1">
             <label htmlFor="" className='label-name mb-0'>ID Expiry</label>
           </div>
           <div className="col-4 col-md-4 col-lg-2 " >
@@ -468,7 +468,7 @@ const Identification = (props) => {
               disabled={isLockOrRestrictModule("Lock", editval[0]?.ExpiryDate, isLocked)}
             />
           </div>
-          <div className="col-3 col-md-3 col-lg-2">
+          <div className="col-3 col-md-3 col-lg-2 mt-1">
             <label htmlFor="" className='label-name mb-0 '>Country{errors.CountryIDErrors !== 'true' && errors.CountryIDErrors ? (
               <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.CountryIDErrors}</p>
             ) : null}</label>
@@ -485,7 +485,7 @@ const Identification = (props) => {
               isDisabled={isLockOrRestrictModule("Lock", editval[0]?.CountryID, isLocked)}
             />
           </div>
-          <div className="col-3 col-md-3 col-lg-2">
+          <div className="col-3 col-md-3 col-lg-2 mt-1">
             <label htmlFor="" className='label-name mb-0 '>State{errors.StateIDErrors !== 'true' ? (
               <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.StateIDErrors}</p>
             ) : null}</label>
