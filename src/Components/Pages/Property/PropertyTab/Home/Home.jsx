@@ -2327,7 +2327,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                       <legend>Article</legend>
                       <div className="row">
                         <div className="col-3 col-md-3 col-lg-1  mt-2">
-                          <label htmlFor="" className='new-label'>Serial Id</label>
+                          <label htmlFor="" className='new-label'>Serial ID</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
                           <input
@@ -2978,7 +2978,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                       <legend>Boat</legend>
                       <div className="row">
                         <div className="col-3 col-md-3 col-lg-1   mt-2">
-                          <label htmlFor="" className='new-label'>Manu. Year</label>
+                          <label htmlFor="" className='new-label'>Manuf. Year</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-1 ">
                           <DatePicker
