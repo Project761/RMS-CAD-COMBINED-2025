@@ -1149,7 +1149,7 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, isLock
             <div className="row align-items-center" style={{ rowGap: "8px" }}>
               <div className="col-3 col-md-3 col-lg-3">
                 <span data-toggle="modal" onClick={() => { setOpenPage('Pretend To Be') }} data-target="#ListModel" className='new-link px-0'>
-                  Pretented To Be
+                  Pretended To Be
                 </span>
               </div>
               <div className="col-9 col-md-9 col-lg-9">
@@ -1163,7 +1163,7 @@ const BasicInformation = ({ ListData, offenceID, nibrsCode, setNibrsCode, isLock
                   components={{ MultiValue, }}
                   onChange={(e) => Agencychange(e)}
                   value={filterArray(pretendToBeID, 'label')}
-                  placeholder='Select Pretented To Be From List'
+                  placeholder='Select  Pretended To Be From List'
                   // styles={customStylesWithOutColor}
                   styles={isLockOrRestrictModule("Lock", editval, isLocked, true) ? MultiSelectLockedStyle : customStylesWithOutColor}
                   isDisabled={isLockOrRestrictModule("Lock", editval, isLocked, true) ? true : false}

@@ -178,8 +178,8 @@ const Warrant = (props) => {
         const WarrantTypeIDErrors = value.WarrantNumber ? RequiredFieldIncident(value.WarrantTypeID) : 'true';
         const WarrantNumberErrors = RequiredFieldIncident(value.WarrantNumber);
         const DateTimeIssuedErrors = value.WarrantNumber ? RequiredFieldIncident(value.DateTimeIssued) : 'true';
-        // const DateExpiredErrors = value?.DateTimeIssued ? RequiredFieldIncident(value.DateExpired) : 'true';
-        const IssuingAgencyIDErrors = value.WarrantNumber ? RequiredFieldIncident(value.IssuingAgencyID || value.WarrantIssuingAgency) : 'true';
+        const DateExpiredErrors = value?.WarrantNumber && value?.DateTimeIssued ? RequiredFieldIncident(value.DateExpired) : 'true';
+        const IssuingAgencyIDErrors = value?.WarrantNumber ? RequiredFieldIncident(value.IssuingAgencyID || value.WarrantIssuingAgency) : 'true';
 
         setErrors(pre => {
             return {
@@ -187,21 +187,21 @@ const Warrant = (props) => {
                 ['WarrantTypeIDErrors']: WarrantTypeIDErrors || pre['WarrantTypeIDErrors'],
                 ['WarrantNumberErrors']: WarrantNumberErrors || pre['WarrantNumberErrors'],
                 ['DateTimeIssuedErrors']: DateTimeIssuedErrors || pre['DateTimeIssuedErrors'],
-                // ['DateExpiredErrors']: DateExpiredErrors || pre['DateExpiredErrors'],
+                ['DateExpiredErrors']: DateExpiredErrors || pre['DateExpiredErrors'],
                 ['IssuingAgencyIDErrors']: IssuingAgencyIDErrors || pre['IssuingAgencyIDErrors'],
 
             }
         });
     }
 
-    const { WarrantTypeIDErrors, IssuingAgencyIDErrors, DateTimeIssuedErrors, WarrantNumberErrors } = errors
+    const { WarrantTypeIDErrors, IssuingAgencyIDErrors, DateTimeIssuedErrors, DateExpiredErrors, WarrantNumberErrors } = errors
 
     useEffect(() => {
-        if (WarrantTypeIDErrors === 'true' && IssuingAgencyIDErrors === 'true' && DateTimeIssuedErrors === 'true' && WarrantNumberErrors === 'true') {
+        if (WarrantTypeIDErrors === 'true' && IssuingAgencyIDErrors === 'true' && DateTimeIssuedErrors === 'true' && DateExpiredErrors === 'true' && WarrantNumberErrors === 'true') {
             if (warrantID && status) { update_Activity() }
             else { Add_Type() }
         }
-    }, [WarrantTypeIDErrors, IssuingAgencyIDErrors, DateTimeIssuedErrors, WarrantNumberErrors])
+    }, [WarrantTypeIDErrors, IssuingAgencyIDErrors, DateTimeIssuedErrors, DateExpiredErrors, WarrantNumberErrors])
 
     const DropDownIssuingAgency = (e, name) => {
         //  !addUpdatePermission && setChangesStatus(true)
@@ -513,6 +513,8 @@ const Warrant = (props) => {
         return true;
     };
 
+
+    console.log(incReportedDate)
     return (
         <>
             <ArresList {...{ ListData }} />
@@ -525,16 +527,6 @@ const Warrant = (props) => {
                         ) : null}</label>
                     </div>
                     <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
-                        {/* <input
-                            type="text"
-                            maxLength={10}
-                            value={value?.WarrantNumber}
-                            onChange={handleChange}
-                            name='WarrantNumber'
-                            required
-                            className={isLockOrRestrictModule("Lock", editval[0]?.WarrantNumber, isLocked) ? 'LockFildsColor' : 'requiredColor'}
-                            disabled={isLockOrRestrictModule("Lock", editval[0]?.WarrantNumber, isLocked)}
-                        /> */}
                         <input
                             type="text"
                             maxLength={10}
@@ -616,7 +608,7 @@ const Warrant = (props) => {
                             isDisabled={isLockOrRestrictModule("Lock", editval[0]?.WarrantStatusID, isLocked)}
                         />
                     </div>
-                    <div className="col-3 col-md-3 col-lg-2 mt-2">
+                    <div className="col-3 col-md-3 col-lg-2 mt-3">
                         <label htmlFor="" className='label-name '>Issued Date/Time{errors.DateTimeIssuedErrors !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.DateTimeIssuedErrors}</p>
                         ) : null}</label>
@@ -680,8 +672,11 @@ const Warrant = (props) => {
                         />
 
                     </div>
-                    <div className="col-3 col-md-3 col-lg-2 mt-2">
-                        <label htmlFor="" className='label-name '></label>
+                    <div className="col-3 col-md-3 col-lg-2 mt-3">
+                        <label htmlFor="" className='label-name '>Expire Date/Time{errors.DateExpiredErrors !== 'true' ? (
+                            <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.DateExpiredErrors}</p>
+                        ) : null}
+                        </label>
                     </div>
                     <div className="col-3 col-md-3 col-lg-2 mt-2">
                         <DatePicker
@@ -728,8 +723,16 @@ const Warrant = (props) => {
                             timeIntervals={1}
                             minDate={new Date(DateTimeIssued)}
 
-                            disabled={isLockOrRestrictModule("Lock", editval[0]?.DateExpired, isLocked) || !value?.DateTimeIssued}
-                            className={isLockOrRestrictModule("Lock", editval[0]?.DateExpired, isLocked) ? "LockFildsColor" : `'' ${!value?.DateTimeIssued ? 'readonlyColor' : ''}`}
+                            // disabled={isLockOrRestrictModule("Lock", editval[0]?.DateExpired, isLocked) || !value?.DateTimeIssued}
+                            // className={isLockOrRestrictModule("Lock", editval[0]?.DateExpired, isLocked) ? "LockFildsColor" : `'' ${!value?.DateTimeIssued ? 'readonlyColor' : ''}`}
+
+                            disabled={
+                                isLockOrRestrictModule("Lock", editval[0]?.DateExpired, isLocked)
+                                || !value?.DateTimeIssued
+                            }
+                            className={isLockOrRestrictModule("Lock", editval[0]?.DateExpired, isLocked) ? "LockFildsColor" : !value?.DateTimeIssued ? "readonlyColor" : value?.WarrantNumber && value?.DateTimeIssued ? "requiredColor" : ""
+                            }
+
 
                         />
                     </div>

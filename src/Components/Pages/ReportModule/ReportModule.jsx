@@ -1117,7 +1117,7 @@ const ReportModule = (props) => {
         //     sortable: true
         // },
         {
-            name: 'Prepared by',
+            name: 'Prepared By',
             selector: (row) => row.ReportedBy_Description,
             sortable: true
         },
@@ -2782,7 +2782,7 @@ const ReportModule = (props) => {
                                                 </div>
 
                                                 <div className="col-2 col-md-2 col-lg-1 mt-2 pt-2">
-                                                    <label htmlFor="" className='new-label text-nowrap'>Prepared by  {errors.ReportedByPinError !== 'true' ? (
+                                                    <label htmlFor="" className='new-label text-nowrap'>Prepared By  {errors.ReportedByPinError !== 'true' ? (
                                                         <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.ReportedByPinError}</p>
                                                     ) : null}</label>
                                                 </div>
@@ -3453,7 +3453,7 @@ const ReportModule = (props) => {
                                         <div className="row ">
                                             {
                                                 // narrativeID && value.Status !== null && !IsSelfApproved && !skipApproverAuthor ?
-                                                 ((narrativeID && value.Status !== null && !IsSelfApproved) || (narrativeID && value.Status !== null && !IsSelfApproved && skipApproverAuthor)) ?
+                                                ((narrativeID && value.Status !== null && !IsSelfApproved) || (narrativeID && value.Status !== null && !IsSelfApproved && skipApproverAuthor)) ?
                                                     <>
                                                         <div className="col-12 col-md-12 col-lg-12">
                                                             <div className="row ">
@@ -3596,7 +3596,7 @@ const ReportModule = (props) => {
                                             } */}
                                                         {
                                                             // (checkWebWorkFlowStatus && (skipApproverAuthor === false || skipApproverAuthor === null)) ? (
-                                                             (checkWebWorkFlowStatus || (checkWebWorkFlowStatus && (skipApproverAuthor === true || skipApproverAuthor === null))) ? (    
+                                                            (checkWebWorkFlowStatus || (checkWebWorkFlowStatus && (skipApproverAuthor === true || skipApproverAuthor === null))) ? (
                                                                 narrativeID && (
                                                                     (value.Status !== "Pending Review" &&
                                                                         value.Status !== "Rejected" &&
