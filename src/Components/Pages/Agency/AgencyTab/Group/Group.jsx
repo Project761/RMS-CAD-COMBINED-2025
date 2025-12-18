@@ -455,7 +455,7 @@ const Group = ({ allowMultipleLogin }) => {
                                 fieldPermissionAgency?.IsAllowSeal[0]?.Changeok === 0 && fieldPermissionAgency?.IsAllowSeal[0]?.AddOK === 0 && status ? true : fieldPermissionAgency?.IsAllowSeal[0]?.Changeok === 0 && fieldPermissionAgency?.IsAllowSeal[0]?.AddOK === 1 && groupEditData?.IsAllowSeal === '' && status ? false : fieldPermissionAgency?.IsAllowSeal[0]?.AddOK === 1 && !status ? false : fieldPermissionAgency?.IsAllowSeal[0]?.Changeok === 1 && status ? false : true : false
                             }
                             id="IsAllowSeal" />
-                        <label className='ml-2' htmlFor="IsAllowSeal">Allow Unseal</label>
+                        <label className='ml-2' htmlFor="IsAllowSeal">Allow Seal</label>
                     </div>
 
                     <div className="col-12 col-md-12 col-lg-4 mt-2 ">
@@ -469,7 +469,7 @@ const Group = ({ allowMultipleLogin }) => {
                                 fieldPermissionAgency?.IsAllowUnSeal[0]?.Changeok === 0 && fieldPermissionAgency?.IsAllowUnSeal[0]?.AddOK === 0 && status ? true : fieldPermissionAgency?.IsAllowUnSeal[0]?.Changeok === 0 && fieldPermissionAgency?.IsAllowUnSeal[0]?.AddOK === 1 && groupEditData?.IsAllowUnSeal === '' && status ? false : fieldPermissionAgency?.IsAllowUnSeal[0]?.AddOK === 1 && !status ? false : fieldPermissionAgency?.IsAllowUnSeal[0]?.Changeok === 1 && status ? false : true : false
                             }
                             id="IsAllowUnSeal" />
-                        <label className='ml-2' htmlFor="IsAllowUnSeal">Allow Seal</label>
+                        <label className='ml-2' htmlFor="IsAllowUnSeal">Allow Unseal</label>
                     </div>
 
 
