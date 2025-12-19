@@ -1812,7 +1812,7 @@ const Home = (props) => {
                                 <div className="row px-0 align-items-center">
                                     <div className="col-3 col-md-3 col-lg-1">
                                         <label htmlFor="" className="new-label text-nowrap mb-0">
-                                            Send Task to List
+                                            Send Task To List
                                             {errors.tasklistError && (
                                                 <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>
                                                     {errors.tasklistError}

@@ -1904,7 +1904,7 @@ const AddInformation = (props) => {
                           htmlFor=""
                           className="new-label text-nowrap mb-0"
                         >
-                          Send Task to List
+                          Send Task To List
                           {errors.tasklistError && (
                             <p
                               style={{
