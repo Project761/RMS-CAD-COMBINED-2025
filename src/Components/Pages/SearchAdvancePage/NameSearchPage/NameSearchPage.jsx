@@ -285,7 +285,7 @@ const NameSearchPage = ({ isCAD = false, setSelectSearchRecord = () => { } }) =>
             NameIDNumber, NameIDNumberTo, NameTypeID, NameReasonCodeID, LastName, MiddleName, FirstName, SuffixID, DateOfBirthFrom, DateOfBirthTo, SexID, RaceID, EthnicityID, HairColorID,
             EyeColorID, WeightFrom, WeightTo, SMTTypeID, SMTLocationID, SSN, SMT_Description, IncidentNumber, IncidentNumberTo, ReportedDate, ReportedDateTo, DateOfBirth,
             HeightFrom, HeightTo, AgencyID, PINID, DLNumber, BusinessTypeID, PhoneTypeID, Contact, FaxNumber, RMSCFSCodeID, FBIID, CrimeLocation, OccurredFrom, OccurredFromTo, LawTitleId, AgeFrom, AgeTo, AgeUnitID, Local, SBI, FBI, TAX, SPN, Jacket, OCN, State, ComplexionID,
-            IPAddress, UserID, SearchCriteria, SearchCriteriaJson, ReportName, Status, ModuleName, ModuleID, VictimTypeID,
+            IPAddress, UserID, SearchCriteria, SearchCriteriaJson, ReportName, Status, ModuleName, Role , ModuleID, VictimTypeID,
             CADEventFrom, CADEventTo // Include these from the input value
         } = myStateRef.current
         if ((AgeFrom?.trim() || AgeTo?.trim())) {
@@ -338,7 +338,7 @@ const NameSearchPage = ({ isCAD = false, setSelectSearchRecord = () => { } }) =>
             'IncidentNumber': IncidentNumber, 'IncidentNumberTo': IncidentNumberTo, 'ReportedDate': ReportedDate, 'ReportedDateTo': ReportedDateTo, 'DateOfBirth': DateOfBirth,
             'HeightFrom': HeightFrom, 'HeightTo': HeightTo, 'AgencyID': loginAgencyID, 'DLNumber': DLNumber, 'BusinessTypeID': BusinessTypeID, 'PhoneTypeID': PhoneTypeID, 'Contact': Contact, 'FaxNumber': FaxNumber, 'RMSCFSCodeID': RMSCFSCodeID, 'FBIID': FBIID, 'Address': CrimeLocation, 'OccurredFrom': OccurredFrom, 'OccurredFromTo': OccurredFromTo, "LawTitleID": LawTitleId, 'AgeFrom': AgeFrom, 'AgeTo': AgeTo, 'AgeUnitID': AgeUnitID, 'Local': Local, 'SBI': SBI, 'FBI': FBI, 'TAX': TAX, 'SPN': SPN, 'Jacket': Jacket, 'OCN': OCN, 'State': State, 'ComplexionID': ComplexionID,
             'IPAddress': IPAddress, 'UserID': loginPinID, 'SearchCriteria': SearchCriteria, 'SearchCriteriaJson': SearchCriteriaJson,
-            'ReportName': effectiveScreenPermission[0]?.ScreenCode1, 'Status': Status, 'ModuleName': effectiveScreenPermission[0]?.ScreenCode1, 'ModuleID': effectiveScreenPermission[0]?.ModuleFK,
+            'ReportName': effectiveScreenPermission[0]?.ScreenCode1, 'Status': Status, 'Role' : Role , 'ModuleName': effectiveScreenPermission[0]?.ScreenCode1, 'ModuleID': effectiveScreenPermission[0]?.ModuleFK,
             'VictimTypeID': VictimTypeID
         }
         // Add CAD-related fields if isCAD is true
