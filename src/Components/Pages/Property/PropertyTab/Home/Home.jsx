@@ -35,7 +35,7 @@ import CreatableSelect from 'react-select/creatable';
 import NCICModal from '../../../../../CADComponents/NCICModal';
 
 
-const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List, propertystatus, setPropertyStatus, isCad = false, isViewEventDetails = false, isCADSearch = false, isLocked, setIsLocked, isCaseManagement = false, refetchPropertyForCaseManagementData = () => { } }) => {
+const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, delPropertyID, get_List, propertystatus, setPropertyStatus, isCad = false, isViewEventDetails = false, isCADSearch = false, isLocked, setIsLocked, isCaseManagement = false, refetchPropertyForCaseManagementData = () => { } }) => {
 
 
   const dispatch = useDispatch();
@@ -119,7 +119,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
   const [lossCode, setLossCode] = useState('');
   const [openPage, setOpenPage] = useState('');
   //------propertyID, MasterPropertyID------
-  const [delPropertyID, setDelPropertyID] = useState('');
+  // const [delPropertyID, setDelPropertyID] = useState('');
   const [propertyID, setPropertyID] = useState('');
   const [masterPropertyID, setMasterPropertyID] = useState('');
   //-------------------image----------------
@@ -2903,7 +2903,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, get_List
                           </div>
                         </div>
                         <div className="col-3 col-md-3 col-lg-1  mt-2">
-                          <label htmlFor="" className='new-label'>Manu.&nbsp;Year</label>
+                          <label htmlFor="" className='new-label'>Manuf.&nbsp;Year</label>
                         </div>
                         <div className="col-3 col-md-3 col-lg-2 ">
                           <DatePicker

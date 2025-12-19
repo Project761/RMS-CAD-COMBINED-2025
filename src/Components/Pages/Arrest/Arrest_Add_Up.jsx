@@ -379,7 +379,12 @@ const Arrest_Add_Up = () => {
             }
         })
     }
-
+    const handleCardClick = (row) => {
+        console.log(row)
+        if (!effectiveScreenPermission?.[0]?.Changeok) return;
+        set_Edit_Value(row);
+        setResetErrors(true);
+    };
     return (
         <div className=" section-body pt-1 p-1 bt" >
             <div className="div">
@@ -400,12 +405,27 @@ const Arrest_Add_Up = () => {
                                                     <div
                                                         className="info-card position-relative d-flex align-items-center justify-content-between"
                                                         key={index}
-                                                        style={{ cursor: "pointer" }}
+                                                        // style={{ cursor: "pointer" }}
+                                                        onClick={() => { handleCardClick(row); }}
+                                                        style={{
+                                                            cursor: "pointer",
+                                                            borderLeft: "5px solid #2DEB7A",
+                                                            backgroundColor: row.ArrestID === DecArrestId ? "#425971" : "#ffffff",
+                                                            color: row.ArrestID === DecArrestId ? "#ffffff" : "#000000",
+                                                        }}
+
                                                     >
                                                         {/* Card Content */}
                                                         <div>
                                                             <div>
-                                                                <p className="mb-0 small" style={{ color: "black" }}>
+                                                                <p className="mb-0 small"
+                                                                    // style={{ color: "black" }}
+                                                                    style={{
+                                                                        color: row.ArrestID === DecArrestId ? "white" : "black",
+                                                                        fontWeight: "bold",
+                                                                    }}
+                                                                >
+
                                                                     <strong>{row.ArrestNumber}</strong>
                                                                 </p>
                                                             </div>

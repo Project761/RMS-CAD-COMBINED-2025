@@ -291,9 +291,9 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                 </div>
         }
     ]
-
+    console.log(delPropertyID)
     const Delete_Property = () => {
-
+        console.log(delPropertyID, "hhfghfgh")
         const val = { 'PropertyID': delPropertyID, 'DeletedByUserFK': loginPinID, 'IsMaster': MstPage === "MST-Property-Dash" ? true : false, }
         AddDeleteUpadate('Property/Delete_Property', val).then((res) => {
             if (res) {
@@ -350,6 +350,11 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
             setIsLocked(false);
         }
     }
+    const handleCardClick = (row) => {
+        console.log(row, "ASdasd")
+        if (!effectiveScreenPermission?.[0]?.Changeok) return;
+        set_EditRow(row);
+    };
 
     return (
         <div className="section-body  pt-1 p-1 bt" >
@@ -374,6 +379,8 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                                                     <div
                                                         className="info-card position-relative d-flex align-items-center justify-content-between"
                                                         key={index}
+                                                        onClick={() => { handleCardClick(row); console.log(row) }}
+
                                                         style={{
                                                             cursor: "pointer",
                                                             borderLeft: nibrsValidateData?.some(item => item?.PropertyID === row?.PropertyID) ? "5px solid #EB0101" : "5px solid #2DEB7A",
@@ -806,7 +813,7 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                                 {
                                     showPage === 'home' ?
                                         <>
-                                            <Home {...{ showRecovered, setShowRecovered, get_List, showOtherTab, setShowOtherTab, setPropertyStatus, setShowPage, propertystatus, isCad, isViewEventDetails, isCADSearch, status, isLocked, setIsLocked, isCaseManagement, refetchPropertyForCaseManagementData }} />
+                                            <Home {...{ showRecovered, setShowRecovered, delPropertyID, get_List, showOtherTab, setShowOtherTab, setPropertyStatus, setShowPage, propertystatus, isCad, isViewEventDetails, isCADSearch, status, isLocked, setIsLocked, isCaseManagement, refetchPropertyForCaseManagementData }} />
                                         </>
                                         :
                                         showPage === 'Miscellaneous Information' ?

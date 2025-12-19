@@ -385,6 +385,11 @@ const OffenceHomeTabs = () => {
         });
     };
 
+    const handleCardClick = (row) => {
+        if (!effectiveScreenPermission?.[0]?.Changeok) return;
+        setEditValOffense(row); setshowOffPage('home');
+    };
+
     return (
         <div className=" section-body pt-1 p-1 bt" >
             <div className="div">
@@ -407,20 +412,18 @@ const OffenceHomeTabs = () => {
                                                 <div className="card-carousel" id="cardCarousel" ref={carouselRef}>
 
                                                     {offenceFillterData?.map((row, index) => (
-
                                                         <div
                                                             className="info-card position-relative d-flex align-items-center justify-content-between"
                                                             key={index}
                                                             //    ----------- change by dinesh---------------
-                                                            // onClick={() => { setEditValOffense(row); setshowOffPage('home'); }}
+                                                            onClick={() => { handleCardClick(row); }}
                                                             ///--------------------//---------------------
                                                             style={{
                                                                 cursor: "pointer",
                                                                 borderLeft: nibrsValidateOffenseData?.some(item => item?.CrimeID === row?.CrimeID) ? "5px solid #EB0101" : "5px solid #2DEB7A",
                                                                 backgroundColor: row?.CrimeID === crimeId ? "#425971" : "#ffffff",
 
-                                                            }}
-                                                        >
+                                                            }}   >
                                                             {/* Card Content */}
                                                             <div>
                                                                 <p
