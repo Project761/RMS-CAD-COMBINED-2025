@@ -500,7 +500,7 @@ const RecoveredVehicle = (props) => {
             <div className="col-12 col-md-12 pt-1 p-0" >
                 <div className="row">
                     <div className="col-2 col-md-2 col-lg-2 mt-3">
-                        <label htmlFor="" className='label-name '>Officer Pf{errors.OfficerPFIDError !== 'true' ? (
+                        <label htmlFor="" className='label-name '>Officer{errors.OfficerPFIDError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.OfficerPFIDError}</p>
                         ) : null}</label>
                     </div>

@@ -455,7 +455,7 @@ const RecoveredProperty = (props) => {
             <div className="col-12 col-md-12 pt-1" >
                 <div className="row align-items-center" style={{ rowGap: "8px" }}>
                     <div className="col-2 col-md-2 col-lg-1">
-                        <label htmlFor="" className='label-name mb-0 '>Officer Pf{errors.OfficerPFIDError !== 'true' ? (
+                        <label htmlFor="" className='label-name mb-0 '>Officer{errors.OfficerPFIDError !== 'true' ? (
                             <p style={{ color: 'red', fontSize: '13px', margin: '0px', padding: '0px' }}>{errors.OfficerPFIDError}</p>
                         ) : null}</label>
                     </div>

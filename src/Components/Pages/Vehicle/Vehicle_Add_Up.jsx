@@ -329,7 +329,10 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
         }
     }
 
-
+    const handleCardClick = (row) => {
+        if (!effectiveScreenPermission?.[0]?.Changeok) return;
+        setEditVal(row); setShowPage('home');
+    };
     return (
         <div className=" section-body pt-1 p-1 bt" >
             <div className="div">
@@ -352,6 +355,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                                     <div
                                                         className="info-card position-relative d-flex align-items-center justify-content-between"
                                                         key={index}
+                                                        onClick={() => { handleCardClick(row); }}
                                                         style={{
                                                             cursor: "pointer",
                                                             borderLeft: nibrsValidateData?.some(item => item?.PropertyID === row?.PropertyID) ? "5px solid #EB0101" : "5px solid #2DEB7A",
