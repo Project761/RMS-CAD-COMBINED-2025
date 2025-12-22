@@ -497,7 +497,8 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
           IsIncidentCode: editval[0]?.IsIncidentCode,
           Comments: editval[0]?.Comments ? editval[0]?.Comments : "",
           //Radio Button
-          AttemptComplete: "",
+          // AttemptComplete: "",
+            AttemptComplete: editval[0]?.AttemptComplete === "Completed" ? "C" : editval[0]?.AttemptComplete === "Attempted" ? "A" : "",
           //Date picker
           FTADate: editval[0]?.FTADate
             ? getShowingWithOutTime(editval[0]?.FTADate)
