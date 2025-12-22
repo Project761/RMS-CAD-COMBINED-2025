@@ -1618,13 +1618,13 @@ const VehicleManagement = (props) => {
                                         setactivitydate(selectedDate);
                                         setValue({
                                             ...value,
-                                            ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate),
+                                            ['ReleaseDate']: getShowingMonthDateYear(selectedDate),
                                         });
                                     } else {
                                         setactivitydate(null);
                                         setValue({
                                             ...value,
-                                            ['LastSeenDtTm']: null,
+                                            ['ReleaseDate']: null,
                                         });
                                     }
                                 }}
@@ -3190,7 +3190,7 @@ const VehicleManagement = (props) => {
                                         name='activitydate'
                                         id='activitydate'
                                         onChange={(date) => {
-                                            setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
+                                            setactivitydate(date); setValue({ ...value, ['ReleaseDate']: date ? getShowingMonthDateYear(date) : null, });
 
                                         }}
                                         isClearable={ActivityDtTm ? true : false}

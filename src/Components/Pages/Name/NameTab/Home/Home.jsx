@@ -2633,9 +2633,9 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                                   }}
                                   onChange={HandleChange}
                                   required
-                                  className={isLockOrRestrictModule("Lock", editval[0]?.HeightTo, isLocked) ? 'LockFildsColor' : nameTypeCode === "B" ? 'readonlyColor' : ''}
-                                  disabled={isLockOrRestrictModule("Lock", editval[0]?.HeightTo, isLocked) || nameTypeCode === "B" ? true : false}
-                                  readOnly={isLockOrRestrictModule("Lock", editval[0]?.HeightTo, isLocked) || nameTypeCode === "B" ? true : false}
+                                  className={isLockOrRestrictModule("Lock", editval[0]?.HeightTo, isLocked) ? 'LockFildsColor' : nameTypeCode === "B" || !value?.HeightFrom ? 'readonlyColor' : ''}
+                                  disabled={isLockOrRestrictModule("Lock", editval[0]?.HeightTo, isLocked) || nameTypeCode === "B" || !value?.HeightFrom ? true : false}
+                                  readOnly={isLockOrRestrictModule("Lock", editval[0]?.HeightTo, isLocked) || nameTypeCode === "B" || !value?.HeightFrom ? true : false}
                                   placeholder='To'
                                   autoComplete='off'
                                 />

@@ -385,7 +385,7 @@ const PropertyManagement = (props) => {
         const ReleasingOfficerError = (value.IsRelease || value.IsCheckOut) ? RequiredFieldIncident(value.ReleasingOfficerID) : 'true';
         const ReceipientError = value.IsRelease ? RequiredFieldIncident(value.ReceipentID) : 'true';
         const ReceipientOfficerError = value.IsCheckOut ? RequiredFieldIncident(value.ReceipentOfficerID) : 'true';
-        const ReleasedDateTimeError = value.IsRelease ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
+        const ReleasedDateTimeError = value.IsRelease ? RequiredFieldIncident(value.ReleaseDate) : 'true';
         // const DestructionDateTimeError = value.IsDestroy ? RequiredFieldIncident(value.DestroyDate) : 'true';
         const DestructionDateTimeError = value.IsDestroy ? RequiredFieldIncident(value.activitydate) : 'true';
         const DestructionOfficerError = value.IsDestroy ? RequiredFieldIncident(value.DestructionOfficerID) : 'true';
@@ -1230,13 +1230,13 @@ const PropertyManagement = (props) => {
                                                 setreleasedate(selectedDate);
                                                 setValue({
                                                     ...value,
-                                                    ['activitydate']: getShowingMonthDateYear(selectedDate),
+                                                    ['ReleaseDate']: getShowingMonthDateYear(selectedDate),
                                                 });
                                             } else {
                                                 setreleasedate(null);
                                                 setValue({
                                                     ...value,
-                                                    ['activitydate']: null,
+                                                    ['ReleaseDate']: null,
                                                 });
                                             }
                                         }}
@@ -1737,13 +1737,13 @@ const PropertyManagement = (props) => {
                                         setactivitydate(selectedDate);
                                         setValue({
                                             ...value,
-                                            ['LastSeenDtTm']: getShowingMonthDateYear(selectedDate),
+                                            ['ReleaseDate']: getShowingMonthDateYear(selectedDate),
                                         });
                                     } else {
                                         setactivitydate(null);
                                         setValue({
                                             ...value,
-                                            ['LastSeenDtTm']: null,
+                                            ['ReleaseDate']: null,
                                         });
                                     }
                                 }}
@@ -3281,7 +3281,7 @@ const PropertyManagement = (props) => {
                                         name='activitydate'
                                         id='activitydate'
                                         onChange={(date) => {
-                                            setactivitydate(date); setValue({ ...value, ['LastSeenDtTm']: date ? getShowingMonthDateYear(date) : null, });
+                                            setactivitydate(date); setValue({ ...value, ['ReleaseDate']: date ? getShowingMonthDateYear(date) : null, });
 
                                         }}
                                         isClearable={ActivityDtTm ? true : false}
