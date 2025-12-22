@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
-import { getShowingWithFixedTime01, getShowingWithOutTime, tableCustomStyles } from '../../../../Common/Utility';
+import { getShowingDateText, getShowingWithFixedTime01, getShowingWithOutTime, tableCustomStyles } from '../../../../Common/Utility';
 import { fetchPostData } from '../../../../hooks/Api';
 
 const ChainOfCustodyData = (props) => {
@@ -79,28 +79,27 @@ const ChainOfCustodyData = (props) => {
       sortable: true,
     },
 
-
-
-    // {
-    //   name: 'Schedule Release Date',
-    //   selector: (row) => row.ReleaseDate,
-    //   sortable: true,
-    // },
-    // {
-    //   name: 'Release To',
-    //   selector: (row) => row.ReleaseDate,
-    //   sortable: true,
-    // },
-    // {
-    //   name: 'Comment',
-    //   selector: (row) => row.ActivityComments,
-    //   sortable: true,
-    // },
+    {
+      name: 'Schedule Release Date',
+      selector: (row) => row.ReleaseDate ? getShowingDateText(row.ReleaseDate) : '',
+      sortable: true,
+    },
+    {
+      name: 'Release To',
+      selector: (row) => row.RecepientName,
+      sortable: true,
+    },
+    {
+      name: 'Comment',
+      selector: (row) => row.ActivityComments,
+      sortable: true,
+    },
 
   ];
 
   return (
-    <div className="col-12 px-0 mt-2">
+    <div className="col-12 px-0 mt-2 modal-table" style={{overflowX:"scroll"}} >
+
       <DataTable
         columns={columns}
         data={data}
