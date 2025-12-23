@@ -280,8 +280,8 @@ const AgencyData = ({ children }) => {
         })
     }
 
-    const get_OffenseName_Data = (DecNameID) => {
-        const val = { 'NameID': DecNameID, }
+    const get_OffenseName_Data = (DecNameID , status) => {
+        const val = { 'NameID': DecNameID, 'IsIncidentOffense': status }
         fetchPostData('NameOffense/GetData_NameOffense', val).then((res) => {
             if (res) {
                 setArrestChargeData(res);

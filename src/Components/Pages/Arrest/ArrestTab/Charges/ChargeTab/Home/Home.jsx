@@ -138,7 +138,7 @@ const Charges = (props) => {
       const storedVal = JSON.parse(localStorage.getItem('insertedArrestVal'));
       // let arresteeID = storedVal['ArresteeID'];
       let arresteeID = storedVal?.ArresteeID
-      if (!DecArrestId) { get_OffenseName_Data(arresteeID); }
+      if (!DecArrestId) { get_OffenseName_Data(arresteeID , true); }
     }
   }, [localStoreData]);
 
