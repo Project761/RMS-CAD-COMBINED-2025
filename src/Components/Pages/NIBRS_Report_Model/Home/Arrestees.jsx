@@ -843,9 +843,9 @@ const Arrestees = ({ arrestClick, isNibrsSummited = false, isLocked, setIsLocked
                 ...valueCharge, 'ChargeCodeID': EditvalCharge[0]?.ChargeCodeID || EditvalCharge?.ChargeCodeID,
                 'NIBRSID': EditvalCharge[0]?.NIBRSID || EditvalCharge?.NIBRSCodeId, 'ChargeID': EditvalCharge[0]?.ChargeID,
                 'ModifiedByUserFK': loginPinID, 'LawTitleId': EditvalCharge[0]?.LawTitleId || EditvalCharge?.LawTitleId,
-                'AttemptComplete': EditvalCharge[0]?.AttemptComplete === "C"
+                'AttemptComplete': (EditvalCharge[0]?.AttemptComplete === "C") || (EditvalCharge?.AttemptComplete === "C")
                     ? "C"
-                    : EditvalCharge[0]?.AttemptComplete === "A"
+                    : (EditvalCharge[0]?.AttemptComplete === "A") || (EditvalCharge?.AttemptComplete === "A")
                         ? "A"
                         : "",
             });
