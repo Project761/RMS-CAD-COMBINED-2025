@@ -1484,8 +1484,8 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
 
   return loder ? (
     <>
-      <div className="col-12 overflow-y-hidden">
-        <div className="row align-items-center mt-2 mb-2" style={{ rowGap: "8px" }}>
+      <div className="col-12 Offense_child">
+        <div className="row align-items-center mt-2" style={{ rowGap: "5px" }}>
           <div className="col-4 col-md-4 col-lg-2 ">
             <label htmlFor="" className="new-label mb-0">
               Incident #
@@ -2205,7 +2205,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
               styles={isLockOrRestrictModule("Lock", editval[0]?.CADDispositionId, isLocked) ? LockFildscolour : customStylesWithOutColor}
             />
           </div>
-          <div className="col-3 col-md-3 col-lg-2 ">
+          <div className="col-3 col-md-3 col-lg-2 text-right">
             <span
               data-toggle="modal"
               data-target="#ListModel"
@@ -2283,7 +2283,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
               </div>
             </div>
           )}
-          <div className="col-3 col-md-3 col-lg-2">
+          <div className="col-3 col-md-3 col-lg-2 text-right">
             <span
               data-toggle="modal"
               data-target="#ListModel"
@@ -2314,7 +2314,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
               styles={isLockOrRestrictModule("Lock", editval[0]?.NIBRSClearanceID, isLocked) ? LockFildscolour : getExceptionColorCode(clsDrpCode, value?.NIBRSClearanceID)}
             />
           </div>
-          <div className="col-5 col-md-5 col-lg-4 ">
+          <div className="col-5 col-md-5 col-lg-4 text-right">
             <label htmlFor="" className="new-label mb-0 ">
               Exceptional Clearance Date/Time{" "}
               {errors.NIBRSclearancedateError !== "true" ? (
@@ -2434,7 +2434,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
             />
           </div>
 
-          <div className="col-3 col-md-3 col-lg-2 ">
+          <div className="col-3 col-md-3 col-lg-2 text-right">
             <label htmlFor="" className="new-label mb-0">
               TIBRS Submission Date/Time
             </label>
@@ -2543,7 +2543,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
         </div>
       </div>
 
-      <div className="col-12 text-right mt-2 d-flex justify-content-between">
+      <div className="col-12 text-right d-flex justify-content-between">
         <div>
           {IncSta === true || IncSta === "true" ? (
             <>
@@ -2668,7 +2668,7 @@ const IncidentHome = ({ setIncidentReportedDate, setShowPoliceForce, setShowIncP
                 Save{" "}
               </button>
           }
-          <button type="button" className="btn btn-sm btn-success mr-4" onClick={() => { OnClose(); }} data-toggle={changesStatus ? "modal" : ""}
+          <button type="button" className="btn btn-sm btn-success" onClick={() => { OnClose(); }} data-toggle={changesStatus ? "modal" : ""}
             data-target={changesStatus ? "#SaveModal" : ""}
           >
             Close
@@ -3081,7 +3081,7 @@ const CloseHistoryModal = (props) => {
                     resetComments();
                     setassignModelShow(false);
                   }}
-                  className="btn  pl-2 mb-2"
+                  className="btn pl-2 mb-2 mr-0"
                 >
                   Close
                 </button>
