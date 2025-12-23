@@ -169,7 +169,7 @@ const Charges = (props) => {
         'IncidentID': DecEIncID, 'ArrestID': ArrestID, 'ChargeID': DecChargeId, 'CreatedByUserFK': LoginPinID, 'AgencyID': LoginAgencyID,
         'Name': Name, 'IncidentNumber': IncNo, 'ArrestNumber': ArrNo, 'LawTitleId': '', 'AttemptComplete': '',
       });
-      get_Data_Arrest_Charge(DecArrestId);
+      // get_Data_Arrest_Charge(DecArrestId);
       if (!incReportedDate) { dispatch(get_Inc_ReportedDate(IncID)); }
       // get_Property_Data(ArrestID);
 
