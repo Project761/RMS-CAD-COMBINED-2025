@@ -35,6 +35,8 @@ const NameListing = (props) => {
     //     })
     // }
 
+    console.log(victimCode)
+
     return (
         <>
             {
@@ -130,8 +132,11 @@ const NameListing = (props) => {
                                                 <div className="row">
                                                     <div className="col-2 col-md-2 col-lg-1 showlist">
                                                         <p htmlFor="" className='label-name'>
-                                                            {
+                                                            {/* {
                                                                 (victimCode != 'L' && victimCode != 'I') && data.AgeFrom ? <ErrorTooltipComp ErrorStr={'For selected vic type Age is not Valid'} /> : ''
+                                                            } */}
+                                                            {
+                                                                victimCode && victimCode !== 'L' && victimCode !== 'I' && data.AgeFrom ? (<ErrorTooltipComp ErrorStr="For selected vic type Age is not Valid" />) : null
                                                             }
                                                             Age From:
                                                         </p>
@@ -141,8 +146,12 @@ const NameListing = (props) => {
                                                     </div>
                                                     <div className="col-2 col-md-2 col-lg-1 showlist">
                                                         <p htmlFor="" className='label-name'>
-                                                            {
+                                                            {/* {
                                                                 (victimCode != 'L' && victimCode != 'I') && data.AgeTo ? <ErrorTooltipComp ErrorStr={'For selected vic type Age is not Valid'} /> : ''
+                                                            } */}
+                                                            {
+                                                                victimCode && victimCode !== 'L' && victimCode !== 'I' && data.AgeTo ? (<ErrorTooltipComp ErrorStr="For selected vic type Age is not Valid" />
+                                                                ) : null
                                                             }
                                                             Age To:
                                                         </p>
@@ -152,9 +161,14 @@ const NameListing = (props) => {
                                                     </div>
                                                     <div className="col-2 col-md-2 col-lg-1 showlist">
                                                         <p htmlFor="" className='label-name'>
-                                                            {
+                                                            {/* {
                                                                 (victimCode != 'L' && victimCode != 'I') && data.Race ? <ErrorTooltipComp ErrorStr={'For selected vic type Race is not Valid'} /> : ''
+                                                            } */}
+                                                            {
+                                                                victimCode && victimCode !== 'L' && victimCode !== 'I' && data.Race ? (<ErrorTooltipComp ErrorStr="For selected vic type Race is not Valid" />
+                                                                ) : null
                                                             }
+
                                                             Race:
                                                         </p>
                                                     </div>
@@ -163,9 +177,14 @@ const NameListing = (props) => {
                                                     </div>
                                                     <div className="col-2 col-md-2 col-lg-1 showlist">
                                                         <p htmlFor="" className='label-name'>
-                                                            {
+                                                            {/* {
                                                                 (victimCode != 'L' && victimCode != 'I') && data.Ethnicity ? <ErrorTooltipComp ErrorStr={'For selected vic type Ethnicity is not Valid'} /> : ''
+                                                            } */}
+                                                            {
+                                                                victimCode && victimCode !== 'L' && victimCode !== 'I' && data.Ethnicity ? (<ErrorTooltipComp ErrorStr="For selected vic type Ethnicity is not Valid" />
+                                                                ) : null
                                                             }
+
                                                             Ethnicity:
                                                         </p>
                                                     </div>
