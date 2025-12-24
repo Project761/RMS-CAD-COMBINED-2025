@@ -348,7 +348,7 @@ const Nibrs_Report_Model = ({ show, setShow, handleModel }) => {
                                                         id='dtpDateFrom'
                                                         name='dtpDateFrom'
                                                         dateFormat="MM/dd/yyyy"
-                                                        onChange={(date) => { setValueObj({ ...valueObj, ['dtpDateFrom']: date ? getShowingWithFixedTime00(date) : null }) }}
+                                                        onChange={(date) => { setValueObj({ ...valueObj, ['dtpDateTo'] : '' , ['dtpDateFrom']: date ? getShowingWithFixedTime00(date) : null }) }}
                                                         timeInputLabel
                                                         isClearable={valueObj?.dtpDateFrom ? true : false}
                                                         placeholderText={valueObj?.dtpDateFrom ? valueObj?.dtpDateFrom : 'Select...'}
@@ -370,6 +370,10 @@ const Nibrs_Report_Model = ({ show, setShow, handleModel }) => {
                                                         placeholderText={valueObj?.dtpDateTo ? valueObj?.dtpDateTo : 'Select...'}
                                                         selected={valueObj?.dtpDateTo && new Date(valueObj?.dtpDateTo)}
                                                         maxDate={new Date(datezone)}
+                                                        minDate={new Date(valueObj?.dtpDateFrom)}
+                                                        disabled={!valueObj?.dtpDateFrom}
+                                                        className={!valueObj?.dtpDateFrom ? 'readonlyColor' : ''}
+
                                                     />
                                                 </div>
                                             </div>
