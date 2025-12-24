@@ -560,6 +560,7 @@ const MiscellaneousInformation = (props) => {
         setValue({
           ...value,
           [e.target.name]: e.target.checked,
+          ['IsSendToPropertyRoom'] : e.target.checked,
         });
       }
     } else if (e.target.name === "IsSendToTaskList") {
@@ -1013,6 +1014,8 @@ const MiscellaneousInformation = (props) => {
       // get_IncidentTab_Count(IncID, loginPinID);
     }
   }, [loginAgencyID]);
+
+  console.log(value.IsSendToPropertyRoom)
 
   return (
     <>
