@@ -2430,32 +2430,13 @@ input.nibrs-reopened:disabled {
 
 .nibrs-tooltip-error {
   position: absolute;
-  bottom: 100%;
+  bottom: 135%;
   left: -230px;
-  max-width: 100%;
-  background-color: #ffecec;
-  color: #d32f2f;
+  background: #ffecec;
   border: 2px solid #f44336;
   border-radius: 6px;
   padding: 8px 12px;
-  font-size: 14px;
-  font-weight: 500;
-  /* z-index: 10; */
-  word-break: break-word;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.nibrs-tooltip-error .close-btn {
-  position: absolute;
-  top: 4px;
-  right: 6px;
-  background: transparent;
-  border: none;
-  color: #d32f2f;
-  font-size: 20px;
-  font-weight: bold;
-  cursor: pointer;
-  line-height: 1;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, .1);
 }
 
 .nibrs-tooltip-error .tooltip-arrow {
@@ -2470,16 +2451,16 @@ input.nibrs-reopened:disabled {
 }
 
 .nibrs-tooltip-error .tooltip-arrow::after {
-  content: '';
+  content: "";
   position: absolute;
-  top: -14px;
+  top: -16px;
   left: -9px;
-  width: 0;
-  height: 0;
   border-left: 9px solid transparent;
   border-right: 9px solid transparent;
   border-top: 14px solid #f44336;
+  /* ✅ inner fill same as tooltip bg */
 }
+
 
 .topBtn {
   background: rgba(51, 76, 101, 1) !important;
