@@ -372,7 +372,7 @@ const AddInformation = (props) => {
         });
         setCollectiondate(""); setIsNonPropertyRoom(false);
       } else {
-        setValue({ ...value, [e.target.name]: e.target.checked });
+        setValue({ ...value, [e.target.name]: e.target.checked ,  ['IsSendToPropertyRoom'] : e.target.checked, });
       }
     } else if (e.target.name === "IsSendToTaskList") {
       setValue({ ...value, [e.target.name]: e.target.checked });
