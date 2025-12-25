@@ -947,7 +947,7 @@ const MasterIncident = ({ comments }) => {
                                                                         {showFields.showIncidentNumber && (
                                                                             <>
                                                                                 <div className="col-12 col-sm-4 col-md-2 mt-2">
-                                                                                    <label className="new-label">Incident Number</label>
+                                                                                    <label className="new-label">Incident # From</label>
                                                                                 </div>
                                                                                 <div className="col-12 col-sm-8 col-md-3 text-field mt-1">
                                                                                     <input
@@ -963,7 +963,7 @@ const MasterIncident = ({ comments }) => {
                                                                         {showFields.showIncidentNumberTo && (
                                                                             <>
                                                                                 <div className="col-12 col-sm-4 col-md-4 mt-2">
-                                                                                    <label className="new-label">Incident Number To</label>
+                                                                                    <label className="new-label">Incident # To</label>
                                                                                 </div>
                                                                                 <div className="col-12 col-sm-8 col-md-3 text-field mt-1">
                                                                                     <input
@@ -1138,7 +1138,7 @@ const MasterIncident = ({ comments }) => {
                                                                 masterReportData?.Incident?.map((obj) =>
                                                                     <>
                                                                         <div className="container mb-1 px-2 incident_bg  footer_margin">
-                                                                            <h5 className=" text-white text-bold bg-green py-1 px-3"> Incident Number:- {obj.IncidentNumber}</h5>
+                                                                            <h5 className=" text-white text-bold bg-green py-1 px-3"> Incident #:- {obj.IncidentNumber}</h5>
                                                                             {/* incident */}
                                                                             <div className="col-12  mb-2 pb-2 py-2" style={{ border: '1px solid #80808085', }}>
                                                                                 <div className="container">
@@ -1150,7 +1150,7 @@ const MasterIncident = ({ comments }) => {
                                                                                                     <input type="text" className='readonlyColor' name='DocFileName' required readOnly
                                                                                                         value={obj.IncidentNumber}
                                                                                                     />
-                                                                                                    <label htmlFor="" className='new-summary'>Incident Number</label>
+                                                                                                    <label htmlFor="" className='new-summary'>Incident #</label>
                                                                                                 </div>
                                                                                             </div>
                                                                                             <div className="col-4 col-md-4 col-lg-4 mt-2 ">
