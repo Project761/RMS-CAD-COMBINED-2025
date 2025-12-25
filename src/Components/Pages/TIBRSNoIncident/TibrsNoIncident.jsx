@@ -157,8 +157,8 @@ const TibrsNoIncident = ({ showTibrsModel, handleTibrsModel }) => {
                                 </div>
 
                                 <div className="row justify-content-center align-items-center mb-3">
-                                    <div className="col-md-4 text-md-right mr-2">
-                                        <label className='text-nowrap mb-0'>Zero SubmissionMonth</label>
+                                    <div className="col-md-6 text-md-right ">
+                                        <label className=' mb-0 text-nowrap'>Zero Submission Month</label>
                                         {/* {error.yearStatus && <p style={{ color: 'red', fontSize: '11px' }}>{error.yearStatus}</p>} */}
                                     </div>
                                     <div className="col-md-6">
@@ -166,7 +166,7 @@ const TibrsNoIncident = ({ showTibrsModel, handleTibrsModel }) => {
                                             id="StrZeroMonth"
                                             name="StrZeroMonth"
                                             isClearable
-                                            dateFormat="MM"
+                                            dateFormat="MMM"
                                             selected={month ? new Date(2024, month - 1) : null}
                                             onChange={(date) => setMonth(date?.getMonth() + 1)}
                                             showMonthYearPicker
@@ -179,8 +179,8 @@ const TibrsNoIncident = ({ showTibrsModel, handleTibrsModel }) => {
                                 </div>
 
                                 <div className="row justify-content-center align-items-center mb-3">
-                                    <div className="col-md-4 text-md-right">
-                                        <label className='mb-0'> Zero SubmissionYear</label>
+                                    <div className="col-md-6 text-md-right">
+                                        <label className='mb-0 text-nowrap'> Zero Submission Year</label>
                                         {/* {error.yearStatus && <p style={{ color: 'red', fontSize: '11px' }}>{error.yearStatus}</p>} */}
 
                                     </div>

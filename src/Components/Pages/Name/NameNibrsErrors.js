@@ -2,7 +2,7 @@
 export const NameVictimError = '{404} Invalid Victim Type ';
 export const NameVictimOffenses = '{401} Atleast one UCR Offense Code must be present - Mandatory field ';
 export const VictimGovermentError = 'Type of Victim must be G = Government for offenses: 26H, 521, 522, 526, 58A, 58B, 61A, 61B, 620';
-export const policeOfficerError = '(Type Of Victim) Cannot be L = Police Officer Unless Victim Connected To UCR Offense Code Is One Of The Following  (09A,13A,13B,13C)';
+export const policeOfficerError = 'Victim type cannot be "Law Enforcement Officer" unless victim connected to ucr offense code is one of the following (09A,13A,13B,13C)';
 export const SocietyPublicError = 'Age of Victim , Sex of Victim and Race of Victim must be entered. WHEN Type of Victim is person or Police Officer';
 export const StatutoryRapeError = '(Age of Victim) should be under 18 WHEN (Victim Connected to UCR Offense Code) is 36B = Statutory Rape.';
 export const ResidentStatusError = ' Resident Status of Victim is must be entered when Victim is Person or Police Officer';
