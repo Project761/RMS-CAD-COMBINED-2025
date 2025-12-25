@@ -669,13 +669,13 @@ const MasterIncident = ({ comments }) => {
                                     </div>
                                     <div className="row align-items-center" style={{ rowGap: "8px" }}>
                                         <div className="col-3 col-md-3 col-lg-2 ">
-                                            <label htmlFor="" className='new-label mb-0'>Incident Number From</label>
+                                            <label htmlFor="" className='new-label mb-0'>Incident # From</label>
                                         </div>
                                         <div className="col-3 col-md-3 col-lg-3 text-field mt-0 ">
                                             <input type="text" name='IncidentNumber' id='IncidentNumber' value={value.IncidentNumber} onChange={handleChange} className='' />
                                         </div>
                                         <div className="col-3 col-md-3 col-lg-4">
-                                            <label htmlFor="" className='new-label mb-0'>Incident Number To</label>
+                                            <label htmlFor="" className='new-label mb-0'>Incident # To</label>
                                         </div>
                                         <div className="col-3 col-md-3 col-lg-3 text-field mt-0 ">
                                             <input type="text" name='IncidentNumberTo'
@@ -979,7 +979,7 @@ const MasterIncident = ({ comments }) => {
                                                                         {showFields.showReportedDateFrom && (
                                                                             <>
                                                                                 <div className="col-12 col-sm-4 col-md-2 mt-2">
-                                                                                    <label className="new-label">Reported Date From</label>
+                                                                                    <label className="new-label">Reported From Date</label>
                                                                                 </div>
                                                                                 <div className="col-12 col-sm-8 col-md-3 text-field mt-1">
                                                                                     <input
@@ -999,7 +999,7 @@ const MasterIncident = ({ comments }) => {
                                                                         {showFields.showReportedDateTo && (
                                                                             <>
                                                                                 <div className="col-12 col-sm-4 col-md-4 mt-2">
-                                                                                    <label className="new-label">Reported Date To</label>
+                                                                                    <label className="new-label">Reported To Date</label>
                                                                                 </div>
                                                                                 <div className="col-12 col-sm-8 col-md-3 text-field mt-1">
                                                                                     <input
@@ -1430,8 +1430,8 @@ const MasterIncident = ({ comments }) => {
                                                                                             <></>
                                                                                     }
                                                                                 </div >
-                                                                               
-                                                                               
+
+
                                                                             </div>
                                                                         </div>
                                                                     </>
@@ -1442,7 +1442,7 @@ const MasterIncident = ({ comments }) => {
                                                     </td>
                                                 </tr>
                                             </tbody>
-                                            
+
                                             <tfoot>
                                                 <tr>
                                                     <div className="footer-space"></div>

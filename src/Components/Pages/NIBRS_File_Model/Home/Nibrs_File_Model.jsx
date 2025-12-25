@@ -251,7 +251,7 @@ const Nibrs_File_Model = ({ show, setShow, handleModel }) => {
                                                     id='createdMonth'
                                                     name='createdMonth'
                                                     isClearable
-                                                    dateFormat="MM"
+                                                    dateFormat="MMM"
                                                     selected={month ? new Date(2024, month - 1) : null}
                                                     onChange={(date) => setMonth(date?.getMonth() + 1)}
                                                     showMonthYearPicker
