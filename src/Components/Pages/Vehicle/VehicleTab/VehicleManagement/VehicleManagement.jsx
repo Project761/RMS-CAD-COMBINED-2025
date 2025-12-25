@@ -290,8 +290,8 @@ const VehicleManagement = (props) => {
         // const ExpectedReturnDateTimeError = value.IsCheckOut ? RequiredFieldIncident(value.ExpectedDate) : 'true';
         const ReleasingOfficerError = (value.IsRelease || value.IsCheckOut) ? RequiredFieldIncident(value.ReleasingOfficerID) : 'true';
         const ReceipientError = value.IsRelease ? RequiredFieldIncident(value.ReceipentID) : 'true';
-         const ReceipientOfficerError = value.IsCheckOut ? RequiredFieldIncident(value.ReceipentOfficerID) : 'true';
-        const ReleasedDateTimeError = value.IsRelease ? RequiredFieldIncident(value.LastSeenDtTm) : 'true';
+        const ReceipientOfficerError = value.IsCheckOut ? RequiredFieldIncident(value.ReceipentOfficerID) : 'true';
+        const ReleasedDateTimeError = value.IsRelease ? RequiredFieldIncident(value.ReleaseDate) : 'true';
         // const DestructionDateTimeError = value.IsDestroy ? RequiredFieldIncident(value.DestroyDate) : 'true';
         const DestructionDateTimeError = value.IsDestroy ? RequiredFieldIncident(value.activitydate) : 'true';
         const DestructionOfficerError = value.IsDestroy ? RequiredFieldIncident(value.DestructionOfficerID) : 'true';
@@ -322,11 +322,11 @@ const VehicleManagement = (props) => {
                 ['UpdateDateTimeError']: UpdateDateTimeError || prevValues['UpdateDateTimeError'],
                 ['StorageLocationError']: StorageLocationError || prevValues['StorageLocationError'],
                 ['NewStorageLocationError']: NewStorageLocationError || prevValues['NewStorageLocationError'],
-                  ['ReceipientOfficerError']: ReceipientOfficerError || prevValues['ReceipientOfficerError'],
+                ['ReceipientOfficerError']: ReceipientOfficerError || prevValues['ReceipientOfficerError'],
             }
         })
     }
-    const { ReasonError, PropertyRoomOfficerError, NewStorageLocationError, CheckInDateTimeError, ReceipientOfficerError , SubmittingOfficerError, StorageLocationError, CheckOutDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
+    const { ReasonError, PropertyRoomOfficerError, NewStorageLocationError, CheckInDateTimeError, ReceipientOfficerError, SubmittingOfficerError, StorageLocationError, CheckOutDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
         DestructionDateTimeError, DestructionOfficerError, UpdatingOfficerError, ApprovalOfficerError, WitnessError, TransferDateTimeError, UpdateDateTimeError } = errors
 
     useEffect(() => {
@@ -693,7 +693,7 @@ const VehicleManagement = (props) => {
         return picked <= serverNow;
     };
 
-     const sameMinute = (a, b) => {
+    const sameMinute = (a, b) => {
         return (
             a.getFullYear() === b.getFullYear() &&
             a.getMonth() === b.getMonth() &&
@@ -1124,9 +1124,30 @@ const VehicleManagement = (props) => {
                                     <DatePicker
                                         name='activitydate'
                                         id='activitydate'
-                                        onChange={(date) => {
-                                            setactivitydate(date); setValue({ ...value, ['activitydate']: date ? getShowingMonthDateYear(date) : null, });
+                                        // onChange={(date) => {
+                                        //     setactivitydate(date); setValue({ ...value, ['activitydate']: date ? getShowingMonthDateYear(date) : null, });
 
+                                        // }}
+                                        onChange={(date) => {
+                                            if (date) {
+                                                const selectedDate = new Date(date);
+                                                const now = new Date(datezone);
+                                                if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0) {
+                                                    selectedDate.setHours(now.getHours());
+                                                    selectedDate.setMinutes(now.getMinutes());
+                                                }
+                                                setreleasedate(selectedDate);
+                                                setValue({
+                                                    ...value,
+                                                    ['ReleaseDate']: getShowingMonthDateYear(selectedDate),
+                                                });
+                                            } else {
+                                                setreleasedate(null);
+                                                setValue({
+                                                    ...value,
+                                                    ['ReleaseDate']: null,
+                                                });
+                                            }
                                         }}
                                         isClearable={ActivityDtTm ? true : false}
                                         selected={ActivityDtTm}
@@ -1144,6 +1165,12 @@ const VehicleManagement = (props) => {
                                         showDisabledMonthNavigation
                                         autoComplete='off'
                                         maxDate={new Date(datezone)}
+                                        filterTime={(time) => {
+                                            const timeValue = new Date(time).getTime();
+                                            const minTime = new Date(incidentReportedDate).getTime();
+                                            const maxTime = new Date(datezone).getTime();
+                                            return timeValue > minTime && timeValue <= maxTime;
+                                        }}
                                         disabled={selectedOption === null || selectedOption === ''}
                                         className={selectedOption === null || selectedOption === '' ? 'readonlyColor' : ''}
                                     />
@@ -1610,7 +1637,7 @@ const VehicleManagement = (props) => {
                                 onChange={(date) => {
                                     if (date) {
                                         const selectedDate = new Date(date);
-                                        const now = new Date();
+                                        const now = new Date(datezone);
                                         if (selectedDate.getHours() === 0 && selectedDate.getMinutes() === 0) {
                                             selectedDate.setHours(now.getHours());
                                             selectedDate.setMinutes(now.getMinutes());
