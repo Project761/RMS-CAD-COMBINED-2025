@@ -464,7 +464,7 @@ const Identification = (props) => {
               placeholderText={value?.ExpiryDate ? value?.ExpiryDate : 'Select...'}
               selected={identificationDate}
               minDate={new Date(NameDateExpired)}
-              className={isLockOrRestrictModule("Lock", editval[0]?.ExpiryDate, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+              className={isLockOrRestrictModule("Lock", editval[0]?.ExpiryDate, isLocked) ? 'LockFildsColor' : ''}
               disabled={isLockOrRestrictModule("Lock", editval[0]?.ExpiryDate, isLocked)}
             />
           </div>
