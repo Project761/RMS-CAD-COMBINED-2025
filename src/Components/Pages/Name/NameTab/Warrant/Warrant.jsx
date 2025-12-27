@@ -243,8 +243,11 @@ const Warrant = (props) => {
                 'DateExpiredErrors': '',
                 'IssuingAgencyIDErrors': '',
             });
-            setValue({ ...value, [e.target.name]: '', ['DateTimeIssued']: '', ['DateExpired']: '', });
-            setDateExpired();
+            setValue({
+                ...value, [e.target.name]: '', ['DateTimeIssued']: '', ['DateExpired']: '',
+                ['WarrantStatusID']: '', ['AssignedOfficerID']: '', ['WarrantIssuingAgency']: '',
+                ['IssuingAgencyID']: '', ['WarrantIssuingAgency']: '', ['WarrantTypeID']: '',
+            }); setDateExpired();
         }
     };
 
@@ -482,10 +485,10 @@ const Warrant = (props) => {
         return true;
     };
 
-   
 
 
-   
+
+
 
     const getValidDate = (date) => {
         const d = new Date(date);
@@ -498,26 +501,26 @@ const Warrant = (props) => {
         return maxTime;
     };
 
-     const getMinTimeForOccurredTo = (occuredFromDate) => {
-    const minTime = new Date(occuredFromDate);
-    minTime.setHours(occuredFromDate?.getHours());
-    minTime.setMinutes(occuredFromDate?.getMinutes());
-    minTime.setSeconds(occuredFromDate?.getSeconds());
-    minTime.setMilliseconds(0);
-    return minTime;
-  };
+    const getMinTimeForOccurredTo = (occuredFromDate) => {
+        const minTime = new Date(occuredFromDate);
+        minTime.setHours(occuredFromDate?.getHours());
+        minTime.setMinutes(occuredFromDate?.getMinutes());
+        minTime.setSeconds(occuredFromDate?.getSeconds());
+        minTime.setMilliseconds(0);
+        return minTime;
+    };
 
-  const filterTimeAfterOccurredFromAndBeforeMaxDate = (time, occuredFromDate, datezone) => {
-    const occurredFromTimestamp = occuredFromDate?.getTime();
-    const maxTimestamp = new Date(datezone)?.getTime();
-    if (time?.getTime() <= occurredFromTimestamp) {
-      return false;
-    }
-    if (time?.getTime() >= maxTimestamp) {
-      return false;
-    }
-    return true;
-  };
+    const filterTimeAfterOccurredFromAndBeforeMaxDate = (time, occuredFromDate, datezone) => {
+        const occurredFromTimestamp = occuredFromDate?.getTime();
+        const maxTimestamp = new Date(datezone)?.getTime();
+        if (time?.getTime() <= occurredFromTimestamp) {
+            return false;
+        }
+        if (time?.getTime() >= maxTimestamp) {
+            return false;
+        }
+        return true;
+    };
 
 
 

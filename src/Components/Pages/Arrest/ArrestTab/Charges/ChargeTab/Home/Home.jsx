@@ -138,7 +138,7 @@ const Charges = (props) => {
       const storedVal = JSON.parse(localStorage.getItem('insertedArrestVal'));
       // let arresteeID = storedVal['ArresteeID'];
       let arresteeID = storedVal?.ArresteeID
-      if (!DecArrestId) { get_OffenseName_Data(arresteeID , true); }
+      if (!DecArrestId) { get_OffenseName_Data(arresteeID, true); }
     }
   }, [localStoreData]);
 
@@ -298,10 +298,12 @@ const Charges = (props) => {
         'ChargeID': Editval[0]?.ChargeID, 'ModifiedByUserFK': LoginPinID,
         'LawTitleId': Editval[0]?.LawTitleId || Editval?.LawTitleId,
         'AttemptComplete': Editval[0]?.AttemptComplete || Editval?.AttemptComplete,
+        'OffenseDateTime': Editval[0]?.OffenseDateTime || Editval?.OffenseDateTime,
+
         'CategoryId': Editval[0]?.CategoryId || Editval?.CategoryID,
         // 'OffenseDateTime': Editval[0]?.OffenseDateTime,
-        'OffenseDateTime': Editval[0]?.OffenseDateTime ? getShowingDateText(Editval[0]?.OffenseDateTime) : "",
-        'ChargeDateTime': Editval[0]?.ChargeDateTime,
+        // 'OffenseDateTime': Editval[0]?.OffenseDateTime ? getShowingDateText(Editval[0]?.OffenseDateTime) : "",
+        // 'ChargeDateTime': Editval[0]?.ChargeDateTime,
 
       });
       setArrestName(Editval[0]?.Name ? Editval[0]?.Name : '');
