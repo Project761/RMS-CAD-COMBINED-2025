@@ -183,10 +183,14 @@ const AddInformation = (props) => {
       } else {
         tempTasklistStatus = editval[0]?.IsSendToTaskList;
       }
+
+      console.log(IsSendToPropertyRoom, editval[0]?.IsNonPropertyRoom)
       setValue({
         ...value,
         MasterPropertyID: DecMVehId, PropertyID: DecVehId, IsImmobalizationDevice: editval[0]?.IsImmobalizationDevice, IsEligibleForImmobalization: editval[0]?.IsEligibleForImmobalization, DestroyDtTm: editval[0]?.DestroyDtTm ? getShowingWithOutTime(editval[0]?.DestroyDtTm) : null,
-        Description: editval[0]?.Description, NICB: editval[0]?.NICB, PropertyTag: editval[0]?.PropertyTag, IsSendToPropertyRoom: IsSendToPropertyRoom,
+        Description: editval[0]?.Description, NICB: editval[0]?.NICB, PropertyTag: editval[0]?.PropertyTag,
+        //  IsSendToPropertyRoom: IsSendToPropertyRoom,
+        IsSendToPropertyRoom: (editval[0]?.IsEvidence === true && IsSendToPropertyRoom === null && editval[0]?.IsNonPropertyRoom === false) ? true : IsSendToPropertyRoom,
         CollectingOfficer: editval[0]?.CollectingOfficer, LocationOfCollection: editval[0]?.LocationOfCollection, EvidenceDescription: editval[0]?.EvidenceDescription,
         CollectionDtTm: editval[0]?.CollectionDtTm, IsEvidence: editval[0]?.IsEvidence, Comments: editval[0]?.Comments, IsNonPropertyRoom: editval[0]?.IsNonPropertyRoom,
         ReportedDtTm: editval[0]?.ReportedDtTm, IsSendToTaskList: tempTasklistStatus, Reason: editval[0]?.Reason, DispatchDtTm: editval[0]?.DispatchDtTm,
@@ -372,7 +376,7 @@ const AddInformation = (props) => {
         });
         setCollectiondate(""); setIsNonPropertyRoom(false);
       } else {
-        setValue({ ...value, [e.target.name]: e.target.checked ,  ['IsSendToPropertyRoom'] : e.target.checked, });
+        setValue({ ...value, [e.target.name]: e.target.checked, ['IsSendToPropertyRoom']: e.target.checked, });
       }
     } else if (e.target.name === "IsSendToTaskList") {
       setValue({ ...value, [e.target.name]: e.target.checked });
@@ -820,7 +824,7 @@ const AddInformation = (props) => {
                           id="IsSendToPropertyRoom"
                           checked={value.IsSendToPropertyRoom}
                           onChange={HandleChanges}
-
+                          disabled={IsNonPropertyStatus === 'true' || IsNonPropertyStatus === true}
                         // disabled={IsNonPropertyStatus === 'true' || IsNonPropertyStatus === true || isLockOrRestrictModule("Lock", editval[0]?.IsSendToPropertyRoom, isLocked)}
                         />
                         <label
@@ -840,7 +844,7 @@ const AddInformation = (props) => {
                           id="IsNonPropertyRoom"
                           checked={value.IsNonPropertyRoom}
                           onChange={HandleChanges}
-
+                          disabled={SendToPropertyRoomStatus === 'true' || SendToPropertyRoomStatus === true}
                         // disabled={SendToPropertyRoomStatus === 'true' || SendToPropertyRoomStatus === true || isLockOrRestrictModule("Lock", editval[0]?.IsNonPropertyRoom, isLocked)}
                         />
                         <label
