@@ -435,7 +435,7 @@ const Aliases = (props) => {
           <div className="col-3 col-md-3 col-lg-3 text-field mt-2" >
             <input
               type="text"
-              className={isLockOrRestrictModule("Lock", editval[0]?.FirstName, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+              className={isLockOrRestrictModule("Lock", editval[0]?.FirstName, isLocked) ? 'LockFildsColor' : ''}
               disabled={isLockOrRestrictModule("Lock", editval[0]?.FirstName, isLocked)}
               name='FirstName'
               maxLength={50}
@@ -453,7 +453,7 @@ const Aliases = (props) => {
           <div className="col-3 col-md-3 col-lg-3 text-field mt-2" >
             <input
               type="text"
-              className={isLockOrRestrictModule("Lock", editval[0]?.MiddleName, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+              className={isLockOrRestrictModule("Lock", editval[0]?.MiddleName, isLocked) ? 'LockFildsColor' : ''}
               disabled={isLockOrRestrictModule("Lock", editval[0]?.MiddleName, isLocked)}
               name='MiddleName'
               maxLength={50}
@@ -471,7 +471,7 @@ const Aliases = (props) => {
           <div className="col-3 col-md-3 col-lg-3 text-field mt-2" >
             <input
               type="text"
-              className={isLockOrRestrictModule("Lock", editval[0]?.AliasSSN, isLocked) ? 'LockFildsColor' : 'requiredColor'}
+              className={isLockOrRestrictModule("Lock", editval[0]?.AliasSSN, isLocked) ? 'LockFildsColor' : ''}
               disabled={isLockOrRestrictModule("Lock", editval[0]?.AliasSSN, isLocked)}
               name='AliasSSN'
               value={value.AliasSSN}
