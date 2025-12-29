@@ -141,7 +141,8 @@ const Nibrs_Report_Model = ({ show, setShow, handleModel }) => {
             "rdbThreeMonth": rdbThreeMonth,
 
             "dtpDateFrom": dtpDateFrom,
-            "dtpDateTo": dtpDateTo,
+            // "dtpDateTo": dtpDateTo,
+            "dtpDateTo": dtpDateTo ? dtpDateTo : getShowingMonthDateYearNibReport(datezone),
             "chkStatetoSubmit": chkStatetoSubmit,
 
 
@@ -348,7 +349,7 @@ const Nibrs_Report_Model = ({ show, setShow, handleModel }) => {
                                                         id='dtpDateFrom'
                                                         name='dtpDateFrom'
                                                         dateFormat="MM/dd/yyyy"
-                                                        onChange={(date) => { setValueObj({ ...valueObj, ['dtpDateTo'] : '' , ['dtpDateFrom']: date ? getShowingWithFixedTime00(date) : null }) }}
+                                                        onChange={(date) => { setValueObj({ ...valueObj, ['dtpDateTo']: '', ['dtpDateFrom']: date ? getShowingWithFixedTime00(date) : null }) }}
                                                         timeInputLabel
                                                         isClearable={valueObj?.dtpDateFrom ? true : false}
                                                         placeholderText={valueObj?.dtpDateFrom ? valueObj?.dtpDateFrom : 'Select...'}
