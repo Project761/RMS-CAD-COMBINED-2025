@@ -170,6 +170,7 @@ const AddInformation = (props) => {
 
   useEffect(() => {
     if (editval) {
+
       // const IsSendToPropertyRoom = editval[0].IsSendToPropertyRoom === false && editval[0].CollectionDtTm === null && editval[0].CollectingOfficer === null ? true : editval[0]?.IsSendToPropertyRoom;
       const IsSendToPropertyRoom = editval[0]?.IsSendToPropertyRoom === false && (editval[0]?.CollectionDtTm === null || editval[0]?.CollectionDtTm === undefined) &&
         (editval[0]?.CollectingOfficer === null || editval[0]?.CollectingOfficer === undefined)
@@ -190,7 +191,7 @@ const AddInformation = (props) => {
         MasterPropertyID: DecMVehId, PropertyID: DecVehId, IsImmobalizationDevice: editval[0]?.IsImmobalizationDevice, IsEligibleForImmobalization: editval[0]?.IsEligibleForImmobalization, DestroyDtTm: editval[0]?.DestroyDtTm ? getShowingWithOutTime(editval[0]?.DestroyDtTm) : null,
         Description: editval[0]?.Description, NICB: editval[0]?.NICB, PropertyTag: editval[0]?.PropertyTag,
         //  IsSendToPropertyRoom: IsSendToPropertyRoom,
-        IsSendToPropertyRoom: (editval[0]?.IsEvidence === true && IsSendToPropertyRoom === null && editval[0]?.IsNonPropertyRoom === false) ? true : IsSendToPropertyRoom,
+        IsSendToPropertyRoom: (editval[0]?.IsEvidence === true && IsSendToPropertyRoom === null && (editval[0]?.IsNonPropertyRoom === false || editval[0]?.IsNonPropertyRoom === undefined || editval[0]?.IsNonPropertyRoom === null)) ? true : IsSendToPropertyRoom,
         CollectingOfficer: editval[0]?.CollectingOfficer, LocationOfCollection: editval[0]?.LocationOfCollection, EvidenceDescription: editval[0]?.EvidenceDescription,
         CollectionDtTm: editval[0]?.CollectionDtTm, IsEvidence: editval[0]?.IsEvidence, Comments: editval[0]?.Comments, IsNonPropertyRoom: editval[0]?.IsNonPropertyRoom,
         ReportedDtTm: editval[0]?.ReportedDtTm, IsSendToTaskList: tempTasklistStatus, Reason: editval[0]?.Reason, DispatchDtTm: editval[0]?.DispatchDtTm,
