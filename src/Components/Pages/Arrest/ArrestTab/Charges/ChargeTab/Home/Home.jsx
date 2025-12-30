@@ -28,6 +28,8 @@ const StatusOption = [
 ];
 
 
+
+
 const Charges = (props) => {
 
   const { setStatus, DecChargeId, ListData, ArresteeID, setListData, GetSingleData, get_List, isLocked, setIsLocked, setShowPage } = props
