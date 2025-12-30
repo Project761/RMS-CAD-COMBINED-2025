@@ -348,7 +348,7 @@ const Home = (props) => {
         })
     }
 
-    const { ReasonError, PropertyRoomOfficerError, CheckInDateTimeError, NewStorageLocationError, ReceipientOfficerError , StorageLocationError, SubmittingOfficerError, CheckOutDateTimeError, ExpectedReturnDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
+    const { ReasonError, PropertyRoomOfficerError, CheckInDateTimeError, NewStorageLocationError, ReceipientOfficerError, StorageLocationError, SubmittingOfficerError, CheckOutDateTimeError, ExpectedReturnDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
         DestructionDateTimeError, DestructionOfficerError, UpdatingOfficerError, ApprovalOfficerError, WitnessError, TransferDateTimeError, UpdateDateTimeError } = errors
 
     useEffect(() => {
@@ -359,7 +359,7 @@ const Home = (props) => {
 
             { Add_Type() }
         }
-    }, [ReasonError, PropertyRoomOfficerError, CheckInDateTimeError, NewStorageLocationError, ReceipientOfficerError , StorageLocationError, SubmittingOfficerError, CheckOutDateTimeError, ExpectedReturnDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
+    }, [ReasonError, PropertyRoomOfficerError, CheckInDateTimeError, NewStorageLocationError, ReceipientOfficerError, StorageLocationError, SubmittingOfficerError, CheckOutDateTimeError, ExpectedReturnDateTimeError, ReleasingOfficerError, ReceipientError, ReleasedDateTimeError,
         DestructionDateTimeError, DestructionOfficerError, UpdatingOfficerError, ApprovalOfficerError, WitnessError, TransferDateTimeError, UpdateDateTimeError
     ])
 
@@ -573,7 +573,8 @@ const Home = (props) => {
             navigate(`/Property-room?&ProId=${stringToBase64(propertyId)}&MProId=${stringToBase64(masterpropertyId)}&ProRomId=${stringToBase64(res?.PropertyroomID)}&ProRoomStatus=${true}&selectedCategory=${''}&ProType=${''}&ProNumber=${''}&ProTransfer=${''}&CallStatus=${true}&CheckboxStatus=${true}`);
             setInsertcall(true); setReleaseStatus(selectedOption === 'Release' ? true : false);
             if (selectedOption === 'Release') {
-                setreportStatus(true); printForm();
+                setreportStatus(true);
+                // printForm();
             }
             toastifySuccess(res.Message);
         });
