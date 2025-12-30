@@ -244,7 +244,7 @@ const PropertyManagement = (props) => {
                 setReportedDtTm(parsedData.Table[0]?.ReportedDtTm);
                 if (parsedData.Table[0].Status === 'Release' && shouldPrintForm === true) {
                     await new Promise(resolve => setTimeout(resolve, 0));
-                    printForm();
+                    // printForm();
                     setShouldPrintForm(false);
                 }
             } else {
