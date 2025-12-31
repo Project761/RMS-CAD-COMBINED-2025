@@ -136,7 +136,7 @@ const RecoveredPropertyModel = (props) => {
 
 
     useEffect(() => {
-        if (mainIncidentID) {
+        if (mainIncidentID || IncID) {
             setMainIncidentID(mainIncidentID); dispatch(get_AgencyOfficer_Data(localStoreData?.AgencyID, IncID))
         }
     }, [IncID])
