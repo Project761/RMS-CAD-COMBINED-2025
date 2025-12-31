@@ -28,11 +28,11 @@ import ChangesModal from '../../../Common/ChangesModal';
 import { AddDeleteUpadate, fetchPostData } from '../../../hooks/Api';
 import { toastifyError, toastifySuccess } from '../../../Common/AlertMsg';
 import DeletePopUpModal from '../../../Common/DeleteModal';
-import { get_ScreenPermissions_Data } from '../../../../redux/actions/IncidentAction';
+import { get_AgencyOfficer_Data, get_ScreenPermissions_Data } from '../../../../redux/actions/IncidentAction';
 
 const RecoveredPropertyModel = (props) => {
 
-    const {  DecPropID, DecMPropID, IncID ,isViewEventDetails = false,   recModalStatus, setrecModalStatus } = props
+    const {  DecIncID,   isLocked, setIsLocked ,  DecPropID, DecMPropID, IncID ,isViewEventDetails = false,   recModalStatus, setrecModalStatus } = props
 
     const dispatch = useDispatch();
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
@@ -123,16 +123,26 @@ const RecoveredPropertyModel = (props) => {
     }, [effectiveScreenPermission]);
 
     useEffect(() => {
-        if (loginAgencyID || loginPinID) {
-            setValue({ ...value, 'PropertyID': ProId, 'AgencyID': loginAgencyID, 'CreatedByUserFK': loginPinID, 'MasterPropertyID': MProId, })
+        if (loginAgencyID || loginPinID && (DecMPropID || DecPropID)) {
+            setValue({ ...value, 'PropertyID': DecPropID, 'AgencyID': loginAgencyID, 'CreatedByUserFK': loginPinID, 'MasterPropertyID': DecMPropID, })
         }
-    }, [loginAgencyID, loginPinID]);
+    }, [loginAgencyID, loginPinID , DecPropID , DecMPropID]);
 
     useEffect(() => {
         if (DecPropID || DecMPropID) {
             get_property_Data(DecPropID, DecMPropID); setPropertyID(DecPropID); setMasterPropertyID(DecMPropID);
         }
     }, [DecPropID, DecMPropID]);
+
+
+    useEffect(() => {
+        if (mainIncidentID) {
+            setMainIncidentID(mainIncidentID); dispatch(get_AgencyOfficer_Data(localStoreData?.AgencyID, IncID))
+        }
+    }, [IncID])
+
+
+    console.log(DecPropID ,DecMPropID )
 
     useEffect(() => {
         if (IncID) { setMainIncidentID(IncID); }
@@ -349,7 +359,8 @@ const RecoveredPropertyModel = (props) => {
     }
 
     const OnClose = () => {
-        reset(); setRecoveredPropertyID(); setRecoverTypeCode()
+        reset(); 
+        setRecoveredPropertyID(); setRecoverTypeCode()
     }
 
     const startRef = React.useRef();
@@ -462,6 +473,8 @@ const RecoveredPropertyModel = (props) => {
 
         return true;
     };
+
+
 
     return (
         <>
@@ -644,7 +657,7 @@ const RecoveredPropertyModel = (props) => {
                                     </div>
                                     {!isViewEventDetails &&
                                         <div className="btn-box text-right  mr-1 mb-2">
-                                            <button type="button" data-dismiss="modal" className="btn btn-sm btn-success mr-1" onClick={OnClose} >New</button>
+                                            <button type="button"  className="btn btn-sm btn-success mr-1" onClick={OnClose} >New</button>
                                             {
                                                 effectiveScreenPermission ?
                                                     effectiveScreenPermission[0]?.AddOK ?
