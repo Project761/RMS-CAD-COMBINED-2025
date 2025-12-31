@@ -659,6 +659,7 @@ const Properties = ({ propertyClick, isViewEventDetails = false, isNibrsSummited
                     ValidateIncidentProperty(mainIncidentID); NibrsErrorReturn(res?.PropertyID);
                     // validateIncSideBar
                     validate_IncSideBar(mainIncidentID, IncNo, loginAgencyID);
+
                 } else {
                     toastifyError('error'); setErrors({ ...errors, ['PropertyTypeIDError']: '', })
                 }
@@ -1504,21 +1505,7 @@ const Properties = ({ propertyClick, isViewEventDetails = false, isNibrsSummited
                                     ) : null}
                                 </label>
                             </div>
-                            {
-                                showRecovered ?
-                                    <>
-                                        <div className="col-1 " data-toggle="modal" data-target="#MasterModalProperty"  >
-                                            <button onClick={() => {
-                                                 setrecModalStatus(true);
-                                               
-                                            }}
-                                                className=" btn btn-sm bg-green text-white py-1"
-                                            >
-                                               Recovered Property
-                                            </button>
-                                        </div>
-                                    </> : <></>
-                            }
+
                             <div className="col-3 col-md-3 col-lg-3 mt-1">
                                 {
                                     nibrsFieldError?.OnPageError && !nibrsFieldError?.IsCategory && (
@@ -1551,6 +1538,7 @@ const Properties = ({ propertyClick, isViewEventDetails = false, isNibrsSummited
                                     ) : null}
                                 </label>
                             </div>
+
                             <div className="col-3 col-md-3 col-lg-2 text-field mt-1">
                                 <input
                                     type="text"
@@ -1565,6 +1553,7 @@ const Properties = ({ propertyClick, isViewEventDetails = false, isNibrsSummited
                                     autoComplete='off'
                                 />
                             </div>
+
                         </div>
                         <div className="row">
                             <div className="col-3 col-md-3 col-lg-1 mt-2">
@@ -1704,6 +1693,26 @@ const Properties = ({ propertyClick, isViewEventDetails = false, isNibrsSummited
                                 />
 
                             </div>
+                            <div className='col-3 col-md-2 col-lg-1 mt-2'></div>
+                            <div className='col-3 col-md-2 col-lg-2 mt-2'>
+                                {
+                                    (propertyID || masterPropertyID) && showRecovered ?
+                                        <>
+                                            <div data-toggle="modal" data-target="#MasterModalProperty"  >
+                                                <button onClick={() => {
+                                                    setrecModalStatus(true);
+
+                                                }}
+                                                    className=" btn btn-sm btn-success  text-white py-1"
+                                                >
+                                                    Recovered Property
+                                                </button>
+                                            </div>
+                                        </> : <></>
+                                }
+                            </div>
+
+
                             {
                                 // // don't remove code
                                 // (propertyID || masterPropertyID) && (ProSta === 'true' || ProSta === true) &&
@@ -2158,7 +2167,7 @@ const Properties = ({ propertyClick, isViewEventDetails = false, isNibrsSummited
                     </div>
                 )
             }
-            <RecoveredPropertyModel {...{ recModalStatus, setrecModalStatus , isViewEventDetails ,  DecPropID, DecMPropID, IncID,   }} />
+            <RecoveredPropertyModel {...{ recModalStatus, setrecModalStatus, isViewEventDetails, DecPropID, DecMPropID, IncID, }} />
         </>
     )
 }
