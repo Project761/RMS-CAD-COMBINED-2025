@@ -3733,11 +3733,6 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                                     {nameShowPage === 'Address' && <MasterAddress {...{ possessionID, mstPossessionID, ownerOfID, loginAgencyID, type, complainNameID, loginPinID }} />}
                                     {/* Offence */}
 
-
-
-
-
-
                                 </div>
 
                                 <div className=" text-right col-12  mb-1">

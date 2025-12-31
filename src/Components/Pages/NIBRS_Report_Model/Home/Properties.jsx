@@ -22,9 +22,10 @@ import ListModal from '../../Utility/ListManagementModel/ListModal';
 import Loader from '../../../Common/Loader';
 import DeletePopUpModal from '../../../Common/DeleteModal';
 import SelectBox from '../../../Common/SelectBox';
+import RecoveredPropertyModel from './RecoveredPropertyModel';
 
 
-const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsErrors = () => { }, isLocked, setIsLocked, getPermissionLevelByLock = () => { } }) => {
+const Properties = ({ propertyClick, isViewEventDetails = false, isNibrsSummited = false, getIncident_NibrsErrors = () => { }, isLocked, setIsLocked, getPermissionLevelByLock = () => { } }) => {
 
     const dispatch = useDispatch();
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
@@ -118,6 +119,8 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
     const [showLossCodeError, setShowLossCodeError] = useState({});
     const [suspectedDrugTypeErrorStatus, setSuspectedDrugTypeErrorStatus] = useState(false);
     const [isPropertyIdZeroError, setIsPropertyIdZeroError] = useState(false);
+    const [showRecovered, setShowRecovered] = useState(false);
+    const [recModalStatus, setrecModalStatus] = useState(false);
 
     const [value, setValue] = useState({
         'MasterPropertyID': '', 'PropertyID': '', 'AgencyID': '', 'IncidentID': '', 'CreatedByUserFK': '', 'ReportedDtTm': '', 'DestroyDtTm': '', 'Value': '', 'PropertyCategoryCode': '', 'PropertyTypeID': null, 'CategoryID': null, 'ClassificationID': null, 'OfficerID': null, 'LossCodeID': null, 'PossessionOfID': null, 'PropertyTag': '', 'NICB': '', 'Description': '', 'IsEvidence': '', 'IsSendToPropertyRoom': '', 'IsPropertyRecovered': '', 'MaterialID': null, 'PropertyArticleID': null, 'SerialID': '', 'ModelID': '', 'OAN': '', 'Quantity': '', 'Brand': '', 'TopColorID': null, 'BottomColorID': null, 'PropertyBoatID': null, 'BoatIDNumber': '', 'HIN': '', 'RegistrationNumber': '', 'VODID': null, 'Length': '', 'Comments': '', 'ManufactureYear': '', 'MakeID': null, 'RegistrationExpiryDtTm': '', 'PropulusionID': null, 'RegistrationStateID': null, 'SuspectedDrugTypeID': null, 'SecurityDtTm': '', 'OtherID': null, 'PropertyOtherID': null, 'PropertySecurityID': null, 'SecurityIDNumber': '', 'Denomination': '', 'IssuingAgency': '', 'MeasureTypeID': null, 'WeaponIDNumber': '', 'Style': '', 'Finish': '', 'Caliber': '', 'Handle': '', 'IsAuto': '', 'BarrelLength': '', 'WeaponModelID': null, 'PropertyWeaponID': null, 'EstimatedDrugQty': '', 'FractionDrugQty': '', 'MeasurementTypeID': null, 'ModifiedByUserFK': '', 'PropertyDrugID': 0, 'PropertySourceDrugTypeID': null, 'MarijuanaTypeID': null, 'MarijuanaNumber': '', 'DrugManufacturedID': null, 'ClandistineLabsNumber': '', 'MasterID': null, 'IsMaster': MstPage === "MST-Property-Dash" ? true : false, 'PropertyNumber': 'Auto Genrated', 'QuantityUnitID': null, 'ArticleIDNumber': '', 'Items': '', 'DoseUnits': '', 'LiquidOunces': '', 'SolidGrams': '', 'SolidOunces': '', 'MeasurementUnitID': null, 'MeasurementTypeID': null, 'SolidPounds': '', 'PropertyDrugMeasure_Description': '', 'SuspectedDrugType_Description': '', 'ManufactureYearFrom': ''
@@ -1467,12 +1470,26 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
     //     }
     // }
 
+    useEffect(() => {
+        propertyLossCodeDrpData?.filter(val => {
+            if (val.value === value?.LossCodeID) {
+                if (val.id === "RECD") {
+                    setShowRecovered(true);
+                } else {
+                    setShowRecovered(false);
+                }
+            }
+        });
+    }, [value.LossCodeID, propertyLossCodeDrpData]);
+
     return (
         <>
             <div className="col-12">
                 <div className="row">
                     <div className="col-12 col-md-12 col-lg-11 pt-1 p-0" >
                         <div className="row ">
+
+
                             <div className="col-3 col-md-3 col-lg-1 mt-2 px-0">
                                 <label htmlFor="" className='new-label px-0'>Property No.</label>
                             </div>
@@ -1487,6 +1504,21 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                                     ) : null}
                                 </label>
                             </div>
+                            {
+                                showRecovered ?
+                                    <>
+                                        <div className="col-1 " data-toggle="modal" data-target="#MasterModalProperty"  >
+                                            <button onClick={() => {
+                                                 setrecModalStatus(true);
+                                               
+                                            }}
+                                                className=" btn btn-sm bg-green text-white py-1"
+                                            >
+                                               Recovered Property
+                                            </button>
+                                        </div>
+                                    </> : <></>
+                            }
                             <div className="col-3 col-md-3 col-lg-3 mt-1">
                                 {
                                     nibrsFieldError?.OnPageError && !nibrsFieldError?.IsCategory && (
@@ -2126,6 +2158,7 @@ const Properties = ({ propertyClick, isNibrsSummited = false, getIncident_NibrsE
                     </div>
                 )
             }
+            <RecoveredPropertyModel {...{ recModalStatus, setrecModalStatus , isViewEventDetails ,  DecPropID, DecMPropID, IncID,   }} />
         </>
     )
 }
