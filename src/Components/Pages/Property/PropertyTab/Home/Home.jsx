@@ -496,8 +496,9 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, delPrope
 
   useEffect(() => {
     propertyLossCodeDrpData?.filter(val => {
+      console.log(propertyLossCodeDrpData)
       if (val.value === value?.LossCodeID) {
-        if (val.id === "RECD") {
+        if (val.id === "RECD" || val.id === "STOL") {
           setShowRecovered(true);
         } else {
           setShowRecovered(false);
@@ -1810,8 +1811,6 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, delPrope
     if (e) {
       if (name === 'LossCodeID') {
         setLossCode(e.id); setPorpRecType(e.code);
-
-
         if (propCategoryCode === '09' || propCategoryCode === '22' || propCategoryCode === '65' || propCategoryCode === '66' || propCategoryCode === '77' || propCategoryCode === '11' || propCategoryCode === '10' || propCategoryCode === '48') {
           setValue({ ...value, [name]: e.value, });
 
