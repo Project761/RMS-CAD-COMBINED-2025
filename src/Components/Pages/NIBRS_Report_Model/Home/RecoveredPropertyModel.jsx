@@ -359,7 +359,8 @@ const RecoveredPropertyModel = (props) => {
     }
 
     const OnClose = () => {
-        reset(); setRecoveredPropertyID(); setRecoverTypeCode()
+        reset(); 
+        setRecoveredPropertyID(); setRecoverTypeCode()
     }
 
     const startRef = React.useRef();
@@ -656,7 +657,7 @@ const RecoveredPropertyModel = (props) => {
                                     </div>
                                     {!isViewEventDetails &&
                                         <div className="btn-box text-right  mr-1 mb-2">
-                                            <button type="button" data-dismiss="modal" className="btn btn-sm btn-success mr-1" onClick={OnClose} >New</button>
+                                            <button type="button"  className="btn btn-sm btn-success mr-1" onClick={OnClose} >New</button>
                                             {
                                                 effectiveScreenPermission ?
                                                     effectiveScreenPermission[0]?.AddOK ?
