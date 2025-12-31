@@ -1474,7 +1474,7 @@ const Properties = ({ propertyClick, isViewEventDetails = false, isNibrsSummited
     useEffect(() => {
         propertyLossCodeDrpData?.filter(val => {
             if (val.value === value?.LossCodeID) {
-                if (val.id === "RECD") {
+                if (val.id === "RECD" || val.id === "STOL") {
                     setShowRecovered(true);
                 } else {
                     setShowRecovered(false);
