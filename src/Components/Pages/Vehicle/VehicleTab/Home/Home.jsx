@@ -383,7 +383,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
     useEffect(() => {
         propertyLossCodeData?.filter(val => {
             if (val.value === value?.LossCodeID) {
-                if (val.id === "RECD") {
+                if (val.id === "RECD" || val.id === "STOL") {
                     setShowVehicleRecovered(true);
                 } else {
                     setShowVehicleRecovered(false);
