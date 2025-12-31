@@ -27,6 +27,7 @@ import { toastifyError, toastifySuccess } from '../../../Common/AlertMsg';
 import { threeColArray } from '../../../Common/ChangeArrayFormat';
 import { AddDeleteUpadate, fetchPostData, fetchPostDataNibrs, } from '../../../hooks/Api';
 import { Decrypt_Id_Name, Encrypted_Id_Name, LockFildscolour, Requiredcolour, base64ToString, filterPassedTimeZone, filterPassedTimeZonesProperty, getShowingDateText, getShowingMonthDateYear, getYearWithOutDateTime, isLockOrRestrictModule, stringToBase64, tableCustomStyles } from '../../../Common/Utility';
+import VehicleRecovred from './VehicleRecovred';
 
 const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsSummited = false, isLocked, setIsLocked, getPermissionLevelByLock = () => { } }) => {
 
@@ -94,6 +95,9 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
     const [showLossCodeError, setShowLossCodeError] = useState({});
     const [nibrsFieldError, setnibrsFieldError] = useState({});
 
+    const [showVehicleRecovered, setShowVehicleRecovered] = useState(false);
+    const [openVehicleRecoveredTab, setOpenVehicleRecoveredTab] = useState(false);
+    const [vehicleData, setVehicleData] = useState([]);
 
     const [value, setValue] = useState({
         'IncidentID': '', 'VehicleID': '', 'PropertyID': '', 'MasterPropertyID': '', 'CreatedByUserFK': '',
@@ -219,9 +223,46 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
         })
     }
 
+
+
+    // ----------------------- new change------------------------
+    useEffect(() => {
+        const matched = propertyLossCodeData?.find(
+            val => val.value === value?.LossCodeID
+        );
+        if (matched && (matched.id === "RECD" || matched.id === "STOL")) {
+            setShowVehicleRecovered(true);
+        } else {
+            setShowVehicleRecovered(false);
+            setOpenVehicleRecoveredTab(false);
+        }
+    }, [value?.LossCodeID, propertyLossCodeData]);
+
+    useEffect(() => {
+        if (openVehicleRecoveredTab && (vehicleID || masterPropertyID)) {
+            get_property_Data(DecVehId); get_vehicle_Count(DecVehId, DecMVehId)
+        }
+    }, [openVehicleRecoveredTab, DecVehId, DecMVehId]);
+
+    const get_property_Data = (PropertyID, masterPropertyID) => {
+        const val = { 'PropertyID': 0, 'MasterPropertyID': masterPropertyID, 'IsMaster': true }
+        const val1 = { 'PropertyID': PropertyID, 'MasterPropertyID': 0, 'IsMaster': false }
+        fetchPostData('VehicleRecovered/GetData_VehicleRecovered', MstVehicle === "MST-Vehicle-Dash" ? val : val1).then((res) => {
+            if (res) {
+                setVehicleData(res);
+            } else {
+                setVehicleData();
+            }
+        })
+    }
+
+    // ----------------------- new change------------------------
+
+
+
+
     useEffect(() => {
         if (editval) {
-
             setcountoffaduit(true)
             dispatch(get_Classification_Drp_Data(editval[0]?.CategoryID));
             setCategoryCode(getCategoryCode(editval, categoryIdDrp));
@@ -793,6 +834,7 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
     ];
 
     const setEditVal = (row) => {
+        console.log(row)
         setStatesChangeStatus(false);
         if (changesStatus) {
             const modal = new window.bootstrap.Modal(document.getElementById('SaveModal'));
@@ -924,7 +966,7 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
 
         }
     }
-
+    console.log(vehicleID)
     return (
         <>
             <div className="col-12 col-md-12 col-lg-12 p-0">
@@ -1202,8 +1244,42 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                                 autoComplete="off"
                             />
                         </div>
-                        <div className='col-2  mt-1 mb-md-5 mb-sm-5 mb-lg-0'>
 
+                        {/* //-------------------------New Change------------------------/ */}
+                        <div className="col-3 col-md-2 col-lg-2 mt-2 text-right ">
+                            {(vehicleID || masterPropertyID) && showVehicleRecovered && (
+                                <button
+                                    data-toggle="modal"
+                                    data-target="#VehicleRecovred"
+                                    className="btn btn-sm  btn-success mr-5"
+                                    onClick={() => setOpenVehicleRecoveredTab(true)}
+                                >
+                                    Vehicle Recovered
+                                </button>
+                            )}
+                        </div>
+
+                        {openVehicleRecoveredTab && (vehicleID || masterPropertyID) && (
+                            <div className="mt-2 vehicle-recovered-tab">
+                                <VehicleRecovred
+                                    openVehicleRecoveredTab={openVehicleRecoveredTab}
+                                    mainIncidentID={mainIncidentID}
+                                    setMainIncidentID={setMainIncidentID}
+                                    vehicleID={vehicleID}
+                                    setVehicleID={setVehicleID}
+                                    masterPropertyID={masterPropertyID}
+                                    setMasterPropertyID={setMasterPropertyID}
+                                    vehicleData={vehicleData}
+                                    setVehicleData={setVehicleData}
+                                    get_property_Data={get_property_Data}
+
+                                />
+                            </div>
+                        )}
+                        {/* //-------------------------New Change------------------------/ */}
+
+
+                        <div className='col-2  mt-1 mb-md-5 mb-sm-5 mb-lg-0'>
                         </div>
                     </div>
                     <div className="text-center p-1 d-flex justify-content-center">
@@ -1302,9 +1378,9 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                         }
                     </div>
                 </div>
-            </div>
+            </div >
             {/* <IdentifyFieldColor /> */}
-            <DeletePopUpModal func={delete_Vehicle_Property} />
+            < DeletePopUpModal func={delete_Vehicle_Property} />
             <ChangesModal func={check_Validation_Error} />
             <ListModal {...{ openPage, setOpenPage }} />
             <NirbsErrorShowModal
