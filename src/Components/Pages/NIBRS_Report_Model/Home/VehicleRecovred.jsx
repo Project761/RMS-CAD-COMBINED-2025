@@ -519,7 +519,7 @@ const VehicleRecovred = (props) => {
                         <div class="modal-dialog  modal-dialog-centered  modal-xl" style={{ minHeight: "500px" }}>
                             <div class="modal-content">
                                 <button type="button" className="border-0" aria-label="Close"
-                                    onClick={() => { setStatusFalse(); }}
+                                    onClick={(e) => { setStatusFalse(); }}
                                     data-dismiss="modal" style={{ alignSelf: "end" }} ref={crossButtonRef}><b>X</b>
                                 </button>
                                 <div class="modal-body name-body-model">
@@ -686,7 +686,7 @@ const VehicleRecovred = (props) => {
 
                                         {!isViewEventDetails &&
                                             <div className="btn-box text-right  mr-1 mb-2">
-                                                <button type="button" data-dismiss="modal" className="btn btn-sm btn-success mr-1" onClick={() => { setStatusFalse(); }} >New</button>
+                                                <button type="button" className="btn btn-sm btn-success mr-1" onClick={() => { reset(); }} >New</button>
                                                 {
                                                     effectiveScreenPermission ?
                                                         effectiveScreenPermission[0]?.AddOK ?
