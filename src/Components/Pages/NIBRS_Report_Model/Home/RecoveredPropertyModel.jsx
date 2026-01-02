@@ -29,6 +29,7 @@ import { AddDeleteUpadate, fetchPostData } from '../../../hooks/Api';
 import { toastifyError, toastifySuccess } from '../../../Common/AlertMsg';
 import DeletePopUpModal from '../../../Common/DeleteModal';
 import { get_AgencyOfficer_Data, get_ScreenPermissions_Data } from '../../../../redux/actions/IncidentAction';
+import DeletePopUpModalRecovered from '../../../Common/DeletePropertyRecovered';
 
 const RecoveredPropertyModel = (props) => {
 
@@ -421,13 +422,13 @@ const RecoveredPropertyModel = (props) => {
                     {
                         effectiveScreenPermission ?
                             effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", propertyData, isLocked, true) ?
-                                <span onClick={() => { setRecoveredPropertyID(row.RecoveredPropertyID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
+                                <span onClick={() => { setRecoveredPropertyID(row.RecoveredPropertyID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModalProperty">
                                     <i className="fa fa-trash"></i>
                                 </span>
                                 : <></>
                             :
                             !isLockOrRestrictModule("Lock", propertyData, isLocked, true) &&
-                            <span onClick={() => { setRecoveredPropertyID(row.RecoveredPropertyID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
+                            <span onClick={() => { setRecoveredPropertyID(row.RecoveredPropertyID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModalProperty">
                                 <i className="fa fa-trash"></i>
                             </span>
                     }
@@ -694,7 +695,8 @@ const RecoveredPropertyModel = (props) => {
                         </div>
                     </div>
                     <ChangesModal func={check_Validation_Error} setToReset={OnClose} />
-                    <DeletePopUpModal func={Delete_RecoveredProperty} />
+                    {/* <DeletePopUpModal func={Delete_RecoveredProperty} /> */}
+                     <DeletePopUpModalRecovered func={Delete_RecoveredProperty} />
 
                 </>
             }
