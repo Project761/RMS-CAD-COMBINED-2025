@@ -34,6 +34,7 @@ import DeleteNameModal from '../../Common/DeleteNameModel';
 import LockRestrictModule from '../../Common/LockRestrictModule';
 import { faLock, faUnlock, faBan, } from "@fortawesome/free-solid-svg-icons";
 import { get_ScreenPermissions_Data } from '../../../redux/actions/IncidentAction';
+import OwnerHistory from './NameTab/OwnerHistory/OwnerHistory';
 
 
 const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = false }) => {
@@ -799,6 +800,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                             >
                                                                 Involvement{`${NameTabCount?.TransactionLogCount > 0 ? '(' + NameTabCount?.TransactionLogCount + ')' : ''}`}
                                                             </span>
+
                                                             {
                                                                 MstPage &&
                                                                 <span
@@ -813,6 +815,17 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                                     History
                                                                 </span>
                                                             }
+                                                            <span
+                                                                className={`nav-item ${nameShowPage === 'OwnerHistory' ? 'active' : ''}${!status ? ' disabled' : ''}`}
+
+                                                                data-toggle={changesStatus ? "modal" : "pill"}
+                                                                data-target={changesStatus ? "#SaveModal" : ''}
+                                                                style={{ color: nameShowPage === 'OwnerHistory' ? 'Red' : NameTabCount?.OwnerHistory > 0 ? 'blue' : '#000' }}
+                                                                aria-current="page"
+                                                                onClick={() => { if (!changesStatus) setNameShowPage('OwnerHistory') }}
+                                                            >
+                                                                Owner History{`${NameTabCount?.TransactionLogCount > 0 ? '(' + NameTabCount?.TransactionLogCount + ')' : ''}`}
+                                                            </span>
                                                         </>
                                                     )}
                                                     {
@@ -956,6 +969,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                                                             nameShowPage === 'History' ?
                                                                                                 <History {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
                                                                                                 :
+
                                                                                                 nameShowPage === 'TransactionLog' ?
                                                                                                     <Involvements
                                                                                                         idColName={'MasterNameID'}
@@ -986,7 +1000,11 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
                                                                                                             IsMaster={MstPage === "MST-Name-Dash" ? true : false}
                                                                                                         />
                                                                                                         :
-                                                                                                        <></>
+                                                                                                        nameShowPage === 'OwnerHistory' ?
+                                                                                                            <OwnerHistory {...{ ListData, DecNameID, DecMasterNameID, DecIncID, isViewEventDetails }} />
+                                                                                                            :
+                                                                                                            <></>
+
                                 }
                             </div>
                         </div>

@@ -27,10 +27,6 @@ const StatusOption = [
 ];
 
 
-
-
-
-
 const Charges = (props) => {
 
   const { DecChargeId, ListData, GetSingleData, get_List, isLocked, } = props
@@ -1154,12 +1150,10 @@ const Charges = (props) => {
                     value={filterArray(multiSelected.ChargeWeaponTypeID, 'label')}
                     components={{ MultiValue, }}
                     placeholder="Select Type Of Weapon From List.."
-
                     // styles={customStylesWithOutColorMulti}
                     // isDisabled={!value?.ChargeID}
                     styles={isLockOrRestrictModule("Lock", typeOfSecurityEditVal, isLocked, true) ? MultiSelectLockedStyle : customStylesWithOutColorMulti}
                     isDisabled={!DecArrestId || isLockOrRestrictModule("Lock", typeOfSecurityEditVal, isLocked, true)}
-
                   />
                   :
                   <Select
@@ -1178,11 +1172,9 @@ const Charges = (props) => {
                     // isDisabled={!value?.ChargeID}
                     styles={isLockOrRestrictModule("Lock", typeOfSecurityEditVal, isLocked, true) ? MultiSelectLockedStyle : customStylesWithOutColorMulti}
                     isDisabled={!DecArrestId || isLockOrRestrictModule("Lock", typeOfSecurityEditVal, isLocked, true)}
-
                   />
               }
             </div>
-
             {/* Property Section */}
             <div className="col-1 col-md-2 col-lg-1 ">
               <label htmlFor="" className='label-name mt-0'>Property</label>
@@ -1396,7 +1388,6 @@ const Charges = (props) => {
                   !addUpdatePermission && setChangesStatus(true);
                   !addUpdatePermission && setStatesChangeStatus(true);
                 }}
-
                 timeInputLabel
                 showTimeSelect
                 timeIntervals={1}
