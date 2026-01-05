@@ -2972,7 +2972,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
             ValidateIncNames(mainIncidentID, IncNo, true)
         }
     }, [victimClick, mainIncidentID])
-
+  
     // validate Incident
     const ValidateIncNames = async (incidentID, IncNo, isDefaultSelected = false) => {
         setclickNibLoder(true);

@@ -216,7 +216,7 @@ const Tab = () => {
         // name
         setNameErrorStatus(false);
         // Relation
-        setNameRelationshipError(false);
+        setNameRelationshipError(false);  
         // narrative
         setNarrativeApprovedStatus(false);
 

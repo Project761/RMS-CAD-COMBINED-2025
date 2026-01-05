@@ -14,7 +14,7 @@ import DatePicker from 'react-datepicker';
 var FileSaver = require('file-saver');
 
 
-const Nibrs_File_Model = ({ show, setShow, handleModel }) => {
+const Nibrs_File_Model = ({ show, setShow, handleModel }) => {   
 
     const dispatch = useDispatch();
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
