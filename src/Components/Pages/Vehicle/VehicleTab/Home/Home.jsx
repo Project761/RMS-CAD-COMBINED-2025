@@ -378,7 +378,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
             });
             setuploadImgFiles([]); setVehicleMultiImg([]);
         }
-    }, [editval, changesStatusCount]);
+    }, [editval]);
 
     useEffect(() => {
         propertyLossCodeData?.filter(val => {
