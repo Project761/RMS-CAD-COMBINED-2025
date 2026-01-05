@@ -1121,6 +1121,7 @@ const Charges = (props) => {
 
   return (
     <>
+    <div className="child">
       <ArresList {...{ ListData }} />
       <div className="container-fluid">
         <fieldset className="">
@@ -1450,6 +1451,7 @@ const Charges = (props) => {
       </div>
       <div className="col-12 text-right mt-0 p-0 mt-2">
         <button type="button" onClick={insert_Arrest_Data} disabled={DecArrestId ? true : false} className="btn btn-sm btn-success  mr-1">Save</button>
+      </div>
       </div>
 
       <DeletePopUpModal func={DeleteArrestCharge} />
