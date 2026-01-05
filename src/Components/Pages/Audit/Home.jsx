@@ -6,6 +6,9 @@ import { AgencyContext } from "../../../Context/Agency/Index";
 import BlindCount from "./BlindCount";
 import Reconcile from "./Reconcile";
 import Reports from "./Reports";
+import { get_AgencyOfficer_Data } from "../../../redux/actions/DropDownsData";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 // Mock data for dropdowns
 const auditTypeOptions = [
@@ -36,6 +39,12 @@ const rooms = [
 
 
 const PropertyAuditTab = ({ DecProRomId, DecPropID, DecMPropID }) => {
+
+    const agencyOfficerDrpData = useSelector((state) => state.DropDown.agencyOfficerDrpData);
+    const localStoreData = useSelector((state) => state.Agency.localStoreData);
+
+    const dispatch = useDispatch();
+
     const [activeTab, setActiveTab] = useState(1);
     const [auditType, setAuditType] = useState(auditTypeOptions);
     const [period, setPeriod] = useState(periodOptions);
@@ -51,6 +60,8 @@ const PropertyAuditTab = ({ DecProRomId, DecPropID, DecMPropID }) => {
     const [supervisorList, setSupervisorList] = useState([]);
     const [isSampleGenerated, setIsSampleGenerated] = useState(false);
     const { get_Incident_Count, incidentCount, setChangesStatus } = useContext(AgencyContext);
+    const [loginAgencyID, setloginAgencyID] = useState('');
+    const [loginPinID, setloginPinID,] = useState('');
 
 
     const [value, setValue] = useState({
@@ -67,6 +78,19 @@ const PropertyAuditTab = ({ DecProRomId, DecPropID, DecMPropID }) => {
         { id: 3, label: "3. Reconcile" },
         { id: 4, label: "4. Reports" },
     ];
+
+    useEffect(() => {
+        if (localStoreData) {
+            setloginAgencyID(localStoreData?.AgencyID); setloginPinID(localStoreData?.PINID);
+
+        }
+    }, [localStoreData]);
+
+    useEffect(() => {
+        if (loginAgencyID) {
+            if (agencyOfficerDrpData?.length === 0) { dispatch(get_AgencyOfficer_Data(loginAgencyID)); }
+        }
+    }, [loginAgencyID]);
 
 
     const check_Validation_Error = (e) => {
@@ -294,14 +318,14 @@ const PropertyAuditTab = ({ DecProRomId, DecPropID, DecMPropID }) => {
                                 <div className="col-4 col-md-3 col-lg-3">
                                     <Select
                                         name='Supervisor'
-
-                                        value={supervisorList?.filter((obj) => obj.value == value?.Supervisor)}
-                                        options={supervisorList}
+                                        value={agencyOfficerDrpData?.filter((obj) => obj.value === value?.Supervisor)}
+                                        isClearable
+                                        options={agencyOfficerDrpData}
                                         onChange={(e) => ChangeDropDown(e, 'Supervisor')}
                                         placeholder="Select.."
                                         menuPlacement="bottom"
                                         className='requiredColor'
-                                        isClearable
+                                       
                                     />
                                 </div>
 

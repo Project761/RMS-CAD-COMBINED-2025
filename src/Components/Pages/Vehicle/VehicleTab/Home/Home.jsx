@@ -352,7 +352,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
 
             setPossessionID(editval[0]?.InProfessionOf); setOwnerOfID(parseInt(editval[0]?.OwnerID));
             setnibrsSubmittedvehicleMain(editval[0]?.IsNIBRSSummited);
-            get_Vehicle_MultiImage(vehicleID, masterPropertyID); setVehicleID(editval[0]?.PropertyID);
+            get_Vehicle_MultiImage(editval[0]?.PropertyID, editval[0]?.MasterPropertyID); setVehicleID(editval[0]?.PropertyID);
             setMasterPropertyID(editval[0]?.MasterPropertyID); setDestoryDate(editval[0]?.DestroyDtTm ? new Date(editval[0]?.DestroyDtTm) : '');
             setInspectionExpDate(editval[0]?.InspectionExpiresDtTm ? new Date(editval[0]?.InspectionExpiresDtTm) : '');
             setManufactureDate(editval[0]?.ManufactureYear ? new Date(editval[0]?.ManufactureYear) : ''); setPlateExpDate(editval[0]?.PlateExpireDtTm ? new Date(editval[0]?.PlateExpireDtTm) : '');
@@ -378,7 +378,7 @@ const Home = ({ setStatus, setShowVehicleRecovered, newStatus, ResetErrors, setR
             });
             setuploadImgFiles([]); setVehicleMultiImg([]);
         }
-    }, [editval, changesStatusCount]);
+    }, [editval]);
 
     useEffect(() => {
         propertyLossCodeData?.filter(val => {
