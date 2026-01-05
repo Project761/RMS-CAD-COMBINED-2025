@@ -1246,12 +1246,13 @@ const VehicleTab = ({ isCADSearch = false, isCad = false, vehicleClick, isNibrsS
                         </div>
 
                         {/* //-------------------------New Change------------------------/ */}
-                        <div className="col-3 col-md-2 col-lg-2 mt-2 text-right ">
+                        <div className="col-3 col-md-2 col-lg-2 mt-2 text-right text-nowrap">
                             {(vehicleID || masterPropertyID) && showVehicleRecovered && (
                                 <button
+                                style={{marginRight:"28px"}}
                                     data-toggle="modal"
                                     data-target="#VehicleRecovred"
-                                    className="btn btn-sm  btn-success mr-5"
+                                    className="btn btn-sm  btn-success"
                                     onClick={() => setOpenVehicleRecoveredTab(true)}
                                 >
                                     Vehicle Recovered
