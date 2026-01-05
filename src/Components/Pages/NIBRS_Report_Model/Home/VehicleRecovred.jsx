@@ -32,12 +32,12 @@ import ChangesModal from '../../../Common/ChangesModal';
 
 const VehicleRecovred = (props) => {
     const dispatch = useDispatch();
-    const { ListData, DecVehId, DecMVehId, IncID, incidentReportedDate, isViewEventDetails = false, isLocked, setIsLocked, openVehicleRecoveredTab, mainIncidentID, setMainIncidentID, vehicleID, setVehicleID, masterPropertyID, setMasterPropertyID, vehicleData, setVehicleData, get_property_Data } = props
+    const { ListData, DecVehId, DecMVehId, IncID, isViewEventDetails = false, isLocked, setIsLocked, openVehicleRecoveredTab, mainIncidentID, setMainIncidentID, vehicleID, setVehicleID, masterPropertyID, vehicleData, get_property_Data } = props
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
     const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
     const agencyOfficerDrpData = useSelector((state) => state.DropDown.agencyOfficerDrpData);
-    const { get_vehicle_Count, setChangesStatus, GetDataTimeZone, datezone } = useContext(AgencyContext);
+    const { get_vehicle_Count, setChangesStatus, GetDataTimeZone, datezone, incidentReportedDate } = useContext(AgencyContext);
 
     const useQuery = () => {
         const params = new URLSearchParams(useLocation().search);
@@ -98,6 +98,7 @@ const VehicleRecovred = (props) => {
             setLoginPinID(localStoreData?.PINID); setLoginAgencyID(localStoreData?.AgencyID);
             dispatch(get_ScreenPermissions_Data("V084", localStoreData?.AgencyID, localStoreData?.PINID));
             GetDataTimeZone(localStoreData?.AgencyID);
+
         }
     }, [localStoreData]);
 
@@ -340,7 +341,7 @@ const VehicleRecovred = (props) => {
             setValue({ ...value, [e.target.name]: e.target.value });
         }
     }
-
+    console.log(incidentReportedDate)
     const ChangeDropDown = (e, name) => {
         !addUpdatePermission && setChangesStatus(true)
         if (e) {
@@ -523,6 +524,8 @@ const VehicleRecovred = (props) => {
                                     data-dismiss="modal" style={{ alignSelf: "end" }} ref={crossButtonRef}><b>X</b>
                                 </button>
                                 <div class="modal-body name-body-model">
+
+
                                     <div className="col-12 col-md-12 pt-1 p-0" >
                                         <div className="row">
                                             <div className="col-2 col-md-2 col-lg-2 mt-3">
@@ -555,18 +558,19 @@ const VehicleRecovred = (props) => {
                                                     onKeyDown={onKeyDown}
                                                     onChange={(selectedDate) => {
                                                         if (!selectedDate) {
+                                                            // No date selected
                                                             setRecoverDate(null);
                                                             !addUpdatePermission && setChangesStatus(true);
                                                             setValue({ ...value, ['RecoveredDateTime']: null });
                                                             return;
                                                         }
                                                         let finalDate = new Date(selectedDate);
-
                                                         const now = new Date(datezone);
                                                         const incidentDate = new Date(incidentReportedDate);
+                                                        // ✅ Check if datezone is valid
                                                         if (isNaN(now.getTime())) {
                                                             console.warn("Invalid datezone:", datezone);
-                                                            return;
+                                                            return; // Or fallback to new Date()
                                                         }
 
                                                         if (
@@ -574,23 +578,24 @@ const VehicleRecovred = (props) => {
                                                             finalDate.getMinutes() === 0 &&
                                                             finalDate.getSeconds() === 0
                                                         ) {
-                                                            finalDate.setHours(now.getHours());
-                                                            finalDate.setMinutes(now.getMinutes());
-                                                            finalDate.setSeconds(now.getSeconds());
-                                                            finalDate.setMilliseconds(now.getMilliseconds());
+                                                            finalDate.setHours(now.getHours());        // Set current hour
+                                                            finalDate.setMinutes(now.getMinutes());    // Set current minute
+                                                            finalDate.setSeconds(now.getSeconds());    // Set current second
+                                                            finalDate.setMilliseconds(now.getMilliseconds());  // Set milliseconds
                                                         }
 
                                                         let finalValidDate;
 
                                                         if (finalDate > now) {
-                                                            finalValidDate = now;
+                                                            finalValidDate = now;  // Don't allow future dates
                                                         } else if (finalDate < incidentDate) {
-                                                            finalValidDate = incidentDate;
+                                                            finalValidDate = incidentDate;  // Don't allow dates before incident date
                                                         } else {
-                                                            finalValidDate = finalDate;
+                                                            finalValidDate = finalDate;  // Otherwise, use selected date
                                                         }
-
+                                                        // Format the date as per your requirements
                                                         const formattedDate = getShowingMonthDateYear(finalValidDate);
+                                                        // Update state with the selected date
                                                         setRecoverDate(finalValidDate);
                                                         !addUpdatePermission && setChangesStatus(true);
                                                         setValue({
@@ -617,6 +622,7 @@ const VehicleRecovred = (props) => {
                                                     maxDate={new Date(datezone)}
                                                     minDate={new Date(incidentReportedDate)}
                                                 />
+
                                             </div>
                                             <div className="col-2 col-md-2 col-lg-2 mt-3">
                                                 <Link to={'/ListManagement?page=Recovery%20Type&call=/Prop-Home'} className='new-link'>

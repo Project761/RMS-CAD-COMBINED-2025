@@ -565,6 +565,8 @@ const Charges = (props) => {
     }
     setChargeLocalArr([]); sessionStorage.removeItem('ChargeLocalData'); get_Arrest_Count(ArrestID); get_Data_Arrest_Charge(ArrestID);
   };
+
+
   const insert_Arrest_Data = async () => {
     if (ChargeLocalArr?.length === 0 && tabCountArrest?.ChargeCount === 0 && arrestChargeData.length === 0) {
       toastifyError("Please add at least one charge");
@@ -578,8 +580,8 @@ const Charges = (props) => {
         sessionStorage.removeItem('ChargeLocalData');
         await SyncLocalChargesToServer(newArrestID, DecEIncID, LoginPinID, LoginAgencyID, ChargeLocalArr, setChargeLocalArr, get_Arrest_Count, get_Data_Arrest_Charge);
         console.log(res?.ArrestID)
-        setArrestID(res?.ArrestID);
         toastifySuccess(res?.Message);
+        setArrestID(res?.ArrestID); get_Data_Arrest(DecEIncID, MstPage === "MST-Arrest-Dash" ? true : false, LoginPinID);
         navigate(
           `/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(
             res?.ArrestID
@@ -644,18 +646,18 @@ const Charges = (props) => {
   // };
 
   const Add_Charge_Data = () => {
-    const { Count, ChargeCodeID, NIBRSID, UCRClearID, Name, LawTitleId, AttemptComplete, CategoryId, OffenseDateTime } = value;
+    const { Count, ChargeCodeID, NIBRSID, UCRClearID, Name, LawTitleId, AttemptComplete, CategoryId, OffenseDateTime, IncidentID } = value;
     const newCharge = {
-      ...value, Count, ChargeCodeID, NIBRSID, UCRClearID, Name, LawTitleId, AttemptComplete, CategoryId, OffenseDateTime
+      ...value, Count, ChargeCodeID, NIBRSID, UCRClearID, Name, LawTitleId, AttemptComplete, CategoryId, OffenseDateTime, IncidentID
     };
-    if (ArrestID) {
-      const val = { ...newCharge, ChargeID: DecChargeId, ArrestID: ArrestID, };
+    if (ArrestID || DecArrestId) {
+      const val = { ...newCharge, ChargeID: DecChargeId, ArrestID: ArrestID || DecArrestId, IncidentID: DecEIncID };
       AddDeleteUpadate('ArrestCharge/Insert_ArrestCharge', val).then((res) => {
         if (res.success) {
           const parsedData = JSON.parse(res.data);
           const message = parsedData.Table[0].Message;
-          toastifySuccess(message); get_Arrest_Count(ArrestID);
-          get_Data_Arrest_Charge(ArrestID); get_ArrestCharge_Count(DecChargeId);
+          toastifySuccess(message); get_Arrest_Count(ArrestID || DecArrestId);
+          get_Data_Arrest_Charge(ArrestID || DecArrestId); get_ArrestCharge_Count(DecChargeId);
           Reset(); setChangesStatus(false); setStatesChangeStatus(false);
           setUpdateCount(updateCount + 1);
           setErrors({ ...errors, ['ChargeCodeIDError']: '', });
@@ -735,30 +737,29 @@ const Charges = (props) => {
   //     get_ChargeCode_Drp_Data(LoginAgencyID, null, null);
   //   }
   // };
+  console.log(DecArrestId)
+  console.log(ArrestID)
 
   const update_Arrest_Charge = () => {
     const { Count, ChargeCodeID, NIBRSID, UCRClearID, Name, LawTitleId, AttemptComplete, CategoryId, OffenseDateTime } = value;
-    if (ArrestID) {
+    if (DecArrestId) {
       const val = {
         'IncidentID': DecEIncID, 'ArrestID': DecArrestId, 'ChargeID': ChargeID, 'ModifiedByUserFK': LoginPinID, 'AgencyID': LoginAgencyID, 'Name': Name, 'IncidentNumber': IncNo, 'ArrestNumber': ArrNo, 'UCRClearID': UCRClearID, 'ChargeCodeID': ChargeCodeID, 'NIBRSID': NIBRSID, 'Count': Count,
         'LawTitleId': LawTitleId, 'AttemptComplete': AttemptComplete, 'CategoryId': CategoryId, 'OffenseDateTime': OffenseDateTime
       };
-
       AddDeleteUpadate('ArrestCharge/Update_ArrestCharge', val).then((res) => {
         const parsedData = JSON.parse(res.data);
         const message = parsedData.Table[0].Message;
         toastifySuccess(message);
         setStatesChangeStatus(false);
         setChangesStatus(false);
-        get_Data_Arrest_Charge(ArrestID);
+        get_Data_Arrest_Charge(DecArrestId);
         setErrors({ ...errors, ['ChargeCodeIDError']: '', });
-
         LawTitleIdDrpDwnVal(LoginAgencyID, null);
         get_NIBRS_Drp_Data(LoginAgencyID, null);
         get_ChargeCode_Drp_Data(LoginAgencyID, null, null);
       });
     } else {
-
       const updatedCharges = ChargeLocalArr.map(charge => {
         if (charge.ChargeID === DecChargeId) {
           return {
@@ -773,7 +774,6 @@ const Charges = (props) => {
         }
         return charge;
       });
-
       setChargeLocalArr(updatedCharges);
       sessionStorage.setItem('ChargeLocalData', JSON.stringify(updatedCharges));
       setStatesChangeStatus(false);
@@ -801,25 +801,42 @@ const Charges = (props) => {
 
   const columns = [
     {
-      name: 'NIBRS Code', selector: (row) => row.NIBRS_Description || row.FBICode_Desc, sortable: true
+      name: 'NIBRS Code',
+      selector: (row) => row.NIBRS_Description || row.FBICode_Desc,
+      sortable: true
     },
     {
-      name: ' Offense Code/Name', selector: (row) => row.ChargeCode_Description || row.Offense_Description, sortable: true
+      name: 'Offense Code/Name',
+      selector: (row) => row.ChargeCode_Description || row.Offense_Description,
+      sortable: true
     },
     {
-      name: 'Law Title', selector: (row) => row.LawTitle || row.LawTitleId, sortable: true
+      name: 'Law Title',
+      selector: (row) => row.LawTitle || row.LawTitleId,
+      sortable: true
     },
     {
-      name: <p className='text-end' style={{ position: 'absolute', top: '7px', right: 10 }}>Delete</p>,
-      cell: row =>
-        <div style={{ position: 'absolute', top: 4, right: 10 }}>
-          <span to={`#`} onClick={() => { setChargeID(row.ChargeID); }} className="btn btn-sm bg-green text-white px-1 py-0 mr-1" data-toggle="modal" data-target="#DeleteModal">
-            <i className="fa fa-trash"></i>
-          </span>
-
-        </div >
+      name: (
+        <p className='text-end' style={{ position: 'absolute', top: '7px', right: 10 }}>
+          Delete
+        </p>
+      ),
+      cell: (row) =>
+        arrestChargeData.length > 1 ? (
+          <div style={{ position: 'absolute', top: 4, right: 10 }}>
+            <span
+              onClick={() => { setChargeID(row.ChargeID); }}
+              className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
+              data-toggle="modal"
+              data-target="#DeleteModal"
+            >
+              <i className="fa fa-trash"></i>
+            </span>
+          </div>
+        ) : null
     }
-  ]
+  ];
+
 
   const conditionalRowStyles = [
     {
@@ -835,23 +852,18 @@ const Charges = (props) => {
     } else {
       if (MstPage === "MST-Arrest-Dash") {
         navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(row?.ArrestID)}&ChargeId=${stringToBase64(row.ChargeID)}&Name=${Name}&ArrNo=${ArrNo}&ArrestSta=${true}&ChargeSta=${true}&SideBarStatus=${false}`);
-
         // setStatus(true); 
         if (row.OffenseID) {
           setEditval(row);
-
         }
         else {
           get_ArrestCharge_Count(row?.ChargeID); setErrors(''); setChargeID(row.ChargeID);
           GetSingleDataCharge(row.ChargeID);
-
         }
-
       } else {
         if (row.OffenseID) {
           navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(row?.ArrestID)}&ChargeId=${stringToBase64(row.ChargeID)}&Name=${Name}&ArrNo=${ArrNo}&ChargeSta=${true}&SideBarStatus=${false}`)
           setEditval(row);
-
         }
         else {
           navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(row?.ArrestID)}&ChargeId=${stringToBase64(row.ChargeID)}&Name=${Name}&ArrNo=${ArrNo}&ArrestSta=${true}&ChargeSta=${true}&SideBarStatus=${false}`)
@@ -860,9 +872,7 @@ const Charges = (props) => {
           //  setStatus(true); 
           setChargeID(row.ChargeID); setChangesStatus(false); GetSingleDataCharge(row.ChargeID); get_Arrest_Count(row?.ArrestID);
           get_Property_Data(row?.ArrestID);
-
         }
-
       }
     }
   }
@@ -1121,7 +1131,6 @@ const Charges = (props) => {
 
   return (
     <>
-    <div className="child">
       <ArresList {...{ ListData }} />
       <div className="container-fluid">
         <fieldset className="">
@@ -1428,7 +1437,6 @@ const Charges = (props) => {
       <div className="col-12 mt-2">
         <DataTable
           dense
-          // data={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? arrestChargeData : '' : arrestChargeData}
           data={
             effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? (DecArrestId) && arrestChargeData.length > 0
               ? arrestChargeData : ChargeLocalArr : []
@@ -1449,10 +1457,20 @@ const Charges = (props) => {
           noDataComponent={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? "There are no data to display" : "You don’t have permission to view data" : 'There are no data to display'}
         />
       </div>
-      <div className="col-12 text-right mt-0 p-0 mt-2">
+      {/* <div className="col-12 text-right mt-0 p-0 mt-2">
         <button type="button" onClick={insert_Arrest_Data} disabled={DecArrestId ? true : false} className="btn btn-sm btn-success  mr-1">Save</button>
-      </div>
-      </div>
+      </div> */}
+      {!DecArrestId && (
+        <div className="col-12 text-right mt-0 p-0 mt-2">
+          <button
+            type="button"
+            onClick={insert_Arrest_Data}
+            className="btn btn-sm btn-success mr-1"
+          >
+            Save
+          </button>
+        </div>
+      )}
 
       <DeletePopUpModal func={DeleteArrestCharge} />
       <ListModal {...{ openPage, setOpenPage }} />
