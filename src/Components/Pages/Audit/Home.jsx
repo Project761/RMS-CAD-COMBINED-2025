@@ -37,6 +37,14 @@ const rooms = [
     { name: "Room 4", sample: 5, total: 20 },
 ];
 
+const methodOptions = [
+    { value: 'room1', label: 'Random Sample' },
+    { value: 'room2', label: 'All Items in Selected Locations' },
+  
+];
+
+
+
 
 const PropertyAuditTab = ({ DecProRomId, DecPropID, DecMPropID }) => {
 
@@ -56,12 +64,13 @@ const PropertyAuditTab = ({ DecProRomId, DecPropID, DecMPropID }) => {
     const [statesChangeStatus, setStatesChangeStatus] = useState(false);
     const [updateCount, setUpdateCount] = useState(0);
     const [teamList, setTeamList] = useState([]);
-    const [methodList, setMethodList] = useState([]);
+    const [methodList, setMethodList] = useState(methodOptions);
     const [supervisorList, setSupervisorList] = useState([]);
     const [isSampleGenerated, setIsSampleGenerated] = useState(false);
     const { get_Incident_Count, incidentCount, setChangesStatus } = useContext(AgencyContext);
     const [loginAgencyID, setloginAgencyID] = useState('');
     const [loginPinID, setloginPinID,] = useState('');
+    const [editval, setEditval] = useState([]);
 
 
     const [value, setValue] = useState({
@@ -122,6 +131,33 @@ const PropertyAuditTab = ({ DecProRomId, DecPropID, DecMPropID }) => {
 
         }
     };
+
+    useEffect(() => {
+        if (editval) {
+            setValue({
+                // ...value, PropertyID: editval?.PropertyID || '', ActivityType: editval?.ActivityType || '',
+
+                // ExpectedDate: editval?.ExpectedDate || '', ActivityComments: editval?.ActivityComments || '', OtherPersonNameID: editval?.OtherPersonNameID || '',
+                // PropertyRoomPersonNameID: editval?.PropertyRoomPersonNameID || '', ChainDate: editval?.ChainDate || '',
+                // DestroyDate: editval?.DestroyDate ? new Date(editval.DestroyDate) : '', CourtDate: editval?.CourtDate ? new Date(editval.CourtDate) : '', ReleaseDate: editval?.ReleaseDate ? new Date(editval.ReleaseDate) : '',
+                // PropertyTag: editval?.PropertyTag || '', RecoveryNumber: editval?.RecoveryNumber || '', StorageLocationID: editval?.StorageLocationID || '',
+                // ReceiveDate: editval?.ReceiveDate || '', OfficerNameID: editval?.OfficerNameID || '', InvestigatorID: editval?.InvestigatorID || '', location: editval?.location || '',
+                // activityid: editval?.activityid || '', EventId: editval?.EventId || '', MasterPropertyId: editval?.MasterPropertyId || '',
+                // CreatedByUserFK: editval?.CreatedByUserFK || '',
+            });
+
+
+
+        } else {
+            setValue({
+                // ...value, PropertyID: editval?.PropertyID || '',
+                // StorageLocationID: editval?.StorageLocationID || '',
+                // location: editval?.location || '',
+
+            });
+
+        }
+    }, [editval]);
 
     // Initialize with default values or fetch from API if needed
     useEffect(() => {
@@ -325,7 +361,7 @@ const PropertyAuditTab = ({ DecProRomId, DecPropID, DecMPropID }) => {
                                         placeholder="Select.."
                                         menuPlacement="bottom"
                                         className='requiredColor'
-                                       
+
                                     />
                                 </div>
 
