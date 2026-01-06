@@ -352,7 +352,7 @@ const LockRestrictModule = (props) => {
                                     >
                                         Cancel
                                     </button>
-                                    <button type="button" className="btn custom-ok-btn w-100" onClick={handleLoginSubmit} >  Ok </button>
+                                    <button type="button" className="btn custom-ok-btn w-100" onClick={handleLoginSubmit} >  OK </button>
                                 </div>
                             </form>
                         </div>
