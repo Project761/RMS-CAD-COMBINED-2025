@@ -1998,6 +1998,9 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
   }, [crimeSuspectEditVal]);
 
 
+  console.log(panelCode)
+
+
   return (
     <>
       {((incidentCount[0]?.OffenseCount === 0 || incidentCount[0]?.OffenseCount === "0") || (OffSta === true || OffSta === 'true') || isNew === "true" || isNew === true) && (
@@ -2560,7 +2563,7 @@ const Home = ({ status, setStatus, setOffenceID, get_List, ResetErrors, setReset
 
                   styles={
                     isLockOrRestrictModule("Lock", weaponEditVal, isLocked, true) ? MultiSelectLockedStyle :
-                      (PanelCode === '03' || PanelCode === '06' || PanelCode === '08') ? MultiSelectRequredColor :
+                      (PanelCode === '03' || PanelCode === '06' || PanelCode === '08') || checkWeaponTypeIsRequire(nibrsCode, loginAgencyState) ? MultiSelectRequredColor :
                         loginAgencyState === 'TX'
                           ?
                           checkWeaponTypeValidate(nibrsCode, WeaponSelectCodeArray, 'Color', loginAgencyState) ? checkWeaponTypeValidate(nibrsCode, WeaponSelectCodeArray, 'Color', loginAgencyState)

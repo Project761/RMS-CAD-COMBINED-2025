@@ -2216,6 +2216,7 @@ const Offense = ({ offenseClick, isNibrsSummited = false, isLocked, setIsLocked,
                   name="WeaponTypeID"
                   styles={
                     isLockOrRestrictModule("Lock", weaponEditVal, isLocked, true) ? MultiSelectLockedStyle :
+                     checkWeaponTypeIsRequire(nibrsCode, loginAgencyState) ? MultiSelectRequredColor :
                       loginAgencyState === "TX" ?
                         checkWeaponTypeValidate(nibrsCode, WeaponSelectCodeArray, "Color", loginAgencyState) ? checkWeaponTypeValidate(nibrsCode, WeaponSelectCodeArray, "Color", loginAgencyState)
                           :
