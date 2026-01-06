@@ -87,6 +87,8 @@ const SealUnseal = () => {
     })
     const [errors, setErrors] = useState({ 'File_Not_Selected': '', })
 
+
+    console.log(datezone)
     useEffect(() => {
         if (localStoreData) {
             setloginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
@@ -314,14 +316,14 @@ const SealUnseal = () => {
         setErrors({ ...errors, 'File_Not_Selected': '' })
     };
 
-    const Add_SealOrUnseal = async (actionType) => {
+    const Add_SealOrUnseal = async (actionType,) => {
         const formdata = new FormData();
         const EncFormdata = new FormData();
         const newDoc = []; const EncDocs = [];
         const isSeal = actionType === 'seal';
         const officerID = isSeal ? value.SealOfficerID : value.UnsealOfficerID;
         const files = isSeal ? value.SealFiles : value.UnsealFiles;
-        const DateTime = isSeal && datezone ? getShowingDateText(new Date(datezone)) : getShowingDateText(new Date(datezone));
+        const DateTime = datezone
         for (let i = 0; i < selectedFile.length; i++) {
             formdata.append("file", selectedFile[i]); EncFormdata.append("file", selectedFile[i]);
         }
@@ -554,7 +556,6 @@ const SealUnseal = () => {
             const res = await fetchPostData("RecordSeal/GetUserSealPermission", val2);
             if (res && Array.isArray(res) && res.length > 0) {
                 const { IsAllowSeal, IsAllowUnSeal } = res[0];
-
                 setScreenPermissionsData1(IsAllowUnSeal === 1);
                 setScreenPermissionsData(IsAllowSeal === 1);
             } else {
@@ -655,7 +656,7 @@ const SealUnseal = () => {
                                             </div>
                                             <div className="col-2 col-md-2 col-lg-1 mt-2 ">
                                                 <label htmlFor="" className='new-label'>Race</label>
-                                            </div>
+                                            </div>0
                                             <div className="col-4 col-md-4 col-lg-3 mt-1">
                                                 <Select
                                                     name='RaceID'
