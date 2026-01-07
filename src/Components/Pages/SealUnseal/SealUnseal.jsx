@@ -656,7 +656,7 @@ const SealUnseal = () => {
                                             </div>
                                             <div className="col-2 col-md-2 col-lg-1 mt-2 ">
                                                 <label htmlFor="" className='new-label'>Race</label>
-                                            </div>0
+                                            </div>
                                             <div className="col-4 col-md-4 col-lg-3 mt-1">
                                                 <Select
                                                     name='RaceID'
