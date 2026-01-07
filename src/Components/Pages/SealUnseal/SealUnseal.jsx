@@ -65,6 +65,7 @@ const SealUnseal = () => {
     const [selectedRowData, setSelectedRowData] = useState(null);
     const [ScreenPermissionsData, setScreenPermissionsData] = useState(false)
     const [ScreenPermissionsData1, setScreenPermissionsData1] = useState(false)
+    const [documentStatus, setdocumentStatus] = useState(false)
 
     const useQuery = () => {
         const params = new URLSearchParams(useLocation().search);
@@ -313,6 +314,7 @@ const SealUnseal = () => {
             nameArray?.push(name?.name)
         }
         setSelectedFileName(nameArray);
+        setdocumentStatus(true);
         setErrors({ ...errors, 'File_Not_Selected': '' })
     };
 
@@ -354,6 +356,7 @@ const SealUnseal = () => {
                     setSelectedRows([]); setSelectedChargeIds([]); setSelectedCheckedRows([]); setExpandedRow(null);
                     // setScreenPermissionsData(false);
                     // setScreenPermissionsData1(false);
+                    setdocumentStatus(false);
                 } else {
                     console.log("Something went wrong");
                 }
@@ -481,7 +484,8 @@ const SealUnseal = () => {
 
     useEffect(() => {
         if (File_Not_Selected === 'true') {
-            handleUnsealSubmit(actionType);
+            // handleUnsealSubmit(actionType);
+            setShowModal(false);
         }
     }, [File_Not_Selected])
 
@@ -802,7 +806,15 @@ const SealUnseal = () => {
                                         {ScreenPermissionsData && value?.SealUnseal === 1 && (
 
                                             <button
-                                                type="button" className="btn btn-sm btn-success mr-1" onClick={() => { setShowModal(true); setActionType('seal'); }} disabled={isActionDisabled()}
+                                                type="button" className="btn btn-sm btn-success mr-1" onClick={() => {
+                                                    if (documentStatus) {
+                                                        setActionType('seal');
+                                                        handleUnsealSubmit(actionType);
+                                                    }
+                                                    else {
+                                                        setShowModal(true); setActionType('seal');
+                                                    }
+                                                }} disabled={isActionDisabled()}
                                             >
                                                 Seal
                                             </button>
@@ -812,7 +824,17 @@ const SealUnseal = () => {
                                         {ScreenPermissionsData1 && value?.SealUnseal === 2 && (
 
                                             <button
-                                                type="button" className="btn btn-sm btn-success mr-1" onClick={() => { setShowModal(true); setActionType('unseal'); }} disabled={isActionDisabled()}
+                                                type="button" className="btn btn-sm btn-success mr-1"
+                                                onClick={() => {
+                                                    if (documentStatus) {
+                                                        setActionType('unseal');
+                                                        handleUnsealSubmit(actionType);
+                                                    }
+                                                    else {
+                                                        setShowModal(true); setActionType('unseal');;
+                                                    }
+                                                }}
+                                                disabled={isActionDisabled()}
                                             >
                                                 UnSeal
                                             </button>
