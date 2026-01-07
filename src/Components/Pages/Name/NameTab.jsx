@@ -141,6 +141,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
     useEffect(() => {
         if (IncID) {
             get_Data_Name(IncID);
+            getPermissionLevelByLock(IncID, localStoreData?.PINID);
         }
     }, [IncID]);
 
@@ -157,7 +158,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
     }
 
     useEffect(() => {
-        console.log(effectiveScreenPermission);
+        // console.log(effectiveScreenPermission);
         if (effectiveScreenPermission?.length > 0) {
             setaddUpdatePermission(effectiveScreenPermission[0]?.AddOK != 1 || effectiveScreenPermission[0]?.Changeok != 1 ? true : false);
         } else {
@@ -179,7 +180,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
 
     useEffect(() => {
         if (DecNameID && IncID && loginPinID) {
-            getPermissionLevelByLock(IncID, loginPinID, DecNameID);
+            // getPermissionLevelByLock(IncID, loginPinID, DecNameID);
         } else {
 
         }
@@ -302,7 +303,7 @@ const NameTab = ({ isCad = false, isCADSearch = false, isViewEventDetails = fals
             } else {
                 navigate(`/Name-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&NameID=${stringToBase64(row?.NameID)}&MasterNameID=${stringToBase64(row?.MasterNameID)}&NameStatus=${true}`)
             }
-            // getPermissionLevelByLock(IncID, localStoreData?.PINID, row.NameID);
+            getPermissionLevelByLock(IncID, localStoreData?.PINID);
             setNameID(row.NameID); setMasterNameID(row?.MasterNameID);
             setNameShowPage('home');
         }
