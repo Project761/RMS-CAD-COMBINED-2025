@@ -14,7 +14,7 @@ import Log from '../Log/Log';
 import RecoveredVehicle from './VehicleTab/RecoveredVehicle/RecoveredVehicle';
 import AddInformation from './VehicleTab/AddInformation/AddInformation';
 import { useDispatch, useSelector } from 'react-redux';
-import { base64ToString, getShowingWithOutTime, stringToBase64, tableCustomStyle } from '../../Common/Utility';
+import { base64ToString, getShowingWithOutTime, isLockOrRestrictModule, stringToBase64, tableCustomStyle } from '../../Common/Utility';
 import DocumentModal from '../../Common/DocumentModal';
 import { AddDeleteUpadate, fetchPostData } from '../../hooks/Api';
 import VehicleInvolvement from '../SummaryModel/VehicleInvolvement';
@@ -103,12 +103,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
     const NameCount = incidentCount[0]?.VehicleCount || 0;
 
 
-    useEffect(() => {
-        if (IncID) {
-            get_Data_Vehicle(IncID);
-            setMainIncidentID(IncID);
-        }
-    }, [IncID]);
+
 
     useEffect(() => {
         if (localStoreData) {
@@ -122,6 +117,14 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
             setnibrsValidateData(propertyValidateNibrsData?.Property);
         }
     }, [propertyValidateNibrsData]);
+
+    useEffect(() => {
+        if (IncID) {
+            get_Data_Vehicle(IncID);
+            setMainIncidentID(IncID);
+            getPermissionLevelByLock(IncID, localStoreData?.PINID);
+        }
+    }, [IncID]);
 
     useEffect(() => {
         if (VehSta === 'true' || VehSta === true) {
@@ -158,7 +161,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                     navigate(`/Vehicle-Home?IncId=${stringToBase64(IncID)}&IncNo=${IncNo}&IncSta=${IncSta}&VehId=${stringToBase64(row?.PropertyID)}&MVehId=${stringToBase64(row?.MasterPropertyID)}&VehSta=${true}&isNew=${true}`)
                     setResetErrors(true);
                     setClickCount(clickCount + 1);
-                    getPermissionLevelByLock(IncID, localStoreData?.PINID, row?.PropertyID)
+                    getPermissionLevelByLock(IncID, localStoreData?.PINID);
                     setShowPage('home')
                 }
             }
@@ -311,7 +314,8 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
     // LockRestrict
     const getPermissionLevelByLock = async (IncidentID, OfficerID, VehicleID) => {
         try {
-            const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { 'IncidentID': IncidentID, 'OfficerID': OfficerID, 'ModuleName': "Property", 'ID': VehicleID || 0 });
+            // const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { 'IncidentID': IncidentID, 'OfficerID': OfficerID, 'ModuleName': "Property", 'ID': VehicleID || 0 });
+            const res = await fetchPostData("Restricted/GetPermissionLevelBy_Lock", { 'IncidentID': IncidentID, 'OfficerID': OfficerID, 'ModuleName': "Incident", 'ID': 0 });
             if (res?.length > 0) {
                 setIsLocked(res[0]?.IsLocked === true || res[0]?.IsLocked === 1 ? true : false);
                 setPermissionToUnlock(res[0]?.IsUnLockPermission === true || res[0]?.IsUnLockPermission === 1 ? true : false);
@@ -491,7 +495,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                                                 effectiveScreenPermission ?
                                                                     <>
                                                                         {
-                                                                            effectiveScreenPermission[0]?.DeleteOK ?
+                                                                            effectiveScreenPermission[0]?.DeleteOK && !isLockOrRestrictModule("Lock", VehicleFilterData, isLocked, true) ?
                                                                                 <>
                                                                                     <div
                                                                                         style={{
@@ -505,16 +509,7 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                                                                             justifyContent: "center",
                                                                                             cursor: "pointer",
                                                                                             boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                                                                            // transition: "transform 0.2s ease, box-shadow 0.2s ease",
                                                                                         }}
-                                                                                        // onMouseEnter={(e) => {
-                                                                                        //     e.currentTarget.style.transform = "scale(1.1)";
-                                                                                        //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
-                                                                                        // }}
-                                                                                        // onMouseLeave={(e) => {
-                                                                                        //     e.currentTarget.style.transform = "scale(1)";
-                                                                                        //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
-                                                                                        // }}
                                                                                         data-toggle="modal"
                                                                                         data-target="#DeleteModal"
                                                                                         onClick={() => setVehicleID(row.PropertyID)}
@@ -530,35 +525,29 @@ const Vehicle_Add_Up = ({ isCad = false, isCADSearch = false, isViewEventDetails
                                                                     </>
                                                                     :
                                                                     <>
-                                                                        <div
-                                                                            style={{
-                                                                                backgroundColor: "#001f3f",
-                                                                                color: "white",
-                                                                                width: "36px",
-                                                                                height: "36px",
-                                                                                borderRadius: "50%",
-                                                                                display: "flex",
-                                                                                alignItems: "center",
-                                                                                justifyContent: "center",
-                                                                                cursor: "pointer",
-                                                                                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                                                                                // transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                                                                            }}
-                                                                            // onMouseEnter={(e) => {
-                                                                            //     e.currentTarget.style.transform = "scale(1.1)";
-                                                                            //     e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
-                                                                            // }}
-                                                                            // onMouseLeave={(e) => {
-                                                                            //     e.currentTarget.style.transform = "scale(1)";
-                                                                            //     e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
-                                                                            // }}
-                                                                            data-toggle="modal"
-                                                                            data-target="#DeleteModal"
-                                                                            onClick={() => setVehicleID(row.PropertyID)}
-                                                                            title="Delete"
-                                                                        >
-                                                                            <i className="fa fa-trash"></i>
-                                                                        </div>
+                                                                        {
+                                                                            !isLockOrRestrictModule("Lock", VehicleFilterData, isLocked, true) &&
+                                                                            <div
+                                                                                style={{
+                                                                                    backgroundColor: "#001f3f",
+                                                                                    color: "white",
+                                                                                    width: "36px",
+                                                                                    height: "36px",
+                                                                                    borderRadius: "50%",
+                                                                                    display: "flex",
+                                                                                    alignItems: "center",
+                                                                                    justifyContent: "center",
+                                                                                    cursor: "pointer",
+                                                                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                                                                                }}
+                                                                                data-toggle="modal"
+                                                                                data-target="#DeleteModal"
+                                                                                onClick={() => setVehicleID(row.PropertyID)}
+                                                                                title="Delete"
+                                                                            >
+                                                                                <i className="fa fa-trash"></i>
+                                                                            </div>
+                                                                        }
                                                                     </>
                                                             }
 

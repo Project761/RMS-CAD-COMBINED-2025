@@ -124,7 +124,6 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
         })
     }
 
-
     // new Grid List
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -138,7 +137,6 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
     const effectiveScreenPermission = useSelector((state) => state.Incident.effectiveScreenPermission);
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
     const loginPinID = localStoreData?.PINID || 0;
-
 
     useEffect(() => {
         if (!localStoreData?.AgencyID || !localStoreData?.PINID) {
@@ -165,12 +163,13 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
     useEffect(() => {
         if (DecIncID) {
             dispatch(get_PropertyMainModule_Data(DecIncID, MstPage === "MST-Property-Dash" ? true : false));
+            getPermissionLevelByLock(DecIncID, localStoreData?.PINID);
         }
     }, [DecIncID]);
 
     useEffect(() => {
         if (DecPropID && DecIncID && loginPinID) {
-            getPermissionLevelByLock(DecIncID, loginPinID, DecPropID);
+            // getPermissionLevelByLock(DecIncID, loginPinID);
         } else {
 
         }
@@ -218,7 +217,7 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                 setMasterPropertyID(row?.MasterPropertyID); dispatch({ type: MasterProperty_ID, payload: row?.MasterPropertyID });
                 setPropertyID(row?.PropertyID); dispatch({ type: Property_ID, payload: row.PropertyID });
                 // Lock Restrict
-                // getPermissionLevelByLock(DecIncID, localStoreData?.PINID, row?.PropertyID);
+                getPermissionLevelByLock(DecIncID, localStoreData?.PINID);
                 setShowPage('home')
             }
         }
@@ -291,9 +290,11 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
                 </div>
         }
     ]
-    console.log(delPropertyID)
+
+    // console.log(delPropertyID)
+
     const Delete_Property = () => {
-        console.log(delPropertyID, "hhfghfgh")
+        // console.log(delPropertyID, "hhfghfgh")
         const val = { 'PropertyID': delPropertyID, 'DeletedByUserFK': loginPinID, 'IsMaster': MstPage === "MST-Property-Dash" ? true : false, }
         AddDeleteUpadate('Property/Delete_Property', val).then((res) => {
             if (res) {
@@ -350,8 +351,9 @@ const Property_Tabs = ({ isCad = false, isViewEventDetails = false, isCADSearch 
             setIsLocked(false);
         }
     }
+
     const handleCardClick = (row) => {
-        console.log(row, "ASdasd")
+        // console.log(row, "ASdasd")
         if (!effectiveScreenPermission?.[0]?.Changeok) return;
         set_EditRow(row);
     };
