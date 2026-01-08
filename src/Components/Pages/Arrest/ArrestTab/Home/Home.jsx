@@ -1072,38 +1072,82 @@ const Home = ({ setShowJuvinile, setEditval, setShowPage, setResetErrors, setSho
                                     isClearable={false}
                                     selected={getValidDate(value?.ArrestDtTm)}
                                     autoComplete="Off"
-                                    //    ----------------------- old-------------------------
+                                    // onChange={(date) => {
+                                    //     if (!date) return;
+                                    //     const oldDate = getValidDate(value?.ArrestDtTm);
+                                    //     const isSameDay =
+                                    //         oldDate &&
+                                    //         date.getFullYear() === oldDate.getFullYear() &&
+                                    //         date.getMonth() === oldDate.getMonth() &&
+                                    //         date.getDate() === oldDate.getDate();
+                                    //     let finalDate = date;
+                                    //     if (!isSameDay) {
+                                    //         const inc = new Date(incReportedDate);
+                                    //         finalDate = new Date(
+                                    //             date.getFullYear(),
+                                    //             date.getMonth(),
+                                    //             date.getDate(),
+                                    //             inc.getHours(),
+                                    //             inc.getMinutes(),
+                                    //             0
+                                    //         );
+                                    //     }
+                                    //     if (finalDate > new Date(datezone)) {
+                                    //         finalDate = new Date(datezone);
+                                    //     }
+                                    //     if (finalDate <= new Date(incReportedDate)) {
+                                    //         finalDate = new Date(datezone);
+                                    //     }
+                                    //     // else {
+                                    //     //     finalDate = new Date(datezone);
+                                    //     // }
+                                    //     setArrestDate(getShowingMonthDateYear(finalDate));
+                                    //     setValue({
+                                    //         ...value,
+                                    //         ArrestDtTm: getShowingDateText(finalDate)
+                                    //     });
+                                    //     !addUpdatePermission && setChangesStatus(true);
+                                    //     !addUpdatePermission && setStatesChangeStatus(true);
+                                    // }}
                                     onChange={(date) => {
                                         if (!date) return;
+
                                         const oldDate = getValidDate(value?.ArrestDtTm);
+
                                         const isSameDay =
                                             oldDate &&
                                             date.getFullYear() === oldDate.getFullYear() &&
                                             date.getMonth() === oldDate.getMonth() &&
                                             date.getDate() === oldDate.getDate();
+
                                         let finalDate = date;
+
                                         if (!isSameDay) {
-                                            const inc = new Date(incReportedDate);
+                                            const max = new Date(datezone);
                                             finalDate = new Date(
                                                 date.getFullYear(),
                                                 date.getMonth(),
                                                 date.getDate(),
-                                                inc.getHours(),
-                                                inc.getMinutes(),
+                                                max.getHours(),
+                                                max.getMinutes(),
                                                 0
                                             );
                                         }
+
                                         if (finalDate > new Date(datezone)) {
                                             finalDate = new Date(datezone);
                                         }
+
                                         if (finalDate < new Date(incReportedDate)) {
                                             finalDate = new Date(incReportedDate);
                                         }
+
                                         setArrestDate(getShowingMonthDateYear(finalDate));
                                         setValue({
                                             ...value,
                                             ArrestDtTm: getShowingDateText(finalDate)
                                         });
+
                                         !addUpdatePermission && setChangesStatus(true);
                                         !addUpdatePermission && setStatesChangeStatus(true);
                                     }}
