@@ -15,8 +15,6 @@ const Nibrs_Report_Model = ({ show, setShow, handleModel }) => {
 
     const { GetDataTimeZone, datezone, } = useContext(AgencyContext);
 
-
-
     const localStoreData = useSelector((state) => state.Agency.localStoreData);
     const uniqueId = sessionStorage.getItem('UniqueUserID') ? Decrypt_Id_Name(sessionStorage.getItem('UniqueUserID'), 'UForUniqueUserID') : '';
     const dispatch = useDispatch();
@@ -33,7 +31,6 @@ const Nibrs_Report_Model = ({ show, setShow, handleModel }) => {
             if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
         }
     }, []);
-
 
     useEffect(() => {
         GetDataTimeZone(localStoreData?.AgencyID);
@@ -54,7 +51,6 @@ const Nibrs_Report_Model = ({ show, setShow, handleModel }) => {
             GetDataTimeZone(localStoreData?.AgencyID);
         }
     }, [localStoreData, show]);
-
 
     useEffect(() => {
         if (loginAgencyID) {
@@ -145,7 +141,6 @@ const Nibrs_Report_Model = ({ show, setShow, handleModel }) => {
             "dtpDateTo": dtpDateTo ? dtpDateTo : getShowingMonthDateYearNibReport(datezone),
             "chkStatetoSubmit": chkStatetoSubmit,
 
-
             "BaseDate": baseDate ? getShowingMonthDateYearNibReport(baseDate) : null,
             "strComputerName": uniqueId,
             "strORINumber": oriNumber,
@@ -174,7 +169,7 @@ const Nibrs_Report_Model = ({ show, setShow, handleModel }) => {
 
         });
 
-        const arr = [res[0]?.ErrorlogPath, res[0]?.NonReportablePath, res[0]?.SubmissionPath,].filter(Boolean);;
+        const arr = [res[0]?.ErrorlogPath, res[0]?.NonReportablePath, res[0]?.SubmissionPath,].filter(Boolean);
 
         const staticArr = [
             'https://apigoldline.com:5002/Imagefolder/WV0030100-1224E.txt',
@@ -202,7 +197,7 @@ const Nibrs_Report_Model = ({ show, setShow, handleModel }) => {
     }
 
     const downloadFile = async (fileUrl) => {
-        console.log("🚀 ~ downloadFile ~ fileUrl:", fileUrl);
+        // console.log("🚀 ~ downloadFile ~ fileUrl:", fileUrl);
         try {
             for (let i = 0; i < fileUrl?.length; i++) {
                 const originalUrl = fileUrl[0];
