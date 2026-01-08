@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
-import { Decrypt_Id_Name, getShowingDateText, getShowingWithOutTime, tableCustomStyles } from '../../Common/Utility'
+import { Decrypt_Id_Name, getShowingDateText, getShowingDateTextArrest, getShowingDateTextArrestAudit, getShowingWithOutTime, tableCustomStyles } from '../../Common/Utility'
 import { fetchPostData } from '../../hooks/Api'
 import ChangesModal from '../../Common/ChangesModal'
 import { useDispatch, useSelector } from 'react-redux'
@@ -109,8 +109,8 @@ const Log = ({ url, ParentId, para, scrCode, MstParentId, masterPara, IsMaster }
         {
             name: 'Change Date',
             selector: (row) => (
-                <span title={row.ChangeDate ? getShowingDateText(row.ChangeDate) : ' '}>
-                    {row.ChangeDate ? getShowingDateText(row.ChangeDate) : ' '}
+                <span title={row.ChangeDate ? getShowingDateTextArrestAudit(row.ChangeDate) : ' '}>
+                    {row.ChangeDate ? getShowingDateTextArrestAudit(row.ChangeDate) : ' '}
                 </span>
             ),
             sortable: true
