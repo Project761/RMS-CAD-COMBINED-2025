@@ -173,7 +173,9 @@ const Nibrs_Report_Model = ({ show, setShow, handleModel }) => {
             ErrorIncident: res[0]?.ErrorIncident,
 
         });
+
         const arr = [res[0]?.ErrorlogPath, res[0]?.NonReportablePath, res[0]?.SubmissionPath,];
+
         const staticArr = [
             'https://apigoldline.com:5002/Imagefolder/WV0030100-1224E.txt',
             'https://apigoldline.com:5002/Imagefolder/WV0030100-1224E.txt',
@@ -181,11 +183,13 @@ const Nibrs_Report_Model = ({ show, setShow, handleModel }) => {
 
         ];
 
+        // [
+        //     "",
+        //     "",
+        //     "https://rmsgoldline.com/Imagefolder/2658cbe7/WV0006000-0126S.txt"
+        // ]
+
         downloadFile(arr);
-
-
-
-
 
         setIsLoading(false);
     }
@@ -197,18 +201,24 @@ const Nibrs_Report_Model = ({ show, setShow, handleModel }) => {
         return url.replace(oldDomain, newDomain);
     }
 
-
     const downloadFile = async (fileUrl) => {
+        console.log("🚀 ~ downloadFile ~ fileUrl:", fileUrl);
         try {
             for (let i = 0; i < fileUrl?.length; i++) {
                 const originalUrl = fileUrl[0];
                 const lastSlashIndex = fileUrl[i].lastIndexOf('/');
                 const updatedUrl = replaceDomain(originalUrl);
 
-                FileSaver.saveAs(fileUrl[i], fileUrl[i]?.substring(lastSlashIndex + 1));
+                //  FileSaver.saveAs(fileUrl[i], fileUrl[i]?.substring(lastSlashIndex + 1));
+
+                if (originalUrl) {
+                    FileSaver.saveAs(fileUrl[i], fileUrl[i]?.substring(lastSlashIndex + 1));
+                }
+
             }
         } catch (error) {
             console.log("🚀 ~ downloadFile ~ error:", error);
+
         }
     };
 
