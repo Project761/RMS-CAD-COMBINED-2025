@@ -496,7 +496,7 @@ const Home = ({ setShowRecovered, setShowPage, status, setShowOtherTab, delPrope
 
   useEffect(() => {
     propertyLossCodeDrpData?.filter(val => {
-      console.log(propertyLossCodeDrpData)
+      // console.log(propertyLossCodeDrpData)
       if (val.value === value?.LossCodeID) {
         if (val.id === "RECD" || val.id === "STOL") {
           setShowRecovered(true);
