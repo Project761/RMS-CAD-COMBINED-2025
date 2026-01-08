@@ -3039,7 +3039,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
 
                 if (data) {
                     const victimError = data?.Victim && data?.Victim[0] ? data?.Victim[0] : [];
-                    console.log("🚀 ~ getNibrsErrorToolTip ~ victimError:", victimError);
+                    console.log("🚀 ~ getNibrsErrorToolTip ~ victimError:", victimError)
                     setnibrsFieldError(victimError);
                     if (victimError?.InjuryType) {
                         setShowInjuryTypeError(true);

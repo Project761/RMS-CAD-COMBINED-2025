@@ -147,6 +147,15 @@ const NibrsHome = () => {
     }
   }, [IncID])
 
+  // useEffect(() => {
+  //   if (incidentValidateNibrsData?.length === 0 && !offenseValidateNibrsData && !propertyValidateNibrsData && !offenderValidateNibrsData && !victimValidateNibrsData) {
+  //     if (IncID && IncNo && loginAgencyID) {
+  //       // call api to get incident validate after Refresh
+  //       validate_IncSideBar(IncID, IncNo, loginAgencyID);
+  //     }
+  //   }
+  // }, [IncID, IncNo, loginAgencyID, incidentValidateNibrsData]);
+
   const GetIncData = (incidentID) => {
     try {
       const val = { IncidentID: incidentID }
