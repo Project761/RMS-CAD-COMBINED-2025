@@ -20,6 +20,7 @@ import { components } from "react-select";
 import DatePicker from "react-datepicker";
 import ArresList from '../../../../../ShowAllList/ArrestList';
 import { classRegistry } from 'fabric';
+import DeleteModalCharge from '../../../../../../Common/DeleteModalCharge';
 
 const StatusOption = [
   { value: "A", label: "Attempted" },
@@ -115,6 +116,7 @@ const Charges = (props) => {
   const [propertyDrp, setPropertyDrp] = useState();
   const [propertyEditVal, setPropertyEditVal] = useState();
   const [categoryIdDrp, setCategoryIdDrp] = useState([]);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [value, setValue] = useState({
     AttemptComplete: 'N', // Default value for AttemptComplete
@@ -140,8 +142,6 @@ const Charges = (props) => {
       const storedVal = JSON.parse(localStorage.getItem('insertedArrestVal'));
       let arresteeID = storedVal?.ArresteeID
       if (!DecArrestId) { get_OffenseName_Data(arresteeID, true); }
-
-
     }
   }, [localStoreData]);
 
@@ -161,26 +161,27 @@ const Charges = (props) => {
     }
   }, [effectiveScreenPermission]);
 
-  useEffect(() => {
-    if (LoginAgencyID) {
-      const defaultDate = incReportedDate ? getShowingDateText(incReportedDate) : null;
-      setValue({ ...value, 'ChargeDateTime': defaultDate });
-    }
-  }, [LoginAgencyID, incReportedDate]);
+  // useEffect(() => {
+  //   if (LoginAgencyID) {
+  //     const defaultDate = incReportedDate ? getShowingDateText(incReportedDate) : null;
+  //     setValue({ ...value, 'ChargeDateTime': defaultDate });
+  //   }
+  // }, [LoginAgencyID, incReportedDate]);
 
   useEffect(() => {
     if (LoginAgencyID) {
+      const defaultDate = incReportedDate ? getShowingDateText(incReportedDate) : null;
       setValue({
         ...value,
         'IncidentID': DecEIncID, 'ArrestID': ArrestID, 'ChargeID': DecChargeId, 'CreatedByUserFK': LoginPinID, 'AgencyID': LoginAgencyID,
-        'Name': Name, 'IncidentNumber': IncNo, 'ArrestNumber': ArrNo, 'LawTitleId': '', 'AttemptComplete': '',
+        'Name': Name, 'IncidentNumber': IncNo, 'ArrestNumber': ArrNo, 'LawTitleId': '', 'AttemptComplete': '', 'ChargeDateTime': defaultDate
       });
       // get_Data_Arrest_Charge(DecArrestId);
       if (!incReportedDate) { dispatch(get_Inc_ReportedDate(IncID)); }
       // get_Property_Data(ArrestID);
       if (DecArrestId) { get_Data_Arrest_Charge(DecArrestId); }
       // setArrestID(ArrestID);
-      get_Property_DropDown(DecEIncID);
+      // get_Property_DropDown(DecEIncID);
       if (UCRClearDrpData?.length === 0) { dispatch(get_UcrClear_Drp_Data(LoginAgencyID)); }
       // lawTitle
       LawTitleIdDrpDwnVal(LoginAgencyID, null);
@@ -191,7 +192,7 @@ const Charges = (props) => {
       // charge code
       get_ChargeCode_Drp_Data(LoginAgencyID, null, null);
     }
-  }, [LoginAgencyID]);
+  }, [LoginAgencyID, incReportedDate]);
 
   useEffect(() => {
     if (ChargeID) {
@@ -203,6 +204,7 @@ const Charges = (props) => {
   useEffect(() => {
     if (DecArrestId) {
       get_Property_Data(DecArrestId); get_Security_Data(DecArrestId); get_Security_DropDown(DecArrestId);
+      get_Data_Arrest_Charge(DecArrestId); get_Arrest_Count(DecArrestId);
     }
   }, [DecArrestId])
 
@@ -219,10 +221,18 @@ const Charges = (props) => {
   }, [NameId])
 
   useEffect(() => {
-    if (DecArrestId) {
-      get_Data_Arrest_Charge(DecArrestId); get_Arrest_Count(DecArrestId);
+    if (DecChargeId) {
+      GetSingleDataCharge(DecChargeId);
+    } else {
+      Reset()
     }
-  }, [DecArrestId])
+  }, [DecChargeId]);
+
+  // useEffect(() => {
+  //   if (DecArrestId) {
+  //     get_Data_Arrest_Charge(DecArrestId); get_Arrest_Count(DecArrestId);
+  //   }
+  // }, [DecArrestId])
 
 
   const isDuplicateCharge = () => {
@@ -270,23 +280,11 @@ const Charges = (props) => {
 
 
 
-
-  useEffect(() => {
-    if (DecChargeId) {
-      GetSingleDataCharge(DecChargeId);
-    } else {
-      Reset()
-    }
-  }, [DecChargeId]);
-
-
-
   const Reset = () => {
     setEditval([]);
     setValue({ ...value, 'CreatedByUserFK': '', 'Count': '', 'ChargeCodeID': '', 'NIBRSID': '', 'UCRClearID': '', 'WarrantID': '', 'LawTitleId': '', 'AttemptComplete': '', 'CategoryId': '', 'OffenseDateTime': '', });
     setStatesChangeStatus(false); setChangesStatus(false); setErrors({});
     // setMultiSelected([]); setMultiSelected(prevValues => { return { ...prevValues, ['PropertyID']: '' } })
-
     // lawTitle
     LawTitleIdDrpDwnVal(LoginAgencyID, null);
     // nibrs code
@@ -370,11 +368,9 @@ const Charges = (props) => {
   const onChangeDrpLawTitle = async (e, name) => {
     !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
     if (e) {
-
       if (name === "LawTitleId") {
         setValue({ ...value, ['LawTitleId']: e.value, ['NIBRSID']: null, ['ChargeCodeID']: null, });
         setChargeCodeDrp([]); setNIBRSDrpData([]);
-
         // nibrs code 
         get_NIBRS_Drp_Data(LoginAgencyID, e.value);
         // charge code
@@ -384,32 +380,25 @@ const Charges = (props) => {
         // getCategory
         setCategoryIdDrp([])
         get_CategoryId_Drp(LoginAgencyID, e.id);
-
         const res = await getLawTitleNibrsByCharge(LoginAgencyID, value?.LawTitleId, e.value, e.id);
-
       } else {
         setValue({ ...value, [name]: e.value });
-
       }
     } else {
       if (name === "LawTitleId") {
         setValue({ ...value, ['LawTitleId']: null, ['NIBRSID']: '', ['ChargeCodeID']: null, });
         setChargeCodeDrp([]); setNIBRSDrpData([]);
-
         //law title
         LawTitleIdDrpDwnVal(LoginAgencyID, null);
         // nibrs code
         get_NIBRS_Drp_Data(LoginAgencyID, null);
         //offence code 
         get_ChargeCode_Drp_Data(LoginAgencyID, null, null);
-
       } else if (name === 'ChargeCodeID') {
-
         setValue({ ...value, ['ChargeCodeID']: null, ['CategoryId']: null });
         // getCategory
         setCategoryIdDrp([])
         // get_CategoryId_Drp(loginAgencyID, null);
-
       } else {
         setValue({ ...value, [name]: null });
       }
@@ -447,10 +436,6 @@ const Charges = (props) => {
     }
   }
 
-  const HandleChange = (e) => {
-    setValue({ ...value, [e.target.name]: e.target.value, });
-    setChangesStatus(true); setStatesChangeStatus(true)
-  };
 
   const handlcount = (e) => {
     !addUpdatePermission && setStatesChangeStatus(true); !addUpdatePermission && setChangesStatus(true);
@@ -490,7 +475,6 @@ const Charges = (props) => {
   //-----------------------------------------------ChargeTab----------------------------------------------------
   useEffect(() => {
     if (Editval) {
-      console.log(Editval)
       setValue({
         ...value,
         'UCRClearID': Editval[0]?.UCRClearID || Editval?.UCRClearID, 'CategoryId': Editval[0]?.CategoryId || Editval?.CategoryId,
@@ -524,9 +508,7 @@ const Charges = (props) => {
       fetchPostData('ArrestCharge/GetSingleData_ArrestCharge', val).then((res) => {
         if (res) {
           setEditval(res);
-        } else {
-          setEditval([]);
-        }
+        } else { setEditval([]); }
       });
     } else {
       const localChargeData = JSON.parse(sessionStorage.getItem('ChargeLocalData')) || [];
@@ -541,17 +523,8 @@ const Charges = (props) => {
 
   const SyncLocalChargesToServer = async (ArrestID, DecEIncID, loginPinID, LoginAgencyID, ChargeLocalArr, setChargeLocalArr, get_Arrest_Count, get_Data_Arrest_Charge) => {
     if (!ArrestID || !ChargeLocalArr?.length) return;
-    console.log(ChargeLocalArr)
-
     const chargeValue = ChargeLocalArr.filter(data => !data.OffenseID);
-    console.log(chargeValue);
-
-    console.log(chargeValue)
-
     for (let charge of chargeValue) {
-
-      console.log(charge, 'hello1')
-
       const val = {
         ...charge, ChargeID: null, ArrestID, IncidentID: DecEIncID, CreatedByUserFK: LoginPinID, AgencyID: LoginAgencyID,
       };
@@ -562,237 +535,156 @@ const Charges = (props) => {
     setChargeLocalArr([]); sessionStorage.removeItem('ChargeLocalData'); get_Arrest_Count(ArrestID); get_Data_Arrest_Charge(ArrestID);
   };
 
-
   const insert_Arrest_Data = async () => {
-    if (ChargeLocalArr?.length === 0 && tabCountArrest?.ChargeCount === 0 && arrestChargeData.length === 0) {
+    if (isSaving) return;
+    if (ChargeLocalArr?.length === 0 && tabCountArrest?.ChargeCount === 0 && arrestChargeData.length === 0
+    ) {
       toastifyError("Please add at least one charge");
       return;
     }
+    setIsSaving(true);
     const storedVal = JSON.parse(localStorage?.getItem('insertedArrestVal'));
-    AddDeleteUpadate('Arrest/Insert_Arrest', storedVal).then(async (res) => {
+    try {
+      const res = await AddDeleteUpadate('Arrest/Insert_Arrest', storedVal);
       if (res?.success) {
         const newArrestID = res.ArrestID;
         setChargeLocalArr([]);
         sessionStorage.removeItem('ChargeLocalData');
         await SyncLocalChargesToServer(newArrestID, DecEIncID, LoginPinID, LoginAgencyID, ChargeLocalArr, setChargeLocalArr, get_Arrest_Count, get_Data_Arrest_Charge);
-        console.log(res?.ArrestID)
         toastifySuccess(res?.Message);
-        setArrestID(res?.ArrestID); get_Data_Arrest(DecEIncID, MstPage === "MST-Arrest-Dash" ? true : false, LoginPinID);
-        navigate(
-          `/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(
-            res?.ArrestID
-          )}&ArrNo=${res?.ArrestNumber}&Name=${ArresteName}&ArrestSta=${true}&ChargeSta=${false}`
+        setArrestID(res?.ArrestID); get_Data_Arrest(DecEIncID, MstPage === "MST-Arrest-Dash", LoginPinID);
+        navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${stringToBase64(
+          res?.ArrestID)}&ArrNo=${res?.ArrestNumber}&Name=${ArresteName}&ArrestSta=${true}&ChargeSta=${false}`
         );
         get_Incident_Count(DecEIncID); GetSingleData(res.ArrestID, DecEIncID);
       }
-    });
-  };
-
-  // const Add_Charge_Data = (MainArrestID) => {
-  //   const { Count, ChargeCodeID, NIBRSID, UCRClearID, Name, LawTitleId, AttemptComplete, CategoryId, OffenseDateTime } = value;
-  //   const newCharge = {
-  //     ...value, Count, ChargeCodeID, NIBRSID, UCRClearID, Name, LawTitleId, AttemptComplete, CategoryId, OffenseDateTime
-  //   };
-  //   if (MainArrestID || DecArrestId) {
-  //     const val = { ...newCharge, ChargeID: DecChargeId, ArrestID: MainArrestID || DecArrestId, };
-  //     AddDeleteUpadate('ArrestCharge/Insert_ArrestCharge', val).then((res) => {
-  //       if (res.success) {
-  //         const parsedData = JSON.parse(res.data);
-  //         const message = parsedData.Table[0].Message;
-  //         toastifySuccess(message); get_Arrest_Count(MainArrestID || DecArrestId);
-  //         Reset(); get_Data_Arrest_Charge(MainArrestID || DecArrestId);
-  //         setChargeID(res.ChargeID); get_Incident_Count(DecEIncID); get_Data_Arrest(DecEIncID, LoginPinID);
-  //         setChangesStatus(false); get_ArrestCharge_Count(ChargeID); setStatesChangeStatus(false);
-  //         setUpdateCount(updateCount + 1);
-  //         setErrors({ ...errors, ['ChargeCodeIDError']: '' });
-  //         // lawTitle
-  //         LawTitleIdDrpDwnVal(LoginAgencyID, null);
-  //         // nibrs code
-  //         get_NIBRS_Drp_Data(LoginAgencyID, null);
-  //         // charge code
-  //         get_ChargeCode_Drp_Data(LoginAgencyID, null, null);
-  //       }
-  //     });
-  //   } else {
-  //     const localCharge = {
-  //       ...newCharge,
-  //       ChargeID: `local-${Date.now()}`,
-  //       ArrestID: null,
-  //       NIBRS_Description: NIBRSDrpData?.find(x => x.value === NIBRSID)?.label || '',
-  //       ChargeCode_Description: chargeCodeDrp?.find(x => x.value === ChargeCodeID)?.label || '',
-  //       LawTitle_Description: lawTitleIdDrp?.find(x => x.value === LawTitleId)?.label || '',
-  //       CategoryId_Description: categoryIdDrp?.find(x => x.value === CategoryId)?.label || '',
-  //       UCRClearID_Description: UCRClearDrpData?.find(x => x.value === UCRClearID)?.label || '',
-  //       AttemptComplete: AttemptComplete, OffenseDateTime: OffenseDateTime, Count: Count, Name: Name,
-
-  //     };
-  //     const isDuplicate = ChargeLocalArr?.some(item =>
-  //       item.ChargeCodeID === localCharge.ChargeCodeID &&
-  //       item.NIBRSID === localCharge.NIBRSID
-  //     );
-  //     if (isDuplicate) {
-  //       toastifyError('This charge already exists locally.');
-  //       setErrors({ ...errors, ['ChargeCodeIDError']: '' });
-  //     }
-  //     const updatedLocalCharges = [...ChargeLocalArr, localCharge];
-  //     setChargeLocalArr(updatedLocalCharges);
-  //     sessionStorage.setItem('ChargeLocalData', JSON.stringify(updatedLocalCharges));
-  //     Reset(); setChangesStatus(false); setStatesChangeStatus(false);
-  //   }
-  // };
-
-  const Add_Charge_Data = () => {
-    const { Count, ChargeCodeID, NIBRSID, UCRClearID, Name, LawTitleId, AttemptComplete, CategoryId, OffenseDateTime, IncidentID } = value;
-    const newCharge = {
-      ...value, Count, ChargeCodeID, NIBRSID, UCRClearID, Name, LawTitleId, AttemptComplete, CategoryId, OffenseDateTime, IncidentID
-    };
-    if (ArrestID || DecArrestId) {
-      const val = { ...newCharge, ChargeID: DecChargeId, ArrestID: ArrestID || DecArrestId, IncidentID: DecEIncID };
-      AddDeleteUpadate('ArrestCharge/Insert_ArrestCharge', val).then((res) => {
-        if (res.success) {
-          const parsedData = JSON.parse(res.data);
-          const message = parsedData.Table[0].Message;
-          toastifySuccess(message); get_Arrest_Count(ArrestID || DecArrestId);
-          get_Data_Arrest_Charge(ArrestID || DecArrestId); get_ArrestCharge_Count(DecChargeId);
-          Reset(); setChangesStatus(false); setStatesChangeStatus(false);
-          setUpdateCount(updateCount + 1);
-          setErrors({ ...errors, ['ChargeCodeIDError']: '', });
-          get_Data_Arrest(DecEIncID, MstPage === "MST-Arrest-Dash" ? true : false, LoginPinID);
-          // Reload dropdowns
-          LawTitleIdDrpDwnVal(LoginAgencyID, null);
-          get_NIBRS_Drp_Data(LoginAgencyID, null);
-          get_ChargeCode_Drp_Data(LoginAgencyID, null, null);
-        }
-      });
-    } else {
-      const localCharge = {
-        ...newCharge,
-        ChargeID: `local-${Date.now()}`,
-        ArrestID: null,
-        NIBRS_Description: NIBRSDrpData?.find(x => x.value === NIBRSID)?.label || '',
-        ChargeCode_Description: chargeCodeDrp?.find(x => x.value === ChargeCodeID)?.label || '',
-        LawTitle_Description: lawTitleIdDrp?.find(x => x.value === LawTitleId)?.label || '',
-        CategoryId_Description: categoryIdDrp?.find(x => x.value === CategoryId)?.label || '',
-        UCRClearID_Description: UCRClearDrpData?.find(x => x.value === UCRClearID)?.label || '',
-        AttemptComplete: AttemptComplete, OffenseDateTime: OffenseDateTime, Count: Count, Name: Name,
-      };
-      const isDuplicate = ChargeLocalArr?.some(item =>
-        item.ChargeCodeID === localCharge.ChargeCodeID &&
-        item.NIBRSID === localCharge.NIBRSID
-      );
-      if (isDuplicate) {
-        toastifyError('This charge already exists locally.');
-        return;
-      }
-      const updatedLocalCharges = [...ChargeLocalArr, localCharge];
-      setChargeLocalArr(updatedLocalCharges); sessionStorage.setItem('ChargeLocalData', JSON.stringify(updatedLocalCharges));
-      Reset(); setChangesStatus(false); setStatesChangeStatus(false);
-      setArrestChargeData(updatedLocalCharges)
+    } catch (error) {
+      toastifyError("Something went wrong");
+    } finally {
+      setIsSaving(false);
     }
   };
 
-  // const update_Arrest_Charge = () => {
-  //   const { Count, ChargeCodeID, NIBRSID, UCRClearID, Name, LawTitleId, AttemptComplete, CategoryId, OffenseDateTime } = value;
-  //   if (DecArrestId) {
-  //     const val = {
-  //       'IncidentID': DecEIncID, 'ArrestID': DecArrestId, 'ChargeID': ChargeID, 'ModifiedByUserFK': LoginPinID, 'AgencyID': LoginAgencyID, 'Name': Name, 'IncidentNumber': IncNo, 'ArrestNumber': ArrNo, 'UCRClearID': UCRClearID, 'ChargeCodeID': ChargeCodeID, 'NIBRSID': NIBRSID, 'Count': Count,
-  //       'LawTitleId': LawTitleId, 'AttemptComplete': AttemptComplete, 'CategoryId': CategoryId, 'OffenseDateTime': OffenseDateTime
-  //     };
-  //     AddDeleteUpadate('ArrestCharge/Update_ArrestCharge', val).then((res) => {
-  //       const parsedData = JSON.parse(res.data);
-  //       const message = parsedData.Table[0].Message;
-  //       toastifySuccess(message); setStatesChangeStatus(false);
-  //       get_Data_Arrest_Charge(DecArrestId); setErrors({ ...errors, ['ChargeCodeIDError']: '' }); setChangesStatus(false);
-  //       // lawTitle
-  //       LawTitleIdDrpDwnVal(LoginAgencyID, null); get_Incident_Count(DecEIncID);
-  //       // nibrs code
-  //       get_NIBRS_Drp_Data(LoginAgencyID, null);
-  //       // charge code
-  //       get_ChargeCode_Drp_Data(LoginAgencyID, null, null);
-  //     });
-  //   } else {
-  //     const updatedCharges = ChargeLocalArr.map(charge => {
-  //       if (charge.ChargeID === DecChargeId) {
-  //         return {
-  //           ...charge, ChargeCodeID,
-  //           NIBRS_Description: NIBRSDrpData?.find(x => x.value === NIBRSID)?.label || '',
-  //           ChargeCode_Description: chargeCodeDrp?.find(x => x.value === ChargeCodeID)?.label || '',
-  //           LawTitle_Description: lawTitleIdDrp?.find(x => x.value === LawTitleId)?.label || '',
-  //           CategoryId_Description: categoryIdDrp?.find(x => x.value === CategoryId)?.label || '',
-  //           UCRClearID_Description: UCRClearDrpData?.find(x => x.value === UCRClearID)?.label || '',
-  //           AttemptComplete: AttemptComplete, OffenseDateTime: OffenseDateTime, Count: Count, Count: Count, Name: Name,
-  //         };
-  //       }
-  //       return charge;
-  //     });
-  //     setChargeLocalArr(updatedCharges);
-  //     sessionStorage.setItem('ChargeLocalData', JSON.stringify(updatedCharges));
-  //     setStatesChangeStatus(false); setChangesStatus(false); setErrors({ ...errors, ['ChargeCodeIDError']: '' });
-  //     LawTitleIdDrpDwnVal(LoginAgencyID, null);
-  //     get_NIBRS_Drp_Data(LoginAgencyID, null);
-  //     get_ChargeCode_Drp_Data(LoginAgencyID, null, null);
-  //   }
-  // };
-  console.log(DecArrestId)
-  console.log(ArrestID)
+  const Add_Charge_Data = () => {
+    try {
+      const { Count, ChargeCodeID, NIBRSID, UCRClearID, Name, LawTitleId, AttemptComplete, CategoryId, OffenseDateTime, IncidentID } = value;
+      const newCharge = {
+        ...value, Count, ChargeCodeID, NIBRSID, UCRClearID, Name, LawTitleId, AttemptComplete, CategoryId, OffenseDateTime, IncidentID
+      };
+      if (ArrestID || DecArrestId) {
+        const val = { ...newCharge, ChargeID: DecChargeId, ArrestID: ArrestID || DecArrestId, IncidentID: DecEIncID };
+        AddDeleteUpadate('ArrestCharge/Insert_ArrestCharge', val).then((res) => {
+          if (res.success) {
+            const parsedData = JSON.parse(res.data);
+            const message = parsedData.Table[0].Message;
+            toastifySuccess(message); get_Arrest_Count(ArrestID || DecArrestId);
+            get_Data_Arrest_Charge(ArrestID || DecArrestId); get_ArrestCharge_Count(DecChargeId);
+            Reset(); setChangesStatus(false); setStatesChangeStatus(false);
+            setUpdateCount(updateCount + 1);
+            setErrors({ ...errors, ['ChargeCodeIDError']: '', });
+            get_Data_Arrest(DecEIncID, MstPage === "MST-Arrest-Dash" ? true : false, LoginPinID);
+            // Reload dropdowns
+            LawTitleIdDrpDwnVal(LoginAgencyID, null);
+            get_NIBRS_Drp_Data(LoginAgencyID, null);
+            get_ChargeCode_Drp_Data(LoginAgencyID, null, null);
+          }
+        });
+      } else {
+        const localCharge = {
+          ...newCharge,
+          ChargeID: `local-${Date.now()}`,
+          ArrestID: null,
+          NIBRS_Description: NIBRSDrpData?.find(x => x.value === NIBRSID)?.label || '',
+          ChargeCode_Description: chargeCodeDrp?.find(x => x.value === ChargeCodeID)?.label || '',
+          LawTitle_Description: lawTitleIdDrp?.find(x => x.value === LawTitleId)?.label || '',
+          CategoryId_Description: categoryIdDrp?.find(x => x.value === CategoryId)?.label || '',
+          UCRClearID_Description: UCRClearDrpData?.find(x => x.value === UCRClearID)?.label || '',
+          AttemptComplete: AttemptComplete, OffenseDateTime: OffenseDateTime, Count: Count, Name: Name,
+        };
+        const isDuplicate = ChargeLocalArr?.some(item =>
+          item.ChargeCodeID === localCharge.ChargeCodeID &&
+          item.NIBRSID === localCharge.NIBRSID
+        );
+        if (isDuplicate) {
+          toastifyError('This charge already exists locally.');
+          return;
+        }
+        const updatedLocalCharges = [...ChargeLocalArr, localCharge];
+        setChargeLocalArr(updatedLocalCharges); sessionStorage.setItem('ChargeLocalData', JSON.stringify(updatedLocalCharges));
+        Reset(); setChangesStatus(false); setStatesChangeStatus(false);
+        setArrestChargeData(updatedLocalCharges)
+      }
+    } catch (error) {
+      console.error('Add_Charge_Data Error:', error);
+      toastifyError('Something went wrong while saving the charge.');
+    }
+  };
 
   const update_Arrest_Charge = () => {
-    const { Count, ChargeCodeID, NIBRSID, UCRClearID, Name, LawTitleId, AttemptComplete, CategoryId, OffenseDateTime } = value;
-    if (DecArrestId) {
-      const val = {
-        'IncidentID': DecEIncID, 'ArrestID': DecArrestId, 'ChargeID': ChargeID, 'ModifiedByUserFK': LoginPinID, 'AgencyID': LoginAgencyID, 'Name': Name, 'IncidentNumber': IncNo, 'ArrestNumber': ArrNo, 'UCRClearID': UCRClearID, 'ChargeCodeID': ChargeCodeID, 'NIBRSID': NIBRSID, 'Count': Count,
-        'LawTitleId': LawTitleId, 'AttemptComplete': AttemptComplete, 'CategoryId': CategoryId, 'OffenseDateTime': OffenseDateTime
-      };
-      AddDeleteUpadate('ArrestCharge/Update_ArrestCharge', val).then((res) => {
-        const parsedData = JSON.parse(res.data);
-        const message = parsedData.Table[0].Message;
-        toastifySuccess(message);
+    try {
+      const { Count, ChargeCodeID, NIBRSID, UCRClearID, Name, LawTitleId, AttemptComplete, CategoryId, OffenseDateTime } = value;
+      if (DecArrestId) {
+        const val = {
+          'IncidentID': DecEIncID, 'ArrestID': DecArrestId, 'ChargeID': ChargeID, 'ModifiedByUserFK': LoginPinID, 'AgencyID': LoginAgencyID, 'Name': Name, 'IncidentNumber': IncNo, 'ArrestNumber': ArrNo, 'UCRClearID': UCRClearID, 'ChargeCodeID': ChargeCodeID, 'NIBRSID': NIBRSID, 'Count': Count,
+          'LawTitleId': LawTitleId, 'AttemptComplete': AttemptComplete, 'CategoryId': CategoryId, 'OffenseDateTime': OffenseDateTime
+        };
+        AddDeleteUpadate('ArrestCharge/Update_ArrestCharge', val).then((res) => {
+          const parsedData = JSON.parse(res.data);
+          const message = parsedData.Table[0].Message;
+          toastifySuccess(message);
+          setStatesChangeStatus(false); setChangesStatus(false);
+          get_Data_Arrest_Charge(DecArrestId); setErrors({ ...errors, ['ChargeCodeIDError']: '', });
+          LawTitleIdDrpDwnVal(LoginAgencyID, null);
+          get_NIBRS_Drp_Data(LoginAgencyID, null);
+          get_ChargeCode_Drp_Data(LoginAgencyID, null, null);
+        });
+      } else {
+        const updatedCharges = ChargeLocalArr.map(charge => {
+          if (charge.ChargeID === DecChargeId) {
+            return {
+              ...charge, ChargeCodeID,
+              NIBRS_Description: NIBRSDrpData?.find(x => x.value === NIBRSID)?.label || '',
+              ChargeCode_Description: chargeCodeDrp?.find(x => x.value === ChargeCodeID)?.label || '',
+              LawTitle_Description: lawTitleIdDrp?.find(x => x.value === LawTitleId)?.label || '',
+              CategoryId_Description: categoryIdDrp?.find(x => x.value === CategoryId)?.label || '',
+              UCRClearID_Description: UCRClearDrpData?.find(x => x.value === UCRClearID)?.label || '',
+              AttemptComplete: AttemptComplete, OffenseDateTime: OffenseDateTime, Count: Count, Name: Name,
+            };
+          }
+          return charge;
+        });
+        setChargeLocalArr(updatedCharges);
+        sessionStorage.setItem('ChargeLocalData', JSON.stringify(updatedCharges));
         setStatesChangeStatus(false);
         setChangesStatus(false);
-        get_Data_Arrest_Charge(DecArrestId);
         setErrors({ ...errors, ['ChargeCodeIDError']: '', });
         LawTitleIdDrpDwnVal(LoginAgencyID, null);
         get_NIBRS_Drp_Data(LoginAgencyID, null);
         get_ChargeCode_Drp_Data(LoginAgencyID, null, null);
-      });
-    } else {
-      const updatedCharges = ChargeLocalArr.map(charge => {
-        if (charge.ChargeID === DecChargeId) {
-          return {
-            ...charge, ChargeCodeID,
-            NIBRS_Description: NIBRSDrpData?.find(x => x.value === NIBRSID)?.label || '',
-            ChargeCode_Description: chargeCodeDrp?.find(x => x.value === ChargeCodeID)?.label || '',
-            LawTitle_Description: lawTitleIdDrp?.find(x => x.value === LawTitleId)?.label || '',
-            CategoryId_Description: categoryIdDrp?.find(x => x.value === CategoryId)?.label || '',
-            UCRClearID_Description: UCRClearDrpData?.find(x => x.value === UCRClearID)?.label || '',
-            AttemptComplete: AttemptComplete, OffenseDateTime: OffenseDateTime, Count: Count, Name: Name,
-          };
-        }
-        return charge;
-      });
-      setChargeLocalArr(updatedCharges);
-      sessionStorage.setItem('ChargeLocalData', JSON.stringify(updatedCharges));
-      setStatesChangeStatus(false);
-      setChangesStatus(false);
-      setErrors({ ...errors, ['ChargeCodeIDError']: '', });
-      LawTitleIdDrpDwnVal(LoginAgencyID, null);
-      get_NIBRS_Drp_Data(LoginAgencyID, null);
-      get_ChargeCode_Drp_Data(LoginAgencyID, null, null);
+      }
+    } catch (error) {
+      console.error('Update_Charge_Data Error:', error);
+      toastifyError('Something went wrong while Update the charge.');
     }
   };
 
 
 
   const DeleteArrestCharge = () => {
-    const val = { 'ChargeID': ChargeID, 'DeletedByUserFK': LoginPinID }
-    AddDeleteUpadate('ArrestCharge/Delete_ArrestCharge', val).then((res) => {
-      if (res) {
-        const parsedData = JSON.parse(res.data);
-        const message = parsedData.Table[0].Message;
-        toastifySuccess(message); get_Data_Arrest_Charge(DecArrestId); get_Arrest_Count(ArrestID);
-        Reset(); get_ArrestCharge_Count(ChargeID); setErrors(''); setStatusFalse(); get_Incident_Count(DecEIncID);
-      } else { console.log("Somthing Wrong"); }
-    })
+    try {
+      const val = { 'ChargeID': ChargeID, 'DeletedByUserFK': LoginPinID }
+      AddDeleteUpadate('ArrestCharge/Delete_ArrestCharge', val).then((res) => {
+        if (res) {
+          const parsedData = JSON.parse(res.data);
+          const message = parsedData.Table[0].Message;
+          toastifySuccess(message); get_Data_Arrest_Charge(DecArrestId); get_Arrest_Count(ArrestID);
+          Reset(); get_ArrestCharge_Count(ChargeID); setErrors(''); setStatusFalse(); get_Incident_Count(DecEIncID);
+        } else { console.log("Somthing Wrong"); }
+      });
+    } catch (error) {
+      console.error('Delete_Charge_Data Error:', error);
+      toastifyError('Something went wrong while Delete the charge.');
+    }
   }
 
   const columns = [
@@ -824,7 +716,7 @@ const Charges = (props) => {
               onClick={() => { setChargeID(row.ChargeID); }}
               className="btn btn-sm bg-green text-white px-1 py-0 mr-1"
               data-toggle="modal"
-              data-target="#DeleteModal"
+              data-target="#DeleteModalCharge"
             >
               <i className="fa fa-trash"></i>
             </span>
@@ -929,19 +821,22 @@ const Charges = (props) => {
   }, [typeOfSecurityEditVal])
 
   const typeofsecurity = (multiSelected) => {
-    setMultiSelected({ ...multiSelected, ChargeWeaponTypeID: multiSelected })
-    const len = multiSelected.length - 1
-    if (multiSelected?.length < typeOfSecurityEditVal?.length) {
-      let missing = null;
-      let i = typeOfSecurityEditVal.length;
-      while (i) {
-        missing = (~multiSelected.indexOf(typeOfSecurityEditVal[--i])) ? missing : typeOfSecurityEditVal[i];
+    try {
+      setMultiSelected({ ...multiSelected, ChargeWeaponTypeID: multiSelected })
+      const len = multiSelected.length - 1
+      if (multiSelected?.length < typeOfSecurityEditVal?.length) {
+        let missing = null;
+        let i = typeOfSecurityEditVal.length;
+        while (i) {
+          missing = (~multiSelected.indexOf(typeOfSecurityEditVal[--i])) ? missing : typeOfSecurityEditVal[i];
+        }
+        DelSertBasicInfo(missing.value, 'ChargeWeaponID', 'ChargeWeaponType/Delete_ChargeWeaponType')
+      } else {
+        InSertBasicInfo(multiSelected[len].value, 'ChargeWeaponTypeID', 'ChargeWeaponType/Insert_ChargeWeaponType')
       }
-      DelSertBasicInfo(missing.value, 'ChargeWeaponID', 'ChargeWeaponType/Delete_ChargeWeaponType')
-    } else {
-      InSertBasicInfo(multiSelected[len].value, 'ChargeWeaponTypeID', 'ChargeWeaponType/Insert_ChargeWeaponType')
+    } catch (error) {
+      console.error('Error in typeofsecurity:', error);
     }
-
   }
 
   const get_Security_Data = (ArrestID) => {
@@ -979,17 +874,44 @@ const Charges = (props) => {
     })
   }
 
-  const InSertBasicInfo = (id, col1, url) => {
-    const val = { 'ArrestID': DecArrestId, [col1]: id, 'CreatedByUserFK': LoginPinID, }
-    AddDeleteUpadate(url, val).then((res) => {
-      if (res) {
-        const parsedData = JSON.parse(res.data);
-        const message = parsedData.Table[0].Message;
-        toastifySuccess(message);
-        col1 === 'ChargeWeaponTypeID' && get_Security_Data(DecArrestId); get_ArrestCharge_Count(ChargeID); get_Security_DropDown(DecArrestId);
-      } else { console.log("Somthing Wrong"); }
-    })
-  }
+  // const InSertBasicInfo = (id, col1, url) => {
+  //   const val = { 'ArrestID': DecArrestId, [col1]: id, 'CreatedByUserFK': LoginPinID, }
+  //   AddDeleteUpadate(url, val).then((res) => {
+  //     if (res) {
+  //       const parsedData = JSON.parse(res.data);
+  //       const message = parsedData.Table[0].Message;
+  //       toastifySuccess(message);
+  //       col1 === 'ChargeWeaponTypeID' && get_Security_Data(DecArrestId); get_ArrestCharge_Count(ChargeID); get_Security_DropDown(DecArrestId);
+  //     } else { console.log("Somthing Wrong"); }
+  //   })
+  // }
+
+
+  const InSertBasicInfo = async (id, col1, url) => {
+    try {
+      const val = {
+        ArrestID: DecArrestId,
+        [col1]: id,
+        CreatedByUserFK: LoginPinID,
+      };
+      const res = await AddDeleteUpadate(url, val);
+      if (!res) {
+        console.log("Something went wrong");
+        return;
+      }
+      const parsedData = JSON.parse(res.data);
+      const message = parsedData?.Table?.[0]?.Message;
+      message && toastifySuccess(message);
+      if (col1 === 'ChargeWeaponTypeID') {
+        get_Security_Data(DecArrestId);
+        get_ArrestCharge_Count(ChargeID);
+        get_Security_DropDown(DecArrestId);
+      }
+
+    } catch (error) {
+      console.error('Error in InSertBasicInfo:', error);
+    }
+  };
 
   const DelSertBasicInfo = (ChargeWeaponID, col1, url) => {
     const val = { [col1]: ChargeWeaponID, 'DeletedByUserFK': LoginPinID, }
@@ -1055,58 +977,123 @@ const Charges = (props) => {
   }
 
   const Property = (multiSelected) => {
-    setMultiSelected({
-      ...multiSelected,
-      PropertyID: multiSelected
-    })
-    const len = multiSelected.length - 1
-    if (multiSelected?.length < propertyEditVal?.length) {
-      let missing = null;
-      let i = propertyEditVal.length;
-      while (i) {
-        missing = (~multiSelected.indexOf(propertyEditVal[--i])) ? missing : propertyEditVal[i];
+    try {
+      setMultiSelected({
+        ...multiSelected,
+        PropertyID: multiSelected
+      })
+      const len = multiSelected.length - 1
+      if (multiSelected?.length < propertyEditVal?.length) {
+        let missing = null;
+        let i = propertyEditVal.length;
+        while (i) {
+          missing = (~multiSelected.indexOf(propertyEditVal[--i])) ? missing : propertyEditVal[i];
+        }
+        DelSertBasicInfopro(missing.value, 'ArrestPropertyID', 'ArrestProperty/Delete_ArrestProperty')
+      } else {
+        InSertBasicInfopro(multiSelected[len].value, 'PropertyID', 'ArrestProperty/Insert_ArrestProperty')
       }
-      DelSertBasicInfopro(missing.value, 'ArrestPropertyID', 'ArrestProperty/Delete_ArrestProperty')
-    } else {
-      InSertBasicInfopro(multiSelected[len].value, 'PropertyID', 'ArrestProperty/Insert_ArrestProperty')
+    } catch (error) {
+      console.error('Error in Property:', error);
     }
   }
 
-  const InSertBasicInfopro = (id, col1, url) => {
-    const val = {
-      'ChargeID': ChargeID,
-      'ArrestID': DecArrestId,
-      [col1]: id,
-      'CreatedByUserFK': LoginPinID,
-    }
-    AddDeleteUpadate(url, val).then((res) => {
-      if (res) {
-        const parsedData = JSON.parse(res.data);
-        const message = parsedData.Table[0].Message;
-        toastifySuccess(message);
-        col1 === 'PropertyID' && get_Property_Data(DecArrestId); get_Security_Data(DecArrestId); get_Property_DropDown(DecEIncID); get_Arrest_Count(ArrestID)
-      } else {
-        console.log("Somthing Wrong");
+  // const InSertBasicInfopro = (id, col1, url) => {
+  //   const val = {
+  //     'ChargeID': ChargeID,
+  //     'ArrestID': DecArrestId,
+  //     [col1]: id,
+  //     'CreatedByUserFK': LoginPinID,
+  //   }
+  //   AddDeleteUpadate(url, val).then((res) => {
+  //     if (res) {
+  //       const parsedData = JSON.parse(res.data);
+  //       const message = parsedData.Table[0].Message;
+  //       toastifySuccess(message);
+  //       col1 === 'PropertyID' && get_Property_Data(DecArrestId); get_Security_Data(DecArrestId); get_Property_DropDown(DecEIncID); get_Arrest_Count(ArrestID)
+  //     } else {
+  //       console.log("Somthing Wrong");
+  //     }
+  //   })
+  // }
+  const InSertBasicInfopro = async (id, col1, url) => {
+    try {
+      const val = {
+        ChargeID: ChargeID,
+        ArrestID: DecArrestId,
+        [col1]: id,
+        CreatedByUserFK: LoginPinID,
+      };
+      const res = await AddDeleteUpadate(url, val);
+      if (!res) {
+        console.log("Something went wrong");
+        return;
       }
-    })
-  }
+      const parsedData = JSON.parse(res.data);
+      const message = parsedData?.Table?.[0]?.Message;
+      message && toastifySuccess(message);
+      if (col1 === 'PropertyID') {
+        get_Property_Data(DecArrestId);
+      }
+
+      get_Security_Data(DecArrestId);
+      get_Property_DropDown(DecEIncID);
+      get_Arrest_Count(ArrestID);
+
+    } catch (error) {
+      console.error('Error in InSertBasicInfopro:', error);
+    }
+  };
+
+
+  // const DelSertBasicInfopro = (ArrestPropertyID, col1, url) => {
+  //   const val = {
+  //     [col1]: ArrestPropertyID,
+  //     'DeletedByUserFK': LoginPinID,
+  //   }
+  //   AddDeleteUpadate(url, val).then((res) => {
+  //     if (res) {
+  //       const parsedData = JSON.parse(res.data);
+  //       const message = parsedData.Table[0].Message;
+  //       toastifySuccess(message);
+  //       col1 === 'ArrestPropertyID' && get_Property_Data(DecArrestId); get_Security_Data(DecArrestId); get_Property_DropDown(DecEIncID); get_Arrest_Count(DecArrestId)
+  //     } else {
+  //       console.log("Somthing Wrong");
+  //     }
+  //   })
+  // }
 
   const DelSertBasicInfopro = (ArrestPropertyID, col1, url) => {
-    const val = {
-      [col1]: ArrestPropertyID,
-      'DeletedByUserFK': LoginPinID,
+    try {
+      const val = {
+        [col1]: ArrestPropertyID,
+        DeletedByUserFK: LoginPinID,
+      };
+      AddDeleteUpadate(url, val)
+        .then((res) => {
+          if (!res) {
+            console.log("Something went wrong");
+            return;
+          }
+          const parsedData = JSON.parse(res.data);
+          const message = parsedData?.Table?.[0]?.Message;
+          message && toastifySuccess(message);
+          if (col1 === 'ArrestPropertyID') {
+            get_Property_Data(DecArrestId);
+          }
+          get_Security_Data(DecArrestId);
+          get_Property_DropDown(DecEIncID);
+          get_Arrest_Count(DecArrestId);
+        })
+        .catch((err) => {
+          console.error('API Error:', err);
+        });
+
+    } catch (error) {
+      console.error('Error in DelSertBasicInfopro:', error);
     }
-    AddDeleteUpadate(url, val).then((res) => {
-      if (res) {
-        const parsedData = JSON.parse(res.data);
-        const message = parsedData.Table[0].Message;
-        toastifySuccess(message);
-        col1 === 'ArrestPropertyID' && get_Property_Data(DecArrestId); get_Security_Data(DecArrestId); get_Property_DropDown(DecEIncID); get_Arrest_Count(DecArrestId)
-      } else {
-        console.log("Somthing Wrong");
-      }
-    })
-  }
+  };
+
 
   const customStylesWithOutColorMulti = {
     control: base => ({
@@ -1122,8 +1109,6 @@ const Charges = (props) => {
     const d = new Date(date);
     return !isNaN(d.getTime()) ? d : null;
   };
-
-  console.log(arrestChargeData)
 
   return (
     <>
@@ -1458,12 +1443,12 @@ const Charges = (props) => {
             onClick={insert_Arrest_Data}
             className="btn btn-sm btn-success mr-1"
           >
-            Save
+            {isSaving ? "Saving..." : "Save"}
           </button>
         </div>
       )}
 
-      <DeletePopUpModal func={DeleteArrestCharge} />
+      <DeleteModalCharge func={DeleteArrestCharge} />
       <ListModal {...{ openPage, setOpenPage }} />
       <ChangesModal func={check_Validation_Error} />
     </>

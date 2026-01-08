@@ -24,7 +24,7 @@ import CurrentArrestMasterReport from './CurrentArrestMasterReport';
 import Location from '../../../../../CADComponents/Common/Location';
 import { classRegistry } from 'fabric';
 
-const Home = ({ setShowJuvinile, setEditval , setShowPage, setResetErrors, setShowPoliceForce, ResetErrors, DecArrestId, setStatus, isEnabled, setIsEnabled, Agencystatus, setAgencystatus, arrestID, setArrestID, setmatchedAgency, ChargeLocalArr, possessionID, setPossessionID, RestStatus, Editval, incExceDate, GetSingleData, get_List, isLocked, }) => {
+const Home = ({ setShowJuvinile, setEditval, setShowPage, setResetErrors, setShowPoliceForce, ResetErrors, DecArrestId, setStatus, isEnabled, setIsEnabled, Agencystatus, setAgencystatus, arrestID, setArrestID, setmatchedAgency, ChargeLocalArr, possessionID, setPossessionID, RestStatus, Editval, incExceDate, GetSingleData, get_List, isLocked, }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -143,18 +143,12 @@ const Home = ({ setShowJuvinile, setEditval , setShowPage, setResetErrors, setSh
             setloginAgencyID(localStoreData?.AgencyID); setloginPinID(localStoreData?.PINID);
             get_Arrest_Count(DecArrestId); dispatch(get_ScreenPermissions_Data("A067", localStoreData?.AgencyID, localStoreData?.PINID));
             get_Single_PersonnelList(localStoreData?.PINID); GetDataTimeZone(localStoreData?.AgencyID); setAgencyCode(localStoreData?.ORI);
-            if (localStatus) {
-                console.log('hello1')
-                localStorage.removeItem('insertedArrestVal')
-            }
+            if (localStatus) { localStorage.removeItem('insertedArrestVal') }
             if (!arrestID) {
-                console.log('hello3')
                 dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
                 const storedVal = JSON.parse(localStorage.getItem('insertedArrestVal'));
                 setlocalArrData(storedVal);
-                console.log(storedVal)
             }
-
         }
     }, [localStoreData]);
 
@@ -179,11 +173,9 @@ const Home = ({ setShowJuvinile, setEditval , setShowPage, setResetErrors, setSh
     useEffect(() => {
         if (ResetErrors) {
             setoffenseChargeCount('');
-            setEditval([]);
-            dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
-             localStorage.removeItem('insertedArrestVal')
-             setlocalArrData();
-            setPossessionID(''); setResetErrors(false); setIsEditvalProcessed(false);
+            setEditval([]); dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
+            localStorage.removeItem('insertedArrestVal')
+            setlocalArrData(); setPossessionID(''); setResetErrors(false); setIsEditvalProcessed(false);
             setValue({ ...value, ['RaceID']: '', ['SexID']: '', ['AgeFrom']: '', ['AgeUnitID']: '', ['DateOfBirth']: '', ArrestNumber: '', IsJuvenileArrest: '', ArrestDtTm: '', ArrestingAgency: '', ArrestTypeID: '', SupervisorID: '', PoliceForceID: '', ArresteeID: '', RightsGivenID: '', JuvenileDispositionID: '', PhoneNo: '', GivenByID: '', PrimaryOfficerID: '', ModifiedByUserFK: '', IsMultipleArrestees: '', ArrestingAgencyID: '', 'IsSchoolNotified': '', 'Grade': '', 'LocationOfSchool': '', 'NameOfSchool': '', 'ParentPhone': '', 'ParentNameID': '', 'ResponseID': '', });
             setErrors({
                 ...errors,
@@ -255,17 +247,11 @@ const Home = ({ setShowJuvinile, setEditval , setShowPage, setResetErrors, setSh
         }
         else if (type === "ArrestMod") {
             dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId));
-
-
-
         }
     }, [DecEIncID, nameModalStatus, possessionID]);
 
     useEffect(() => {
-        // console.log(possessionID, isEditvalProcessed, type)
         if (possessionID && (isEditvalProcessed === false) && type === "ArrestMod") {
-            console.log('hello2')
-            // console.log(possessionID)
             const newvalue = arresteeNameData?.filter((val) => val?.NameID == possessionID);
             setNameID(newvalue[0]?.NameID)
             setValue({
@@ -416,11 +402,8 @@ const Home = ({ setShowJuvinile, setEditval , setShowPage, setResetErrors, setSh
     }, [ArrestDtTmError, ArresteeIDError, CellPhoneError, JuvenileDispoError, ArrestTypeIDError])
 
     useEffect(() => {
-        // console.log("🚀 ~ Home ~ Editval:", Editval)
-        console.log(localArrData)
         if (Editval?.length > 0 || localArrData) {
             const newvalue = arresteeNameData?.filter((val) => val?.NameID == (Editval[0]?.ArresteeID || localArrData?.ArresteeID));
-            console.log(newvalue, arresteeNameData, Editval[0]?.ArresteeID, localArrData?.ArresteeID , localArrData , Editval[0])
             setNameID(newvalue[0]?.NameID);
             get_Arrest_MultiImage(arrestID);
             setValue({
@@ -630,7 +613,7 @@ const Home = ({ setShowJuvinile, setEditval , setShowPage, setResetErrors, setSh
                 get_Incident_Count(DecEIncID); get_Arrest_Count(DecArrestId); setStatusFalse();
                 navigate(`/Arrest-Home?IncId=${IncID}&IncNo=${IncNo}&IncSta=${IncSta}&ArrestId=${('')}&ArrestSta=${false}&ChargeSta=${false}&SideBarStatus=${false}`); if (DecEIncID) { dispatch(get_ArresteeName_Data('', '', DecEIncID, true, DecArrestId)); }
                 sessionStorage.removeItem('ChargeLocalData');
-            } else console.log("Somthing Wrong");
+            } else { console.log("Somthing Wrong"); }
         })
     }
 
@@ -907,7 +890,6 @@ const Home = ({ setShowJuvinile, setEditval , setShowPage, setResetErrors, setSh
         if (ArresteeID) {
             const keysToCheck = ['AgeFrom', 'Gendre_Description', 'LastName', 'Race_Description'];
             const nameStatus = MstPage === "MST-Arrest-Dash" ? mastersNameDrpData : arresteeNameData?.filter((val) => val?.NameID == ArresteeID);
-            console.log(nameStatus[0])
             setArresteeChange(nameStatus[0]);
             const age = nameStatus[0]?.AgeFrom;
             const status = nameStatus[0]?.IsJuvenile;
@@ -918,7 +900,6 @@ const Home = ({ setShowJuvinile, setEditval , setShowPage, setResetErrors, setSh
                 setValue({ ...value, ['IsJuvenileArrest']: status, ['ArresteeID']: parseInt(possessionID) })
             }
             const allKeysExist = keysToCheck.every(key => nameStatus[0]?.[key] != null);
-            // console.log(keysToCheck.every(key => nameStatus[0]?.hasOwnProperty(key) && nameStatus[0]?.[key]), keysToCheck)
             return allKeysExist;
         } else {
             return true
@@ -1010,7 +991,6 @@ const Home = ({ setShowJuvinile, setEditval , setShowPage, setResetErrors, setSh
         const d = new Date(date);
         return !isNaN(d.getTime()) ? d : null;
     };
-
     return (
         <>
             {((incidentCount[0]?.ArrestCount === 0 || incidentCount[0]?.ArrestCount === "0") || (ArrestSta === true || ArrestSta === 'true') || isNew === "true" || isNew === true) && (
@@ -1090,23 +1070,9 @@ const Home = ({ setShowJuvinile, setEditval , setShowPage, setResetErrors, setSh
                                     timeFormat="HH:mm "
                                     is24Hour
                                     isClearable={false}
-                                    // selected={value?.ReportedDtTm && new Date(value?.ReportedDtTm)}
                                     selected={getValidDate(value?.ArrestDtTm)}
                                     autoComplete="Off"
-                                    // onChange={(date) => {
-                                    //     setArrestDate(date ? getShowingMonthDateYear(date) : null);
-                                    //     !addUpdatePermission && setChangesStatus(true); !addUpdatePermission && setStatesChangeStatus(true);
-                                    //     if (date > new Date(datezone)) {
-                                    //         date = new Date(datezone);
-                                    //     }
-                                    //     if (date >= new Date()) {
-                                    //         setValue({ ...value, ['ArrestDtTm']: new Date() ? getShowingDateText(new Date()) : null })
-                                    //     } else if (date <= new Date(incReportedDate)) {
-                                    //         setValue({ ...value, ['ArrestDtTm']: incReportedDate ? getShowingDateText(incReportedDate) : null })
-                                    //     } else {
-                                    //         setValue({ ...value, ['ArrestDtTm']: date ? getShowingDateText(date) : null })
-                                    //     }
-                                    // }}
+                                    //    ----------------------- old-------------------------
                                     onChange={(date) => {
                                         if (!date) return;
                                         const oldDate = getValidDate(value?.ArrestDtTm);
@@ -1141,7 +1107,6 @@ const Home = ({ setShowJuvinile, setEditval , setShowPage, setResetErrors, setSh
                                         !addUpdatePermission && setChangesStatus(true);
                                         !addUpdatePermission && setStatesChangeStatus(true);
                                     }}
-
                                     timeInputLabel
                                     showTimeSelect
                                     timeIntervals={1}
