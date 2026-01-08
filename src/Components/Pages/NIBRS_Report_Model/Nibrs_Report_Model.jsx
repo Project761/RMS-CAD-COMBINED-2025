@@ -174,7 +174,7 @@ const Nibrs_Report_Model = ({ show, setShow, handleModel }) => {
 
         });
 
-        const arr = [res[0]?.ErrorlogPath, res[0]?.NonReportablePath, res[0]?.SubmissionPath,];
+        const arr = [res[0]?.ErrorlogPath, res[0]?.NonReportablePath, res[0]?.SubmissionPath,].filter(Boolean);;
 
         const staticArr = [
             'https://apigoldline.com:5002/Imagefolder/WV0030100-1224E.txt',
@@ -209,11 +209,7 @@ const Nibrs_Report_Model = ({ show, setShow, handleModel }) => {
                 const lastSlashIndex = fileUrl[i].lastIndexOf('/');
                 const updatedUrl = replaceDomain(originalUrl);
 
-                //  FileSaver.saveAs(fileUrl[i], fileUrl[i]?.substring(lastSlashIndex + 1));
-
-                if (originalUrl) {
-                    FileSaver.saveAs(fileUrl[i], fileUrl[i]?.substring(lastSlashIndex + 1));
-                }
+                FileSaver.saveAs(fileUrl[i], fileUrl[i]?.substring(lastSlashIndex + 1));
 
             }
         } catch (error) {

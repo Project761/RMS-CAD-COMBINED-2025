@@ -1761,6 +1761,42 @@ const Properties = ({ propertyClick, isViewEventDetails = false, isNibrsSummited
                                         </span>
                                     )
                                         :
+                                        nibrsFieldError?.IsCategory ?
+                                            <span
+                                                style={{ color: 'red', textAlign: 'center', }}
+                                                onClick={() => { '' }}>
+                                                <u>⚠️ {nibrsFieldError?.Category || ''}</u>
+                                            </span>
+
+                                            :
+
+                                            (
+                                                nibrsFieldError?.OnPageError && (
+                                                    <span
+                                                        style={{ color: 'red', textAlign: 'center', }}
+                                                        onClick={() => { '' }}>
+                                                        <u>⚠️ {nibrsFieldError?.OnPageError || ''}</u>
+                                                    </span>
+                                                )
+                                            )
+                            }
+                            {/* {
+                                suspectedDrugTypeErrorStatus ? (
+                                    <span
+                                        style={{ color: 'red', textAlign: 'center', }}
+                                        onClick={() => { '' }}>
+                                        <u>⚠️ {"{352} Add at least one suspected drug type(create a property with type 'Drug')" || ''}</u>
+                                    </span>
+                                )
+                                    :
+                                    isPropertyIdZeroError ? (
+                                        <span
+                                            style={{ color: 'red', textAlign: 'center', }}
+                                            onClick={() => { '' }}>
+                                            <u>⚠️ {'{074} Need a property loss code of 5,7 for offense  23B' || ''}</u>
+                                        </span>
+                                    )
+                                        :
                                         (
                                             nibrsFieldError?.OnPageError && (
                                                 <span
@@ -1770,7 +1806,7 @@ const Properties = ({ propertyClick, isViewEventDetails = false, isNibrsSummited
                                                 </span>
                                             )
                                         )
-                            }
+                            } */}
                         </div>
                     </div>
                     {
