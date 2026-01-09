@@ -88,7 +88,7 @@ const NibrsHome = () => {
 
 
   const useQuery = () => {
-    const params = new URLSearchParams(useLocation().search);
+    const params = new URLSearchParams(useLocation().search);          
     return {
       get: (param) => params.get(param)
     };
@@ -108,6 +108,8 @@ const NibrsHome = () => {
       if (uniqueId) dispatch(get_LocalStoreData(uniqueId));
     }
   }, []);
+
+  // comment
 
   useEffect(() => {
     if (localStoreData) {
