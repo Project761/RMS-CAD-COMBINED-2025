@@ -68,7 +68,7 @@ const FingerPrint = (props) => {
     useEffect(() => {
         if (localStoreData) {
             setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
-            dispatch(get_ScreenPermissions_Data("N135", localStoreData?.AgencyID, localStoreData?.PINID));
+            dispatch(get_ScreenPermissions_Data("A53", localStoreData?.AgencyID, localStoreData?.PINID));
         }
     }, [localStoreData]);
 
@@ -339,17 +339,35 @@ const FingerPrint = (props) => {
                 </div>
                 {!isViewEventDetails &&
                     <div className="btn-box text-right mr-1 mb-2 mt-3">
-                        {/* <button type="button" className="btn btn-sm btn-success mx-1 py-1 text-center" onClick={() => { setShowPage('MugShorts'); }}>Back</button>
-                        <button type="button" className="btn btn-sm btn-success mx-1 py-1 text-center" onClick={() => { setShowPage('CourtInformation'); }}>Next</button> */}
                         <button type="button" data-dismiss="modal" onClick={() => {
                             setStatusFalse();
                         }} className="btn btn-sm btn-success mr-1" >New</button>
 
-                        {
+                        {/* {
                             status ?
                                 <button type="button" className="btn btn-sm btn-success mr-1" disabled={!statesChangeStatus} onClick={(e) => { update_Activity(); }}>Update</button>
                                 :
                                 <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { Add_Type(); }}>Save</button>
+                        } */}
+                        {
+                            status ?
+                                effectiveScreenPermission ?
+                                    effectiveScreenPermission[0]?.Changeok ?
+                                        <button type="button" className="btn btn-sm btn-success mr-1" disabled={!statesChangeStatus} onClick={(e) => { update_Activity(); }}>Update</button>
+                                        :
+                                        <>
+                                        </>
+                                    :
+                                    <button type="button" className="btn btn-sm btn-success mr-1" disabled={!statesChangeStatus} onClick={(e) => { update_Activity(); }}>Update</button>
+                                :
+                                effectiveScreenPermission ?
+                                    effectiveScreenPermission[0]?.AddOK ?
+                                        <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { Add_Type(); }}>Save</button>
+                                        :
+                                        <>
+                                        </>
+                                    :
+                                    <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { Add_Type(); }}>Save</button>
                         }
 
                     </div>
@@ -360,7 +378,9 @@ const FingerPrint = (props) => {
                 <DataTable
                     dense
                     columns={columns}
-                    data={FingerPrintData}
+                    // data={FingerPrintData}
+                    data={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? FingerPrintData : [] : FingerPrintData}
+
                     pagination
                     highlightOnHover
                     customStyles={tableCustomStyles}

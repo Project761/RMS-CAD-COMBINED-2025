@@ -76,7 +76,7 @@ const Warrant = (props) => {
     useEffect(() => {
         if (localStoreData) {
             setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
-            dispatch(get_ScreenPermissions_Data("N135", localStoreData?.AgencyID, localStoreData?.PINID));
+            dispatch(get_ScreenPermissions_Data("A54", localStoreData?.AgencyID, localStoreData?.PINID));
         }
     }, [localStoreData]);
 
@@ -551,10 +551,6 @@ const Warrant = (props) => {
     };
 
 
-
-
-
-
     return (
         <>
             <ArresList {...{ ListData }} />
@@ -967,7 +963,8 @@ const Warrant = (props) => {
                 <DataTable
                     dense
                     columns={columns}
-                    data={warrentTypeData}
+                    // data={warrentTypeData}
+                    data={effectiveScreenPermission ? effectiveScreenPermission[0]?.DisplayOK ? warrentTypeData : [] : warrentTypeData}
                     pagination
                     highlightOnHover
                     customStyles={tableCustomStyles}
