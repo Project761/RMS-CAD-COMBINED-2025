@@ -126,6 +126,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
     const [victimTypeStatus, setvictimTypeStatus] = useState(false);
     const [missingpersonCount, setmissingpersonCount] = useState('');
     const [propertyOwnerCount, setpropertyOwnerCount] = useState('');
+     const [saveValue, setsaveValue] = useState(false);
 
 
     const [roleStatus, setroleStatus] = useState(false);
@@ -1291,6 +1292,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                 setErrors({ ...errors, ['ContactError']: 'true', ['NameTypeIDError']: '', });
                 if (data) {
                     if (data[0]?.Total === 0) {
+                         setsaveValue(true);
                         AddDeleteUpadate('MasterName/Insert_MasterName', values).then((res) => {
 
                             if (res.success) {
@@ -1387,6 +1389,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
 
                                 }
                                 toastifySuccess(res.Message);
+                                setsaveValue(false);
                                 setStatesChangeStatus(false);
                                 if (!saveContinueStatus) {
                                     Reset();
@@ -2185,6 +2188,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
         setvictimTypeStatus(false);
         setMstPossessionID('');
         setVictimTypeDrp([]);
+         setsaveValue(false);
         const id = nameTypeIdDrp?.filter((val) => { if (val.id === "I") return val });
         if (id.length > 0) {
             setmasterNameValues(prevValues => { return { ...prevValues, ['NameTypeID']: id[0].value } })
@@ -3750,8 +3754,8 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                                                         <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }} disabled={!statesChangeStatus}>Update</button>
                                                         :
                                                         <>
-                                                            <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }}>Save</button>
-                                                            <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); setsaveContinueStatus(true) }}>Save & Continue</button>
+                                                            <button type="button" className="btn btn-sm btn-success mt-2  mr-1" disabled={saveValue} onClick={() => { check_Validation_Error(); }}>Save</button>
+                                                            <button type="button" className="btn btn-sm btn-success mt-2  mr-1" disabled={saveValue} onClick={() => { check_Validation_Error(); setsaveContinueStatus(true) }}>Save & Continue</button>
                                                         </>
                                                 }
                                                 <button type="button" onClick={() => { setStatusFalse(); Reset(); }} data-dismiss="modal" className="btn btn-sm btn-success mr-1 mt-2"  >Close</button>
@@ -3770,8 +3774,8 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                                                     <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }} disabled={!statesChangeStatus}>Update</button>
                                                     :
                                                     <>
-                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }} ref={saveButtonRef}>Save</button>
-                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); setsaveContinueStatus(true) }} ref={saveAndContRef}>Save & Continue</button>
+                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" disabled={saveValue} onClick={() => { check_Validation_Error(); }} ref={saveButtonRef}>Save</button>
+                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" disabled={saveValue} onClick={() => { check_Validation_Error(); setsaveContinueStatus(true) }} ref={saveAndContRef}>Save & Continue</button>
                                                     </>
                                             }
                                             <button type="button" onClick={() => setStatusFalse()} data-dismiss="modal" className="btn btn-sm btn-success mr-1 mt-2" ref={closeButtonRef}>Close</button>
@@ -3787,8 +3791,8 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                                                     <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }} disabled={!statesChangeStatus}>Update</button>
                                                     :
                                                     <>
-                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }} ref={saveButtonRef}>Save</button>
-                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); setsaveContinueStatus(true) }} ref={saveAndContRef}>Save & Continue</button>
+                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" disabled={saveValue} onClick={() => { check_Validation_Error(); }} ref={saveButtonRef}>Save</button>
+                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" disabled={saveValue} onClick={() => { check_Validation_Error(); setsaveContinueStatus(true) }} ref={saveAndContRef}>Save & Continue</button>
                                                     </>
                                             }
                                             <button type="button" onClick={() => setStatusFalse()} data-dismiss="modal" className="btn btn-sm btn-success mr-1 mt-2" ref={closeButtonRef}>Close</button>
@@ -3801,8 +3805,8 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                                                     <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }} disabled={!statesChangeStatus}>Update</button>
                                                     :
                                                     <>
-                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }} ref={saveButtonRef}>Save</button>
-                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); setsaveContinueStatus(true) }} ref={saveAndContRef}>Save & Continue</button>
+                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" disabled={saveValue} onClick={() => { check_Validation_Error(); }} ref={saveButtonRef}>Save</button>
+                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" disabled={saveValue} onClick={() => { check_Validation_Error(); setsaveContinueStatus(true) }} ref={saveAndContRef}>Save & Continue</button>
                                                     </>
                                             }
                                             <button type="button" onClick={() => setStatusFalse()} data-dismiss="modal" className="btn btn-sm btn-success mr-1 mt-2" ref={closeButtonRef}>Close</button>
@@ -3816,8 +3820,8 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                                                     <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }} disabled={!statesChangeStatus}>Update</button>
                                                     :
                                                     <>
-                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }} ref={saveButtonRef}>Save</button>
-                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); setsaveContinueStatus(true) }} ref={saveAndContRef}>Save & Continue</button>
+                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" disabled={saveValue} onClick={() => { check_Validation_Error(); }} ref={saveButtonRef}>Save</button>
+                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" disabled={saveValue} onClick={() => { check_Validation_Error(); setsaveContinueStatus(true) }} ref={saveAndContRef}>Save & Continue</button>
                                                     </>
                                             }
                                             <button type="button" onClick={() => setStatusFalse()} data-dismiss="modal" className="btn btn-sm btn-success mr-1 mt-2" ref={closeButtonRef}>Close</button>
