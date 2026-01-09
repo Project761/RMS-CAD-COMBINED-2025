@@ -1254,6 +1254,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
       setglobalname(''); setglobalnameto(''); setLocationStatus(true); setUpdateStatus(updateStatus + 1); setNameTypeCode(Id[0].id); setIsBusinessName(false); setcountAppear(false); setcountStatus(false);
     }
     setNameMultiImg('');
+    setsaveValue(false);
     setuploadImgFiles('');
     // remove EditVal Object
     setEditval([]);
