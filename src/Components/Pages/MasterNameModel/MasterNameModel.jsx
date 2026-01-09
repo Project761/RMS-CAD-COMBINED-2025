@@ -155,7 +155,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
 
     const [errors, setErrors] = useState({
         'NameTypeIDError': '', 'LastNameError': '', 'FirstNameError': '', 'MiddleNameError': '', 'NameReasonCodeIDError': '', 'CertifiedByIDError': '', 'ContactError': 'true', 'WeightError': 'true',
-        'AgeError': 'true', 'DateOfBirthError': '', 'RaceIDError': '', 'SexIDError': '', 'AddressError': 'true', 'DLNumberError': '', 'HeightError': 'true', 'SsnNoError': '', 'AgeFromError': '',
+        'AgeError': 'true', 'DateOfBirthError': '', 'RaceIDError': '', 'AgeUnitError' : '', 'AgeUnitError': '', 'SexIDError': '', 'AddressError': 'true', 'DLNumberError': '', 'HeightError': 'true', 'SsnNoError': '', 'AgeFromError': '',
     })
 
 
@@ -965,6 +965,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
             // const InjuryErr = victimStatus ? RequiredFieldIncident(masterNameValues.IsInjury) : 'true'
             const OwnerPhoneNumberError = masterNameValues?.OwnerPhoneNumber ? PhoneField(masterNameValues?.OwnerPhoneNumber) : 'true'
             const OwnerFaxNumberError = masterNameValues.OwnerFaxNumber ? FaxField(masterNameValues.OwnerFaxNumber) : 'true'
+            const AgeUnitError = masterNameValues.AgeFrom ? RequiredFieldIncident(masterNameValues.AgeUnitID) : 'true';
 
             setErrors(pre => {
                 return {
@@ -987,7 +988,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
 
                     ['OwnerPhoneNumberError']: OwnerPhoneNumberError || pre['OwnerPhoneNumberError'],
                     ['OwnerFaxNumberError']: OwnerFaxNumberError || pre['OwnerFaxNumberError'],
-
+                    ['AgeUnitError']: AgeUnitError || prevValues['AgeUnitError'],
 
                 }
             })
@@ -1030,6 +1031,8 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
             const VictimTypeError = roleStatus ? RequiredFieldIncident(masterNameValues.VictimTypeID) : 'true';
             const OwnerPhoneNumberError = masterNameValues.OwnerPhoneNumber ? PhoneField(masterNameValues.OwnerPhoneNumber) : 'true'
             const OwnerFaxNumberError = masterNameValues.OwnerFaxNumber ? FaxField(masterNameValues.OwnerFaxNumber) : 'true'
+            const AgeUnitError = masterNameValues.AgeFrom ? RequiredFieldIncident(masterNameValues.AgeUnitID) : 'true';
+
 
             setErrors(pre => {
                 return {
@@ -1050,7 +1053,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                     ['VictimTypeError']: VictimTypeError || pre['VictimTypeError'],
                     ['OwnerPhoneNumberError']: OwnerPhoneNumberError || pre['OwnerPhoneNumberError'],
                     ['OwnerFaxNumberError']: OwnerFaxNumberError || pre['OwnerFaxNumberError'],
-
+                    ['AgeUnitError']: AgeUnitError || prevValues['AgeUnitError'],
                 }
             })
             if (phoneTypeCode === 'E') {
@@ -1085,12 +1088,12 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
     }
 
 
-    const { NameTypeIDError, AgeFromError, LastNameError, ContactError, FirstNameError, MiddleNameError, RoleError, VictimTypeError, EthnicityErrorr, OwnerPhoneNumberError, OwnerFaxNumberError, ResidentError, NameReasonCodeIDError, SexIDError, RaceIDError, DateOfBirthError, DLNumberError, SsnNoError, HeightError, WeightError, AgeError } = errors
+    const { NameTypeIDError, AgeFromError, LastNameError, ContactError, FirstNameError, AgeUnitError, MiddleNameError, RoleError, VictimTypeError, EthnicityErrorr, OwnerPhoneNumberError, OwnerFaxNumberError, ResidentError, NameReasonCodeIDError, SexIDError, RaceIDError, DateOfBirthError, DLNumberError, SsnNoError, HeightError, WeightError, AgeError } = errors
 
     useEffect(() => {
         if (nameTypeCode === 'B') {
             if (isAdult || isOffender || victimTypeStatus) {
-                if (NameReasonCodeIDError === 'true' && ContactError === 'true' && VictimTypeError === 'true' && OwnerPhoneNumberError === 'true' && OwnerFaxNumberError === 'true' && RoleError === 'true' && EthnicityErrorr === 'true' && HeightError === 'true' && LastNameError === 'true' && FirstNameError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && SexIDError === 'true' && RaceIDError === 'true' && WeightError === 'true' && DateOfBirthError === 'true' && DLNumberError === 'true' && SsnNoError === 'true') {
+                if (NameReasonCodeIDError === 'true' && ContactError === 'true' && AgeUnitError === 'true' && VictimTypeError === 'true' && OwnerPhoneNumberError === 'true' && OwnerFaxNumberError === 'true' && RoleError === 'true' && EthnicityErrorr === 'true' && HeightError === 'true' && LastNameError === 'true' && FirstNameError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && SexIDError === 'true' && RaceIDError === 'true' && WeightError === 'true' && DateOfBirthError === 'true' && DLNumberError === 'true' && SsnNoError === 'true') {
                     if (type === "VehicleOwner") {
                         if (ownerOfID && possenSinglData?.length > 0) {
                             Update_Name(); return;
@@ -1128,7 +1131,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                         }
                     }
                 }
-            } else if (NameReasonCodeIDError === 'true' && HeightError === 'true' && RoleError === 'true' && OwnerPhoneNumberError === 'true' && OwnerFaxNumberError === 'true' && VictimTypeError === 'true' && ContactError === 'true' && LastNameError === 'true' && FirstNameError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && SexIDError === 'true' && RaceIDError === 'true' && DateOfBirthError === 'true' && WeightError === 'true' && DLNumberError === 'true' && SsnNoError === 'true') {
+            } else if (NameReasonCodeIDError === 'true' && HeightError === 'true' && AgeUnitError === 'true' && RoleError === 'true' && OwnerPhoneNumberError === 'true' && OwnerFaxNumberError === 'true' && VictimTypeError === 'true' && ContactError === 'true' && LastNameError === 'true' && FirstNameError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && SexIDError === 'true' && RaceIDError === 'true' && DateOfBirthError === 'true' && WeightError === 'true' && DLNumberError === 'true' && SsnNoError === 'true') {
 
                 if (type === "VehicleOwner") {
                     if (ownerOfID && possenSinglData?.length > 0) {
@@ -1170,7 +1173,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
         }
         else {
             if (isAdult || isOffender || victimTypeStatus) {
-                if (NameReasonCodeIDError === 'true' && ContactError === 'true' && AgeFromError === 'true' && VictimTypeError === 'true' && RoleError === 'true' && ResidentError === 'true' && EthnicityErrorr === 'true' && HeightError === 'true' && LastNameError === 'true' && FirstNameError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && SexIDError === 'true' && RaceIDError === 'true' && WeightError === 'true' && DateOfBirthError === 'true' && DLNumberError === 'true' && SsnNoError === 'true' && AgeError === 'true') {
+                if (NameReasonCodeIDError === 'true' && ContactError === 'true' && AgeUnitError === 'true' && AgeFromError === 'true' && VictimTypeError === 'true' && RoleError === 'true' && ResidentError === 'true' && EthnicityErrorr === 'true' && HeightError === 'true' && LastNameError === 'true' && FirstNameError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && SexIDError === 'true' && RaceIDError === 'true' && WeightError === 'true' && DateOfBirthError === 'true' && DLNumberError === 'true' && SsnNoError === 'true' && AgeError === 'true') {
                     if (type === "VehicleOwner") {
                         if (ownerOfID && possenSinglData.length > 0) {
                             Update_Name(); return;
@@ -1207,7 +1210,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                         }
                     }
                 }
-            } else if (NameReasonCodeIDError === 'true' && HeightError === 'true' && AgeFromError === 'true' && RoleError === 'true' && VictimTypeError === 'true' && ContactError === 'true' && LastNameError === 'true' && FirstNameError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && SexIDError === 'true' && RaceIDError === 'true' && DateOfBirthError === 'true' && WeightError === 'true' && DLNumberError === 'true' && SsnNoError === 'true' && AgeError === 'true') {
+            } else if (NameReasonCodeIDError === 'true' && HeightError === 'true' && AgeUnitError === 'true' && AgeFromError === 'true' && RoleError === 'true' && VictimTypeError === 'true' && ContactError === 'true' && LastNameError === 'true' && FirstNameError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && SexIDError === 'true' && RaceIDError === 'true' && DateOfBirthError === 'true' && WeightError === 'true' && DLNumberError === 'true' && SsnNoError === 'true' && AgeError === 'true') {
 
                 if (type === "VehicleOwner") {
                     if (ownerOfID && possenSinglData?.length > 0) {
@@ -1247,7 +1250,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                 }
             }
         }
-    }, [LastNameError, FirstNameError, MiddleNameError, ContactError, OwnerFaxNumberError, OwnerPhoneNumberError, WeightError, NameTypeIDError, VictimTypeError, EthnicityErrorr, RoleError, ResidentError, AgeFromError, NameReasonCodeIDError, DateOfBirthError, RaceIDError, SexIDError, HeightError, DLNumberError, SsnNoError, AgeError])
+    }, [LastNameError, FirstNameError, MiddleNameError, ContactError, AgeUnitError, OwnerFaxNumberError, OwnerPhoneNumberError, WeightError, NameTypeIDError, VictimTypeError, EthnicityErrorr, RoleError, ResidentError, AgeFromError, NameReasonCodeIDError, DateOfBirthError, RaceIDError, SexIDError, HeightError, DLNumberError, SsnNoError, AgeError])
 
     const insertMasterName = () => {
         if (roleStatus && !victimTypeStatus) {
@@ -3272,6 +3275,9 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                                                                                     isDisabled={masterNameValues.DateOfBirth ? true : false || !masterNameValues?.AgeFrom || masterNameValues?.IsUnknown === 'true' || masterNameValues?.IsUnknown === true}
 
                                                                                 />
+                                                                                {errors.AgeUnitError !== 'true' ? (
+                                                                                    <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.AgeUnitError}</p>
+                                                                                ) : null}
                                                                             </div>
                                                                         </div>
                                                                     </div>
