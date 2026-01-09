@@ -155,7 +155,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
 
     const [errors, setErrors] = useState({
         'NameTypeIDError': '', 'LastNameError': '', 'FirstNameError': '', 'MiddleNameError': '', 'NameReasonCodeIDError': '', 'CertifiedByIDError': '', 'ContactError': 'true', 'WeightError': 'true',
-        'AgeError': 'true', 'DateOfBirthError': '', 'RaceIDError': '', 'AgeUnitError' : '', 'AgeUnitError': '', 'SexIDError': '', 'AddressError': 'true', 'DLNumberError': '', 'HeightError': 'true', 'SsnNoError': '', 'AgeFromError': '',
+        'AgeError': 'true', 'DateOfBirthError': '', 'RaceIDError': '', 'AgeUnitError': '', 'AgeUnitError': '', 'SexIDError': '', 'AddressError': 'true', 'DLNumberError': '', 'HeightError': 'true', 'SsnNoError': '', 'AgeFromError': '',
     })
 
 
@@ -988,7 +988,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
 
                     ['OwnerPhoneNumberError']: OwnerPhoneNumberError || pre['OwnerPhoneNumberError'],
                     ['OwnerFaxNumberError']: OwnerFaxNumberError || pre['OwnerFaxNumberError'],
-                    ['AgeUnitError']: AgeUnitError || prevValues['AgeUnitError'],
+                    ['AgeUnitError']: AgeUnitError || pre['AgeUnitError'],
 
                 }
             })
@@ -1053,7 +1053,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                     ['VictimTypeError']: VictimTypeError || pre['VictimTypeError'],
                     ['OwnerPhoneNumberError']: OwnerPhoneNumberError || pre['OwnerPhoneNumberError'],
                     ['OwnerFaxNumberError']: OwnerFaxNumberError || pre['OwnerFaxNumberError'],
-                    ['AgeUnitError']: AgeUnitError || prevValues['AgeUnitError'],
+                    ['AgeUnitError']: AgeUnitError || pre['AgeUnitError'],
                 }
             })
             if (phoneTypeCode === 'E') {
