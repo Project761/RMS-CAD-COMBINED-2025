@@ -187,7 +187,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
   })
 
   const [errors, setErrors] = useState({
-    'NameTypeIDError': '', 'LastNameError': '', 'AgeUnitError' : '', 'FirstNameError': '', 'MiddleNameError': '', 'NameReasonCodeIDError': '', 'CertifiedByIDError': '', 'ContactError': 'true', 'WeightError': 'true', 'HeightError': 'true', 'AgeError': 'true', 'DateOfBirthError': '', 'RaceIDError': '', 'DLError': 'true', 'SexIDError': '', 'AddressError': 'true', 'CrimeLocationError': '', 'InjuryError': '', 'ResidentError': '', 'EthnicityErrorr': '',
+    'NameTypeIDError': '', 'LastNameError': '', 'AgeUnitError': '', 'FirstNameError': '', 'MiddleNameError': '', 'NameReasonCodeIDError': '', 'CertifiedByIDError': '', 'ContactError': 'true', 'WeightError': 'true', 'HeightError': 'true', 'AgeError': 'true', 'DateOfBirthError': '', 'RaceIDError': '', 'DLError': 'true', 'SexIDError': '', 'AddressError': 'true', 'CrimeLocationError': '', 'InjuryError': '', 'ResidentError': '', 'EthnicityErrorr': '',
   })
 
   const [imgData, setImgData] = useState({
@@ -2008,7 +2008,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
           <div className='Offense_child'>
             <div className="row ">
               <div className="col-12 col-md-12 col-lg-12 mt-1 ">
-                <div className="row align-items-center" style={{ rowGap: "3px" }}>
+                <div className="row align-items-center" style={{ rowGap: "6px" }}>
                   <div className="col-2 col-md-2 col-lg-1">
                     <label htmlFor="" className='label-name mb-0'>Name Type
                       {errors.NameTypeIDError !== 'true' ? (
@@ -2372,6 +2372,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                               <label htmlFor="" className='label-name mb-0'>Age {errors.AgeFromError !== 'true' ? (
                                 <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.AgeFromError}</p>
                               ) : null}</label>
+                              <div style={{ height: '5px' }}></div>
                             </div>
                             <div className="col-5 col-md-2 mt-0 text-field px-0" >
                               <input
@@ -2407,6 +2408,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                                     : {}
                                 }}
                               />
+                              <div style={{ height: '5px' }}></div>
                             </div>
                             <div className="col-1 text-center px-0" style={{ marginTop: "-14px" }}>
                               <span className="dash-name">_</span>
@@ -2443,6 +2445,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                                 readOnly={isLockOrRestrictModule("Lock", editval[0]?.AgeTo, isLocked) || value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
 
                               />
+                              <div style={{ height: '5px' }}></div>
                             </div>
                             <div className="col-5 col-md-6" >
                               <Select
@@ -2456,14 +2459,17 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                                 isDisabled={isLockOrRestrictModule("Lock", editval[0]?.AgeUnitID, isLocked) || value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
 
                               />
-                              {errors.AgeUnitError !== 'true' ? (
-                                <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.AgeUnitError}</p>
-                              ) : null}
+                              <div  style={{ height: '5px' }}>
+                                {errors.AgeUnitError !== 'true' ? (
+                                  <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.AgeUnitError}</p>
+                                ) : null}
+                              </div>
                             </div>
                           </div>
 
 
                         </div>
+
                         <div className="col-2 col-md-2 col-lg-1">
                           <span data-toggle="modal" onClick={() => { setOpenPage('Gender') }} data-target="#ListModel" className='new-link px-0'>
                             Gender {errors.SexIDError !== 'true' ? (
