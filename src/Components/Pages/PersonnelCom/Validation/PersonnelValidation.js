@@ -140,7 +140,7 @@ export const Comparision2 = (ValueFrom, ValueTo, Name, AgeUnitID, nameTypeCode) 
 
 	} else {
 		if (((AgeUnitID === null || AgeUnitID === undefined || AgeUnitID === '') && ValueFrom)) {
-			toastifyError(`Please select Age Unit`);
+			// toastifyError(`Please select Age Unit`);
 			return (`Please select Age Unit`);
 		}
 		return 'true';

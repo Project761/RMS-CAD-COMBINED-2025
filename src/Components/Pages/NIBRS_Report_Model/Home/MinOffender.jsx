@@ -166,7 +166,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, isLocked,
 
     const [errors, setErrors] = useState({
         'NameTypeIDError': '', 'LastNameError': '', 'FirstNameError': '', 'MiddleNameError': '', 'NameReasonCodeIDError': '', 'CertifiedByIDError': '', 'ContactError': 'true', 'WeightError': 'true',
-        'HeightError': 'true', 'AgeError': 'true', 'DateOfBirthError': '', 'RaceIDError': '', 'DLError': 'true', 'SexIDError': '', 'AddressError': 'true', 'CrimeLocationError': '', 'InjuryError': '', 'ResidentError': '', 'EthnicityErrorr': '',
+        'HeightError': 'true', 'AgeError': 'true', 'AgeUnitError' : '', 'DateOfBirthError': '', 'RaceIDError': '', 'DLError': 'true', 'SexIDError': '', 'AddressError': 'true', 'CrimeLocationError': '', 'InjuryError': '', 'ResidentError': '', 'EthnicityErrorr': '',
     })
 
     useEffect(() => {
@@ -304,6 +304,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, isLocked,
             const ResidentErr = victimTypeStatus ? RequiredFieldIncident(value.ResidentID) : 'true'
             const RoleErr = RequiredFieldIncident(value.Role);
             const VictimTypeError = roleStatus ? RequiredFieldIncident(value.VictimTypeID) : 'true';
+             const AgeUnitError = value.AgeFrom ? RequiredFieldIncident(value.AgeUnitID) : 'true';
             setErrors(prevValues => {
                 return {
                     ...prevValues,
@@ -325,6 +326,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, isLocked,
                     ['ResidentError']: ResidentErr || prevValues['ResidentError'],
                     ['RoleError']: RoleErr || prevValues['RoleError'],
                     ['VictimTypeError']: VictimTypeError || prevValues['VictimTypeError'],
+                     ['AgeUnitError']: AgeUnitError || prevValues['AgeUnitError'],
                 }
             })
 
@@ -368,6 +370,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, isLocked,
             const OwnerFaxNumberError = value.OwnerFaxNumber ? FaxField(value.OwnerFaxNumber) : 'true'
             const RoleErr = RequiredFieldIncident(value.Role);
             const VictimTypeError = roleStatus ? RequiredFieldIncident(value.VictimTypeID) : 'true';
+              const AgeUnitError = value.AgeFrom ? RequiredFieldIncident(value.AgeUnitID) : 'true';
             setErrors(prevValues => {
                 return {
                     ...prevValues,
@@ -384,6 +387,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, isLocked,
                     ['OwnerFaxNumberError']: OwnerFaxNumberError || prevValues['OwnerFaxNumberError'],
                     ['RoleError']: RoleErr || prevValues['RoleError'],
                     ['VictimTypeError']: VictimTypeError || prevValues['VictimTypeError'],
+                      ['AgeUnitError']: AgeUnitError || prevValues['AgeUnitError'],
                 }
             })
 
@@ -420,11 +424,11 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, isLocked,
     };
 
     // Check All Field Format is True Then Submit   
-    const { LastNameError, OwnerPhoneNumberError, CrimeLocationError, AgeFromError, EthnicityErrorr, ResidentError, VictimTypeError, RoleError, OwnerFaxNumberError, FirstNameError, MiddleNameError, NameTypeIDError, CertifiedByIDError, NameReasonCodeIDError, ContactError, DLError, SSN, WeightError, HeightError, AgeError, DateOfBirthError, RaceIDError, SexIDError, } = errors
+    const { LastNameError, OwnerPhoneNumberError, CrimeLocationError, AgeUnitError , AgeFromError, EthnicityErrorr, ResidentError, VictimTypeError, RoleError, OwnerFaxNumberError, FirstNameError, MiddleNameError, NameTypeIDError, CertifiedByIDError, NameReasonCodeIDError, ContactError, DLError, SSN, WeightError, HeightError, AgeError, DateOfBirthError, RaceIDError, SexIDError, } = errors
 
     useEffect(() => {
         if (nameTypeCode === 'B') {
-            if (LastNameError === 'true' && FirstNameError === 'true' && CrimeLocationError === 'true' && RoleError === 'true' && CrimeLocationError === 'true' && OwnerPhoneNumberError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true') {
+            if (LastNameError === 'true' && FirstNameError === 'true' && AgeUnitError === 'true' && CrimeLocationError === 'true' && RoleError === 'true' && CrimeLocationError === 'true' && OwnerPhoneNumberError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true') {
                 if (MstPage === "MST-Name-Dash") {
                     if (masterNameID) { Update_Name(); }
                     else { InsertName(); }
@@ -435,7 +439,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, isLocked,
                 }
             }
         } else if (isAdult || IsOffender || victimTypeStatus) {
-            if (LastNameError === 'true' && OwnerPhoneNumberError === 'true' && CrimeLocationError === 'true' && VictimTypeError === 'true' && RoleError === 'true' && ResidentError === 'true' && EthnicityErrorr === 'true' && AgeFromError === 'true' && FirstNameError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true' && DateOfBirthError === 'true' && RaceIDError === 'true' && SexIDError === 'true') {
+            if (LastNameError === 'true' && OwnerPhoneNumberError === 'true' && AgeUnitError === 'true' && CrimeLocationError === 'true' && VictimTypeError === 'true' && RoleError === 'true' && ResidentError === 'true' && EthnicityErrorr === 'true' && AgeFromError === 'true' && FirstNameError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true' && DateOfBirthError === 'true' && RaceIDError === 'true' && SexIDError === 'true') {
                 if (MstPage === "MST-Name-Dash") {
                     if (masterNameID) { Update_Name(); }
                     else { InsertName(); }
@@ -445,7 +449,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, isLocked,
                     else { InsertName(); }
                 }
             }
-        } else if (LastNameError === 'true' && OwnerPhoneNumberError === 'true' && CrimeLocationError === 'true' && VictimTypeError === 'true' && RoleError === 'true' && FirstNameError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true') {
+        } else if (LastNameError === 'true' && OwnerPhoneNumberError === 'true' && AgeUnitError === 'true' && CrimeLocationError === 'true' && VictimTypeError === 'true' && RoleError === 'true' && FirstNameError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true') {
             if (MstPage === "MST-Name-Dash") {
                 if (masterNameID) { Update_Name(); }
                 else { InsertName(); }
@@ -455,7 +459,7 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, isLocked,
                 else { InsertName(); }
             }
         }
-    }, [LastNameError, FirstNameError, OwnerPhoneNumberError, EthnicityErrorr, MiddleNameError, ResidentError, VictimTypeError, RoleError, AgeFromError, CrimeLocationError, OwnerFaxNumberError, DLError, NameTypeIDError, NameReasonCodeIDError, ContactError, SSN, WeightError, HeightError, AgeError, DateOfBirthError, RaceIDError, SexIDError])
+    }, [LastNameError, FirstNameError, OwnerPhoneNumberError, EthnicityErrorr, AgeUnitError , MiddleNameError, ResidentError, VictimTypeError, RoleError, AgeFromError, CrimeLocationError, OwnerFaxNumberError, DLError, NameTypeIDError, NameReasonCodeIDError, ContactError, SSN, WeightError, HeightError, AgeError, DateOfBirthError, RaceIDError, SexIDError])
 
     useEffect(() => {
         if (loginAgencyID) {
@@ -2749,6 +2753,9 @@ const MinOffender = ({ offenderClick = false, isNibrsSummited = false, isLocked,
                                                     styles={isLockOrRestrictModule("Lock", editval[0]?.AgeUnitID, isLocked) ? LockFildscolour : value.AgeFrom ? Requiredcolour : customStylesWithOutColor}
                                                     isDisabled={value.DateOfBirth || isLockOrRestrictModule("Lock", editval[0]?.AgeUnitID, isLocked) ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true}
                                                 />
+                                                 {errors.AgeUnitError !== 'true' ? (
+                                                    <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.AgeUnitError}</p>
+                                                ) : null}
                                             </div>
                                         </div>
                                     </div>

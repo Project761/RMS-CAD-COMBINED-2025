@@ -187,7 +187,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
   })
 
   const [errors, setErrors] = useState({
-    'NameTypeIDError': '', 'LastNameError': '', 'FirstNameError': '', 'MiddleNameError': '', 'NameReasonCodeIDError': '', 'CertifiedByIDError': '', 'ContactError': 'true', 'WeightError': 'true', 'HeightError': 'true', 'AgeError': 'true', 'DateOfBirthError': '', 'RaceIDError': '', 'DLError': 'true', 'SexIDError': '', 'AddressError': 'true', 'CrimeLocationError': '', 'InjuryError': '', 'ResidentError': '', 'EthnicityErrorr': '',
+    'NameTypeIDError': '', 'LastNameError': '', 'AgeUnitError': '', 'FirstNameError': '', 'MiddleNameError': '', 'NameReasonCodeIDError': '', 'CertifiedByIDError': '', 'ContactError': 'true', 'WeightError': 'true', 'HeightError': 'true', 'AgeError': 'true', 'DateOfBirthError': '', 'RaceIDError': '', 'DLError': 'true', 'SexIDError': '', 'AddressError': 'true', 'CrimeLocationError': '', 'InjuryError': '', 'ResidentError': '', 'EthnicityErrorr': '',
   })
 
   const [imgData, setImgData] = useState({
@@ -307,6 +307,8 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
       const ResidentErr = victimTypeStatus ? RequiredFieldIncident(value.ResidentID) : 'true'
       const RoleErr = MstPage === "MST-Name-Dash" ? 'true' : RequiredFieldIncident(value.Role);
       const VictimTypeError = roleStatus && MstPage !== "MST-Name-Dash" ? RequiredFieldIncident(value.VictimTypeID) : 'true';
+      const AgeUnitError = value.AgeFrom ? RequiredFieldIncident(value.AgeUnitID) : 'true';
+
       setErrors(prevValues => {
         return {
           ...prevValues,
@@ -328,6 +330,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
           ['ResidentError']: ResidentErr || prevValues['ResidentError'],
           ['RoleError']: RoleErr || prevValues['RoleError'],
           ['VictimTypeError']: VictimTypeError || prevValues['VictimTypeError'],
+          ['AgeUnitError']: AgeUnitError || prevValues['AgeUnitError'],
         }
       })
       // Phone Validation
@@ -369,6 +372,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
       const OwnerFaxNumberError = value.OwnerFaxNumber ? FaxField(value.OwnerFaxNumber) : 'true'
       const RoleErr = MstPage === "MST-Name-Dash" ? 'true' : RequiredFieldIncident(value.Role);
       const VictimTypeError = roleStatus && MstPage !== "MST-Name-Dash" ? RequiredFieldIncident(value.VictimTypeID) : 'true';
+      const AgeUnitError = value.AgeFrom ? RequiredFieldIncident(value.AgeUnitID) : 'true';
       setErrors(prevValues => {
         return {
           ...prevValues,
@@ -385,6 +389,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
           ['OwnerFaxNumberError']: OwnerFaxNumberError || prevValues['OwnerFaxNumberError'],
           ['RoleError']: RoleErr || prevValues['RoleError'],
           ['VictimTypeError']: VictimTypeError || prevValues['VictimTypeError'],
+          ['AgeUnitError']: AgeUnitError || prevValues['AgeUnitError'],
         }
       })
 
@@ -427,11 +432,11 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
   };
 
   // Check All Field Format is True Then Submit   
-  const { LastNameError, OwnerPhoneNumberError, CrimeLocationError, AgeFromError, EthnicityErrorr, ResidentError, VictimTypeError, RoleError, OwnerFaxNumberError, FirstNameError, MiddleNameError, NameTypeIDError, NameReasonCodeIDError, ContactError, DLError, SSN, WeightError, HeightError, AgeError, DateOfBirthError, RaceIDError, SexIDError, } = errors
+  const { LastNameError, OwnerPhoneNumberError, CrimeLocationError, AgeFromError, AgeUnitError, EthnicityErrorr, ResidentError, VictimTypeError, RoleError, OwnerFaxNumberError, FirstNameError, MiddleNameError, NameTypeIDError, NameReasonCodeIDError, ContactError, DLError, SSN, WeightError, HeightError, AgeError, DateOfBirthError, RaceIDError, SexIDError, } = errors
 
   useEffect(() => {
     if (nameTypeCode === 'B') {
-      if (LastNameError === 'true' && FirstNameError === 'true' && CrimeLocationError === 'true' && RoleError === 'true' && CrimeLocationError === 'true' && OwnerPhoneNumberError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true') {
+      if (LastNameError === 'true' && FirstNameError === 'true' && AgeUnitError === 'true' && CrimeLocationError === 'true' && RoleError === 'true' && CrimeLocationError === 'true' && OwnerPhoneNumberError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true') {
         if (MstPage === "MST-Name-Dash") {
           if (masterNameID) { Update_Name(); }
           else { InsertName(); }
@@ -442,7 +447,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
         }
       }
     } else if (isAdult || IsOffender || victimTypeStatus) {
-      if (LastNameError === 'true' && OwnerPhoneNumberError === 'true' && CrimeLocationError === 'true' && VictimTypeError === 'true' && RoleError === 'true' && ResidentError === 'true' && EthnicityErrorr === 'true' && AgeFromError === 'true' && FirstNameError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true' && DateOfBirthError === 'true' && RaceIDError === 'true' && SexIDError === 'true') {
+      if (LastNameError === 'true' && OwnerPhoneNumberError === 'true' && AgeUnitError === 'true' && CrimeLocationError === 'true' && VictimTypeError === 'true' && RoleError === 'true' && ResidentError === 'true' && EthnicityErrorr === 'true' && AgeFromError === 'true' && FirstNameError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true' && DateOfBirthError === 'true' && RaceIDError === 'true' && SexIDError === 'true') {
         if (MstPage === "MST-Name-Dash") {
           if (masterNameID) { Update_Name(); }
           else { InsertName(); }
@@ -452,7 +457,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
           else { InsertName(); }
         }
       }
-    } else if (LastNameError === 'true' && OwnerPhoneNumberError === 'true' && CrimeLocationError === 'true' && VictimTypeError === 'true' && RoleError === 'true' && FirstNameError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true') {
+    } else if (LastNameError === 'true' && OwnerPhoneNumberError === 'true' && AgeUnitError === 'true' && CrimeLocationError === 'true' && VictimTypeError === 'true' && RoleError === 'true' && FirstNameError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true') {
       if (MstPage === "MST-Name-Dash") {
         if (masterNameID) { Update_Name(); }
         else { InsertName(); }
@@ -462,7 +467,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
         else { InsertName(); }
       }
     }
-  }, [LastNameError, FirstNameError, OwnerPhoneNumberError, EthnicityErrorr, MiddleNameError, ResidentError, VictimTypeError, RoleError, AgeFromError, CrimeLocationError, OwnerFaxNumberError, DLError, NameTypeIDError, NameReasonCodeIDError, ContactError, SSN, WeightError, HeightError, AgeError, DateOfBirthError, RaceIDError, SexIDError])
+  }, [LastNameError, FirstNameError, OwnerPhoneNumberError, EthnicityErrorr, AgeUnitError, MiddleNameError, ResidentError, VictimTypeError, RoleError, AgeFromError, CrimeLocationError, OwnerFaxNumberError, DLError, NameTypeIDError, NameReasonCodeIDError, ContactError, SSN, WeightError, HeightError, AgeError, DateOfBirthError, RaceIDError, SexIDError])
 
   useEffect(() => {
     if (loginAgencyID) {
@@ -1249,6 +1254,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
       setglobalname(''); setglobalnameto(''); setLocationStatus(true); setUpdateStatus(updateStatus + 1); setNameTypeCode(Id[0].id); setIsBusinessName(false); setcountAppear(false); setcountStatus(false);
     }
     setNameMultiImg('');
+    setsaveValue(false);
     setuploadImgFiles('');
     // remove EditVal Object
     setEditval([]);
@@ -2003,7 +2009,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
           <div className='Offense_child'>
             <div className="row ">
               <div className="col-12 col-md-12 col-lg-12 mt-1 ">
-                <div className="row align-items-center" style={{ rowGap: "3px" }}>
+                <div className="row align-items-center" style={{ rowGap: "6px" }}>
                   <div className="col-2 col-md-2 col-lg-1">
                     <label htmlFor="" className='label-name mb-0'>Name Type
                       {errors.NameTypeIDError !== 'true' ? (
@@ -2367,6 +2373,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                               <label htmlFor="" className='label-name mb-0'>Age {errors.AgeFromError !== 'true' ? (
                                 <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.AgeFromError}</p>
                               ) : null}</label>
+                              <div style={{ height: '5px' }}></div>
                             </div>
                             <div className="col-5 col-md-2 mt-0 text-field px-0" >
                               <input
@@ -2402,6 +2409,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                                     : {}
                                 }}
                               />
+                              <div style={{ height: '5px' }}></div>
                             </div>
                             <div className="col-1 text-center px-0" style={{ marginTop: "-14px" }}>
                               <span className="dash-name">_</span>
@@ -2438,6 +2446,7 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                                 readOnly={isLockOrRestrictModule("Lock", editval[0]?.AgeTo, isLocked) || value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
 
                               />
+                              <div style={{ height: '5px' }}></div>
                             </div>
                             <div className="col-5 col-md-6" >
                               <Select
@@ -2451,11 +2460,17 @@ const Home = ({ setShowVictim, setshowWarrant, setNameShowPage, setShowOffender,
                                 isDisabled={isLockOrRestrictModule("Lock", editval[0]?.AgeUnitID, isLocked) || value.DateOfBirth ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true || nibrsSubmittedName === 1}
 
                               />
+                              <div  style={{ height: '5px' }}>
+                                {errors.AgeUnitError !== 'true' ? (
+                                  <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.AgeUnitError}</p>
+                                ) : null}
+                              </div>
                             </div>
                           </div>
 
 
                         </div>
+
                         <div className="col-2 col-md-2 col-lg-1">
                           <span data-toggle="modal" onClick={() => { setOpenPage('Gender') }} data-target="#ListModel" className='new-link px-0'>
                             Gender {errors.SexIDError !== 'true' ? (

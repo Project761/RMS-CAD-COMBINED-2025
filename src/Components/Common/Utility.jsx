@@ -96,7 +96,9 @@ export const getLabelsString = (data) => {
 export const getShowingDateText = (dateStr) => {
   return moment(dateStr)?.format("MM/DD/yyyy HH:mm")
 }
-
+export const getShowingDateTextArrestAudit = (dateStr) => {
+  return moment(dateStr)?.format("yyyy-MM-DD HH:mm")
+}
 export const getShowingYearMonthDate = (dateStr) => {
   return moment(dateStr).format("yyyy-MM-DD HH:mm:ss")
 }

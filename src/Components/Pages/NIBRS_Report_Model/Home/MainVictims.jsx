@@ -203,9 +203,8 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
 
     const [errors, setErrors] = useState({
         'NameTypeIDError': '', 'LastNameError': '', 'FirstNameError': '', 'MiddleNameError': '', 'NameReasonCodeIDError': '', 'CertifiedByIDError': '', 'ContactError': 'true', 'WeightError': 'true', 'InjuryTypeError': '',
-        'HeightError': 'true', 'AgeError': 'true', 'DateOfBirthError': '', 'RaceIDError': '', 'DLError': 'true', 'SexIDError': '', 'AddressError': 'true', 'CrimeLocationError': '', 'InjuryError': '', 'ResidentError': '', 'EthnicityErrorr': '',
+        'HeightError': 'true', 'AgeError': 'true', 'AgeUnitError' : '', 'DateOfBirthError': '', 'RaceIDError': '', 'DLError': 'true', 'SexIDError': '', 'AddressError': 'true', 'CrimeLocationError': '', 'InjuryError': '', 'ResidentError': '', 'EthnicityErrorr': '',
 
-        'CallTypeIDError': '', 'AssignmentTypeIDError': '', "AssaultTypeIDError": '', 'JusifiableHomicideError': '',
     })
 
     const [imgData, setImgData] = useState({
@@ -367,7 +366,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
             const AssaultTypeIDErr = nibrsCodeArray?.includes('09A') || nibrsCodeArray?.includes('09C') || nibrsCodeArray?.includes('13A') ? validateFields(assaultID) : 'true';
 
             const JusifiableHomicideErr = assaultID20Or21 ? validateFields(justifiyID) : 'true';
-
+            const AgeUnitError = value.AgeFrom ? RequiredFieldIncident(value.AgeUnitID) : 'true';
 
             setErrors(prevValues => {
                 return {
@@ -398,6 +397,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
 
                     ['JusifiableHomicideError']: JusifiableHomicideErr || prevValues['JusifiableHomicideError'],
                     ['AssaultTypeIDError']: AssaultTypeIDErr || prevValues['AssaultTypeIDError'],
+                    ['AgeUnitError']: AgeUnitError || prevValues['AgeUnitError'],
                 }
             })
 
@@ -450,6 +450,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
             const AssaultTypeIDErr = nibrsCodeArray?.includes('09A') || nibrsCodeArray?.includes('09C') || nibrsCodeArray?.includes('13A') ? validateFields(assaultID) : 'true';
 
             const JusifiableHomicideErr = assaultID20Or21 ? validateFields(justifiyID) : 'true';
+            const AgeUnitError = value.AgeFrom ? RequiredFieldIncident(value.AgeUnitID) : 'true';
 
             setErrors(prevValues => {
                 return {
@@ -474,6 +475,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                     ['AssignmentTypeIDError']: AssignmentTypeIDError || prevValues['AssignmentTypeIDError'],
                     ['JusifiableHomicideError']: JusifiableHomicideErr || prevValues['JusifiableHomicideError'],
                     ['AssaultTypeIDError']: AssaultTypeIDErr || prevValues['AssaultTypeIDError'],
+                    ['AgeUnitError']: AgeUnitError || prevValues['AgeUnitError'],
                 }
             })
 
@@ -523,11 +525,11 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
     };
 
     // Check All Field Format is True Then Submit   
-    const { LastNameError, OwnerPhoneNumberError, CrimeLocationError, ORITypeErrors, AgeFromError, EthnicityErrorr, ResidentError, VictimTypeError, InjuryTypeError, RoleError, OwnerFaxNumberError, FirstNameError, MiddleNameError, NameTypeIDError, CertifiedByIDError, NameReasonCodeIDError, ContactError, DLError, SSN, WeightError, HeightError, AgeError, DateOfBirthError, RaceIDError, SexIDError, CallTypeIDError, AssignmentTypeIDError, JusifiableHomicideError, AssaultTypeIDError } = errors
+    const { LastNameError, OwnerPhoneNumberError, AgeUnitError, CrimeLocationError, ORITypeErrors, AgeFromError, EthnicityErrorr, ResidentError, VictimTypeError, InjuryTypeError, RoleError, OwnerFaxNumberError, FirstNameError, MiddleNameError, NameTypeIDError, CertifiedByIDError, NameReasonCodeIDError, ContactError, DLError, SSN, WeightError, HeightError, AgeError, DateOfBirthError, RaceIDError, SexIDError, CallTypeIDError, AssignmentTypeIDError, JusifiableHomicideError, AssaultTypeIDError } = errors
 
     useEffect(() => {
         if (nameTypeCode === 'B') {
-            if (LastNameError === 'true' && FirstNameError === 'true' && ORITypeErrors === 'true' && CrimeLocationError === 'true' && InjuryTypeError === 'true' && RoleError === 'true' && CrimeLocationError === 'true' && OwnerPhoneNumberError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true' && CallTypeIDError === 'true' && AssignmentTypeIDError === 'true' && JusifiableHomicideError === 'true' && AssaultTypeIDError === 'true') {
+            if (LastNameError === 'true' && FirstNameError === 'true' && AgeUnitError === 'true' && ORITypeErrors === 'true' && CrimeLocationError === 'true' && InjuryTypeError === 'true' && RoleError === 'true' && CrimeLocationError === 'true' && OwnerPhoneNumberError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true' && CallTypeIDError === 'true' && AssignmentTypeIDError === 'true' && JusifiableHomicideError === 'true' && AssaultTypeIDError === 'true') {
 
                 if (MstPage === "MST-Name-Dash") {
                     if (masterNameID) {
@@ -545,7 +547,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                 }
             }
         } else if (isAdult || IsOffender || victimTypeStatus) {
-            if (LastNameError === 'true' && OwnerPhoneNumberError === 'true' && ORITypeErrors === 'true' && CrimeLocationError === 'true' && InjuryTypeError === 'true' && VictimTypeError === 'true' && RoleError === 'true' && ResidentError === 'true' && EthnicityErrorr === 'true' && AgeFromError === 'true' && FirstNameError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true' && DateOfBirthError === 'true' && RaceIDError === 'true' && SexIDError === 'true' && CallTypeIDError === 'true' && AssignmentTypeIDError === 'true' && JusifiableHomicideError === 'true' && AssaultTypeIDError === 'true') {
+            if (LastNameError === 'true' && OwnerPhoneNumberError === 'true' && AgeUnitError === 'true' && ORITypeErrors === 'true' && CrimeLocationError === 'true' && InjuryTypeError === 'true' && VictimTypeError === 'true' && RoleError === 'true' && ResidentError === 'true' && EthnicityErrorr === 'true' && AgeFromError === 'true' && FirstNameError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true' && DateOfBirthError === 'true' && RaceIDError === 'true' && SexIDError === 'true' && CallTypeIDError === 'true' && AssignmentTypeIDError === 'true' && JusifiableHomicideError === 'true' && AssaultTypeIDError === 'true') {
                 if (MstPage === "MST-Name-Dash") {
                     if (masterNameID) {
                         Update_Name();
@@ -561,7 +563,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                     }
                 }
             }
-        } else if (LastNameError === 'true' && OwnerPhoneNumberError === 'true' && ORITypeErrors === 'true' && CrimeLocationError === 'true' && InjuryTypeError === 'true' && VictimTypeError === 'true' && RoleError === 'true' && FirstNameError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true' && CallTypeIDError === 'true' && AssignmentTypeIDError === 'true' && JusifiableHomicideError === 'true' && AssaultTypeIDError === 'true') {
+        } else if (LastNameError === 'true' && OwnerPhoneNumberError === 'true' && AgeUnitError === 'true' && ORITypeErrors === 'true' && CrimeLocationError === 'true' && InjuryTypeError === 'true' && VictimTypeError === 'true' && RoleError === 'true' && FirstNameError === 'true' && OwnerFaxNumberError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && NameReasonCodeIDError === 'true' && ContactError === 'true' && DLError === 'true' && SSN === 'true' && HeightError === 'true' && WeightError === 'true' && AgeError === 'true' && CallTypeIDError === 'true' && AssignmentTypeIDError === 'true' && JusifiableHomicideError === 'true' && AssaultTypeIDError === 'true') {
             if (MstPage === "MST-Name-Dash") {
                 if (masterNameID) {
                     Update_Name();
@@ -577,7 +579,7 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                 }
             }
         }
-    }, [LastNameError, FirstNameError, OwnerPhoneNumberError, EthnicityErrorr, ORITypeErrors, MiddleNameError, ResidentError, InjuryTypeError, VictimTypeError, RoleError, AgeFromError, CrimeLocationError, OwnerFaxNumberError, DLError, NameTypeIDError, NameReasonCodeIDError, ContactError, SSN, WeightError, HeightError, AgeError, DateOfBirthError, RaceIDError, SexIDError, CallTypeIDError, AssignmentTypeIDError, JusifiableHomicideError, AssaultTypeIDError])
+    }, [LastNameError, FirstNameError, OwnerPhoneNumberError, AgeUnitError, EthnicityErrorr, ORITypeErrors, MiddleNameError, ResidentError, InjuryTypeError, VictimTypeError, RoleError, AgeFromError, CrimeLocationError, OwnerFaxNumberError, DLError, NameTypeIDError, NameReasonCodeIDError, ContactError, SSN, WeightError, HeightError, AgeError, DateOfBirthError, RaceIDError, SexIDError, CallTypeIDError, AssignmentTypeIDError, JusifiableHomicideError, AssaultTypeIDError])
 
     useEffect(() => {
         if (loginAgencyID) {
@@ -3664,6 +3666,9 @@ const MainVictims = ({ victimClick, isNibrsSummited = false, isLocked, setIsLock
                                                     styles={isLockOrRestrictModule("Lock", editval[0]?.AgeUnitID, isLocked) ? LockFildscolour : value.AgeFrom ? Requiredcolour : customStylesWithOutColor}
                                                     isDisabled={value.DateOfBirth || isLockOrRestrictModule("Lock", editval[0]?.AgeUnitID, isLocked) ? true : false || !value?.AgeFrom || value?.IsUnknown === 'true' || value?.IsUnknown === true}
                                                 />
+                                                {errors.AgeUnitError !== 'true' ? (
+                                                    <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.AgeUnitError}</p>
+                                                ) : null}
                                             </div>
                                         </div>
                                     </div>

@@ -69,7 +69,7 @@ const MugShorts = (props) => {
     useEffect(() => {
         if (localStoreData) {
             setLoginAgencyID(localStoreData?.AgencyID); setLoginPinID(localStoreData?.PINID);
-            dispatch(get_ScreenPermissions_Data("N135", localStoreData?.AgencyID, localStoreData?.PINID));
+            dispatch(get_ScreenPermissions_Data("A52", localStoreData?.AgencyID, localStoreData?.PINID));
         }
     }, [localStoreData]);
 
@@ -835,18 +835,25 @@ const MugShorts = (props) => {
                     </div>
                 </div>
                 <div className="btn-box text-right mr-1 mb-2 mt-3">
-                    {/* <button type="button" className="btn btn-sm btn-success mx-1 py-1 text-center" onClick={() => { setShowPage('Narratives'); }}>Back</button>
-                    <button type="button" className="btn btn-sm btn-success mx-1 py-1 text-center" onClick={() => { setShowPage('Fingerprint'); }}>Next</button> */}
+
                     <button type="button" onClick={setStatusFalse}
                         className="btn btn-sm btn-success mr-1" >New</button>
-                    {/* <button type="button" className="btn btn-sm btn-success mr-1" onClick={Add_MugShorts}>Save</button> */}
-                    <button type="button" className="btn btn-sm btn-success mr-1" disabled={!statesChangeStatus} onClick={(e) => { check_Validation_Error(); }}>Update</button>
-                    {/* {
-                        status ?
-                            <button type="button" className="btn btn-sm btn-success mr-1" disabled={!statesChangeStatus} onClick={(e) => { check_Validation_Error(); }}>Update</button>
-                            :
-                            <button type="button" className="btn btn-sm btn-success mr-1" onClick={(e) => { check_Validation_Error(); }}>Save</button>
-                    } */}
+
+                    {/* <button type="button" className="btn btn-sm btn-success mr-1" disabled={!statesChangeStatus} onClick={(e) => { check_Validation_Error(); }}>Update</button> */}
+
+                    {
+                        effectiveScreenPermission ? (
+                            effectiveScreenPermission[0]?.Changeok ? (
+                                <button type="button" disabled={!statesChangeStatus} className="btn btn-sm btn-success mr-1" onClick={() => { check_Validation_Error() }}>Update</button>
+                            ) : (
+                                <></>
+                            )
+                        ) : (
+                            <button type="button" disabled={!statesChangeStatus} className="btn btn-sm btn-success mr-1" onClick={() => { check_Validation_Error() }}>Update</button>
+                        )
+                    }
+
+
                     <button type="button" onClick={handleAddMugshot} className="btn btn-sm btn-success mr-1" >Add Mughshot</button>
                 </div>
             </div >

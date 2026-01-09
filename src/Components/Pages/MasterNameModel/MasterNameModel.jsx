@@ -126,6 +126,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
     const [victimTypeStatus, setvictimTypeStatus] = useState(false);
     const [missingpersonCount, setmissingpersonCount] = useState('');
     const [propertyOwnerCount, setpropertyOwnerCount] = useState('');
+     const [saveValue, setsaveValue] = useState(false);
 
 
     const [roleStatus, setroleStatus] = useState(false);
@@ -155,7 +156,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
 
     const [errors, setErrors] = useState({
         'NameTypeIDError': '', 'LastNameError': '', 'FirstNameError': '', 'MiddleNameError': '', 'NameReasonCodeIDError': '', 'CertifiedByIDError': '', 'ContactError': 'true', 'WeightError': 'true',
-        'AgeError': 'true', 'DateOfBirthError': '', 'RaceIDError': '', 'SexIDError': '', 'AddressError': 'true', 'DLNumberError': '', 'HeightError': 'true', 'SsnNoError': '', 'AgeFromError': '',
+        'AgeError': 'true', 'DateOfBirthError': '', 'RaceIDError': '', 'AgeUnitError': '', 'AgeUnitError': '', 'SexIDError': '', 'AddressError': 'true', 'DLNumberError': '', 'HeightError': 'true', 'SsnNoError': '', 'AgeFromError': '',
     })
 
 
@@ -965,6 +966,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
             // const InjuryErr = victimStatus ? RequiredFieldIncident(masterNameValues.IsInjury) : 'true'
             const OwnerPhoneNumberError = masterNameValues?.OwnerPhoneNumber ? PhoneField(masterNameValues?.OwnerPhoneNumber) : 'true'
             const OwnerFaxNumberError = masterNameValues.OwnerFaxNumber ? FaxField(masterNameValues.OwnerFaxNumber) : 'true'
+            const AgeUnitError = masterNameValues.AgeFrom ? RequiredFieldIncident(masterNameValues.AgeUnitID) : 'true';
 
             setErrors(pre => {
                 return {
@@ -987,7 +989,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
 
                     ['OwnerPhoneNumberError']: OwnerPhoneNumberError || pre['OwnerPhoneNumberError'],
                     ['OwnerFaxNumberError']: OwnerFaxNumberError || pre['OwnerFaxNumberError'],
-
+                    ['AgeUnitError']: AgeUnitError || pre['AgeUnitError'],
 
                 }
             })
@@ -1030,6 +1032,8 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
             const VictimTypeError = roleStatus ? RequiredFieldIncident(masterNameValues.VictimTypeID) : 'true';
             const OwnerPhoneNumberError = masterNameValues.OwnerPhoneNumber ? PhoneField(masterNameValues.OwnerPhoneNumber) : 'true'
             const OwnerFaxNumberError = masterNameValues.OwnerFaxNumber ? FaxField(masterNameValues.OwnerFaxNumber) : 'true'
+            const AgeUnitError = masterNameValues.AgeFrom ? RequiredFieldIncident(masterNameValues.AgeUnitID) : 'true';
+
 
             setErrors(pre => {
                 return {
@@ -1050,7 +1054,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                     ['VictimTypeError']: VictimTypeError || pre['VictimTypeError'],
                     ['OwnerPhoneNumberError']: OwnerPhoneNumberError || pre['OwnerPhoneNumberError'],
                     ['OwnerFaxNumberError']: OwnerFaxNumberError || pre['OwnerFaxNumberError'],
-
+                    ['AgeUnitError']: AgeUnitError || pre['AgeUnitError'],
                 }
             })
             if (phoneTypeCode === 'E') {
@@ -1085,12 +1089,12 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
     }
 
 
-    const { NameTypeIDError, AgeFromError, LastNameError, ContactError, FirstNameError, MiddleNameError, RoleError, VictimTypeError, EthnicityErrorr, OwnerPhoneNumberError, OwnerFaxNumberError, ResidentError, NameReasonCodeIDError, SexIDError, RaceIDError, DateOfBirthError, DLNumberError, SsnNoError, HeightError, WeightError, AgeError } = errors
+    const { NameTypeIDError, AgeFromError, LastNameError, ContactError, FirstNameError, AgeUnitError, MiddleNameError, RoleError, VictimTypeError, EthnicityErrorr, OwnerPhoneNumberError, OwnerFaxNumberError, ResidentError, NameReasonCodeIDError, SexIDError, RaceIDError, DateOfBirthError, DLNumberError, SsnNoError, HeightError, WeightError, AgeError } = errors
 
     useEffect(() => {
         if (nameTypeCode === 'B') {
             if (isAdult || isOffender || victimTypeStatus) {
-                if (NameReasonCodeIDError === 'true' && ContactError === 'true' && VictimTypeError === 'true' && OwnerPhoneNumberError === 'true' && OwnerFaxNumberError === 'true' && RoleError === 'true' && EthnicityErrorr === 'true' && HeightError === 'true' && LastNameError === 'true' && FirstNameError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && SexIDError === 'true' && RaceIDError === 'true' && WeightError === 'true' && DateOfBirthError === 'true' && DLNumberError === 'true' && SsnNoError === 'true') {
+                if (NameReasonCodeIDError === 'true' && ContactError === 'true' && AgeUnitError === 'true' && VictimTypeError === 'true' && OwnerPhoneNumberError === 'true' && OwnerFaxNumberError === 'true' && RoleError === 'true' && EthnicityErrorr === 'true' && HeightError === 'true' && LastNameError === 'true' && FirstNameError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && SexIDError === 'true' && RaceIDError === 'true' && WeightError === 'true' && DateOfBirthError === 'true' && DLNumberError === 'true' && SsnNoError === 'true') {
                     if (type === "VehicleOwner") {
                         if (ownerOfID && possenSinglData?.length > 0) {
                             Update_Name(); return;
@@ -1128,7 +1132,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                         }
                     }
                 }
-            } else if (NameReasonCodeIDError === 'true' && HeightError === 'true' && RoleError === 'true' && OwnerPhoneNumberError === 'true' && OwnerFaxNumberError === 'true' && VictimTypeError === 'true' && ContactError === 'true' && LastNameError === 'true' && FirstNameError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && SexIDError === 'true' && RaceIDError === 'true' && DateOfBirthError === 'true' && WeightError === 'true' && DLNumberError === 'true' && SsnNoError === 'true') {
+            } else if (NameReasonCodeIDError === 'true' && HeightError === 'true' && AgeUnitError === 'true' && RoleError === 'true' && OwnerPhoneNumberError === 'true' && OwnerFaxNumberError === 'true' && VictimTypeError === 'true' && ContactError === 'true' && LastNameError === 'true' && FirstNameError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && SexIDError === 'true' && RaceIDError === 'true' && DateOfBirthError === 'true' && WeightError === 'true' && DLNumberError === 'true' && SsnNoError === 'true') {
 
                 if (type === "VehicleOwner") {
                     if (ownerOfID && possenSinglData?.length > 0) {
@@ -1170,7 +1174,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
         }
         else {
             if (isAdult || isOffender || victimTypeStatus) {
-                if (NameReasonCodeIDError === 'true' && ContactError === 'true' && AgeFromError === 'true' && VictimTypeError === 'true' && RoleError === 'true' && ResidentError === 'true' && EthnicityErrorr === 'true' && HeightError === 'true' && LastNameError === 'true' && FirstNameError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && SexIDError === 'true' && RaceIDError === 'true' && WeightError === 'true' && DateOfBirthError === 'true' && DLNumberError === 'true' && SsnNoError === 'true' && AgeError === 'true') {
+                if (NameReasonCodeIDError === 'true' && ContactError === 'true' && AgeUnitError === 'true' && AgeFromError === 'true' && VictimTypeError === 'true' && RoleError === 'true' && ResidentError === 'true' && EthnicityErrorr === 'true' && HeightError === 'true' && LastNameError === 'true' && FirstNameError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && SexIDError === 'true' && RaceIDError === 'true' && WeightError === 'true' && DateOfBirthError === 'true' && DLNumberError === 'true' && SsnNoError === 'true' && AgeError === 'true') {
                     if (type === "VehicleOwner") {
                         if (ownerOfID && possenSinglData.length > 0) {
                             Update_Name(); return;
@@ -1207,7 +1211,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                         }
                     }
                 }
-            } else if (NameReasonCodeIDError === 'true' && HeightError === 'true' && AgeFromError === 'true' && RoleError === 'true' && VictimTypeError === 'true' && ContactError === 'true' && LastNameError === 'true' && FirstNameError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && SexIDError === 'true' && RaceIDError === 'true' && DateOfBirthError === 'true' && WeightError === 'true' && DLNumberError === 'true' && SsnNoError === 'true' && AgeError === 'true') {
+            } else if (NameReasonCodeIDError === 'true' && HeightError === 'true' && AgeUnitError === 'true' && AgeFromError === 'true' && RoleError === 'true' && VictimTypeError === 'true' && ContactError === 'true' && LastNameError === 'true' && FirstNameError === 'true' && MiddleNameError === 'true' && NameTypeIDError === 'true' && SexIDError === 'true' && RaceIDError === 'true' && DateOfBirthError === 'true' && WeightError === 'true' && DLNumberError === 'true' && SsnNoError === 'true' && AgeError === 'true') {
 
                 if (type === "VehicleOwner") {
                     if (ownerOfID && possenSinglData?.length > 0) {
@@ -1247,7 +1251,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                 }
             }
         }
-    }, [LastNameError, FirstNameError, MiddleNameError, ContactError, OwnerFaxNumberError, OwnerPhoneNumberError, WeightError, NameTypeIDError, VictimTypeError, EthnicityErrorr, RoleError, ResidentError, AgeFromError, NameReasonCodeIDError, DateOfBirthError, RaceIDError, SexIDError, HeightError, DLNumberError, SsnNoError, AgeError])
+    }, [LastNameError, FirstNameError, MiddleNameError, ContactError, AgeUnitError, OwnerFaxNumberError, OwnerPhoneNumberError, WeightError, NameTypeIDError, VictimTypeError, EthnicityErrorr, RoleError, ResidentError, AgeFromError, NameReasonCodeIDError, DateOfBirthError, RaceIDError, SexIDError, HeightError, DLNumberError, SsnNoError, AgeError])
 
     const insertMasterName = () => {
         if (roleStatus && !victimTypeStatus) {
@@ -1288,6 +1292,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                 setErrors({ ...errors, ['ContactError']: 'true', ['NameTypeIDError']: '', });
                 if (data) {
                     if (data[0]?.Total === 0) {
+                         setsaveValue(true);
                         AddDeleteUpadate('MasterName/Insert_MasterName', values).then((res) => {
 
                             if (res.success) {
@@ -1384,6 +1389,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
 
                                 }
                                 toastifySuccess(res.Message);
+                                setsaveValue(false);
                                 setStatesChangeStatus(false);
                                 if (!saveContinueStatus) {
                                     Reset();
@@ -2182,6 +2188,7 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
         setvictimTypeStatus(false);
         setMstPossessionID('');
         setVictimTypeDrp([]);
+         setsaveValue(false);
         const id = nameTypeIdDrp?.filter((val) => { if (val.id === "I") return val });
         if (id.length > 0) {
             setmasterNameValues(prevValues => { return { ...prevValues, ['NameTypeID']: id[0].value } })
@@ -3272,6 +3279,9 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                                                                                     isDisabled={masterNameValues.DateOfBirth ? true : false || !masterNameValues?.AgeFrom || masterNameValues?.IsUnknown === 'true' || masterNameValues?.IsUnknown === true}
 
                                                                                 />
+                                                                                {errors.AgeUnitError !== 'true' ? (
+                                                                                    <p style={{ color: 'red', fontSize: '11px', margin: '0px', padding: '0px' }}>{errors.AgeUnitError}</p>
+                                                                                ) : null}
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -3744,8 +3754,8 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                                                         <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }} disabled={!statesChangeStatus}>Update</button>
                                                         :
                                                         <>
-                                                            <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }}>Save</button>
-                                                            <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); setsaveContinueStatus(true) }}>Save & Continue</button>
+                                                            <button type="button" className="btn btn-sm btn-success mt-2  mr-1" disabled={saveValue} onClick={() => { check_Validation_Error(); }}>Save</button>
+                                                            <button type="button" className="btn btn-sm btn-success mt-2  mr-1" disabled={saveValue} onClick={() => { check_Validation_Error(); setsaveContinueStatus(true) }}>Save & Continue</button>
                                                         </>
                                                 }
                                                 <button type="button" onClick={() => { setStatusFalse(); Reset(); }} data-dismiss="modal" className="btn btn-sm btn-success mr-1 mt-2"  >Close</button>
@@ -3764,8 +3774,8 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                                                     <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }} disabled={!statesChangeStatus}>Update</button>
                                                     :
                                                     <>
-                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }} ref={saveButtonRef}>Save</button>
-                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); setsaveContinueStatus(true) }} ref={saveAndContRef}>Save & Continue</button>
+                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" disabled={saveValue} onClick={() => { check_Validation_Error(); }} ref={saveButtonRef}>Save</button>
+                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" disabled={saveValue} onClick={() => { check_Validation_Error(); setsaveContinueStatus(true) }} ref={saveAndContRef}>Save & Continue</button>
                                                     </>
                                             }
                                             <button type="button" onClick={() => setStatusFalse()} data-dismiss="modal" className="btn btn-sm btn-success mr-1 mt-2" ref={closeButtonRef}>Close</button>
@@ -3781,8 +3791,8 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                                                     <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }} disabled={!statesChangeStatus}>Update</button>
                                                     :
                                                     <>
-                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }} ref={saveButtonRef}>Save</button>
-                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); setsaveContinueStatus(true) }} ref={saveAndContRef}>Save & Continue</button>
+                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" disabled={saveValue} onClick={() => { check_Validation_Error(); }} ref={saveButtonRef}>Save</button>
+                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" disabled={saveValue} onClick={() => { check_Validation_Error(); setsaveContinueStatus(true) }} ref={saveAndContRef}>Save & Continue</button>
                                                     </>
                                             }
                                             <button type="button" onClick={() => setStatusFalse()} data-dismiss="modal" className="btn btn-sm btn-success mr-1 mt-2" ref={closeButtonRef}>Close</button>
@@ -3795,8 +3805,8 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                                                     <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }} disabled={!statesChangeStatus}>Update</button>
                                                     :
                                                     <>
-                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }} ref={saveButtonRef}>Save</button>
-                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); setsaveContinueStatus(true) }} ref={saveAndContRef}>Save & Continue</button>
+                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" disabled={saveValue} onClick={() => { check_Validation_Error(); }} ref={saveButtonRef}>Save</button>
+                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" disabled={saveValue} onClick={() => { check_Validation_Error(); setsaveContinueStatus(true) }} ref={saveAndContRef}>Save & Continue</button>
                                                     </>
                                             }
                                             <button type="button" onClick={() => setStatusFalse()} data-dismiss="modal" className="btn btn-sm btn-success mr-1 mt-2" ref={closeButtonRef}>Close</button>
@@ -3810,8 +3820,8 @@ const MasterNameModel = ({ setArrestID, setOwnerOfID, ownerOfID, possenSinglData
                                                     <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }} disabled={!statesChangeStatus}>Update</button>
                                                     :
                                                     <>
-                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); }} ref={saveButtonRef}>Save</button>
-                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" onClick={() => { check_Validation_Error(); setsaveContinueStatus(true) }} ref={saveAndContRef}>Save & Continue</button>
+                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" disabled={saveValue} onClick={() => { check_Validation_Error(); }} ref={saveButtonRef}>Save</button>
+                                                        <button type="button" className="btn btn-sm btn-success mt-2  mr-1" disabled={saveValue} onClick={() => { check_Validation_Error(); setsaveContinueStatus(true) }} ref={saveAndContRef}>Save & Continue</button>
                                                     </>
                                             }
                                             <button type="button" onClick={() => setStatusFalse()} data-dismiss="modal" className="btn btn-sm btn-success mr-1 mt-2" ref={closeButtonRef}>Close</button>
