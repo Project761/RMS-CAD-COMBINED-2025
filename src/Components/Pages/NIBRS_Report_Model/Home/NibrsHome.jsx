@@ -277,32 +277,6 @@ const NibrsHome = () => {
 
         }
 
-        // if (offenseValidateNibrsData) {
-        //   const incObj = incidentValidateNibrsData?.Incident ? incidentValidateNibrsData?.Incident : [];
-        //   const offenseObj = offenseValidateNibrsData?.Offense ? offenseValidateNibrsData?.Offense : [];
-
-        //   if (offenseObj?.length > 0) {
-
-        //     setOffenseErrorString(offenseObj[0]?.OnPageError ? offenseObj[0]?.OnPageError : '');
-        //     setOffenseErrorStatus(true);
-
-        //   } else {
-
-        //     if (incObj?.IsOffence) {
-        //       setOffenseErrorString(incObj?.IsOffenceError ? incObj?.IsOffenceError : '');
-        //       setIsOffenseInc(true); setOffenseErrorStatus(true);
-
-        //     } else {
-        //       setIsOffenseInc(false); setOffenseErrorStatus(false); setOffenseErrorString('');
-
-        //     }
-        //   }
-
-        // } else {
-        //   setOffenseErrorStatus(false); setOffenseErrorString('');
-
-        // }
-
         if (propertyValidateNibrsData) {
           const proObj = propertyValidateNibrsData?.Properties ? propertyValidateNibrsData?.Properties : [];
           // console.log("🚀 ~ ValidateProperty ~ proObj:", proObj)
@@ -538,16 +512,6 @@ const NibrsHome = () => {
     }
   }
 
-  // Don't remove code Dev kashyap
-  // const [offenseSectionStatus, setOffenseSectionStatus] = useState("completed");
-
-  // useEffect(() => {
-  //   const nextStatus = !offenseErrorStatus && !isOffenseInc ? "completed" : "attention highlighted";
-
-  //   setOffenseSectionStatus(prev => prev === nextStatus ? prev : nextStatus);
-  // }, [offenseErrorStatus, isOffenseInc]);
-
-
   const sectionData = [
     {
       title: "Administrative Details",
@@ -555,16 +519,6 @@ const NibrsHome = () => {
       sectionKey: "admin",
       list: <Administrative_Details incidentClick={incidentClick} isNibrsSummited={isNibrsSummited} isLocked={isLocked} setIsLocked={setIsLocked} />
     },
-    // {
-    //   title: !isOffenseInc ? `Offense (${offenseCount})` : (
-    //     <span className="text-center" style={TitleErrorStyle}>
-    //       {`Offense (${offenseCount}) --- This Incident does not have any TIBRS reportable Crime(s)`}
-    //     </span>
-    //   ),
-    //   status: offenseSectionStatus,
-    //   sectionKey: "offenses",
-    //   list: (<Offense offenseClick={offenseClick} isNibrsSummited={isNibrsSummited} isLocked={isLocked} setIsLocked={setIsLocked} getPermissionLevelByLock={getPermissionLevelByLock} />)
-    // },
     {
       title: !isOffenseInc ? `Offense (${offenseCount})` : <span className="text-center" style={TitleErrorStyle} > {`Offense (${offenseCount}) --- This Incident does not have any TIBRS reportable Crime(s)`} </span>,
       status: !offenseErrorStatus && !isOffenseInc ? "completed" : "attention highlighted",
@@ -602,7 +556,6 @@ const NibrsHome = () => {
       list: <Arrestees arrestClick={arrestClick} isNibrsSummited={isNibrsSummited} isLocked={isLocked} setIsLocked={setIsLocked} getPermissionLevelByLock={getPermissionLevelByLock} />
     },
   ];
-
 
 
   return (
