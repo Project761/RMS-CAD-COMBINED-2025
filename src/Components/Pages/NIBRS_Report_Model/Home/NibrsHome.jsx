@@ -112,6 +112,7 @@ const NibrsHome = () => {
   // comment
 
   useEffect(() => {
+    
     if (localStoreData) {
       setLoginPinID(localStoreData?.PINID)
       setLoginAgencyID(localStoreData?.AgencyID); setBaseDate(localStoreData?.BaseDate ? localStoreData?.BaseDate : null); setOriNumber(localStoreData?.ORI);
