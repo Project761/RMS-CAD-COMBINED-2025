@@ -883,6 +883,7 @@ export const editorConfig = {
   placeholder: 'Message'
 }
 
+// comment
 
 // Lock Restrict Module
 export const isLockOrRestrictModule = (moduleType, fieldValue, isLock, isMultiSelect = false) => {
